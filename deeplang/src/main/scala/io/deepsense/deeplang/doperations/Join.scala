@@ -195,24 +195,21 @@ trait JoinParams {
 
   val joinColumnsParam = ParametersSequence(
     "Pairs of columns to join upon",
-    required = true,
     predefinedSchema = ParametersSchema(
       leftColumnParamKey -> SingleColumnSelectorParameter(
-        "Column from the left DataFrame", required = true, portIndex = 0),
+        "Column from the left DataFrame", portIndex = 0),
       rightColumnParamKey -> SingleColumnSelectorParameter(
-        "Column from the right DataFrame", required = true, portIndex = 1)
+        "Column from the right DataFrame", portIndex = 1)
     )
   )
 
   val leftTablePrefixParam = PrefixBasedColumnCreatorParameter(
     "Prefix for columns of left DataFrame",
-    default = None,
-    required = false)
+    default = Some(""))
 
   val rightTablePrefixParam = PrefixBasedColumnCreatorParameter(
     "Prefix for columns of right DataFrame",
-    default = None,
-    required = false)
+    default = Some(""))
 }
 
 object Join {

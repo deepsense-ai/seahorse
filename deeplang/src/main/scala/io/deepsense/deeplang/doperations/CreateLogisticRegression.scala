@@ -37,18 +37,15 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
     Regularization -> NumericParameter(
       description = "Regularization parameter",
       default = Some(0.0),
-      required = true,
       validator = RangeValidator(begin = 0.0, end = Double.PositiveInfinity)),
     IterationsNumberKey -> NumericParameter(
       description = "Max number of iterations to perform",
       default = Some(1.0),
-      required = true,
       validator = RangeValidator(begin = 1.0, end = EndOfRange, step = Some(1.0))),
     Tolerance -> NumericParameter(
       description = "The convergence tolerance of iterations for LBFGS. " +
         "Smaller value will lead to higher accuracy at a cost of more iterations.",
       default = Some(0.0001),
-      required = true,
       validator = RangeValidator(begin = 0.0, end = EndOfRange, beginIncluded = false)))
 
   override protected def _execute(context: ExecutionContext)(): UntrainedLogisticRegression = {

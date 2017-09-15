@@ -45,7 +45,6 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
 
   val selectedColumnsParameter = ColumnSelectorParameter(
     "Columns to be converted",
-    required = true,
     portIndex = 0
   )
 
@@ -54,7 +53,6 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
   val targetTypeParameter = ChoiceParameter(
     "Target type of the columns",
     None,
-    required = true,
     options = ListMap(availableTargetTypes.map(_.toString -> ParametersSchema()): _*)
   )
 

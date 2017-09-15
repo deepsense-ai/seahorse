@@ -30,7 +30,7 @@ class ParametersSerializationSuite
   with Serialization {
 
   test("ParametersSchema and its content should be serializable") {
-    val param = BooleanParameter("", None, required = false)
+    val param = BooleanParameter("", None)
     val schema = ParametersSchema("x" -> param)
     param.value = Some(false)
     val result = serializeDeserialize(schema)
@@ -41,28 +41,28 @@ class ParametersSerializationSuite
   test("Parameter and it's value should be serializable even after using json methods") {
     // This test was added because serialization wasn't working
     // only after using methods associated with json protocols.
-    val param = BooleanParameter("", None, required = false)
+    val param = BooleanParameter("", None)
     import spray.json.JsBoolean
     param.fillValueWithJson(JsBoolean(true))
     testParameterSerialization(param)
   }
 
   test("BooleanParameter and it's value should be serializable") {
-    val param = BooleanParameter("", None, required = false)
+    val param = BooleanParameter("", None)
     param.value = Some(true)
     testParameterSerialization(param)
   }
 
   test("NumericParameter, it's validator and it's value should be serializable") {
     val rangeValidator = RangeValidator(3, 4)
-    val param = NumericParameter("", None, required = false, validator = rangeValidator)
+    val param = NumericParameter("", None, validator = rangeValidator)
     param.value = Some(1420)
     testParameterSerialization(param)
   }
 
   test("StringParameter, it's validator and it's value should be serializable") {
     val regexValidator = RegexValidator("xxx".r)
-    val param = StringParameter("", None, required = false, validator = regexValidator)
+    val param = StringParameter("", None, validator = regexValidator)
     param.value = Some("xyz")
     val result = serializeDeserialize(param)
 
@@ -80,50 +80,50 @@ class ParametersSerializationSuite
   }
 
   test("ChoiceParameter and it's value should be serializable") {
-    val param = ChoiceParameter("", None, required = false, options = ListMap.empty)
+    val param = ChoiceParameter("", None, options = ListMap.empty)
     param.value = Some("some selection")
     testParameterSerialization(param)
   }
 
   test("MultipleChoiceParameter and it's value should be serializable") {
-    val param = MultipleChoiceParameter("", None, required = false, options = ListMap.empty)
+    val param = MultipleChoiceParameter("", None, options = ListMap.empty)
     param.value = Some(Seq("first selection", "second selection"))
     testParameterSerialization(param)
   }
 
   test("ParametersSequence and it's value should be serializable") {
-    val param = ParametersSequence("", required = false, predefinedSchema = ParametersSchema())
+    val param = ParametersSequence("", predefinedSchema = ParametersSchema())
     param.value = Some(Vector(ParametersSchema(
-      "x" -> BooleanParameter("", None, required = false))))
+      "x" -> BooleanParameter("", None))))
     testParameterSerialization(param)
   }
 
   test("SingleColumnSelectorParameter and it's value should be serializable") {
-    val param = SingleColumnSelectorParameter("", required = false, portIndex = 0)
+    val param = SingleColumnSelectorParameter("", portIndex = 0)
     param.value = Some(IndexSingleColumnSelection(4))
     testParameterSerialization(param)
   }
 
   test("ColumnSelectorParameter and it's value should be serializable") {
-    val param = ColumnSelectorParameter("", required = false, portIndex = 0)
+    val param = ColumnSelectorParameter("", portIndex = 0)
     param.value = Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("xyz"))), false))
     testParameterSerialization(param)
   }
 
   test("SingleColumnCreatorParameter and it's value should be serializable") {
-    val param = SingleColumnCreatorParameter("", None, false)
+    val param = SingleColumnCreatorParameter("", None)
     param.value = Some("abc")
     testParameterSerialization(param)
   }
 
   test("MultipleColumnCreatorParameter and it's value should be serializable") {
-    val param = MultipleColumnCreatorParameter("", None, false)
+    val param = MultipleColumnCreatorParameter("", None)
     param.value = Some(Vector("a", "b", "c"))
     testParameterSerialization(param)
   }
 
   test("PrefixBasedColumnCreatorParameter and it's value should be serializable") {
-    val param = PrefixBasedColumnCreatorParameter("", None, false)
+    val param = PrefixBasedColumnCreatorParameter("", None)
     param.value = Some("customPrefix")
     testParameterSerialization(param)
   }

@@ -26,8 +26,7 @@ trait Scorer[T <: Scorable] extends DOperation2To1[T, DataFrame, DataFrame] {
 
   val predictionColumnParam = SingleColumnCreatorParameter(
     "Column name for predictions",
-    Some("prediction"),
-    required = true)
+    Some("prediction"))
 
   override val parameters = ParametersSchema(
     "prediction column" -> predictionColumnParam

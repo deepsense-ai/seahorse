@@ -24,8 +24,7 @@ import spray.json._
 case class BooleanParameter(
     description: String,
     default: Option[Boolean],
-    required: Boolean,
-    var value: Option[Boolean] = None)
+    var _value: Option[Boolean] = None)
   extends Parameter
   with CanHaveDefault {
 
@@ -47,9 +46,8 @@ case class BooleanParameter(
 case class NumericParameter(
     description: String,
     default: Option[Double],
-    required: Boolean,
     validator: Validator[Double],
-    var value: Option[Double] = None)
+    var _value: Option[Double] = None)
   extends Parameter
   with HasValidator
   with CanHaveDefault {
@@ -72,9 +70,8 @@ case class NumericParameter(
 case class StringParameter(
     description: String,
     default: Option[String],
-    required: Boolean,
     validator: Validator[String],
-    var value: Option[String] = None)
+    var _value: Option[String] = None)
   extends Parameter
   with HasValidator
   with CanHaveDefault {
@@ -103,9 +100,8 @@ case class StringParameter(
 case class ChoiceParameter(
     description: String,
     default: Option[String],
-    required: Boolean,
     options: ListMap[String, ParametersSchema],
-    var value: Option[String] = None)
+    var _value: Option[String] = None)
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -155,14 +151,12 @@ object ChoiceParameter {
   def binaryChoice(
       description: String,
       default: Option[String],
-      required: Boolean,
       yesSchema: ParametersSchema,
       noSchema: ParametersSchema): ChoiceParameter = {
 
     ChoiceParameter(
       description,
       default,
-      required,
       options = ListMap(
         BinaryChoice.YES.toString -> yesSchema,
         BinaryChoice.NO.toString -> noSchema
@@ -180,9 +174,8 @@ object ChoiceParameter {
 case class MultipleChoiceParameter(
     description: String,
     default: Option[Traversable[String]],
-    required: Boolean,
     options: ListMap[String, ParametersSchema],
-    var value: Option[Traversable[String]] = None)
+    var _value: Option[Traversable[String]] = None)
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -234,9 +227,8 @@ case class MultipleChoiceParameter(
  */
 case class ParametersSequence(
     description: String,
-    required: Boolean,
     predefinedSchema: ParametersSchema,
-    var value: Option[Vector[ParametersSchema]] = None)
+    var _value: Option[Vector[ParametersSchema]] = None)
   extends Parameter {
   type HeldValue = Vector[ParametersSchema]
 
@@ -301,9 +293,8 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
  */
 case class SingleColumnSelectorParameter(
     description: String,
-    required: Boolean,
     portIndex: Int,
-    var value: Option[SingleColumnSelection] = None)
+    var _value: Option[SingleColumnSelection] = None)
   extends AbstractColumnSelectorParameter {
   type HeldValue = SingleColumnSelection
 
@@ -325,12 +316,12 @@ case class SingleColumnSelectorParameter(
  */
 case class ColumnSelectorParameter(
     description: String,
-    required: Boolean,
     portIndex: Int,
-    var value: Option[MultipleColumnSelection] = None)
-  extends AbstractColumnSelectorParameter {
+    var _value: Option[MultipleColumnSelection] = None,
+    default: Option[MultipleColumnSelection] = None)
+  extends AbstractColumnSelectorParameter
+  with CanHaveDefault {
   type HeldValue = MultipleColumnSelection
-
   protected val isSingle = false
 
   private[parameters] def replicate: Parameter = copy()
@@ -350,6 +341,10 @@ case class ColumnSelectorParameter(
   override protected def validateDefined(definedValue: HeldValue): Unit = {
     definedValue.validate
   }
+
+  override protected def defaultValueToJson(defaultValue: MultipleColumnSelection): JsValue = {
+    definedValueToJson(defaultValue)
+  }
 }
 
 /**
@@ -358,8 +353,7 @@ case class ColumnSelectorParameter(
 case class SingleColumnCreatorParameter(
     description: String,
     default: Option[String],
-    required: Boolean,
-    var value: Option[String] = None)
+    var _value: Option[String] = None)
   extends Parameter
   with CanHaveDefault {
 
@@ -384,8 +378,7 @@ case class SingleColumnCreatorParameter(
 case class MultipleColumnCreatorParameter(
     description: String,
     default: Option[Vector[String]],
-    required: Boolean,
-    var value: Option[Vector[String]] = None)
+    var _value: Option[Vector[String]] = None)
   extends Parameter
   with CanHaveDefault {
 
@@ -412,8 +405,7 @@ case class MultipleColumnCreatorParameter(
 case class PrefixBasedColumnCreatorParameter(
     description: String,
     default: Option[String],
-    required: Boolean,
-    var value: Option[String] = None)
+    var _value: Option[String] = None)
   extends Parameter
   with CanHaveDefault {
 

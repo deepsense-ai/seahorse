@@ -45,13 +45,13 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
   val timestampColumnParam = SingleColumnSelectorParameter(
-    "Timestamp column to decompose", required = true, portIndex = 0)
+    "Timestamp column to decompose", portIndex = 0)
 
   val timestampPartsParam = MultipleChoiceParameter(
-    "Parts of the date/time to retain", None, required = true, timeUnits, value = None)
+    "Parts of the date/time to retain", default = None, options = timeUnits)
 
   val timestampPrefixParam = PrefixBasedColumnCreatorParameter(
-    "Common prefix for names of created columns", None, required = false)
+    "Common prefix for names of created columns", default = Some(""))
 
   override val parameters = ParametersSchema(
     "timestamp column" -> timestampColumnParam,

@@ -27,8 +27,8 @@ import io.deepsense.deeplang.parameters.exceptions._
 class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of valid parameters is successful") {
-    val param1 = NumericParameter("example1", None, true, RangeValidator(3, 4))
-    val param2 = StringParameter("example2", Some("default"), true, RegexValidator("abc".r))
+    val param1 = NumericParameter("example1", None, RangeValidator(3, 4))
+    val param2 = StringParameter("example2", Some("default"), RegexValidator("abc".r))
 
     param1.value = Some(3.5)
     param2.value = Some("abc")
@@ -39,7 +39,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of invalid parameter using range validator should throw an exception") {
     val exception = intercept[OutOfRangeException] {
-      val param = NumericParameter("description", None, true, RangeValidator(3, 4))
+      val param = NumericParameter("description", None, RangeValidator(3, 4))
       param.value = Some(4.1)
 
       val parametersSchema = ParametersSchema("x" -> param)
@@ -51,7 +51,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   test("Validation of invalid parameter using range with step should throw an exception") {
     val exception = intercept[OutOfRangeWithStepException] {
       val validator = RangeValidator(3, 5.4, step = Some(1.2))
-      val param = NumericParameter("description", None, true, validator)
+      val param = NumericParameter("description", None, validator)
       param.value = Some(4.1)
 
       val parametersSchema = ParametersSchema("x" -> param)
@@ -78,20 +78,28 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     }
   }
 
-  test("Missing required parameter should throw an exception") {
+  test("Validating empty parameter without default value should throw an exception") {
     val exception = intercept[ParameterRequiredException] {
-      val param = StringParameter("description", None, true, RegexValidator("a".r))
+      val param = StringParameter("description", None, RegexValidator("a".r))
       val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
     }
     assert(exception == ParameterRequiredException("x"))
   }
 
+  test("Validation empty parameter with default value should not throw an exception") {
+    val default = Option("someDefault")
+    val param = StringParameter("description", default, new AcceptAllRegexValidator)
+    val parametersSchema = ParametersSchema("x" -> param)
+    parametersSchema.validate
+    assert(param.value == default)
+  }
+
   test("Validation of invalid parameter using regex validator should throw an exception") {
     val regex = "a".r
     val exception = intercept[MatchException] {
       val validator = RegexValidator(regex)
-      val param = StringParameter("description", None, true, validator)
+      val param = StringParameter("description", None, validator)
       param.value = Some("abc")
 
       val parametersSchema = ParametersSchema("x" -> param)
@@ -103,7 +111,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   test("Validation of choice parameter should validate chosen schema") {
     val mockSchema = mock[ParametersSchema]
     val possibleChoices = ListMap("onlyChoice" -> mockSchema)
-    val choice = ChoiceParameter("choice", None, true, possibleChoices)
+    val choice = ChoiceParameter("choice", None, possibleChoices)
     choice.value = Some("onlyChoice")
     choice.validate("choice")
     verify(mockSchema).validate
@@ -113,7 +121,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val mockSchema1 = mock[ParametersSchema]
     val mockSchema2 = mock[ParametersSchema]
     val possibleChoices = ListMap("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
-    val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
+    val multipleChoices = MultipleChoiceParameter("choice", None, possibleChoices)
     multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
     multipleChoices.validate("choice")
     verify(mockSchema1).validate
@@ -122,7 +130,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of parameters sequence should validate inner schemas") {
     val mockSchema = mock[ParametersSchema]
-    val multiplicator = ParametersSequence("description", true, mockSchema)
+    val multiplicator = ParametersSequence("description", mockSchema)
     multiplicator.value = Some(Vector(mockSchema, mockSchema))
     multiplicator.validate("someParamName")
     verify(mockSchema, times(2)).validate
@@ -130,7 +138,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of MultipleColumnSelection should validate inner selectors") {
     val selections = Vector.fill(3)({mock[ColumnSelection]})
-    val selectorParameter = ColumnSelectorParameter("description", true, 0)
+    val selectorParameter = ColumnSelectorParameter("description", 0)
     val multipleColumnSelection = MultipleColumnSelection(selections, false)
     selectorParameter.value = Some(multipleColumnSelection)
     selectorParameter.validate("someParamName")

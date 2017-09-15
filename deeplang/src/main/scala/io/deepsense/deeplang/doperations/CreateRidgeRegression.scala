@@ -37,19 +37,16 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
   val regularizationParameter = NumericParameter(
     description = "Regularization parameter",
     default = Some(0.0),
-    required = true,
     validator = RangeValidator(begin = 0.0, end = Double.PositiveInfinity))
 
   val iterationsNumberParameter = NumericParameter(
     description = "Number of iterations to perform",
     default = Some(1.0),
-    required = true,
     validator = RangeValidator(begin = 1.0, end = 1000000, step = Some(1.0)))
 
   val miniBatchFractionParameter = NumericParameter(
     description = "Mini batch fraction",
     default = Some(1.0),
-    required = true,
     validator = RangeValidator(begin = 0.0, end = 1.0, beginIncluded = false))
 
   override val parameters = ParametersSchema(

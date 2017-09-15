@@ -168,18 +168,16 @@ trait ReadDataFrameParameters extends CsvParameters {
 
   val csvShouldConvertToBooleanParameter = BooleanParameter(
     "Should columns containing only 0 and 1 be converted to Boolean?",
-    default = Some(false),
-    required = true)
+    default = Some(false))
 
   val categoricalColumnsParameter = ColumnSelectorParameter(
     "Categorical columns in the input file",
-    required = false,
-    portIndex = 0)
+    portIndex = 0,
+    default = Some(MultipleColumnSelection.emptySelection))
 
   val formatParameter = ChoiceParameter(
     "Format of the input file",
     default = Some(FileFormat.CSV.toString),
-    required = true,
     options = ListMap(
       FileFormat.CSV.toString -> ParametersSchema(
         "separator" -> csvColumnSeparatorParameter,
@@ -194,19 +192,16 @@ trait ReadDataFrameParameters extends CsvParameters {
   val sourceFileParameter = StringParameter(
     "Path to the DataFrame file",
     default = None,
-    required = true,
     validator = new AcceptAllRegexValidator())
 
   val customLineSeparatorParameter = StringParameter(
     "Custom line separator",
     default = None,
-    required = true,
     validator = new AcceptAllRegexValidator())
 
   val lineSeparatorParameter = ChoiceParameter(
     "Line separator",
     default = Some(LineSeparator.UNIX.toString),
-    required = true,
     options = ListMap(
       LineSeparator.UNIX.toString -> ParametersSchema(),
       LineSeparator.WINDOWS.toString -> ParametersSchema(),

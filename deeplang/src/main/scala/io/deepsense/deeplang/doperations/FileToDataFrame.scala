@@ -39,25 +39,21 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
     formatParameter -> ChoiceParameter(
       "Format of the input file",
       Some(CSV.name),
-      required = true,
       ListMap(CSV.name -> ParametersSchema(
         separatorParameter -> StringParameter(
           "Column separator",
           Some(","),
-          required = true,
           new AcceptAllRegexValidator,
-          value = None
+          _value = None
         ),
         namesIncludedParameter -> BooleanParameter(
           "Does the first row include column names?",
-          Some(true),
-          required = true
+          Some(true)
         )
       )),
-      value = None),
+      _value = None),
     categoricalColumnsParameter -> ColumnSelectorParameter(
       "Categorical columns in the input File",
-      required = false,
       portIndex = 0
     )
   )

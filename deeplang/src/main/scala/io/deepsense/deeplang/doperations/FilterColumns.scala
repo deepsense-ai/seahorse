@@ -32,7 +32,6 @@ case class FilterColumns() extends DOperation1To1[DataFrame, DataFrame] {
   override val parameters: ParametersSchema = ParametersSchema(
     selectedColumns -> ColumnSelectorParameter(
       "Columns to be retained in the output DataFrame",
-      required = true,
       portIndex = 0
     )
   )

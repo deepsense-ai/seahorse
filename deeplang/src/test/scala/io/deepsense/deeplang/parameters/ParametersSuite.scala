@@ -102,21 +102,21 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting BooleanParameter value from schema") {
-    val param = BooleanParameter("example", Some(true), true)
+    val param = BooleanParameter("example", Some(true))
     param.value = Some(true)
     val parametersSchema = ParametersSchema("x" -> param)
     assert(parametersSchema.getBoolean("x") == param.value)
   }
 
   test("Getting NumericParameter value from schema") {
-    val param = NumericParameter("example", Some(3.1), true, RangeValidator(3, 4))
+    val param = NumericParameter("example", Some(3.1), RangeValidator(3, 4))
     param.value = Some(3.2)
     val parametersSchema = ParametersSchema("x" -> param)
     assert(parametersSchema.getDouble("x") == param.value)
   }
 
   test("Getting StringParameter value from schema") {
-    val param = StringParameter("example", Some("default"), true, RegexValidator("a".r))
+    val param = StringParameter("example", Some("default"), RegexValidator("a".r))
     param.value = Some("abc")
     val parametersSchema = ParametersSchema("x" -> param)
     assert(parametersSchema.getString("x") == param.value)
@@ -126,7 +126,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val choiceSchema = mock[ParametersSchema]
     val possibleChoices = ListMap("onlyChoice" -> choiceSchema)
 
-    val choice = ChoiceParameter("description", None, true, possibleChoices)
+    val choice = ChoiceParameter("description", None, possibleChoices)
     choice.value = Some("onlyChoice")
 
     val parametersSchema = ParametersSchema("choice" -> choice)
@@ -136,7 +136,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   test("Getting MultipleChoiceParameter value from schema") {
     val choiceSchema = mock[ParametersSchema]
     val possibleChoices = ListMap("onlyChoice" -> choiceSchema)
-    val multipleChoice = MultipleChoiceParameter("", None, true, possibleChoices)
+    val multipleChoice = MultipleChoiceParameter("", None, possibleChoices)
     multipleChoice.value = Some(Traversable("onlyChoice"))
     val parametersSchema = ParametersSchema("multipleChoice" -> multipleChoice)
     val actualMultipleSelection = parametersSchema.getMultipleChoice("multipleChoice").get
@@ -146,7 +146,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Getting MultiplierParameter value from schema") {
     val schema = mock[ParametersSchema]
-    val parametersSequence = ParametersSequence("", true, schema)
+    val parametersSequence = ParametersSequence("", schema)
     val schema1 = mock[ParametersSchema]
     val schema2 = mock[ParametersSchema]
     parametersSequence.value = Some(Vector(schema1, schema2))
@@ -155,7 +155,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting SingleColumnsSelector value from schema") {
-    val param = SingleColumnSelectorParameter("description", true, 0)
+    val param = SingleColumnSelectorParameter("description", 0)
     val schema = ParametersSchema("x" -> param)
     val parameter = IndexSingleColumnSelection(1)
     param.value = Some(parameter)
@@ -163,7 +163,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting ColumnSelector value from schema") {
-    val param = ColumnSelectorParameter("description", true, 0)
+    val param = ColumnSelectorParameter("description", 0)
     val schema = ParametersSchema("x" -> param)
     val values = IndexColumnSelection(Set(1, 3))
     val parameter = MultipleColumnSelection(Vector(values), false)
@@ -172,7 +172,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting SingleColumnCreator value from schema") {
-    val param = SingleColumnCreatorParameter("description", None, true)
+    val param = SingleColumnCreatorParameter("description", None)
     val schema = ParametersSchema("x" -> param)
     val value = "abc"
     param.value = Some(value)
@@ -180,7 +180,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting MultipleColumnCreator value from schema") {
-    val param = MultipleColumnCreatorParameter("description", None, true)
+    val param = MultipleColumnCreatorParameter("description", None)
     val schema = ParametersSchema("x" -> param)
     val value = Vector("a", "b", "c")
     param.value = Some(value)
@@ -188,7 +188,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting PrefixBasedColumnCreator value from schema") {
-    val param = PrefixBasedColumnCreatorParameter("description", None, true)
+    val param = PrefixBasedColumnCreatorParameter("description", None)
     val schema = ParametersSchema("x" -> param)
     val value = "abc"
     param.value = Some(value)
@@ -198,7 +198,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   test("Getting wrong type of parameter value should throw an exception") {
     val parameter = Some("abc")
     val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
-    val param = StringParameter("description", None, true, RegexValidator("a".r))
+    val param = StringParameter("description", None, RegexValidator("a".r))
     val exception = intercept[TypeConversionException] {
       param.value = parameter
       val parametersSchema = ParametersSchema("x" -> param)
@@ -219,7 +219,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Comparing two parameters") {
-    val param1 = BooleanParameter("xyz", None, required = false)
+    val param1 = BooleanParameter("xyz", None)
     param1.value = Some(true)
     val param2 = param1.copy()
     assert(param1 == param2)

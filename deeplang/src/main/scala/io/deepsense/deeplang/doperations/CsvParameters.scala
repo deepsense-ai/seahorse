@@ -29,13 +29,11 @@ trait CsvParameters {
   val csvCustomColumnSeparatorParameter = StringParameter(
     "Custom column separator",
     default = Some(","),
-    required = true,
     validator = new SingleCharRegexValidator)
 
   val csvColumnSeparatorParameter = ChoiceParameter(
     "Column separator",
     default = Some(ColumnSeparator.COMMA.toString),
-    required = true,
     options = ListMap(
       ColumnSeparator.COMMA.toString -> ParametersSchema(),
       ColumnSeparator.SEMICOLON.toString -> ParametersSchema(),
@@ -47,8 +45,7 @@ trait CsvParameters {
 
   val csvNamesIncludedParameter = BooleanParameter(
     description = "Does the first row include column names?",
-    default = Some(true),
-    required = true
+    default = Some(true)
   )
 
   def determineColumnSeparator(): Char = {

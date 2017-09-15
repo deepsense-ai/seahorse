@@ -41,14 +41,14 @@ case class ReadFile() extends DOperation0To1[File] {
 
   override val parameters = ParametersSchema(
     ReadFile.pathParam -> StringParameter(
-      "HDFS path to file", None, true, new AcceptAllRegexValidator),
+      "HDFS path to file", None, new AcceptAllRegexValidator),
     ReadFile.lineSeparatorParam ->
-      ChoiceParameter("Line separator", Some(ReadFile.unixSeparatorLabel), true, ListMap(
+      ChoiceParameter("Line separator", Some(ReadFile.unixSeparatorLabel), ListMap(
         ReadFile.unixSeparatorLabel -> ParametersSchema(),
         ReadFile.windowsSeparatorLabel -> ParametersSchema(),
         ReadFile.customLineSeparatorLabel -> ParametersSchema(ReadFile.customLineSeparatorParam ->
           StringParameter(
-            "Custom line separator", None, true, new AcceptAllRegexValidator())))))
+            "Custom line separator", None, new AcceptAllRegexValidator())))))
 
   override val name: String = "Read File"
 

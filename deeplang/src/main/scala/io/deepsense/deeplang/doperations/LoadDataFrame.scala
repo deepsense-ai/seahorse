@@ -34,7 +34,7 @@ case class LoadDataFrame() extends DOperation0To1[DataFrame] {
   override val id: DOperation.Id = "2aa22df2-e28b-11e4-8a00-1681e6b88ec1"
 
   val idParameter = StringParameter(
-    "unique id of the Dataframe", None, required = true, validator = new AcceptAllRegexValidator)
+    "unique id of the Dataframe", None, validator = new AcceptAllRegexValidator)
 
   override val parameters = ParametersSchema(LoadDataFrame.IdParam -> idParameter)
 

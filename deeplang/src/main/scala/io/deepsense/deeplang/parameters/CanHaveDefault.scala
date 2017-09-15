@@ -26,6 +26,14 @@ trait CanHaveDefault extends Parameter {
   /** Default value of the parameter. Can be None if not provided. */
   val default: Option[HeldValue]
 
+  /** Returns default if _value is None, _value otherwise */
+  override def value: Option[HeldValue] = {
+    _value match {
+      case Some(_) => _value
+      case None => default
+    }
+  }
+
   override def jsDescription: Map[String, JsValue] = {
     val result = super.jsDescription
     default match {

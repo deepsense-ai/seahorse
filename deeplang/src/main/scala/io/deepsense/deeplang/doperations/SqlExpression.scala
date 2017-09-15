@@ -33,17 +33,15 @@ case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] {
     "An identifier that can be used in the SQL expression to refer to the input " +
       "DataFrame. The value has to be unique in the workflow.",
     None,
-    required = true,
     new AcceptAllRegexValidator(),
-    value = None
+    _value = None
   )
 
   val expressionParameter = StringParameter(
     "SQL Expression to be executed on the DataFrame",
     None,
-    required = true,
     new AcceptAllRegexValidator(),
-    value = None)
+    _value = None)
 
   override val parameters: ParametersSchema = ParametersSchema(
     SqlExpression.dataFrameIdParameterName -> dataFrameIdParameter,

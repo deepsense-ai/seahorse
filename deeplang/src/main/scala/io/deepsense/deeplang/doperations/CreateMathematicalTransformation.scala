@@ -40,13 +40,11 @@ case class CreateMathematicalTransformation() extends DOperation0To1[Mathematica
   val formulaParam = StringParameter(
     description = "Mathematical formula. For example, \"(myColumn * myColumn)\"",
     default = None,
-    required = true,
     validator = new AcceptAllRegexValidator)
 
   val columnNameParam = StringParameter(
     description = "Name of the newly created column holding the result.",
     default = None,
-    required = true,
     validator = new AcceptAllRegexValidator)
 
   override val parameters = ParametersSchema(

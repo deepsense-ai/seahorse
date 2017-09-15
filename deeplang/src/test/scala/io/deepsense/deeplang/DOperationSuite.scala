@@ -63,7 +63,7 @@ class DOperationSuite extends FunSuite with MockitoSugar {
       override val name: String = "Some name"
       override val parameters: ParametersSchema = ParametersSchema(
         "param" -> NumericParameter(
-          "description", None, required = true, validator = mock[Validator[Double]]))
+          "description", None, validator = mock[Validator[Double]]))
       override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
       override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
       override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]

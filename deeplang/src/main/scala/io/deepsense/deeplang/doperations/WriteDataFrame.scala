@@ -46,7 +46,6 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] with CsvParameters
   val formatParameter = ChoiceParameter(
     description = "Format of the output file",
     default = Some(FileFormat.CSV.toString),
-    required = true,
     options = ListMap(
       FileFormat.CSV.toString -> ParametersSchema(
         "column separator" -> csvColumnSeparatorParameter,
@@ -59,7 +58,6 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] with CsvParameters
   val outputFileParameter = StringParameter(
     description = "Output file path",
     default = None,
-    required = true,
     validator = new AcceptAllRegexValidator())
 
   override val parameters = ParametersSchema(

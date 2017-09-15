@@ -121,6 +121,8 @@ case class MultipleColumnSelection(selections: Vector[ColumnSelection],
 
 object MultipleColumnSelection {
 
+  val emptySelection = new MultipleColumnSelection(Vector.empty)
+
   val selectionsField = "selections"
 
   val excludingField = "excluding"

@@ -23,12 +23,10 @@ trait WithTrainParameters {
 
   val featureColumnsParameter = ColumnSelectorParameter(
     "Columns which are to be used as features",
-    required = true,
     portIndex = dataFramePortIndex)
 
   val targetColumnParameter = SingleColumnSelectorParameter(
     "Column containing observations (labels)",
-    required = true,
     portIndex = dataFramePortIndex)
 
   protected val trainParameters = ParametersSchema(

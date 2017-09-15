@@ -27,28 +27,23 @@ trait RandomForestParams {
   private val numTreesParameter = NumericParameter(
     description = "Number of trees in the random forest",
     default = Some(1.0),
-    required = true,
     validator = RangeValidator(begin = 1.0, end = 1000, step = Some(1.0)))
   private val featureSubsetStrategyParameter = ChoiceParameter(
     description = "Number of features to consider for splits at each node",
     default = Some("auto"),
-    required = true,
     options = ListMap(
       SparkRandomForest.supportedFeatureSubsetStrategies.toList.map(_ -> ParametersSchema()): _*))
   private val impurityParameter = ChoiceParameter(
     description = "Criterion used for information gain calculation",
     default = Some(impurityOptions(0)),
-    required = true,
     options = ListMap(impurityOptions.map(_ -> ParametersSchema()): _*))
   private val maxDepthParameter = NumericParameter(
     description = "Maximum depth of the tree",
     default = Some(4.0),
-    required = true,
     validator = RangeValidator(begin = 1.0, end = 1000, step = Some(1.0)))
   private val maxBinsParameter = NumericParameter(
     description = "Maximum number of bins used for splitting features",
     default = Some(100.0),
-    required = true,
     validator = RangeValidator(begin = 1.0, end = 100000, step = Some(1.0)))
 
   val impurityOptions: Seq[String]

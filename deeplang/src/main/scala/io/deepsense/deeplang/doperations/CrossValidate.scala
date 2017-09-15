@@ -176,23 +176,20 @@ trait CrossValidateParams {
   val numberOfFoldsParameter = NumericParameter(
     "How many folds should be used in cross-validation?",
     Some(10.0),
-    required = true,
     validator = RangeValidator(
       0, Int.MaxValue / 2, beginIncluded = true, endIncluded = true, Some(1.0)),
-    value = None)
+    _value = None)
 
   val seedShuffleParameter = NumericParameter(
     "Seed for random generator used during shuffling",
     default = Some(0.0),
-    required = true,
     validator = RangeValidator(
       Int.MinValue / 2, Int.MaxValue / 2, beginIncluded = true, endIncluded = true, Some(1.0)),
-    value = None)
+    _value = None)
 
   val shuffleParameter = ChoiceParameter.binaryChoice(
     "Should the DataFrame be shuffled before cross-validation?",
     Some(BinaryChoice.YES.toString),
-    required = true,
     yesSchema = ParametersSchema("seed" -> seedShuffleParameter),
     noSchema = ParametersSchema()
   )

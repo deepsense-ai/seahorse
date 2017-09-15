@@ -315,21 +315,19 @@ private object ReplaceWithCustomValueStrategy {
 
 trait MissingValuesHandlerParams {
   val selectedColumnsParam = ColumnSelectorParameter(
-    "Columns containing missing values to handle", required = true, portIndex = 0)
+    "Columns containing missing values to handle", portIndex = 0)
 
   val defaultStrategy = Strategy.REMOVE_ROW
 
   val customValueParameter = StringParameter(
     description = "Replacement for missing values",
     default = None,
-    required = true,
     validator = new AcceptAllRegexValidator()
   )
 
   val emptyColumnStrategyParameter = ChoiceParameter(
     "Strategy of handling columns with missing all values",
     default = Some(EmptyColumnsMode.REMOVE.toString),
-    required = true,
     options = ListMap(
       MissingValuesHandler.EmptyColumnsMode.REMOVE.toString -> ParametersSchema(),
       MissingValuesHandler.EmptyColumnsMode.RETAIN.toString -> ParametersSchema()
@@ -339,7 +337,6 @@ trait MissingValuesHandlerParams {
   val strategyParam = ChoiceParameter(
     "Strategy of handling missing values",
     default = Some(defaultStrategy.toString),
-    required = true,
     options = ListMap(
       MissingValuesHandler.Strategy.REMOVE_ROW.toString -> ParametersSchema(),
       MissingValuesHandler.Strategy.REMOVE_COLUMN.toString -> ParametersSchema(),
@@ -354,14 +351,12 @@ trait MissingValuesHandlerParams {
 
   val indicatorPrefixParam = PrefixBasedColumnCreatorParameter(
     "Prefix for columns indicating presence of missing values",
-    default = None,
-    required = true
+    default = Some("")
   )
 
   val missingValueIndicatorParam = ChoiceParameter.binaryChoice(
     description = "Generate missing value indicator column",
     default = Some(BinaryChoice.NO.toString),
-    required = true,
     yesSchema = ParametersSchema(
       "indicator column prefix" -> indicatorPrefixParam
     ),

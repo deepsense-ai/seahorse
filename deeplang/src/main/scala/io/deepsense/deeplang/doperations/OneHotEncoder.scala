@@ -32,13 +32,13 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
   override val id: Id = "b1b6eefe-f7b7-11e4-a322-1697f925ec7b"
 
   val selectedColumnsParam = ColumnSelectorParameter(
-    "Categorical columns to encode", required = true, portIndex = 0)
+    "Categorical columns to encode", portIndex = 0)
 
   val withRedundantParam = BooleanParameter(
-    "Preserve redundant column", default = Some(false), required = true)
+    "Preserve redundant column", default = Some(false))
 
   val prefixParam = PrefixBasedColumnCreatorParameter(
-    "Prefix for generated columns", None, required = false)
+    "Prefix for generated columns", default = Some(""))
 
   override val parameters: ParametersSchema = ParametersSchema(
     "columns" -> selectedColumnsParam,

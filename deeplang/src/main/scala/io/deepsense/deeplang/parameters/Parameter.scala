@@ -16,11 +16,13 @@
 
 package io.deepsense.deeplang.parameters
 
+import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
+
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.deeplang.parameters.ParameterType.ParameterType
-import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
+
 
 /**
  * Holds parameter value.
@@ -36,11 +38,14 @@ abstract class Parameter extends Serializable {
 
   val description: String
 
-  /** Flag specifying if parameter is required. */
-  val required: Boolean
-
   /** Value of parameter. */
-  var value: Option[HeldValue]
+  protected var _value: Option[HeldValue]
+
+  def value: Option[HeldValue] = _value
+
+  def value_= (value: Option[HeldValue]): Unit = {
+    _value = value
+  }
 
   /**
    * Returns another parameter which has all fields equal to this parameter's fields
@@ -50,13 +55,11 @@ abstract class Parameter extends Serializable {
 
   /**
    * Validates held value.
-   * If value is set to None and required, exception is thrown.
+   * If value is set to None exception is thrown.
    */
   def validate(parameterName: String): Unit = value match {
     case Some(definedValue) => validateDefined(definedValue)
-    case None => if (required) {
-      throw ParameterRequiredException(parameterName)
-    }
+    case None => throw ParameterRequiredException(parameterName)
   }
 
   /**
@@ -74,8 +77,7 @@ abstract class Parameter extends Serializable {
   private[deeplang] def jsDescription: Map[String, JsValue] = {
     Map(
       "type" -> parameterType.toString.toJson,
-      "description" -> description.toJson,
-      "required" -> required.toJson)
+      "description" -> description.toJson)
   }
 
   /**

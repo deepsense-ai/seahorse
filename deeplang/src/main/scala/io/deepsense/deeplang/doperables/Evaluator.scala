@@ -58,12 +58,10 @@ trait Evaluator extends DOperation1To1[DataFrame, Report] with EvaluatorParams {
 trait EvaluatorParams {
   val targetColumnParameter = SingleColumnSelectorParameter(
     "Target Column",
-    required = true,
     portIndex = 0)
 
   val predictionColumnParameter = SingleColumnSelectorParameter(
     "Prediction Column",
-    required = true,
     portIndex = 0)
 
   val parameters = ParametersSchema(

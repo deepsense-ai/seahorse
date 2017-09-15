@@ -32,9 +32,9 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
 
   override val parameters = ParametersSchema(
     SaveDataFrame.nameParam -> StringParameter(
-      "user friendly name", None, required = true, validator = new AcceptAllRegexValidator),
+      "user friendly name", None, validator = new AcceptAllRegexValidator),
     SaveDataFrame.descriptionParam -> StringParameter(
-      "description for DataFrame", None, required = true, validator = new AcceptAllRegexValidator))
+      "description for DataFrame", None, validator = new AcceptAllRegexValidator))
 
   override val id: DOperation.Id = "58025c36-e28b-11e4-8a00-1681e6b88ec1"
 
