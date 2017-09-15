@@ -32,7 +32,7 @@ case class RExecutor(rBackendPort: Int,
 
   def isValid(code: String): Boolean = true
 
-  val RExecutable = "/usr/bin/Rscript"
+  val RExecutable = "Rscript"
 
   def run(workflowId: String, nodeId: String, code: String): Unit = {
     val command = s"""$RExecutable $rExecutorScript """ +
