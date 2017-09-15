@@ -2,17 +2,10 @@
 //
 // Owner: Radoslaw Kotowski
 
-organization := "com.codilime"
-
+organization := "io.deepsense"
 name := "graphlibrary"
-
 version := "0.1.0"
-
 scalaVersion := "2.11.5"
-
-ideaExcludeFolders += ".idea"
-
-ideaExcludeFolders += ".idea_modules"
 
 libraryDependencies ++= Seq(
   "org.scalatest"           %% "scalatest"      % "2.2.4"   % "test",
@@ -20,4 +13,5 @@ libraryDependencies ++= Seq(
   "org.scala-lang"          %  "scala-reflect"  % "2.11.5"
 )
 
-fork := true // fork all test tasks and run tasks
+// Fork to run all test and run tasks in JVM separated from sbt JVM
+fork := true
