@@ -102,16 +102,30 @@
       "app": "app.js"
     },
     "libs": {
-      "js": [
-        "./node_modules/angular/angular.min.js",
-        "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
-        "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
-        "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.2-min.js"
-      ],
-      "css": [
-        "./node_modules/bootstrap/dist/css/bootstrap.min.css",
-        "./client/css/*.css"
-      ]
+      "dev": {
+        "js": [
+          "./node_modules/angular/angular.js",
+          "./node_modules/angular-ui-router/release/angular-ui-router.js",
+          "./node_modules/angular-bootstrap/dist/ui-bootstrap.js",
+          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.2.js"
+        ],
+        "css": [
+          "./node_modules/bootstrap/dist/css/bootstrap.css",
+          "./client/css/*.css"
+        ]
+      },
+      "prod": {
+        "js": [
+          "./node_modules/angular/angular.min.js",
+          "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
+          "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
+          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.2-min.js"
+        ],
+        "css": [
+          "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "./client/css/*.css"
+        ]
+      }
     },
     "tests": {
       "e2e": "./e2e-tests/**/*.spec.js"

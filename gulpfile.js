@@ -99,7 +99,7 @@ gulp.task('less', function () {
 });
 
 gulp.task('libs:css', function () {
-  return gulp.src(libs.css)
+  return gulp.src(libs[devMode ? 'dev': 'prod'].css)
     .pipe(concat(build.bundle.css))
     .pipe(size({
       title: 'libs:css',
@@ -109,7 +109,7 @@ gulp.task('libs:css', function () {
 });
 
 gulp.task('libs:js', function () {
-  return gulp.src(libs.js)
+  return gulp.src(libs[devMode ? 'dev': 'prod'].js)
     .pipe(concat(build.bundle.js))
     .pipe(size({
       title: 'libs:js',
