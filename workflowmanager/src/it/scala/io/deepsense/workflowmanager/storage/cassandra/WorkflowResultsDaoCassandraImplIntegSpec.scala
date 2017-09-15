@@ -79,7 +79,7 @@ class WorkflowResultsDaoCassandraImplIntegSpec
 
   def createResult(
       resultId: ExecutionReportWithId.Id,
-      graph: StatefulGraph): WorkflowWithSavedResults = {
+      graph: DirectedGraph): WorkflowWithSavedResults = {
     val metadata = WorkflowMetadata(
       apiVersion = CurrentBuild.version.humanReadable,
       workflowType = WorkflowType.Batch)
@@ -102,7 +102,7 @@ class WorkflowResultsDaoCassandraImplIntegSpec
       executionReport)
   }
 
-  def createGraph() : StatefulGraph = {
+  def createGraph() : DirectedGraph = {
     val node1 = Node(Node.Id.randomId, operation1)
     val node2 = Node(Node.Id.randomId, operation2)
     val node3 = Node(Node.Id.randomId, operation3)
@@ -114,6 +114,6 @@ class WorkflowResultsDaoCassandraImplIntegSpec
       (node2, node4, 0, 0),
       (node3, node4, 0, 1))
     val edges = edgesList.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
-    StatefulGraph(nodes, edges)
+    DirectedGraph(nodes, edges)
   }
 }

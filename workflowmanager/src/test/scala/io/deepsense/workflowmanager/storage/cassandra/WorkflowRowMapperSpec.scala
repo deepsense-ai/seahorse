@@ -16,7 +16,7 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Version
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.graph.{StatefulGraph, graphstate}
+import io.deepsense.graph.DirectedGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{WorkflowJsonProtocol, WorkflowWithSavedResultsJsonProtocol}
 import io.deepsense.models.workflows._
@@ -29,7 +29,7 @@ class WorkflowRowMapperSpec
   with WorkflowWithSavedResultsJsonProtocol {
 
   override val graphReader: GraphReader = mock[GraphReader]
-  when(graphReader.read(any())).thenReturn(StatefulGraph())
+  when(graphReader.read(any())).thenReturn(DirectedGraph())
   val currentVersion = CurrentBuild.version
   val otherVersion = Version(3, 2, 1)
 
@@ -123,7 +123,7 @@ class WorkflowRowMapperSpec
   def withWorkflow(version: Version)(testCode: (Workflow, String, Row) => Any): Unit = {
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, version.humanReadable),
-      StatefulGraph(),
+      DirectedGraph(),
       ThirdPartyData("{}"))
     val stringWorkflow = workflow.toJson.compactPrint
     val rowWorkflow = mock[Row]
@@ -156,7 +156,7 @@ class WorkflowRowMapperSpec
       WorkflowWithSavedResults(
         Id.randomId,
         WorkflowMetadata(WorkflowType.Batch, version.humanReadable),
-        StatefulGraph(),
+        DirectedGraph(),
         ThirdPartyData("{}"),
         ExecutionReportWithId(
           Id.randomId,
