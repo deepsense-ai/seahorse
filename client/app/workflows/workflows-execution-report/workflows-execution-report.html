@@ -17,9 +17,8 @@
   </aside>
 
   <general-data-panel
-    data="workflow.GUIData"
-    additional-data="workflow.reportData"
-    ng-if="!workflow.getSelectedNode()"
-    class="o-panel--absolute o-panel--dynamic-top">
+    name="workflow.getWorkflow().name"
+    description="workflow.getWorkflow().description"
+    ng-if="!workflow.getSelectedNode()">
   </general-data-panel>
 </div>

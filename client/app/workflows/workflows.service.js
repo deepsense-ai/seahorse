@@ -2,9 +2,11 @@
 
 /* @ngInject */
 function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, $rootScope) {
+
   let internal = {};
 
   class WorkflowServiceClass {
+
     constructor() {
       internal.workflow = null;
     }
@@ -13,11 +15,10 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       let workflow = new Workflow();
       let thirdPartyData = workflowData.thirdPartyData || {};
 
-      workflow.setData({
-        'id': workflowData.id,
-        'name': (thirdPartyData.gui || {}).name,
-        'description': (thirdPartyData.gui || {}).description
-      });
+      workflow.id = workflowData.id;
+      workflow.name = (thirdPartyData.gui || {}).name;
+      workflow.description = (thirdPartyData.gui || {}).description;
+
       workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
       workflow.createEdges(workflowData.workflow.connections);
       workflow.updateEdgesStates(OperationsHierarchyService);

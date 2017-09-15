@@ -1,8 +1,12 @@
 'use strict';
 
 /* @ngInject */
-function GeneralDataPanelController ($modal, $scope) {
-  this.showErrorMessage = function showErrorMessage () {
+function GeneralDataPanelController ($modal, $scope, WorkflowService) {
+  this.saveWorkflow = () => {
+    WorkflowService.saveWorkflow();
+  };
+
+  this.showErrorMessage = () => {
     $modal.open({
       scope: $scope,
       template: `

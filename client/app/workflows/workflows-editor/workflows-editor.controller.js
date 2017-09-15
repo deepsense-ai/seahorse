@@ -3,14 +3,12 @@
 import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 
 /* @ngInject */
-function WorkflowsEditorController(
-  workflow,
-  $scope, $state, $stateParams,
-  GraphNode, Edge,
-  PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-  RunModalFactory
-) {
+function WorkflowsEditorController(workflow,
+                                   $scope, $state, $stateParams,
+                                   GraphNode, Edge,
+                                   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
+                                   DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+                                   RunModalFactory) {
   let that = this;
   let internal = {};
 
@@ -20,21 +18,10 @@ function WorkflowsEditorController(
   });
 
   internal.init = function init() {
-    const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
-    let getTitle = () => {
-      try {
-        return workflow.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
-      } catch (e) {
-        return DEFAULT_WORKFLOW_NAME;
-      }
-    };
-
-    PageService.setTitle('Workflow: ' + getTitle());
-
+    PageService.setTitle('Workflow editor');
     WorkflowService.createWorkflow(workflow, Operations.getData());
     GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     GraphPanelRendererService.setZoom(1.0);
-
     internal.updateAndRerenderEdges(workflow);
   };
 
@@ -58,10 +45,6 @@ function WorkflowsEditorController(
 
   that.unselectNode = function unselectNode() {
     internal.selectedNode = null;
-  };
-
-  that.getGUIData = function getGUIData () {
-    return workflow.thirdPartyData.gui;
   };
 
   $scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
@@ -114,11 +97,11 @@ function WorkflowsEditorController(
     let elementOffsetX = 100;
     let elementOffsetY = 30;
     let node = WorkflowService.getWorkflow().createNode({
-        'id': UUIDGenerator.generateUUID(),
-        'operation': operation,
-        'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-        'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
-      });
+      'id': UUIDGenerator.generateUUID(),
+      'operation': operation,
+      'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+      'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
+    });
 
     WorkflowService.getWorkflow().addNode(node);
     WorkflowService.saveWorkflow();
@@ -142,20 +125,20 @@ function WorkflowsEditorController(
     ConfirmationModalService.showModal({
       message: 'The operation redirects to the home page. Make sure you saved the current state of the workflow.'
     }).
-      then(() => {
-        $state.go('home');
-      });
+    then(() => {
+      $state.go('home');
+    });
   });
 
   $scope.$on('StatusBar.CLEAR_CLICK', () => {
     ConfirmationModalService.showModal({
       message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
     }).
-      then(() => {
-        WorkflowService.clearGraph();
-        GraphPanelRendererService.rerender();
-        WorkflowService.saveWorkflow();
-      });
+    then(() => {
+      WorkflowService.clearGraph();
+      GraphPanelRendererService.rerender();
+      WorkflowService.saveWorkflow();
+    });
   });
 
   $scope.$on('StatusBar.EXPORT_CLICK', () => {
@@ -173,11 +156,11 @@ function WorkflowsEditorController(
       message: `The operation redirects to the view that displays the latest report for this workflow.
       The workflow had to be executed at least once. Make sure you saved the current state of the workflow.`
     }).
-      then(() => {
-        $state.go('workflows.latest_report', {
-          'id': $stateParams.id
-        });
+    then(() => {
+      $state.go('workflows.latest_report', {
+        'id': $stateParams.id
       });
+    });
   });
 
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {

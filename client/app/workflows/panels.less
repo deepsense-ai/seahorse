@@ -56,17 +56,31 @@
 
   &__title {
     height: auto;
-    min-height: 48px;
+    font-weight: bold;
     text-transform: uppercase;
+    width: 100%;
+    border: 1px solid white;
+
+    &:hover {
+      border: 1px solid black;
+      cursor: pointer;
+    }
   }
 
   &__content {
-    padding: 14px 5px 7px 15px;
+    padding: 14px 15px 7px 15px;
   }
 
   &__description {
+    width: 100%;
     max-height: 21ex;
     overflow: hidden;
+    border: 1px solid white;
+
+    &:hover {
+      border: 1px solid black;
+      cursor: pointer;
+    }
 
     // new method of clipping by line numbers
     @supports (display: -webkit-box) {

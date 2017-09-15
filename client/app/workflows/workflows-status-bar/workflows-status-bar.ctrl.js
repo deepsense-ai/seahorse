@@ -20,7 +20,7 @@ function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
       $rootScope.$broadcast('StatusBar.LAST_EXECUTION_REPORT');
     },
     getReportName () {
-      let name = WorkflowService.getWorkflow().getThirdPartyData().gui.name;
+      let name = WorkflowService.getWorkflow().name;
       return name.toLowerCase().split(' ').join('-');
     },
     exportReportLink: WorkflowsApiClient

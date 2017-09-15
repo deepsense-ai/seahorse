@@ -27,16 +27,7 @@ function WorkflowsReportController(
   });
 
   internal.init = function init() {
-    const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
-    let getTitle = () => {
-      try {
-        return report.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
-      } catch (e) {
-        return DEFAULT_WORKFLOW_NAME;
-      }
-    };
-
-    PageService.setTitle(`Workflow execution report: ${getTitle()}`);
+    PageService.setTitle('Workflow execution report');
 
     let workflow = WorkflowService.createWorkflow(report, Operations.getData());
     workflow.updateState(report.executionReport);

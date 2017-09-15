@@ -1,18 +1,19 @@
 'use strict';
 
 /* @ngInject */
-function GeneralDataPanel ($modal) {
+function GeneralDataPanel () {
   return {
     restrict: 'E',
     templateUrl: 'app/workflows/general-data-panel/general-data-panel.html',
     replace: true,
     scope: {
-      'data': '=',
-      'additionalData': '='
+      'name': '=',
+      'description': '=',
+      'status': '=',
+      'executionStarted': '=',
+      'executionEnded': '='
     },
-    link: function (scope, element) {},
-    controller: 'GeneralDataPanelController',
-    controllerAs: 'controller',
+    controller: 'GeneralDataPanelController as controller',
     bindToController: true
   };
 }
