@@ -5,7 +5,7 @@
 package io.deepsense.workflowmanager.rest
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
+import scala.util.{Try, Failure, Success}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
@@ -19,12 +19,14 @@ import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
+import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
+import io.deepsense.workflowmanager.model.ExecutionReportWithId
 import org.apache.commons.lang3.StringUtils
 import spray.http.HttpHeaders.`Content-Disposition`
 import spray.http.MediaTypes._
 import spray.http.{MultipartFormData, StatusCodes}
 import spray.httpx.unmarshalling.Unmarshaller
-import spray.json.{JsonParser, ParserInput}
+import spray.json._
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
@@ -120,13 +122,24 @@ abstract class WorkflowApi @Inject() (
               val workflowId = Id(idParameter)
               get {
                 withUserContext { userContext =>
-                  respondWithHeader(
-                    `Content-Disposition`("attachment", Map("filename" -> "workflow.json"))) {
-                      complete {
-                        workflowManagerProvider
-                          .forContext(userContext)
-                          .download(workflowId)
+                  onComplete(
+                    workflowManagerProvider
+                      .forContext(userContext)
+                      .download(workflowId)
+                  ) {
+                    case Success(workflowWithVariables) => {
+                      if (workflowWithVariables != None) {
+                        complete(
+                          StatusCodes.OK,
+                          Seq(`Content-Disposition`(
+                            "attachment",
+                            Map("filename" -> workflowFileName(workflowWithVariables.get)))),
+                          workflowWithVariables)
+                      } else {
+                        complete(StatusCodes.NotFound)
                       }
+                    }
+                    case Failure(exception) => failWith(exception)
                   }
                 }
               }
@@ -237,6 +250,18 @@ abstract class WorkflowApi @Inject() (
       .filter(_.name.get == partName)
       .map(_.entity.asString)
       .mkString
+
+  private def workflowFileName(workflow: WorkflowWithVariables): String = {
+    val thirdPartyData = workflow.thirdPartyData.data.parseJson
+    // TODO DS-1486 Add "name" and "description" fields to Workflow
+    Try(thirdPartyData.asJsObject
+      .fields("gui").asJsObject
+      .fields("name").asInstanceOf[JsString].value) match {
+      case Success(name) => name.replaceAll("[^ a-zA-Z0-9.-]", "_") + ".json"
+      case Failure(_) => "workflow.json"
+    }
+  }
+
 }
 
 class SecureWorkflowApi @Inject() (

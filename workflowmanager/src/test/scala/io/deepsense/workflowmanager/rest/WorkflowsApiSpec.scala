@@ -49,6 +49,7 @@ class WorkflowsApiSpec
   val dOperableCatalog = new DOperableCatalog
   val inferContext: InferContext = new InferContext(dOperableCatalog, true)
   override val graphReader: GraphReader = new GraphReader(catalog)
+  val workflowAName = "Very nice workflow&*workflow"
   val (workflowA, knowledgeA) = newWorkflowAndKnowledge
   val workflowAId = Workflow.Id.randomId
   val workflowAWithResults = newWorkflowWithResults(workflowAId, workflowA)
@@ -63,7 +64,11 @@ class WorkflowsApiSpec
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
     val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = "0.1.1")
-    val thirdPartyData = ThirdPartyData("{}")
+    val thirdPartyData = ThirdPartyData(JsObject(
+      "gui" -> JsObject(
+        "name" -> JsString(workflowAName)
+      )
+    ).toString)
     val knowledge = graph.inferKnowledge(inferContext)
     val workflow = Workflow(metadata, graph, thirdPartyData)
     (workflow, knowledge)
@@ -281,7 +286,9 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           header("Content-Disposition") shouldBe Some(
-            `Content-Disposition`("attachment", Map("filename" -> "workflow.json")))
+            `Content-Disposition`(
+              "attachment",
+              Map("filename" -> "Very nice workflow__workflow.json")))
 
           responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
             workflowAId,
