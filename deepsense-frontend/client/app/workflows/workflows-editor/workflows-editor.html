@@ -24,7 +24,7 @@
       ng-if="workflow.getSelectedNode()"
       disabled-mode="!workflow.isEditable()"
       predef-colors="workflow.getPredefColors()"
-      class="o-panel o-panel--scroll-right animated fadeInRight"
+      class="o-panel o-panel--scroll-right animated fadeInRight right-panel-resizable"
       custom-scroll-bar
       resizable
       resizable-panel-name="rightPanel"
@@ -35,6 +35,7 @@
     <general-data-panel
       workflow="workflow.getWorkflow()"
       name="workflow.getWorkflow().name"
+      class="right-panel-resizable"
       description="workflow.getWorkflow().description"
       public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
       disabled-mode="!workflow.isEditable()"

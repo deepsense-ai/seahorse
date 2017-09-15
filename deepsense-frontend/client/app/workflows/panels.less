@@ -42,7 +42,6 @@
 }
 
 .operation-attributes-panel {
-  .panelsMinWidth();
   .spaceBetween(left);
 
   width: 100%;
@@ -150,8 +149,12 @@
   }
 }
 
+
+.right-panel-resizable {
+  .panelsMinWidth();
+}
+
 deepsense-operation-attributes {
-  min-width: 250px;
   .mCSB_container {
     // Used for correct height calculation of resizable directive
     min-height: 100%;
