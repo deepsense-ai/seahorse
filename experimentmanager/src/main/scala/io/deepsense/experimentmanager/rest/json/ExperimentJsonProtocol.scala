@@ -95,4 +95,6 @@ trait ExperimentJsonProtocol
   val experimentEnvelopeLabel = "experiment"
   implicit val experimentEnvelopeFormat =
     new EnvelopeJsonFormat[Experiment](experimentEnvelopeLabel)
+  implicit val inputExperimentEnvelopeFormat =
+    new EnvelopeJsonFormat[InputExperiment](experimentEnvelopeLabel)
 }

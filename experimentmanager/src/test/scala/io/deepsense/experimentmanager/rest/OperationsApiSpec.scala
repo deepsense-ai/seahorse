@@ -55,9 +55,11 @@ class OperationsApiSpec
   val existingOperationDescriptor = DOperationDescriptor(
     existingOperationId, "operation name", "0.1.0", "operation description",
     mockCategory, ParametersSchema(), Nil, Nil)
+  val envelopedExistingOperationDescription = Map("operation" -> existingOperationDescriptor)
 
   val operationsMapMock = Map(existingOperationId -> existingOperationDescriptor)
   when(dOperationsCatalog.operations) thenReturn operationsMapMock
+  val operationsResponse = Map("operations" -> operationsMapMock)
 
   val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), Map.empty, Set.empty)
   when(dOperationsCatalog.categoryTree) thenReturn categoryTreeMock
@@ -99,7 +101,7 @@ class OperationsApiSpec
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           implicit val operationDescriptor = DOperationDescriptorBaseFormat
-          responseAs[JsObject] shouldBe operationsMapMock.toJson
+          responseAs[JsObject] shouldBe operationsResponse.toJson
         }
       }
 
@@ -138,7 +140,7 @@ class OperationsApiSpec
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           implicit val operationDescriptor = DOperationDescriptorFullFormat
-          responseAs[JsObject] shouldBe existingOperationDescriptor.toJson
+          responseAs[JsObject] shouldBe envelopedExistingOperationDescription.toJson
         }
       }
     }

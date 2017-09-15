@@ -17,6 +17,7 @@ import spray.routing.PathMatchers
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.TokenTranslator
+import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -62,9 +63,8 @@ class OperationsApi @Inject() (
           path(JavaUUID) { operationId =>
             get {
               withUserContext { userContext =>
-                implicit val operationsFormat = DOperationDescriptorFullFormat
                 dOperationsCatalog.operations.get(operationId) match {
-                  case Some(operation) => complete(Future.successful(operation))
+                  case Some(operation) => complete(Future.successful(Envelope(operation)))
                   case None => complete(
                     StatusCodes.NotFound, s"Operation with id = $operationId does not exist")
                 }
@@ -73,9 +73,8 @@ class OperationsApi @Inject() (
           } ~
           pathEndOrSingleSlash {
             get {
-              implicit val operationsFormat = DOperationDescriptorBaseFormat
               withUserContext { userContext =>
-                complete(Future.successful(dOperationsCatalog.operations))
+                complete(Future.successful(Envelope(dOperationsCatalog.operations)))
               }
             }
           }

@@ -66,10 +66,10 @@ class ExperimentsApi @Inject() (
             } ~
             put {
               withUserContext { userContext =>
-                entity(as[InputExperiment]) { inputExperiment =>
+                entity(as[Envelope[InputExperiment]]) { envelope =>
                   complete {experimentManagerProvider
                       .forContext(userContext)
-                      .update(experimentId, inputExperiment)
+                      .update(experimentId, envelope.content)
                       .map(Envelope(_))
                   }
                 }
@@ -108,9 +108,9 @@ class ExperimentsApi @Inject() (
           pathEndOrSingleSlash {
             post {
               withUserContext { userContext =>
-                entity(as[InputExperiment]) { inputExperiment =>
+                entity(as[Envelope[InputExperiment]]) { envelope =>
                   onComplete(experimentManagerProvider
-                    .forContext(userContext).create(inputExperiment)) {
+                    .forContext(userContext).create(envelope.content)) {
                     case Success(experiment) => complete(
                       StatusCodes.Created, Envelope(experiment))
                     case Failure(exception) => failWith(exception)

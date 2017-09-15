@@ -57,6 +57,8 @@ class ExperimentsApiSpec
    */
   def inputExperiment: InputExperiment = InputExperiment("test name", "test description", Graph())
 
+  def envelopedInputExperiment: Envelope[InputExperiment] = Envelope(inputExperiment)
+
   val tenantAId: String = "A"
   val tenantBId: String = "B"
 
@@ -240,13 +242,13 @@ class ExperimentsApiSpec
   "POST /experiments" should {
     "process authorization before reading POST content" in {
       val invalidContent = JsObject()
-      Post(s"/$apiPrefix", inputExperiment) ~> testRoute ~> check {
+      Post(s"/$apiPrefix", envelopedInputExperiment) ~> testRoute ~> check {
         status should be(StatusCodes.Unauthorized)
       }
     }
     "return created" when {
       "inputExperiment was send" in {
-        Post(s"/$apiPrefix", inputExperiment) ~>
+        Post(s"/$apiPrefix", envelopedInputExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
           val savedExperiment = responseAs[Envelope[Experiment]].content
@@ -261,19 +263,19 @@ class ExperimentsApiSpec
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Post(s"/$apiPrefix", inputExperiment) ~>
+        Post(s"/$apiPrefix", envelopedInputExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Post(s"/$apiPrefix", inputExperiment) ~>
+        Post(s"/$apiPrefix", envelopedInputExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post(s"/$apiPrefix", inputExperiment) ~> testRoute ~> check {
+        Post(s"/$apiPrefix", envelopedInputExperiment) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -399,6 +401,7 @@ class ExperimentsApiSpec
 
   s"PUT /experiments/:id" should {
     val newExperiment = InputExperiment("New Name", "New Desc", Graph())
+    val envlopedNewExperiment = Envelope(newExperiment)
 
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
@@ -408,7 +411,7 @@ class ExperimentsApiSpec
     }
     "update the experiment and return Ok" when {
       "user updates his experiment" in {
-        Put(s"/$apiPrefix/${experimentOfTenantA.id}", newExperiment) ~>
+        Put(s"/$apiPrefix/${experimentOfTenantA.id}", envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           val response = responseAs[Envelope[Experiment]].content
@@ -425,14 +428,14 @@ class ExperimentsApiSpec
       "the experiment does not exist" in {
         val nonExistingId = UUID.randomUUID()
 
-        Put(s"/$apiPrefix/$nonExistingId", newExperiment) ~>
+        Put(s"/$apiPrefix/$nonExistingId", envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "the user has no right to that experiment" in {
 
-        Put(s"/$apiPrefix/${experimentOfTenantB.id}", newExperiment) ~>
+        Put(s"/$apiPrefix/${experimentOfTenantB.id}", envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -440,19 +443,19 @@ class ExperimentsApiSpec
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Put(s"/$apiPrefix/" + experimentOfTenantA.id, newExperiment) ~>
+        Put(s"/$apiPrefix/" + experimentOfTenantA.id, envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Put(s"/$apiPrefix/" + experimentOfTenantA.id, newExperiment) ~>
+        Put(s"/$apiPrefix/" + experimentOfTenantA.id, envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Put(s"/$apiPrefix/" + experimentOfTenantA.id, newExperiment) ~> testRoute ~> check {
+        Put(s"/$apiPrefix/" + experimentOfTenantA.id, envlopedNewExperiment) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }

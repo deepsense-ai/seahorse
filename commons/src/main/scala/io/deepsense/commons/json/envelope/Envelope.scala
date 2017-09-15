@@ -4,15 +4,14 @@
 
 package io.deepsense.commons.json.envelope
 
-import spray.json.JsonFormat
-
 /**
  *  Envelope for objects serializable to JSON
  *
- *  Such object can be later encoded into following JSON using EnvelopeJsonFormat
+ *  Such object can be later encoded into following JSON using EnvelopeJson[Writer/Format]
  *
  *   { [label]: [JSON representation of the content] }
  *
- *  where [label] is a string defined in EnvelopeJsonFormat.
+ *  where [label] is a string defined in EnvelopeJson[Writer/Format].
+ *  There is also EnvelopeJsonReader which allows for decoding.
  */
-case class Envelope[T : JsonFormat](content: T)
+case class Envelope[T](content: T)

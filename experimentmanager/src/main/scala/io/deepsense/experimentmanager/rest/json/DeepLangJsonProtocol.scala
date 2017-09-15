@@ -10,5 +10,6 @@ trait DeepLangJsonProtocol
   extends DOperationCategoryNodeJsonProtocol
   with DOperationDescriptorJsonProtocol
   with HierarchyDescriptorJsonProtocol
+  with DOperationEnvelopesJsonProtocol
 
 object DeepLangJsonProtocol extends DeepLangJsonProtocol
