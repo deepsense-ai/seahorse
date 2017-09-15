@@ -41,9 +41,9 @@ object CommonSettingsPlugin extends AutoPlugin {
     publishTo := {
       val url = artifactoryUrl.value
       if (isSnapshot.value)
-        Some("snapshots" at url + "deepsense-backend-snapshot")
+        Some("snapshots" at url + "deepsense-backend-jars-snapshot")
       else
-        Some("releases" at url + "deepsense-backend-release")
+        Some("releases" at url + "deepsense-backend-jars-release")
     },
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
