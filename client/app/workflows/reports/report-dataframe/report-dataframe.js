@@ -11,7 +11,7 @@ function ReportDataframe() {
       'data': '=',
       'distributionsTypes': '='
     },
-    templateUrl: 'app/reports/report-dataframe/report-dataframe.html',
+    templateUrl: 'app/workflows/reports/report-dataframe/report-dataframe.html',
     replace: 'true',
     controller: function($scope) {
       this.tableData = this.data['Data Sample'];

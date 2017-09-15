@@ -9,7 +9,7 @@
 function DistributionContinuousChart() {
   return {
     restrict: 'E',
-    templateUrl: 'app/reports/charts/distribution-continuous-chart.html',
+    templateUrl: 'app/workflows/reports/charts/distribution-continuous-chart.html',
     replace: true,
     scope: {
       'data': '='

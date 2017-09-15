@@ -8,7 +8,7 @@
 
 function ReportTableHeader() {
   return {
-    templateUrl: 'app/reports/report-table/report-table-header/report-table-header.html',
+    templateUrl: 'app/workflows/reports/report-table/report-table-header/report-table-header.html',
     replace: 'true',
     scope: {
       'tableData': '=',

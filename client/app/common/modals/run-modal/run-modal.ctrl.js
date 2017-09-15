@@ -20,8 +20,7 @@ function RunModalController($modalInstance, message, RunModalFactory) {
           this.status = LOADED;
           return $modalInstance.close(response.id);
         }).
-        catch((reason) => {
-          reason.data = reason.data || 'Server is not responding';
+        catch((reason = { data: 'Server is not responding' }) => {
           this.status = FAILED;
           this.errorMessage = reason.data;
         });

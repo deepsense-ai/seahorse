@@ -10,7 +10,7 @@ let REPORT_EVENTS = require('../../reports.controller.js').EVENTS;
 
 function ReportTableBody() {
   return {
-    templateUrl: 'app/reports/report-table/report-table-body/report-table-body.html',
+    templateUrl: 'app/workflows/reports/report-table/report-table-body/report-table-body.html',
     controller: ReportTableBodyeController,
     bindToController: true,
     controllerAs: 'reportTableBody',

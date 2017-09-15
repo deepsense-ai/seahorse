@@ -1,35 +1,21 @@
 'use strict';
-function ReportOptionsService($rootScope) {
+
+/* @ngInject */
+function ReportOptionsService($state) {
   var that = this;
   var internal = {};
 
   internal.elements = [];
   internal.port = null;
   internal.node = null;
-  internal.DEPLOYABLE_TYPES = [
-    'io.deepsense.deeplang.doperables.TrainedRidgeRegression',
-    'io.deepsense.deeplang.doperables.TrainedLogisticRegression'
-  ];
-
-  internal.goToDeploy = function goToDeploy() {
-    $rootScope.$broadcast('Model.DEPLOY', {id: that.getReportId()});
-  };
 
   that.getReportOptions = function getReportOptions() {
     return internal.elements;
   };
 
-  that.getReportURL = function getReportURL() {
-    return '/#/report/' + that.getReportId();
-  };
-
   that.getReportId = function getReportId() {
-    if (that.getCurrentNode().results && that.getCurrentNode().results.length > 0) {
-      return that.getCurrentNode().results[that.getCurrentPortIndex()];
-    }
-    else {
-      return '';
-    }
+    let currentNode = that.getCurrentNode();
+    return currentNode ? currentNode.getResult(that.getCurrentPortIndex()) : '';
   };
 
   that.getCurrentNode = function getCurrentNode() {
@@ -44,16 +30,8 @@ function ReportOptionsService($rootScope) {
     return that.getCurrentPort().getParameter('portIndex');
   };
 
-  that.isDeployable = function isDeployable() {
-    let nodeOutputPorts = that.getCurrentNode().output;
-    let currentPort = nodeOutputPorts[that.getCurrentPortIndex()];
-    return _.any(_.map(internal.DEPLOYABLE_TYPES, (deployableType) => {
-      return currentPort.typeQualifier.indexOf(deployableType) > -1;
-    }));
-  };
-
   that.isCompleted = function isCompleted() {
-    var status = that.getCurrentNode().status;
+    var status = that.getCurrentNode().state.status;
     return status === that.getCurrentNode().STATUS.COMPLETED;
   };
 
@@ -73,15 +51,13 @@ function ReportOptionsService($rootScope) {
     internal.elements.push({
         icon: 'fa-dot-circle-o',
         active: that.isCompleted(),
-        href: that.getReportURL(),
         visible: true,
-        description: 'Show report'
-      }, {
-        icon: 'fa-database',
-        active: that.isDeployable(),
-        description: 'Deploy',
-        visible: that.isDeployable(),
-        action: internal.goToDeploy
+        description: 'Show report',
+        action: () => {
+          $state.go('workflows.reportEntity', {
+            reportEntityId: that.getReportId()
+          });
+        }
       }
     );
   };

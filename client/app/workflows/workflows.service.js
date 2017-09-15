@@ -20,11 +20,11 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       });
       workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
       workflow.createEdges(workflowData.workflow.connections);
-      // TODO
-      //workflow.updateState(workflowData.workflow.state);
       workflow.updateEdgesStates(OperationsHierarchyService);
 
       internal.workflow = workflow;
+
+      return workflow;
     }
 
     getWorkflow () {

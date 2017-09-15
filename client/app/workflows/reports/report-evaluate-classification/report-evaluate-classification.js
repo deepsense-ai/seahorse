@@ -11,7 +11,7 @@ function ReportEvaluateClassification() {
     scope: {
       'data': '='
     },
-    templateUrl: 'app/reports/report-evaluate-classification/report-evaluate-classification.html',
+    templateUrl: 'app/workflows/reports/report-evaluate-classification/report-evaluate-classification.html',
     replace: 'true',
     controller: function() {},
     controllerAs: 'reportEvaluateClassification',

@@ -1,5 +1,5 @@
 <div id="node-{{ ::node.id }}"
-     class="flowchart-node {{ node.status }}"
+     class="flowchart-node {{ node.state.status }}"
      ng-style="{'left': node.x + 'px', 'top': node.y + 'px'}"
      title="{{ ::node.description }}">
   <span class="name" title="{{ ::node.name }}">

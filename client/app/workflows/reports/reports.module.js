@@ -9,6 +9,7 @@ var angular = require('angular');
 var reports = angular.module('ds.reports', []);
 
 require('./reports.controller.js').inject(reports);
+require('./reports.factory.js').inject(reports);
 require('./reports.config.js').inject(reports);
 
 require('./report-dataframe/report-dataframe.js').inject(reports);

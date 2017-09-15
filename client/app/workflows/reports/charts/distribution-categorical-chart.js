@@ -9,7 +9,7 @@
 function DistributionCategoricalChart() {
   return {
     restrict: 'E',
-    templateUrl: 'app/reports/charts/distribution-categorical-chart.html',
+    templateUrl: 'app/workflows/reports/charts/distribution-categorical-chart.html',
     replace: true,
     scope: {
       'data': '='

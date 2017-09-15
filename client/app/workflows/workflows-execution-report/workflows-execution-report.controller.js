@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowsReportController(
-  $state, $scope, report, ConfirmationModalService,
+  $state, $scope, report, ConfirmationModalService, Report,
   GraphNode, PageService, Operations, GraphPanelRendererService, WorkflowService, DeepsenseNodeParameters
 ) {
   let that = this;
@@ -19,12 +19,10 @@ function WorkflowsReportController(
   });
 
   internal.init = function init() {
-    let workflow = report;
-
     const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
     let getTitle = () => {
       try {
-        return workflow.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
+        return report.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
       } catch (e) {
         return DEFAULT_WORKFLOW_NAME;
       }
@@ -32,11 +30,14 @@ function WorkflowsReportController(
 
     PageService.setTitle(`Workflow execution report: ${getTitle()}`);
 
-    WorkflowService.createWorkflow(workflow, Operations.getData());
-    GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
-    GraphPanelRendererService.setZoom(1.0);
+    let workflow = WorkflowService.createWorkflow(report, Operations.getData());
+    workflow.updateState(report.executionReport);
 
+    GraphPanelRendererService.setWorkflow(workflow);
+    GraphPanelRendererService.setZoom(1.0);
     GraphPanelRendererService.changeEdgesPaintStyles();
+
+    Report.createReportEntities(report.executionReport.resultEntities);
   };
 
   $scope.$on(GraphNode.CLICK, (event, data) => {

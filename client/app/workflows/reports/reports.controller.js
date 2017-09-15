@@ -10,7 +10,7 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function Report(report, $scope, $modal, PageService) {
+function ReportCtrl(report, $scope, $modal, PageService) {
   PageService.setTitle(`Report: ${report.name}`);
 
   let that = this;
@@ -55,7 +55,7 @@ function Report(report, $scope, $modal, PageService) {
     if (!_.isUndefined(distObject)) {
       $modal.open({
         size: 'lg',
-        templateUrl: 'app/reports/report-chart-panel.html',
+        templateUrl: 'app/workflows/reports/report-chart-panel.html',
         controller: function ($scope, $modalInstance) {
           _.assign(this, {
             close: () => {
@@ -80,9 +80,9 @@ function Report(report, $scope, $modal, PageService) {
   return that;
 }
 
-exports.function = Report;
+exports.function = ReportCtrl;
 exports.EVENTS = EVENTS;
 
 exports.inject = function (module) {
-  module.controller('Report', Report);
+  module.controller('ReportCtrl', ReportCtrl);
 };

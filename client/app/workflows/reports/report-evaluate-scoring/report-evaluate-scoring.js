@@ -10,7 +10,7 @@ function ReportEvaluateScoring() {
     scope: {
       'data': '='
     },
-    templateUrl: 'app/reports/report-evaluate-scoring/report-evaluate-scoring.html',
+    templateUrl: 'app/workflows/reports/report-evaluate-scoring/report-evaluate-scoring.html',
     replace: 'true',
     controller: function() {
       this.tableData = this.data['Evaluate Regression Report'];

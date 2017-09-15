@@ -9,7 +9,7 @@
 function PiePlot() {
   return {
     restrict: 'E',
-    templateUrl: 'app/reports/charts/plot.html',
+    templateUrl: 'app/workflows/reports/charts/plot.html',
     replace: true,
     scope: {
       'data': '='

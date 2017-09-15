@@ -2,7 +2,9 @@
 
 let angular = require('angular');
 
-let workflows = angular.module('ds.workflows', []);
+let workflows = angular.module('ds.workflows', [
+  require('./reports/reports.module.js').name
+]);
 
 require('./workflows.config.js').inject(workflows);
 require('./workflows.service.js').inject(workflows);

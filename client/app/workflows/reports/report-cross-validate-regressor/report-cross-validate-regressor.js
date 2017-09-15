@@ -10,7 +10,7 @@ function ReportCrossValidateRegressor() {
     scope: {
       'data': '='
     },
-    templateUrl: 'app/reports/report-cross-validate-regressor/report-cross-validate-regressor.html',
+    templateUrl: 'app/workflows/reports/report-cross-validate-regressor/report-cross-validate-regressor.html',
     replace: 'true',
     controller: function() {
       this.tableData = this.data['Cross-validate report table'];

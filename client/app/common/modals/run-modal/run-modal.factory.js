@@ -29,7 +29,7 @@ function RunModalFactory ($modal, $q, BaseApiClient) {
       // return this.makeRequest(this.METHOD_GET, URL);
       let def = $q.defer();
 
-      setTimeout(() => def.reject(), 10000);
+      setTimeout(() => def.reject(), 2000);
 
       return def.promise;
     }
