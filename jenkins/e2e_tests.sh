@@ -6,15 +6,13 @@ set -ex
 
 cd `dirname $0`"/../"
 
+BACKEND_TAG=`git rev-parse HEAD`
+
 if [ -z ${SEAHORSE_BUILD_TAG+x} ]; then # SEAHORSE_BUILD_TAG is not defined
   FRONTEND_TAG="master-latest"
-  BACKEND_TAG=`git rev-parse HEAD`
-
-  # SEAHORSE_BUILD_TAG is set for backward compability - some scripts require it
   export SEAHORSE_BUILD_TAG=$BACKEND_TAG
 else # SEAHORSE_BUILD_TAG is defined
   FRONTEND_TAG=$SEAHORSE_BUILD_TAG
-  BACKEND_TAG=$SEAHORSE_BUILD_TAG
 fi
 
 ./jenkins/scripts/sync_up_docker_images_with_git_repo.sh
