@@ -10,6 +10,8 @@ unzip {{ds_frontend_package_name}}.zip
 cp -r build/* /usr/share/nginx/html
 
 export EDITOR_VERSION=`cat build/FULL_VERSION`
+export DOCS_ADDRESS={{ds_frontend_docs_address}}
+export API_VERSION={{api_version}}
 
 eval "echo \"$(<config.js)\"" > /usr/share/nginx/html/config.js
 
