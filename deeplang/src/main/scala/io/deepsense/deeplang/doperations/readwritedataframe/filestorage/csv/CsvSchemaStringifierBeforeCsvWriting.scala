@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe.csv
+package io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv
 
 import java.sql.Timestamp
 

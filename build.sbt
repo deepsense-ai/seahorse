@@ -22,8 +22,11 @@ lazy val rootProject = project.in(file("."))
   .aggregate(commons, deeplang, docgen, graph, workflowjson, models,reportlib, workflowexecutormqprotocol,
     workflowexecutor)
 
-lazy val settingsForPublished = LicenceReportSettings.settings ++ PublishSettings.enablePublishing
-lazy val settingsForNotPublished = LicenceReportSettings.settings ++ PublishSettings.disablePublishing
+lazy val settingsForPublished = CommonSettingsPlugin.assemblySettings ++
+  LicenceReportSettings.settings ++ PublishSettings.enablePublishing
+lazy val settingsForNotPublished = CommonSettingsPlugin.assemblySettings ++
+  LicenceReportSettings.settings ++ PublishSettings.disablePublishing
+
 lazy val commons                = project settings settingsForPublished
 lazy val deeplang               = project dependsOn (
   commons,

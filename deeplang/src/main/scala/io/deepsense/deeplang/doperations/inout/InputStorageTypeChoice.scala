@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperations.inout
 
+import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.library.LoadFromLibraryParam
 import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
@@ -25,12 +26,14 @@ sealed trait InputStorageTypeChoice extends Choice {
 
   override val choiceOrder: List[Class[_ <: InputStorageTypeChoice]] = List(
     classOf[File],
-    classOf[Jdbc])
+    classOf[Jdbc],
+    classOf[GoogleSheet]
+  )
 }
 
 object InputStorageTypeChoice {
 
-  case class File() extends InputStorageTypeChoice {
+  class File extends InputStorageTypeChoice {
 
     override val name: String = StorageType.FILE.toString
 
@@ -44,20 +47,32 @@ object InputStorageTypeChoice {
     val fileFormat = ChoiceParam[InputFileFormatChoice](
       name = "format",
       description = "Format of the input file.")
-    setDefault(fileFormat, InputFileFormatChoice.Csv())
+    setDefault(fileFormat, new InputFileFormatChoice.Csv())
 
     def getFileFormat(): InputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: InputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(sourceFile, fileFormat)
+    override def params = Array(sourceFile, fileFormat)
   }
 
-  case class Jdbc()
-    extends InputStorageTypeChoice
-    with JdbcParameters {
+  class Jdbc extends InputStorageTypeChoice with JdbcParameters {
 
     override val name: String = StorageType.JDBC.toString
-    override val params: Array[Param[_]] =
-      Array(jdbcUrl, jdbcDriverClassName, jdbcTableName)
+    override def params = Array(jdbcUrl, jdbcDriverClassName, jdbcTableName)
+
   }
+
+  class GoogleSheet
+    extends InputStorageTypeChoice
+    with GoogleSheetParams
+    with NamesIncludedParam
+    with HasShouldConvertToBooleanParam {
+
+    override val name: String = "Google Sheet"
+    override lazy val params: Array[Param[_]] = Array(
+      googleSheetId, serviceAccountCredentials, namesIncluded, shouldConvertToBoolean
+    )
+
+  }
+
 }

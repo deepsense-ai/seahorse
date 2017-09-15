@@ -62,22 +62,22 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "/test_files")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
-                  .setCsvNamesIncluded(true)))
+                  .setNamesIncluded(true)))
       wdf.executeUntyped(Vector(dataFrame))(executionContext)
 
       val rdf =
         new ReadDataFrame()
           .setStorageType(
-            InputStorageTypeChoice.File()
+            new InputStorageTypeChoice.File()
               .setSourceFile(absoluteTestsDirPath.fullPath + "/test_files")
-              .setFileFormat(InputFileFormatChoice.Csv()
+              .setFileFormat(new InputFileFormatChoice.Csv()
                 .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
-                .setCsvNamesIncluded(true)
+                .setNamesIncluded(true)
                 .setShouldConvertToBoolean(true)))
       val loadedDataFrame = rdf.executeUntyped(Vector())(executionContext).head.asInstanceOf[DataFrame]
 
@@ -108,17 +108,17 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
 
       val wdf =
         new WriteDataFrame()
-          .setStorageType(OutputStorageTypeChoice.File()
+          .setStorageType(new OutputStorageTypeChoice.File()
             .setOutputFile(absoluteTestsDirPath.fullPath + "json")
-            .setFileFormat(OutputFileFormatChoice.Json()))
+            .setFileFormat(new OutputFileFormatChoice.Json()))
 
       wdf.executeUntyped(Vector(dataFrame))(executionContext)
 
       val rdf =
         new ReadDataFrame()
-          .setStorageType(InputStorageTypeChoice.File()
+          .setStorageType(new InputStorageTypeChoice.File()
             .setSourceFile(absoluteTestsDirPath.fullPath + "json")
-            .setFileFormat(InputFileFormatChoice.Json()))
+            .setFileFormat(new InputFileFormatChoice.Json()))
       val loadedDataFrame = rdf.executeUntyped(Vector())(executionContext).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, convertedDataFrame, checkRowOrder = false)

@@ -42,15 +42,15 @@ class InputOutputSpec extends
   implicit lazy val ctx = StandaloneSparkClusterForTests.executionContext
 
   private val someFormatsSupportedByDriver = Seq(
-    InputFileFormatChoice.Csv()
+    new InputFileFormatChoice.Csv()
       .setCsvColumnSeparator(ColumnSeparatorChoice.Comma())
-      .setCsvNamesIncluded(true)
+      .setNamesIncluded(true)
       .setShouldConvertToBoolean(true),
-    InputFileFormatChoice.Json()
+    new InputFileFormatChoice.Json()
   )
 
   private val someFormatsSupportedByCluster =
-    someFormatsSupportedByDriver :+ InputFileFormatChoice.Parquet()
+    someFormatsSupportedByDriver :+ new InputFileFormatChoice.Parquet()
 
   assume({
     val clusterClasses = someFormatsSupportedByCluster.map(_.getClass).toSet
@@ -120,7 +120,7 @@ class InputOutputSpec extends
       fileFormat: InputFileFormatChoice): DataFrame = {
     val readDF = new ReadDataFrame()
       .setStorageType(
-        InputStorageTypeChoice.File()
+        new InputStorageTypeChoice.File()
           .setSourceFile(path)
           .setFileFormat(fileFormat))
     readDF.executeUntyped(Vector.empty[DOperable])(ctx).head.asInstanceOf[DataFrame]
@@ -130,7 +130,7 @@ class InputOutputSpec extends
                    (dataframe: DataFrame): Unit = {
     val write = new WriteDataFrame()
       .setStorageType(
-        OutputStorageTypeChoice.File()
+        new OutputStorageTypeChoice.File()
           .setOutputFile(path)
           .setFileFormat(fileFormat)
       )

@@ -39,61 +39,7 @@ import io.deepsense.deeplang.utils.DataFrameMatchers
 /**
  * Adds features to facilitate integration testing using Spark
  */
-trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
-
-  var commonExecutionContext: CommonExecutionContext = _
-  implicit var executionContext: ExecutionContext = _
-
-  val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
-  val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
-  val sparkSession: SparkSession = DeeplangIntegTestSupport.sparkSession
-
-  val dOperableCatalog = {
-    val catalog = new DOperableCatalog
-    CatalogRecorder.registerDOperables(catalog)
-    catalog
-  }
-
-  override def beforeAll(): Unit = {
-    commonExecutionContext = prepareCommonExecutionContext()
-    executionContext = prepareExecutionContext()
-  }
-
-  protected def prepareCommonExecutionContext(): CommonExecutionContext = {
-    val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
-
-    new MockedCommonExecutionContext(
-      sparkContext,
-      sparkSession,
-      inferContext,
-      LocalFileSystemClient(),
-      "testTenantId",
-      mock[InnerWorkflowExecutor],
-      mock[DataFrameStorage],
-      mock[CustomCodeExecutionProvider])
-  }
-
-  protected def prepareExecutionContext(): ExecutionContext = {
-    val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
-
-    new MockedExecutionContext(
-      sparkContext,
-      sparkSession,
-      inferContext,
-      LocalFileSystemClient(),
-      "testTenantId",
-      mock[InnerWorkflowExecutor],
-      mock[ContextualDataFrameStorage],
-      new MockedContextualCodeExecutor)
-  }
+trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll with LocalExecutionContext {
 
   protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
     val rdd: RDD[Row] = sparkContext.parallelize(rows)

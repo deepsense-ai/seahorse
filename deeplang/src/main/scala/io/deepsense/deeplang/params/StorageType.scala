@@ -24,5 +24,5 @@ object StorageType extends Enumeration {
   type StorageType = Value
   val FILE = Value("FILE")
   val JDBC = Value("JDBC")
-  val CASSANDRA = Value("CASSANDRA")
+  val GOOGLE_SHEET = Value("GOOGLE_SHEET")
 }

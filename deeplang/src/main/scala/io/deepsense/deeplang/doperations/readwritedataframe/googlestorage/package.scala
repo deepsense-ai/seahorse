@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.json.workflow
+package io.deepsense.deeplang.doperations.readwritedataframe
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
+package object googlestorage {
 
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+  type GoogleSheetId = String
+  type GoogleCretendialsJson = String
 
-class GraphReaderModule extends AbstractModule {
-  override def configure(): Unit = {
-    // Done by 'provides' methods.
-  }
-
-  @Singleton
-  @Provides
-  def provideGraphReader(dOperationsCatalog: DOperationsCatalog): GraphReader = {
-    new GraphReader(dOperationsCatalog)
-  }
 }

@@ -16,6 +16,10 @@
 
 import sbt.Keys._
 import sbt._
+import sbtassembly.AssemblyPlugin.autoImport._
+import sbtassembly.PathList
+
+// scalastyle:off
 
 object CommonSettingsPlugin extends AutoPlugin {
   override def trigger = allRequirements
@@ -57,6 +61,22 @@ object CommonSettingsPlugin extends AutoPlugin {
     credentials += Credentials(Path.userHome / ".artifactory_credentials")
   )
 
+  lazy val assemblySettings = Seq(
+    // Necessary while assembling uber-jar (omitting MANIFEST.MF file from constituent jar files)
+    assemblyMergeStrategy in assembly := {
+      case PathList("META-INF", "MANIFEST.MF")               => MergeStrategy.discard
+      case PathList("META-INF", "INDEX.LIST")                => MergeStrategy.discard
+      case PathList("META-INF", "ECLIPSEF.SF")               => MergeStrategy.discard
+      case PathList("META-INF", "ECLIPSEF.RSA")              => MergeStrategy.discard
+      case PathList("META-INF", "DUMMY.SF")                  => MergeStrategy.discard
+      case PathList("META-INF", "services", "org.apache.hadoop.fs.FileSystem") => MergeStrategy.concat
+      case "reference.conf"                                  => MergeStrategy.concat
+      case _ => MergeStrategy.first
+    },
+    // Skip test while assembling uber-jar
+    test in assembly := {}
+  )
+
   lazy val ouritSettings = inConfig(OurIT)(Defaults.testSettings) ++ inConfig(OurIT) {
     Seq(
       testOptions ++= Seq(
@@ -87,3 +107,5 @@ object CommonSettingsPlugin extends AutoPlugin {
 
   override def projectConfigurations = OurIT +: super.projectConfigurations
 }
+
+// scalastyle:on

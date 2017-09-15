@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.commons.utils
 
-import io.deepsense.deeplang.exceptions.DeepLangException
+import org.slf4j.{Logger, LoggerFactory}
 
-case object ParquetNotSupported
-  extends DeepLangException({
-    val supportedScheme = FileScheme.supportedByParquet.mkString("[", ",", "]")
-    s"Parquet file format supported only with $supportedScheme file schemes"
-  })
+object LoggerForCallerClass {
+
+  def apply(): Logger = {
+    // We use the third stack element; second is this method, first is .getStackTrace()
+    val myCaller = Thread.currentThread().getStackTrace()(2)
+    assert(myCaller.getMethodName() == "<init>", "Must be called in constructor")
+    LoggerFactory.getLogger(myCaller.getClassName)
+  }
+
+}
