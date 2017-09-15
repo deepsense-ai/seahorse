@@ -27,13 +27,10 @@ class GraphWithTimestampDecomposeIntegSuite extends ExperimentExecutionSpec {
   loadOp.parameters.getStringParameter(idParam).value =
     Some(SimpleGraphExecutionIntegSuiteEntities.entityId.toString)
 
-  val timestampDecomposerOp = DecomposeDatetime()
-  timestampDecomposerOp.parameters.getSingleColumnSelectorParameter(
-    DecomposeDatetime.timestampColumnParamKey).value =
-      Some(NameSingleColumnSelection("column4"))
-  timestampDecomposerOp.parameters.getMultipleChoiceParameter(
-    DecomposeDatetime.timestampPartsParamKey).value =
-      Some(Seq("year", "month", "day", "hour", "minutes", "seconds"))
+  val timestampDecomposerOp = DecomposeDatetime(
+    NameSingleColumnSelection("column4"),
+    Seq("year", "month", "day", "hour", "minutes", "seconds"),
+    prefix = None)
 
   import io.deepsense.deeplang.doperations.SaveDataFrame._
   val saveOp = new SaveDataFrame

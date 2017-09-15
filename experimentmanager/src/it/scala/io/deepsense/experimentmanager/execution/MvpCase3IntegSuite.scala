@@ -97,16 +97,11 @@ class MvpCase3IntegSuite extends ExperimentExecutionSpec {
     operation
   }
 
-  // TODO: Use apply
   private def timestampDecomposer: DecomposeDatetime = {
-    val operation = new DecomposeDatetime
-    val columnParam = operation.parameters.getSingleColumnSelectorParameter(
-      DecomposeDatetime.timestampColumnParamKey)
-    columnParam.value = Some(NameSingleColumnSelection("datetime"))
-    val timeUnitsParam = operation.parameters.getMultipleChoiceParameter(
-      DecomposeDatetime.timestampPartsParamKey)
-    timeUnitsParam.value = Some(Seq("year", "month", "day", "hour"))
-    operation
+    DecomposeDatetime(
+      NameSingleColumnSelection("datetime"),
+      Seq("year", "month", "day", "hour"),
+      prefix = None)
   }
 
   // TODO: Use apply
