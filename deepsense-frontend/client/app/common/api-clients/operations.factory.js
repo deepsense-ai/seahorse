@@ -8,8 +8,22 @@ function OperationsFactory(OperationsApiClient, $q) {
     '6c730c11-9708-4a84-9dbd-3845903f32ac': 'fa-pencil-square-o', // Data Manipulation
     'c80397a8-7840-4bdb-83b3-dc12f1f5bc3c': 'fa-line-chart', // Regression
     'ff13cbbd-f4ec-4df3-b0c3-f6fd4b019edf': 'fa-tag', // Classification
-    'dd29042a-a32c-4948-974f-073c41230da0': 'fa-filter' // Feature Selection
+    'a6114fc2-3144-4828-b350-4232d0d32f91': 'fa-filter', // Filtering
+    '5d6ed17f-7dc5-4b50-954c-8b2bbe6da2fd': 'fa-adjust', // Clustering
+    'daf4586c-4107-4aab-bfab-2fe4e1652784': 'fa-star', // Recommendation
+    'a112511e-5433-4ed2-a675-098a14a63c00': 'fa-sort-amount-desc', // Dimensionality reduction
+    'b5d34823-3f2c-4a9a-9114-3c126ce8dfb6': 'fa-tachometer' // Model evaluation
   };
+
+  const OPERATION_ICONS = {
+    '0c2ff818-977b-11e5-8994-feff819cdc9f': 'fa-gears', // Fit
+    '643d8706-24db-4674-b5b4-10b5129251fc': 'fa-bolt', // Transform
+    '1cb153f1-3731-4046-a29b-5ad64fde093f': 'fa-gears fa-bolt', // Fit + Transform
+    'a88eaf35-9061-4714-b042-ddd2049ce917': 'fa-tachometer', // Evaluate
+    'e76ca616-0322-47a5-b390-70c9668265dd': 'fa-book', // Notebook
+    '9163f706-eaaf-46f6-a5b0-4114d92032b7': 'fa-table' // Grid Search
+  };
+
   const DEFAULT_ICON = 'fa-square';
 
   const SINK_OPERATION_ID = 'e652238f-7415-4da6-95c6-ee33808561b2';
@@ -37,6 +51,16 @@ function OperationsFactory(OperationsApiClient, $q) {
     }
   };
 
+  var updateItemIcons = function(category) {
+    return function(item) {
+      if (item.id in OPERATION_ICONS) {
+        item.icon = OPERATION_ICONS[item.id];
+      } else {
+        item.icon = category.icon;
+      }
+    };
+  };
+
   var updateCategoryIcons = function updateCategoryIcons() {
     for (let id in categoryMap) {
       let category = categoryMap[id];
@@ -55,6 +79,9 @@ function OperationsFactory(OperationsApiClient, $q) {
           category.icon = DEFAULT_ICON;
         }
       }
+      if (category.items) {
+        _.forEach(category.items, updateItemIcons(category));
+      }
     }
   };
 
@@ -62,7 +89,11 @@ function OperationsFactory(OperationsApiClient, $q) {
     for (let id in operationsData) {
       let operation = operationsData[id];
       let category = categoryMap[operation.category];
-      operation.icon = category ? category.icon : DEFAULT_ICON;
+      if (id in OPERATION_ICONS) {
+        operation.icon = OPERATION_ICONS[id];
+      } else {
+        operation.icon = category ? category.icon : DEFAULT_ICON;
+      }
     }
   };
 
