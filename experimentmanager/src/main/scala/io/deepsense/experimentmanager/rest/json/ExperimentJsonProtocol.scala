@@ -12,12 +12,14 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.{ExceptionsJsonProtocol, IdJsonProtocol}
+import io.deepsense.commons.json.envelope.EnvelopeJsonFormat
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.graph.Graph
 import io.deepsense.graphjson.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.graphjson._
 import io.deepsense.models.experiments.{Experiment, InputExperiment}
+
 
 trait ExperimentJsonProtocol
   extends DefaultJsonProtocol
@@ -90,4 +92,7 @@ trait ExperimentJsonProtocol
   implicit val inputExperimentFormat = jsonFormat3(InputExperiment.apply)
   implicit val countFormat = jsonFormat2(Count)
   implicit val experimentsListFormat = jsonFormat2(ExperimentsList)
+  val experimentEnvelopeLabel = "experiment"
+  implicit val experimentEnvelopeFormat =
+    new EnvelopeJsonFormat[Experiment](experimentEnvelopeLabel)
 }

@@ -18,11 +18,13 @@ import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
-import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
+import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException,
+  ExperimentRunningException}
 import io.deepsense.experimentmanager.rest.actions.Action
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -58,7 +60,8 @@ class ExperimentsApi @Inject() (
               withUserContext { userContext =>
                 complete(experimentManagerProvider
                   .forContext(userContext)
-                  .get(experimentId))
+                  .get(experimentId)
+                  .map(_.map(Envelope(_))))
               }
             } ~
             put {
@@ -67,6 +70,7 @@ class ExperimentsApi @Inject() (
                   complete {experimentManagerProvider
                       .forContext(userContext)
                       .update(experimentId, inputExperiment)
+                      .map(Envelope(_))
                   }
                 }
               }
@@ -93,7 +97,8 @@ class ExperimentsApi @Inject() (
                 entity(as[Action]) { action =>
                   onComplete(action.run(experimentId, experimentManagerProvider
                     .forContext(userContext))) {
-                    case Success(experiment) => complete(StatusCodes.Accepted, experiment)
+                    case Success(experiment) => complete(
+                      StatusCodes.Accepted, Envelope(experiment))
                     case Failure(exception) => failWith(exception)
                   }
                 }
@@ -106,7 +111,8 @@ class ExperimentsApi @Inject() (
                 entity(as[InputExperiment]) { inputExperiment =>
                   onComplete(experimentManagerProvider
                     .forContext(userContext).create(inputExperiment)) {
-                    case Success(experiment) => complete(StatusCodes.Created, experiment)
+                    case Success(experiment) => complete(
+                      StatusCodes.Created, Envelope(experiment))
                     case Failure(exception) => failWith(exception)
                   }
                 }

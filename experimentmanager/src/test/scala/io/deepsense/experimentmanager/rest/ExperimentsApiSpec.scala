@@ -20,6 +20,7 @@ import spray.routing.Route
 
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.commons.auth.usercontext.{Role, TokenTranslator, UserContext}
+import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.InferContext
@@ -185,7 +186,7 @@ class ExperimentsApiSpec
         Get(s"/$apiPrefix/${experimentOfTenantA.id}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-          val response = responseAs[Experiment]
+          val response = responseAs[Envelope[Experiment]].content
           response shouldBe experimentOfTenantA
         }
       }
@@ -248,7 +249,7 @@ class ExperimentsApiSpec
         Post(s"/$apiPrefix", inputExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
-          val savedExperiment = responseAs[Experiment]
+          val savedExperiment = responseAs[Envelope[Experiment]].content
           savedExperiment should have (
             'name (inputExperiment.name),
             'description (inputExperiment.description),
@@ -336,7 +337,7 @@ class ExperimentsApiSpec
         Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.Accepted)
-          val response = responseAs[Experiment]
+          val response = responseAs[Envelope[Experiment]].content
           response shouldBe experimentOfTenantA
         }
       }
@@ -386,7 +387,7 @@ class ExperimentsApiSpec
         Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.Accepted)
-          val response = responseAs[Experiment]
+          val response = responseAs[Envelope[Experiment]].content
           response shouldBe experimentOfTenantA
         }
       }
@@ -407,7 +408,7 @@ class ExperimentsApiSpec
         Put(s"/$apiPrefix/${experimentOfTenantA.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-          val response = responseAs[Experiment]
+          val response = responseAs[Envelope[Experiment]].content
           response should have(
             'id (experimentOfTenantA.id),
             'tenantId (experimentOfTenantA.tenantId),
