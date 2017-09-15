@@ -69,6 +69,7 @@ class PresetApiSpec
     */
   def validAuthTokenTenantB: String = tenantBId
 
+  val fakeDatasourcesServerAddress = "http://mockedHttpAddress/"
   val roleGet = "workflows:get"
   val roleUpdate = "workflows:update"
   val roleDelete = "workflows:delete"
@@ -98,7 +99,8 @@ class PresetApiSpec
           val notebookStorage = mock[NotebookStorage]
           new WorkflowManagerImpl(
             authorizatorProvider, workflowStorage, workflowStatesStorage,
-            notebookStorage, futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
+            notebookStorage, futureContext, fakeDatasourcesServerAddress,
+            roleGet, roleUpdate, roleDelete, roleCreate)
         }
       })
 

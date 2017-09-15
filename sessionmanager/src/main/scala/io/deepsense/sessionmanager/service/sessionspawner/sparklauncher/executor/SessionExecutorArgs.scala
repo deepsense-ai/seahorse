@@ -30,6 +30,7 @@ object SessionExecutorArgs {
     "--mail-server-password", config.mailServerPassword,
     "--mail-server-sender", config.mailServerSender,
     "--notebook-server-address", config.notebookServerAddress,
+    "--datasource-server-address", config.datasourceManagerServerAddress,
     "--workflow-id", sessionConfig.workflowId.toString(),
     "--deps-zip", config.weDepsPath,
     "--user-id", sessionConfig.userId,

@@ -9,7 +9,9 @@ import scala.concurrent.Future
 import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import spray.json.{JsObject, JsString}
+import org.scalatest.concurrent.PatienceConfiguration
+import org.scalatest.time.{Seconds, Span}
+import spray.json.{JsArray, JsObject, JsString}
 
 import io.deepsense.commons.auth.usercontext.{Role, User, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
@@ -26,7 +28,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val roleForAll = "aRole"
   val ownerId = "ownerId"
   val ownerName = "ownerName"
-
+  val fakeDatasourcesServerAddress = "http://mockedHttpAddress/"
   val userContext = mock[UserContext]
   when(userContext.tenantId).thenReturn(tenantId)
   when(userContext.roles).thenReturn(Set(Role(roleForAll)))
@@ -73,6 +75,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()),
     WorkflowInfo.forId(workflowId))
 
+
   val storedWorkflowFullInfo = WorkflowFullInfo(
     storedWorkflow, DateTime.now, DateTime.now, ownerId, ownerName)
 
@@ -82,6 +85,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     workflowStateStorage,
     notebookStorage,
     userContextFuture,
+    fakeDatasourcesServerAddress,
     roleForAll,
     roleForAll,
     roleForAll,
@@ -142,7 +146,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       val workflowDescription = WorkflowDescription("Brand new name", "Brand new desc")
 
       val res = workflowManager.clone(storedWorkflowId, workflowDescription)
-      whenReady(res) { workflow =>
+      whenReady(res, timeout = PatienceConfiguration.Timeout(Span(2, Seconds))) { workflow =>
         workflow shouldBe 'defined
         workflow.get.id should not be storedWorkflowId
         workflow.get.metadata shouldBe storedWorkflow.metadata

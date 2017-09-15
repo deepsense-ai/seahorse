@@ -19,9 +19,9 @@ lazy val seahorseWorkflowExecutor = ProjectRef(shWeRepoDir, "workflowexecutor")
 
 lazy val backendcommons         = project dependsOn seahorseCommons
 lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseGraph, seahorseReportlib,
-  seahorseWorkflowJson, backendcommons, backendcommons % "test->test")
+  seahorseWorkflowJson, backendcommons, backendcommons % "test->test", seahorseApi)
 lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, backendcommons, backendcommons % "test->test",
-  seahorseWorkflowJson)
+  seahorseWorkflowJson, seahorseApi)
 lazy val libraryservice         = project dependsOn (backendcommons, backendcommons % "test->test")
 lazy val datasourcemanager      = project dependsOn (backendcommons, seahorseApi)
 lazy val schedulingmanager      = project dependsOn (backendcommons, workflowmanager, sessionmanager)

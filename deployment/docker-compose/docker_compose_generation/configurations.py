@@ -196,6 +196,7 @@ class SessionManager(Service):
             SM_PORT=self.port_mapping().get().exposed,
             JDBC_URL=self.services.Database.exposed_jdbc_url(db='sessionmanager'),
             NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.exposed_address().as_string()),
+            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.exposed_datasource_url(),
             SX_PARAM_SESSION_EXECUTOR_PATH='/opt/docker/we.jar',
             SX_PARAM_SESSION_EXECUTOR_DEPS_PATH='/opt/docker/we-deps.zip',
             SX_PARAM_PYTHON_EXECUTOR_BINARY='python',
@@ -224,14 +225,18 @@ class SessionManager(Service):
 
 class WorkflowManager(Service):
 
+    network_mode = 'host'
+
     def depends_on(self):
         return [
-            Database
+            Database,
+            DataSourceManager
         ]
 
     def environment(self):
         return Env(
-            JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager')) + \
+            JDBC_URL=self.services.Database.exposed_jdbc_url(db='workflowmanager'),
+            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.exposed_datasource_url()) + \
                self.credentials().as_env()
 
     @staticmethod
@@ -239,12 +244,31 @@ class WorkflowManager(Service):
         return Credentials('oJkTZ8BV', '8Ep9GqRr', 'WM_AUTH_USER', 'WM_AUTH_PASS')
 
     def port_mapping(self):
-        return PortMappings().add(PortMappings.Mapping(9080, 60103))
+        return PortMappings().add(PortMappings.Mapping(60103, 60103))
 
     def volumes(self):
         return [
             Directories.expose(Directories.jars, '/resources/jars')
         ]
+
+
+class WorkflowManagerBridgeNetwork(WorkflowManager):
+
+    network_mode = None
+
+    @classmethod
+    def name(cls):
+        return 'workflowmanager'
+
+    @classmethod
+    def image_name(cls):
+        return 'workflowmanager'
+
+    def environment(self):
+        return Env(
+            JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager'),
+            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_datasource_url()) + \
+               self.credentials().as_env()
 
 
 class Frontend(Service):
@@ -318,7 +342,7 @@ class Notebooks(Service):
     def environment(self):
         return Env(
             MISSED_HEARTBEAT_LIMIT=30,
-            WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address()),
+            WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address().as_string()),
             HEARTBEAT_INTERVAL=2.0) \
                + self.services.RabbitMQ.credentials().as_env() \
                + self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT') \
@@ -359,6 +383,11 @@ class DataSourceManager(Service):
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8080, 60108))
 
+    def internal_datasource_url(self):
+        return 'http://{}/datasourcemanager/v1/'.format(self.internal_address())
+
+    def exposed_datasource_url(self):
+        return 'http://{}/datasourcemanager/v1/'.format(self.exposed_address())
 
 class Library(Service):
 
@@ -436,6 +465,7 @@ class SessionManagerBridgeNetwork(SessionManager):
                    SM_PORT=self.port_mapping().get().internal,
                    JDBC_URL=self.services.Database.internal_jdbc_url(db='sessionmanager'),
                    NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.internal_address().as_string()),
+                   DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_datasource_url(),
                    SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.internal_address().as_string()) + \
                self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT') + \
                self.services.Mail.internal_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
@@ -504,7 +534,7 @@ class MacConfiguration(Configuration):
         RabbitMQ,
         Authorization,
         Notebooks,
-        WorkflowManager,
+        WorkflowManagerBridgeNetwork,
         Database,
         DataSourceManager
     ]
