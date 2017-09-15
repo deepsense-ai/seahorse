@@ -33,7 +33,8 @@ case class CreateSupportVectorMachineClassification()
     UntrainedSupportVectorMachineClassifier(modelParameters)
   }
 
-  override val tTagTO_0: ru.TypeTag[UntrainedSupportVectorMachineClassifier] =
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[UntrainedSupportVectorMachineClassifier] =
     ru.typeTag[UntrainedSupportVectorMachineClassifier]
 
   override val id: Id = "7a17e3d8-f991-4a80-82c5-d06b2d065879"
