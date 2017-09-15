@@ -17,12 +17,13 @@
 package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.DoubleType
 
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.DecomposeDatetime.{timeUnits, timestampParts}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
@@ -37,6 +38,10 @@ import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
  * where N is first not used Int value starting from 1.
  */
 case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
   val timestampColumnParam = SingleColumnSelectorParameter(
     "Timestamp column to decompose", required = true, portIndex = 0)

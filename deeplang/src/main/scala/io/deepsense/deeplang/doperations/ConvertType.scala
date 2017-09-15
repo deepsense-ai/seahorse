@@ -18,23 +18,29 @@ package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
 import scala.collection.mutable.ListBuffer
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql.types.DataType
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.types.{SparkConversions, Conversions}
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe._
-import io.deepsense.deeplang.inference.{InferenceWarning, ConversionMayNotBePossibleWarning, InferenceWarnings, InferContext}
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
+import io.deepsense.deeplang.doperables.dataframe.types.{Conversions, SparkConversions}
+import io.deepsense.deeplang.inference.{ConversionMayNotBePossibleWarning, InferContext, InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang._
 
 case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
 
   override val name: String = "Convert Type"
   override val id: Id = "f8b3c5d0-febe-11e4-b939-0800200c9a66"
+
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
   val selectedColumnsParameter = ColumnSelectorParameter(
     "Columns to be converted",

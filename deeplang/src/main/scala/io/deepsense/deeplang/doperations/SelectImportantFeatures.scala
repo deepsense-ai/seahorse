@@ -17,12 +17,12 @@
 package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
+import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{ChoiceParameter, ParametersSchema}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
-
 /**
  * Mock.
  */
@@ -46,6 +46,11 @@ case class SelectImportantFeatures() extends DOperation1To1[DataFrame, DataFrame
     context.dataFrameBuilder.buildDataFrame(
       dataFrame.sparkDataFrame.select(ColumnsNames.head, ColumnsNames.tail: _*))
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object SelectImportantFeatures {

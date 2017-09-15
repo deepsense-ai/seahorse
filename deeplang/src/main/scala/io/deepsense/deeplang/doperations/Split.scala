@@ -16,13 +16,15 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 
 case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
   override val name: String = "Split"
@@ -68,6 +70,13 @@ case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
       ((DKnowledge[DataFrame], DKnowledge[DataFrame]), InferenceWarnings) = {
     ((knowledge, knowledge), InferenceWarnings.empty)
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object Split {

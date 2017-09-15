@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
@@ -161,6 +162,11 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
   private def generateColumnNames(columnsNo: Int): Seq[String] = {
     (0 until columnsNo).map(i => s"column_$i")
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[File] = ru.typeTag[File]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 /**

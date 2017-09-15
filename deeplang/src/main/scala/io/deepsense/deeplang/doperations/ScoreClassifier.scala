@@ -16,12 +16,21 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Classifier, Scorable}
 
 case class ScoreClassifier() extends Scorer[Classifier with Scorable] {
   override val id: DOperation.Id = "6f9a4e9e-fe1a-11e4-a322-1697f925ec7b"
   override val name = "Score Classifier"
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[Classifier with Scorable] = ru.typeTag[Classifier with Scorable]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object ScoreClassifier {

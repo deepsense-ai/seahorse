@@ -16,10 +16,12 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.Transformation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
@@ -27,6 +29,13 @@ case class ApplyTransformation() extends DOperation2To1[Transformation, DataFram
   override val parameters: ParametersSchema = ParametersSchema()
   override val name: String = "Apply Transformation"
   override val id: Id = "f6e1f59b-d04d-44e2-ae35-2fcada44d23f"
+
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[Transformation] = ru.typeTag[Transformation]
+  @transient
+  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
   override protected def _execute(
       context: ExecutionContext)(transformation: Transformation, dataFrame: DataFrame): DataFrame =

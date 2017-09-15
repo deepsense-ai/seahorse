@@ -16,14 +16,14 @@
 
 package io.deepsense.deeplang.doperations
 
-import spray.json._
+import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadata, DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameMetadata}
 import io.deepsense.deeplang.doperables.{DOperableSaver, Report}
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation1To0, ExecutionContext}
 import io.deepsense.entitystorage.UniqueFilenameUtil
-import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, CreateEntityRequest}
+import io.deepsense.models.entities.{CreateEntityRequest, DataObjectReference}
 
 /**
  * Operation which is able to serialize DataFrame and save it.
@@ -69,6 +69,9 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
 
   private def getUniqueFileName(context: ExecutionContext): String =
     context.uniqueFsFileName(UniqueFilenameUtil.DataFrameEntityCategory)
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object SaveDataFrame {

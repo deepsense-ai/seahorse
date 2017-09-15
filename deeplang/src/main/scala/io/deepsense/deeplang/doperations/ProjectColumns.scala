@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
@@ -44,4 +46,9 @@ case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
       DataFrame.empty(context)
     }
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

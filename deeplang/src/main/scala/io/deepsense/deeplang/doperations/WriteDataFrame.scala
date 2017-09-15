@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperations
 import java.io.StringWriter
 
 import scala.collection.immutable.ListMap
+import scala.reflect.runtime.{universe => ru}
 
 import au.com.bytecode.opencsv.CSVWriter
 import org.apache.commons.lang3.StringEscapeUtils
@@ -84,7 +85,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
-    require(formatParameter.value.contains(CSV.toString))
+    require(contains(formatParameter.value, CSV.toString))
 
     val categoricalMetadata = CategoricalMetadata(dataFrame.sparkDataFrame)
     val csv = dataFrame.sparkDataFrame.rdd
@@ -99,6 +100,13 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
     }
 
     result.saveAsTextFile(s"${outputFileParameter.value.get}://${pathParameter.value.get}")
+  }
+
+  private def contains(o: Option[String], value: String): Boolean = {
+    o match {
+      case None => false
+      case Some(x) => x == value
+    }
   }
 
   private def rowToStringArray(categoricalMetadata: CategoricalMetadata) = (row: Row) => {
@@ -129,6 +137,9 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
     writer.writeAll(List(data))
     buf.toString.trim
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object WriteDataFrame {

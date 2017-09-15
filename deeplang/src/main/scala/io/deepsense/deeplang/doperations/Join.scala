@@ -16,16 +16,16 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-
 import scala.collection.mutable
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql
 import org.apache.spark.sql.{Column, Row}
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame}
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMetadata}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
@@ -186,6 +186,13 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
 
     (dataFrame.toDF(renamedColumns: _*), columnNamesMap)
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object Join {

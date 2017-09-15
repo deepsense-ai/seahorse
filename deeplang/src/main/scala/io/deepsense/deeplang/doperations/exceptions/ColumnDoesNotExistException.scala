@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadata, DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadata
 import io.deepsense.deeplang.parameters.SingleColumnSelection
 
 case class ColumnDoesNotExistException(

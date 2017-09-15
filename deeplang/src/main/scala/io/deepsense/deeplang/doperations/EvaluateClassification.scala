@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
 import org.apache.spark.rdd.RDD
 
@@ -23,7 +25,7 @@ import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Evaluator, Report}
-import io.deepsense.deeplang.parameters.{NameSingleColumnSelection, ParametersSchema}
+import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class EvaluateClassification() extends Evaluator {
@@ -145,6 +147,11 @@ case class EvaluateClassification() extends Evaluator {
         List(Some(DoubleUtils.double2String(a)), Some(DoubleUtils.double2String(b)))
     }.toList
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[Report] = ru.typeTag[Report]
 }
 
 object EvaluateClassification {

@@ -25,6 +25,8 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Validator}
+import scala.reflect.runtime.{universe => ru}
+
 
 object DClassesForDOperations {
   trait A extends DOperableMock
@@ -39,6 +41,8 @@ object DOperationForPortTypes {
     override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
     override val parameters: ParametersSchema = ParametersSchema()
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 }
 
@@ -60,6 +64,9 @@ class DOperationSuite extends FunSuite with MockitoSugar {
       override val parameters: ParametersSchema = ParametersSchema(
         "param" -> NumericParameter(
           "description", None, required = true, validator = mock[Validator[Double]]))
+      override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+      override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
+      override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
     }
 
     val firstPicker: DOperation = new PickOne
@@ -98,6 +105,7 @@ class DOperationSuite extends FunSuite with MockitoSugar {
 
       override val name: String = ""
       override val parameters: ParametersSchema = ParametersSchema()
+      override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
     }
 
     val generator: DOperation = new GeneratorOfA

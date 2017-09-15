@@ -20,6 +20,7 @@ import java.util.UUID
 
 import scala.collection.immutable.ListMap
 import scala.collection.mutable
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.mllib.evaluation.RegressionMetrics
 import org.apache.spark.rdd.RDD
@@ -29,13 +30,22 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class CrossValidateRegressor()
   extends DOperation2To2[Regressor with Trainable, DataFrame, Regressor with Scorable, Report]
   with WithTrainParameters {
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[Regressor with Trainable] = ru.typeTag[Regressor with Trainable]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[Regressor with Scorable] = ru.typeTag[Regressor with Scorable]
+  @transient
+  override lazy val tTagTO_1: ru.TypeTag[Report] = ru.typeTag[Report]
+  @transient
+  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
   import CrossValidateRegressor._
 

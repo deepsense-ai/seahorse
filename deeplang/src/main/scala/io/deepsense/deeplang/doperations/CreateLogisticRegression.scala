@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
 
 import io.deepsense.deeplang.doperables.UntrainedLogisticRegression
@@ -23,6 +25,10 @@ import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Ran
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 
 case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRegression] {
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[UntrainedLogisticRegression] =
+    ru.typeTag[UntrainedLogisticRegression]
+
   import CreateLogisticRegression._
   override val name = "Logistic Regression"
 

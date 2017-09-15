@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperations
 import java.io.FileNotFoundException
 
 import scala.collection.immutable.ListMap
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.io.{LongWritable, Text}
@@ -82,6 +83,9 @@ case class ReadFile() extends DOperation0To1[File] {
       case _ => ReadFile.defaultSeparatorValue
     }
   }
+
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[File] = ru.typeTag[File]
 }
 
 object ReadFile {

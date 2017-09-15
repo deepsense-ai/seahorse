@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
 
@@ -78,6 +79,9 @@ case class CreateRandomForestRegression() extends DOperation0To1[UntrainedRandom
 
     UntrainedRandomForestRegression(model)
   }
+
+  override val tTagTO_0: ru.TypeTag[UntrainedRandomForestRegression] =
+    ru.typeTag[UntrainedRandomForestRegression]
 }
 
 object CreateRandomForestRegression {

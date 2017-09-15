@@ -57,6 +57,8 @@ abstract class DOperation extends Serializable with Logging {
       context: InferContext)(
       inputKnowledge: Vector[DKnowledge[DOperable]])
       : (Vector[DKnowledge[DOperable]], InferenceWarnings)
+
+  def typeTag[T : ru.TypeTag]: ru.TypeTag[T] = ru.typeTag[T]
 }
 
 object DOperation {

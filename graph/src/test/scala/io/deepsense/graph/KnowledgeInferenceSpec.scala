@@ -28,6 +28,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, Inferenc
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.parameters.exceptions.ValidationException
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation2To1, ExecutionContext}
+import scala.reflect.runtime.{universe => ru}
 
 class KnowledgeInferenceSpec
   extends WordSpec
@@ -256,6 +257,10 @@ class KnowledgeInferenceSpec
       }
       (DKnowledge(A1()), InferenceWarnings(warning))
     }
+
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
+    override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 
   object DOperationA1A2ToFirst {

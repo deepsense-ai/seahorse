@@ -16,13 +16,13 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
-import io.deepsense.deeplang.{ExecutionContext, DOperation0To1}
 import io.deepsense.deeplang.doperables.Transformation
-import io.deepsense.deeplang.parameters.AcceptAllRegexValidator
-import io.deepsense.deeplang.parameters.StringParameter
-import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
+import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
+import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
 case class MathematicalOperation() extends DOperation0To1[Transformation] {
 
@@ -41,6 +41,8 @@ case class MathematicalOperation() extends DOperation0To1[Transformation] {
     "formula", None, required = true, validator = new AcceptAllRegexValidator)
 
   override val parameters = ParametersSchema("formula" -> formulaParam)
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[Transformation] = ru.typeTag[Transformation]
 }
 
 object MathematicalOperation {

@@ -18,6 +18,9 @@ package io.deepsense.deeplang.doperations
 
 
 import java.util.NoSuchElementException
+import scala.reflect.runtime._
+import scala.reflect.runtime.{universe => ru}
+
 
 import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
@@ -127,6 +130,8 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
 
     context.dataFrameBuilder.buildDataFrame(convertedSchema, convertedData, categoricalColumnNames)
   }
+
+  override val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 trait ReadDataFrameParameters {

@@ -18,15 +18,15 @@ package io.deepsense.deeplang.doperations
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.DOperable.AbstractMetadata
-import io.deepsense.deeplang.doperables.DOperableLoader
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, DataFrameMetadata, DataFrame}
-import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
-import io.deepsense.deeplang._
 import spray.json._
 
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.DOperableLoader
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder, DataFrameMetadata}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 /**
  * Operation which is able to load DataFrame and deserialize it.
  */
@@ -60,6 +60,9 @@ case class LoadDataFrame() extends DOperation0To1[DataFrame] {
     val df = DataFrameBuilder.buildDataFrameForInference(metadata)
     (new DKnowledge[DataFrame](df), InferenceWarnings.empty)
   }
+
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object LoadDataFrame {

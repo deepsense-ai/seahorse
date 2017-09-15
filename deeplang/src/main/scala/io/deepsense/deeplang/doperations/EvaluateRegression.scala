@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.mllib.evaluation.RegressionMetrics
 import org.apache.spark.rdd.RDD
 
@@ -64,6 +66,11 @@ case class EvaluateRegression() extends Evaluator {
     )
     Report(ReportContent(evaluateRegressionName, Map(table.name -> table)))
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[Report] = ru.typeTag[Report]
 }
 
 object EvaluateRegression {

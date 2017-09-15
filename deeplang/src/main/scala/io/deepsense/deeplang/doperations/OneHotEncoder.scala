@@ -16,12 +16,13 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.deeplang.DOperation._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMetadata, CategoriesMapping}
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.parameters.{BooleanParameter, ColumnSelectorParameter, ColumnType, ParametersSchema}
+import io.deepsense.deeplang.parameters.{BooleanParameter, ColumnSelectorParameter, ColumnType, ParametersSchema, _}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
@@ -74,6 +75,11 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
     val resultSparkDataFrame = dataFrame.sparkDataFrame.selectExpr("*" +: expressions.flatten: _*)
     context.dataFrameBuilder.buildDataFrame(resultSparkDataFrame)
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object OneHotEncoder {

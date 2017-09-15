@@ -19,9 +19,11 @@ package io.deepsense.graph
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
+import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.doperations.ApplyTransformation
 import io.deepsense.graph.RandomNodeFactory.randomNode
 
-class GraphSuite extends FunSuite with Matchers with Serialization {
+class GraphSuite extends FunSuite with Matchers with Serialization with Logging {
 
   test("An empty Graph should have size 0") {
     Graph().size shouldBe 0
@@ -242,13 +244,14 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     import io.deepsense.graph.DOperationTestClasses._
     val operationWithInitializedLogger = new DOperationAToALogging
     val id = Node.Id.randomId
+    val id2 = Node.Id.randomId
     val nodes = Seq(
       randomNode(DOperationCreateA1()),
-      randomNode(DOperationA1ToA()),
+      Node(id2, DOperationA1ToA()),
       Node(id, operationWithInitializedLogger),
       randomNode(DOperationA1A2ToA())
     )
-    val edges = Set(
+    val edges = Set[Edge](
       Edge(nodes(0), 0, nodes(1), 0),
       Edge(nodes(0), 0, nodes(2), 0),
       Edge(nodes(1), 0, nodes(3), 0),
@@ -257,7 +260,8 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val graph = Graph(nodes.toSet, edges)
     val graphIn = serializeDeserialize(graph)
     graphIn shouldBe graph
-    graphIn.node(id).operation.asInstanceOf[DOperationAToALogging]
-      .trace("Logging just to clarify that it works after deserialization!")
+    val operation = graphIn.node(id).operation.asInstanceOf[DOperationAToALogging]
+    operation.trace("Logging just to clarify that it works after deserialization!")
+    operation.tTagTI_0.tpe should not be (null)
   }
 }

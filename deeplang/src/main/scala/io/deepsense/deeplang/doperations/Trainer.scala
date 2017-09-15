@@ -17,9 +17,9 @@
 package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.{WithTrainParameters, Scorable, Trainable}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.doperables.{Scorable, Trainable, WithTrainParameters}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 /**
  * Operation that receives Trainable and trains it on dataframe to get trained, Scorable model.

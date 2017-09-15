@@ -18,8 +18,8 @@ package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang.doperables.Scorable
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.parameters.{SingleColumnCreatorParameter, ParametersSchema}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.parameters.{ParametersSchema, SingleColumnCreatorParameter}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 trait Scorer[T <: Scorable] extends DOperation2To1[T, DataFrame, DataFrame] {

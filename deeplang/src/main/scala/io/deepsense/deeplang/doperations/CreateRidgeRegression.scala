@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.mllib.regression.RidgeRegressionWithSGD
 
 import io.deepsense.deeplang.DOperation.Id
@@ -25,6 +27,8 @@ import io.deepsense.deeplang.doperations.CreateRidgeRegression._
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 
 case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegression] {
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[UntrainedRidgeRegression] = ru.typeTag[UntrainedRidgeRegression]
 
   override val name = "Ridge Regression"
 

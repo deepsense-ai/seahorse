@@ -16,11 +16,11 @@
 
 package io.deepsense.deeplang.doperations.transformations
 
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.{DKnowledge, DOperable, DMethod1To1, ExecutionContext}
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.doperables.{Report, Transformation}
 import io.deepsense.deeplang.doperations.exceptions.MathematicalOperationExecutionException
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.ReportContent
 
 case class MathematicalTransformation(formula: Option[String]) extends Transformation {

@@ -21,6 +21,7 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.parameters.ParametersSchema
+import scala.reflect.runtime.{universe => ru}
 
 object RandomNodeFactory {
   def randomNode(operation: DOperation): Node = Node(Node.Id.randomId, operation)
@@ -46,22 +47,47 @@ object DOperationTestClasses {
 
   case class DOperationCreateA1() extends DOperation0To1[A1] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(): A1 = ???
+
+    @transient
+    override lazy val tTagTO_0: ru.TypeTag[A1] = ru.typeTag[A1]
   }
 
   case class DOperationReceiveA1() extends DOperation1To0[A1] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(t0: A1): Unit = ???
+
+    @transient
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
   }
 
   case class DOperationA1ToA() extends DOperation1To1[A1, A] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(t1: A1): A = ???
+
+    @transient
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    @transient
+    override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
   }
 
   case class DOperationAToA1A2() extends DOperation1To2[A, A1, A2] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(in: A): (A1, A2) = ???
+
+    @transient
+    override lazy val tTagTI_0: ru.TypeTag[A] = ru.typeTag[A]
+    @transient
+    override lazy val tTagTO_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    @transient
+    override lazy val tTagTO_1: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 
   case class DOperationA1A2ToA() extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
+
+    @transient
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    @transient
+    override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
+    @transient
+    override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 
   case class DOperationAToALogging() extends DOperation1To1[A, A] with DOperationBaseFields {
@@ -69,5 +95,10 @@ object DOperationTestClasses {
     override protected def _execute(context: ExecutionContext)(t0: A): A = ???
 
     def trace(message: String): Unit = logger.trace(message)
+
+    @transient
+    override lazy val tTagTI_0: ru.TypeTag[A] = ru.typeTag[A]
+    @transient
+    override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
   }
 }
