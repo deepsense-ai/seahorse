@@ -19,13 +19,14 @@ package io.deepsense.workflowexecutor
 
 import java.io.{File, FileWriter, PrintWriter}
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.typesafe.config.ConfigFactory
+import org.apache.log4j.xml.DOMConfigurator
 import scopt.OptionParser
 import spray.json._
 
@@ -121,6 +122,8 @@ object WorkflowExecutorApp
     Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
 
   def main(args: Array[String]): Unit = {
+    configureLogging
+
     val cmdParams = parser.parse(args, ExecutionParams())
 
     logger.info("Starting WorkflowExecutor.")
@@ -150,6 +153,12 @@ object WorkflowExecutorApp
           }
         }
     }
+  }
+
+  def configureLogging: Unit = {
+    Option(System.getProperty("logFile"))
+      .getOrElse(System.setProperty("logFile", "workflowexecutor"))
+    DOMConfigurator.configure(getClass.getResource("/log4j.xml"))
   }
 
   private def handleVersionException(versionException: WorkflowVersionException): Unit = {
