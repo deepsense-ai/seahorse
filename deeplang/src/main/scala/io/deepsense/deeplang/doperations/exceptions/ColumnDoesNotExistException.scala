@@ -16,11 +16,12 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadata
+import io.deepsense.deeplang.doperables.dataframe.{SchemaPrintingUtils, DataFrameMetadata}
 import io.deepsense.deeplang.parameters.SingleColumnSelection
 
 case class ColumnDoesNotExistException(
     selection: SingleColumnSelection,
     dataFrameMetadata: DataFrameMetadata) extends DOperationExecutionException(
-  s"Column from specified selection: $selection does not exist in $dataFrameMetadata",
+  s"Column from specified selection: $selection does not exist in " +
+    s"${SchemaPrintingUtils.columnsMetadataToSchemaString(dataFrameMetadata.orderedColumns)}",
   None)

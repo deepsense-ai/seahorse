@@ -78,8 +78,6 @@ object SingleColumnSelection {
 case class IndexSingleColumnSelection(value: Int)
   extends SingleColumnSelection(IndexSingleColumnSelection.typeName) {
 
-  override def toString: String = s"IndexSelection with index=$value"
-
   override protected def valueToJson: JsValue = value.toJson
 }
 
@@ -97,8 +95,6 @@ object IndexSingleColumnSelection {
  */
 case class NameSingleColumnSelection(value: String)
   extends SingleColumnSelection(NameSingleColumnSelection.typeName) {
-
-  override def toString: String = s"NameSelection with name=$value"
 
   override protected def valueToJson: JsValue = value.toJson
 }

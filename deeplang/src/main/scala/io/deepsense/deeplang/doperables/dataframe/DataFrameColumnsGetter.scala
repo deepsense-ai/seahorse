@@ -162,10 +162,9 @@ object DataFrameColumnsGetter {
     multipleColumnSelection: MultipleColumnSelection): Unit = {
 
     val selections = multipleColumnSelection.selections
-    for (selection <- selections) {
-      if (!isSelectionValid(schema, selection)) {
-        throw ColumnsDoNotExistException(selections, schema)
-      }
+    val invalidSelections = selections.filterNot(isSelectionValid(schema, _))
+    if (invalidSelections.nonEmpty) {
+      throw ColumnsDoNotExistException(invalidSelections, schema)
     }
   }
 

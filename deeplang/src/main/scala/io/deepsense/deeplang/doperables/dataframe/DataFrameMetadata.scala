@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import scala.collection.mutable.ListBuffer
-
 import org.apache.spark.sql.types.{StructField, StructType}
 import spray.json._
 
@@ -179,17 +177,11 @@ case class DataFrameMetadata(
   private def assertColumnSelectionsValid(
       multipleColumnSelection: MultipleColumnSelection): Seq[InferenceWarning] = {
     val selections = multipleColumnSelection.selections
-    val warnings = new ListBuffer[InferenceWarning]()
-    for (selection <- selections) {
-      if (!isSelectionValid(selection)) {
-        if (isExact) {
-          throw ColumnsDoNotExistException(selections, toSchema)
-        }
-        warnings += MultipleColumnsMayNotExistWarning(selection, this)
-
-      }
+    val invalidSelections = selections.filterNot(isSelectionValid)
+    if (invalidSelections.nonEmpty && isExact) {
+      throw ColumnsDoNotExistException(invalidSelections, toSchema)
     }
-    warnings
+    invalidSelections.map(MultipleColumnsMayNotExistWarning(_, this))
   }
 
   /**
@@ -266,6 +258,8 @@ sealed trait ColumnMetadata {
   private[dataframe] def toStructField: StructField
 
   def withIndex(index: Option[Int]): ColumnMetadata
+
+  def prettyPrint: String = SchemaPrintingUtils.columnMetadataToString(this)
 }
 
 case class CommonColumnMetadata(

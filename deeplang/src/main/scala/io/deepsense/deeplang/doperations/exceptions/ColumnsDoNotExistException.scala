@@ -18,19 +18,20 @@ package io.deepsense.deeplang.doperations.exceptions
 
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.{SchemaPrintingUtils, DataFrame}
 import io.deepsense.deeplang.parameters.ColumnSelection
 
 case class ColumnsDoNotExistException(
-    selections: Vector[ColumnSelection],
+    invalidSelections: Vector[ColumnSelection],
     schema: StructType)
   extends DOperationExecutionException(
-    s"One or more columns from specified selection: $selections does not exist in $schema",
+    s"One or more columns from specified selections: $invalidSelections " +
+      s"does not exist in ${SchemaPrintingUtils.structTypeToString(schema)}",
     None)
 
 object ColumnsDoNotExistException {
   def apply(
-      selections: Vector[ColumnSelection],
+      invalidSelections: Vector[ColumnSelection],
       dataFrame: DataFrame): ColumnsDoNotExistException =
-    ColumnsDoNotExistException(selections, dataFrame.sparkDataFrame.schema)
+    ColumnsDoNotExistException(invalidSelections, dataFrame.sparkDataFrame.schema)
 }

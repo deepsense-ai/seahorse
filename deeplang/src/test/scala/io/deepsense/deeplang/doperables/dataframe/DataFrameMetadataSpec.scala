@@ -215,8 +215,8 @@ class DataFrameMetadataSpec extends UnitSpec {
         val exception = the [ColumnsDoNotExistException] thrownBy {
           metadata.select(selection)
         }
-        exception.selections should have size 1
-        exception.selections.head shouldBe nameSelection
+        exception.invalidSelections should have size 1
+        exception.invalidSelections.head shouldBe nameSelection
         exception.schema shouldBe schema
       }
 
