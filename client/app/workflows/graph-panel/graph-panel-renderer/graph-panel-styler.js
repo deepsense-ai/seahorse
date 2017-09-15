@@ -1,6 +1,9 @@
 'use strict';
 
-import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
+import {
+  GraphPanelRendererBase
+}
+from './graph-panel-renderer-base.js';
 
 const ENDPOINT_DEFAULT_BACKGROUND_COLOR = '#00b1eb';
 

@@ -4,8 +4,8 @@
 function DraggableDirective(GraphNode) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
-      var reInitThisNodePosition = function reInitThisNodePosition () {
+    link: function(scope, element, attrs) {
+      var reInitThisNodePosition = function reInitThisNodePosition() {
         scope.node.x = parseInt(element.css('left'), 10);
         scope.node.y = parseInt(element.css('top'), 10);
       };
@@ -23,6 +23,6 @@ function DraggableDirective(GraphNode) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('jsplumbDraggable', DraggableDirective);
 };

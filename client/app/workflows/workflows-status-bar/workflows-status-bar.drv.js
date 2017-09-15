@@ -24,7 +24,7 @@ function WorkflowReportStatusBar() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('workflowEditorStatusBar', WorkflowEditorStatusBar);
   module.directive('workflowReportStatusBar', WorkflowReportStatusBar);
 };

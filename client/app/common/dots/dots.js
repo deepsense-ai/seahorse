@@ -9,22 +9,24 @@ function Dots($timeout) {
     link: (scope, element) => {
       let dots = null;
 
-      let processDots = function processDots () {
-        const LENGTH  = 19;
-        const SPEED   = 450;
+      let processDots = function processDots() {
+        const LENGTH = 19;
+        const SPEED = 450;
 
         if (dots) {
-          dots.html(dots.html().length >= LENGTH ? '.' : dots.html() + '.');
+          dots.html(dots.html()
+            .length >= LENGTH ? '.' : dots.html() + '.');
           $timeout(processDots, SPEED);
         }
       };
 
-      let process = function process (newButtonStatus) {
+      let process = function process(newButtonStatus) {
         switch (newButtonStatus) {
           case 'loading':
             if (!dots) {
               dots = angular.element(element)
-                .after('<span class="o-dots"></span>').next();
+                .after('<span class="o-dots"></span>')
+                .next();
               processDots();
               element.attr('disabled', 'disabled');
             }
@@ -47,6 +49,6 @@ function Dots($timeout) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('dynamicDots', Dots);
 };

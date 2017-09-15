@@ -2,26 +2,27 @@
 
 /* @ngInject */
 function ContextMenuWrapperController($scope, $element, $window,
-                                      WorkflowService, ReportOptionsService, GraphNode, Edge) {
+  WorkflowService, ReportOptionsService, GraphNode, Edge) {
   let that = this;
   let internal = {};
 
-  let $flowchartBox = $($element).closest('.flowchart-box');
+  let $flowchartBox = $($element)
+    .closest('.flowchart-box');
 
   internal.contextMenuState = 'invisible';
   internal.contextMenuPosition = {};
 
-  internal.rawCloseContextMenu = function rawCloseContextMenu () {
+  internal.rawCloseContextMenu = function rawCloseContextMenu() {
     $scope.$broadcast('ContextMenu.CLOSE');
     internal.contextMenuState = 'invisible';
   };
 
-  internal.closeContextMenu = function closeContextMenu () {
+  internal.closeContextMenu = function closeContextMenu() {
     internal.rawCloseContextMenu();
     $scope.$digest();
   };
 
-  internal.contextMenuOpener = function contextMenuOpener (event, data) {
+  internal.contextMenuOpener = function contextMenuOpener(event, data) {
     let portEl = data.reference.canvas;
     let dimensions = portEl.getBoundingClientRect();
 
@@ -32,20 +33,21 @@ function ContextMenuWrapperController($scope, $element, $window,
     $scope.$digest();
   };
 
-  internal.isNotInternal = function isNotInternal (event) {
+  internal.isNotInternal = function isNotInternal(event) {
     return event.target && event.target.matches('.context-menu *') === false;
   };
 
-  internal.checkClickAndClose = function checkClickAndClose (event) {
+  internal.checkClickAndClose = function checkClickAndClose(event) {
     if (internal.isNotInternal(event)) {
       internal.closeContextMenu();
     }
   };
 
-  internal.handlePortRightClick = function handlePortRightClick (event, data) {
+  internal.handlePortRightClick = function handlePortRightClick(event, data) {
     let port = data.reference;
     let nodeId = port.getParameter('nodeId');
-    let currentNode = WorkflowService.getWorkflow().getNodes()[nodeId];
+    let currentNode = WorkflowService.getWorkflow()
+      .getNodes()[nodeId];
 
     ReportOptionsService.setCurrentPort(port);
     ReportOptionsService.setCurrentNode(currentNode);
@@ -60,7 +62,8 @@ function ContextMenuWrapperController($scope, $element, $window,
     getContextMenuPositionY: () => internal.contextMenuPosition.y,
     getContextMenuPositionX: () => internal.contextMenuPosition.x,
     getPositionY: () => $flowchartBox[0].offsetTop,
-    getPositionX: () => $flowchartBox[0].getBoundingClientRect().left,
+    getPositionX: () => $flowchartBox[0].getBoundingClientRect()
+      .left,
     getReportOptions: () => ReportOptionsService.getReportOptions()
   });
 
@@ -97,7 +100,6 @@ function ContextMenuWrapperDirective() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('contextMenuWrapper', ContextMenuWrapperDirective);
 };
-

@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function GeneralDataPanel () {
+function GeneralDataPanel() {
   return {
     restrict: 'E',
     templateUrl: 'app/workflows/general-data-panel/general-data-panel.html',
@@ -22,17 +22,23 @@ function GeneralDataPanel () {
          *
          * https://github.com/angular-ui/bootstrap/issues/4458
          */
-        let $nodes = $(element).find('.ibox-title__name, .o-panel__description');
+        let $nodes = $(element)
+          .find('.ibox-title__name, .o-panel__description');
 
         $nodes.hover(
-          () => { $('body').css('overflow', 'hidden'); },
-          () => { $('body').css('overflow', 'auto'); }
+          () => {
+            $('body')
+              .css('overflow', 'hidden');
+          }, () => {
+            $('body')
+              .css('overflow', 'auto');
+          }
         );
       });
     }
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('generalDataPanel', GeneralDataPanel);
 };

@@ -7,7 +7,7 @@ class ExportModalService {
   }
 
   showModal() {
-    let modal =  this.$modal.open({
+    let modal = this.$modal.open({
       animation: true,
       templateUrl: 'app/common/modals/export-modal/export-modal.html',
       controller: 'ExportModalController as controller',
@@ -19,6 +19,6 @@ class ExportModalService {
   }
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('ExportModalService', ExportModalService);
 };

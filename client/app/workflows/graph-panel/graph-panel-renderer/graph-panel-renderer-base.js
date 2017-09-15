@@ -1,8 +1,7 @@
 'use strict';
 
 export class GraphPanelRendererBase {
-  constructor() {
-  }
+  constructor() {}
 
   getNodeById(id) {
     return document.querySelector(`#node-${id}`);

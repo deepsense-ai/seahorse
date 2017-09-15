@@ -4,7 +4,7 @@
 function Keyboard($rootScope) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
+    link: function(scope, element, attrs) {
       Mousetrap.bind(['del', 'backspace'], () => {
         $rootScope.$broadcast('Keyboard.KEY_PRESSED_DEL');
         return false;
@@ -17,6 +17,6 @@ function Keyboard($rootScope) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('keyboard', Keyboard);
 };

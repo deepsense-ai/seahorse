@@ -14,22 +14,28 @@ function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
       this.loading = true;
 
       WorkflowsApiClient.
-        createWorkflow({
+      createWorkflow({
           name: this.name || DEFAULT_NAME,
           description: this.description || ''
-        }).
-        then((response) => {
+        })
+        .
+      then((response) => {
           $modalInstance.close(response.id);
-        }).
-        catch(({ data } = {}) => {
-          let { message } = (data || {});
-          this.loading = false;
-          this.errorMessage = message || 'Server error';
-        });
+        })
+        .
+      catch(({
+        data
+      } = {}) => {
+        let {
+          message
+        } = (data || {});
+        this.loading = false;
+        this.errorMessage = message || 'Server error';
+      });
     }
   });
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('NewWorkflowModalController', NewWorkflowModalController);
 };

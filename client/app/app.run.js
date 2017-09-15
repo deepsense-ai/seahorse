@@ -41,6 +41,6 @@ function AppRun($rootScope, $state, PageService) {
 
 exports.function = AppRun;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.run(AppRun);
 };

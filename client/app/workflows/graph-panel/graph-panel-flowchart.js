@@ -11,7 +11,8 @@ function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
       let data = {
         dropEvent: dropEvent,
         elementId: dropEvent.dataTransfer.getData('elementId'),
-        target: $($element).find('.flowchart-paint-area')[0]
+        target: $($element)
+          .find('.flowchart-paint-area')[0]
       };
 
       $scope.$emit('FlowChartBox.ELEMENT_DROPPED', data);
@@ -47,6 +48,6 @@ function FlowChartBox(GraphPanelRendererService) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('flowChartBox', FlowChartBox);
 };

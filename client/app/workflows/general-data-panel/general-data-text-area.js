@@ -11,7 +11,7 @@ function AutoTextArea(WorkflowService) {
       let textarea = element[0].children[0];
       autosize(textarea);
 
-      scope.$applyAsync(()=> {
+      scope.$applyAsync(() => {
         autosize.update(textarea);
       });
 

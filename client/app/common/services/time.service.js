@@ -22,7 +22,6 @@ function TimeService() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('TimeService', TimeService);
 };
-

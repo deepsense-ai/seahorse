@@ -6,47 +6,65 @@ describe('OperationsApiClient', () => {
       $httpBackend.expectGET(url);
 
       let promise = functionReturningPromise();
-      expect(promise).toEqual(jasmine.any(Object));
-      expect(promise.then).toEqual(jasmine.any(Function));
-      expect(promise.catch).toEqual(jasmine.any(Function));
+      expect(promise)
+        .toEqual(jasmine.any(Object));
+      expect(promise.then)
+        .toEqual(jasmine.any(Function));
+      expect(promise.catch)
+        .toEqual(jasmine.any(Function));
 
       $httpBackend.flush();
     },
     promiseIsResolved: ($httpBackend, url, functionReturningPromise, expectedResponse) => {
       let success = false;
-      let error   = false;
+      let error = false;
       let responseData = null;
 
       $httpBackend.expectGET(url);
 
-      functionReturningPromise().
-        then((data) => {
+      functionReturningPromise()
+        .
+      then((data) => {
           success = true;
           responseData = data;
-        }).
-        catch(() => { error = true; });
+        })
+        .
+      catch(() => {
+        error = true;
+      });
 
       $httpBackend.flush();
 
-      expect(success).toBe(true);
-      expect(error).toBe(false);
-      expect(responseData).toEqual(expectedResponse);
+      expect(success)
+        .toBe(true);
+      expect(error)
+        .toBe(false);
+      expect(responseData)
+        .toEqual(expectedResponse);
     },
     promiseIsRejected: ($httpBackend, url, functionReturningPromise, mockRequest) => {
       let success = false;
-      let error   = false;
+      let error = false;
 
       $httpBackend.expectGET(url);
 
-      functionReturningPromise().
-        then(() => { success = true; }).
-        catch(() => { error = true; });
+      functionReturningPromise()
+        .
+      then(() => {
+          success = true;
+        })
+        .
+      catch(() => {
+        error = true;
+      });
 
       mockRequest.respond(500, 'Server Error');
       $httpBackend.flush();
 
-      expect(success).toBe(false);
-      expect(error).toBe(true);
+      expect(success)
+        .toBe(false);
+      expect(error)
+        .toBe(true);
     }
   };
 
@@ -59,8 +77,10 @@ describe('OperationsApiClient', () => {
   beforeEach(() => {
     testModule = angular.module('test', []);
 
-    require('./../base-api-client.factory.js').inject(testModule);
-    require('./../operations-api-client.factory.js').inject(testModule);
+    require('./../base-api-client.factory.js')
+      .inject(testModule);
+    require('./../operations-api-client.factory.js')
+      .inject(testModule);
 
     angular.mock.module('test');
     angular.mock.module(($provide) => {
@@ -77,18 +97,20 @@ describe('OperationsApiClient', () => {
     });
   });
 
-
   it('should be defined', () => {
-    expect(OperationsApiClient).toBeDefined();
-    expect(OperationsApiClient).toEqual(jasmine.any(Object));
+    expect(OperationsApiClient)
+      .toBeDefined();
+    expect(OperationsApiClient)
+      .toEqual(jasmine.any(Object));
   });
-
 
   describe('should have getAll method', () => {
     let $httpBackend;
     let mockRequest;
     let url = `/${URL_API_VERSION}/operations`;
-    let response = { 'test': true };
+    let response = {
+      'test': true
+    };
 
     beforeEach(() => {
       angular.mock.inject(($injector) => {
@@ -96,7 +118,7 @@ describe('OperationsApiClient', () => {
         mockRequest = $httpBackend
           .when('GET', url)
           .respond(response);
-        });
+      });
     });
 
     afterEach(function() {
@@ -104,9 +126,9 @@ describe('OperationsApiClient', () => {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-
     it('which is valid function', () => {
-      expect(OperationsApiClient.getAll).toEqual(jasmine.any(Function));
+      expect(OperationsApiClient.getAll)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
@@ -122,13 +144,14 @@ describe('OperationsApiClient', () => {
     });
   });
 
-
   describe('should have get method', () => {
     let $httpBackend;
     let mockRequest;
     let id = 'id-01';
     let url = `/${URL_API_VERSION}/operations/${id}`;
-    let response = { 'test': true };
+    let response = {
+      'test': true
+    };
 
     beforeEach(() => {
       angular.mock.inject(($injector) => {
@@ -136,7 +159,7 @@ describe('OperationsApiClient', () => {
         mockRequest = $httpBackend
           .when('GET', url)
           .respond(response);
-        });
+      });
     });
 
     afterEach(function() {
@@ -144,9 +167,9 @@ describe('OperationsApiClient', () => {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-
     it('which is valid function', () => {
-      expect(OperationsApiClient.get).toEqual(jasmine.any(Function));
+      expect(OperationsApiClient.get)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
@@ -166,7 +189,9 @@ describe('OperationsApiClient', () => {
     let $httpBackend;
     let mockRequest;
     let url = `/${URL_API_VERSION}/operations/catalog`;
-    let response = { 'test': true };
+    let response = {
+      'test': true
+    };
 
     beforeEach(() => {
       angular.mock.inject(($injector) => {
@@ -174,7 +199,7 @@ describe('OperationsApiClient', () => {
         mockRequest = $httpBackend
           .when('GET', url)
           .respond(response);
-        });
+      });
     });
 
     afterEach(function() {
@@ -182,9 +207,9 @@ describe('OperationsApiClient', () => {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-
     it('which is valid function', () => {
-      expect(OperationsApiClient.getCatalog).toEqual(jasmine.any(Function));
+      expect(OperationsApiClient.getCatalog)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
@@ -204,7 +229,9 @@ describe('OperationsApiClient', () => {
     let $httpBackend;
     let mockRequest;
     let url = `/${URL_API_VERSION}/operations/hierarchy`;
-    let response = { 'test': true };
+    let response = {
+      'test': true
+    };
 
     beforeEach(() => {
       angular.mock.inject(($injector) => {
@@ -220,9 +247,9 @@ describe('OperationsApiClient', () => {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-
     it('which is valid function', () => {
-      expect(OperationsApiClient.getHierarchy).toEqual(jasmine.any(Function));
+      expect(OperationsApiClient.getHierarchy)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {

@@ -8,6 +8,6 @@ function NavigationBar() {
 }
 exports.function = NavigationBar;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('navigationBar', NavigationBar);
 };

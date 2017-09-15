@@ -4,7 +4,7 @@
 function Draggable($rootScope, $log, DragAndDrop) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
+    link: function(scope, element, attrs) {
       let doNotListen = false;
       let isTargetCorrect;
 
@@ -16,12 +16,12 @@ function Draggable($rootScope, $log, DragAndDrop) {
       element.on('dragstart', dragstart);
       element.on('dragend', dragend);
 
-      function mousedown (event) {
+      function mousedown(event) {
         /* check cascade */
         doNotListen = !isTargetCorrect(event.target.closest('[draggable]'));
       }
 
-      function dragstart (event) {
+      function dragstart(event) {
         $log.debug('Drag started on', element[0]);
 
         /* filter to cascaded draggable elements */
@@ -45,7 +45,7 @@ function Draggable($rootScope, $log, DragAndDrop) {
         }
       }
 
-      function dragend (event) {
+      function dragend(event) {
         if (isTargetCorrect(event.target)) {
           event.dataTransfer.setData('draggableType', attrs.draggableType);
 
@@ -58,13 +58,13 @@ function Draggable($rootScope, $log, DragAndDrop) {
       }
 
       /* privates */
-      isTargetCorrect = function isTargetCorrect (element, target) {
+      isTargetCorrect = function isTargetCorrect(element, target) {
         return element === target;
       }.bind(undefined, element[0]);
     }
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('draggable', Draggable);
 };

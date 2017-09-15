@@ -4,7 +4,7 @@
 function Droppable($log, DragAndDrop) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
+    link: function(scope, element, attrs) {
       if (!attrs.droppableType) {
         return false;
       }
@@ -51,6 +51,6 @@ function Droppable($log, DragAndDrop) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('droppable', Droppable);
 };

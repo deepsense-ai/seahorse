@@ -12,6 +12,6 @@ function StickyWindow() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('stickyWindow', StickyWindow);
 };

@@ -1,7 +1,13 @@
 'use strict';
 
-import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
-import { GraphPanelStyler } from './graph-panel-styler.js';
+import {
+  GraphPanelRendererBase
+}
+from './graph-panel-renderer-base.js';
+import {
+  GraphPanelStyler
+}
+from './graph-panel-styler.js';
 
 class ConnectionHinterService extends GraphPanelRendererBase {
   constructor($rootScope, WorkflowService, OperationsHierarchyService, Operations) {
@@ -65,7 +71,8 @@ class ConnectionHinterService extends GraphPanelRendererBase {
    * Remove any port highlighting.
    */
   setDefaultPortColors(renderMode) {
-    const nodes = this.WorkflowService.getWorkflow().getNodes();
+    const nodes = this.WorkflowService.getWorkflow()
+      .getNodes();
     _.forEach(nodes, (node) => {
       const nodeEl = this.getNodeById(node.id);
       const endpoints = jsPlumb.getEndpoints(nodeEl);
@@ -115,8 +122,8 @@ class ConnectionHinterService extends GraphPanelRendererBase {
   }
 }
 
-exports.inject = function (module) {
-  module.factory('ConnectionHinterService', /* @ngInject */($rootScope, WorkflowService, OperationsHierarchyService, Operations) => {
+exports.inject = function(module) {
+  module.factory('ConnectionHinterService', /* @ngInject */ ($rootScope, WorkflowService, OperationsHierarchyService, Operations) => {
     return new ConnectionHinterService($rootScope, WorkflowService, OperationsHierarchyService, Operations);
   });
 };

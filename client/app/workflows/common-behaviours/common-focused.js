@@ -4,7 +4,7 @@
 function Focused($timeout) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
+    link: function(scope, element, attrs) {
       $timeout(() => {
         element[0].focus();
       }, 50, false);
@@ -12,6 +12,6 @@ function Focused($timeout) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('focused', Focused);
 };

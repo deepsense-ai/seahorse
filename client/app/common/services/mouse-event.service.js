@@ -30,9 +30,12 @@ function MouseEvent() {
     var scale = internal.getScale(element);
 
     return {
-      x: Math.round((event.clientX - scroll.x - element.getBoundingClientRect().left) / scale),
+      x: Math.round((event.clientX - scroll.x - element.getBoundingClientRect()
+        .left) / scale),
       // y: Math.round((event.clientY - scroll.y - element.getBoundingClientRect().top) / scale)
-      y: Math.round((event.clientY + scroll.y - $(element).offset().top) / scale)
+      y: Math.round((event.clientY + scroll.y - $(element)
+        .offset()
+        .top) / scale)
     };
   };
 
@@ -41,6 +44,6 @@ function MouseEvent() {
 
 exports.function = MouseEvent;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('MouseEvent', MouseEvent);
 };

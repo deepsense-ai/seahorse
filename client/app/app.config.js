@@ -23,6 +23,6 @@ function AppConfig($urlRouterProvider, toastrConfig) {
 
 exports.function = AppConfig;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.config(AppConfig);
 };

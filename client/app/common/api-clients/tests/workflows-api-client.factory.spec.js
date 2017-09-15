@@ -15,8 +15,10 @@ describe('WorkflowsApiClient', () => {
   beforeEach(() => {
     module = angular.module('test', []);
 
-    require('./../base-api-client.factory.js').inject(module);
-    require('./../workflows-api-client.factory.js').inject(module);
+    require('./../base-api-client.factory.js')
+      .inject(module);
+    require('./../workflows-api-client.factory.js')
+      .inject(module);
 
     angular.mock.module('test');
     angular.mock.module(($provide) => {
@@ -34,8 +36,10 @@ describe('WorkflowsApiClient', () => {
   });
 
   it('should be defined', () => {
-    expect(WorkflowsApiClient).toBeDefined();
-    expect(WorkflowsApiClient).toEqual(jasmine.any(Object));
+    expect(WorkflowsApiClient)
+      .toBeDefined();
+    expect(WorkflowsApiClient)
+      .toEqual(jasmine.any(Object));
   });
 
   describe('should have getWorkflow method', () => {
@@ -62,9 +66,10 @@ describe('WorkflowsApiClient', () => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend.
-          when('GET', url).
-          respond(response);
-        });
+        when('GET', url)
+          .
+        respond(response);
+      });
     });
 
     afterEach(() => {
@@ -73,29 +78,28 @@ describe('WorkflowsApiClient', () => {
     });
 
     it('which is valid function', () => {
-      expect(WorkflowsApiClient.getWorkflow).toEqual(jasmine.any(Function));
+      expect(WorkflowsApiClient.getWorkflow)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
       resultIsPromise(
-        $httpBackend,
-        () => WorkflowsApiClient.getWorkflow(id),
-        () => { $httpBackend.expectGET(url); }
+        $httpBackend, () => WorkflowsApiClient.getWorkflow(id), () => {
+          $httpBackend.expectGET(url);
+        }
       );
     });
 
     it('which return promise & resolve it on request success', () => {
-      promiseIsResolved($httpBackend, url, response,
-        () => WorkflowsApiClient.getWorkflow(id),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsResolved($httpBackend, url, response, () => WorkflowsApiClient.getWorkflow(id), () => {
+        $httpBackend.expectGET(url);
+      });
     });
 
     it('which return promise & rejects it on request error', () => {
-      promiseIsRejected($httpBackend, mockRequest,
-        () => WorkflowsApiClient.getWorkflow(id),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsRejected($httpBackend, mockRequest, () => WorkflowsApiClient.getWorkflow(id), () => {
+        $httpBackend.expectGET(url);
+      });
     });
   });
 
@@ -131,8 +135,9 @@ describe('WorkflowsApiClient', () => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend.
-          when('POST', url).
-          respond(dataResponse);
+        when('POST', url)
+          .
+        respond(dataResponse);
       });
     });
 
@@ -142,30 +147,30 @@ describe('WorkflowsApiClient', () => {
     });
 
     it('which is valid function', () => {
-      expect(WorkflowsApiClient.createWorkflow).toEqual(jasmine.any(Function));
+      expect(WorkflowsApiClient.createWorkflow)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
       resultIsPromise(
-        $httpBackend,
-        () => WorkflowsApiClient.createWorkflow(params),
-        () => { $httpBackend.expectPOST(url, dataRequest); }
+        $httpBackend, () => WorkflowsApiClient.createWorkflow(params), () => {
+          $httpBackend.expectPOST(url, dataRequest);
+        }
       );
     });
 
     it('which return promise & resolve it on request success', () => {
       promiseIsResolved(
-        $httpBackend, url, dataResponse,
-        () => WorkflowsApiClient.createWorkflow(params),
-        () => { $httpBackend.expectPOST(url, dataRequest); }
+        $httpBackend, url, dataResponse, () => WorkflowsApiClient.createWorkflow(params), () => {
+          $httpBackend.expectPOST(url, dataRequest);
+        }
       );
     });
 
     it('which return promise & rejects it on request error', () => {
-      promiseIsRejected($httpBackend, mockRequest,
-        () => WorkflowsApiClient.createWorkflow(params),
-        () => { $httpBackend.expectPOST(url, dataRequest); }
-      );
+      promiseIsRejected($httpBackend, mockRequest, () => WorkflowsApiClient.createWorkflow(params), () => {
+        $httpBackend.expectPOST(url, dataRequest);
+      });
     });
   });
 
@@ -197,9 +202,10 @@ describe('WorkflowsApiClient', () => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend.
-          when('PUT', url).
-          respond(dataResponse);
-        });
+        when('PUT', url)
+          .
+        respond(dataResponse);
+      });
     });
 
     afterEach(() => {
@@ -208,29 +214,28 @@ describe('WorkflowsApiClient', () => {
     });
 
     it('which is valid function', () => {
-      expect(WorkflowsApiClient.updateWorkflow).toEqual(jasmine.any(Function));
+      expect(WorkflowsApiClient.updateWorkflow)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
       resultIsPromise(
-        $httpBackend,
-        () => WorkflowsApiClient.updateWorkflow(serializedWorkflow),
-        () => { $httpBackend.expectPUT(url, dataRequest); }
+        $httpBackend, () => WorkflowsApiClient.updateWorkflow(serializedWorkflow), () => {
+          $httpBackend.expectPUT(url, dataRequest);
+        }
       );
     });
 
     it('which return promise & resolve it on request success', () => {
-      promiseIsResolved($httpBackend, url, dataResponse,
-        () => WorkflowsApiClient.updateWorkflow(serializedWorkflow),
-        () => { $httpBackend.expectPUT(url, dataRequest); }
-      );
+      promiseIsResolved($httpBackend, url, dataResponse, () => WorkflowsApiClient.updateWorkflow(serializedWorkflow), () => {
+        $httpBackend.expectPUT(url, dataRequest);
+      });
     });
 
     it('which return promise & rejects it on request error', () => {
-      promiseIsRejected($httpBackend, mockRequest,
-        () => WorkflowsApiClient.updateWorkflow(serializedWorkflow),
-        () => { $httpBackend.expectPUT(url, dataRequest); }
-      );
+      promiseIsRejected($httpBackend, mockRequest, () => WorkflowsApiClient.updateWorkflow(serializedWorkflow), () => {
+        $httpBackend.expectPUT(url, dataRequest);
+      });
     });
   });
 
@@ -258,8 +263,9 @@ describe('WorkflowsApiClient', () => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend.
-          when('GET', url).
-          respond(dataResponse);
+        when('GET', url)
+          .
+        respond(dataResponse);
       });
     });
 
@@ -269,29 +275,28 @@ describe('WorkflowsApiClient', () => {
     });
 
     it('which is valid function', () => {
-      expect(WorkflowsApiClient.getLatestReport).toEqual(jasmine.any(Function));
+      expect(WorkflowsApiClient.getLatestReport)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
       resultIsPromise(
-        $httpBackend,
-        () => WorkflowsApiClient.getLatestReport(id),
-        () => { $httpBackend.expectGET(url); }
+        $httpBackend, () => WorkflowsApiClient.getLatestReport(id), () => {
+          $httpBackend.expectGET(url);
+        }
       );
     });
 
     it('which return promise & resolve it on request success', () => {
-      promiseIsResolved($httpBackend, url, dataResponse,
-        () => WorkflowsApiClient.getLatestReport(id),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsResolved($httpBackend, url, dataResponse, () => WorkflowsApiClient.getLatestReport(id), () => {
+        $httpBackend.expectGET(url);
+      });
     });
 
     it('which return promise & rejects it on request error', () => {
-      promiseIsRejected($httpBackend, mockRequest,
-        () => WorkflowsApiClient.getLatestReport(id),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsRejected($httpBackend, mockRequest, () => WorkflowsApiClient.getLatestReport(id), () => {
+        $httpBackend.expectGET(url);
+      });
     });
   });
 
@@ -319,8 +324,9 @@ describe('WorkflowsApiClient', () => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend.
-          when('GET', url).
-          respond(dataResponse);
+        when('GET', url)
+          .
+        respond(dataResponse);
       });
     });
 
@@ -330,29 +336,28 @@ describe('WorkflowsApiClient', () => {
     });
 
     it('which is valid function', () => {
-      expect(WorkflowsApiClient.getReport).toEqual(jasmine.any(Function));
+      expect(WorkflowsApiClient.getReport)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
       resultIsPromise(
-        $httpBackend,
-        () => WorkflowsApiClient.getReport(id),
-        () => { $httpBackend.expectGET(url); }
+        $httpBackend, () => WorkflowsApiClient.getReport(id), () => {
+          $httpBackend.expectGET(url);
+        }
       );
     });
 
     it('which return promise & resolve it on request success', () => {
-      promiseIsResolved($httpBackend, url, dataResponse,
-        () => WorkflowsApiClient.getReport(id),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsResolved($httpBackend, url, dataResponse, () => WorkflowsApiClient.getReport(id), () => {
+        $httpBackend.expectGET(url);
+      });
     });
 
     it('which return promise & rejects it on request error', () => {
-      promiseIsRejected($httpBackend, mockRequest,
-        () => WorkflowsApiClient.getReport(id),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsRejected($httpBackend, mockRequest, () => WorkflowsApiClient.getReport(id), () => {
+        $httpBackend.expectGET(url);
+      });
     });
   });
 
@@ -368,8 +373,9 @@ describe('WorkflowsApiClient', () => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend.
-          when('GET', url).
-          respond(dataResponse);
+        when('GET', url)
+          .
+        respond(dataResponse);
       });
     });
 
@@ -379,29 +385,28 @@ describe('WorkflowsApiClient', () => {
     });
 
     it('which is valid function', () => {
-      expect(WorkflowsApiClient.getResultsUploadTime).toEqual(jasmine.any(Function));
+      expect(WorkflowsApiClient.getResultsUploadTime)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
       resultIsPromise(
-        $httpBackend,
-        () => WorkflowsApiClient.getResultsUploadTime(workflowId),
-        () => { $httpBackend.expectGET(url); }
+        $httpBackend, () => WorkflowsApiClient.getResultsUploadTime(workflowId), () => {
+          $httpBackend.expectGET(url);
+        }
       );
     });
 
     it('which return promise & resolve it on request success', () => {
-      promiseIsResolved($httpBackend, url, dataResponse,
-        () => WorkflowsApiClient.getResultsUploadTime(workflowId),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsResolved($httpBackend, url, dataResponse, () => WorkflowsApiClient.getResultsUploadTime(workflowId), () => {
+        $httpBackend.expectGET(url);
+      });
     });
 
     it('which return promise & rejects it on request error', () => {
-      promiseIsRejected($httpBackend, mockRequest,
-        () => WorkflowsApiClient.getResultsUploadTime(workflowId),
-        () => { $httpBackend.expectGET(url); }
-      );
+      promiseIsRejected($httpBackend, mockRequest, () => WorkflowsApiClient.getResultsUploadTime(workflowId), () => {
+        $httpBackend.expectGET(url);
+      });
     });
   });
 });

@@ -8,41 +8,42 @@ function BasicLinePlot() {
     scope: {
       'data': '='
     },
-    link: function (scope, element) {
-      function displayChart (data) {
-        $(function () {
-          $(element).highcharts({
-            chart: {
-              type: 'spline'
-            },
-            title: {
-              text: ''
-            },
-            xAxis: {
-              reversed: false,
-              maxPadding: 0.05,
-              showLastLabel: true
-            },
-            yAxis: {
-              title: null
-            },
-            legend: {
-              enabled: false
-            },
-            tooltip: {
-              enabled: false
-            },
-            plotOptions: {
-              spline: {
-                marker: {
-                  enable: true
+    link: function(scope, element) {
+      function displayChart(data) {
+        $(function() {
+          $(element)
+            .highcharts({
+              chart: {
+                type: 'spline'
+              },
+              title: {
+                text: ''
+              },
+              xAxis: {
+                reversed: false,
+                maxPadding: 0.05,
+                showLastLabel: true
+              },
+              yAxis: {
+                title: null
+              },
+              legend: {
+                enabled: false
+              },
+              tooltip: {
+                enabled: false
+              },
+              plotOptions: {
+                spline: {
+                  marker: {
+                    enable: true
+                  }
                 }
-              }
-            },
-            series: [{
-              data: _.map(data, (point) => _.map(point, parseFloat))
-            }]
-          });
+              },
+              series: [{
+                data: _.map(data, (point) => _.map(point, parseFloat))
+              }]
+            });
         });
       }
 
@@ -53,6 +54,6 @@ function BasicLinePlot() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('basicLinePlot', BasicLinePlot);
 };

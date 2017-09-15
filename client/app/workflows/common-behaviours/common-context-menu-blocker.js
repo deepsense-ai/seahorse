@@ -1,8 +1,9 @@
 'use strict';
+
 function ContextMenuBlocker() {
   return {
     restrict: 'A',
-    link: function (scope, element, atrributes) {
+    link: function(scope, element, atrributes) {
       element.on('contextmenu', (event) => {
         event.preventDefault();
       });
@@ -10,6 +11,6 @@ function ContextMenuBlocker() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('contextMenuBlocker', ContextMenuBlocker);
 };

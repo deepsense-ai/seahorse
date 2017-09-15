@@ -32,7 +32,6 @@ function OperationsApiClientFactory(BaseApiClient) {
   return new OperationsApiClient();
 }
 
-
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('OperationsApiClient', OperationsApiClientFactory);
 };

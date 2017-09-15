@@ -1,6 +1,9 @@
 'use strict';
 
-import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+import {
+  GraphPanelRendererBase
+}
+from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 
 /* @ngInject */
 function WorkflowsReportController(
@@ -12,16 +15,18 @@ function WorkflowsReportController(
 
   _.assign(internal, {
     selectedNode: null,
-    unselectNode: () => { internal.selectedNode = null; }
+    unselectNode: () => {
+      internal.selectedNode = null;
+    }
   });
 
   _.assign(that, {
     getWorkflow: WorkflowService.getWorkflow,
     getSelectedNode: () => internal.selectedNode,
-    get GUIData () {
+    get GUIData() {
       return report.thirdPartyData.gui;
     },
-    get reportData () {
+    get reportData() {
       return report.executionReport;
     }
   });
@@ -50,13 +55,14 @@ function WorkflowsReportController(
     if (node.hasParameters()) {
       $scope.$digest();
     } else {
-      Operations.getWithParams(node.operationId).then((operationData) => {
-        $scope.$applyAsync(() => {
-          node.setParameters(operationData.parameters, DeepsenseNodeParameters);
+      Operations.getWithParams(node.operationId)
+        .then((operationData) => {
+          $scope.$applyAsync(() => {
+            node.setParameters(operationData.parameters, DeepsenseNodeParameters);
+          });
+        }, (error) => {
+          console.error('operation fetch error', error);
         });
-      }, (error) => {
-        console.error('operation fetch error', error);
-      });
     }
   });
 
@@ -71,7 +77,8 @@ function WorkflowsReportController(
   });
 
   $scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
-    let node = WorkflowService.getWorkflow().getNodeById(data.portObject.nodeId);
+    let node = WorkflowService.getWorkflow()
+      .getNodeById(data.portObject.nodeId);
     $scope.$applyAsync(() => {
       let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
       if (Report.hasReportEntity(reportEntityId)) {
@@ -94,6 +101,6 @@ function WorkflowsReportController(
 
 exports.function = WorkflowsReportController;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('WorkflowsReportController', WorkflowsReportController);
 };

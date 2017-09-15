@@ -20,24 +20,36 @@ const inputStyle = {
   maxConnections: 1
 };
 
-import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
-import { GraphPanelStyler } from './graph-panel-styler.js';
+import {
+  GraphPanelRendererBase
+}
+from './graph-panel-renderer-base.js';
+import {
+  GraphPanelStyler
+}
+from './graph-panel-styler.js';
 
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
-                                   DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService, GraphNode)
-{
+  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService, GraphNode) {
   const connectorPaintStyles = {
-    [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' }),
-    [Edge.STATE_TYPE.MAYBE]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' }),
-    [Edge.STATE_TYPE.NEVER]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#ED5565' }),
-    [Edge.STATE_TYPE.UNKNOWN]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' })
+    [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, {
+      strokeStyle: '#61B7CF'
+    }), [Edge.STATE_TYPE.MAYBE]: _.defaults({}, connectorPaintStyleDefault, {
+      strokeStyle: '#F8AC59'
+    }), [Edge.STATE_TYPE.NEVER]: _.defaults({}, connectorPaintStyleDefault, {
+      strokeStyle: '#ED5565'
+    }), [Edge.STATE_TYPE.UNKNOWN]: _.defaults({}, connectorPaintStyleDefault, {
+      strokeStyle: 'gray'
+    })
   };
 
   const OUTPUT_STYLE = {
     endpoint: 'Dot',
     isSource: true,
-    connector: ['Bezier', { curviness: 75 }],
+    connector: ['Bezier', {
+      curviness: 75
+    }],
     connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
     connectorHoverStyle: connectorHoverStyle,
     maxConnections: -1
@@ -90,7 +102,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   that.getZoomRatio = () => jsPlumb.getZoom();
 
-  that.setZoom = function setZoom (zoomRatio) {
+  that.setZoom = function setZoom(zoomRatio) {
     let instance = jsPlumb;
     internal.currentZoomRatio = zoomRatio;
     instance.setZoom(zoomRatio);
@@ -112,7 +124,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.renderPorts = function renderPorts() {
-    let nodes = WorkflowService.getWorkflow().getNodes();
+    let nodes = WorkflowService.getWorkflow()
+      .getNodes();
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         let node = internal.getNodeById(nodeId);
@@ -124,7 +137,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   that.renderEdges = function renderEdges() {
     jsPlumb.detachEveryConnection();
-    let edges = WorkflowService.getWorkflow().getEdges();
+    let edges = WorkflowService.getWorkflow()
+      .getEdges();
     let outputPrefix = 'output';
     let inputPrefix = 'input';
     for (let id in edges) {
@@ -145,11 +159,12 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   that.changeEdgesPaintStyles = function changeEdgesStates() {
     let connections = jsPlumb.getConnections();
-    let edges = WorkflowService.getWorkflow().getEdges();
+    let edges = WorkflowService.getWorkflow()
+      .getEdges();
     for (let id in edges) {
       if (edges.hasOwnProperty(id)) {
         let edge = edges[id];
-        let connection = _.find(connections, (connection) => connection.getParameter('edgeId') === edge.id );
+        let connection = _.find(connections, (connection) => connection.getParameter('edgeId') === edge.id);
 
         if (!_.isUndefined(connection)) {
           connection.setPaintStyle(connectorPaintStyles[edge.state]);
@@ -159,9 +174,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.addOutputPoint = function addOutputPoint(nodeElement, ports, nodeObj) {
-    let anchors = (ports.length === 1) ?
-      ['BottomCenter'] :
-      ['BottomLeft', 'BottomCenter', 'BottomRight'];
+    let anchors = (ports.length === 1) ? ['BottomCenter'] : ['BottomLeft', 'BottomCenter', 'BottomRight'];
 
     for (let i = 0; i < ports.length; i++) {
       let reportEntityId = nodeObj.getResult(i);
@@ -219,9 +232,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.addInputPoint = function addInputPoint(node, ports) {
-    let anchors = (ports.length === 1) ?
-      ['TopCenter'] :
-      ['TopLeft', 'TopCenter', 'TopRight'];
+    let anchors = (ports.length === 1) ? ['TopCenter'] : ['TopLeft', 'TopCenter', 'TopRight'];
 
     for (let i = 0; i < ports.length; i++) {
       let port = jsPlumb.addEndpoint(node, inputStyle, {
@@ -254,20 +265,23 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       }
 
       let data = {
-          'from': {
-            'nodeId': info.sourceId.slice(nodeIdPrefixLength),
-            'portIndex': info.sourceEndpoint.getParameter('portIndex')
-          },
-          'to': {
-            'nodeId': info.targetId.slice(nodeIdPrefixLength),
-            'portIndex': info.targetEndpoint.getParameter('portIndex')
-          }
-        };
-      let edge = WorkflowService.getWorkflow().createEdge(data);
+        'from': {
+          'nodeId': info.sourceId.slice(nodeIdPrefixLength),
+          'portIndex': info.sourceEndpoint.getParameter('portIndex')
+        },
+        'to': {
+          'nodeId': info.targetId.slice(nodeIdPrefixLength),
+          'portIndex': info.targetEndpoint.getParameter('portIndex')
+        }
+      };
+      let edge = WorkflowService.getWorkflow()
+        .createEdge(data);
 
       info.connection.setParameter('edgeId', edge.id);
 
-      $rootScope.$broadcast(Edge.CREATE, {edge: edge});
+      $rootScope.$broadcast(Edge.CREATE, {
+        edge: edge
+      });
 
       if (DeepsenseCycleAnalyser.cycleExists(WorkflowService.getWorkflow())) {
         NotificationService.showError({
@@ -277,7 +291,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
         $timeout(() => {
           $rootScope.$broadcast(Edge.REMOVE, {
-            edge: WorkflowService.getWorkflow().getEdgeById(info.connection.getParameter('edgeId'))
+            edge: WorkflowService.getWorkflow()
+              .getEdgeById(info.connection.getParameter('edgeId'))
           });
 
           jsPlumb.detach(info.connection);
@@ -292,16 +307,21 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       if (workflow) {
         let edge = workflow.getEdgeById(info.connection.getParameter('edgeId'));
         if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
-          $rootScope.$broadcast(Edge.REMOVE, { edge: edge });
+          $rootScope.$broadcast(Edge.REMOVE, {
+            edge: edge
+          });
           WorkflowService.saveWorkflow();
         }
       }
     });
 
     jsPlumb.bind('connectionMoved', (info) => {
-      let edge = WorkflowService.getWorkflow().getEdgeById(info.connection.getParameter('edgeId'));
+      let edge = WorkflowService.getWorkflow()
+        .getEdgeById(info.connection.getParameter('edgeId'));
       if (edge) {
-        $rootScope.$broadcast(Edge.REMOVE, { edge: edge });
+        $rootScope.$broadcast(Edge.REMOVE, {
+          edge: edge
+        });
         WorkflowService.saveWorkflow();
       }
     });
@@ -322,8 +342,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   that.setRenderMode = function setRenderMode(renderMode) {
     if (renderMode !== GraphPanelRendererBase.EDITOR_RENDER_MODE &&
-      renderMode !== GraphPanelRendererBase.REPORT_RENDER_MODE)
-    {
+      renderMode !== GraphPanelRendererBase.REPORT_RENDER_MODE) {
       throw `render mode should be either 'editor' or 'report'`;
     }
 
@@ -361,6 +380,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   return that;
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('GraphPanelRendererService', GraphPanelRendererService);
 };

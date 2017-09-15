@@ -6,8 +6,10 @@ class ConfirmationModalService {
     this.$modal = $modal;
   }
 
-  showModal(options = { message: '' }) {
-    let modal =  this.$modal.open({
+  showModal(options = {
+    message: ''
+  }) {
+    let modal = this.$modal.open({
       animation: true,
       templateUrl: 'app/common/modals/confirmation-modal/confirmation-modal.html',
       controller: 'ConfirmationModalController as controller',
@@ -22,6 +24,6 @@ class ConfirmationModalService {
   }
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('ConfirmationModalService', ConfirmationModalService);
 };

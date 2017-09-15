@@ -1,6 +1,7 @@
 'use strict';
 
-let REPORT_EVENTS = require('../../reports.controller.js').EVENTS;
+let REPORT_EVENTS = require('../../reports.controller.js')
+  .EVENTS;
 
 function ReportTableBody() {
   return {
@@ -14,9 +15,9 @@ function ReportTableBody() {
       'tableColumnsData': '=',
       'selectionColumnEnabled': '='
     },
-    link: function (scope, element, args, controller) {
+    link: function(scope, element, args, controller) {
       if (scope.reportTableBody.selectionColumnEnabled) {
-        element.on('click', function (event) {
+        element.on('click', function(event) {
           scope.$apply(() => {
             controller.selectColumn(event);
             controller.extendSidePanel();
@@ -42,7 +43,7 @@ function ReportTableBodyeController($scope, $rootScope, $element) {
         cell.classList.remove(internals.CELL_HIGHLIGHT_CLASS);
       });
     },
-    selectColumn: function (index) {
+    selectColumn: function(index) {
       let tableEl = $element[0];
       let allCellsToSelect = tableEl.querySelectorAll(`td:nth-child(${index + 1}), th:nth-child(${index + 1})`);
 
@@ -53,13 +54,14 @@ function ReportTableBodyeController($scope, $rootScope, $element) {
   });
 
   _.assign(that, {
-    extendSidePanel: function extendSidePanel () {
+    extendSidePanel: function extendSidePanel() {
       let tableEl = $element[0];
       let highlightedCell = tableEl.querySelector('td.info');
 
       if (highlightedCell) {
         let index = highlightedCell.cellIndex + 1;
-        let colName = tableEl.querySelector(`th:nth-child(${ index }) span.col-name`).innerHTML;
+        let colName = tableEl.querySelector(`th:nth-child(${ index }) span.col-name`)
+          .innerHTML;
 
         $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
           colName: colName
@@ -68,9 +70,10 @@ function ReportTableBodyeController($scope, $rootScope, $element) {
         $scope.$on(REPORT_EVENTS.DESELECT_COLUMN, internals.clearSelection);
       }
     },
-    selectColumn: function selectColumn (event) {
+    selectColumn: function selectColumn(event) {
       // get exactly the cell, not a <span> or <a> or something else
-      let cell = $(event.target).closest('td, th');
+      let cell = $(event.target)
+        .closest('td, th');
 
       if (!cell.length) {
         return false;
@@ -82,6 +85,6 @@ function ReportTableBodyeController($scope, $rootScope, $element) {
   });
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('reportTableBody', ReportTableBody);
 };

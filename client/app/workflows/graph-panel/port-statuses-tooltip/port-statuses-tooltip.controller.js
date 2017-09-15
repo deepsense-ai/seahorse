@@ -9,7 +9,8 @@ function PortStatusesTooltipController($scope, $element) {
     portElement: null,
     portObject: null,
     tooltipIsVisible: false,
-    flowchartBoxContainer: $($element).closest('.flowchart-box')
+    flowchartBoxContainer: $($element)
+      .closest('.flowchart-box')
   });
 
   internal.mouseoverHandler = (portEl, portObject) => {
@@ -26,10 +27,14 @@ function PortStatusesTooltipController($scope, $element) {
     $scope.$digest();
   };
 
-  $scope.$on('InputPoint.MOUSEOVER', (event, data) => { internal.mouseoverHandler(data.portElement, data.portObject); });
+  $scope.$on('InputPoint.MOUSEOVER', (event, data) => {
+    internal.mouseoverHandler(data.portElement, data.portObject);
+  });
   $scope.$on('InputPoint.MOUSEOUT', internal.hideTooltip);
 
-  $scope.$on('OutputPoint.MOUSEOVER', (event, data) => { internal.mouseoverHandler(data.portElement, data.portObject); });
+  $scope.$on('OutputPoint.MOUSEOVER', (event, data) => {
+    internal.mouseoverHandler(data.portElement, data.portObject);
+  });
   $scope.$on('OutputPoint.MOUSEOUT', internal.hideTooltip);
 
   $scope.$on('Keyboard.KEY_PRESSED_DEL', internal.hideTooltip);
@@ -40,17 +45,22 @@ function PortStatusesTooltipController($scope, $element) {
 
   that.getPositionX = () => {
     return Math.round(
-      that.portElement.getBoundingClientRect().left -
-      that.flowchartBoxContainer[0].getBoundingClientRect().left +
-      that.portElement.getBoundingClientRect().width +
+      that.portElement.getBoundingClientRect()
+      .left -
+      that.flowchartBoxContainer[0].getBoundingClientRect()
+      .left +
+      that.portElement.getBoundingClientRect()
+      .width +
       (that.portObject.type === 'output' ? 3 : 0) // a slight adjustment for output ports
     );
   };
 
   that.getPositionY = () => {
     return Math.round(
-      that.portElement.getBoundingClientRect().top -
-      that.flowchartBoxContainer[0].getBoundingClientRect().top +
+      that.portElement.getBoundingClientRect()
+      .top -
+      that.flowchartBoxContainer[0].getBoundingClientRect()
+      .top +
       (that.portObject.type === 'output' ? 10 : 0) // a slight adjustment for output ports
     );
   };
@@ -58,7 +68,6 @@ function PortStatusesTooltipController($scope, $element) {
   return that;
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('PortStatusesTooltipController', PortStatusesTooltipController);
 };
-

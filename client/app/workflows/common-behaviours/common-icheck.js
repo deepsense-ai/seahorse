@@ -12,28 +12,33 @@ function Icheck($timeout) {
         value = $attrs.value;
 
         $scope.$watch($attrs.ngModel, () => {
-          $(element).iCheck('update');
+          $(element)
+            .iCheck('update');
         });
 
-        return $(element).
-          iCheck({
+        return $(element)
+          .
+        iCheck({
             checkboxClass: 'icheckbox_square-green',
             radioClass: 'iradio_square-green'
-          }).
-          on('ifChanged', (event) => {
-            if ($(element).attr('type') === 'checkbox' && $attrs.ngModel) {
-              $scope.$apply(() => ngModel.$setViewValue(event.target.checked));
-            }
+          })
+          .
+        on('ifChanged', (event) => {
+          if ($(element)
+            .attr('type') === 'checkbox' && $attrs.ngModel) {
+            $scope.$apply(() => ngModel.$setViewValue(event.target.checked));
+          }
 
-            if ($(element).attr('type') === 'radio' && $attrs.ngModel) {
-              return $scope.$apply(() => ngModel.$setViewValue(value));
-            }
-          });
+          if ($(element)
+            .attr('type') === 'radio' && $attrs.ngModel) {
+            return $scope.$apply(() => ngModel.$setViewValue(value));
+          }
+        });
       });
     }
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('icheck', Icheck);
 };

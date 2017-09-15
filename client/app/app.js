@@ -19,14 +19,20 @@ if (browser.name === 'chrome') {
     'deepsense.cycle-analyser',
     'ngFileUpload',
     'toastr',
-    require('./home/home.module.js').name,
-    require('./workflows/workflows.module.js').name,
-    require('./common/common.module.js').name,
-    require('./errors/errors.module.js').name
+    require('./home/home.module.js')
+    .name,
+    require('./workflows/workflows.module.js')
+    .name,
+    require('./common/common.module.js')
+    .name,
+    require('./errors/errors.module.js')
+    .name
   ]);
   lab.constant('additionalControls', false);
-  require('./app.config.js').inject(lab);
-  require('./app.run.js').inject(lab);
+  require('./app.config.js')
+    .inject(lab);
+  require('./app.run.js')
+    .inject(lab);
 } else {
   alert('Error: Unsupported browser.\nDetected browser: ' + _.capitalize(browser.name) + '\n' + 'Please use Chrome.');
 }

@@ -12,19 +12,25 @@ function RunModalController($state, $stateParams, $modalInstance, message, RunMo
     close: () => {
       $modalInstance.dismiss();
     },
-    execute: function () {
+    execute: function() {
       this.status = LOADING;
 
-      RunModalFactory.execute().
-        then(() => {
+      RunModalFactory.execute()
+        .
+      then(() => {
           this.status = SUCCESS;
-        }).
-        catch(({ data } = { data: 'Server is not responding' }) => {
-          this.status = FAILED;
-          this.errorMessage = data;
-        });
+        })
+        .
+      catch(({
+        data
+      } = {
+        data: 'Server is not responding'
+      }) => {
+        this.status = FAILED;
+        this.errorMessage = data;
+      });
     },
-    goToReport : function () {
+    goToReport: function() {
       $state.go('workflows.latest_report', {
         'id': $stateParams.id
       });
@@ -33,6 +39,6 @@ function RunModalController($state, $stateParams, $modalInstance, message, RunMo
   });
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('RunModalController', RunModalController);
 };

@@ -13,6 +13,6 @@ function ConfirmationModalController($modalInstance, message) {
   });
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('ConfirmationModalController', ConfirmationModalController);
 };

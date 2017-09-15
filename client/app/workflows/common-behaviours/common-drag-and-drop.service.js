@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function DragAndDrop ($rootScope, $log, MouseEvent) {
+function DragAndDrop($rootScope, $log, MouseEvent) {
   var that = this;
   var internal = {
     allDraggableElements: new WeakMap(),
@@ -15,7 +15,7 @@ function DragAndDrop ($rootScope, $log, MouseEvent) {
   that.drag = drag;
   that.drop = drop;
 
-  function drag (event, element) {
+  function drag(event, element) {
     let type = event.dataTransfer.getData('draggableType');
 
     setCurrentElement(element);
@@ -34,7 +34,7 @@ function DragAndDrop ($rootScope, $log, MouseEvent) {
     $rootScope.$broadcast('Drag.START', event, element);
   }
 
-  function drop (event, element) {
+  function drop(event, element) {
     let type = event.dataTransfer.getData('draggableType');
 
     switch (type) {
@@ -51,7 +51,7 @@ function DragAndDrop ($rootScope, $log, MouseEvent) {
     $rootScope.$broadcast('Drop.DROP', ...arguments);
   }
 
-  function saveFrameElementData (event, element) {
+  function saveFrameElementData(event, element) {
     let containerStartEventCoordinates =
       MouseEvent.getEventOffsetOfElement(event, element[0]);
 
@@ -82,13 +82,13 @@ function DragAndDrop ($rootScope, $log, MouseEvent) {
       containerStartEventCoordinates;
   }
 
-  function saveExactElementData (event, element) {
+  function saveExactElementData(event, element) {
     internal.draggableElement.element = element;
     internal.draggableElement.exactType =
       event.dataTransfer.getData('draggableExactType');
   }
 
-  function handleFrameMovement (event, element) {
+  function handleFrameMovement(event, element) {
     internal.draggableElement.element
       .css('transform', `translate(
         ${event.pageX - internal.draggableElement.eventPosition.x}px,
@@ -100,12 +100,12 @@ function DragAndDrop ($rootScope, $log, MouseEvent) {
       .attr('data-drag-state', internal.states.displaced);
   }
 
-  function publishExactEvent (event, element) {
+  function publishExactEvent(event, element) {
     $rootScope.$broadcast(`Drop.EXACT`,
       ...arguments, internal.draggableElement.exactType);
   }
 
-  function setCurrentElement (key) {
+  function setCurrentElement(key) {
     var draggableElementFromList = internal.allDraggableElements.get(key);
 
     if (draggableElementFromList) {
@@ -119,6 +119,6 @@ function DragAndDrop ($rootScope, $log, MouseEvent) {
 
 exports.function = DragAndDrop;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('DragAndDrop', DragAndDrop);
 };

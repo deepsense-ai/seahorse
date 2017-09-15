@@ -56,16 +56,18 @@ let getHierarchyResponseMock = {
   }
 };
 
-
 describe('OperationsHierarchy', () => {
   let testModule;
   let OperationsHierarchyService;
 
   beforeEach(() => {
     testModule = angular.module('test', []);
-    require('./../base-api-client.factory.js').inject(testModule);
-    require('./../operations-api-client.factory.js').inject(testModule);
-    require('./../operations-hierarchy.service.js').inject(testModule);
+    require('./../base-api-client.factory.js')
+      .inject(testModule);
+    require('./../operations-api-client.factory.js')
+      .inject(testModule);
+    require('./../operations-hierarchy.service.js')
+      .inject(testModule);
 
     angular.mock.module('test');
 
@@ -85,7 +87,9 @@ describe('OperationsHierarchy', () => {
 
         return {
           getHierarchy: () => requestAPI(getHierarchyResponseMock),
-          changeResponseStatus: (state) => { responseSuccess = state; }
+          changeResponseStatus: (state) => {
+            responseSuccess = state;
+          }
         };
       });
     });
@@ -96,37 +100,51 @@ describe('OperationsHierarchy', () => {
   });
 
   it('should be defined', () => {
-    expect(OperationsHierarchyService).toBeDefined();
-    expect(OperationsHierarchyService).toEqual(jasmine.any(Object));
+    expect(OperationsHierarchyService)
+      .toBeDefined();
+    expect(OperationsHierarchyService)
+      .toEqual(jasmine.any(Object));
   });
 
   describe('should have load method', () => {
     it('which is valid function', () => {
-      expect(OperationsHierarchyService.load).toEqual(jasmine.any(Function));
+      expect(OperationsHierarchyService.load)
+        .toEqual(jasmine.any(Function));
     });
 
     it('which returns a promise object', () => {
       let promise = OperationsHierarchyService.load();
-      expect(promise).toEqual(jasmine.any(Object));
-      expect(promise.then).toEqual(jasmine.any(Function));
-      expect(promise.catch).toEqual(jasmine.any(Function));
+      expect(promise)
+        .toEqual(jasmine.any(Object));
+      expect(promise.then)
+        .toEqual(jasmine.any(Function));
+      expect(promise.catch)
+        .toEqual(jasmine.any(Function));
     });
 
     it(
       'which returns a promise object that should be resolved on successful response',
       angular.mock.inject(($rootScope, OperationsApiClient) => {
         let success = false;
-        let error   = false;
+        let error = false;
 
         OperationsApiClient.changeResponseStatus(true);
 
-        OperationsHierarchyService.load().
-          then(() => { success = true; }).
-          catch(() => { error = true; });
+        OperationsHierarchyService.load()
+          .
+        then(() => {
+            success = true;
+          })
+          .
+        catch(() => {
+          error = true;
+        });
         $rootScope.$apply();
 
-        expect(success).toBe(true);
-        expect(error).toBe(false);
+        expect(success)
+          .toBe(true);
+        expect(error)
+          .toBe(false);
       })
     );
 
@@ -134,17 +152,25 @@ describe('OperationsHierarchy', () => {
       'which returns a promise object that should be rejected on error response',
       angular.mock.inject(($rootScope, OperationsApiClient) => {
         let success = false;
-        let error   = false;
+        let error = false;
 
         OperationsApiClient.changeResponseStatus(false);
 
-        OperationsHierarchyService.load().
-          then(() => { success = true; }).
-          catch(() => { error = true; });
+        OperationsHierarchyService.load()
+          .
+        then(() => {
+            success = true;
+          })
+          .
+        catch(() => {
+          error = true;
+        });
         $rootScope.$apply();
 
-        expect(success).toBe(false);
-        expect(error).toBe(true);
+        expect(success)
+          .toBe(false);
+        expect(error)
+          .toBe(true);
       })
     );
 
@@ -152,49 +178,71 @@ describe('OperationsHierarchy', () => {
       'which should make only one request to the API.',
       angular.mock.inject(($q, $rootScope, OperationsApiClient) => {
         let success = false;
-        let error   = false;
+        let error = false;
 
         OperationsApiClient.changeResponseStatus(true);
 
-        spyOn(OperationsHierarchyService, 'load').and.callThrough();
-        spyOn(OperationsApiClient, 'getHierarchy').and.callThrough();
+        spyOn(OperationsHierarchyService, 'load')
+          .and.callThrough();
+        spyOn(OperationsApiClient, 'getHierarchy')
+          .and.callThrough();
 
-
-        OperationsHierarchyService.load().
-          then(() => { success = true; }).
-          catch(() => { error = true; });
+        OperationsHierarchyService.load()
+          .
+        then(() => {
+            success = true;
+          })
+          .
+        catch(() => {
+          error = true;
+        });
 
         $rootScope.$apply();
 
-        expect(OperationsHierarchyService.load).toHaveBeenCalled();
-        expect(OperationsApiClient.getHierarchy).toHaveBeenCalled();
+        expect(OperationsHierarchyService.load)
+          .toHaveBeenCalled();
+        expect(OperationsApiClient.getHierarchy)
+          .toHaveBeenCalled();
 
-        expect(success).toBe(true);
-        expect(error).toBe(false);
-
+        expect(success)
+          .toBe(true);
+        expect(error)
+          .toBe(false);
 
         success = false;
         error = false;
 
-        OperationsHierarchyService.load().
-          then(() => { success = true; }).
-          catch(() => { error = true; });
+        OperationsHierarchyService.load()
+          .
+        then(() => {
+            success = true;
+          })
+          .
+        catch(() => {
+          error = true;
+        });
 
         $rootScope.$apply();
 
-        expect(OperationsHierarchyService.load).toHaveBeenCalled();
-        expect(OperationsHierarchyService.load.calls.count()).toBe(2);
-        expect(OperationsApiClient.getHierarchy.calls.count()).toBe(1);
+        expect(OperationsHierarchyService.load)
+          .toHaveBeenCalled();
+        expect(OperationsHierarchyService.load.calls.count())
+          .toBe(2);
+        expect(OperationsApiClient.getHierarchy.calls.count())
+          .toBe(1);
 
-        expect(success).toBe(true);
-        expect(error).toBe(false);
+        expect(success)
+          .toBe(true);
+        expect(error)
+          .toBe(false);
       })
     );
   });
 
   describe('should have IsDescendantOf method', () => {
     it('which is valid function', () => {
-      expect(OperationsHierarchyService.IsDescendantOf).toEqual(jasmine.any(Function));
+      expect(OperationsHierarchyService.IsDescendantOf)
+        .toEqual(jasmine.any(Function));
     });
 
     describe('which returns proper response', () => {
@@ -206,73 +254,113 @@ describe('OperationsHierarchy', () => {
 
       describe('for a node that is not a descendant', () => {
         it('of one node', () => {
-          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T1'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T2'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T3'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T1']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T2']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T3']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T4'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T7'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T5'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T4']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T7']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T5']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T7'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T3'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T0'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T7']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T3']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T0']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T7'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T4'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T3'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T7']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T4']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T3']))
+            .toBe(false);
         });
 
         it('of more than one nodes', () => {
-          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T0', 'T1'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T0', 'T1']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T1', ['T0', 'T1', 'T3'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T1', ['T0', 'T1', 'T3']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T0', 'T1', 'T2', 'T4'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T0', 'T1', 'T2', 'T4']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T2', 'T7'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T2', 'T7']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T5', 'T3'])).toBe(false);
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T0', 'T1', 'T5', 'T2', 'T3'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T5', 'T3']))
+            .toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T0', 'T1', 'T5', 'T2', 'T3']))
+            .toBe(false);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T0', 'T1', 'T2', 'T3', 'T4', 'T5'])).toBe(false);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T0', 'T1', 'T2', 'T3', 'T4', 'T5']))
+            .toBe(false);
         });
       });
 
       describe('for a node that is a descendant', () => {
         it('of itself', () => {
-          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T0'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T2', ['T2'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T7'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T0', ['T0']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T2', ['T2']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T7']))
+            .toBe(true);
         });
 
         it('of one node', () => {
-          expect(OperationsHierarchyService.IsDescendantOf('T1', ['T0'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T1', ['T0']))
+            .toBe(true);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T1'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T2'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T0'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T1']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T2']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T0']))
+            .toBe(true);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T2'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T4', ['T2']))
+            .toBe(true);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T5', ['T2'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T5', ['T2']))
+            .toBe(true);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T0'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T1'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T5'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T2'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T0']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T1']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T5']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T2']))
+            .toBe(true);
 
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T0'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T1'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T2'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T3'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T4'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T0']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T1']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T2']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T3']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T4']))
+            .toBe(true);
         });
 
         it('of more than one nodes', () => {
-          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T0', 'T1', 'T2'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T0', 'T1', 'T5', 'T2'])).toBe(true);
-          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T0', 'T1', 'T2', 'T3', 'T4'])).toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T3', ['T0', 'T1', 'T2']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T6', ['T0', 'T1', 'T5', 'T2']))
+            .toBe(true);
+          expect(OperationsHierarchyService.IsDescendantOf('T7', ['T0', 'T1', 'T2', 'T3', 'T4']))
+            .toBe(true);
         });
       });
     });

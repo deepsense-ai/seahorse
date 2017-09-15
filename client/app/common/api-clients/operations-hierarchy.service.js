@@ -1,10 +1,10 @@
 'use strict';
 
-function Graph () {
+function Graph() {
   this.nodes = {};
 }
 
-Graph.prototype.build = function (data) {
+Graph.prototype.build = function(data) {
   let that = this;
   let internal = {};
 
@@ -47,14 +47,14 @@ Graph.prototype.build = function (data) {
   internal.addClasses(data.classes);
 };
 
-Graph.prototype.IsDescendantOf = function (node, ancestors) {
+Graph.prototype.IsDescendantOf = function(node, ancestors) {
   return this.areDescendantsOf([node], ancestors);
 };
 
 Graph.prototype.IsDescendantOf = function(node, ancestors) {
   let thatGraph = this;
   let visitedNodes = {};
-  let queue = [ node ];
+  let queue = [node];
 
   /* run BFS */
   while (queue.length > 0) {
@@ -83,11 +83,12 @@ function OperationsHierarchyService($q, OperationsApiClient) {
       return deferred.promise;
     } else {
       return OperationsApiClient.
-        getHierarchy().
-        then((data) => {
-          graph.build(data);
-          isLoaded = true;
-        });
+      getHierarchy()
+        .
+      then((data) => {
+        graph.build(data);
+        isLoaded = true;
+      });
     }
   };
 
@@ -96,6 +97,6 @@ function OperationsHierarchyService($q, OperationsApiClient) {
   return service;
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('OperationsHierarchyService', OperationsHierarchyService);
 };

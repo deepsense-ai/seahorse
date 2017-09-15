@@ -15,6 +15,6 @@ function ReportEvaluateScoring() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('reportEvaluateScoring', ReportEvaluateScoring);
 };

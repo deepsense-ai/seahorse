@@ -14,24 +14,28 @@ function LastExecutionReportService($timeout, $rootScope, config, WorkflowServic
   }
 
   function requestForLastExecutionReportTime() {
-    let workflowId = WorkflowService.getWorkflow().id;
+    let workflowId = WorkflowService.getWorkflow()
+      .id;
 
-    WorkflowsApiClient.getResultsUploadTime(workflowId).
-      then((data) => {
+    WorkflowsApiClient.getResultsUploadTime(workflowId)
+      .
+    then((data) => {
         let workflow = WorkflowService.getWorkflow();
         if (workflow.id === workflowId) {
           setLastExecutionReportTime(workflow, data.resultsUploadTime);
         }
-      }).
-      catch(() => {
+      })
+      .
+    catch(() => {
         let workflow = WorkflowService.getWorkflow();
         if (workflow.id === workflowId) {
           workflow.lastExecutionReportTime = null;
         }
-      }).
-      then(() => {
-        internal.timeoutPromise = $timeout(requestForLastExecutionReportTime, config.resultsRefreshInterval);
-      });
+      })
+      .
+    then(() => {
+      internal.timeoutPromise = $timeout(requestForLastExecutionReportTime, config.resultsRefreshInterval);
+    });
   }
 
   _.assign(this, {
@@ -44,6 +48,6 @@ function LastExecutionReportService($timeout, $rootScope, config, WorkflowServic
   });
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('LastExecutionReportService', LastExecutionReportService);
 };

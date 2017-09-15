@@ -1,12 +1,12 @@
 'use strict';
 
-describe('NotificationService', function () {
+describe('NotificationService', function() {
   var NotificationService;
   var $rootScope;
   var toastr;
   var $log;
 
-  beforeEach(function  () {
+  beforeEach(function() {
     var testModule = angular.module('test', ['ui.router', 'toastr']);
 
     if (typeof Function.prototype.bind !== 'function') {
@@ -31,14 +31,18 @@ describe('NotificationService', function () {
       };
     }
 
-    require('./../../../app.run.js').inject(testModule);
-    require('./../../../app.config.js').inject(testModule);
-    require('./../page.service.js').inject(testModule);
-    require('./../notification.service.js').inject(testModule);
+    require('./../../../app.run.js')
+      .inject(testModule);
+    require('./../../../app.config.js')
+      .inject(testModule);
+    require('./../page.service.js')
+      .inject(testModule);
+    require('./../notification.service.js')
+      .inject(testModule);
 
     angular.mock.module('test');
 
-    angular.mock.inject(function ($injector, _NotificationService_) {
+    angular.mock.inject(function($injector, _NotificationService_) {
       NotificationService = _NotificationService_;
       $rootScope = $injector.get('$rootScope');
       toastr = $injector.get('toastr');
@@ -46,60 +50,84 @@ describe('NotificationService', function () {
     });
   });
 
-  it('should be defined', function () {
-    expect(NotificationService).toBeDefined();
-    expect(NotificationService).toEqual(jasmine.any(Object));
+  it('should be defined', function() {
+    expect(NotificationService)
+      .toBeDefined();
+    expect(NotificationService)
+      .toEqual(jasmine.any(Object));
   });
 
-  it('should be extended with console log service', function () {
-    expect(NotificationService.$log).toBeDefined();
-    expect(NotificationService.$log).toEqual($log);
-    expect(NotificationService.error).toBeDefined();
-    expect(NotificationService.error).toEqual(jasmine.any(Function));
+  it('should be extended with console log service', function() {
+    expect(NotificationService.$log)
+      .toBeDefined();
+    expect(NotificationService.$log)
+      .toEqual($log);
+    expect(NotificationService.error)
+      .toBeDefined();
+    expect(NotificationService.error)
+      .toEqual(jasmine.any(Function));
   });
 
-  it('should have constructed with necessary properties', function () {
-    expect(NotificationService.$rootScope).toBeDefined();
-    expect(NotificationService.$rootScope).toEqual($rootScope); // I AM ROOT
-    expect(NotificationService.toastr).toBeDefined();
-    expect(NotificationService.toastr).toEqual(toastr);
-    expect(NotificationService.staticMessages).toBeDefined();
-    expect(NotificationService.staticMessages).toEqual(jasmine.any(Object));
-    expect(NotificationService.dynamicMessages).toBeDefined();
-    expect(NotificationService.dynamicMessages).toEqual(jasmine.any(Object));
+  it('should have constructed with necessary properties', function() {
+    expect(NotificationService.$rootScope)
+      .toBeDefined();
+    expect(NotificationService.$rootScope)
+      .toEqual($rootScope); // I AM ROOT
+    expect(NotificationService.toastr)
+      .toBeDefined();
+    expect(NotificationService.toastr)
+      .toEqual(toastr);
+    expect(NotificationService.staticMessages)
+      .toBeDefined();
+    expect(NotificationService.staticMessages)
+      .toEqual(jasmine.any(Object));
+    expect(NotificationService.dynamicMessages)
+      .toBeDefined();
+    expect(NotificationService.dynamicMessages)
+      .toEqual(jasmine.any(Object));
   });
 
-  describe('should have event listeners as static and dynamic messages', function () {
-    it('should have static messages', function () {
-      var staticMessagesLength = Object.keys(NotificationService.staticMessages).length;
-      expect(staticMessagesLength).toEqual(0);
+  describe('should have event listeners as static and dynamic messages', function() {
+    it('should have static messages', function() {
+      var staticMessagesLength = Object.keys(NotificationService.staticMessages)
+        .length;
+      expect(staticMessagesLength)
+        .toEqual(0);
     });
 
-    it('should have dynamic messages', function () {
-      var dynamicMessagesLength = Object.keys(NotificationService.dynamicMessages).length;
-      expect(dynamicMessagesLength).not.toEqual(0);
+    it('should have dynamic messages', function() {
+      var dynamicMessagesLength = Object.keys(NotificationService.dynamicMessages)
+        .length;
+      expect(dynamicMessagesLength)
+        .not.toEqual(0);
     });
 
     it('should have messages array to store all messages and prevent memory ' +
-      'leak', function () {
-      expect(NotificationService.messages).toEqual(jasmine.any(Array));
-      var messagesLength = Object.keys(NotificationService.messages).length;
-      expect(messagesLength).toEqual(0);
-    });
+      'leak',
+      function() {
+        expect(NotificationService.messages)
+          .toEqual(jasmine.any(Array));
+        var messagesLength = Object.keys(NotificationService.messages)
+          .length;
+        expect(messagesLength)
+          .toEqual(0);
+      });
   });
 
-  describe('should have init events listeners method', function () {
-    beforeEach(function () {
+  describe('should have init events listeners method', function() {
+    beforeEach(function() {
       spyOn(NotificationService.$rootScope, '$on');
       spyOn(NotificationService, 'transportEventToShowByName');
     });
 
-    it('should be defined', function () {
-      expect(NotificationService.initEventListeners).toBeDefined();
-      expect(NotificationService.initEventListeners).toEqual(jasmine.any(Function));
+    it('should be defined', function() {
+      expect(NotificationService.initEventListeners)
+        .toBeDefined();
+      expect(NotificationService.initEventListeners)
+        .toEqual(jasmine.any(Function));
     });
 
-    it('should add all event listeners from static messages', function () {
+    it('should add all event listeners from static messages', function() {
       NotificationService.initEventListeners();
 
       for (var eventName in NotificationService.staticMessages) {
@@ -110,7 +138,7 @@ describe('NotificationService', function () {
       }
     });
 
-    it('should add all event listeners from dynamic messages', function () {
+    it('should add all event listeners from dynamic messages', function() {
       NotificationService.initEventListeners();
 
       for (var eventName in NotificationService.dynamicMessages) {

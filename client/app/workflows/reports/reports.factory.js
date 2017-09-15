@@ -31,6 +31,6 @@ function ReportsFactory() {
 
 exports.function = ReportsFactory;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('Report', ReportsFactory);
 };

@@ -1,8 +1,9 @@
 'use strict';
+
 function FlowchartBoxUndraggable() {
   return {
     restrict: 'A',
-    link: function (scope, element) {
+    link: function(scope, element) {
       if (scope.flowChartBoxCtrl && scope.flowChartBoxCtrl.reportMode) {
         element.on('mousedown', (event) => {
           event.preventDefault();
@@ -12,6 +13,6 @@ function FlowchartBoxUndraggable() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('flowchartBoxUndraggable', FlowchartBoxUndraggable);
 };

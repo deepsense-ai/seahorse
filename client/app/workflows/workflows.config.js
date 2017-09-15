@@ -11,6 +11,6 @@ function WorkflowsConfig($stateProvider) {
 
 exports.function = WorkflowsConfig;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.config(WorkflowsConfig);
 };

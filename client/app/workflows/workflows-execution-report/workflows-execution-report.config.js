@@ -13,64 +13,68 @@ function WorkflowsConfig($stateProvider) {
   };
 
   $stateProvider.
-    state('workflows.latest_report', {
-      url: '/:id/latest_report',
-      'views': views,
-      resolve: {
-        report: /* @ngInject */($q, $state, $rootScope, $stateParams, WorkflowsApiClient) =>
-        {
-          let workflowId = $stateParams.id;
-          let deferred = $q.defer();
+  state('workflows.latest_report', {
+    url: '/:id/latest_report',
+    'views': views,
+    resolve: {
+      report: /* @ngInject */ ($q, $state, $rootScope, $stateParams, WorkflowsApiClient) => {
+        let workflowId = $stateParams.id;
+        let deferred = $q.defer();
 
-          WorkflowsApiClient.getLatestReport(workflowId).
-            then((data) => {
-              $rootScope.stateData.dataIsLoaded = true;
-              $state.go('workflows.report', {
-                  reportId: data.executionReport.id
-              });
-            }).
-            catch(() => {
-              $rootScope.stateData.errorMessage = `Could not load the latest report of the workflow with id ${workflowId}`;
-              deferred.reject();
+        WorkflowsApiClient.getLatestReport(workflowId)
+          .
+        then((data) => {
+            $rootScope.stateData.dataIsLoaded = true;
+            $state.go('workflows.report', {
+              reportId: data.executionReport.id
             });
+          })
+          .
+        catch(() => {
+          $rootScope.stateData.errorMessage = `Could not load the latest report of the workflow with id ${workflowId}`;
+          deferred.reject();
+        });
 
-          return deferred.promise;
-        }
+        return deferred.promise;
       }
-    });
+    }
+  });
 
   $stateProvider.
-    state('workflows.report', {
-      url: '/report/:reportId',
-      views: views,
-      resolve: {
-        report: /* @ngInject */($q, $rootScope, $stateParams, WorkflowsApiClient,
-                                Operations, OperationsHierarchyService) =>
-        {
-          let reportId = $stateParams.reportId;
-          let deferred = $q.defer();
+  state('workflows.report', {
+    url: '/report/:reportId',
+    views: views,
+    resolve: {
+      report: /* @ngInject */ ($q, $rootScope, $stateParams, WorkflowsApiClient,
+        Operations, OperationsHierarchyService) => {
+        let reportId = $stateParams.reportId;
+        let deferred = $q.defer();
 
-          Operations.load().
-            then(OperationsHierarchyService.load).
-            then(() => WorkflowsApiClient.getReport(reportId)).
-            then((data) => {
-              $rootScope.stateData.dataIsLoaded = true;
-              deferred.resolve(data);
-            }).
-            catch(() => {
-              $rootScope.stateData.errorMessage = `Could not load the report of id ${reportId}`;
-              deferred.reject();
-            });
+        Operations.load()
+          .
+        then(OperationsHierarchyService.load)
+          .
+        then(() => WorkflowsApiClient.getReport(reportId))
+          .
+        then((data) => {
+            $rootScope.stateData.dataIsLoaded = true;
+            deferred.resolve(data);
+          })
+          .
+        catch(() => {
+          $rootScope.stateData.errorMessage = `Could not load the report of id ${reportId}`;
+          deferred.reject();
+        });
 
-          return deferred.promise;
-        }
+        return deferred.promise;
       }
-    });
+    }
+  });
 
 }
 
 exports.function = WorkflowsConfig;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.config(WorkflowsConfig);
 };

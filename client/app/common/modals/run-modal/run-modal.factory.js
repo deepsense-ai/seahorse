@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function RunModalFactory ($modal, $q, $timeout) {
+function RunModalFactory($modal, $q, $timeout) {
   class RunModal {
 
     constructor() {}
@@ -9,7 +9,7 @@ function RunModalFactory ($modal, $q, $timeout) {
     showModal(options = {}) {
       options.message = options.message || '';
 
-      let modal =  $modal.open({
+      let modal = $modal.open({
         animation: true,
         templateUrl: 'app/common/modals/run-modal/run-modal.html',
         controller: 'RunModalController as controller',
@@ -21,7 +21,7 @@ function RunModalFactory ($modal, $q, $timeout) {
       return modal.result;
     }
 
-    execute () {
+    execute() {
       let def = $q.defer();
       $timeout(def.resolve, 5000, false);
       return def.promise;
@@ -31,6 +31,6 @@ function RunModalFactory ($modal, $q, $timeout) {
   return new RunModal();
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('RunModalFactory', RunModalFactory);
 };

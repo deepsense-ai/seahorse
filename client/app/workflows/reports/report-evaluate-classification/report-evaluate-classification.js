@@ -13,6 +13,6 @@ function ReportEvaluateClassification() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('reportEvaluateClassification', ReportEvaluateClassification);
 };

@@ -4,7 +4,7 @@
 function StickOnScroll($window, $document, debounce) {
   return {
     restrict: 'A',
-    link: function (scope, element, attributes) {
+    link: function(scope, element, attributes) {
       // also in common-stick-onscroll.less
       var CSS_CLASS_TO_STICK = 'stuck';
       var CSS_CLASS_TO_STICK_TO_LEFT = 'stuckLeft';
@@ -19,10 +19,11 @@ function StickOnScroll($window, $document, debounce) {
       var $clone;
       var originalWidth = $element.width();
 
-      var calculateCorrectTopOffset = function calculateCorrectTopOffset () {
+      var calculateCorrectTopOffset = function calculateCorrectTopOffset() {
         // store top mistake because of display: flex
         $element.addClass(CSS_CLASS_TO_STICK);
-        var result = $element.offset().top;
+        var result = $element.offset()
+          .top;
         $element.removeClass(CSS_CLASS_TO_STICK);
 
         return result;
@@ -30,11 +31,12 @@ function StickOnScroll($window, $document, debounce) {
 
       var topMistake = calculateCorrectTopOffset();
 
-      var mirror = function mirror (hasToBeCreated) {
+      var mirror = function mirror(hasToBeCreated) {
         if (hasToBeCreated) {
-          $clone = $element.clone(true).removeClass(CSS_CLASS_TO_STICK);
+          $clone = $element.clone(true)
+            .removeClass(CSS_CLASS_TO_STICK);
           $clone.css({
-            'visibility' : 'hidden',
+            'visibility': 'hidden',
             'z-index': '-1'
           });
           $clone.insertBefore($element);
@@ -43,8 +45,9 @@ function StickOnScroll($window, $document, debounce) {
         }
       };
 
-      var stick = function stick (viewScroll) {
-        elementAbsolutePositionTop = elementAbsolutePositionTop || $element.offset().top;
+      var stick = function stick(viewScroll) {
+        elementAbsolutePositionTop = elementAbsolutePositionTop || $element.offset()
+          .top;
 
         if (viewScroll >= elementAbsolutePositionTop && $element.hasClass(CSS_CLASS_TO_STICK) === false) {
           $element.addClass(CSS_CLASS_TO_STICK);
@@ -59,7 +62,7 @@ function StickOnScroll($window, $document, debounce) {
         }
       };
 
-      var setPosition = function setPosition (viewScroll) {
+      var setPosition = function setPosition(viewScroll) {
         var method = 'css';
 
         if (isAnimated) {
@@ -81,12 +84,13 @@ function StickOnScroll($window, $document, debounce) {
         }
       };
 
-      var unstick = function unstick (viewScroll) {
+      var unstick = function unstick(viewScroll) {
         if ($stickEndPoint.length === 0) {
           return true;
         }
 
-        let stickEndPointAbsolutePositionTop = $stickEndPoint.offset().top - topMistake;
+        let stickEndPointAbsolutePositionTop = $stickEndPoint.offset()
+          .top - topMistake;
 
         if (viewScroll < parseInt($element.css('top'))) {
           return false;
@@ -99,14 +103,14 @@ function StickOnScroll($window, $document, debounce) {
         }
       };
 
-      var runListener = function runListener (event) {
+      var runListener = function runListener(event) {
         var viewScroll = $document[0].body.scrollTop;
 
         stick(viewScroll);
         setPosition(viewScroll);
       };
 
-      var init = function init () {
+      var init = function init() {
         if (isAnimated) {
           setPosition = debounce(setPosition, DEBOUNCE_VALUE);
         }
@@ -131,6 +135,6 @@ function StickOnScroll($window, $document, debounce) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('stickOnScroll', StickOnScroll);
 };

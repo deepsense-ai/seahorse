@@ -1,18 +1,18 @@
 'use strict';
 
 /* @ngInject */
-function CalculateAvailableViewHeight () {
+function CalculateAvailableViewHeight() {
   return {
     restrict: 'A',
-    link: function (scope, element) {
+    link: function(scope, element) {
       let siblings = (el) => {
-        return Array.prototype.filter.call(el.parentNode.children, function(child){
+        return Array.prototype.filter.call(el.parentNode.children, function(child) {
           return child !== el;
         });
       };
       let allSiblingsHeight = (siblings) => {
-        return _.reduce(_.map(siblings, el => $(el).outerHeight(true)),
-          (current, next) => current + next);
+        return _.reduce(_.map(siblings, el => $(el)
+          .outerHeight(true)), (current, next) => current + next);
       };
 
       element.css('height',
@@ -21,6 +21,6 @@ function CalculateAvailableViewHeight () {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('calculateAvailableViewHeight', CalculateAvailableViewHeight);
 };

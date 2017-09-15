@@ -21,7 +21,10 @@ var jshint = require('gulp-jshint');
 var exit = require('gulp-exit');
 var templateCache = require('gulp-angular-templatecache');
 var htmlreplace = require('gulp-html-replace');
+var prettify = require('gulp-jsbeautifier');
+var debug  = require('gulp-debug');
 var exec = require('child_process').exec;
+var filenames = require('gulp-filenames');
 
 require('jshint-stylish');
 
@@ -43,6 +46,13 @@ gulp.task('clean', function () {
     .pipe(clean({force: true}));
 });
 
+gulp.task('style', function () {
+  return gulp.src('./client/app/**/*.js')
+    .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
+    .pipe(gulp.dest('./client/app/'));
+});
+
+
 gulp.task('server', function (callback) {
   var called = false,
     config = {
@@ -55,17 +65,17 @@ gulp.task('server', function (callback) {
     };
 
   return nodemon(config).
-    on('start', function () {
-      if (!called) {
-        callback();
-      }
-      called = true;
-    }).
-    on('restart', function () {
-      setTimeout(function () {
-        browserSync.reload();
-      }, BROWSER_SYNC_RELOAD_DELAY);
-    });
+  on('start', function () {
+    if (!called) {
+      callback();
+    }
+    called = true;
+  }).
+  on('restart', function () {
+    setTimeout(function () {
+      browserSync.reload();
+    }, BROWSER_SYNC_RELOAD_DELAY);
+  });
 });
 
 gulp.task('browser-sync', function () {
@@ -210,7 +220,7 @@ gulp.task('browserify', function () {
 
 gulp.task('build', function (callback) {
   runSequence(
-    'clean',
+    'clean','style',
     [
       'fonts', 'images', 'html:index', 'html:partials', 'config', 'copy:images', 'copy:scripts', 'favicon', 'assets', 'less',
       'libs:css', 'libs:js', 'jshint', 'browserify'
@@ -218,8 +228,7 @@ gulp.task('build', function (callback) {
     'version', 'replace', callback);
 });
 
-gulp.task('start', function (callback) {
-  runSequence('build', 'server', 'browser-sync', callback);
+gulp.task('watch', function() {
   if (devMode) {
     gulp.watch(client.path + client.html, ['html:index', 'html:partials', browserSync.reload]);
     gulp.watch(client.path + client.images, ['images', browserSync.reload]);
@@ -233,6 +242,10 @@ gulp.task('start', function (callback) {
       ['jshint', 'browserify', 'copy:scripts', browserSync.reload]
     );
   }
+});
+
+gulp.task('start', function (callback) {
+  runSequence('build', 'server', 'browser-sync', 'watch', callback);
 });
 
 gulp.task('default', function () {

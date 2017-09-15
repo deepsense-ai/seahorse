@@ -8,36 +8,37 @@ function PiePlot() {
     scope: {
       'data': '='
     },
-    link: function (scope, element) {
-      function displayChart (data) {
-        $(element).highcharts({
-          chart: {
-            type: 'pie'
-          },
-          title: null,
-          subtitle: null,
-          plotOptions: {
-            pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              dataLabels: {
-                enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                style: {
-                  color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+    link: function(scope, element) {
+      function displayChart(data) {
+        $(element)
+          .highcharts({
+            chart: {
+              type: 'pie'
+            },
+            title: null,
+            subtitle: null,
+            plotOptions: {
+              pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                  enabled: true,
+                  format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                  style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                  }
                 }
               }
-            }
-          },
-          tooltip: {
-            headerFormat: 'Value: <b>{point.key}</b><br />',
-            pointFormat: 'Occurrence count: <b>{point.y}</b>'
-          },
-          series: [{
-            colorByPoint: true,
-            data: _.zip(data.buckets, data.counts)
-          }]
-        });
+            },
+            tooltip: {
+              headerFormat: 'Value: <b>{point.key}</b><br />',
+              pointFormat: 'Occurrence count: <b>{point.y}</b>'
+            },
+            series: [{
+              colorByPoint: true,
+              data: _.zip(data.buckets, data.counts)
+            }]
+          });
       }
 
       scope.$applyAsync(() => {
@@ -47,6 +48,6 @@ function PiePlot() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('piePlot', PiePlot);
 };

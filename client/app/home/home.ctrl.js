@@ -23,11 +23,11 @@ function Home($rootScope, $modal, $state, PageService, config) {
     });
 
     modal.result.
-      then((workflowId) => {
-        $state.go('workflows.editor', {
-          id: workflowId
-        });
+    then((workflowId) => {
+      $state.go('workflows.editor', {
+        id: workflowId
       });
+    });
   };
 
   this.displayUploadWorkflowPopup = function displayUploadWorkflowPopup(event) {
@@ -42,11 +42,11 @@ function Home($rootScope, $modal, $state, PageService, config) {
     });
 
     modal.result.
-      then((workflowId) => {
-        $state.go('workflows.editor', {
-          'id': workflowId
-        });
+    then((workflowId) => {
+      $state.go('workflows.editor', {
+        'id': workflowId
       });
+    });
   };
 
   this.displayUploadExecutionWorkflowPopup = function displayUploadExecutionWorkflowPopup(event) {
@@ -61,11 +61,11 @@ function Home($rootScope, $modal, $state, PageService, config) {
     });
 
     modal.result.
-      then((reportId) => {
-        $state.go('workflows.report', {
-          'reportId': reportId
-        });
+    then((reportId) => {
+      $state.go('workflows.report', {
+        'reportId': reportId
       });
+    });
   };
 
   this.init();
@@ -73,6 +73,6 @@ function Home($rootScope, $modal, $state, PageService, config) {
 
 exports.function = Home;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('Home', Home);
 };

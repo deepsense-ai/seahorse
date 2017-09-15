@@ -17,13 +17,13 @@ var _ues = {
   tab_hover_color: '#5ba0dd'
 };
 
-(function () {
+(function() {
   var _ue = document.createElement('script');
   _ue.type = 'text/javascript';
   _ue.async = true;
   _ue.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'cdn.userecho.com/js/widget-1.4.gz.js';
   var s = document.getElementsByTagName('script')[0];
-  _ue.onload = function () {
+  _ue.onload = function() {
     UE.Popin.preload();
   };
   s.parentNode.insertBefore(_ue, s);
@@ -36,13 +36,17 @@ var _ues = {
   var timeout;
   var closeTimeout;
 
-  var getCurrentDate = function getCurrentDate () {
-    return moment().year(moment().year() + 1).toDate().toUTCString();
+  var getCurrentDate = function getCurrentDate() {
+    return moment()
+      .year(moment()
+        .year() + 1)
+      .toDate()
+      .toUTCString();
   };
-  var hasBeenShowed = function hasBeenShowed () {
+  var hasBeenShowed = function hasBeenShowed() {
     return localStorage.getItem('feedback-showed');
   };
-  var hasBeenClosed = function hasBeenClosed () {
+  var hasBeenClosed = function hasBeenClosed() {
     return localStorage.getItem('feedback-closed');
   };
   var setClosed = function setClosed() {
@@ -50,14 +54,15 @@ var _ues = {
 
     localStorage.setItem('feedback-closed', getCurrentDate());
   };
-  var setShowed = function setShowed () {
+  var setShowed = function setShowed() {
     localStorage.setItem('feedback-showed', getCurrentDate());
   };
   var showFeedbackWindow = function showFeedbackWindow() {
     if (!hasBeenClosed() && !hasBeenShowed()) {
       UE.Popin.show();
 
-      listenToClose().done(setClosed);
+      listenToClose()
+        .done(setClosed);
 
       setShowed();
     }
@@ -66,7 +71,8 @@ var _ues = {
     var def = new $.Deferred();
 
     closeTimeout = setTimeout(function waiter() {
-      if ($('#ue-dlg').css('display') === 'none') {
+      if ($('#ue-dlg')
+        .css('display') === 'none') {
         def.resolve();
       } else {
         closeTimeout = setTimeout(waiter, 300);

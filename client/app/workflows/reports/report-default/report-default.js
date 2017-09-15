@@ -13,6 +13,6 @@ function ReportDefault() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('reportDefault', ReportDefault);
 };

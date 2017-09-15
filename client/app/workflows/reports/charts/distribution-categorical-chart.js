@@ -14,6 +14,6 @@ function DistributionCategoricalChart() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('distributionCategoricalChart', DistributionCategoricalChart);
 };

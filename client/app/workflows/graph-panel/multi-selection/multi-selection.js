@@ -2,8 +2,8 @@
 
 /* @ngInject */
 function MultiSelection(GraphNode, MouseEvent, WorkflowService,
-                        $document, $timeout, $rootScope,
-                        debounce) {
+  $document, $timeout, $rootScope,
+  debounce) {
   return {
     restrict: 'A',
     link: (scope, element) => {
@@ -11,7 +11,10 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
       let currentPoint = {};
       var selectionElement = $document[0].createElement('div');
       var $selectionElement = $(selectionElement);
-      var startPoint = {x: 0, y: 0};
+      var startPoint = {
+        x: 0,
+        y: 0
+      };
       var elementDimensions;
       var axisToWord = {
         x: {
@@ -41,24 +44,27 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
 
         startPoint = MouseEvent.getEventOffsetOfElement(event, element[0]);
 
-        workflowNodes = workflowNodes || _.map(WorkflowService.getWorkflow().getNodes(),
-            node => {
-              return {
-                x: node.x,
-                y: node.y,
-                id: node.id
-              };
-            }
-          );
+        workflowNodes = workflowNodes || _.map(WorkflowService.getWorkflow()
+          .getNodes(),
+          node => {
+            return {
+              x: node.x,
+              y: node.y,
+              id: node.id
+            };
+          }
+        );
 
         elementDimensions = elementDimensions || {
-            width: element[0].clientWidth,
-            height: element[0].clientHeight
-          };
+          width: element[0].clientWidth,
+          height: element[0].clientHeight
+        };
         nodeDimensions = nodeDimensions || {
-            width: $(element[0].querySelector('[id^="node-"]')).outerWidth(true),
-            height: $(element[0].querySelector('[id^="node-"]')).outerHeight(true)
-          };
+          width: $(element[0].querySelector('[id^="node-"]'))
+            .outerWidth(true),
+          height: $(element[0].querySelector('[id^="node-"]'))
+            .outerHeight(true)
+        };
 
         unselectNodes();
 
@@ -69,7 +75,8 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
           'left': startPoint.x
         });
 
-        $selectionElement.stop().fadeIn(200);
+        $selectionElement.stop()
+          .fadeIn(200);
 
         $document.on('mousemove', paint);
 
@@ -230,6 +237,6 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('multiSelection', MultiSelection);
 };

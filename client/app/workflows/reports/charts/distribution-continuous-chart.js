@@ -38,6 +38,6 @@ function DistributionContinuousChart() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('distributionContinuousChart', DistributionContinuousChart);
 };

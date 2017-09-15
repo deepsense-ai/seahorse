@@ -3,8 +3,7 @@
 /* @ngInject */
 function BaseApiClientFactory($http, $q, config) {
 
-  function BaseApiClient() {
-  }
+  function BaseApiClient() {}
 
   BaseApiClient.prototype.API_URL = config.apiPort ?
     `${config.apiHost}:${config.apiPort}/${config.urlApiVersion}` :
@@ -15,18 +14,19 @@ function BaseApiClientFactory($http, $q, config) {
   BaseApiClient.prototype.METHOD_PUT = 'PUT';
   BaseApiClient.prototype.METHOD_DELETE = 'DELETE';
 
-  BaseApiClient.prototype.makeRequest = function (method, url, data = {}) {
+  BaseApiClient.prototype.makeRequest = function(method, url, data = {}) {
     let deferred = $q.defer();
     $http({
-      'method': method,
-      'url': url,
-      'data': data
-    }).
-      then((result) => {
-        deferred.resolve(result.data);
-      }, (error) => {
-        deferred.reject(error);
-      });
+        'method': method,
+        'url': url,
+        'data': data
+      })
+      .
+    then((result) => {
+      deferred.resolve(result.data);
+    }, (error) => {
+      deferred.reject(error);
+    });
 
     return deferred.promise;
   };
@@ -34,6 +34,6 @@ function BaseApiClientFactory($http, $q, config) {
   return BaseApiClient;
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('BaseApiClient', BaseApiClientFactory);
 };

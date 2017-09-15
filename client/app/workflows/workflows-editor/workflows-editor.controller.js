@@ -1,14 +1,17 @@
 'use strict';
 
-import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+import {
+  GraphPanelRendererBase
+}
+from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 
 /* @ngInject */
 function WorkflowsEditorController(workflow,
-                                   $scope, $state, $stateParams,
-                                   GraphNode, Edge,
-                                   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-                                   DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-                                   RunModalFactory, LastExecutionReportService, NotificationService) {
+  $scope, $state, $stateParams,
+  GraphNode, Edge,
+  PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
+  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+  RunModalFactory, LastExecutionReportService, NotificationService) {
   let that = this;
   let internal = {};
 
@@ -60,13 +63,14 @@ function WorkflowsEditorController(workflow,
     if (node.hasParameters()) {
       $scope.$digest();
     } else {
-      Operations.getWithParams(node.operationId).then((operationData) => {
-        $scope.$applyAsync(() => {
-          node.setParameters(operationData.parameters, DeepsenseNodeParameters);
+      Operations.getWithParams(node.operationId)
+        .then((operationData) => {
+          $scope.$applyAsync(() => {
+            node.setParameters(operationData.parameters, DeepsenseNodeParameters);
+          });
+        }, (error) => {
+          console.error('operation fetch error', error);
         });
-      }, (error) => {
-        console.error('operation fetch error', error);
-      });
     }
   });
 
@@ -74,17 +78,20 @@ function WorkflowsEditorController(workflow,
     WorkflowService.saveWorkflow();
   });
 
-  $scope.$on(Edge.CREATE, (data, args)  => {
-    WorkflowService.getWorkflow().addEdge(args.edge);
+  $scope.$on(Edge.CREATE, (data, args) => {
+    WorkflowService.getWorkflow()
+      .addEdge(args.edge);
   });
 
-  $scope.$on(Edge.REMOVE, (data, args)  => {
-    WorkflowService.getWorkflow().removeEdge(args.edge);
+  $scope.$on(Edge.REMOVE, (data, args) => {
+    WorkflowService.getWorkflow()
+      .removeEdge(args.edge);
   });
 
   $scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
     if (internal.selectedNode) {
-      WorkflowService.getWorkflow().removeNode(internal.selectedNode.id);
+      WorkflowService.getWorkflow()
+        .removeNode(internal.selectedNode.id);
       GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();
       $scope.$digest();
@@ -101,26 +108,29 @@ function WorkflowsEditorController(workflow,
     let positionY = offsetY || 0;
     let elementOffsetX = 100;
     let elementOffsetY = 30;
-    let node = WorkflowService.getWorkflow().createNode({
-      'id': UUIDGenerator.generateUUID(),
-      'operation': operation,
-      'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-      'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
-    });
+    let node = WorkflowService.getWorkflow()
+      .createNode({
+        'id': UUIDGenerator.generateUUID(),
+        'operation': operation,
+        'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+        'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
+      });
 
-    WorkflowService.getWorkflow().addNode(node);
+    WorkflowService.getWorkflow()
+      .addNode(node);
 
     /* Checks if parameters schema has been already fetched */
     if (Operations.hasWithParams(operation.id)) {
       WorkflowService.saveWorkflow();
     } else {
-      Operations.getWithParams(operation.id).
-        then((operationData) => {
-          node.setParameters(operationData.parameters, DeepsenseNodeParameters);
-          WorkflowService.saveWorkflow();
-        }, (error) => {
-          console.error('operation fetch error', error);
-        });
+      Operations.getWithParams(operation.id)
+        .
+      then((operationData) => {
+        node.setParameters(operationData.parameters, DeepsenseNodeParameters);
+        WorkflowService.saveWorkflow();
+      }, (error) => {
+        console.error('operation fetch error', error);
+      });
     }
   });
 
@@ -151,8 +161,9 @@ function WorkflowsEditorController(workflow,
 
   $scope.$on('StatusBar.CLEAR_CLICK', () => {
     ConfirmationModalService.showModal({
-      message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
-    }).
+        message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
+      })
+      .
     then(() => {
       WorkflowService.clearGraph();
       GraphPanelRendererService.rerender();
@@ -198,6 +209,6 @@ function WorkflowsEditorController(workflow,
   return that;
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('WorkflowsEditorController', WorkflowsEditorController);
 };

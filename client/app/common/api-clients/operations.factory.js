@@ -12,13 +12,12 @@ function OperationsFactory(OperationsApiClient, $q) {
   };
   const DEFAULT_ICON = 'fa-square';
 
-
   var service = {},
-      isLoaded = false;
+    isLoaded = false;
 
   var operationsData = {},
-      catalogData = {},
-      categoryMap = {};
+    catalogData = {},
+    categoryMap = {};
 
   var createCategoryMap = function createCategoryMap(catalog, parentId) {
     for (let i = catalog.length - 1; i >= 0; i--) {
@@ -62,38 +61,40 @@ function OperationsFactory(OperationsApiClient, $q) {
     }
   };
 
-
   var loadData = function loadData() {
-    return OperationsApiClient.getAll().then((data) => {
-      operationsData = data.operations;
-      Object.freeze(operationsData);
-      return operationsData;
-    });
+    return OperationsApiClient.getAll()
+      .then((data) => {
+        operationsData = data.operations;
+        Object.freeze(operationsData);
+        return operationsData;
+      });
   };
 
   var loadOperationData = function loadOperationData(id) {
-    return OperationsApiClient.get(id).then((data) => {
-      if (_.isUndefined(operationsData[id].parameters)) {
-        operationsData[id].parameters = Object.freeze(data.operation.parameters || {});
-        Object.freeze(operationsData[id]);
-      }
-      return operationsData[id];
-    }, (error) => {
-      console.error('error', error);
-    });
+    return OperationsApiClient.get(id)
+      .then((data) => {
+        if (_.isUndefined(operationsData[id].parameters)) {
+          operationsData[id].parameters = Object.freeze(data.operation.parameters || {});
+          Object.freeze(operationsData[id]);
+        }
+        return operationsData[id];
+      }, (error) => {
+        console.error('error', error);
+      });
   };
 
   var loadCatalog = function loadCatalog() {
-    return OperationsApiClient.getCatalog().then((data) => {
-      catalogData = data.catalog;
-      categoryMap = {};
-      createCategoryMap(catalogData);
-      updateCategoryIcons();
-      updateOperationIcons();
-      Object.freeze(catalogData);
-      Object.freeze(categoryMap);
-      return catalogData;
-    });
+    return OperationsApiClient.getCatalog()
+      .then((data) => {
+        catalogData = data.catalog;
+        categoryMap = {};
+        createCategoryMap(catalogData);
+        updateCategoryIcons();
+        updateOperationIcons();
+        Object.freeze(catalogData);
+        Object.freeze(categoryMap);
+        return catalogData;
+      });
   };
 
   service.load = function load() {
@@ -103,11 +104,13 @@ function OperationsFactory(OperationsApiClient, $q) {
       return deferred.promise;
     }
 
-    return loadData().
-      then(loadCatalog).
-      then(() => {
-        isLoaded = true;
-      });
+    return loadData()
+      .
+    then(loadCatalog)
+      .
+    then(() => {
+      isLoaded = true;
+    });
   };
 
   service.getData = function getData(id) {
@@ -160,10 +163,9 @@ function OperationsFactory(OperationsApiClient, $q) {
     return categoryMap[id] || null;
   };
 
-
   return service;
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('Operations', OperationsFactory);
 };

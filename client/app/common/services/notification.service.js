@@ -1,17 +1,17 @@
 'use strict';
 
 class LogHandlingService {
-  constructor ($log) {
+  constructor($log) {
     this.$log = $log;
   }
 
-  error (message, error) {
+  error(message, error) {
     this.$log.error(message, error);
   }
 }
 
 class NotificationService extends LogHandlingService {
-  constructor ($rootScope, $log, toastr) {
+  constructor($rootScope, $log, toastr) {
     super($log);
 
     _.assign(this, {
@@ -45,35 +45,33 @@ class NotificationService extends LogHandlingService {
       //  );
       //},
       'LastExecutionReportService.REPORT_HAS_BEEN_UPLOADED': (event, data) => {
-        this.showLastExecution(
-          {
-            message: 'The report for this workflow is already available',
-            title: 'Workflow event',
-            settings: {
-              timeOut: 0,
-              extendedTimeOut: 0,
-            },
+        this.showLastExecution({
+          message: 'The report for this workflow is already available',
+          title: 'Workflow event',
+          settings: {
+            timeOut: 0,
+            extendedTimeOut: 0,
+          },
 
-            notificationType: 'info'
-          }
-        );
+          notificationType: 'info'
+        });
       }
     };
 
     this.initEventListeners();
   }
 
-  transportEventToShowByName (event) {
+  transportEventToShowByName(event) {
     this.showNotificationByEventName(event.name);
   }
 
-  showLastExecution (options) {
+  showLastExecution(options) {
     let toast = this.toastr[options.notificationType](options.message, options.title, options.settings);
 
     this.handleSameMessages(options.message, toast);
   }
 
-  showError (data, error) {
+  showError(data, error) {
     this.error(data.title, error);
 
     let toast = this.toastr.error(data.message, data.title, {
@@ -84,7 +82,7 @@ class NotificationService extends LogHandlingService {
     this.replaceInfoMessagesWithSuccess(data.message, toast);
   }
 
-  showNotificationByEventName (eventName) {
+  showNotificationByEventName(eventName) {
     let toast = this.toastr[this.staticMessages[eventName].notificationType](
       this.staticMessages[eventName].message,
       this.staticMessages[eventName].title
@@ -94,7 +92,7 @@ class NotificationService extends LogHandlingService {
     this.replaceInfoMessagesWithSuccess(eventName, toast);
   }
 
-  handleSameMessages (name, toast) {
+  handleSameMessages(name, toast) {
     _.remove(this.messages, message => {
       let result = message.name === name;
 
@@ -105,7 +103,9 @@ class NotificationService extends LogHandlingService {
       return result;
     });
 
-    this.messages.push({ name, toast });
+    this.messages.push({
+      name, toast
+    });
   }
 
   clearToasts() {
@@ -114,7 +114,7 @@ class NotificationService extends LogHandlingService {
     });
   }
 
-  replaceInfoMessagesWithSuccess (name, toast) {
+  replaceInfoMessagesWithSuccess(name, toast) {
     let regExp = /\.SUCCESS$/;
     let match = name.match(regExp);
 
@@ -123,7 +123,7 @@ class NotificationService extends LogHandlingService {
     }
   }
 
-  initEventListeners () {
+  initEventListeners() {
     for (let staticEventName in this.staticMessages) {
       if (this.staticMessages.hasOwnProperty(staticEventName)) {
         this.$rootScope.$on(
@@ -141,17 +141,16 @@ class NotificationService extends LogHandlingService {
   }
 
   // Statics
-  static getCommonErrorMessage (label, error) {
+  static getCommonErrorMessage(label, error) {
     return NotificationService.commonMessages(
-      'error',
-      {
+      'error', {
         errorType: label
       },
       error
     );
   }
 
-  static commonMessages (key, templateData, dynamicPart = {}) {
+  static commonMessages(key, templateData, dynamicPart = {}) {
     let data = {
       error: {
         message: `
@@ -177,6 +176,6 @@ class NotificationService extends LogHandlingService {
 
 exports.function = NotificationService;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('NotificationService', NotificationService.factory);
 };

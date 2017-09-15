@@ -9,7 +9,7 @@ function GraphNodeView($sce, GraphNode) {
     },
     replace: true,
     templateUrl: 'app/workflows/graph-panel/graph-panel-node/graph-panel-node.html',
-    controller: function ($scope) {
+    controller: function($scope) {
       $scope.$watch('node.knowledgeErrors', () => {
         $scope.tooltipMessage = $sce.trustAsHtml(`
           <div class="text-left--important">
@@ -18,14 +18,14 @@ function GraphNodeView($sce, GraphNode) {
         `);
       });
     },
-    link: function (scope, element) {
-      element.on('click', function () {
+    link: function(scope, element) {
+      element.on('click', function() {
         scope.$emit(GraphNode.CLICK, {
           selectedNode: scope.node
         });
       });
 
-      element.on('mousedown', function () {
+      element.on('mousedown', function() {
         scope.$emit(GraphNode.MOUSEDOWN, {
           selectedNode: scope.node
         });
@@ -34,6 +34,6 @@ function GraphNodeView($sce, GraphNode) {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('graphNode', GraphNodeView);
 };

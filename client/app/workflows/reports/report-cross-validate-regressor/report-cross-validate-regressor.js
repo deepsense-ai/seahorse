@@ -15,6 +15,6 @@ function ReportCrossValidateRegressor() {
   };
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('reportCrossValidateRegressor', ReportCrossValidateRegressor);
 };

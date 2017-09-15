@@ -11,6 +11,6 @@ function HomeConfig($stateProvider) {
 
 exports.function = HomeConfig;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.config(HomeConfig);
 };

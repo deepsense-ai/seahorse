@@ -79,6 +79,6 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
   return new WorkflowsApiClient();
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('WorkflowsApiClient', WorkflowsApiClientFactory);
 };

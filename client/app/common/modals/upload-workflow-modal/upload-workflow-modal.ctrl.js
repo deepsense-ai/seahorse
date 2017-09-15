@@ -14,35 +14,42 @@ function UploadWorkflowModalController($modalInstance, Upload, WorkflowsApiClien
     close: () => {
       $modalInstance.dismiss();
     },
-    upload: function (file) {
+    upload: function(file) {
       this.status = STATUS_FAILURE;
       Upload.
-        upload({
+      upload({
           url: WorkflowsApiClient.getUploadWorkflowMethodUrl(),
           method: 'POST',
           file: file,
           fileFormDataName: 'workflowFile'
-        }).
-        progress((evt) => {
+        })
+        .
+      progress((evt) => {
           this.status = STATUS_LOADING;
           this.progress = parseInt(100.0 * evt.loaded / evt.total);
-        }).
-        then((response) => {
+        })
+        .
+      then((response) => {
           this.status = STATUS_SUCCESS;
           $modalInstance.close(response.data.id);
-        }).
-        catch(({ data } = {}) => {
-          let { message } = (data || {});
-          this.status = STATUS_FAILURE;
-          this.errorMessage = message || 'Server error';
-        });
+        })
+        .
+      catch(({
+        data
+      } = {}) => {
+        let {
+          message
+        } = (data || {});
+        this.status = STATUS_FAILURE;
+        this.errorMessage = message || 'Server error';
+      });
     },
-    ok: function () {
+    ok: function() {
       $modalInstance.close();
     }
   });
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('UploadWorkflowModalController', UploadWorkflowModalController);
 };

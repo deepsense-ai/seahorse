@@ -18,14 +18,13 @@ function ReportCtrl(report, $scope, $state, $modal, PageService) {
   internal.reportId = report.reportId;
   internal.distributionsTypes = _.reduce(
     internal.distributions,
-    function (acc, distObj, name) {
+    function(acc, distObj, name) {
       let re = /[a-zA-Z0-9_]+/.exec(name);
       if (re) {
         acc[re[0]] = distObj.subtype;
       }
       return acc;
-    },
-    {}
+    }, {}
   );
 
   that.back = () => {
@@ -52,14 +51,14 @@ function ReportCtrl(report, $scope, $state, $modal, PageService) {
     return internal.name;
   };
 
-  $scope.$on(EVENTS.SELECT_COLUMN, function (event, data) {
+  $scope.$on(EVENTS.SELECT_COLUMN, function(event, data) {
     let distObject = that.getDistributionObject(data.colName);
 
     if (!_.isUndefined(distObject)) {
       $modal.open({
         size: 'lg',
         templateUrl: 'app/workflows/reports/report-chart-panel.html',
-        controller: function ($scope, $modalInstance) {
+        controller: function($scope, $modalInstance) {
           _.assign(this, {
             close: () => {
               $modalInstance.close();
@@ -86,6 +85,6 @@ function ReportCtrl(report, $scope, $state, $modal, PageService) {
 exports.function = ReportCtrl;
 exports.EVENTS = EVENTS;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('ReportCtrl', ReportCtrl);
 };

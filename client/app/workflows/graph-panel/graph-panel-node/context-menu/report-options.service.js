@@ -27,12 +27,15 @@ function ReportOptionsService($state) {
   };
 
   that.getCurrentPortIndex = function getCurrentPort() {
-    return that.getCurrentPort().getParameter('portIndex');
+    return that.getCurrentPort()
+      .getParameter('portIndex');
   };
 
   that.isCompleted = function isCompleted() {
-    var status = that.getCurrentNode().state.status;
-    return status === that.getCurrentNode().STATUS.COMPLETED;
+    var status = that.getCurrentNode()
+      .state.status;
+    return status === that.getCurrentNode()
+      .STATUS.COMPLETED;
   };
 
   that.setCurrentPort = function setCurrentPort(port) {
@@ -44,27 +47,27 @@ function ReportOptionsService($state) {
   };
 
   that.clearReportOptions = function clearReportOptions() {
-    that.getReportOptions().length = 0;
+    that.getReportOptions()
+      .length = 0;
   };
 
   that.updateReportOptions = function updateReportOptions() {
     internal.elements.push({
-        icon: 'fa-dot-circle-o',
-        active: that.isCompleted(),
-        visible: true,
-        description: 'Show report',
-        action: () => {
-          $state.go('workflows.reportEntity', {
-            reportEntityId: that.getReportId()
-          });
-        }
+      icon: 'fa-dot-circle-o',
+      active: that.isCompleted(),
+      visible: true,
+      description: 'Show report',
+      action: () => {
+        $state.go('workflows.reportEntity', {
+          reportEntityId: that.getReportId()
+        });
       }
-    );
+    });
   };
 
   return that;
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.factory('ReportOptionsService', ReportOptionsService);
 };

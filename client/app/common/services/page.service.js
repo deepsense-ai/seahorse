@@ -18,6 +18,6 @@ function PageService() {
 
 exports.function = PageService;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('PageService', PageService);
 };
