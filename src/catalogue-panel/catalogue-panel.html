@@ -4,7 +4,7 @@
       <input type="text" class="form-control search-input"
         placeholder="Search" ng-model="cpCtrl.search" />
     </div>
-    <div>
+    <div ng-if="cpCtrl.search">
       <span class="icon-remove" ng-click="cpCtrl.clearSearch()">
           <i class="fa fa-remove " ></i>
       </span>
