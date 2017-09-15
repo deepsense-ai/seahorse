@@ -20,6 +20,7 @@ object ParameterType extends Enumeration {
   type ParameterType = Value
   val Boolean = Value("boolean")
   val Numeric = Value("numeric")
+  val MultipleNumeric = Value("multipleNumeric")
   val String = Value("string")
   val Choice = Value("choice")
   val MultipleChoice = Value("multipleChoice")
