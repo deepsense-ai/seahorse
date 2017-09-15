@@ -19,6 +19,7 @@ package io.deepsense.workflowexecutor.executor
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.BuildInfo
+import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang._
@@ -37,6 +38,9 @@ trait Executor extends Logging {
 
   def createExecutionContext(
       dataFrameStorage: DataFrameStorage,
+      executionMode: ExecutionMode,
+      notebooksClientFactory: Option[NotebooksClientFactory],
+      emailSender: Option[EmailSender],
       customCodeExecutionProvider: CustomCodeExecutionProvider,
       sparkContext: SparkContext,
       sparkSQLSession: SparkSQLSession,
@@ -60,11 +64,14 @@ trait Executor extends Logging {
       sparkContext,
       sparkSQLSession,
       inferContext,
+      executionMode,
       FileSystemClientStub(), // temporarily mocked
       tempPath,
       tenantId,
       innerWorkflowExecutor,
       dataFrameStorage,
+      notebooksClientFactory,
+      emailSender,
       customCodeExecutionProvider)
   }
 

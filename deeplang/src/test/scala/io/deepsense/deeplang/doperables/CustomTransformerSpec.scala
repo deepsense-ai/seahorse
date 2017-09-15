@@ -184,11 +184,14 @@ class CustomTransformerSpec extends UnitSpec {
       mock[SparkContext],
       mock[SparkSQLSession],
       mock[InferContext],
+      ExecutionMode.Batch,
       mock[FileSystemClient],
       "/tmp",
       "",
       innerWorkflowExecutor,
       mock[ContextualDataFrameStorage],
+      None,
+      None,
       mock[ContextualCustomCodeExecutor]
     )
 }

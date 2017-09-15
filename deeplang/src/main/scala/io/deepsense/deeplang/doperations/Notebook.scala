@@ -17,8 +17,9 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.DOperation1To0
+import io.deepsense.deeplang.{DOperation, DOperation1To0}
 import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.params.choice.{Choice, MultipleChoiceParam}
 import io.deepsense.deeplang.params.{Params, StringParam}

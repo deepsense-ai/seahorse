@@ -126,10 +126,13 @@ object StandaloneSparkClusterForTests {
       sparkContext,
       sparkSQLSession,
       inferContext,
+      ExecutionMode.Batch,
       LocalFileSystemClient(),
       "testTenantId",
       mock[InnerWorkflowExecutor],
       mock[ContextualDataFrameStorage],
+      None,
+      None,
       new MockedContextualCodeExecutor)
   }
 

@@ -28,9 +28,10 @@ import com.thenewmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
+import io.deepsense.commons.mail.{EmailSender, EmailSenderAuthorizationConfig, EmailSenderConfig}
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.{CatalogRecorder, CustomCodeExecutionProvider, OperationExecutionDispatcher}
+import io.deepsense.deeplang._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.sparkutils.SparkSQLSession
@@ -58,8 +59,12 @@ case class SessionExecutor(
     wmAddress: String,
     wmUsername: String,
     wmPassword: String,
-    mailServerAddress: String,
-    notebookServerAddress: String,
+    mailServerHost: String,
+    mailServerPort: Int,
+    mailServerUser: String,
+    mailServerPassword: String,
+    mailServerSender: String,
+    notebookServerAddress: URL,
     depsZip: String,
     workflowOwnerId: String,
     tempPath: String,
@@ -230,12 +235,27 @@ case class SessionExecutor(
 
     val heartbeatPublisher: ActorRef = createHeartbeatPublisher
 
+    val emailSender = {
+      val emailSenderConfig = EmailSenderConfig(
+        smtpHost = mailServerHost,
+        smtpPort = mailServerPort,
+        from = mailServerSender,
+        authorizationConfig = Some(EmailSenderAuthorizationConfig(
+          user = mailServerUser,
+          password = mailServerPassword)))
+      EmailSender(emailSenderConfig)
+    }
+    val notebooksClientFactory = new NotebooksClientFactory(notebookServerAddress)
+
     val executionContext = createExecutionContext(
-      dataFrameStorage,
-      customCodeExecutionProvider,
-      sparkContext,
-      sparkSQLSession,
-      tempPath,
+      dataFrameStorage = dataFrameStorage,
+      executionMode = ExecutionMode.Interactive,
+      notebooksClientFactory = Some(notebooksClientFactory),
+      emailSender = Some(emailSender),
+      customCodeExecutionProvider = customCodeExecutionProvider,
+      sparkContext = sparkContext,
+      sparkSQLSession = sparkSQLSession,
+      tempPath = tempPath,
       dOperableCatalog = Some(dOperableCatalog))
 
     val readyBroadcaster = communicationFactory.createBroadcaster(

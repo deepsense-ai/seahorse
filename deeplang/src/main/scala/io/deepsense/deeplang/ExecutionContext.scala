@@ -18,10 +18,10 @@ package io.deepsense.deeplang
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
+import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
@@ -33,11 +33,14 @@ case class CommonExecutionContext(
     sparkContext: SparkContext,
     sparkSQLSession: SparkSQLSession,
     inferContext: InferContext,
+    executionMode: ExecutionMode,
     fsClient: FileSystemClient,
     tempPath: String,
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: DataFrameStorage,
+    notebooksClientFactory: Option[NotebooksClientFactory],
+    emailSender: Option[EmailSender],
     customCodeExecutionProvider: CustomCodeExecutionProvider) extends Logging {
 
   def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
@@ -45,11 +48,14 @@ case class CommonExecutionContext(
       sparkContext,
       sparkSQLSession,
       inferContext,
+      executionMode,
       fsClient,
       tempPath,
       tenantId,
       innerWorkflowExecutor,
       ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
+      notebooksClientFactory.map(_.createNotebookForNode(workflowId, nodeId)),
+      emailSender,
       ContextualCustomCodeExecutor(customCodeExecutionProvider, workflowId, nodeId))
 }
 
@@ -60,11 +66,14 @@ object CommonExecutionContext {
       context.sparkContext,
       context.sparkSQLSession,
       context.inferContext,
+      context.executionMode,
       context.fsClient,
       context.tempPath,
       context.tenantId,
       context.innerWorkflowExecutor,
       context.dataFrameStorage.dataFrameStorage,
+      context.notebooksClient.map(_.toFactory),
+      context.emailSender,
       context.customCodeExecutor.customCodeExecutionProvider)
 }
 
@@ -73,11 +82,14 @@ case class ExecutionContext(
     sparkContext: SparkContext,
     sparkSQLSession: SparkSQLSession,
     inferContext: InferContext,
+    executionMode: ExecutionMode,
     fsClient: FileSystemClient,
     tempPath: String,
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,
+    notebooksClient: Option[NotebooksClient],
+    emailSender: Option[EmailSender],
     customCodeExecutor: ContextualCustomCodeExecutor) extends Logging {
 
   def dataFrameBuilder: DataFrameBuilder = inferContext.dataFrameBuilder

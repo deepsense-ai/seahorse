@@ -104,11 +104,14 @@ case class WorkflowExecutor(
       operationExecutionDispatcher)
 
     val executionContext = createExecutionContext(
-      dataFrameStorage,
-      customCodeExecutionProvider,
-      sparkContext,
-      sparkSQLSession,
-      tempPath)
+      dataFrameStorage = dataFrameStorage,
+      executionMode = ExecutionMode.Batch,
+      notebooksClientFactory = None,
+      emailSender = None,
+      customCodeExecutionProvider = customCodeExecutionProvider,
+      sparkContext = sparkContext,
+      sparkSQLSession = sparkSQLSession,
+      tempPath = tempPath)
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionReport] = Promise()

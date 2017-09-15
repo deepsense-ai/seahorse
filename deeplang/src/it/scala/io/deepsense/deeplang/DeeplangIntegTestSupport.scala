@@ -19,7 +19,6 @@ package io.deepsense.deeplang
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
-
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -27,6 +26,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar._
 
+import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
@@ -78,30 +78,39 @@ private class MockedCommonExecutionContext(
     override val sparkContext: SparkContext,
     override val sparkSQLSession: SparkSQLSession,
     override val inferContext: InferContext,
+    override val executionMode: ExecutionMode,
     override val fsClient: FileSystemClient,
     override val tenantId: String,
     override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: DataFrameStorage,
+    override val notebooksClientFactory: Option[NotebooksClientFactory],
+    override val emailSender: Option[EmailSender],
     override val customCodeExecutionProvider: CustomCodeExecutionProvider)
   extends CommonExecutionContext(
     sparkContext,
     sparkSQLSession,
     inferContext,
+    executionMode,
     fsClient,
     "/tmp",
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,
+    notebooksClientFactory,
+    emailSender,
     customCodeExecutionProvider) {
 
   override def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
     new MockedExecutionContext(sparkContext,
       sparkSQLSession,
       inferContext,
+      executionMode,
       fsClient,
       tenantId,
       innerWorkflowExecutor,
       mock[ContextualDataFrameStorage],
+      notebooksClientFactory.map(_.createNotebookForNode(workflowId, nodeId)),
+      emailSender,
       new MockedContextualCodeExecutor)
 }
 
@@ -110,20 +119,26 @@ private class MockedExecutionContext(
     override val sparkContext: SparkContext,
     override val sparkSQLSession: SparkSQLSession,
     override val inferContext: InferContext,
+    override val executionMode: ExecutionMode,
     override val fsClient: FileSystemClient,
     override val tenantId: String,
     override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: ContextualDataFrameStorage,
+    override val notebooksClient: Option[NotebooksClient],
+    override val emailSender: Option[EmailSender],
     override val customCodeExecutor: ContextualCustomCodeExecutor)
   extends ExecutionContext(
     sparkContext,
     sparkSQLSession,
     inferContext,
+    executionMode,
     fsClient,
     "/tmp",
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,
+    notebooksClient,
+    emailSender,
     customCodeExecutor)
 
 private class MockedCodeExecutor extends CustomCodeExecutor {

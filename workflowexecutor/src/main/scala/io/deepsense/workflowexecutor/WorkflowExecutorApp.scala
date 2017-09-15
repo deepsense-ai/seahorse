@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor
 
+import java.net.URL
+
 import org.apache.log4j.xml.DOMConfigurator
 import scopt.OptionParser
 
@@ -112,12 +114,28 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(wmPassword = Some(x))
     } text "password for accessing Workflow Manager API"
 
-    opt[String]("mail-server-address") hidden() valueName "URI" action {
-      (x, c) => c.copy(mailServerAddress = Some(x))
+    opt[String]("mail-server-host") hidden() valueName "HOST" action {
+      (x, c) => c.copy(mailParams = c.mailParams.copy(mailServerHost = Some(x)))
     }
 
-    opt[String]("notebook-server-address") hidden() valueName "URI" action {
-      (x, c) => c.copy(notebookServerAddress = Some(x))
+    opt[Int]("mail-server-port") hidden() valueName "PORT" action {
+      (x, c) => c.copy(mailParams = c.mailParams.copy(mailServerPort = Some(x)))
+    }
+
+    opt[String]("mail-server-user") hidden() valueName "USER" action {
+      (x, c) => c.copy(mailParams = c.mailParams.copy(mailServerUser = Some(x)))
+    }
+
+    opt[String]("mail-server-password") hidden() valueName "PASS" action {
+      (x, c) => c.copy(mailParams = c.mailParams.copy(mailServerPassword = Some(x)))
+    }
+
+    opt[String]("mail-server-sender") hidden() valueName "EMAIL" action {
+      (x, c) => c.copy(mailParams = c.mailParams.copy(mailServerSender = Some(x)))
+    }
+
+    opt[String]("notebook-server-address") hidden() valueName "URL" action {
+      (x, c) => c.copy(notebookServerAddress = Some(new URL(x)))
     }
 
     opt[String]('x', "custom-code-executors-path") optional() valueName "PATH" action {
@@ -157,8 +175,18 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.tempPath.isEmpty, "--temp-dir is required in interactive mode"),
         (config.customCodeExecutorsPath.isDefined,
           "--custom-code-executors-path is forbidden in interactive mode"),
-        (config.mailServerAddress.isEmpty, "--mail-server-address is required in interactive mode"),
-        (config.notebookServerAddress.isEmpty, "--notebook-server-address is required in interactive mode")
+        (config.mailParams.mailServerHost.isEmpty,
+          "--mail-server-host is required in interactive mode"),
+        (config.mailParams.mailServerPort.isEmpty,
+          "--mail-server-port is required in interactive mode"),
+        (config.mailParams.mailServerUser.isEmpty,
+          "--mail-server-user is required in interactive mode"),
+        (config.mailParams.mailServerPassword.isEmpty,
+          "--mail-server-password is required in interactive mode"),
+        (config.mailParams.mailServerSender.isEmpty,
+          "--mail-server-sender is required in interactive mode"),
+        (config.notebookServerAddress.isEmpty,
+          "--notebook-server-address is required in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
@@ -208,7 +236,11 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         wmAddress = params.wmAddress.get,
         wmUsername = params.wmUsername.get,
         wmPassword = params.wmPassword.get,
-        mailServerAddress = params.mailServerAddress.get,
+        mailServerHost = params.mailParams.mailServerHost.get,
+        mailServerPort = params.mailParams.mailServerPort.get,
+        mailServerUser = params.mailParams.mailServerUser.get,
+        mailServerPassword = params.mailParams.mailServerPassword.get,
+        mailServerSender = params.mailParams.mailServerSender.get,
         notebookServerAddress = params.notebookServerAddress.get,
         depsZip = params.depsZip.get,
         workflowOwnerId = params.userId.get,

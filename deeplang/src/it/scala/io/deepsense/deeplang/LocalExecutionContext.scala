@@ -56,10 +56,13 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
       sparkContext,
       sparkSQLSession,
       inferContext,
+      ExecutionMode.Batch,
       LocalFileSystemClient(),
       "testTenantId",
       mock[InnerWorkflowExecutor],
       mock[DataFrameStorage],
+      None,
+      None,
       mock[CustomCodeExecutionProvider])
   }
 
@@ -74,10 +77,13 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
       sparkContext,
       sparkSQLSession,
       inferContext,
+      ExecutionMode.Batch,
       LocalFileSystemClient(),
       "testTenantId",
       mock[InnerWorkflowExecutor],
       mock[ContextualDataFrameStorage],
+      None,
+      None,
       new MockedContextualCodeExecutor)
   }
 

@@ -27,15 +27,11 @@ import com.sun.mail.smtp.SMTPTransport
 import io.deepsense.commons.mail.templates.{TemplateInstanceToLoad, Template}
 import io.deepsense.commons.utils.Logging
 
-class EmailSender(emailSenderConfig: EmailSenderConfig) extends Logging {
+class EmailSender private (emailSenderConfig: EmailSenderConfig) extends Logging {
 
   import EmailSender._
 
-  def this() = {
-    this(EmailSenderConfig())
-  }
-
-  val session: Session = Session.getInstance(emailSenderConfig.sessionProperties)
+  val session: Session = emailSenderConfig.session
 
   private def createMessage(subject: String, to: Seq[String]): MimeMessage = {
     val msg = new MimeMessage(session)
@@ -117,7 +113,7 @@ class EmailSender(emailSenderConfig: EmailSenderConfig) extends Logging {
 
 object EmailSender {
   def apply(emailSenderConfig: EmailSenderConfig): EmailSender = new EmailSender(emailSenderConfig)
-  def apply(): EmailSender = new EmailSender()
+  def apply(): EmailSender = new EmailSender(EmailSenderConfig())
 
   private def recipientsForLogging(msg: Message): String = {
     msg.getAllRecipients.mkString("[", ", ", "]")
