@@ -71,6 +71,14 @@ class WorkflowsEditorController extends WorkflowReports {
     this.init();
   }
 
+  loadReports(data) {
+    if (!_.isEmpty(data.resultEntities)) {
+      super.init(data.resultEntities);
+      super.initListeners(data.resultEntities);
+      this.GraphPanelRendererService.rerender();
+    }
+  };
+
   init() {
     this.PageService.setTitle('Workflow editor');
     this.WorkflowService.createWorkflow(this.workflow, this.Operations.getData());
@@ -80,14 +88,13 @@ class WorkflowsEditorController extends WorkflowReports {
     this.updateAndRerenderEdges(this.workflow);
     this.initListeners();
     this.ServerCommunication.init(this.workflow.id);
-    internal.loadReports.call(this, this.workflow);
+    this.loadReports(this.workflow);
   }
 
   initListeners() {
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
       this.WorkflowService.getWorkflow().updateState(data);
-
-      internal.loadReports.call(this, data);
+      this.loadReports(data);
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.knowledge', (event, data) => {

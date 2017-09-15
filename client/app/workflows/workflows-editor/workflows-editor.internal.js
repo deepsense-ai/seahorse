@@ -72,14 +72,6 @@ let internal = {};
 
     this.WorkflowService.saveWorkflow();
   };
-
-  internal.loadReports = function loadReports(data) {
-    if (!jQuery.isEmptyObject(data.resultEntities)) {
-      super.init(data.resultEntities);
-      super.initListeners(data.resultEntities);
-      this.GraphPanelRendererService.rerender();
-    }
-  };
 })();
 
 export default internal;
