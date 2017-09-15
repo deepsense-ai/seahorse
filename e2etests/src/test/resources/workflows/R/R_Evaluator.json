@@ -27,7 +27,7 @@
         "name": "Read Datasource"
       },
       "parameters": {
-        "datasourceId": "425c1536-7039-47d7-8db4-5c4e8bb9d742"
+        "data source": "425c1536-7039-47d7-8db4-5c4e8bb9d742"
       }
     }],
     "connections": [{
