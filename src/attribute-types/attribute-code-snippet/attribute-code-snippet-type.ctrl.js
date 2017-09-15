@@ -6,6 +6,7 @@ function AttributeCodeSnippetTypeCtrl($rootScope, $uibModal) {
   that.editInWindow = function() {
     var modalInstance = $uibModal.open({
       animation: true,
+      backdrop: 'static',
       templateUrl: 'attribute-types/attribute-code-snippet/attribute-code-snippet-type-modal/attribute-code-snippet-type-modal.html',
       controller: 'AttributeCodeSnippetTypeModalCtrl',
       controllerAs: 'acstmCtrl',
