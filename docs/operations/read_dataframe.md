@@ -12,7 +12,7 @@ It supports reading files (in CSV, JSON or PARQUET formats) both from local file
 HDFS (it supports reading Hadoop-compatible partitioned files).
 
 In addition, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
-``https://seahorse.deepsense.io/_static/transactions.csv`` as the ``source`` parameter will result
+``https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv`` as the ``source`` parameter will result
 in downloading the example file from HTTP server.
 
 It also supports reading data from JDBC-compatible databases.
