@@ -24,7 +24,7 @@ class AttributesPanelService {
 
   disableElements (container) {
     if (this.getDisabledMode()) {
-      jQuery(':input, textarea', container)
+      jQuery(':input:not(.o-error-btn), textarea', container)
         .attr('disabled', 'disabled');
       jQuery('.close-link', container)
         .css('display', 'none');
