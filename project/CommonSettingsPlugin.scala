@@ -5,8 +5,10 @@
 import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.Universal
 import sbt.Keys._
 import sbt._
+import sbt.plugins.JvmPlugin
 
 object CommonSettingsPlugin extends AutoPlugin {
+  override def requires = JvmPlugin
   override def trigger = allRequirements
 
   lazy val OurIT = config("it") extend Test
@@ -28,11 +30,12 @@ object CommonSettingsPlugin extends AutoPlugin {
       "-target", "1.7"
     ),
     resolvers ++= Dependencies.resolvers,
-    crossPaths := false
+    crossPaths := false,
+    unmanagedResourceDirectories in Compile += globalResources,
+    unmanagedResourceDirectories in Runtime += globalResources,
+    unmanagedResourceDirectories in Test += globalResources
   ) ++ ouritSettings ++ testSettings ++ Seq(
     test <<= test in Test
-  ) ++ Seq(
-    publish <<= publish dependsOn (packageBin in Universal)
   )
 
   lazy val ouritSettings = inConfig(OurIT)(Defaults.testSettings) ++ inConfig(OurIT) {

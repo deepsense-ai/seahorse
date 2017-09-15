@@ -20,6 +20,3 @@ dockerUpdateLatest := true
 version in Docker := SbtGit.GitKeys.gitHeadCommit.value.get
 
 WorkflowExamples.defaultSettings
-
-unmanagedResourceDirectories in Runtime += CommonSettingsPlugin.globalResources
-unmanagedResourceDirectories in Compile += CommonSettingsPlugin.globalResources
