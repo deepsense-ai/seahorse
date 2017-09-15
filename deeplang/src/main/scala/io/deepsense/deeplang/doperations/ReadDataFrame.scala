@@ -16,10 +16,9 @@
 
 package io.deepsense.deeplang.doperations
 
-import java.io.IOException
+import java.io._
 import java.nio.file.Files
 
-import scala.reflect.io.File
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.SparkContext
@@ -30,9 +29,10 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame._
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.doperations.inout._
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
-import io.deepsense.deeplang.{DOperable, DOperation0To1, ExecutionContext, FileSystemClient}
+import io.deepsense.deeplang.{DOperation0To1, ExecutionContext, FileSystemClient}
 
 case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
@@ -144,10 +144,29 @@ case class ReadDataFrame()
 
   private def downloadFile(url: String, sparkContext: SparkContext): String = {
     // TODO DS-2355 this saves the file in local filesystem, which will not work in non-local modes
-    val content = scala.io.Source.fromURL(url).mkString
-    val file = Files.createTempFile("download", ".csv")
-    File(file.toString).writeAll(content)
-    s"file:///$file"
+    val outFilePath = Files.createTempFile("download", ".csv")
+    // content is a stream. Do not invoke stuff like .toList() on it.
+    val content = scala.io.Source.fromURL(url).getLines()
+    val writer: BufferedWriter =
+      new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFilePath.toFile)))
+    try {
+      content.foreach {s =>
+        writer.write(s)
+        writer.newLine()
+      }
+    } finally {
+      safeClose(writer)
+    }
+    s"file:///$outFilePath"
+  }
+
+  private def safeClose(bufferedWriter: BufferedWriter): Unit = {
+    try {
+      bufferedWriter.flush()
+      bufferedWriter.close()
+    } catch {
+      case e: IOException => throw new DeepSenseIOException(e)
+    }
   }
 
   @transient
