@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import java.io.FileNotFoundException
+
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.protocol.HdfsFileStatus
 import org.apache.hadoop.io.{LongWritable, Text}
@@ -47,7 +49,10 @@ class ReadFile extends DOperation0To1[File] {
     val lines = context.sqlContext.sparkContext.newAPIHadoopFile(
       path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf)
       .map { case (_, text) => text.toString }
-    val fileInfo = context.hdfsClient.hdfsClient.getFileInfo(path)
+    val fileInfo = Option(context.hdfsClient.hdfsClient.getFileInfo(path)) match {
+      case Some(hdfsFileInfo) => hdfsFileInfo
+      case None => throw new FileNotFoundException(path)
+    }
     File(Some(lines), Some(ReadFile.buildReportMap(fileInfo)))
   }
 

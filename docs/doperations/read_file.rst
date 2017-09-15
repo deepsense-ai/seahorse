@@ -37,7 +37,8 @@ Output
 ===========
 Description
 ===========
-Read File operation reads a text file from HDFS.
+Read File operation reads a text file from HDFS. If the file does not exist the operation
+fails with ``FileNotFoundException``.
 Current version of the operation supports only CSV files.
 
 -----
