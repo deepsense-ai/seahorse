@@ -1,9 +1,6 @@
 'use strict';
 
 let specialOperations = {
-  'e76ca616-0322-47a5-b390-70c9668265dd': {
-    icons: ['fa fa-book']
-  },
   // Evaluate
   'a88eaf35-9061-4714-b042-ddd2049ce917': {
     icons: ['fa fa-tachometer']
