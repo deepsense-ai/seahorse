@@ -5,7 +5,7 @@ ARCHIVE_FILE=$NAME.tgz
 TARGET_DIR=/opt
 
 # download spark
-wget http://www.apache.org/dist/spark/spark-2.0.0/$ARCHIVE_FILE -O $ARCHIVE_FILE || exit 1
+wget http://d3kbcqa49mib13.cloudfront.net/$ARCHIVE_FILE -O $ARCHIVE_FILE || exit 1
 
 # verify checksum
 echo 3A1598EB7C32384830C48C779141C1C6  $ARCHIVE_FILE | md5sum -c - || exit 1
