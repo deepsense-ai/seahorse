@@ -26,6 +26,7 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.doperables.MissingValuesHandler.EmptyColumnsStrategy
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, ValueConversionException}
@@ -38,6 +39,16 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
 
   import DeeplangIntegTestSupport._
   import TransformerSerialization._
+
+  trait TestData {
+    val schema = StructType(List(
+      StructField("value-1", DoubleType, nullable = true),
+      StructField("value2", StringType, nullable = true),
+      StructField("value3", StringType, nullable = true)
+    ))
+
+    val uut = new MissingValuesHandler
+  }
 
   "MissingValuesHandler" should {
     "remove rows with null, NaN or undefined values while using REMOVE_ROW strategy" in {
@@ -529,24 +540,50 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
   }
 
   "with REMOVE_COLUMN strategy transformSchema should return None" in {
-    val schema = StructType(List(
-      StructField("value-1", DoubleType, nullable = true),
-      StructField("value2", StringType, nullable = true),
-      StructField("value3", StringType, nullable = true)
-    ))
+    new TestData {
+      val columnSelection = MultipleColumnSelection(
+        Vector(IndexRangeColumnSelection(Some(0), Some(1))))
 
-    val columnSelection = MultipleColumnSelection(
-      Vector(IndexRangeColumnSelection(Some(0), Some(1))))
+      val transformation = new MissingValuesHandler()
+        .setUserDefinedMissingValues(Seq())
+        .setSelectedColumns(columnSelection)
+        .setStrategy(MissingValuesHandler.Strategy.RemoveColumn())
+        .setMissingValueIndicator(
+          MissingValuesHandler.MissingValueIndicatorChoice.Yes()
+            .setIndicatorPrefix("prefix_"))
 
-    val transformation = new MissingValuesHandler()
-      .setUserDefinedMissingValues(Seq())
-      .setSelectedColumns(columnSelection)
-      .setStrategy(MissingValuesHandler.Strategy.RemoveColumn())
-      .setMissingValueIndicator(
-        MissingValuesHandler.MissingValueIndicatorChoice.Yes()
-          .setIndicatorPrefix("prefix_"))
+      transformation._transformSchema(schema) shouldBe None
+    }
+  }
 
-    transformation._transformSchema(schema) shouldBe None
+  "not throw an error" when {
+    "all DataFrame values are missing for RemoveEmptyColumns strategy" in {
+      new TestData {
+        val strategy = MissingValuesHandler.Strategy.ReplaceWithMode()
+
+        strategy.setEmptyColumnStrategy(EmptyColumnsStrategy.RemoveEmptyColumns())
+
+        uut
+          .setUserDefinedMissingValues(Seq())
+          .setSelectedColumns(MultipleColumnSelection(
+            Vector(IndexRangeColumnSelection(Some(0), Some(schema.fields.length - 1)))))
+          .setStrategy(strategy)
+
+
+        val df = createDataFrame(
+          Seq(
+            Row(null, null, null),
+            Row(null, null, null)
+          ),
+          schema
+        )
+
+        val resultDf = executeTransformer(uut, df)
+        val expectedDf = createDataFrame(Seq(Row(), Row()), StructType(Seq()))
+
+        assertDataFramesEqual(resultDf, expectedDf)
+      }
+    }
   }
 
   def executeTransformer(op: MissingValuesHandler, df: DataFrame): DataFrame = {
