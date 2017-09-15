@@ -145,3 +145,28 @@ case class MultiplicatorParameterHolder(
     value.get.value.foreach(_.validate)
   }
 }
+
+abstract class ColumnSelectorParameterHolder extends ParameterHolder {
+  val default = None
+  val parameterType = ParameterType.ColumnSelector
+}
+
+/**
+ * Holds parameter that allows to select single column.
+ */
+case class SingleColumnSelectorParameterHolder(
+    description: String,
+    required: Boolean)
+  extends ColumnSelectorParameterHolder {
+  type HeldParameter = SingleColumnSelection
+}
+
+/**
+ * Holds parameter that allows to select columns.
+ */
+case class MultipleColumnSelectorParameterHolder(
+    description: String,
+    required: Boolean)
+  extends ColumnSelectorParameterHolder {
+  type HeldParameter = MultipleColumnSelection
+}

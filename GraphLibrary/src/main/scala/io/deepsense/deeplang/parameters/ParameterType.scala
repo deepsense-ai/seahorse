@@ -14,4 +14,5 @@ object ParameterType extends Enumeration {
   val Choice = Value("choice")
   val MultipleChoice = Value("multipleChoice")
   val Multiplicator = Value("multiplicator")
+  val ColumnSelector = Value("selector")
 }

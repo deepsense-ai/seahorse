@@ -27,7 +27,7 @@ abstract class ParameterConverter[T : ru.TypeTag] {
 
 /**
  * Object containing implicit conversions of Parameters to target types.
- * These conversions are used when DOperation wants to get some specific parameter.
+ * These conversions are used to get some specific parameter.
  */
 object ParameterConversions {
   implicit object ToStringParameter extends ParameterConverter[StringParameter] {
@@ -63,6 +63,20 @@ object ParameterConversions {
   implicit object ToMultiplicatorParameter extends ParameterConverter[MultiplicatorParameter] {
     def convertPF = {
       case parameter: MultiplicatorParameter => parameter
+    }
+  }
+
+  implicit object ToSingleColumnSelection
+    extends ParameterConverter[SingleColumnSelection] {
+    def convertPF = {
+      case parameter: SingleColumnSelection => parameter
+    }
+  }
+
+  implicit object ToColumnSelection
+      extends ParameterConverter[MultipleColumnSelection] {
+    def convertPF = {
+      case parameter: MultipleColumnSelection => parameter
     }
   }
 }

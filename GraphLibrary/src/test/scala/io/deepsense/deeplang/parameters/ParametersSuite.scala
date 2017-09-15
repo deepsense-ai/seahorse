@@ -94,6 +94,24 @@ class ParametersSuite extends FunSuite with Matchers {
     }
   }
 
+
+  test("Getting single columns selector parameter") {
+    val holder = SingleColumnSelectorParameterHolder("description", true)
+    val schema = ParametersSchema("x" -> holder)
+    val parameter = IndexSingleColumnSelection(1)
+    holder.value = Some(parameter)
+    assert(schema.getSingleColumnSelection("x").get == parameter)
+  }
+
+  test("Getting multiple columns selector parameter") {
+    val holder = MultipleColumnSelectorParameterHolder("description", true)
+    val schema = ParametersSchema("x" -> holder)
+    val values = IndexColumnSelection(List(1, 3))
+    val parameter = MultipleColumnSelection(List(values))
+    holder.value = Some(parameter)
+    assert(schema.getMultipleColumnSelection("x").get == parameter)
+  }
+
   test("Getting wrong type of parameter should throw an exception") {
     val parameter = Some(StringParameter("abc"))
     val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"

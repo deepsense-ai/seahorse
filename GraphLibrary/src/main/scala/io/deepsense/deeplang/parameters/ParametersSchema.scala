@@ -38,7 +38,14 @@ class ParametersSchema protected (schemaMap: Map[String, ParameterHolder] = Map.
   def getMultiplicatorParameter(name: String): Option[MultiplicatorParameter] = {
     get[MultiplicatorParameter](name)
   }
-  // TODO: add get method for other parameter types
+
+  def getSingleColumnSelection(name: String): Option[SingleColumnSelection] = {
+    get[SingleColumnSelection](name)
+  }
+
+  def getMultipleColumnSelection(name: String): Option[MultipleColumnSelection] = {
+    get[MultipleColumnSelection](name)
+  }
 }
 
 object ParametersSchema {
