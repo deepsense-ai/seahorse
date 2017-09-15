@@ -314,7 +314,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "Wine Properties",
+      "name": "EXAMPLE 5: Wine Properties",
       "description": "Finding important features of wines that define wine quality as perceived by tasters",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {

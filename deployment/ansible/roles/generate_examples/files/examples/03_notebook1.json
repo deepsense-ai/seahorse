@@ -65,7 +65,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "Example 3",
+      "name": "EXAMPLE 3: Analyze Data Using Notebook",
       "description": "Analyze data using Notebook",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {

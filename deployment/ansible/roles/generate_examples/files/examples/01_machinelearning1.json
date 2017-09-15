@@ -230,7 +230,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "Example 1",
+      "name": "EXAMPLE 1: Simple Regression Model",
       "description": "Simple regression model",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
