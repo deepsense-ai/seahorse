@@ -19,6 +19,7 @@ var lab = angular.module('ds.lab', [
   'deepsense-catalogue-panel',
   'deepsense.attributes-panel',
   'deepsense.navigation-panel',
+  'toastr',
   require('./home/home.module.js').name,
   require('./account/account.module.js').name,
   require('./experiments/experiments.module.js').name,

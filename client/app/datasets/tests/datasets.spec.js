@@ -5,7 +5,7 @@
 
 describe('Datasets test', function() {
   beforeEach(function() {
-    let testModule = angular.module('test', ['ui.router']);
+    let testModule = angular.module('test', ['ui.router', 'toastr']);
 
     require('./../dataset-list.js').inject(testModule);
     require('./../datasets.config.js').inject(testModule);

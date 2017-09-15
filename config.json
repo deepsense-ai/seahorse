@@ -59,17 +59,19 @@
           "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js",
           "./node_modules/deepsense-navigation-panel/dist/deepsense-navigation-panel.js",
-          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js"
+          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
+          "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
+          "./node_modules/angular-toastr/dist/angular-toastr.min.css",
+          "./node_modules/animate.css/animate.min.css",
           "./client/css/*.css",
           "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css",
           "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.css",
           "./node_modules/deepsense-context-menu/dist/context-menu.css",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.css",
           "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css",
-          "./node_modules/animate.css/animate.min.css",
           "./node_modules/ng-switchery/dist/switchery.min.css",
           "./node_modules/deepsense-navigation-panel/dist/deepsense-navigation-panel.css"
         ]
@@ -94,7 +96,8 @@
           "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js",
           "./node_modules/deepsense-navigation-panel/dist/deepsense-navigation-panel.js",
-          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js"
+          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
+          "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -106,7 +109,8 @@
           "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css",
           "./node_modules/animate.css/animate.min.css",
           "./node_modules/ng-switchery/dist/switchery.min.css",
-          "./node_modules/deepsense-navigation-panel/dist/deepsense-navigation-panel.css"
+          "./node_modules/deepsense-navigation-panel/dist/deepsense-navigation-panel.css",
+          "./node_modules/angular-toastr/dist/angular-toastr.min.css"
         ]
       }
     },

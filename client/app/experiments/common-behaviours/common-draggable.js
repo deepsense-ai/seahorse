@@ -12,6 +12,7 @@ function Draggable($rootScope, $log, DragAndDrop) {
     restrict: 'A',
     link: function (scope, element, attrs) {
       let doNotListen = false;
+      let isTargetCorrect;
 
       if (!attrs.draggableType) {
         return false;
@@ -59,10 +60,9 @@ function Draggable($rootScope, $log, DragAndDrop) {
       }
 
       /* privates */
-      function isTargetCorrect (element, target) {
+      isTargetCorrect = function isTargetCorrect (element, target) {
         return element === target;
-      }
-      isTargetCorrect = isTargetCorrect.bind(undefined, element[0]);
+      }.bind(undefined, element[0]);
     }
   };
 }

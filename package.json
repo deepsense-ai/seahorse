@@ -26,6 +26,7 @@
     "angular": "^1.4.2",
     "angular-bootstrap": "^0.12.0",
     "angular-mocks": "^1.4.0",
+    "angular-toastr": "^1.4.1",
     "angular-ui-router": "^0.2.15",
     "bootstrap": "^3.3.4",
     "deepsense-attributes-panel": "0.0.9",

@@ -5,7 +5,7 @@
 
 describe('Home test', function () {
   beforeEach(() => {
-    let testModule = angular.module('test', ['ui.router']);
+    let testModule = angular.module('test', ['ui.router', 'toastr']);
 
     require('./../home.js').inject(testModule);
     require('./../home.config.js').inject(testModule);
