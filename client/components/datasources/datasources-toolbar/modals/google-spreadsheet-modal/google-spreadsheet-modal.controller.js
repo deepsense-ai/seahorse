@@ -14,6 +14,7 @@ class GoogleSpreadsheetModalController extends DatasourceModal {
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
       this.datasourceParams = editedDatasource.params;
+      this.isGoogleCrendetialsValid();
     } else {
       this.datasourceParams = {
         name: '',
@@ -45,7 +46,7 @@ class GoogleSpreadsheetModalController extends DatasourceModal {
 
   canAddDatasource() {
     return this.datasourceParams.name !== '' && this.isGoogleSpreadsheetIdValid() &&
-      this.isGoogleCrendetialsValid() && !super.doesNameExists();
+      this.areCredentialsValid && !super.doesNameExists();
   }
 
   isGoogleSpreadsheetIdValid() {

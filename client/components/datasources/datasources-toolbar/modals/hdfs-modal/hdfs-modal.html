@@ -1,4 +1,4 @@
-<div class="datasources-modal">
+<div class="datasources-modal" ng-form="datasourceForm">
   <div class="datasources-modal__header">
     <div class="modal-title">HDFS</div>
   </div>
@@ -11,21 +11,19 @@
         <input
           ng-model="$ctrl.hdfsPathBuffer"
           ng-change="$ctrl.onChangeHandler()"
+          name="hdfsUrl"
           placeholder="HDFS Path"
           class="form-control"
           type="text"
         />
         <div class="icon-input__status">
           <div
-            ng-if="$ctrl.isHdfsPathValid"
-            class="sa sa-ok icon-input__status--ok"
-          >
-          </div>
-          <div
-            ng-if="!$ctrl.isHdfsPathValid"
-            class="sa sa-cross icon-input__status--error"
-          >
-          </div>
+            class="sa icon"
+            ng-class="{
+              'sa-ok status-ok': $ctrl.isHdfsPathValid && (datasourceForm.hdfsUrl.$dirty || $ctrl.originalDatasource),
+              'sa-cross status-error': !$ctrl.isHdfsPathValid && (datasourceForm.hdfsUrl.$dirty || $ctrl.originalDatasource)
+            }"
+          ></div>
         </div>
       </div>
     </div>

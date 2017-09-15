@@ -14,6 +14,7 @@ class ExternalFileModalController extends DatasourceModal {
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
       this.datasourceParams = editedDatasource.params;
+      this.validateUrl();
     } else {
       this.datasourceParams = {
         name: '',
@@ -49,7 +50,7 @@ class ExternalFileModalController extends DatasourceModal {
 
   validateUrl() {
     this.isUrlValid = this.datasourceParams.externalFileParams.url !== '' &&
-        this.datasourceParams.externalFileParams.url.match(URL_REGEX);
+        !!this.datasourceParams.externalFileParams.url.match(URL_REGEX);
   }
 
   onFileSettingsChange(data) {

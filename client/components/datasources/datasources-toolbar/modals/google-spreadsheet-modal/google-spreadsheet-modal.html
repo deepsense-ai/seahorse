@@ -1,29 +1,27 @@
-<div class="datasources-modal">
+<div class="datasources-modal" ng-form="datasourceForm">
   <div class="datasources-modal__header">
     <div class="modal-title">Google Spreadsheet</div>
   </div>
 
   <div class="datasources-modal__body">
     <div class="datasources-modal__body-row">
-      <label class="title">Google sheet ID</label>
+      <label class="title">Google Spreadsheet ID / URL to Google Spreadsheet</label>
       <div class="icon-input">
         <input
           ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId"
+          name="googleSpreadsheetId"
           type="text"
           class="form-control"
-          placeholder="Connection string"
+          placeholder="Google spreadsheet ID"
         />
         <div class="icon-input__status">
           <div
-            ng-if="$ctrl.isGoogleSpreadsheetIdValid()"
-            class="sa sa-ok icon-input__status--ok"
-          >
-          </div>
-          <div
-            ng-if="!$ctrl.isGoogleSpreadsheetIdValid()"
-            class="sa sa-cross icon-input__status--error"
-          >
-          </div>
+            class="sa icon"
+            ng-class="{
+              'sa-ok status-ok': $ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource),
+              'sa-cross status-error': !$ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource)
+            }"
+          ></div>
         </div>
       </div>
     </div>
@@ -34,21 +32,20 @@
         <input
           ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials"
           ng-change="$ctrl.isGoogleCrendetialsValid()"
+          name="googleServiceAccountCredentials"
           type="text"
           class="form-control"
           placeholder="JSON credentials"
         />
+
         <div class="icon-input__status">
           <div
-            ng-if="$ctrl.areCredentialsValid"
-            class="sa sa-ok icon-input__status--ok"
-          >
-          </div>
-          <div
-            ng-if="!$ctrl.areCredentialsValid"
-            class="sa sa-cross icon-input__status--error"
-          >
-          </div>
+            class="sa icon"
+            ng-class="{
+              'sa-ok status-ok': $ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource),
+              'sa-cross status-error': !$ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource)
+            }"
+          ></div>
         </div>
       </div>
     </div>
