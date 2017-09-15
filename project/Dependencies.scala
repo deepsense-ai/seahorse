@@ -184,7 +184,7 @@ object Dependencies {
     scalajs
   )
 
-  val schedulingmanager =  scalatraAndJetty ++ json4s ++ Seq(
+  val schedulingmanager = scalatraAndJetty ++ json4s ++ Seq(
     cronUtils,
     h2,
     flyway,
@@ -194,9 +194,6 @@ object Dependencies {
   ) ++ Seq(scalatest).map(_ % Test)
 
   val integrationtests = Seq(
-    "com.typesafe.play" %% "play-ws" % "2.4.3",
-    "org.jfarcand" % "wcs" % "1.5",
-    scalaz,
-    stampy
+    scalaz
   ) ++ Seq(scalatest).map(_ % s"$Test,it")
 }

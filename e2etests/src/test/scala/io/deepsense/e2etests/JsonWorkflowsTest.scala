@@ -3,12 +3,12 @@
   */
 package io.deepsense.e2etests
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 
-import org.scalatest.{FreeSpec, Matchers, WordSpec}
-import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.{Matchers, WordSpec}
 
-import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
+import io.deepsense.models.workflows.WorkflowInfo
 
 
 class JsonWorkflowsTest extends WordSpec with Matchers with SeahorseIntegrationTestDSL {
@@ -23,8 +23,15 @@ class JsonWorkflowsTest extends WordSpec with Matchers with SeahorseIntegrationT
               val workflowFut = uploadWorkflow(fileContents)
               workflowFut.flatMap { workflow =>
                 val id = workflow.id
-                runWorkflowSynchronously(workflow, id)
-                client.deleteWorkflow(id)
+
+                createSessionSynchronously(id)
+                smclient.launchSession(id)
+
+                assertAllNodesCompletedSuccessfully(workflow)
+
+                smclient.deleteSession(id)
+                wmclient.deleteWorkflow(id)
+
               }
             }, workflowTimeout)
           }
@@ -35,8 +42,8 @@ class JsonWorkflowsTest extends WordSpec with Matchers with SeahorseIntegrationT
 
   def uploadWorkflow(fileContents: String): Future[WorkflowInfo] = {
     for {
-      id <- client.uploadWorkflow(fileContents)
-      wflows <- client.fetchWorkflows()
+      id <- wmclient.uploadWorkflow(fileContents)
+      wflows <- wmclient.fetchWorkflows()
       wflow = wflows.find(_.id == id)
     } yield {
       wflow.get

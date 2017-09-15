@@ -37,11 +37,11 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
       name = s"CLONE - ${wflow.name}",
       description = wflow.description
     )
-    val clonedWorkflowIdFut = client.cloneWorkflow(wflow.id, cloneDescription)
+    val clonedWorkflowIdFut = wmclient.cloneWorkflow(wflow.id, cloneDescription)
 
     for {
       id <- clonedWorkflowIdFut
-      wflows <- client.fetchWorkflows()
+      wflows <- wmclient.fetchWorkflows()
       wflow = wflows.find(_.id == id)
     } yield {
       wflow.get
@@ -51,13 +51,16 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
   def cloneAndRunWorkflow(wflow: WorkflowInfo): Future[Unit] = {
     cloneWorkflow(wflow).flatMap { clonedWorkflow =>
       val clonedWorkflowId = clonedWorkflow.id
-      runWorkflowSynchronously(clonedWorkflow, clonedWorkflowId)
-      client.deleteWorkflow(clonedWorkflowId)
+      createSessionSynchronously(clonedWorkflowId)
+      smclient.launchSession(clonedWorkflowId)
+      assertAllNodesCompletedSuccessfully(wflow)
+      smclient.deleteSession(clonedWorkflowId)
+      wmclient.deleteWorkflow(clonedWorkflowId)
     }
   }
 
   def fetchExampleWorkflows(): Future[Seq[WorkflowInfo]] = {
-    val workflowsFut = client.fetchWorkflows()
+    val workflowsFut = wmclient.fetchWorkflows()
     val exampleWorkflows = workflowsFut.map(_.filter(_.ownerName == "seahorse"))
     // Order matters because of
     // - `Write Transformer` in Example 1
