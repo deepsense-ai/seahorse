@@ -3,7 +3,8 @@
 let angular = require('angular');
 
 let workflows = angular.module('ds.workflows', [
-  require('./reports/reports.module.js').name
+  require('./reports/reports.module.js').name,
+  require('./core-canvas/canvas.module.js')
 ]);
 
 require('./workflows.config.js').inject(workflows);

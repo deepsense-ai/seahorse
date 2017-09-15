@@ -1,0 +1,17 @@
+<div class="flowchart-box"
+     ng-class="{'flowchart-box--is-running': isRunning}">
+  <div class="flowchart-mask sliding-window">
+    <div class="flowchart-paint-area"
+         droppable
+         droppable-type="exact"
+         droppable-exact-type="graphNode"
+         droppable-highlight="parent">
+      <graph-node jsplumb-draggable
+                  keyboard
+                  ng-repeat="(nodeId, node) in $ctrl.workflow.getNodes()"
+                  is-selected = "$ctrl.selectedNode.id === nodeId"
+                  node="node">
+      </graph-node>
+    </div>
+  </div>
+</div>

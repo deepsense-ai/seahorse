@@ -9,12 +9,9 @@
       >
     </operation-catalogue>
 
-    <flow-chart-box
+    <core-canvas
       workflow="workflow.getWorkflow()"
-      selected-node="workflow.getSelectedNode()"
-      is-running="workflow.isRunningOrAborting()"
-      disabled-mode="!workflow.isEditable()"
-      zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
+    ></core-canvas>
 
     <deepsense-operation-attributes
       workflow="workflow.WorkflowService.getCurrentWorkflow().id"
