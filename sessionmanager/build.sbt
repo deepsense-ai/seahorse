@@ -9,8 +9,11 @@ Revolver.settings
 
 enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 
-// Docker-related configuration
+// TODO Use sbt assembly to create jar.
+//   NOTE: Python path in application.conf needs to be set to /opt/conda/bin/python
+//   It might require manual change prop pythoncaretaker.python-binary in application.conf in JAR.
+// TODO Introduce new sbt task to generate we-deps.zip
 
-dockerBaseImage := "anapsix/alpine-java:jre8"
+dockerBaseImage := "sequenceiq/spark:1.6.0"
 dockerExposedPorts := Seq(9082)
 dockerUpdateLatest := true

@@ -7,7 +7,7 @@ package io.deepsense.sessionmanager.service.actors
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{Props, ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
@@ -20,11 +20,10 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.service.EventStore.{Event, InvalidWorkflowId, SessionExists}
-import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{CreateRequest, GetRequest, KillRequest, ListRequest}
+import io.deepsense.sessionmanager.service._
+import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{GetRequest, CreateRequest, KillRequest, ListRequest}
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
-import io.deepsense.sessionmanager.service.livy.Livy
-import io.deepsense.sessionmanager.service.livy.responses.Batch
-import io.deepsense.sessionmanager.service.{EventStore, Session, Status, StatusInferencer}
+import io.deepsense.sessionmanager.service.sessionspawner.SessionSpawner
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
 
 class SessionServiceActorSpec(_system: ActorSystem)
@@ -129,22 +128,22 @@ class SessionServiceActorSpec(_system: ActorSystem)
           m
         }
 
-        def livy: Livy = {
-          val m = mock[Livy]
+        def sessionSpawner: SessionSpawner = {
+          val m = mock[SessionSpawner]
           when(m.createSession(matchers.eq(notExistingSessionId), any()))
-            .thenReturn(Future.successful(mock[Batch]))
+            .thenReturn(Future.successful(()))
           m
         }
 
-        "use Livy to create a session" in fixture(eventStore, livy) { p =>
+        "use session spawner to create a session" in fixture(eventStore, sessionSpawner) { p =>
           val userId = Id.randomId.toString
           sendCreateRequest(p, notExistingSessionId, userId)
           eventually {
-            verify(p.livy, times(1)).createSession(notExistingSessionId, userId)
+            verify(p.sessionSpawner, times(1)).createSession(notExistingSessionId, userId)
           }
         }
 
-        "put 'Created' event to EventStore" in fixture(eventStore, livy) { p =>
+        "put 'Created' event to EventStore" in fixture(eventStore, sessionSpawner) { p =>
           sendCreateRequest(p, notExistingSessionId, Id.randomId.toString)
           eventually {
             verify(p.eventStore, times(1)).started(notExistingSessionId)
@@ -211,34 +210,34 @@ class SessionServiceActorSpec(_system: ActorSystem)
     (p.sessionServiceActor ? CreateRequest(workflowId, userId)).mapTo[Id]
 
   private def fixture[T](eventStore: EventStore)(test: (TestParams) => T): T =
-    fixture(eventStore, mock[StatusInferencer], mock[Livy])(test)
+    fixture(eventStore, mock[StatusInferencer], mock[SessionSpawner])(test)
 
-  private def fixture[T](eventStore: EventStore, livy: Livy)(test: (TestParams) => T): T =
-    fixture(eventStore, mock[StatusInferencer], livy)(test)
+  private def fixture[T](eventStore: EventStore, sessionSpawner: SessionSpawner)(test: (TestParams) => T): T =
+    fixture(eventStore, mock[StatusInferencer], sessionSpawner)(test)
 
   private def fixture[T](
       eventStore: EventStore,
       statusInferencer: StatusInferencer)(test: (TestParams) => T): T = {
-    fixture(eventStore, statusInferencer, mock[Livy])(test)
+    fixture(eventStore, statusInferencer, mock[SessionSpawner])(test)
   }
 
   private def fixture[T](test: (TestParams) => T): T =
-    fixture(mock[EventStore], mock[StatusInferencer], mock[Livy])(test)
+    fixture(mock[EventStore], mock[StatusInferencer], mock[SessionSpawner])(test)
 
   private def fixture[T](
     eventStore: EventStore,
     statusInferencer: StatusInferencer,
-    livy: Livy
+    sessionSpawner: SessionSpawner
   )(test: (TestParams) => T): T = {
     val sessionExecutorClients = mock[SessionExecutorClients]
     val props = Props(new SessionServiceActor(
-      livy,
+      sessionSpawner,
       eventStore,
       statusInferencer,
       sessionExecutorClients))
     val params = TestParams(
       system.actorOf(props),
-      livy,
+      sessionSpawner,
       eventStore,
       statusInferencer,
       sessionExecutorClients)
@@ -247,7 +246,7 @@ class SessionServiceActorSpec(_system: ActorSystem)
 
   case class TestParams(
     sessionServiceActor: ActorRef,
-    livy: Livy,
+    sessionSpawner: SessionSpawner,
     eventStore: EventStore,
     statusInferencer: StatusInferencer,
     sessionExecutorClients: SessionExecutorClients
