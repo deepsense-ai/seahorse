@@ -13,6 +13,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
   class WorkflowServiceClass {
 
     constructor() {
+      this._isLoading = true;
       this._workflowsStack = [];
       this._innerWorkflowByNodeId = {};
       this.init();
@@ -31,6 +32,9 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
     init() {
       WorkflowsApiClient.getAllWorkflows().then((data) => {
         this._workflowsData = data;
+        this._isLoading = false;
+      }, (failure) => {
+        this._isLoading = false;
       });
 
       $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, {
@@ -136,6 +140,10 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       });
 
       return idx !== -1;
+    }
+
+    isWorkflowLoading () {
+      return this._isLoading;
     }
 
     getCurrentWorkflow() {

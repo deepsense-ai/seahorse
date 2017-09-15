@@ -1,93 +1,109 @@
 <div class="panel panel-default no-border">
   <!-- Default panel contents -->
   <div class="panel-heading text-center logo">
-    <img src="../../img/seahorse-full-community-logo.png">
+    <img src="../../img/seahorse-logo-main.png">
     <p class="api-version">v.{{home.getVersion()}}</p>
   </div>
   <!-- List group -->
   <div class="btn-group btn-group-justified" role="group">
     <div class="btn-group" role="group">
       <button type="button" class="btn-yellow btn text-uppercase btn-workflow btn-workflow__new"
-              ng-click="home.displayCreateWorkflowPopup($event)">New Workflow</button>
+              ng-click="home.displayCreateWorkflowPopup($event)">New Workflow
+      </button>
     </div>
-    <div class="btn-group" role="group" >
+    <div class="btn-group" role="group">
       <button type="button" class="btn-blue btn text-uppercase btn-workflow btn-workflow__upload"
-              ng-click="home.displayUploadWorkflowPopup($event)">Upload Workflow</button>
+              ng-click="home.displayUploadWorkflowPopup($event)">Upload Workflow
+      </button>
     </div>
   </div>
-  <div class="input-group col-md-12">
+  <deepsense-loading-spinner-sm ng-if="home.isWorkflowLoading()"></deepsense-loading-spinner-sm>
+  <div class="input-group col-md-12" ng-if="home.getAllWorkflows()">
     <input type="text" class="text-center form-control input-search-workflow"
            ng-model="home.filterString" placeholder="SEARCH...">
   </div>
-  <table class="table table-striped text-center table-workflows">
-    <tr class="header text-uppercase">
-      <td class="col-md-1 color-gray"><b>Index</b></td>
-      <td class="col-md-2 color-gray sortable"
-          ng-click="home.sortBy('name')">
-        <b>Name</b>
+  <div ng-if="home.getAllWorkflows() && !home.isWorkflowLoading()">
+    <table class="table table-striped text-center table-workflows">
+      <tr class="header text-uppercase">
+        <td class="col-md-1 color-gray"><b>Index</b></td>
+        <td class="col-md-2 color-gray sortable"
+            ng-click="home.sortBy('name')">
+          <b>Name</b>
         <span>
           <i ng-class="home.getClass('name')"></i>
         </span>
-      </td>
-      <td class="col-md-3 color-gray sortable"
-          ng-click="home.sortBy('description')">
-        <b>Description</b>
+        </td>
+        <td class="col-md-3 color-gray sortable"
+            ng-click="home.sortBy('description')">
+          <b>Description</b>
         <span>
           <i ng-class="home.getClass('description')"></i>
         </span>
-      </td>
-      <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('updated')">
-        <b>Updated</b>
+        </td>
+        <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('updated')">
+          <b>Updated</b>
         <span>
           <i ng-class="home.getClass('updated')"></i>
         </span>
-      </td>
-      <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('created')">
-        <b>Created</b>
+        </td>
+        <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('created')">
+          <b>Created</b>
         <span>
           <i ng-class="home.getClass('created')"></i>
         </span>
-      </td>
-      <td class="col-md-3 color-gray">
-        <b>Actions</b>
-      </td>
-    </tr>
-    <tr ng-repeat="workflow in home.getAllWorkflows() | orderBy : home.sort.column : home.sort.descending | filter:home.filterString track by workflow.id">
-      <td>{{$index+1}}</td>
-      <td>
-        <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.name}}</a>
-      </td>
-      <td>
-        <a ng-if="workflow.description"
-           uib-popover="{{workflow.description}}"
-           popover-trigger="{{ home.getTriggerEventBasedOnDescriptionLength(workflow.description) }}"
-           popover-append-to-body="true"
-           ng-href="{{home.getWorkflowUrl(workflow.id)}}">
-          {{workflow.description | cut : true : 50 : ' ...' }}
-        </a>
-        <a ng-if="workflow.description.length == 0"
-           ng-href="{{home.getWorkflowUrl(workflow.id)}}">
-          -
-        </a>
-      </td>
-      <td>
-        <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
-          {{workflow.updated | date:"dd/MM/yyyy - HH:mm:ss"}}
-        </a>
-      </td>
-      <td>
-        <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
-          {{workflow.created | date:"dd/MM/yyyy - HH:mm:ss"}}
-        </a>
-      </td>
-      <td>
-        <a popover-trigger="mouseenter"
-           popover-placement="left"
-           uib-popover="Delete workflow"
-           ng-click="home.deleteWorkflow(workflow)">
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
-      </td>
-    </tr>
-  </table>
+        </td>
+        <td class="col-md-3 color-gray">
+          <b>Actions</b>
+        </td>
+      </tr>
+      <tr
+        ng-repeat="workflow in home.getAllWorkflows() | orderBy : home.sort.column : home.sort.descending | filter:home.filterString track by workflow.id">
+        <td>{{$index+1}}</td>
+        <td>
+          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.name}}</a>
+        </td>
+        <td>
+          <a ng-if="workflow.description"
+             uib-popover="{{workflow.description}}"
+             popover-trigger="{{ home.getTriggerEventBasedOnDescriptionLength(workflow.description) }}"
+             popover-append-to-body="true"
+             ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+            {{workflow.description | cut : true : 50 : ' ...' }}
+          </a>
+          <a ng-if="workflow.description.length == 0"
+             ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+            -
+          </a>
+        </td>
+        <td>
+          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+            {{workflow.updated | date:"dd/MM/yyyy - hh:mm a"}}
+          </a>
+        </td>
+        <td>
+          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+            {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
+          </a>
+        </td>
+        <td>
+          <a popover-trigger="mouseenter"
+             popover-placement="left"
+             uib-popover="Delete workflow"
+             ng-click="home.deleteWorkflow(workflow)">
+            <span class="glyphicon glyphicon-remove"></span>
+          </a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-md-12" ng-if="!home.getAllWorkflows() && !home.isWorkflowLoading()">
+    <div class="container center">
+      <div class="no-worfklows">
+        <div class="no-worfklows__icon">
+          <i class="fa fa-ban"></i>
+          <span>No workflows found</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

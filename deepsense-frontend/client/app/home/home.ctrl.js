@@ -26,6 +26,10 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
     }
   };
 
+  this.isWorkflowLoading = () => {
+    return WorkflowService.isWorkflowLoading();
+  };
+
   this.getClass = (columnName) => {
     if (this.sort.column === columnName) {
       let icon = 'glyphicon glyphicon-chevron';
