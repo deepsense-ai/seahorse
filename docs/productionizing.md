@@ -161,7 +161,9 @@ Detailed information about command line parameters can be obtained by executing 
 | ``-w FILENAME``<BR/>``--workflow-filename FILENAME``            | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
 | ``-e:NAME=VALUE``<BR/>``--extra-var:NAME=VALUE``                | Extra variable. Sets an extra variable to a specified value. Can be specified multiple times. |
-| ``-p PATH``<BR/>``--python-executor-path PATH``                 | Path to PyExecutor code (included in `workflowexecutor.jar`). |
+| ``-x PATH``<BR/>``--custom-code-executors-path PATH``           | Custom code executors (included in workflowexecutor.jar) path. |
+| ``--python-binary PATH``                                        | Python binary path. |
+| ``-t PATH``<BR/>``--temp-dir PATH``                             | Temporary directory path. |
 
 * **NOTE:** Parameter ``-w FILENAME`` (or its long name) needs to be specified.
 * **NOTE:** Both parameters ``-w FILENAME`` and ``-o DIR`` (or their long names) have to be specified.
