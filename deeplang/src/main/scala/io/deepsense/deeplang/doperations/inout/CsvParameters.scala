@@ -32,7 +32,7 @@ trait NamesIncludedParam {
   def setNamesIncluded(value: Boolean): this.type = set(namesIncluded, value)
 }
 
-trait CsvParameters extends NamesIncludedParam{
+trait CsvParameters extends NamesIncludedParam {
   this: Params =>
 
   import CsvParameters._

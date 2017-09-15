@@ -27,7 +27,8 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperations.exceptions.UnsupportedColumnTypeException
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, ParquetNotSupported, UnknownFileSchemaForPath}
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.ParquetNotSupported
+import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, UnknownFileSchemaForPath}
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport, TestFiles}
 
 class WriteDataFrameWithDriverFilesIntegSpec

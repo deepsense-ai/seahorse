@@ -14,54 +14,55 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe.google
+package io.deepsense.deeplang.doperations.readwritedataframe.googlestorage
 
-import java.io.{File => _, _}
+import java.io.{ByteArrayInputStream, FileOutputStream}
 import java.util
-import java.util.UUID
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.http.FileContent
 import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.drive.model.File
 import com.google.api.services.drive.{Drive, DriveScopes}
 
 import io.deepsense.commons.resources.ManagedResource
-import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, InputStorageTypeChoice}
-import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice.GoogleSheet
-import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
+import io.deepsense.commons.utils.LoggerForCallerClass
+import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice
 
-object GoogleSheetClient extends Logging {
+private[googlestorage] object GoogleDriveClient {
+
+  val logger = LoggerForCallerClass()
+
+  val googleSheetCsvSeparator = ColumnSeparatorChoice.Comma()
 
   private val ApplicationName = "Seahorse"
 
-  // TODO Consider handling both DRIVER and DRIVER_ONLY if user wants read-only access.
   private val Scopes = util.Arrays.asList(DriveScopes.DRIVE)
 
-  def reduceGoogleSheetToDriverFile(googleSheet: GoogleSheet): InputStorageTypeChoice.File = {
-    val id = googleSheet.getGoogleSheetId()
-    val tmpPath = s"/tmp/seahorse/google_sheet_${id}__${UUID.randomUUID()}.csv"
+  def uploadCsvFileAsGoogleSheet(
+      credentials: GoogleCretendialsJson,
+      sheetId: GoogleSheetId,
+      filePath: String
+    ): Unit = {
+    val fileMetadata = new File().setMimeType("application/vnd.google-apps.spreadsheet")
+    val mediaContent = new FileContent("text/csv", new java.io.File(filePath))
 
-    val file = new java.io.File(tmpPath)
+    driveService(credentials).files.update(sheetId, fileMetadata, mediaContent).execute
+  }
+
+  def downloadGoogleSheetAsCsvFile(
+      credentials: GoogleCretendialsJson,
+      sheetId: GoogleSheetId,
+      filePath: String
+    ): Unit = {
+    val file = new java.io.File(filePath)
     file.getParentFile.mkdirs()
 
     ManagedResource(new FileOutputStream(file)) { fos =>
-      driveService(
-        googleSheet.getGoogleServiceAccountCredentials()
-      ).files().export(id, "text/csv").executeMediaAndDownloadTo(fos)
-      logger.info(s"Downloaded google sheet id=$id to the temporary path $tmpPath")
+      driveService(credentials).files().export(sheetId, "text/csv").executeMediaAndDownloadTo(fos)
+      logger.info(s"Downloaded google sheet id=$sheetId to the file $filePath")
     }
-
-    val downloadedCsvPath = FilePath(FileScheme.File, tmpPath)
-
-    new InputStorageTypeChoice.File()
-      .setFileFormat(
-        new InputFileFormatChoice.Csv()
-          .setCsvColumnSeparator(new CsvParameters.ColumnSeparatorChoice.Comma())
-          .setShouldConvertToBoolean(googleSheet.getShouldConvertToBoolean)
-          .setNamesIncluded(googleSheet.getNamesIncluded)
-      )
-      .setSourceFile(downloadedCsvPath.fullPath)
   }
 
   private def driveService(serviceAccountCredentials: String): Drive = {

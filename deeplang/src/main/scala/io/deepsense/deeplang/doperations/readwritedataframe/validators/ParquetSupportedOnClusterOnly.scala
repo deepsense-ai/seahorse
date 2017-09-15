@@ -17,7 +17,8 @@
 package io.deepsense.deeplang.doperations.readwritedataframe.validators
 
 import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, InputStorageTypeChoice, OutputFileFormatChoice, OutputStorageTypeChoice}
-import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme, ParquetNotSupported}
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.ParquetNotSupported
+import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 
 object ParquetSupportedOnClusterOnly {

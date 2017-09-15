@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.apache.spark.sql.{DataFrame => SparkDataFrame, SaveMode}
+import org.apache.spark.sql.{SaveMode, DataFrame => SparkDataFrame}
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout.OutputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
-import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvOptions
+import io.deepsense.deeplang.doperations.readwritedataframe.FilePath
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvOptions
 
-object ClusterFiles {
+private[filestorage] object ClusterFiles {
 
   import CsvOptions._
 

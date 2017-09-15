@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
 import java.io.PrintWriter
 
@@ -29,9 +29,10 @@ import io.deepsense.commons.resources.ManagedResource
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
-import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvOptions
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvOptions
+import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
 
-object DriverFiles {
+private[filestorage] object DriverFiles {
 
   def read(driverPath: String, fileFormat: InputFileFormatChoice)
           (implicit context: ExecutionContext): SparkDataFrame = fileFormat match {

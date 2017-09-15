@@ -32,8 +32,9 @@ import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice.{File, GoogleSheet}
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe._
-import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvSchemaInferencerAfterReading
-import io.deepsense.deeplang.doperations.readwritedataframe.google.GoogleSheetClient
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvSchemaInferencerAfterReading
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.DataFrameFromFileReader
+import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage.DataFrameFromGoogleSheetReader
 import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
@@ -61,10 +62,10 @@ case class ReadDataFrame()
     try {
       val dataframe = getStorageType() match {
         case jdbcChoice: InputStorageTypeChoice.Jdbc => readFromJdbc(jdbcChoice)
-        case googleSheet: InputStorageTypeChoice.GoogleSheet =>
-          val fileChoiceFromGoogleSheetChoice = GoogleSheetClient.reduceGoogleSheetToDriverFile(googleSheet)
-          readFromFile(fileChoiceFromGoogleSheetChoice)
-        case fileChoice: InputStorageTypeChoice.File => readFromFile(fileChoice)
+        case googleSheet: InputStorageTypeChoice.GoogleSheet => DataFrameFromGoogleSheetReader.readFromGoogleSheet(
+          googleSheet
+        )
+        case fileChoice: InputStorageTypeChoice.File => DataFrameFromFileReader.readFromFile(fileChoice)
       }
       DataFrame.fromSparkDataFrame(dataframe)
     } catch {
@@ -79,31 +80,6 @@ case class ReadDataFrame()
     ParquetSupportedOnClusterOnly.validate(this)
     super._inferKnowledge(context)()
   }
-
-  private def readFromFile(fileChoice: InputStorageTypeChoice.File)
-                          (implicit context: ExecutionContext) = {
-    val path = FilePath(fileChoice.getSourceFile)
-    val rawDataFrame = readUsingProvidedFileScheme(path, fileChoice.getFileFormat)
-    val postprocessed = fileChoice.getFileFormat match {
-      case csv: Csv => CsvSchemaInferencerAfterReading.postprocess(csv)(rawDataFrame)
-      case other => rawDataFrame
-    }
-    postprocessed
-  }
-
-  private def readUsingProvidedFileScheme
-      (path: FilePath, fileFormat: InputFileFormatChoice)
-      (implicit context: ExecutionContext): SparkDataFrame =
-    path.fileScheme match {
-      case FileScheme.Library =>
-        val filePath = FilePathFromLibraryPath(path)
-        readUsingProvidedFileScheme(filePath, fileFormat)
-      case FileScheme.File => DriverFiles.read(path.pathWithoutScheme, fileFormat)
-      case FileScheme.HTTP | FileScheme.HTTPS | FileScheme.FTP =>
-        val downloadedPath = FileDownloader.downloadFile(path.fullPath)
-        readUsingProvidedFileScheme(downloadedPath, fileFormat)
-      case FileScheme.HDFS => ClusterFiles.read(path, fileFormat)
-    }
 
   private def readFromJdbc
       (jdbcChoice: InputStorageTypeChoice.Jdbc)

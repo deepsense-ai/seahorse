@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperations.inout
 
+import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.library.LoadFromLibraryParam
 import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
@@ -61,29 +62,16 @@ object InputStorageTypeChoice {
       declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
   }
 
-  class GoogleSheet extends InputStorageTypeChoice with NamesIncludedParam with HasShouldConvertToBooleanParam {
+  class GoogleSheet
+    extends InputStorageTypeChoice
+    with GoogleSheetParams
+    with NamesIncludedParam
+    with HasShouldConvertToBooleanParam {
 
     override val name: String = "Google Sheet"
     override lazy val params = declareParams(
       googleSheetId, serviceAccountCredentials, namesIncluded, shouldConvertToBoolean
     )
-
-    val googleSheetId = StringParam(
-      name = "Google Sheet Id",
-      description = "Id of google sheet")
-    setDefault(googleSheetId, "")
-
-    def getGoogleSheetId(): String = $(googleSheetId)
-    def setGoogleSheetId(value: String): this.type = set(googleSheetId, value)
-
-    val serviceAccountCredentials = StringParam(
-      name = "Google Service Account credentials JSON",
-      description = "Json file representing google service account credentials to be used for reading " +
-        "google sheet. For more details read documentation #TODO_LINK")
-    setDefault(serviceAccountCredentials, "")
-
-    def getGoogleServiceAccountCredentials(): String = $(serviceAccountCredentials)
-    def setGoogleServiceAccountCredentials(value: String): this.type = set(serviceAccountCredentials, value)
 
   }
 

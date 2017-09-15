@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperations.inout
 
+import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.library.SaveToLibraryParam
 import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
@@ -25,7 +26,9 @@ sealed trait OutputStorageTypeChoice extends Choice {
 
   override val choiceOrder: List[Class[_ <: OutputStorageTypeChoice]] = List(
     classOf[File],
-    classOf[Jdbc])
+    classOf[Jdbc],
+    classOf[GoogleSheet]
+  )
 }
 
 object OutputStorageTypeChoice {
@@ -60,4 +63,16 @@ object OutputStorageTypeChoice {
     override val params: Array[Param[_]] =
       declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
   }
+
+  class GoogleSheet()
+    extends OutputStorageTypeChoice with GoogleSheetParams with NamesIncludedParam
+    with HasShouldConvertToBooleanParam  {
+
+    override val name = "Google Sheet"
+    override lazy val params = declareParams(
+      googleSheetId, serviceAccountCredentials, namesIncluded, shouldConvertToBoolean
+    )
+
+  }
+
 }
