@@ -81,8 +81,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       return document.querySelector('#' + nodeIdPrefix + id);
     },
 
-    broadcastHoverEvent(eventName, portElement, portObject) {
-      $rootScope.$broadcast(eventName, {
+    emitMouseOverEvent(eventName, portElement, portObject) {
+      $rootScope.$emit(eventName, {
         portElement: portElement,
         portObject: portObject
       });
@@ -242,11 +242,11 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       });
 
       jsPlumbPort.bind('mouseover', (endpoint) => {
-        internal.broadcastHoverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
+        internal.emitMouseOverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
       });
 
       jsPlumbPort.bind('mouseout', (endpoint) => {
-        internal.broadcastHoverEvent('OutputPoint.MOUSEOUT', endpoint.canvas, ports[i]);
+        $rootScope.$emit('OutputPoint.MOUSEOUT');
       });
     }
   };
@@ -269,11 +269,11 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       });
 
       port.bind('mouseover', (endpoint) => {
-        internal.broadcastHoverEvent('InputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
+        internal.emitMouseOverEvent('InputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
       });
 
       port.bind('mouseout', (endpoint) => {
-        internal.broadcastHoverEvent('InputPoint.MOUSEOUT', endpoint.canvas, ports[i]);
+        $rootScope.$broadcast('InputPoint.MOUSEOUT');
       });
     }
   };

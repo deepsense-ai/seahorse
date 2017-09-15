@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function PortStatusesTooltipController($scope, $element) {
+function PortStatusesTooltipController($rootScope, $scope, $element) {
   let that = this;
   let internal = {};
 
@@ -27,15 +27,15 @@ function PortStatusesTooltipController($scope, $element) {
     $scope.$digest();
   };
 
-  $scope.$on('InputPoint.MOUSEOVER', (event, data) => {
+  $rootScope.$on('InputPoint.MOUSEOVER', (event, data) => {
     internal.mouseoverHandler(data.portElement, data.portObject);
   });
-  $scope.$on('InputPoint.MOUSEOUT', internal.hideTooltip);
+  $rootScope.$on('InputPoint.MOUSEOUT', internal.hideTooltip);
 
-  $scope.$on('OutputPoint.MOUSEOVER', (event, data) => {
+  $rootScope.$on('OutputPoint.MOUSEOVER', (event, data) => {
     internal.mouseoverHandler(data.portElement, data.portObject);
   });
-  $scope.$on('OutputPoint.MOUSEOUT', internal.hideTooltip);
+  $rootScope.$on('OutputPoint.MOUSEOUT', internal.hideTooltip);
 
   $scope.$on('Keyboard.KEY_PRESSED_DEL', internal.hideTooltip);
 
