@@ -201,7 +201,7 @@ object Join {
   val rightColumnParamKey = "right column"
 
   val parametersSequenceParam = ParametersSequence(
-    "Columns used for LEFT JOIN operation",
+    "Pairs of columns to join upon",
     required = true,
     predefinedSchema = ParametersSchema(
       leftColumnParamKey -> SingleColumnSelectorParameter(
