@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function GeneralDataPanelController ($modal, $scope, WorkflowService) {
+function GeneralDataPanelController ($modal, $scope, $timeout, WorkflowService) {
   this.saveWorkflow = () => {
     WorkflowService.saveWorkflow();
   };
@@ -20,6 +20,10 @@ function GeneralDataPanelController ($modal, $scope, WorkflowService) {
   };
 
   this.getVerboseStatus = () => this.state.status.toUpperCase().split('_')[1];
+
+  this.delaySave = function delaySave () {
+    $timeout(this.saveWorkflow, 0, false);
+  };
 }
 
 exports.inject = function (module) {

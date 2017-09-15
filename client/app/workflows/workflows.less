@@ -37,3 +37,15 @@
   width: @panel-main-width;
   min-width: @panel-main-width;
 }
+
+textarea.editable-has-buttons.editable-input {
+  width: 100%;
+  margin: 0 0 10px;
+  min-height: 12ex;
+
+  + .editable-buttons {
+    button:first-child {
+      margin-left: 0;
+    }
+  }
+}

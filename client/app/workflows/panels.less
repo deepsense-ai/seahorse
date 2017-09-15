@@ -60,12 +60,12 @@
   &__ibox-title {
     &--editor-mode {
       padding: @general-panel-padding;
-      height: 64px;
+      min-height: 64px;
     }
 
     &--report-mode {
       padding: @general-panel-padding;
-      height: 48px;
+      min-height: 48px;
     }
   }
 }
@@ -75,15 +75,10 @@
   margin-bottom: 0;
 
   &__title {
-    height: auto;
-    font-weight: bold;
     text-transform: uppercase;
-    width: 100%;
-    border: 1px solid lighten(@color-active, 40%);
-    cursor: text;
 
-    &:hover {
-      border: 1px solid @color-active;
+    &.editable-empty {
+      text-transform: none;
     }
   }
 
@@ -95,7 +90,8 @@
     width: 100%;
     max-height: 22ex;
     overflow: hidden;
-    border: 1px solid lighten(@color-active, 40%);
+    border: 1px solid transparent;
+    border-bottom: 1px dashed gray;
     margin: 0;
     cursor: text;
 

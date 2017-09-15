@@ -1,8 +1,15 @@
 <aside class="ibox o-general-data-panel o-panel o-panel--scroll-right animated fadeInRight">
   <header class="o-general-data-panel__ibox-title--editor-mode" ng-if="!controller.isReportMode">
-    <input type="text" size="30" class="o-panel__title text-success form-control no-margins"
-           ng-model="controller.name" ng-blur="controller.saveWorkflow()"
-           tooltip="Edit workflow's name" tooltip-placement="left" tooltip-append-to-body="true"/>
+    <h4 class="ibox-title__name"
+        tooltip="{{controller.name ? 'Edit workflow\'s name' : ''}}"
+        tooltip-placement="left"
+        tooltip-append-to-body="true">
+      <span editable-text="controller.name"
+            onaftersave="controller.delaySave()"
+            class="o-panel__title">
+        {{controller.name || 'Enter workflow name'}}
+      </span>
+    </h4>
   </header>
   <header class="o-general-data-panel__ibox-title--report-mode" ng-if="controller.isReportMode">
     <h4 class="text-success no-margins">{{::controller.name}}</h4>
@@ -11,10 +18,16 @@
     <header>
       <auto-text-area value="controller.description"
                       ng-if="!controller.isReportMode"
-                      tooltip="Edit workflow's description" tooltip-placement="left" tooltip-append-to-body="true"></auto-text-area>
+                      tooltip="Edit workflow's description"
+                      tooltip-placement="left"
+                      tooltip-append-to-body="true"></auto-text-area>
       <p ng-if="controller.isReportMode"
          class="o-panel__description o-panel__description--read-only"
-         tooltip="{{::controller.description}}" tooltip-placement="left" tooltip-append-to-body="true">{{::controller.description}}</p>
+         tooltip="{{::controller.description}}"
+         tooltip-placement="left"
+         tooltip-append-to-body="true">
+        {{::controller.description}}
+      </p>
     </header>
     <section ng-if="controller.isReportMode">
       <header>
