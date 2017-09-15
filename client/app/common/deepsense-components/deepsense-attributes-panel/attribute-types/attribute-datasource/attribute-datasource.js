@@ -3,7 +3,7 @@
 import tpl from './attribute-datasource.html';
 
 /* @ngInject */
-function AttributeDatasource(DatasourcesPanelService, datasourcesService, DatasourcesModalsService, UserService) {
+function AttributeDatasource(DatasourcesPanelService, datasourcesService, DatasourcesModalsService, AttributesPanelService) {
   return {
     restrict: 'E',
     templateUrl: tpl,
@@ -18,6 +18,10 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
           scope.error = 'Could not find datasource with given ID.';
         }
       }
+
+      scope.$watch(() => AttributesPanelService.getDisabledMode(), (newValue) => {
+        scope.disabledMode = newValue;
+      });
 
       scope.$watch(() => datasourcesService.datasources, (changedDatasources) => {
         scope.datasource = changedDatasources.find(datasource => datasource.id === scope.parameter.value);

@@ -1,4 +1,7 @@
-<div class="attribute-datasource">
+<div
+  ng-class="{'disable-mask': disabledMode}"
+  class="attribute-datasource"
+>
   <div
     ng-if="isDataSourceEmpty()"
     class="datasource-wrapper error-wrapper"
