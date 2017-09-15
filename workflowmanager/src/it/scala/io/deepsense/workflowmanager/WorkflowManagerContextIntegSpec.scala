@@ -8,7 +8,7 @@ import com.google.inject.Guice
 import org.scalatest.FlatSpec
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.workflowmanager.rest.OperationsApi
+import io.deepsense.workflowmanager.rest.{InsecureWorkflowApi, InsecureOperationsApi, OperationsApi}
 
 class WorkflowManagerContextIntegSpec extends FlatSpec {
 
@@ -16,7 +16,8 @@ class WorkflowManagerContextIntegSpec extends FlatSpec {
 
   "Guice context" should "have all needed services created" in {
     checkIfSingleton(classOf[DOperableCatalog])
-    assert(injector.getInstance(classOf[OperationsApi]) != null)
+    assert(injector.getInstance(classOf[InsecureOperationsApi]) != null)
+    assert(injector.getInstance(classOf[InsecureWorkflowApi]) != null)
   }
 
   private def checkIfSingleton[T <: AnyRef](clazz: Class[T]) = {

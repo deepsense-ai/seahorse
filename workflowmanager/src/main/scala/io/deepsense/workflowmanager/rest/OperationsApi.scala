@@ -35,7 +35,8 @@ abstract class OperationsApi @Inject() (
   extends RestApiAbstractAuth
   with RestComponent
   with DeepLangJsonProtocol
-  with SprayJsonSupport {
+  with SprayJsonSupport
+  with Cors {
 
   self: AbstractAuthDirectives =>
 
@@ -46,36 +47,38 @@ abstract class OperationsApi @Inject() (
   def route: Route = {
     handleRejections(rejectionHandler) {
       handleExceptions(exceptionHandler) {
-        pathPrefix(pathPrefixMatcher) {
-          path("hierarchy") {
-            get {
-              withUserContext { userContext =>
-                complete(Future.successful(dOperableCatalog.descriptor))
-              }
-            }
-          } ~
-          path("catalog") {
-            get {
-              withUserContext { userContext =>
-                complete(Future.successful(dOperationsCatalog.categoryTree))
-              }
-            }
-          } ~
-          path(JavaUUID) { operationId =>
-            get {
-              withUserContext { userContext =>
-                dOperationsCatalog.operations.get(operationId) match {
-                  case Some(operation) => complete(Future.successful(Envelope(operation)))
-                  case None => complete(
-                    StatusCodes.NotFound, s"Operation with id = $operationId does not exist")
+        cors {
+          pathPrefix(pathPrefixMatcher) {
+            path("hierarchy") {
+              get {
+                withUserContext { userContext =>
+                  complete(Future.successful(dOperableCatalog.descriptor))
                 }
               }
-            }
-          } ~
-          pathEndOrSingleSlash {
-            get {
-              withUserContext { userContext =>
-                complete(Future.successful(Envelope(dOperationsCatalog.operations)))
+            } ~
+            path("catalog") {
+              get {
+                withUserContext { userContext =>
+                  complete(Future.successful(dOperationsCatalog.categoryTree))
+                }
+              }
+            } ~
+            path(JavaUUID) { operationId =>
+              get {
+                withUserContext { userContext =>
+                  dOperationsCatalog.operations.get(operationId) match {
+                    case Some(operation) => complete(Future.successful(Envelope(operation)))
+                    case None => complete(
+                      StatusCodes.NotFound, s"Operation with id = $operationId does not exist")
+                  }
+                }
+              }
+            } ~
+            pathEndOrSingleSlash {
+              get {
+                withUserContext { userContext =>
+                  complete(Future.successful(Envelope(dOperationsCatalog.operations)))
+                }
               }
             }
           }

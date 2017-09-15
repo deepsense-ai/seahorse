@@ -42,7 +42,8 @@ abstract class WorkflowApi @Inject() (
   with WorkflowJsonProtocol
   with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
-  with MetadataInferenceResultJsonProtocol {
+  with MetadataInferenceResultJsonProtocol
+  with Cors {
 
   self: AbstractAuthDirectives =>
 
@@ -52,95 +53,97 @@ abstract class WorkflowApi @Inject() (
   def route: Route = {
     handleRejections(rejectionHandler) {
       handleExceptions(exceptionHandler) {
-        path("") {
-          get {
-            complete("Workflow Manager")
-          }
-        } ~
-        pathPrefix(pathPrefixMatcher) {
-          path(JavaUUID) { idParameter =>
-            val workflowId = Id(idParameter)
+        cors {
+          path("") {
             get {
-              withUserContext { userContext =>
-                complete {
-                  workflowManagerProvider
-                    .forContext(userContext)
-                    .get(workflowId)
-                }
-              }
-            } ~
-            put {
-              withUserContext { userContext =>
-                entity(as[Workflow]) { workflow =>
+              complete("Workflow Manager")
+            }
+          } ~
+          pathPrefix(pathPrefixMatcher) {
+            path(JavaUUID) { idParameter =>
+              val workflowId = Id(idParameter)
+              get {
+                withUserContext { userContext =>
                   complete {
                     workflowManagerProvider
                       .forContext(userContext)
-                      .update(workflowId, workflow)
+                      .get(workflowId)
+                  }
+                }
+              } ~
+              put {
+                withUserContext { userContext =>
+                  entity(as[Workflow]) { workflow =>
+                    complete {
+                      workflowManagerProvider
+                        .forContext(userContext)
+                        .update(workflowId, workflow)
+                    }
+                  }
+                }
+              } ~
+              delete {
+                withUserContext { userContext =>
+                  onComplete(
+                    workflowManagerProvider
+                      .forContext(userContext)
+                      .delete(workflowId)) {
+                    case Success(result) => result match {
+                      case true => complete(StatusCodes.OK)
+                      case false => complete(StatusCodes.NotFound)
+                    }
+                    case Failure(exception) => failWith(exception)
                   }
                 }
               }
             } ~
-            delete {
-              withUserContext { userContext =>
-                onComplete(
-                  workflowManagerProvider
-                    .forContext(userContext)
-                    .delete(workflowId)) {
-                  case Success(result) => result match {
-                    case true => complete(StatusCodes.OK)
-                    case false => complete(StatusCodes.NotFound)
-                  }
-                  case Failure(exception) => failWith(exception)
-                }
-              }
-            }
-          } ~
-          path(JavaUUID / "download") { idParameter =>
-            val workflowId = Id(idParameter)
-            get {
-              withUserContext { userContext =>
-                complete {
-                  workflowManagerProvider
-                    .forContext(userContext)
-                    .download(workflowId)
-                }
-              }
-            }
-          } ~
-          path("upload") {
-            post {
-              withUserContext { userContext =>
-                entity(as[MultipartFormData]) {
-                  def workflowFileContent(formData: MultipartFormData): String =
-                    formData.fields
-                      .filter(_.name.get == "workflowFile")
-                      .map(_.entity.asString)
-                      .foldLeft("")(_ + _)
-
-                  def readWorkflow(s: String): Workflow =
-                    workflowFormat.read(JsonParser(ParserInput(s)))
-
-                  formData => onComplete(
+            path(JavaUUID / "download") { idParameter =>
+              val workflowId = Id(idParameter)
+              get {
+                withUserContext { userContext =>
+                  complete {
                     workflowManagerProvider
                       .forContext(userContext)
-                      .create(readWorkflow(workflowFileContent(formData)))) {
-                    case Success(workflowWithKnowledge) => complete(
-                      StatusCodes.Created, workflowWithKnowledge)
-                    case Failure(exception) => failWith(exception)
+                      .download(workflowId)
                   }
                 }
               }
-            }
-          } ~
-          pathEndOrSingleSlash {
-            post {
-              withUserContext { userContext =>
-                entity(as[Workflow]) { workflow =>
-                  onComplete(workflowManagerProvider
-                    .forContext(userContext).create(workflow)) {
-                    case Success(workflowWithKnowledge) => complete(
-                      StatusCodes.Created, workflowWithKnowledge)
-                    case Failure(exception) => failWith(exception)
+            } ~
+            path("upload") {
+              post {
+                withUserContext { userContext =>
+                  entity(as[MultipartFormData]) {
+                    def workflowFileContent(formData: MultipartFormData): String =
+                      formData.fields
+                        .filter(_.name.get == "workflowFile")
+                        .map(_.entity.asString)
+                        .foldLeft("")(_ + _)
+
+                    def readWorkflow(s: String): Workflow =
+                      workflowFormat.read(JsonParser(ParserInput(s)))
+
+                    formData => onComplete(
+                      workflowManagerProvider
+                        .forContext(userContext)
+                        .create(readWorkflow(workflowFileContent(formData)))) {
+                      case Success(workflowWithKnowledge) => complete(
+                        StatusCodes.Created, workflowWithKnowledge)
+                      case Failure(exception) => failWith(exception)
+                    }
+                  }
+                }
+              }
+            } ~
+            pathEndOrSingleSlash {
+              post {
+                withUserContext { userContext =>
+                  entity(as[Workflow]) { workflow =>
+                    onComplete(workflowManagerProvider
+                      .forContext(userContext).create(workflow)) {
+                      case Success(workflowWithKnowledge) => complete(
+                        StatusCodes.Created, workflowWithKnowledge)
+                      case Failure(exception) => failWith(exception)
+                    }
                   }
                 }
               }
