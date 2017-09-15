@@ -54,7 +54,7 @@
           </div>
           <div class="cluster-presets__preset-delete"
                ng-click="controller.deletePresetById(preset)"
-               ng-if="preset.isEditable">
+               ng-if="preset.isEditable && !preset.isDefault">
             <i class="fa fa-trash-o"></i>
           </div>
         </div>
