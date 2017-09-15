@@ -66,6 +66,7 @@ services:
     volumes:
       - "./data:/resources/data"
       - "library:/library"
+      - "./R_Libs:/opt/R_Libs"
       - "./spark_applications_logs:/spark_applications_logs:rw"
     depends_on:
       - rabbitmq

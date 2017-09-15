@@ -1,5 +1,6 @@
 data
 h2-data
 spark_applications_logs
+R_Libs
 
 docker-compose.yml
