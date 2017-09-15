@@ -6,6 +6,7 @@ let SelectorItemFactory = require('./common-selector-items/common-selector-item-
 function SelectorParameter(options, node) {
   this.factoryItem = SelectorItemFactory;
   this.name = options.name;
+  this.isDynamic = options.isDynamic;
   let value = _.isUndefined(options.value) ? null : options.value;
   let defaultValue = options.schema.default;
   this.initItems(value, defaultValue, options.schema);
@@ -106,7 +107,13 @@ SelectorParameter.prototype.validate = function() {
 
 SelectorParameter.prototype.setDataFrameSchema = function(node) {
   this.dataFrameSchema = undefined;
-  let dataFrameInputPort = this.schema.portIndex;
+  let dataFrameInputPort;
+
+  if (this.isDynamic) {
+    dataFrameInputPort = 1;
+  } else {
+    dataFrameInputPort = this.schema.portIndex;
+  }
   let inputKnowledge = node.getIncomingKnowledge(dataFrameInputPort);
   if (inputKnowledge) {
     let inferredResultDetails = inputKnowledge.result;

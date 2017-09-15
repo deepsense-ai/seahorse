@@ -41,11 +41,13 @@ DynamicParameter.prototype.setInternalParams = function (node) {
     // If at any point we wish to present information which values were overwritten,
     // here is the place to get this information.
     let dynamicParamsValues = _.assign({}, this.value, this.serialize());
+    const isDynamic = true;
 
     this.internalParams = this.paramsFactory.createParametersList(
-        dynamicParamsValues,
-        dynamicParamsSchema,
-        node
+      dynamicParamsValues,
+      dynamicParamsSchema,
+      node,
+      isDynamic
     );
   }
 };

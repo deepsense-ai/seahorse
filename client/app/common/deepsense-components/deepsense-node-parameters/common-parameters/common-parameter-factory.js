@@ -47,7 +47,7 @@ let parameterConstructors = {
 
 let ParameterFactory = {
 
-  createParametersList(paramValues, paramSchemas, node) {
+  createParametersList(paramValues, paramSchemas, node, isDynamic = false) {
     let parametersList = [];
 
     if (!_.isNull(paramSchemas)) {
@@ -58,7 +58,8 @@ let ParameterFactory = {
         let options = {
           'name': paramName,
           'value': paramValue,
-          'schema': paramSchema
+          'schema': paramSchema,
+          'isDynamic': isDynamic
         };
 
         switch (paramSchema.type) {
