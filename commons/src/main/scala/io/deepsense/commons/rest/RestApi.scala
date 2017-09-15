@@ -13,21 +13,26 @@ import spray.util.LoggingContext
 import io.deepsense.commons.auth.directives.AuthDirectives
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.commons.auth.usercontext.InvalidTokenException
+import io.deepsense.commons.utils.Logging
 
-trait RestApi extends Directives with AuthDirectives {
+trait RestApi extends Directives with AuthDirectives with Logging {
 
   def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
     ExceptionHandler {
-      case _: HttpResponseException =>
+      case e: HttpResponseException =>
+        logger.error("Could not contact Keystone!", e)
         complete(StatusCodes.ServiceUnavailable)
-      case _: NoHostAvailableException =>
+      case e: NoHostAvailableException =>
+        logger.error("Could not contact Cassandra!", e)
         complete(StatusCodes.ServiceUnavailable)
-      case _: NoRoleException =>
+      case e: NoRoleException =>
+        logger.warn("A user does not have the expected role", e)
         complete(StatusCodes.Unauthorized)
-      case _: ResourceAccessDeniedException =>
+      case e: ResourceAccessDeniedException =>
+        logger.warn("A user tried to access a resource he does not have right to", e)
         complete(StatusCodes.NotFound)
-      case _: InvalidTokenException =>
-        // Works as a wildcard for all ITEs. Can be expanded for logging
+      case e: InvalidTokenException =>
+        logger.warn("Invalid token was send by the user", e)
         complete(StatusCodes.Unauthorized)
     }
   }
@@ -35,10 +40,15 @@ trait RestApi extends Directives with AuthDirectives {
   val rejectionHandler: RejectionHandler = {
     RejectionHandler {
       case MissingHeaderRejection(param) :: _ if param == TokenHeader =>
+        logger.info(s"A request was rejected because did not contain '$TokenHeader' header")
         complete(StatusCodes.Unauthorized, s"Request is missing required header '$param'")
-      case ValidationRejection(message, cause) :: _ =>
+      case ValidationRejection(rejectionMessage, cause) :: _ =>
+        val message = s"A request was rejected because it was invalid: '$rejectionMessage'."
+        cause match {
+          case Some(throwable) => logger.info(message, throwable)
+          case None => logger.info(message)
+        }
         complete(StatusCodes.BadRequest)
     }
   }
-
 }
