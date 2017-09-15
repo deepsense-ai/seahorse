@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function SessionManager($interval, SessionManagerApi, SessionStatus) {
+function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
 
   const service = {
     sessions: [],
@@ -19,7 +19,7 @@ function SessionManager($interval, SessionManagerApi, SessionStatus) {
     SessionManagerApi.downloadSessions().then((result) => {
       service.sessions = result;
     });
-  }, 1000);
+  }, config.sessionPollingInterval);
 
   return service;
 }
