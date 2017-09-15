@@ -15,7 +15,7 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
     "serialize" when {
       val rowNames: List[String] = List("rowName1", "rowName2")
       val columnNames: List[String] = List("A", "B")
-      val values: List[List[String]] = List(List("11", "12"), List("23", "34"))
+      val values: List[List[Option[String]]] = List(List(Some("11"), None), List(None, Some("34")))
       "columnsNames specified" in {
         val json = testTableWithLabels(Some(columnNames), None, values).toJson
         json shouldBe jsonTable(Some(columnNames), None, values)
@@ -37,7 +37,8 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
       "filled table" in {
         val columnNames: Some[List[String]] = Some(List("A", "B"))
         val rowNames: Some[List[String]] = Some(List("1", "2"))
-        val values: List[List[String]] = List(List("a", "b"), List("c", "d"))
+        val values: List[List[Option[String]]] =
+          List(List(Some("a"), Some("b")), List(Some("c"), Some("d")))
         val json = jsonTable(columnNames, rowNames, values)
         json.convertTo[Table] shouldBe testTableWithLabels(columnNames, rowNames, values)
       }
@@ -51,7 +52,7 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
   private def jsonTable(
     columnsNames: Option[List[String]],
     rowsNames: Option[List[String]],
-    values: List[List[String]]): JsObject = JsObject(Map[String, JsValue](
+    values: List[List[Option[String]]]): JsObject = JsObject(Map[String, JsValue](
     "name" -> JsString(TableTestFactory.tableName),
     "blockType" -> JsString("table"),
     "description" -> JsString(TableTestFactory.tableDescription),
@@ -59,7 +60,10 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
       .map(names => JsArray(names.map(JsString(_)).toVector)).getOrElse(JsNull),
     "rowNames" -> rowsNames
       .map(names => JsArray(names.map(JsString(_)).toVector)).getOrElse(JsNull),
-    "values" -> JsArray(values.map(row => JsArray(row.map(JsString(_)).toVector)).toVector)
+    "values" ->
+      JsArray(
+        values.map(row => JsArray(row.map(op => op.map(JsString(_)).getOrElse(JsNull)).toVector))
+          .toVector)
   ))
 
 }

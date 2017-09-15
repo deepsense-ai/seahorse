@@ -26,17 +26,17 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       "number of columns and rows exceeds max" in {
         val columnsNumber = DataFrameReportGenerator.maxColumnsNumberInReport + 10
         val rowsNumber = DataFrameReportGenerator.maxColumnsNumberInReport + 10
-        testReportTables(exampleString, columnNameBase, columnsNumber, rowsNumber)
+        testReportTables(Some(exampleString), columnNameBase, columnsNumber, rowsNumber)
       }
       "number of columns and rows is minimal" in {
          val columnsNumber = 1
          val rowsNumber = 1
-         testReportTables(exampleString, columnNameBase, columnsNumber, rowsNumber)
+         testReportTables(Some(exampleString), columnNameBase, columnsNumber, rowsNumber)
        }
       "DataFrame is empty" in {
          val columnsNumber = 0
          val rowsNumber = 0
-         testReportTables(exampleString, columnNameBase, columnsNumber, rowsNumber)
+         testReportTables(Some(exampleString), columnNameBase, columnsNumber, rowsNumber)
        }
       "DataFrame has missing values" in {
         val now = DateTimeConverter.now
@@ -57,7 +57,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         dataSampleTable.columnNames shouldBe Some(List(nameColumnName, birthDateColumnName))
         dataSampleTable.rowNames shouldBe None
         dataSampleTable.values shouldBe
-          List(List(null, DateTimeConverter.toString(now)), List(exampleString, null))
+          List(List(None, Some(DateTimeConverter.toString(now))), List(Some(exampleString), None))
        }
       "there is timestamp column" in {
         val now: DateTime = DateTimeConverter.now
@@ -72,7 +72,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
         dataSampleTable.columnNames shouldBe Some(List(timestampColumnName))
         dataSampleTable.rowNames shouldBe None
-        dataSampleTable.values shouldBe List(List(DateTimeConverter.toString(now)))
+        dataSampleTable.values shouldBe List(List(Some(DateTimeConverter.toString(now))))
       }
     }
     "generate report with correct column Distribution" in {
@@ -222,7 +222,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
   }
 
   private def testReportTables(
-      cellValue: String,
+      cellValue: Option[String],
       columnNameBase: String,
       dataFrameColumnsNumber: Int,
       dataFrameRowsNumber: Int): Registration = {
@@ -243,7 +243,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
   }
 
   private def testDataSampleTable(
-      cellValue: String,
+      cellValue: Option[String],
       columnNameBase: String,
       dataFrameColumnsNumber: Int,
       dataFrameRowsNumber: Int,
@@ -267,7 +267,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     val dataFrameSizeTable = tables.get(DataFrameReportGenerator.dataFrameSizeTableName).get
     dataFrameSizeTable.columnNames shouldBe Some(List("Number of columns", "Number of rows"))
     dataFrameSizeTable.rowNames shouldBe None
-    dataFrameSizeTable.values shouldBe List(List(numberOfColumns.toString, numberOfRows.toString))
+    dataFrameSizeTable.values shouldBe
+      List(List(Some(numberOfColumns.toString), Some(numberOfRows.toString)))
   }
 
   private def buildSchema(numberOfColumns: Int, columnNameBase: String): StructType = {
@@ -277,6 +278,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
   private def buildRDDWithStringValues(
       numberOfColumns: Int,
       numberOfRows: Int,
-      value: String): RDD[Row] =
-    sparkContext.parallelize(List.fill(numberOfRows)(Row(List.fill(numberOfColumns)(value):_*)))
+      value: Option[String]): RDD[Row] =
+    sparkContext.parallelize(
+      List.fill(numberOfRows)(Row(List.fill(numberOfColumns)(value.orNull):_*)))
 }

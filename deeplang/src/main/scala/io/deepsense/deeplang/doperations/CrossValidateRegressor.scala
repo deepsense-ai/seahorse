@@ -7,14 +7,12 @@ import scala.collection.mutable
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.mllib.evaluation.RegressionMetrics
-import org.apache.spark.mllib.util.MLUtils
-import org.apache.spark.sql.Row
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
-import io.deepsense.reportlib.model.{Table, ReportContent}
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 class CrossValidateRegressor
   extends DOperation2To2[Trainable, DataFrame, Scorable, Report]
@@ -226,15 +224,15 @@ case class RegressionMetricsRow(
     r2: Double,
     rootMeanSquaredError: Double) {
 
-  def toRowList: List[String] = {
+  def toRowList: List[Option[String]] = {
     List(
-      foldNumber,
-      trainSetSize,
-      testSetSize,
-      explainedVariance.toString,
-      meanAbsoluteError.toString,
-      meanSquaredError.toString,
-      r2.toString,
-      rootMeanSquaredError.toString)
+      Option(foldNumber),
+      Option(trainSetSize),
+      Option(testSetSize),
+      Option(explainedVariance.toString),
+      Option(meanAbsoluteError.toString),
+      Option(meanSquaredError.toString),
+      Option(r2.toString),
+      Option(rootMeanSquaredError.toString))
   }
 }

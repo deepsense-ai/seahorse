@@ -141,7 +141,10 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
       executionContext.entityStorageClient = entityStorageClient
       executionContext.hdfsClient =
-        new DSHdfsClient(new DFSClient(new URI("/"), new Configuration()))
+        new DSHdfsClient(
+          new DFSClient(
+            new URI(s"hdfs://${Constants.MasterHostname}:${Constants.HdfsNameNodePort}"),
+          new Configuration()))
       graphGuard.synchronized {
         executionContext.tenantId = experiment.get.tenantId
       }

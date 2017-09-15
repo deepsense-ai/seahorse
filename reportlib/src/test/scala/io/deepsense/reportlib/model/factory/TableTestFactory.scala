@@ -11,7 +11,7 @@ trait TableTestFactory {
   def testTableWithLabels(
       columnNames: Option[List[String]],
       rowNames: Option[List[String]],
-      values: List[List[String]]): Table =
+      values: List[List[Option[String]]]): Table =
     Table(
       TableTestFactory.tableName,
       TableTestFactory.tableDescription,

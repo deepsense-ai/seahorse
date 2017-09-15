@@ -19,7 +19,7 @@ class FileSpec extends UnitSpec {
 
       forAll(table.rowNames.get.zipWithIndex) { case (rowName, i) =>
         table.values(i) should have length 1
-        table.values(i).head shouldBe params(rowName)
+        table.values(i).head shouldBe Option(params(rowName))
       }
     }
   }

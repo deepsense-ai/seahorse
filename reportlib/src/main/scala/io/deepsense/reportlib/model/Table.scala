@@ -9,7 +9,7 @@ case class Table(
   description: String,
   columnNames: Option[List[String]],
   rowNames: Option[List[String]],
-  values: List[List[String]],
+  values: List[List[Option[String]]],
   blockType: String = Table.tableType) {
   require(blockType == Table.tableType)
 }

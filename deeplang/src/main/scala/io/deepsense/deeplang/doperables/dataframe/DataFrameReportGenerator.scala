@@ -50,7 +50,7 @@ trait DataFrameReportGenerator {
     val columnsNames:List[String] = sparkDataFrame.schema.fieldNames.toList
     val columnsNumber = columnsNames.size
     val rows: Array[Row] = sparkDataFrame.take(DataFrameReportGenerator.maxRowsNumberInReport)
-    val values: List[List[String]] = rows.map(row =>
+    val values: List[List[Option[String]]] = rows.map(row =>
       (0 until columnsNumber).map(cell2String(row, _, categoricalMetadata)).toList).toList
     Table(
       DataFrameReportGenerator.dataSampleTableName,
@@ -69,7 +69,7 @@ trait DataFrameReportGenerator {
         s"Number of columns and number of rows in the DataFrame.",
       Some(List("Number of columns", "Number of rows")),
       None,
-      List(List(schema.fieldNames.length.toString, dataFrameSize.toString))
+      List(List(Some(schema.fieldNames.length.toString), Some(dataFrameSize.toString)))
     )
 
   /**
@@ -295,18 +295,18 @@ trait DataFrameReportGenerator {
   private def cell2String(
       row: Row,
       index: Int,
-      categoricalMetadata: CategoricalMetadata): String = {
+      categoricalMetadata: CategoricalMetadata): Option[String] = {
     val structField: StructField = row.schema.apply(index)
     if (row.isNullAt(index)) {
-      null
+      None
     } else {
       structField.dataType match {
-        case TimestampType => DateTimeConverter.toString(
-          DateTimeConverter.fromMillis(row.get(index).asInstanceOf[Timestamp].getTime))
-        case DoubleType => double2String(row.getDouble(index))
+        case TimestampType => Some(DateTimeConverter.toString(
+          DateTimeConverter.fromMillis(row.get(index).asInstanceOf[Timestamp].getTime)))
+        case DoubleType => Some(double2String(row.getDouble(index)))
         case IntegerType if categoricalMetadata.isCategorical(index) =>
-          categoricalMetadata.mapping(index).idToValue(row.getInt(index))
-        case _ => row(index).toString
+          Some(categoricalMetadata.mapping(index).idToValue(row.getInt(index)))
+        case _ => Some(row(index).toString)
       }
     }
   }

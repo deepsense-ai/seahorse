@@ -12,6 +12,7 @@ import org.mockito.Matchers._
 import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
+import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
@@ -19,7 +20,9 @@ import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSele
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 import io.deepsense.models.entities.Entity
 
-class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
+class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
+
+  var testDir: Option[String] = None
 
   "UntrainedRidgeRegression" should {
 
@@ -75,6 +78,7 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
       castedResult.targetColumn shouldBe Some("column3")
 
       val entity = getInsertedEntity
+      testDir = Some(entity.data.get.url)
       executionContext.hdfsClient.fileExists(entity.data.get.url) shouldBe true
     }
 
@@ -120,6 +124,10 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
         }
       }
     }
+  }
+
+  after{
+    testDir.foreach(rawHdfsClient.delete(_, true))
   }
 
   private def getInsertedEntity: Entity = {
