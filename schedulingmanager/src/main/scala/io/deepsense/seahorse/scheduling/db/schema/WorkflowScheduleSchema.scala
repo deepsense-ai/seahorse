@@ -44,7 +44,7 @@ object WorkflowScheduleSchema {
 // https://github.com/sbt/sbt-native-packager/pull/319
 // TODO use sbt-docker with sbt-assembly and define mainClass in assembly as
 // it's solved in Neptune
-
+/*
 object PrintDDL extends App {
   import Database.api._
   import WorkflowScheduleSchema._
@@ -52,4 +52,4 @@ object PrintDDL extends App {
   println(workflowScheduleTable.schema.createStatements.mkString("\n"))
   // scalastyle:on println
 }
-
+*/
