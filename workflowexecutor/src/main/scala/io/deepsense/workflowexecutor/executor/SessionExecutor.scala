@@ -251,6 +251,9 @@ case class SessionExecutor(
     }
     val notebooksClientFactory = new NotebooksClientFactory(notebookServerAddress, 1 second, 3600)(system)
 
+    // TODO There might be need to have it passed to we.jar as argument eventually
+    val libraryPath = "/library"
+
     val executionContext = createExecutionContext(
       dataFrameStorage = dataFrameStorage,
       executionMode = ExecutionMode.Interactive,
@@ -261,6 +264,7 @@ case class SessionExecutor(
       sparkContext = sparkContext,
       sparkSQLSession = sparkSQLSession,
       tempPath = tempPath,
+      libraryPath = libraryPath,
       dOperableCatalog = Some(dOperableCatalog))
 
     val readyBroadcaster = communicationFactory.createBroadcaster(

@@ -38,12 +38,6 @@ import io.deepsense.sparkutils.SparkSQLSession
  */
 trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll with LocalExecutionContext {
 
-  protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
-    val rdd: RDD[Row] = sparkContext.parallelize(rows)
-    val sparkDataFrame = sparkSQLSession.createDataFrame(rdd, schema)
-    DataFrame.fromSparkDataFrame(sparkDataFrame)
-  }
-
   def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
     op.executeUntyped(dfs.toVector)(executionContext).head.asInstanceOf[DataFrame]
 

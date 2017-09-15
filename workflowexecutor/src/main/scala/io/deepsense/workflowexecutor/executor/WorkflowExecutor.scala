@@ -108,6 +108,8 @@ case class WorkflowExecutor(
       rExecutionCaretaker.rCodeExecutor,
       operationExecutionDispatcher)
 
+    val libraryPath = "/library"
+
     val datasources =
       DatasourceListJsonProtocol.fromString(workflow.thirdPartyData.getFields("datasources").toString)
     val executionContext = createExecutionContext(
@@ -119,7 +121,9 @@ case class WorkflowExecutor(
       customCodeExecutionProvider = customCodeExecutionProvider,
       sparkContext = sparkContext,
       sparkSQLSession = sparkSQLSession,
-      tempPath = tempPath)
+      tempPath = tempPath,
+      libraryPath = libraryPath
+    )
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionReport] = Promise()

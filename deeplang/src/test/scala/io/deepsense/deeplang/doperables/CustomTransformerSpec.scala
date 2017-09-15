@@ -172,6 +172,7 @@ class CustomTransformerSpec extends UnitSpec {
       ExecutionMode.Batch,
       mock[FileSystemClient],
       "/tmp",
+      "/tmp/library",
       innerWorkflowExecutor,
       mock[ContextualDataFrameStorage],
       None,

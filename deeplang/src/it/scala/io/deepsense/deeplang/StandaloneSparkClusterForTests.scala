@@ -119,6 +119,7 @@ object StandaloneSparkClusterForTests {
       ExecutionMode.Batch,
       LocalFileSystemClient(),
       "/tmp",
+      "/tmp/library",
       mock[InnerWorkflowExecutor],
       mock[ContextualDataFrameStorage],
       None,

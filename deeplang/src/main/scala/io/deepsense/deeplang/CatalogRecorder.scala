@@ -142,6 +142,7 @@ object CatalogRecorder {
     catalog.registerDOperation(DOperationCategories.IO, () => new ReadDatasource())
     catalog.registerDOperation(DOperationCategories.IO, () => new ReadTransformer())
     catalog.registerDOperation(DOperationCategories.IO, () => new WriteDataFrame())
+    catalog.registerDOperation(DOperationCategories.IO, () => new WriteDatasource())
     catalog.registerDOperation(DOperationCategories.IO, () => new WriteTransformer())
 
     // Operations API uses catalog to fetch data even for operation/{id} calls.

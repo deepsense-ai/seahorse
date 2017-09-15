@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.deeplang.params.datasource
 
-import io.deepsense.deeplang.ExecutionContext
+import spray.json.DefaultJsonProtocol.StringJsonFormat
 
-object FilePathFromLibraryPath {
+import io.deepsense.deeplang.params.ParameterType.ParameterType
+import io.deepsense.deeplang.params.{ParamWithJsFormat, ParameterType}
 
-  def apply(path: FilePath)(implicit ctx: ExecutionContext): FilePath = {
-    require(path.fileScheme == FileScheme.Library)
-    val libraryPath = ctx.libraryPath + "/" + path.pathWithoutScheme
-    FilePath(FileScheme.File, libraryPath)
-  }
+case class DatasourceIdForReadParam(
+    name: String,
+    description: String)
+  extends ParamWithJsFormat[String] {
 
+  override def replicate(name: String): DatasourceIdForReadParam = copy(name = name)
+
+  override val parameterType: ParameterType = ParameterType.DatasourceIdForRead
 }

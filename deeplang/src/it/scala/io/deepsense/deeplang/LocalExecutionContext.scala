@@ -16,21 +16,31 @@
 
 package io.deepsense.deeplang
 
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types.StructType
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.mockito.MockitoSugar._
 
 import io.deepsense.commons.rest.client.datasources.{DatasourceClient, DatasourceInMemoryClientFactory}
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.sparkutils.SparkSQLSession
 
 trait LocalExecutionContext {
   protected lazy implicit val executionContext: ExecutionContext = LocalExecutionContext.createExecutionContext()
   protected lazy implicit val sparkContext = LocalExecutionContext.sparkContext
   protected lazy val sparkSQLSession = LocalExecutionContext.sparkSQLSession
+  protected lazy val createDataFrame = LocalExecutionContext.createDataFrame _
 }
 
 object LocalExecutionContext {
+
+  def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
+    val rdd: RDD[Row] = sparkContext.parallelize(rows)
+    val sparkDataFrame = sparkSQLSession.createDataFrame(rdd, schema)
+    DataFrame.fromSparkDataFrame(sparkDataFrame)
+  }
 
   lazy val commonExecutionContext = new CommonExecutionContext(
     sparkContext,
@@ -39,6 +49,7 @@ object LocalExecutionContext {
     ExecutionMode.Batch,
     LocalFileSystemClient(),
     "/tmp",
+    "/tmp/library",
     mock[InnerWorkflowExecutor],
     mock[DataFrameStorage],
     None,
@@ -56,6 +67,7 @@ object LocalExecutionContext {
       ExecutionMode.Batch,
       LocalFileSystemClient(),
       "/tmp",
+      "/tmp/library",
       mock[InnerWorkflowExecutor],
       mock[ContextualDataFrameStorage],
       None,

@@ -24,12 +24,13 @@ import io.deepsense.api.datasourcemanager.model._
 import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.ReadDatasource.{FileStorageType, ReadDataSourceParameters}
-import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice
-import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, InputStorageTypeChoice}
+import io.deepsense.deeplang.doperations.ReadDatasource.ReadDataSourceParameters
+import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice
+import io.deepsense.deeplang.doperations.readwritedatasource.DatasourceConverters
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.{Param, StringParam}
+import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.datasource.DatasourceIdForReadParam
 import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}
 
 class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourceParameters {
@@ -43,13 +44,11 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
   override def params: Array[Param[_]] = Array(datasourceId)
 
   override def getDatasourcesId: Set[UUID] = Set(
-    UUID.fromString(getDataSourceId())
+    UUID.fromString(getDatasourceId())
   )
 
-  // TODO Make custom parameter for frontend. Similar in WriteDataSource
-
   def setDatasourceId(value: String) = set(datasourceId, value)
-  private def getDataSourceId() = $(datasourceId)
+  private def getDatasourceId() = $(datasourceId)
 
   override def execute()(context: ExecutionContext): DataFrame = {
     createReadDataFrameFromDataSource(context.inferContext.datasourceClient).execute()(context)
@@ -60,8 +59,10 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
   }
 
   private def createReadDataFrameFromDataSource(datasourceClient: DatasourceClient) = {
-    val datasourceOpt = datasourceClient.getDatasource(UUID.fromString(getDataSourceId()))
+    val datasourceOpt = datasourceClient.getDatasource(UUID.fromString(getDatasourceId()))
     val datasource = checkDataSourceExists(datasourceOpt)
+
+    // TODO Reduce similar code with WriteDatasource
 
     val storageType = datasource.getParams.getDatasourceType match {
       case DatasourceType.JDBC =>
@@ -84,11 +85,11 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
           .setNamesIncluded(googleSheetParams.getIncludeHeader)
           .setShouldConvertToBoolean(googleSheetParams.getConvert01ToBoolean)
       case DatasourceType.HDFS =>
-        FileStorageType.get(datasource.getParams.getHdfsParams)
+        DatasourceConverters.InputFileStorageType.get(datasource.getParams.getHdfsParams)
       case DatasourceType.EXTERNALFILE =>
-        FileStorageType.get(datasource.getParams.getExternalFileParams)
+        DatasourceConverters.InputFileStorageType.get(datasource.getParams.getExternalFileParams)
       case DatasourceType.LIBRARYFILE =>
-        FileStorageType.get(datasource.getParams.getLibraryFileParams)
+        DatasourceConverters.InputFileStorageType.get(datasource.getParams.getLibraryFileParams)
     }
 
     new ReadDataFrame().setStorageType(storageType)
@@ -96,7 +97,7 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
 
   private def checkDataSourceExists(datasourceOpt: Option[Datasource]) = datasourceOpt match {
     case Some(datasource) => datasource
-    case None => throw new DeepLangException(s"Failed to read data source with id = ${getDataSourceId()}")
+    case None => throw new DeepLangException(s"Datasource with id = ${getDatasourceId()} not found")
   }
 
   private def wrapAsSubQuery(query: String): String =
@@ -105,59 +106,8 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
 
 object ReadDatasource {
   trait ReadDataSourceParameters {
-
-    val datasourceId = StringParam("data source", "")
-  }
-
-  trait InputStorageParams {
-    def path: String
-    def fileFormat: FileFormat
-    def csvFileFormatParams: CsvFileFormatParams
-  }
-
-  implicit def hdfsParamsToInputStorageParams(params: HdfsParams): InputStorageParams =
-    new InputStorageParams {
-      override def path: String = params.getHdfsPath
-      override def fileFormat: FileFormat = params.getFileFormat
-      override def csvFileFormatParams: CsvFileFormatParams = params.getCsvFileFormatParams
-    }
-
-  implicit def externalFileParamsToInputStorageParams(params: ExternalFileParams): InputStorageParams =
-    new InputStorageParams {
-      override def path: String = params.getUrl
-      override def fileFormat: FileFormat = params.getFileFormat
-      override def csvFileFormatParams: CsvFileFormatParams = params.getCsvFileFormatParams
-  }
-
-  implicit def libraryParamsToInputStorageParams(params: LibraryFileParams): InputStorageParams =
-    new InputStorageParams {
-      override def path: String = params.getLibraryPath
-      override def fileFormat: FileFormat = params.getFileFormat
-      override def csvFileFormatParams: CsvFileFormatParams = params.getCsvFileFormatParams
-  }
-
-  object FileStorageType {
-    def get(inputStorageParams: InputStorageParams): InputStorageTypeChoice.File =
-      new InputStorageTypeChoice.File()
-        .setSourceFile(inputStorageParams.path)
-        .setFileFormat(inputStorageParams.fileFormat match {
-          case FileFormat.JSON => new InputFileFormatChoice.Json()
-          case FileFormat.PARQUET => new InputFileFormatChoice.Parquet()
-          case FileFormat.CSV => csvFormatChoice(inputStorageParams.csvFileFormatParams)
-        })
-
-    private def csvFormatChoice(csvParams: CsvFileFormatParams): InputFileFormatChoice.Csv =
-      new InputFileFormatChoice.Csv()
-        .setNamesIncluded(csvParams.getIncludeHeader)
-        .setCsvColumnSeparator(csvParams.getSeparatorType match {
-          case CsvSeparatorType.COLON => ColumnSeparatorChoice.Colon()
-          case CsvSeparatorType.COMMA => ColumnSeparatorChoice.Comma()
-          case CsvSeparatorType.SEMICOLON => ColumnSeparatorChoice.Semicolon()
-          case CsvSeparatorType.SPACE => ColumnSeparatorChoice.Space()
-          case CsvSeparatorType.TAB => ColumnSeparatorChoice.Tab()
-          case CsvSeparatorType.CUSTOM =>
-            ColumnSeparatorChoice.Custom()
-              .setCustomColumnSeparator(csvParams.getCustomSeparator)
-        })
+    val datasourceId = DatasourceIdForReadParam(
+      name = "datasourceId",
+      description = "Id of the datasource")
   }
 }

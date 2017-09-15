@@ -35,4 +35,6 @@ object ParameterType extends Enumeration {
   val GridSearch = Value("gridSearch")
   val LoadFromLibrary = Value("loadFromLibrary")
   val SaveToLibrary = Value("saveToLibrary")
+  val DatasourceIdForRead = Value("datasourceIdForRead")
+  val DatasourceIdForWrite = Value("datasourceIdForWrite")
 }

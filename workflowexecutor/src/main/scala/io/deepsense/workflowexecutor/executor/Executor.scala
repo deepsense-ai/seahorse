@@ -34,7 +34,6 @@ import io.deepsense.sparkutils.SparkSQLSession
 
 trait Executor extends Logging {
 
-
   def currentVersion: Version =
     Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
 
@@ -48,11 +47,10 @@ trait Executor extends Logging {
       sparkContext: SparkContext,
       sparkSQLSession: SparkSQLSession,
       tempPath: String,
+      libraryPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
     val CatalogPair(operableCatalog, operationsCatalog) = CatalogRecorder.catalogs
-
-    val tenantId = ""
 
     val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
       new GraphReader(operationsCatalog))
@@ -71,6 +69,7 @@ trait Executor extends Logging {
       executionMode,
       FileSystemClientStub(), // temporarily mocked
       tempPath,
+      libraryPath,
       innerWorkflowExecutor,
       dataFrameStorage,
       notebooksClientFactory,
