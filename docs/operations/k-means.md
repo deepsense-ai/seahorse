@@ -6,7 +6,7 @@ description: K-Means
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Creates a k-means model.
+Creates a k-means model. Note: Trained k-means model does not have any parameters.
 
 This operation is ported from Spark ML.
 
