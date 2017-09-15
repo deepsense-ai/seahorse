@@ -47,6 +47,15 @@
   vars_files:
     - vars/docker.yml
     - vars/env.yml
+  tasks:
+    - name: Register running Docker containers
+      register: docker_containers
+      command: docker ps -a
+
+    - name: Remove previous container
+      command: docker rm -f cassandra
+      when: docker_containers.stdout.find(' cassandra ') != -1
+
   roles:
     - { role: cassandra,
         data_dir: "{{cassandra_data_dir}}"
