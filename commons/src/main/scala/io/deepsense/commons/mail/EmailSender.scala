@@ -17,14 +17,18 @@
 package io.deepsense.commons.mail
 
 import javax.mail.Message.RecipientType
-import javax.mail.internet.{InternetAddress, MimeMessage}
-import javax.mail.{Address, Message, Session}
+import javax.mail.internet.{InternetAddress, MimeBodyPart, MimeMessage, MimeMultipart}
+import javax.mail._
+import java.io.InputStream
+import javax.activation.{DataHandler, DataSource, FileDataSource}
+import javax.mail.util.ByteArrayDataSource
 
 import scala.util.{Failure, Success, Try}
 
 import com.sun.mail.smtp.SMTPTransport
+import collection.JavaConversions._
 
-import io.deepsense.commons.mail.templates.{TemplateInstanceToLoad, Template}
+import io.deepsense.commons.mail.templates.{Template, TemplateInstanceToLoad}
 import io.deepsense.commons.utils.Logging
 
 class EmailSender private (emailSenderConfig: EmailSenderConfig) extends Logging {
@@ -33,8 +37,10 @@ class EmailSender private (emailSenderConfig: EmailSenderConfig) extends Logging
 
   val session: Session = emailSenderConfig.session
 
+  private def createEmptyMessage: MimeMessage = new MimeMessage(session)
+
   private def createMessage(subject: String, to: Seq[String]): MimeMessage = {
-    val msg = new MimeMessage(session)
+    val msg = createEmptyMessage
 
     msg.setSubject(subject)
 
@@ -108,6 +114,57 @@ class EmailSender private (emailSenderConfig: EmailSenderConfig) extends Logging
     }
 
     sent.failed.toOption
+  }
+
+  private def copyMessageWithoutContent(oldMsg: MimeMessage): MimeMessage = {
+    val newMsg = createEmptyMessage
+    oldMsg.saveChanges()
+    copyMessageHeaders(oldMsg, newMsg)
+    newMsg
+  }
+
+  private def copyMessageHeaders(from: MimeMessage, to: MimeMessage): Unit = {
+    for (line <- from.getAllHeaderLines) {
+      to.addHeaderLine(line.asInstanceOf[String])
+    }
+  }
+
+  private def createAttachmentBodyPart(
+      attachmentStream: InputStream,
+      filename: String,
+      contentTypeOpt: Option[String]): BodyPart = {
+    val contentType = contentTypeOpt.getOrElse("application/octet-stream")
+    val bodyPart = new MimeBodyPart()
+    bodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachmentStream, contentType)))
+    bodyPart.setFileName(filename)
+
+    bodyPart
+  }
+
+  def attachAttachment(msg: Message,
+      attachment: InputStream,
+      filename: String,
+      contentTypeOpt: Option[String]): Message = {
+
+    val attachmentBodyPart = createAttachmentBodyPart(
+      attachment,
+      filename,
+      contentTypeOpt
+    )
+
+    if (msg.getContentType.toLowerCase.startsWith("multipart") || msg.getContent.isInstanceOf[Multipart]) {
+      msg.getContent.asInstanceOf[Multipart].addBodyPart(attachmentBodyPart)
+      msg
+    } else {
+      val newMsg = copyMessageWithoutContent(msg.asInstanceOf[MimeMessage])
+      val multipart = new MimeMultipart()
+      val firstPart = new MimeBodyPart()
+      firstPart.setContent(msg.getContent, msg.getContentType)
+      multipart.addBodyPart(firstPart)
+      multipart.addBodyPart(attachmentBodyPart)
+      newMsg.setContent(multipart)
+      newMsg
+    }
   }
 }
 
