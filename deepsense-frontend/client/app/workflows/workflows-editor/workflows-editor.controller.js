@@ -191,7 +191,11 @@ class WorkflowsEditorController {
         this.$rootScope.$apply();
       }),
 
-      this.$scope.$on('Keyboard.KEY_PRESSED_DEL', this.WorkflowsEditorService.handleDelete.bind(this)),
+      this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
+        if (this.MultiSelectionService.getSelectedNodeIds().length > 0) {
+          this.WorkflowsEditorService.handleDelete();
+        }
+      }),
       this.EventsService.on(this.EventsService.EVENTS.WORKFLOW_DELETE_SELECTED_ELEMENT, this._handleDelete.bind(this)),
 
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
