@@ -19,11 +19,17 @@ package io.deepsense.workflowexecutor.communication.mq.json
 import java.nio.charset.StandardCharsets
 
 import org.scalatest.mockito.MockitoSugar
-import spray.json.{JsArray, JsObject, JsString}
+import spray.json._
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.commons.models.Entity
+import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.doperables.ColumnsFilterer
+import io.deepsense.graph.Node
+import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport, Workflow}
 import io.deepsense.workflowexecutor.communication.message.global._
+import io.deepsense.models.json.workflow.ExecutionReportJsonProtocol._
+import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.communication.mq.json.Global.GlobalMQSerializer
 
 class GlobalMQSerializerSpec
@@ -31,6 +37,20 @@ class GlobalMQSerializerSpec
   with MockitoSugar {
 
     "GlobalMQSerializer" should {
+      "serialize ExecutionReport" in {
+        val executionReport = ExecutionReport(
+          Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft()),
+          EntitiesMap(
+            Map[Entity.Id, DOperable](
+              Entity.Id.randomId -> new ColumnsFilterer),
+            Map(Entity.Id.randomId -> ReportContentTestFactory.someReport)),
+          None)
+
+        serialize(executionReport) shouldBe asBytes(JsObject(
+          "messageType" -> JsString("executionStatus"),
+          "messageBody" -> executionReport.toJson))
+      }
+
       "serialize Launch messages" in {
         val workflowId = Workflow.Id.randomId
         val nodesToExecute = Vector(Workflow.Id.randomId, Workflow.Id.randomId, Workflow.Id.randomId)

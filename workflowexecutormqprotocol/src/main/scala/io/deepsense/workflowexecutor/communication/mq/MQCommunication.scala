@@ -21,7 +21,7 @@ import io.deepsense.models.workflows.Workflow
 object MQCommunication {
   val mqActorSystemName = "rabbitmq"
 
-  def subscriberName(topic: String): String = s"${topic}_subscriber"
+  def subscriberName(topic: String): String = s"${topic}_subscriber_${System.currentTimeMillis().toString}"
   def publisherName(topic: String): String = s"${topic}_publisher"
   def queueName(topic: String): String = s"${topic}_to_executor"
 

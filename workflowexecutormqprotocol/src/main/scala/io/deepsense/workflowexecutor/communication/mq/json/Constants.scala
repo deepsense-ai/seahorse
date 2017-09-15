@@ -27,5 +27,7 @@ object Constants {
     val poisonPill = "poisonPill"
     val ready = "ready"
     val launch = "launch"
+    val inferredState = "inferredState"
+    val executionReport = "executionStatus"
   }
 }

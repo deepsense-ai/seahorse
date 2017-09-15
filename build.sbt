@@ -37,7 +37,9 @@ lazy val reportlib              = project dependsOn commons settings LicenceRepo
 lazy val workflowexecutormqprotocol = project dependsOn (
   commons,
   commons % "test->test",
-  models) settings LicenceReportSettings.settings
+  models,
+  reportlib % "test->test",
+  workflowjson) settings LicenceReportSettings.settings
 lazy val workflowexecutor       = project dependsOn (
   commons % "test->test",
   deeplang,

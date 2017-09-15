@@ -24,6 +24,7 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 trait InferenceErrorJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit object InferenceErrorMappingFormat extends JsonFormat[DeepLangException] {
     override def write(exc: DeepLangException): JsValue = JsString(exc.message)
-    override def read(value: JsValue): DeepLangException = ???
+    override def read(value: JsValue): DeepLangException =
+      new DeepLangException(value.asInstanceOf[JsString].value)
   }
 }

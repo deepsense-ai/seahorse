@@ -21,7 +21,4 @@ import io.deepsense.workflowexecutor.communication.mq.json.JsonMQSerializer
 
 case class ProtocolJsonSerializer(graphReader: GraphReader)
   extends JsonMQSerializer(
-    Seq(
-      WorkflowProtocol.ExecutionStatusSerializer,
-      WorkflowProtocol.InferredStateSerializer(graphReader),
-      WorkflowProtocol.SynchronizeSerializer))
+    Seq(WorkflowProtocol.SynchronizeSerializer))
