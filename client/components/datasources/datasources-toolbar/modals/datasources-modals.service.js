@@ -30,13 +30,16 @@ const modalsTypesMap = {
 };
 
 class DatasourcesModalsService {
-  constructor($uibModal, $document) {
+  constructor($uibModal, $document, $log) {
     'ngInject';
 
     _.assign(this, {$uibModal, $document});
+    this.$log = $log;
   }
 
   openModal(type, datasource, mode) {
+    this.$log.warn('DatasourcesModalsService.openModal()', mode, type, datasource);
+
     const modal = modalsTypesMap[type];
     const $datasourcesToolbar = angular.element(document.querySelector('.datasources-panel'));
 

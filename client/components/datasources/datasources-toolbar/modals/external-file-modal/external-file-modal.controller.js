@@ -1,11 +1,19 @@
 'use strict';
 
+// App
 import DatasourceModal from '../datasource-modal.class.js';
 
 const URL_REGEX = /(http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
 
 class ExternalFileModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
+  constructor(
+    $scope,
+    $log,
+    $uibModalInstance,
+    datasourcesService,
+    editedDatasource,
+    previewMode
+  ) {
     'ngInject';
 
     super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
@@ -40,12 +48,12 @@ class ExternalFileModalController extends DatasourceModal {
   }
 
   canAddDatasource() {
-    const {separatorType, customSeparator} = this.datasourceParams.externalFileParams.csvFileFormatParams;
-    const isSeparatorValid = this.isSeparatorValid(separatorType, customSeparator);
+    const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.externalFileParams);
     const isSourceValid = this.datasourceParams.externalFileParams.url !== '';
-    const isNameValid = this.datasourceParams.name !== '';
 
-    return isSeparatorValid && isSourceValid && isNameValid && !super.doesNameExists();
+    return super.canAddDatasource() &&
+      isCsvSeparatorValid &&
+      isSourceValid;
   }
 
   validateUrl() {

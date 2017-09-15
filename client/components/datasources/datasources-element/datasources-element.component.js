@@ -1,9 +1,13 @@
 'use strict';
 
+// Assets
 import templateUrl from './datasources-element.html';
 import './datasources-element.less';
 
+// App
 import {datasourceContext} from 'APP/enums/datasources-context.js';
+
+
 const COOKIE_NAME = 'DELETE_DATASOURCE_COOKIE';
 
 const DatasourcesElementComponent = {

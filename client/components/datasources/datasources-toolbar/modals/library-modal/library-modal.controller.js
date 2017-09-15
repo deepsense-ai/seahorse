@@ -1,10 +1,20 @@
 'use strict';
 
+// App
 import DatasourceModal from '../datasource-modal.class.js';
 
+
 class LibraryModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, LibraryModalService,
-              datasourcesService, DatasourcesPanelService, editedDatasource, previewMode) {
+  constructor(
+    $scope,
+    $log,
+    $uibModalInstance,
+    LibraryModalService,
+    datasourcesService,
+    DatasourcesPanelService,
+    editedDatasource,
+    previewMode
+  ) {
     'ngInject';
 
     super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
@@ -12,9 +22,13 @@ class LibraryModalController extends DatasourceModal {
     this.LibraryModalService = LibraryModalService;
     this.DatasourcesPanelService = DatasourcesPanelService;
 
+    this.$log.warn('LibraryModalController.constructor() datasourceParams:');
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
       this.datasourceParams = editedDatasource.params;
+      this.extension = this.getFileExtension(this.datasourceParams.libraryFileParams.libraryPath);
+
+      this.$log.warn('Exists and equals to:', JSON.stringify(this.datasourceParams, null, 2));
     } else {
       this.datasourceParams = {
         name: '',
@@ -31,9 +45,13 @@ class LibraryModalController extends DatasourceModal {
           }
         }
       };
+      this.$log.warn('Does not exists and set to:', JSON.stringify(this.datasourceParams, null, 2));
     }
 
     $scope.$watch(() => this.datasourceParams, (newSettings) => {
+      this.$log.warn('LibraryModalController $watch datasourceParams');
+      this.$log.warn(JSON.stringify(newSettings, null, 2));
+
       this.datasourceParams = newSettings;
       this.canAddNewDatasource = this.canAddDatasource();
     }, true);
@@ -44,12 +62,12 @@ class LibraryModalController extends DatasourceModal {
   }
 
   canAddDatasource() {
-    const {separatorType, customSeparator} = this.datasourceParams.libraryFileParams.csvFileFormatParams;
-    const isSeparatorValid = this.isSeparatorValid(separatorType, customSeparator);
+    const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.libraryFileParams);
     const isSourceValid = this.datasourceParams.libraryFileParams.libraryPath !== '';
-    const isNameEmpty = this.datasourceParams.name === '';
 
-    return !super.doesNameExists() && isSeparatorValid && isSourceValid && !isNameEmpty;
+    return super.canAddDatasource() &&
+      isCsvSeparatorValid &&
+      isSourceValid;
   }
 
   openLibrary() {
@@ -70,10 +88,15 @@ class LibraryModalController extends DatasourceModal {
     }
   }
 
-  setDatasourceParams(fullFilePath) {
-    this.extension = fullFilePath
+
+  getFileExtension(fullFilePath) {
+    return fullFilePath
       .substr(fullFilePath.lastIndexOf('.') + 1)
       .toLowerCase();
+  }
+
+  setDatasourceParams(fullFilePath) {
+    this.extension = this.getFileExtension(fullFilePath);
     this.datasourceParams.libraryFileParams.libraryPath = fullFilePath;
     this.datasourceParams.libraryFileParams.fileFormat = this.extension;
     this.datasourceParams.name = fullFilePath
@@ -81,9 +104,15 @@ class LibraryModalController extends DatasourceModal {
       .slice(0, fullFilePath.split('.').length - 1)
       .join('.')
       .replace('library://', '');
+
+    this.$log.warn(`LibraryModalController.setDatasourceParams(${fullFilePath}) datasourceParams:`);
+    this.$log.warn(JSON.stringify(this.datasourceParams, null, 2));
   }
 
   onFileSettingsChange(data) {
+    this.$log.warn('LibraryModalController.onFileSettingsChange()');
+    this.$log.warn('data is:', JSON.stringify(data, null, 2));
+
     this.datasourceParams.libraryFileParams = Object.assign({}, this.datasourceParams.libraryFileParams, data);
   }
 }

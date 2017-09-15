@@ -4,14 +4,12 @@
     <div class="inputs-row vertical-align-bottom">
       <div class="col">
         <select
-          ng-disabled="$ctrl.disabledMode"
-          ng-init="$ctrl.fileSettings.fileFormat = $ctrl.formats[0]"
+          ng-model="$ctrl.fileSettings.fileFormat"
           ng-options="format as (format | uppercase) for format in $ctrl.formats"
           ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
-          ng-model="$ctrl.fileSettings.fileFormat"
+          ng-disabled="$ctrl.disabledMode"
           class="form-control"
-        >
-        </select>
+        ></select>
       </div>
       <div
         ng-if="$ctrl.fileSettings.fileFormat === 'csv'"

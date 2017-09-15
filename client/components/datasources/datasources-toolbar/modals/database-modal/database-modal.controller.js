@@ -52,10 +52,9 @@ class DatabaseModalController extends DatasourceModal {
   }
 
   canAddDatasource() {
-    return this.datasourceParams.name !== '' &&
+    return super.canAddDatasource() &&
       this.datasourceParams.jdbcParams.driver !== '' &&
-      this.datasourceParams.jdbcParams.url !== '' &&
-      !super.doesNameExists();
+      this.datasourceParams.jdbcParams.url !== '';
   }
 
   stopCopyingFromUserField() {

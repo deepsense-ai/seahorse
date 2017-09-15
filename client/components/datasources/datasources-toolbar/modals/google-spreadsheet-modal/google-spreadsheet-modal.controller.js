@@ -45,8 +45,9 @@ class GoogleSpreadsheetModalController extends DatasourceModal {
   }
 
   canAddDatasource() {
-    return this.datasourceParams.name !== '' && this.isGoogleSpreadsheetIdValid() &&
-      this.areCredentialsValid && !super.doesNameExists();
+    return super.canAddDatasource() &&
+      this.isGoogleSpreadsheetIdValid() &&
+      this.areCredentialsValid;
   }
 
   isGoogleSpreadsheetIdValid() {

@@ -1,12 +1,21 @@
 'use strict';
 
+// App
 import DatasourceModal from '../datasource-modal.class.js';
+
 
 const HDFS_REGEX = /(hdfs):\/\/([\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
 const HDFS_PREFIX = 'hdfs://';
 
 class HdfsModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
+  constructor(
+    $scope,
+    $log,
+    $uibModalInstance,
+    datasourcesService,
+    editedDatasource,
+    previewMode
+  ) {
     'ngInject';
 
     super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
@@ -41,12 +50,12 @@ class HdfsModalController extends DatasourceModal {
   }
 
   canAddDatasource() {
-    const {separatorType, customSeparator} = this.datasourceParams.hdfsParams.csvFileFormatParams;
-    const isSeparatorValid = this.isSeparatorValid(separatorType, customSeparator);
+    const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.hdfsParams);
     const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== '';
-    const isNameEmpty = this.datasourceParams.name === '';
 
-    return !super.doesNameExists() && isSeparatorValid && isSourceValid && !isNameEmpty;
+    return super.canAddDatasource() &&
+      isCsvSeparatorValid &&
+      isSourceValid;
   }
 
   onChangeHandler() {
