@@ -21,7 +21,6 @@ import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.commons.utils.Version
 import io.deepsense.graph.CyclicGraphException
@@ -90,8 +89,7 @@ abstract class WorkflowApi @Inject() (
             }
           } ~
           pathPrefix(workflowsPathPrefixMatcher) {
-            path(JavaUUID) { idParameter =>
-              val workflowId = Id(idParameter)
+            path(JavaUUID) { workflowId =>
               get {
                 withUserContext { userContext =>
                   workflowManagerProvider.forContext(userContext).get(workflowId)
@@ -124,8 +122,7 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
-            path(JavaUUID / "download") { idParameter =>
-              val workflowId = Id(idParameter)
+            path(JavaUUID / "download") { workflowId =>
               get {
                 withUserContext { userContext =>
                   onComplete(
@@ -173,8 +170,7 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
-            path(JavaUUID / "report") { idParameter =>
-              val workflowId = Id(idParameter)
+            path(JavaUUID / "report") { workflowId =>
               get {
                 withUserContext { userContext =>
                     workflowManagerProvider.forContext(userContext)
@@ -215,16 +211,14 @@ abstract class WorkflowApi @Inject() (
             }
           } ~
           pathPrefix(reportsPathPrefixMatcher) {
-            path(JavaUUID) { idParameter =>
-              val reportId = ExecutionReportWithId.Id(idParameter)
+            path(JavaUUID) { reportId =>
               get {
                 withUserContext { userContext =>
                     workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
                 }
               }
             } ~
-            path(JavaUUID / "download") { idParameter =>
-              val reportId = ExecutionReportWithId.Id(idParameter)
+            path(JavaUUID / "download") { reportId =>
               get {
                 withUserContext { userContext =>
                   respondWithMediaType(`application/json`) {
