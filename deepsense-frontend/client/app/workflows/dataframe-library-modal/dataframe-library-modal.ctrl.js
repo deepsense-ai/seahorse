@@ -29,7 +29,7 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
     }
   });
 
-  $scope.$watch(LibraryService.getUploadingFiles, (newValue, oldValue) => {
+  $scope.$watch(LibraryService.getUploadingFiles, (newValue) => {
     vm.uploadingFiles = newValue.filter((value) => value.status === 'uploading');
     vm.uploadedFiles = newValue.filter((value) => value.status === 'complete');
   }, true);

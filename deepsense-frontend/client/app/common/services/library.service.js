@@ -81,6 +81,7 @@ function LibraryService($q, $log, LibraryApiService) {
       if (progress === 100) {
         uploadingFile.status =  STATUS_COMPLETE;
         uploadingFile.downloadUrl = LibraryApiService.getDownloadUrlForFile(uploadingFile.name);
+        uploadingFile.uri = LibraryApiService.getUriForFile(uploadingFile.name);
       } else {
         uploadingFile.status = STATUS_UPLOADING;
       }

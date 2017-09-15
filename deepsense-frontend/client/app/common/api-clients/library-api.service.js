@@ -9,6 +9,7 @@ function LibraryApi($http, config) {
   service.upload = upload;
   service.remove = remove;
   service.getDownloadUrlForFile = getDownloadUrlForFile;
+  service.getUriForFile = getUriForFile;
 
   /**
    * @returns {Promise}
@@ -18,7 +19,7 @@ function LibraryApi($http, config) {
       return result.data.map((file) => {
         return Object.assign(file, {
           downloadUrl: getDownloadUrlForFile(file.name),
-          uri: config.libraryPrefix + file.name
+          uri: getUriForFile(file.name)
         });
       });
     });
@@ -58,6 +59,14 @@ function LibraryApi($http, config) {
    */
   function getDownloadUrlForFile(fileName) {
     return `${URL}/${encodeURIComponent(fileName)}`;
+  }
+
+  /**
+   * @param {String} fileName
+   * @returns {string}
+   */
+  function getUriForFile(fileName) {
+    return config.libraryPrefix + fileName;
   }
 }
 
