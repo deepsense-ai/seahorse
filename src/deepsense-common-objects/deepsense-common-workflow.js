@@ -54,6 +54,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       return internal.edges[edgeId];
     };
 
+    // TODO rename to getChildren, or at least to getCholtren
     that.getNeightbours = function getNeightbours(nodeId) {
       return _.map(
         _.filter(that.getEdgesByNodeId(nodeId), (neighbourEdge) => neighbourEdge.startNodeId === nodeId),
@@ -216,9 +217,15 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
         throw new Error('Cannot remove edge between nodes. End node id: ' + edge.endNodeId + ' doesn\'t exist.');
       }
 
+      let startNode = internal.nodes[edge.startNodeId];
+      let endNode = internal.nodes[edge.endNodeId];
+
       delete internal.edges[edge.id];
-      delete internal.nodes[edge.startNodeId].edges[edge.id];
-      delete internal.nodes[edge.endNodeId].edges[edge.id];
+      delete startNode.edges[edge.id];
+      delete endNode.edges[edge.id];
+
+      // Refreshing params of target node. Dynamic params can change because of lost knowledge.
+      endNode.refreshParameters();
     };
 
     that.removeNodes = (nodes) => {
@@ -309,9 +316,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
               if (types) {
                 port.typeQualifier = types.slice();
               }
-              if (result) {
-                port.result = result;
-              }
+              port.result = result;
             });
           }
         }
