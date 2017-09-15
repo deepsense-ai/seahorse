@@ -6,7 +6,7 @@
   "nodes": {
     "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": {
       "error": {
-        "code": "UnexpectedError"
+        "code": "NodeFailure"
       },
       "status": "FAILED"
     }
