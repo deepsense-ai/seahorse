@@ -31,7 +31,6 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
    * If n-th port is not used then the sequence contains None on n-th position.
    */
   val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = preparePredecessors
-  private lazy val topologicalSort = new TopologicalSort(this)
 
   def readyNodes: List[Node] = {
     nodes.filter(_.state.status == Status.Queued)
@@ -70,12 +69,12 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
   def abortNodes: Graph =
     copy(nodes = nodes.map(_.markAborted))
 
-  def containsCycle: Boolean = topologicalSort.isSorted
+  def containsCycle: Boolean = new TopologicalSort(this).isSorted
 
   def size: Int = nodes.size
 
   /** Returns topologically sorted nodes if the Graph does not contain cycles. */
-  def topologicallySorted: Option[List[Node]] = topologicalSort.sortedNodes
+  def topologicallySorted: Option[List[Node]] = new TopologicalSort(this).sortedNodes
 
   /** Returns graph knowledge with knowledge inferred for the given node. */
   def inferKnowledge(

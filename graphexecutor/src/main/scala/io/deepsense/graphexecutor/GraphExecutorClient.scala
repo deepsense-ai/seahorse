@@ -229,7 +229,6 @@ class GraphExecutorClient extends Closeable {
 
 object GraphExecutorClient {
   def apply() = {
-    val ret = new GraphExecutorClient()
-    ret
+    new GraphExecutorClient()
   }
 }

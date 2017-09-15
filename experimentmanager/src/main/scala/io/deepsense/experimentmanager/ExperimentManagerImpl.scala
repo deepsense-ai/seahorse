@@ -99,7 +99,7 @@ class ExperimentManagerImpl @Inject()(
       val runningExperimentsFuture: Future[Map[Id, Experiment]] = runningExperimentsActor
         .ask(ListExperiments(Some(userContext.tenantId)))
         .mapTo[Experiments]
-        .map(_.experimentsByTenantId(userContext.tenantId)
+        .map(_.experimentsByTenantId.getOrElse(userContext.tenantId, Set())
           .map(experiment => experiment.id -> experiment).toMap)
 
       val runningAndStoredExperiments = for {

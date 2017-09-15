@@ -47,7 +47,7 @@ object Constants {
   /**
    * Location of Graph Executor library on cluster HDFS
    */
-  val GraphExecutorLibraryLocation = "/graphexecutor-assembly-0.1.0.jar"
+  val GraphExecutorLibraryLocation = "/deepsense-graphexecutor-assembly-0.1.0.jar"
 
   /**
    * Hostname of cluster master node
