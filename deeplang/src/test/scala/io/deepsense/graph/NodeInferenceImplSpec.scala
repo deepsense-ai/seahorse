@@ -161,6 +161,27 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         )
       )
     }
+    "skip duplicated errors" in {
+      val node = nodeA1A2ToFirst
+      setInferenceErrorThrowing(node)
+      setParametersInvalid(node)
+      val inputInferenceForNode = NodeInferenceResult(
+        ports = Vector(knowledgeA1, knowledgeA2),
+        errors = Vector(
+          DOperationA1A2ToFirst.parameterInvalidError,
+          DOperationA1A2ToFirst.inferenceError))
+      val inferenceResult = nodeInference.inferKnowledge(
+        node,
+        typeInferenceCtx,
+        inputInferenceForNode)
+      inferenceResult shouldBe NodeInferenceResult(
+        Vector(knowledgeA12),
+        errors = Vector(
+          DOperationA1A2ToFirst.parameterInvalidError,
+          DOperationA1A2ToFirst.inferenceError
+        )
+      )
+    }
   }
 
   def testInputInferenceForNode(

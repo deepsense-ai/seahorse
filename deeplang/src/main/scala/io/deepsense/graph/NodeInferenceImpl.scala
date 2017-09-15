@@ -57,7 +57,7 @@ trait NodeInferenceImpl extends NodeInference {
             context,
             node.value,
             warnings,
-            errors ++ parametersValidationErrors :+ exception
+            (errors ++ parametersValidationErrors :+ exception).distinct
           )
       }
     }
