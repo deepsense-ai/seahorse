@@ -159,7 +159,11 @@ executing linear regression algorithm on the data.
      * Select <code>city_index</code> in the **INPUT COLUMN**
      * Select <code>append new column</code> in **OUTPUT** selector
      * Put <code>city_encoded</code> in the **OUTPUT COLUMN**
-   * As a result of executing the two operations above, in our dataset we will have additional
+   * Modify existing Assemble Vector node and add <code>city_index</code> to excluded columns
+     * In the **INPUT COLUMNS** section click **Edit selection**
+     * Add <code>city_index</code> to the list - we only want to add <code>city_encoded</code>
+       column to the features
+   * As a result of executing the operations above, in our dataset we will have additional
      columns with values <code>0</code> or <code>1</code> for each possible value of <code>city</code>
      column.
 

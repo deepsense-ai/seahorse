@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor
 
+import scala.util.control.NonFatal
+
 import akka.actor.{Actor, PoisonPill}
 
 import io.deepsense.commons.models.Entity
@@ -54,6 +56,8 @@ class WorkflowNodeExecutorActor(
       } catch {
         case e: Exception =>
           sendFailed(e)
+        case NonFatal(e) =>
+          sendFailed(new RuntimeException(e))
       } finally {
         // Exception thrown here could result in slightly delayed graph execution
         val duration = (System.currentTimeMillis() - executionStart) / 1000.0

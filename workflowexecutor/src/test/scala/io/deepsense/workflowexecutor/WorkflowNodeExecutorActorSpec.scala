@@ -74,6 +74,15 @@ class WorkflowNodeExecutorActorSpec
         probe.expectMsg(NodeStarted(node.id))
         probe.expectMsgType[NodeFailed] shouldBe NodeFailed(node.id, cause)
       }
+      "node failed with an Error" in {
+        val (probe, testedActor, node, cause) = fixtureFailingOperationError()
+        probe.send(testedActor, Start())
+        probe.expectMsg(NodeStarted(node.id))
+        val nodeFailed = probe.expectMsgType[NodeFailed]
+        nodeFailed shouldBe a[NodeFailed]
+        nodeFailed.id shouldBe node.id
+        nodeFailed.cause.getCause shouldBe cause
+      }
       "node's inference throws an exception" in {
         val (probe, testedActor, node, cause) = fixtureFailingInference()
         probe.send(testedActor, Start())
@@ -121,6 +130,16 @@ class WorkflowNodeExecutorActorSpec
       : (TestProbe, ActorRef, DeeplangNode, NullPointerException) = {
     val operation = mockOperation
     val cause = new NullPointerException("test exception")
+    when(operation.execute(any[ExecutionContext]())(any[Vector[DOperable]]()))
+      .thenThrow(cause)
+    val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
+    (probe, testedActor, node, cause)
+  }
+
+  private def fixtureFailingOperationError()
+  : (TestProbe, ActorRef, DeeplangNode, Throwable) = {
+    val operation = mockOperation
+    val cause = new AssertionError("test exception")
     when(operation.execute(any[ExecutionContext]())(any[Vector[DOperable]]()))
       .thenThrow(cause)
     val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
