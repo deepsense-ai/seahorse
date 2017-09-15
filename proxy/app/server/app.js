@@ -8,11 +8,17 @@ var express = require('express'),
     compression = require('compression'),
     timeout = require('connect-timeout'),
 
-    auth = require('./auth/auth'),
     reverseProxy = require('./reverse-proxy'),
     config = require('./config/config');
 
 var app = express();
+
+var auth = undefined;
+if (config.get('DISABLE_OAUTH') === "true") {
+  auth = require('./auth/stub');
+} else {
+  auth = require('./auth/auth');
+}
 
 app.use(logger('dev'));
 app.use(timeout(config.get('timeout')));
