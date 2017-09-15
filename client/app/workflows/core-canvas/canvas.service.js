@@ -7,13 +7,19 @@ const NODE_HEIGHT = 60;
 
 const OFFSET = 30;
 
+const POSITION_BOUNDS = {
+  X: [-10000, 0],
+  Y: [-10000, 0]
+};
+
 const ZOOM_BOUNDS = [0.5, 1.5];
 const ZOOM_STEP = 0.1;
 
 class CanvasService {
   /*@ngInject*/
-  constructor(AdapterService) {
+  constructor(AdapterService, $rootScope) {
     this.AdapterService = AdapterService;
+    this.$rootScope = $rootScope;
 
     this.slidingWindowSize = {
       width: 0,
@@ -31,7 +37,20 @@ class CanvasService {
   initialize(jsPlumbContainer, slidingWindow) {
     this.$slidingWindow = $(slidingWindow);
     this.AdapterService.initialize(jsPlumbContainer);
-    this.slidingWindowSize = this.getWindowSize();
+    this.$rootScope.$watch(() => this.getWindowSize(), (newValue, oldValue) => {
+      const heightDelta = newValue.height - oldValue.height;
+      const widthDelta = newValue.width - oldValue.width;
+      let ratio;
+      if (widthDelta && Math.abs(heightDelta) > Math.abs(widthDelta)) {
+        ratio = widthDelta / newValue.width * this.scale;
+      } else {
+        ratio = heightDelta / newValue.height * this.scale;
+      }
+      this.centerZoom(ratio);
+      this.moveWindow(widthDelta/2, heightDelta/2);
+      this.slidingWindowSize = this.getWindowSize();
+    }, true); // deep
+
     this.setZoom(1);
     this.bindEvents();
     this.applyToWindow();
@@ -86,7 +105,11 @@ class CanvasService {
   }
 
   setPosition(position) {
-    this.slidingWindowPosition = position;
+    const newPosition = {
+      x: _.clamp(position.x, POSITION_BOUNDS.X[0] * this.scale + this.slidingWindowSize.width, POSITION_BOUNDS.X[1]),
+      y: _.clamp(position.y, POSITION_BOUNDS.Y[0] * this.scale + this.slidingWindowSize.height, POSITION_BOUNDS.Y[1]),
+    };
+    this.slidingWindowPosition = newPosition;
     this.applyToWindow();
   }
 
