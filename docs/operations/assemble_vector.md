@@ -74,3 +74,177 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tbody>
 </table>
 
+## Example
+
+### Parameters
+
+<table class="table">
+<thead>
+<tr>
+<th style="width:20%">Name</th>
+<th style="width:80%">Value</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td><code>input columns</code></td>
+<td>Selected columns: windspeed, hum, temp</td>
+</tr>
+
+<tr>
+<td><code>output column</code></td>
+<td>assembled</td>
+</tr>
+
+</tbody>
+</table>
+
+### Input
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>datetime</th>
+            <th>windspeed</th>
+            <th>hum</th>
+            <th>temp</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>2011-01-03T20:00:00.000Z</td>
+            <td>0.1045</td>
+            <td>0.47</td>
+            <td>0.2</td>
+       </tr>
+        <tr>
+            <td>2011-01-03T21:00:00.000Z</td>
+            <td>0.1343</td>
+            <td>0.64</td>
+            <td>0.18</td>
+       </tr>
+        <tr>
+            <td>2011-01-03T22:00:00.000Z</td>
+            <td>0.1343</td>
+            <td>0.69</td>
+            <td>0.14</td>
+       </tr>
+        <tr>
+            <td>2011-02-11T06:00:00.000Z</td>
+            <td>0.0</td>
+            <td>0.68</td>
+            <td>0.1</td>
+       </tr>
+        <tr>
+            <td>2011-02-13T17:00:00.000Z</td>
+            <td>0.3284</td>
+            <td>0.28</td>
+            <td>0.42</td>
+       </tr>
+        <tr>
+            <td>2011-02-18T11:00:00.000Z</td>
+            <td>0.1642</td>
+            <td>0.72</td>
+            <td>0.44</td>
+       </tr>
+        <tr>
+            <td>2011-02-19T02:00:00.000Z</td>
+            <td>0.3881</td>
+            <td>0.13</td>
+            <td>0.44</td>
+       </tr>
+        <tr>
+            <td>2011-02-19T03:00:00.000Z</td>
+            <td>0.2985</td>
+            <td>0.14</td>
+            <td>0.42</td>
+       </tr>
+        <tr>
+            <td>2012-12-31T23:00:00.000Z</td>
+            <td>0.1343</td>
+            <td>0.65</td>
+            <td>0.26</td>
+       </tr>
+    </tbody>
+</table>
+
+
+### Output
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>datetime</th>
+            <th>windspeed</th>
+            <th>hum</th>
+            <th>temp</th>
+            <th>assembled</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>2011-01-03T20:00:00.000Z</td>
+            <td>0.1045</td>
+            <td>0.47</td>
+            <td>0.2</td>
+            <td>[0.1045, 0.47, 0.2]</td>
+       </tr>
+        <tr>
+            <td>2011-01-03T21:00:00.000Z</td>
+            <td>0.1343</td>
+            <td>0.64</td>
+            <td>0.18</td>
+            <td>[0.1343, 0.64, 0.18]</td>
+       </tr>
+        <tr>
+            <td>2011-01-03T22:00:00.000Z</td>
+            <td>0.1343</td>
+            <td>0.69</td>
+            <td>0.14</td>
+            <td>[0.1343, 0.69, 0.14]</td>
+       </tr>
+        <tr>
+            <td>2011-02-11T06:00:00.000Z</td>
+            <td>0.0</td>
+            <td>0.68</td>
+            <td>0.1</td>
+            <td>[0.0, 0.68, 0.1]</td>
+       </tr>
+        <tr>
+            <td>2011-02-13T17:00:00.000Z</td>
+            <td>0.3284</td>
+            <td>0.28</td>
+            <td>0.42</td>
+            <td>[0.3284, 0.28, 0.42]</td>
+       </tr>
+        <tr>
+            <td>2011-02-18T11:00:00.000Z</td>
+            <td>0.1642</td>
+            <td>0.72</td>
+            <td>0.44</td>
+            <td>[0.1642, 0.72, 0.44]</td>
+       </tr>
+        <tr>
+            <td>2011-02-19T02:00:00.000Z</td>
+            <td>0.3881</td>
+            <td>0.13</td>
+            <td>0.44</td>
+            <td>[0.3881, 0.13, 0.44]</td>
+       </tr>
+        <tr>
+            <td>2011-02-19T03:00:00.000Z</td>
+            <td>0.2985</td>
+            <td>0.14</td>
+            <td>0.42</td>
+            <td>[0.2985, 0.14, 0.42]</td>
+       </tr>
+        <tr>
+            <td>2012-12-31T23:00:00.000Z</td>
+            <td>0.1343</td>
+            <td>0.65</td>
+            <td>0.26</td>
+            <td>[0.1343, 0.65, 0.26]</td>
+       </tr>
+    </tbody>
+</table>
