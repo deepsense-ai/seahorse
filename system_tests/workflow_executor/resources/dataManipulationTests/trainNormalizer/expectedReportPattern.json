@@ -8,18 +8,6 @@
         "DataFrame Size": {
           "values": [["2", "40"]]
         }
-      },
-      "distributions": {
-        "x": {
-          "statistics": {
-            "mean": "0"
-          }
-        },
-        "y": {
-          "statistics": {
-            "mean": "0"
-          }
-        }
       }
     }
   }, {

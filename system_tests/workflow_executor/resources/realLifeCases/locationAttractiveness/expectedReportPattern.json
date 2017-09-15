@@ -143,7 +143,7 @@
         "DataFrame Size": {
           "name": "DataFrame Size",
           "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["29", "3"]]
+          "values": [["29", "1"]]
         },
         "Data Sample": {
           "name": "Data Sample"
@@ -242,7 +242,7 @@
         "DataFrame Size": {
           "name": "DataFrame Size",
           "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["28", "6"]]
+          "values": [["28", "8"]]
         },
         "Data Sample": {
           "name": "Data Sample"
@@ -288,7 +288,7 @@
         "DataFrame Size": {
           "name": "DataFrame Size",
           "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["28", "3"]]
+          "values": [["28", "1"]]
         },
         "Data Sample": {
           "name": "Data Sample"
