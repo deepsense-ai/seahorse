@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "angular": "^1.4.4",
-    "angular-bootstrap": "^0.12.0",
     "angular-mocks": "^1.4.4",
     "angular-sanitize": "^1.4.6",
     "angular-toastr": "^1.4.1",
