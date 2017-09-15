@@ -19,9 +19,9 @@ case class UntrainedLogisticRegression(
 
   override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
     override def apply(
-      context: ExecutionContext)(
-      parameters: Trainable.Parameters)(
-      dataFrame: DataFrame): Scorable = {
+        context: ExecutionContext)(
+        parameters: Trainable.Parameters)(
+        dataFrame: DataFrame): Scorable = {
 
       val featureColumns = dataFrame.getColumnNames(parameters.featureColumns)
       val labelColumn = dataFrame.getColumnName(parameters.targetColumn)
