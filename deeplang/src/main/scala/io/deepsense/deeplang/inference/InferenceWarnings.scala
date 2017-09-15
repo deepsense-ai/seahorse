@@ -34,6 +34,6 @@ object InferenceWarnings {
 
   def apply(warnings: InferenceWarning*): InferenceWarnings = InferenceWarnings(warnings.toVector)
 
-  def flatten(inferenceWarnings: Vector[InferenceWarnings]): InferenceWarnings =
-    InferenceWarnings(inferenceWarnings.map(_.warnings).flatten)
+  def flatten(inferenceWarnings: Traversable[InferenceWarnings]): InferenceWarnings =
+    InferenceWarnings(inferenceWarnings.flatMap(_.warnings).toVector)
 }
