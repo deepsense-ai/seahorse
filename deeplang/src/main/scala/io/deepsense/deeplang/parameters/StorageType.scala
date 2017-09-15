@@ -38,7 +38,7 @@ object StorageType extends Enumeration {
 
   type StorageType = Value
   val HDFS = Value("hdfs")
-  val S3 = Value("s3")
+  val S3N = Value("s3n")
   val FILE = Value("file")
   val LOCAL = Value("local")
 }

@@ -76,7 +76,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
     required = true,
     options = ListMap(
       StorageType.HDFS.toString -> ParametersSchema("path" -> pathParameter),
-      StorageType.S3.toString -> ParametersSchema("path" -> pathParameter),
+      StorageType.S3N.toString -> ParametersSchema("path" -> pathParameter),
       StorageType.FILE.toString -> ParametersSchema("path" -> pathParameter),
       StorageType.LOCAL.toString -> ParametersSchema("path" -> pathParameter)
     )
