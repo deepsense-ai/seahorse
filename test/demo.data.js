@@ -535,6 +535,27 @@ angular.module('test').
           "default": null,
           "required": true,
           "isSingle": false
+        },
+        {
+          "name": "single-choice",
+          "type": "choice",
+          "description": "that's the single choice parameter, enjoy!",
+          "default": "option1",
+          "required": true,
+          "values": [
+            {
+              "name": "option1",
+              "schema": null
+            },
+            {
+              "name": "option2",
+              "schema": null
+            },
+            {
+              "name": "option3",
+              "schema": null
+            }
+          ]
         }
       ],
       [
@@ -624,6 +645,9 @@ angular.module('test').
         "selectors-new": {
           "excluding": false,
           "selections": []
+        },
+        "single-choice": {
+          "option2": {}
         }
       },
       {

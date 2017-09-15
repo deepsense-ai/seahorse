@@ -7,7 +7,7 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeSelectorType($timeout, $modal) {
+function AttributeSelectorType($timeout, $modal, $rootScope) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type.html',
@@ -25,12 +25,23 @@ function AttributeSelectorType($timeout, $modal) {
         modal: null,
 
         openSelector() {
+          let oldParameter = JSON.stringify(scope.parameter.serialize());
+
           this.modal = $modal.open({
             templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type-modal.html',
             size: 'lg',
             scope: scope,
             windowClass: 'selection-modal'
           });
+
+          this.modal.result.
+            finally(() => {
+              let currParameter = JSON.stringify(scope.parameter.serialize());
+              if (currParameter !== oldParameter) {
+                oldParameter = currParameter;
+                $rootScope.$broadcast('AttributesPanel.UPDATED');
+              }
+            });
         },
         checkUnique(id) {
           return !!(id === 'columnList' || id === 'typesList');

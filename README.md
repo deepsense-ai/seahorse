@@ -45,6 +45,8 @@ EVENTS
 
 - AttributePanel.UNSELECT_NODE | `$emit()` | click | No args | Click on close icon on panel
 
+- AttributesPanel.UPDATED | `$broadcast()` | No args | The event is broadcasted if any parameter has changed its value
+
 ### Additional directives are exported
 
 COMPONENT MODULE `deepsense.attributes-panel`
@@ -78,7 +80,7 @@ EXAMPLE OF USAGE
       <input type="text" />
     </div>
 
-DESCRIPTION  
+DESCRIPTION
 
 Add unique ID to first next input element
 
@@ -97,11 +99,21 @@ ARGUMENTS
 - *start | {Date|Angular binding} | started time
 - *end | {Date|Angular binding} | ended time
 
-DESCRIPTION  
+DESCRIPTION
 
 Shows difference between start and end time
 
+### Additional directives:
+
+- `<... click-listener ...>`
+- `<... input-checkbox-change-listener ...>`
+- `<... input-text-change-listener ...>`
+- `<... select-change-listener ...>`
+
+They listen on UI components' values' changes. If any change appears, the `AttributesPanel.UPDATED` event is triggered.
+The event is also triggered when an user changes any value in the column selector panel.
+
 ### Development
 
-`gulp start` to start watchers  
+`gulp start` to start watchers
 `gulp` to build

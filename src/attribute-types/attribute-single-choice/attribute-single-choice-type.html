@@ -1,7 +1,8 @@
 <div>
   <select class="form-control"
           ng-model="choice"
-          ng-options="choiceName as choiceName for (choiceName, parametersList) in ::parameter.possibleChoicesList"></select>
+          ng-options="choiceName as choiceName for (choiceName, parametersList) in ::parameter.possibleChoicesList"
+          select-change-listener></select>
 
   <div class="nested-attributes-view"></div>
 </div>
