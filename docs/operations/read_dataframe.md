@@ -6,9 +6,9 @@ description: Read DataFrame
 includeOperationsMenu: true
 ---
 
-Reads a DataFrame from a specified data storage type.
+Reads a DataFrame from a specified data storage.
 
-Supports reading files (CSV, JSON or PARQUET) from local file system, Amazon S3 and HDFS
+It supports reading files (CSV, JSON or PARQUET) from local file system, Amazon S3 and HDFS
 (it supports reading Hadoop-compatible partitioned files).
 
 Additionally, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
@@ -29,26 +29,25 @@ If you are using the Bundled Image please read about
 In this mode, the operation infers column types.
 When a column contains values of different types, the narrowest possible type will be chosen,
 so that all the values can be represented in that type.
-Empty cells are treated as ``null``, unless column type is inferred as ``String`` - in this
+Empty cells are treated as ``null``, unless column type is inferred as a ``String`` - in this
 case, they are treated as empty strings.
 
 If `convert to boolean` mode is enabled, columns that contain only zeros, ones and empty values will be
 inferred as `Boolean`.
 In particular, column consisting of empty cells will be inferred as ``Boolean`` containing ``null`` values only.
 
-Operation assumes that each row in file has the same number of fields.
+The operation assumes that each row in file has the same number of fields.
 In other case, behavior of operation is undefined.
 
-If the file defines column names they will be used in the output DataFrame.
+If the file defines column names, they will be used in the output DataFrame.
 If a name is missing (or is empty) for some column then the column will
-be named ``unnamed_X`` (where ``X`` is the smallest positive number so that
+be named ``unnamed_X`` (where ``X`` is the smallest non-negative number so that
 column names are unique). In case names are not included in the input file
 or are all empty then the columns will be named ``unnamed_X`` where ``X`` are
 consecutive integers beginning from 0.
 
-Escaping of separator sign is done by double quotes sign.
-Moreover, all not escaped values will be trimmed before parsing.
-For example, assuming comma as separator, following line
+Escaping of a separator can be achieved by double quotes sign.
+For example, assuming a comma as separator, following line
 
 <code>1,abc,"a,b,c","""x""",, z ," z&nbsp;&nbsp;"</code>
 
@@ -56,7 +55,7 @@ will be parsed as:
 
 ``1.0``  ``abc``  ``a,b,c``  ``"x"`` <code>&nbsp;</code> ``_z_``  ``_z__``
 
-where ``_`` denotes space and the fifth value is an empty string.
+where ``_`` denotes a space and the fifth value is an empty string.
 
 ### `PARQUET`
 <a target="_blank" href="http://spark.apache.org/docs/latest/sql-programming-guide.html#parquet-files">Parquet Files</a>

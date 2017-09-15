@@ -7,9 +7,9 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Write DataFrame saves a DataFrame to specified data storage type.
+Write DataFrame saves a DataFrame to a specified data storage.
 
-Supports writing files (CSV, JSON or PARQUET) to the local file system, Amazon S3 and HDFS.
+It supports writing files (CSV, JSON or PARQUET) to the local file system, Amazon S3 and HDFS.
 The output will be a Hadoop-compatible partitioned file.
 It is possible to customize the file format (e.g. the values separator in CSV format)
 by setting appropriate parameters.
