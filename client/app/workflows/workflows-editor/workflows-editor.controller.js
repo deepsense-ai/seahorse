@@ -57,10 +57,12 @@ function WorkflowsEditorController(workflow, MultiSelectionService,
     internal.updateAndRerenderEdges(data);
   });
 
-  $scope.$on(GraphNode.CLICK, (event, data) => {
+  $scope.$on('GraphNode.CLICK', (event, data) => {
     let node = data.selectedNode;
     internal.selectedNode = node;
-    MultiSelectionService.addNodesToSelection([node.id]);
+    if (!_.includes(MultiSelectionService.getSelectedNodes(),node.id)) {
+      MultiSelectionService.setSelectedNodes([node.id]);
+    }
     if (node.hasParameters()) {
       $scope.$digest();
     } else {
@@ -92,8 +94,9 @@ function WorkflowsEditorController(workflow, MultiSelectionService,
   $scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
     WorkflowService.getWorkflow().removeNodes(MultiSelectionService.getSelectedNodes());
     GraphPanelRendererService.removeNodes(MultiSelectionService.getSelectedNodes());
+    MultiSelectionService.clearSelection();
     that.unselectNode();
-    $scope.$digest();
+    $scope.$apply();
     WorkflowService.saveWorkflow();
   });
 

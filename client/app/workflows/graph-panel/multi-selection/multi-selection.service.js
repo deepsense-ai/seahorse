@@ -4,6 +4,7 @@ exports.inject = (module) => {
   module.service('MultiSelectionService', () => {
 
     let internal = {};
+    internal.selectedNodes = [];
 
     class MultiSelectionService {
 
@@ -13,6 +14,10 @@ exports.inject = (module) => {
 
       addNodesToSelection(nodes) {
         internal.selectedNodes = _.union(internal.selectedNodes, nodes);
+      }
+
+      clearSelection() {
+        internal.selectedNodes = [];
       }
 
       removeNodesFromSelection(nodes) {
