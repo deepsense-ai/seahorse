@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
-"use strict";
+'use strict';
 
 var express = require('express');
 
@@ -9,16 +9,17 @@ module.exports = function(waterline) {
   var router = express.Router();
 
   var wc = waterline.collections;
+  var response = function(res) {
+    return function(err, data) {
+      if (err) {
+        res.send(err);
+      }
+      res.json(data);
+    };
+  };
   for (var collection in wc) {
     if (wc.hasOwnProperty(collection)) {
       var model = wc[collection];
-      var response = function(res) {
-        return function(err, data) {
-          if (err)
-            res.send(err);
-          res.json(data);
-        };
-      };
 
       router.route('/' + collection + '/:id')
 

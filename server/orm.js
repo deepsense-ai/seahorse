@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
-"use strict";
+'use strict';
 
 var Waterline = require('waterline');
 var waterline = new Waterline();
@@ -27,7 +27,9 @@ var config = {
 
 module.exports = function(callback) {
   waterline.initialize(config, function(err, models) {
-    if(err) throw console.log(err);
+    if(err) {
+      throw console.log(err);
+    }
     callback(waterline);
   });
 };

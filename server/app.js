@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
-"use strict";
+'use strict';
 
 var http     = require('http');
 var Q        = require('q');
@@ -9,22 +9,22 @@ var fs       = require('fs');
 var express  = require('express');
 var app      = express();
 var http     = require('http').Server(app);
-var Waterline = require('waterline');
 var bodyParser = require('body-parser');
 
 var httpProxy = require('http-proxy');
 var proxies = [];
 
-var settingsFile = "settings.json";
-Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, "utf-8")
+var settingsFile = 'settings.json';
+Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, 'utf-8')
  .catch(function() {
   console.log('Error reading settings file');
  })
  .done(function (text) {
+  var settings;
   try {
-    var settings = JSON.parse(text);
+    settings = JSON.parse(text);
   } catch(e) {
-    console.log(settingsFile + ": " + e);
+    console.log(settingsFile + ': ' + e);
     return;
   }
 
@@ -62,6 +62,6 @@ Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, "utf-8")
 
       var port = 8000;
       http.listen(port);
-      console.log("Listening on port " + port + ".");
+      console.log('Listening on port ' + port + '.');
   });
 });
