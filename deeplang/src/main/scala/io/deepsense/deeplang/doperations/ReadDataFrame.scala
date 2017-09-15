@@ -131,7 +131,8 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
     context.dataFrameBuilder.buildDataFrame(convertedSchema, convertedData, categoricalColumnNames)
   }
 
-  override val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 trait ReadDataFrameParameters {

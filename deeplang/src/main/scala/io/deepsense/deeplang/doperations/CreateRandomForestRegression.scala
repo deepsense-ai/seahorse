@@ -80,7 +80,8 @@ case class CreateRandomForestRegression() extends DOperation0To1[UntrainedRandom
     UntrainedRandomForestRegression(model)
   }
 
-  override val tTagTO_0: ru.TypeTag[UntrainedRandomForestRegression] =
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[UntrainedRandomForestRegression] =
     ru.typeTag[UntrainedRandomForestRegression]
 }
 
