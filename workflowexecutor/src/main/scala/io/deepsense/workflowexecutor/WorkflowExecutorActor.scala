@@ -57,7 +57,7 @@ abstract class WorkflowExecutorActor(
   def ready(): Receive = {
     case Launch(nodes) => launch(nodes.toSet)
     case UpdateStruct(workflow) => updateStruct(workflow)
-    case Init() => sendWorkflowWithResults()
+    case Init() => initWhenStateIsAvailable()
   }
 
   def launched(): Receive = {
@@ -70,7 +70,7 @@ abstract class WorkflowExecutorActor(
   def waitingForFinish(): PartialFunction[Any, Unit] = {
     case NodeCompleted(id, nodeExecutionResult) => nodeCompleted(id, nodeExecutionResult)
     case NodeFailed(id, failureDescription) => nodeFailed(id, failureDescription)
-    case Init() => sendWorkflowWithResults()
+    case Init() => initWhenStateIsAvailable()
     case UpdateStruct(workflow) => updateStruct(workflow)
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
@@ -79,17 +79,26 @@ abstract class WorkflowExecutorActor(
   def initWithWorkflow(workflowWithResults: WorkflowWithResults): Unit = {
     statefulWorkflow = StatefulWorkflow(executionContext, workflowWithResults)
     context.become(ready())
-    sendWorkflowWithResults()
+    initWhenStateIsAvailable()
   }
 
-  def sendWorkflowWithResults(): Unit = {
-    publisher.foreach(_ ! statefulWorkflow.workflowWithResults)
+  def initWhenStateIsAvailable(): Unit = {
+    sendWorkflowWithResults(statefulWorkflow.workflowWithResults)
+    sendInferredState(statefulWorkflow.inferState())
+  }
+
+  def sendWorkflowWithResults(workflowWithResults: WorkflowWithResults): Unit = {
+    publisher.foreach(_ ! workflowWithResults)
   }
 
   private def updateStruct(workflow: Workflow): Unit = {
     val inferredState = statefulWorkflow.updateStructure(workflow)
     val workflowWithResults: WorkflowWithResults = statefulWorkflow.workflowWithResults
     workflowManagerClientActor.foreach(_ ! SaveWorkflow(workflowWithResults))
+    sendInferredState(inferredState)
+  }
+
+  def sendInferredState(inferredState: InferredState): Unit = {
     publisher.foreach(_ ! inferredState)
   }
 

@@ -75,6 +75,10 @@ class WorkflowExecutorActorSpec
               results.id shouldBe workflow.id
               results.metadata shouldBe workflow.metadata
               results.thirdPartyData shouldBe workflow.thirdPartyData
+
+              val inferredState = receiver.expectMsgClass(classOf[InferredState])
+              inferredState.id shouldBe workflow.id
+              inferredState.states shouldBe workflow.executionReport
             }
           }
         }
