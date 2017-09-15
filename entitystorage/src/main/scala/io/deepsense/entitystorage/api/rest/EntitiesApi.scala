@@ -86,7 +86,7 @@ class EntitiesApi @Inject() (
             }
           }
         } ~
-        pathEnd {
+        pathEndOrSingleSlash {
           get {
             withUserContext { userContext =>
               complete(

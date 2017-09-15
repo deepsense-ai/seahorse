@@ -111,7 +111,7 @@ class ExperimentsApi @Inject() (
               }
             }
           } ~
-          pathEnd {
+          pathEndOrSingleSlash {
             post {
               entity(as[InputExperiment]) { inputExperiment =>
                 withUserContext { userContext =>

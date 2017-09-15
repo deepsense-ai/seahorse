@@ -71,7 +71,7 @@ class OperationsApi @Inject() (
               }
             }
           } ~
-          pathEnd {
+          pathEndOrSingleSlash {
             get {
               implicit val operationsFormat = DOperationDescriptorBaseFormat
               withUserContext { userContext =>
