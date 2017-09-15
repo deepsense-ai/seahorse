@@ -56,7 +56,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
         updateWorkflow(internal.workflow.serialize()).
         then((data) => {
           if (this.workflowIsSet()) {
-            $rootScope.$broadcast('Workflow.SAVE.SUCCESS');
+            $rootScope.$broadcast('Workflow.SAVE.SUCCESS', data);
             return data;
           }
         }).

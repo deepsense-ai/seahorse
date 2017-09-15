@@ -1,5 +1,7 @@
 'use strict';
 
+import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+
 /* @ngInject */
 function WorkflowsReportController(
   $state, $scope, report, ConfirmationModalService, Report,
@@ -40,12 +42,11 @@ function WorkflowsReportController(
     workflow.updateState(report.executionReport);
     workflow.setPortTypesFromReport(report.executionReport.resultEntities);
 
-    GraphPanelRendererService.setWorkflow(workflow);
+    GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.REPORT_RENDER_MODE);
     GraphPanelRendererService.setZoom(1.0);
 
     WorkflowService.updateEdgesStates();
     GraphPanelRendererService.changeEdgesPaintStyles();
-    GraphPanelRendererService.disableAddingEdges();
 
     Report.createReportEntities(report.executionReport.resultEntities);
   };
@@ -80,6 +81,15 @@ function WorkflowsReportController(
       then(() => {
         $state.go('home');
       });
+  });
+
+  $scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
+    let node = WorkflowService.getWorkflow().getNodeById(data.portObject.nodeId);
+    $scope.$applyAsync(() => {
+      $state.go('workflows.reportEntity', {
+        reportEntityId: node.getResult(data.reference.getParameter('portIndex'))
+      });
+    });
   });
 
   $scope.$on('$destroy', () => {

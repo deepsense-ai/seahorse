@@ -1,5 +1,7 @@
 'use strict';
 
+import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+
 /* @ngInject */
 function WorkflowsEditorController(
   workflow,
@@ -30,11 +32,10 @@ function WorkflowsEditorController(
     PageService.setTitle('Workflow: ' + getTitle());
 
     WorkflowService.createWorkflow(workflow, Operations.getData());
-    GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
+    GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     GraphPanelRendererService.setZoom(1.0);
-    GraphPanelRendererService.enableAddingEdges();
 
-    internal.updateAndRerenderEdges(workflow.knowledge);
+    internal.updateAndRerenderEdges(workflow);
   };
 
   internal.rerenderEdges = function rerenderEdges() {
@@ -43,23 +44,16 @@ function WorkflowsEditorController(
   };
 
   internal.updateAndRerenderEdges = function updateAndRerenderEdges(data) {
-    WorkflowService.updateTypeKnowledge(data);
-    internal.rerenderEdges();
+    if (data && data.knowledge) {
+      WorkflowService.updateTypeKnowledge(data.knowledge);
+      internal.rerenderEdges();
+    }
   };
 
   that.getWorkflow = WorkflowService.getWorkflow;
 
   that.getSelectedNode = function getSelectedNode() {
     return internal.selectedNode;
-  };
-
-  that.saveWorkflow = function saveWorkflow() {
-    WorkflowService.saveWorkflow().
-      then((data) => {
-        if (!_.isUndefined(data)) {
-          internal.updateAndRerenderEdges(data.knowledge);
-        }
-      });
   };
 
   that.unselectNode = function unselectNode() {
@@ -69,6 +63,10 @@ function WorkflowsEditorController(
   that.getGUIData = function getGUIData () {
     return workflow.thirdPartyData.gui;
   };
+
+  $scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
+    internal.updateAndRerenderEdges(data);
+  });
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
     let node = data.selectedNode;
@@ -90,12 +88,10 @@ function WorkflowsEditorController(
 
   $scope.$on(Edge.CREATE, (data, args)  => {
     WorkflowService.getWorkflow().addEdge(args.edge);
-    that.saveWorkflow();
   });
 
   $scope.$on(Edge.REMOVE, (data, args)  => {
     WorkflowService.getWorkflow().removeEdge(args.edge);
-    that.saveWorkflow();
   });
 
   $scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
@@ -104,7 +100,7 @@ function WorkflowsEditorController(
       GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();
       $scope.$digest();
-      that.saveWorkflow();
+      WorkflowService.saveWorkflow();
     }
   });
 
@@ -125,7 +121,7 @@ function WorkflowsEditorController(
       });
 
     WorkflowService.getWorkflow().addNode(node);
-    that.saveWorkflow();
+    WorkflowService.saveWorkflow();
   });
 
   $scope.$on('AttributePanel.UNSELECT_NODE', () => {
@@ -138,7 +134,9 @@ function WorkflowsEditorController(
     GraphPanelRendererService.clearWorkflow();
   });
 
-  $scope.$on('StatusBar.SAVE_CLICK', that.saveWorkflow);
+  $scope.$on('StatusBar.SAVE_CLICK', () => {
+    WorkflowService.saveWorkflow();
+  });
 
   $scope.$on('StatusBar.HOME_CLICK', () => {
     ConfirmationModalService.showModal({
@@ -156,7 +154,7 @@ function WorkflowsEditorController(
       then(() => {
         WorkflowService.clearGraph();
         GraphPanelRendererService.rerender();
-        that.saveWorkflow();
+        WorkflowService.saveWorkflow();
       });
   });
 

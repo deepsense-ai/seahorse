@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
 'use strict';
 
 const connectorPaintStyleDefault = {
@@ -13,17 +10,8 @@ const connectorHoverStyle = {
   strokeStyle: '#216477'
 };
 
-const endpointHoverStyle = {
-  fillStyle: '#216477',
-  strokeStyle: '#216477'
-};
-
 const inputStyle = {
   endpoint: 'Rectangle',
-  paintStyle: {
-    fillStyle: '#00B1EB'
-  },
-  hoverPaintStyle: endpointHoverStyle,
   dropOptions: {
     hoverClass: 'hover',
     activeClass: 'active'
@@ -32,8 +20,13 @@ const inputStyle = {
   maxConnections: 1
 };
 
+import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
+import { GraphPanelStyler } from './graph-panel-styler.js';
+
 /* @ngInject */
-function GraphPanelRendererService($rootScope, $document, Edge, $timeout, DeepsenseCycleAnalyser, NotificationService) {
+function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
+                                   DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService)
+{
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' }),
     [Edge.STATE_TYPE.MAYBE]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' }),
@@ -41,17 +34,11 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     [Edge.STATE_TYPE.UNKNOWN]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' })
   };
 
-  const outputStyle = {
+  const OUTPUT_STYLE = {
     endpoint: 'Dot',
-    paintStyle: {
-      fillStyle: '#00B1EB',
-      radius: 10,
-      lineWidth: 2
-    },
     isSource: true,
     connector: ['Bezier', { curviness: 75 }],
     connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
-    hoverPaintStyle: endpointHoverStyle,
     connectorHoverStyle: connectorHoverStyle,
     maxConnections: -1
   };
@@ -60,61 +47,33 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
   const nodeIdPrefixLength = nodeIdPrefix.length;
 
   let that = this;
-  let internal = {};
+  let internal = {
+    currentZoomRatio: 1.0,
+    renderMode: null,
 
-  internal.currentZoomRatio = 1.0;
-  internal.isDetachable = true;
+    edgesAreDetachable() {
+      return internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE;
+    },
 
-  internal.getAllInternalElementsPosition = function getAllInternalElementsPosition () {
-    let elementsToFit = jsPlumb.getContainer().children;
+    reset() {
+      jsPlumb.deleteEveryEndpoint();
+      jsPlumb.unbind('connection');
+      jsPlumb.unbind('connectionDetached');
+      jsPlumb.unbind('connectionMoved');
+      jsPlumb.unbind('connectionDrag');
+      jsPlumb.setZoom(internal.currentZoomRatio, true);
+    },
 
-    return _.map(elementsToFit, (el) => {
-      let elementDimensions = el.getBoundingClientRect();
-      return {
-        top: el.offsetTop,
-        left: el.offsetLeft,
-        right: el.offsetLeft + elementDimensions.width,
-        bottom: el.offsetTop + elementDimensions.height
-      };
-    });
-  };
+    getNodeById(id) {
+      return document.querySelector('#' + nodeIdPrefix + id);
+    },
 
-  that.getPseudoContainerPosition = function getPseudoContainerPosition () {
-    let elementsToFitPositions = internal.getAllInternalElementsPosition();
-    return {
-      topMost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.top )),
-      leftMost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.left )),
-      rightMost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.right )),
-      bottomMost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.bottom ))
-    };
-  };
-
-  that.getPseudoContainerCenter = function getPseudoContainerCenter () {
-    let pseudoContainerPosition = that.getPseudoContainerPosition();
-    return {
-      y: pseudoContainerPosition.topMost  + ((pseudoContainerPosition.bottomMost - pseudoContainerPosition.topMost) / 2),
-      x: pseudoContainerPosition.leftMost + ((pseudoContainerPosition.rightMost - pseudoContainerPosition.leftMost) / 2)
-    };
-  };
-
-  that.getZoomRatio = function getZoomRatio () {
-    return jsPlumb.getZoom();
-  };
-
-  that.setZoom = function setZoom (zoomRatio) {
-    let instance = jsPlumb;
-    internal.currentZoomRatio = zoomRatio;
-    instance.setZoom(zoomRatio);
-    instance.repaintEverything();
-  };
-
-  internal.reset = function reset() {
-    jsPlumb.deleteEveryEndpoint();
-    jsPlumb.unbind('connection');
-    jsPlumb.unbind('connectionDetached');
-    jsPlumb.unbind('connectionMoved');
-    jsPlumb.unbind('connectionDrag');
-    jsPlumb.setZoom(internal.currentZoomRatio, true);
+    broadcastHoverEvent(eventName, portElement, portObject) {
+      $rootScope.$broadcast(eventName, {
+        portElement: portElement,
+        portObject: portObject
+      });
+    }
   };
 
   that.init = function init() {
@@ -129,21 +88,21 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     that.bindEdgeEvent();
   };
 
-  internal.getNodeById = function getNodeById(id) {
-    return document.querySelector('#' + nodeIdPrefix + id);
+  that.getZoomRatio = () => jsPlumb.getZoom();
+
+  that.setZoom = function setZoom (zoomRatio) {
+    let instance = jsPlumb;
+    internal.currentZoomRatio = zoomRatio;
+    instance.setZoom(zoomRatio);
+    instance.repaintEverything();
   };
 
   that.repaintEverything = function redrawEverything() {
     jsPlumb.repaintEverything();
   };
 
-  that.setWorkflow = function setWorkflow(workflow) {
-    internal.workflow = workflow;
-  };
-
   that.clearWorkflow = function clearWorkflow() {
     internal.reset();
-    internal.workflow = null;
   };
 
   that.removeNode = function removeNode(nodeId) {
@@ -152,7 +111,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
   };
 
   that.renderPorts = function renderPorts() {
-    let nodes = internal.workflow.getNodes();
+    let nodes = WorkflowService.getWorkflow().getNodes();
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         let node = internal.getNodeById(nodeId);
@@ -164,7 +123,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
   that.renderEdges = function renderEdges() {
     jsPlumb.detachEveryConnection();
-    let edges = internal.workflow.getEdges();
+    let edges = WorkflowService.getWorkflow().getEdges();
     let outputPrefix = 'output';
     let inputPrefix = 'input';
     for (let id in edges) {
@@ -175,7 +134,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
             outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
             inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
           ],
-          detachable: internal.isDetachable
+          detachable: internal.edgesAreDetachable()
         });
         connection.setParameter('edgeId', edge.id);
       }
@@ -185,7 +144,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
   that.changeEdgesPaintStyles = function changeEdgesStates() {
     let connections = jsPlumb.getConnections();
-    let edges = internal.workflow.getEdges();
+    let edges = WorkflowService.getWorkflow().getEdges();
     for (let id in edges) {
       if (edges.hasOwnProperty(id)) {
         let edge = edges[id];
@@ -198,28 +157,15 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     }
   };
 
-  that.portContextMenuHandler = function portContextMenuHandler(port, event) {
-    $rootScope.$broadcast('OutputPort.RIGHT_CLICK', {
-      reference: port,
-      event: event
-    });
-  };
-
-  that.outputClickHandler = function outputClickHandler() {
-    $rootScope.$broadcast('OutputPort.LEFT_CLICK');
-  };
-
-  internal.broadcastHoverEvent = function (eventName, portElement, portObject) {
-    $rootScope.$broadcast(eventName, {
-      portElement: portElement,
-      portObject: portObject
-    });
-  };
-
   that.addOutputPoint = function addOutputPoint(nodeElement, ports, nodeObj) {
     let anchors = (ports.length === 1) ?
       ['BottomCenter'] :
       ['BottomLeft', 'BottomCenter', 'BottomRight'];
+
+    let outputStyle = _.assign({}, OUTPUT_STYLE, {
+      cssClass: GraphPanelStyler.getOutputEndpointDefaultCssClass(internal.renderMode),
+      hoverClass: GraphPanelStyler.getOutputEndpointDefaultHoverCssClass(internal.renderMode)
+    });
 
     for (let i = 0; i < ports.length; i++) {
       let port = jsPlumb.addEndpoint(nodeElement, outputStyle, {
@@ -230,8 +176,15 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
       port.setParameter('portIndex', i);
       port.setParameter('nodeId', nodeObj.id);
 
-      port.bind('contextmenu', that.portContextMenuHandler);
-      port.bind('click', that.outputClickHandler);
+      GraphPanelStyler.styleOutputEndpointDefault(port, internal.renderMode);
+
+      port.bind('click', () => {
+        $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
+          reference: port,
+          portObject: ports[i],
+          event: event
+        });
+      });
 
       port.bind('mouseover', (endpoint) => {
         internal.broadcastHoverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
@@ -241,10 +194,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
         internal.broadcastHoverEvent('OutputPoint.MOUSEOUT', endpoint.canvas, ports[i]);
       });
     }
-  };
-
-  that.inputClickHandler = function inputClickHandler() {
-    $rootScope.$broadcast('InputPoint.CLICK');
   };
 
   that.addInputPoint = function addInputPoint(node, ports) {
@@ -260,7 +209,11 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
       port.setParameter('portIndex', i);
 
-      port.bind('click', that.inputClickHandler);
+      GraphPanelStyler.styleInputEndpointDefault(port, internal.renderMode);
+
+      port.bind('click', () => {
+        $rootScope.$broadcast('InputPoint.CLICK');
+      });
 
       port.bind('mouseover', (endpoint) => {
         internal.broadcastHoverEvent('InputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
@@ -288,13 +241,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
             'portIndex': info.targetEndpoint.getParameter('portIndex')
           }
         };
-      let edge = internal.workflow.createEdge(data);
+      let edge = WorkflowService.getWorkflow().createEdge(data);
 
       info.connection.setParameter('edgeId', edge.id);
 
       $rootScope.$broadcast(Edge.CREATE, {edge: edge});
 
-      if (DeepsenseCycleAnalyser.cycleExists(internal.workflow)) {
+      if (DeepsenseCycleAnalyser.cycleExists(WorkflowService.getWorkflow())) {
         NotificationService.showError({
           title: 'Error',
           message: 'You cannot create a cycle in the graph!'
@@ -302,30 +255,47 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
         $timeout(() => {
           $rootScope.$broadcast(Edge.REMOVE, {
-            edge: internal.workflow.getEdgeById(info.connection.getParameter('edgeId'))
+            edge: WorkflowService.getWorkflow().getEdgeById(info.connection.getParameter('edgeId'))
           });
 
           jsPlumb.detach(info.connection);
         }, 0, false);
+      } else {
+        WorkflowService.saveWorkflow();
       }
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
-      let edge = internal.workflow.getEdgeById(info.connection.getParameter('edgeId'));
-      if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
-        $rootScope.$broadcast(Edge.REMOVE, {
-          edge: edge
-        });
+      let workflow = WorkflowService.getWorkflow();
+      if (workflow) {
+        let edge = workflow.getEdgeById(info.connection.getParameter('edgeId'));
+        if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
+          $rootScope.$broadcast(Edge.REMOVE, { edge: edge });
+          WorkflowService.saveWorkflow();
+        }
       }
     });
 
     jsPlumb.bind('connectionMoved', (info) => {
-      let edge = internal.workflow.getEdgeById(info.connection.getParameter('edgeId'));
+      let edge = WorkflowService.getWorkflow().getEdgeById(info.connection.getParameter('edgeId'));
       if (edge) {
-        $rootScope.$broadcast(Edge.REMOVE, {
-          edge: edge
-        });
+        $rootScope.$broadcast(Edge.REMOVE, { edge: edge });
+        WorkflowService.saveWorkflow();
       }
+    });
+
+    jsPlumb.bind('connectionDrag', (connection) => {
+      for (let endpoint of connection.getAttachedElements()) {
+        if (endpoint.isSource) {
+          ConnectionHinterService.showHints(endpoint, internal.renderMode);
+          ConnectionHinterService.highlightOperations(endpoint);
+        }
+      }
+    });
+
+    jsPlumb.bind('connectionDragStop', () => {
+      ConnectionHinterService.setDefaultPortColors(internal.renderMode);
+      ConnectionHinterService.disableHighlightingOoperations();
     });
 
     jsPlumb.bind('connectionDrag', () => {
@@ -333,12 +303,14 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     });
   };
 
-  that.disableAddingEdges = function disableAddingEdges () {
-    internal.isDetachable = false;
-  };
+  that.setRenderMode = function setRenderMode(renderMode) {
+    if (renderMode !== GraphPanelRendererBase.EDITOR_RENDER_MODE &&
+      renderMode !== GraphPanelRendererBase.REPORT_RENDER_MODE)
+    {
+      throw `render mode should be either 'editor' or 'report'`;
+    }
 
-  that.enableAddingEdges = function enableAddingEdges () {
-    internal.isDetachable = true;
+    internal.renderMode = renderMode;
   };
 
   that.rerender = function rerender() {
@@ -350,8 +322,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
   return that;
 }
-
-// exports.function = GraphPanelRendererService;
 
 exports.inject = function (module) {
   module.service('GraphPanelRendererService', GraphPanelRendererService);
