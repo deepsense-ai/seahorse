@@ -104,7 +104,7 @@ object CatalogRecorder {
     )
 
     catalog.registerDOperation[CreateLogisticRegression](
-      DOperationCategories.ML.Classification,
+      DOperationCategories.ML.Regression,
       "Creates untrained logistic regression model"
     )
 
