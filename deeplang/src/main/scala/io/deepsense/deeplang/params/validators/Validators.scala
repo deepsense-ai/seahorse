@@ -79,35 +79,54 @@ case class RangeValidator(
     rangeValidatorFormat.write(this).asJsObject
   }
 
+  /**
+    * Generates human-readable range constraints to be added as a description.
+    * Ex. 1: RangeValidator(0.0, Int.MaxValue, true, false, Some(1))).toHumanReadable("num param"):
+    *  Range constraints: 0 <= `num param` and `num param` is an integer.
+    *
+    * Ex. 2: RangeValidator(0.0, 3.0, false, true, Some(0.5))).toHumanReadable("num param"):
+    *  Range constraints: 0 < `num param` <= 3 and `num param` = k*0.5, where k is an integer.
+    */
   override def toHumanReadable(paramName: String): String = {
     val beginConstraint = Begin()
     val endConstraint = End()
-    val stepRepresentation = step match {
+    val (isIntStep, mappedStep) = step match {
       case Some(s) =>
         val isInt = s == s.round
-        Some(if (isInt) s.round.toString else s.toString)
-      case None => None
+        (isInt, Some(if (isInt) s.round.toString else s.toString))
+      case None => (false, None)
     }
-    val stepDescription = stepRepresentation match {
-      case Some("1") => s" and $paramName is an integer."
-      case Some(s) => s" and $paramName = $begin + k * $s, where k is an integer."
-      case None => "."
+    val isIntRange = beginConstraint.mapsToInt && endConstraint.mapsToInt && isIntStep
+    val rangeDescription = {
+      if (beginConstraint.isOneOfLimits && endConstraint.isOneOfLimits) {
+        ""
+      } else {
+        beginConstraint.create + s"`$paramName`" + endConstraint.create + " and "
+      }
     }
-
-    " Range constraints: " +
-        beginConstraint.create + paramName + endConstraint.create + stepDescription
+    val stepDescription = {
+      def beginSum: String = {
+        val strBegin = beginConstraint.mappedLimit
+        if (strBegin == "0") "" else strBegin + " + "
+      }
+      (isIntRange, mappedStep) match {
+        case (true, Some("1")) => s"`$paramName` is an integer."
+        case (_, Some(s)) => s"`$paramName` = ${beginSum}k*$s, where k is an integer."
+        case (_, None) => s"`$paramName` is a floatng point number."
+      }
+    }
+    " Range constraints: " + rangeDescription + stepDescription
   }
 
   abstract class Constraint(limit: Double) {
     val limits: List[Double]
-
     def buildConstraint(oneOfLimits: Boolean, limitRepresentation: String): Option[String]
 
     lazy val isOneOfLimits = limits.contains(limit)
     val mapsToInt = limit.round == limit
-    val limitRepresentation = if (mapsToInt) limit.round.toString else limit.toString
+    val mappedLimit = if (mapsToInt) limit.round.toString else limit.toString
 
-    def create: String = buildConstraint(isOneOfLimits, limitRepresentation).getOrElse("")
+    def create: String = buildConstraint(isOneOfLimits, mappedLimit).getOrElse("")
   }
 
   case class Begin() extends Constraint(begin) {
