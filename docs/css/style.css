@@ -352,6 +352,20 @@ p.footer-text span {
   font-size: 1.3em;
 }
 
+@media (max-width: 600px) {
+  .contact-block {
+    flex-direction: column;
+  }
+
+  .contact-info {
+    width: 90% !important;
+  }
+
+  .contact-block-container {
+    margin-top: 20px;
+  }
+}
+
 .contact-info {
   display: flex;
   justify-content: center;
