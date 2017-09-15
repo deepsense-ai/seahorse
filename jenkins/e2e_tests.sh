@@ -8,12 +8,14 @@ if [[ "$#" -eq 0 ]]; then
   echo "-b, --batch"
   echo "-s, --session"
   echo "-a, --all"
+  echo "--cleanup-only"
   exit 1
 fi
 
 # parse parameters
 RUN_BATCH_TESTS=false
 RUN_SESSIONMANAGER_TESTS=false
+CLEANUP_ONLY=false
 while (( "$#" )); do
   key="$1"
 
@@ -30,6 +32,10 @@ while (( "$#" )); do
     RUN_BATCH_TESTS=true
     RUN_SESSIONMANAGER_TESTS=true
     ;;
+    --cleanup-only)
+    CLEANUP_ONLY=true
+    shift
+    ;;
     *)
     echo "error: unknown option $key"
     exit 1
@@ -42,17 +48,14 @@ set -ex
 # `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
 
-# set cluster id and network name for standalone docker setup
-export RUN_ID=`cat /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 10`
-export CLUSTER_ID=$RUN_ID
-export NETWORK_NAME="sbt-test-$CLUSTER_ID"
+RUN_ID="seahorse-e2e-tests"
+export CLUSTER_ID=$RUN_ID # needed by spark-standalone-cluster-manage.sh
+export NETWORK_NAME="sbt-test-$RUN_ID" # needed by spark-standalone-cluster-manage.sh
 
 export BACKEND_TAG=`git rev-parse HEAD`
 
 FRONTEND_TAG="${FRONTEND_TAG:-$SEAHORSE_BUILD_TAG}" # If FRONTEND_TAG not defined try to use SEAHORSE_BUILD_TAG
 FRONTEND_TAG="${FRONTEND_TAG:-master-latest}" # If it's still undefined fallback to master-latest
-
-./jenkins/scripts/sync_up_docker_images_with_git_repo.sh
 
 SPARK_STANDALONE_MANAGEMENT="./seahorse-workflow-executor/docker/spark-standalone-cluster-manage.sh"
 MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
@@ -66,9 +69,15 @@ function cleanup {
   deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID logs > docker-compose.log
   deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID down
 }
+
+cleanup
+if $CLEANUP_ONLY ; then
+  exit 0
+fi
+
 trap cleanup EXIT
 
-cleanup # in case something was already running
+./jenkins/scripts/sync_up_docker_images_with_git_repo.sh
 
 ## Start Seahorse dockers
 
@@ -92,7 +101,7 @@ $SPARK_STANDALONE_MANAGEMENT up $SPARK_VERSION
 
 ## Get and export Spark Standalone cluster IP
 INSPECT_FORMAT="{{(index (index .NetworkSettings.Networks \"$NETWORK_NAME\").IPAddress )}}"
-export SPARK_STANDALONE_MASTER_IP=$(docker inspect --format "$INSPECT_FORMAT" sparkMaster-$CLUSTER_ID)
+export SPARK_STANDALONE_MASTER_IP=$(docker inspect --format "$INSPECT_FORMAT" sparkMaster-$RUN_ID)
 
 ## Start Mesos Spark cluster dockers
 
