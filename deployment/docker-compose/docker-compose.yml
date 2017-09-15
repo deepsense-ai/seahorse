@@ -24,6 +24,7 @@ services:
       - HADOOP_CONF_DIR=/opt/docker/yarn-remote-client
       - SM_MQ_HOST=rabbitmq
       - SM_MQ_PORT=5672
+      - TEMP_DIR=/tmp/seahorse/download
     links:
       - rabbitmq
       - workflowmanager

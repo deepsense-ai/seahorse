@@ -53,7 +53,8 @@ class SparkLauncherSessionSpawner @Inject()(
     "-d", config.weDepsPath,
     "--wm-username", config.wmUsername,
     "--wm-password", config.wmPassword,
-    "--user-id", userId
+    "--user-id", userId,
+    "--temp-dir", config.tempDir
   )
 
   private class AppHandleListener extends SparkAppHandle.Listener {
