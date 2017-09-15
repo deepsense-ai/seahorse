@@ -1,11 +1,10 @@
 'use strict';
 
 let angular = require('angular');
-let browser = require('detect-browser');
-let unsupported = require('./unsupported.js');
+let browser = require('bowser');
 let version = parseInt(browser.version.substring(0, 2));
 
-if (browser.name === 'chrome' && version >= 40) {
+if (browser.chrome && version >= 40) {
   let lab = angular.module('ds.lab', [
     'ui.router',
     'ui.bootstrap',
@@ -30,6 +29,8 @@ if (browser.name === 'chrome' && version >= 40) {
   require('./app.config.js').inject(lab);
   require('./app.run.js').inject(lab);
 } else {
-  let lab = angular.module('ds.lab', ['ui.router']);
-  unsupported.inject(lab);
+  document.body.innerHTML =
+    '<div class="alert alert-danger" role="alert" style="font-size: 18px;">' +
+    'We\'re sorry, Seahorse doesn\'t support your browser yet.<br/>' +
+    'We\'re working on it, please use Google Chrome 40.0+ in the meantime.</div>';
 }
