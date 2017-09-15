@@ -36,7 +36,8 @@ function PiePlot() {
             }
           },
           tooltip: {
-            pointFormat: 'The number of the such elements: <b>{point.y}</b>'
+            headerFormat: 'Value: <b>{point.key}</b><br />',
+            pointFormat: 'Occurrence count: <b>{point.y}</b>'
           },
           series: [{
             colorByPoint: true,

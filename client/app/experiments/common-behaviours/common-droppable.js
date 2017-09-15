@@ -1,32 +1,55 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Konrad Szałwiński
+ * Created by Oleksandr Tserkovnyi on 22.07.15.
  */
 
 'use strict';
 
 /* @ngInject */
-function Droppable() {
+function Droppable($log, DragAndDrop) {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
-      angular.element(element).attr('draggable', 'true');
-      element.on('dragstart',function (event) {
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('elementId', element[0].id);
-        event.dataTransfer.setData('droppable', true);
-        scope.$emit('FlowChartBox.ELEMENT_DRAGSTART', element);
-      });
+      if (!attrs.droppableType) {
+        return false;
+      }
 
-      element.on('dragend',function (event) {
-        scope.$emit('FlowChartBox.ELEMENT_DRAGEND', element);
-      });
+      // TODO highlight
+      var highlightTo;
+
+      switch (attrs.droppableHighlight) {
+        case 'parent':
+          highlightTo = element.parent();
+          break;
+      }
+
+      element.on('drop', drop);
+      element.on('dragover', dragOver);
+
+      function drop(event) {
+        if (
+          event.dataTransfer.getData('droppable') === 'true' &&
+          event.dataTransfer.getData('draggableType') === attrs.droppableType
+        ) {
+          $log.info('Drop was on', element[0]);
+
+          /* prevent bubbling */
+          event.stopImmediatePropagation();
+
+          DragAndDrop.drop(event, element);
+        }
+      }
+
+      function dragOver(event) {
+        /* prevent default behaviour */
+        event.preventDefault();
+        /* allow drop */
+        return true;
+      }
     }
   };
 }
-
-Droppable.DROP = 'Droppable.DROP';
 
 exports.inject = function (module) {
   module.directive('droppable', Droppable);

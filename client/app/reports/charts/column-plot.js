@@ -32,17 +32,17 @@ function ColumnPlot() {
               }
             }
           },
-          yAxis: {
-            min: 0,
-            title: {
-              text: ''
-            }
-          },
           legend: {
             enabled: false
           },
           tooltip: {
-            pointFormat: 'The value: <b>{point.y}</b>'
+            formatter: function () {
+              return `
+                <p>Value range: <b>${this.x} - ${data.buckets[this.point.index + 1]}</b></p>
+                <br />
+                <p>Occurrence count: <b>${this.point.y}</b></p>
+              `;
+            }
           },
           series: [{
             data: data.counts

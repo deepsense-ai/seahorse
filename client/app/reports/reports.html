@@ -17,5 +17,9 @@
       ng-switch-when="Evaluate Classification Report"
       data="::report.getTables()">
     </report-evaluate-classification>
+    <div ng-switch-default class="alert alert-danger text-center lead animated fadeIn">
+      <i class="fa fa-exclamation-triangle fa-4x"></i>
+      <div>The report is not supported</div>
+    </div>
   </div>
 </div>

@@ -1,5 +1,13 @@
 <div context-menu-blocker class="flowchart-box">
-  <div class="flowchart-paint-area" multi-selection deepsense-interactive zoom-id="flowchart-box" drop-target drop-target-to="parent">
+  <div class="flowchart-paint-area"
+       multi-selection
+       deepsense-interactive
+       zoom-id="flowchart-box"
+       max-zoom-ratio="1.5"
+       droppable
+       droppable-type="exact"
+       droppable-exact-type="graphNode"
+       droppable-highlight="parent">
     <graph-node on-render-finish
                 jsplumb-draggable
                 keyboard

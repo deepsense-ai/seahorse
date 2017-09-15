@@ -12,8 +12,7 @@ function ReportsConfig($stateProvider) {
       controller: 'Report',
       controllerAs: 'report',
       resolve: {
-        /* @ngInject */
-        report: ($q, $stateParams, $rootScope, EntitiesApiClient) => {
+        report: /* @ngInject */($q, $stateParams, $rootScope, EntitiesApiClient) => {
           let deferred = $q.defer();
 
           EntitiesApiClient.getReport($stateParams.id).

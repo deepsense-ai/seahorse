@@ -126,8 +126,6 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.init = function init() {
-    internal.reset();
-
     jsPlumb.setContainer($document[0].querySelector('.flowchart-paint-area'));
     jsPlumb.importDefaults({
       DragOptions: {

@@ -41,7 +41,9 @@
 
         <deepsense-loading-spinner-lg ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
 
-        <div ng-show="stateData.showView" class="animated fadeIn" ui-view></div>
+        <div ng-show="stateData.showView" class="animated fadeIn" ui-view
+             droppable
+             droppable-type="frame"></div>
       </div>
 
       <div class="footer">

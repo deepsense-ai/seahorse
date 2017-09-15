@@ -6,9 +6,10 @@
 /* @ngInject */
 function ExperimentController(
   experiment,
-  $http, $modal, $timeout, $scope,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentApiClient, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, FreezeService
+  $http, $modal, $timeout, $scope, $log,
+  PageService, Operations, GraphPanelRendererService, ExperimentService,
+  ExperimentApiClient, UUIDGenerator, MouseEvent,
+  DeepsenseNodeParameters, FreezeService, NotificationService
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -25,6 +26,8 @@ function ExperimentController(
    */
   internal.init = function init() {
     PageService.setTitle('Experiment: ' + experiment.experiment.name);
+
+    NotificationService.initEventListeners();
 
     ExperimentService.setExperiment(ExperimentService.createExperiment(experiment, Operations.getData()));
     GraphPanelRendererService.setExperiment(ExperimentService.getExperiment());
@@ -80,8 +83,12 @@ function ExperimentController(
           internal.handleExperimentStateChange(result);
           internal.updateAndRerenderEdges(result);
 
+          $scope.$emit('Experiment.SAVE.SUCCESS');
+
           // TODO: compare sent data with response / update experiment if needed
         }
+      }, (error) => {
+        $scope.$emit('Experiment.SAVE.ERROR', error);
       });
   };
 
@@ -195,7 +202,7 @@ function ExperimentController(
   });
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    let dropElementOffset = MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target[0]);
+    let dropElementOffset = MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
     let operation = Operations.get(args.elementId);
     let offsetX = dropElementOffset.x;
     let offsetY = dropElementOffset.y;
@@ -219,21 +226,23 @@ function ExperimentController(
 
   $scope.$on('Experiment.RUN', () => {
     internal.saveExperiment().then(() => {
-      ExperimentApiClient.runExperiment(
+      return ExperimentApiClient.runExperiment(
         ExperimentService.getExperiment().getId()
-      ).then((data) => {
-        internal.handleExperimentStateChange(data);
-      }, (error) => {
-        console.log('experiment launch error', error);
-      });
+      );
+    }).then((data) => {
+      internal.handleExperimentStateChange(data);
+      $scope.$emit('Experiment.RUN.SUCCESS', data);
+    }, (error) => {
+      $scope.$emit('Experiment.RUN.ERROR', error);
     });
   });
 
   $scope.$on('Experiment.ABORT', () => {
     ExperimentApiClient.abortExperiment(ExperimentService.getExperiment().getId()).then((data) => {
       internal.handleExperimentStateChange(data);
+      $scope.$emit('Experiment.ABORT.SUCCESS', data);
     }, (error) => {
-      console.log('experiment abort error', error);
+      $scope.$emit('Experiment.ABORT.ERROR', error);
     });
   });
 

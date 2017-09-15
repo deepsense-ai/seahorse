@@ -17,6 +17,7 @@ module.exports = function(config) {
         './node_modules/angular-mocks/angular-mocks.js',
         './bower_components/lodash/lodash.min.js',
         './node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js',
+        './node_modules/angular-toastr/dist/angular-toastr.tpls.min.js',
         settings.files.tests.client
       ],
 
