@@ -8,49 +8,28 @@ import NodeCopyPasteVisitor from './node-copy-paste-visitor.js';
 
 class WorkflowsEditorController {
 
-  // TODO Try to use this instead of long constructors with boilerplate?
-  // http://stackoverflow.com/questions/27529518/automatically-set-arguments-as-instance-properties-in-es6
-
   /* @ngInject */
-  constructor(workflowWithResults, config, Report, MultiSelectionService,
-    $scope, $state, $q, $rootScope, $log,
-    GraphNode, Edge,
-    PageService, Operations, GraphPanelRendererService, WorkflowService, MouseEvent,
-    ConfirmationModalService, ExportModalService, GraphNodesService,
-    NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService) {
+  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log,
+    GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
+    WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
+    ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService) {
 
     WorkflowService.initRootWorkflow(workflowWithResults);
 
-    this.Report = Report;
-    this.ServerCommunication = ServerCommunication;
-    this.PageService = PageService;
-    this.WorkflowService = WorkflowService;
-    this.Edge = Edge;
-    this.config = config;
-    this.MultiSelectionService = MultiSelectionService;
-    this.$scope = $scope;
-    this.$rootScope = $rootScope;
-    this.$state = $state;
-    this.$q = $q;
-    this.$log = $log;
-    this.NotificationService = NotificationService;
-    this.GraphPanelRendererService = GraphPanelRendererService;
-    this.ConfirmationModalService = ConfirmationModalService;
-    this.ExportModalService = ExportModalService;
-    this.MouseEvent = MouseEvent;
-    this.GraphNode = GraphNode;
+    _.assign(this, {
+      $scope, $state, $q, $rootScope, $log,
+      GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
+      WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
+      ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService
+    });
+
+    this.BottomBarData = BottomBarService.tabsState;
+    this.SideBarData = SideBarService.data;
     this.selectedNode = null;
-    this.Operations = Operations;
     this.catalog = Operations.getCatalog();
     this.isReportMode = false;
     this.eventListeners = [];
     this.zoomId = 'flowchart-box';
-    this.CopyPasteService = CopyPasteService;
-    this.SideBarData = SideBarService.data;
-    this.BottomBarData = BottomBarService.tabsState;
-    this.WorkflowStatusBarService = WorkflowStatusBarService;
-    this.GraphNodesService = GraphNodesService;
-
     this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q,
       $scope, WorkflowService, this, GraphNodesService);
 
@@ -77,7 +56,10 @@ class WorkflowsEditorController {
     this.$scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
       let workflow = this.WorkflowService.getCurrentWorkflow();
       let node = workflow.getNodeById(data.portObject.nodeId);
-
+      this.selectedPortObject = {
+        portIdx: data.portObject.index,
+        node: node
+      };
       this.MultiSelectionService.clearSelection();
       this.MultiSelectionService.addNodesToSelection([node.id]);
       this.workflowIdForReport = workflow.id;
@@ -86,13 +68,7 @@ class WorkflowsEditorController {
       this.loadParametersForNode();
 
       let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
-
-      if (this.Report.hasReportEntity(reportEntityId)) {
-        this.Report.getReport(reportEntityId).then(report => {
-          this.report = report;
-          this.Report.openReport();
-        });
-      }
+      this.loadReportById(reportEntityId);
     });
 
     this.inited = true;
@@ -122,9 +98,13 @@ class WorkflowsEditorController {
 
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
       this.getWorkflow().updateState(data);
-
       this._loadReports(data);
 
+      if (this.selectedPortObject) {
+        this.report = null;
+        let reportEntityId = this.selectedPortObject.node.state.results[this.selectedPortObject.portIdx];
+        this.loadReportById(reportEntityId);
+      }
       if (!this.WorkflowService.isWorkflowRunning()) {
         this.$rootScope.$broadcast('ServerCommunication.EXECUTION_FINISHED');
       }
@@ -150,13 +130,14 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
+      this.selectedPortObject = null;
       this.unselectNode();
       this.$scope.$digest();
     });
 
     this.$scope.$on('OpenReportTab.SELECT_NODE', () => {
       if (this.workflowIdForReport && this.nodeIdForReport) {
-        let workflow = this.WorkflowService.getWorkflowById(this.workflowIdForReport);
+        let workflow = this.getWorkflow();
         let node = workflow.getNodeById(this.nodeIdForReport);
         this.selectedNode = node;
         this.loadParametersForNode();
@@ -240,6 +221,7 @@ class WorkflowsEditorController {
         this.MultiSelectionService.clearSelection();
         this.unselectNode();
         this.$scope.$apply();
+        this.selectedPortObject = null;
       }),
 
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
@@ -300,6 +282,15 @@ class WorkflowsEditorController {
     this.rerenderEdges();
   }
 
+  loadReportById(reportEntityId) {
+    if (this.Report.hasReportEntity(reportEntityId)) {
+      this.Report.getReport(reportEntityId).then(report => {
+        this.report = report;
+        this.Report.openReport();
+      });
+    }
+  }
+
   getWorkflow() {
     return this.WorkflowService.getCurrentWorkflow();
   }
@@ -316,6 +307,7 @@ class WorkflowsEditorController {
     if (this.selectedNode) {
       this.MultiSelectionService.removeNodesFromSelection([this.selectedNode.id]);
       this.selectedNode = null;
+      this.selectedNodeBeforeRun = null;
     }
   }
 

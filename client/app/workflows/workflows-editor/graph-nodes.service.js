@@ -3,11 +3,12 @@
 class GraphNodesService {
 
   /* @ngInject */
-  constructor($q, DeepsenseNodeParameters, $rootScope, Operations, MultiSelectionService,
+  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, MultiSelectionService,
     UUIDGenerator) {
     this.$q = $q;
     this.DeepsenseNodeParameters = DeepsenseNodeParameters;
     this.$rootScope = $rootScope;
+    this.$timeout = $timeout;
     this.Operations = Operations;
     this.MultiSelectionService = MultiSelectionService;
     this.UUIDGenerator = UUIDGenerator;
@@ -18,7 +19,10 @@ class GraphNodesService {
 
     if (node.hasParameters()) {
       node.refreshParameters(this.DeepsenseNodeParameters);
-      this.$rootScope.$apply();
+      this.$timeout(() => {
+        // Sometimes when we click on a port to show report, '$digest cycle in progress' is shown. This fixes it.
+        this.$rootScope.$apply();
+      }, 0);
       deferred.resolve(node, 'sync');
     } else {
       this.Operations.getWithParams(node.operationId)
