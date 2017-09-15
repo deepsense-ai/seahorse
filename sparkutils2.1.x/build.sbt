@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-sparkutils2.1.0"
+name := "deepsense-seahorse-sparkutils2.1.x"
 
 libraryDependencies ++= Dependencies.sparkutils(Version.spark)

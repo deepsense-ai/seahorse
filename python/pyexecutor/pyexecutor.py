@@ -62,7 +62,7 @@ class PyExecutor(object):
             from pyspark import HiveContext
             java_sql_context = java_spark_sql_session.getSQLContext()
             spark_sql_session = HiveContext(spark_context, java_sql_context)
-        elif spark_version in ["2.0.0", "2.0.1", "2.0.2", "2.1.0"]:
+        elif spark_version in ["2.0.0", "2.0.1", "2.0.2", "2.1.0", "2.1.1"]:
             from pyspark.sql import SparkSession
             java_spark_session = java_spark_sql_session.getSparkSession()
             spark_sql_session = SparkSession(spark_context, java_spark_session)
