@@ -8,11 +8,13 @@ package io.deepsense.entitystorage.services
 
 import scala.concurrent.{ExecutionContext, Future}
 
+import com.google.inject.Inject
+
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.entitystorage.models.{Entity, InputEntity, UserEntityDescriptor}
 import io.deepsense.entitystorage.storage.EntityDao
 
-class EntityService(entityDao: EntityDao)(implicit ec: ExecutionContext) {
+class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionContext) {
 
   /**
    * Returns all entities of tenant.

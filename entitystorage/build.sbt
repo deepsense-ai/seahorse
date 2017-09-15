@@ -39,7 +39,6 @@ inConfig(IntegTest) {
       // Show full stacktraces (F), Put results in target/test-reports
       Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
     ),
-    javaOptions := Seq("-Denv=integtest"),
     fork := true
   )
 }
