@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.{JsValue, JsObject}
+import spray.json.JsValue
 
 /**
  * Represents ParameterHolder with validator.

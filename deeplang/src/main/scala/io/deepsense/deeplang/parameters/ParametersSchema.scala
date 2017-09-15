@@ -31,8 +31,12 @@ import io.deepsense.deeplang.parameters.exceptions.{ValidationException, NoSuchP
 class ParametersSchema protected (private val schemaMap: ListMap[String, Parameter] = ListMap.empty)
   extends Serializable {
 
+  // TODO: Parameter name should be taken from parameter, not from schema.
+  // TODO: When it's there, this method should be simplified to schema.values.foreach(_.validate)
   @throws[ValidationException]
-  def validate: Unit = schemaMap.values.foreach(_.validate)
+  def validate: Unit = schemaMap.foreach {
+    case (name, parameter) => parameter.validate(name)
+  }
 
   private def get[T <: Parameter](name: String)(implicit converter: ParameterConverter[T]): T = {
     schemaMap.get(name) match {

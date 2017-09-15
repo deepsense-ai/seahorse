@@ -52,10 +52,10 @@ abstract class Parameter extends Serializable {
    * Validates held value.
    * If value is set to None and required, exception is thrown.
    */
-  def validate: Unit = value match {
+  def validate(parameterName: String): Unit = value match {
     case Some(definedValue) => validateDefined(definedValue)
     case None => if (required) {
-      throw ParameterRequiredException(parameterType)
+      throw ParameterRequiredException(parameterName)
     }
   }
 

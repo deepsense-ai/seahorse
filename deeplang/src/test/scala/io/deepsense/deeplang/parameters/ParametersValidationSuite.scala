@@ -84,7 +84,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
       val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
     }
-    assert(exception == ParameterRequiredException(ParameterType.String))
+    assert(exception == ParameterRequiredException("x"))
   }
 
   test("Validation of invalid parameter using regex validator should throw an exception") {
@@ -105,7 +105,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val possibleChoices = ListMap("onlyChoice" -> mockSchema)
     val choice = ChoiceParameter("choice", None, true, possibleChoices)
     choice.value = Some("onlyChoice")
-    choice.validate
+    choice.validate("choice")
     verify(mockSchema).validate
   }
 
@@ -115,7 +115,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val possibleChoices = ListMap("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
     val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
     multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
-    multipleChoices.validate
+    multipleChoices.validate("choice")
     verify(mockSchema1).validate
     verify(mockSchema2).validate
   }
@@ -124,7 +124,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val mockSchema = mock[ParametersSchema]
     val multiplicator = ParametersSequence("description", true, mockSchema)
     multiplicator.value = Some(Vector(mockSchema, mockSchema))
-    multiplicator.validate
+    multiplicator.validate("someParamName")
     verify(mockSchema, times(2)).validate
   }
 
@@ -133,7 +133,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val selectorParameter = ColumnSelectorParameter("description", true, 0)
     val multipleColumnSelection = MultipleColumnSelection(selections, false)
     selectorParameter.value = Some(multipleColumnSelection)
-    selectorParameter.validate
+    selectorParameter.validate("someParamName")
     selections.foreach {
       case selection => verify(selection).validate
     }

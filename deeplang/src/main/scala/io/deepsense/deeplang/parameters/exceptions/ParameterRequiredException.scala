@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.parameters.exceptions
 
-import io.deepsense.deeplang.parameters.ParameterType.ParameterType
-
-case class ParameterRequiredException(parameterType: ParameterType)
-  extends ValidationException(s"Parameter value of type $parameterType was required " +
-    "but was not provided.")
+case class ParameterRequiredException(parameterName: String)
+  extends ValidationException(
+    s"Parameter ${parameterName.toUpperCase} is required but was not provided.")
