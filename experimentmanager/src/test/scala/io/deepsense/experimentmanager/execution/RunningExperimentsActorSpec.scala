@@ -6,7 +6,7 @@
 
 package io.deepsense.experimentmanager.execution
 
-import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 
 class RunningExperimentsActorSpec extends StandardSpec with UnitTestSupport {
 

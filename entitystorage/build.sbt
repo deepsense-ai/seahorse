@@ -5,6 +5,9 @@
 name := "deepsense-entitystorage"
 
 libraryDependencies ++= Dependencies.entitystorage
+resolvers ++= Dependencies.resolvers
+
+Revolver.settings
 
 // Configuration for test and it:test tasks
 inConfig(Test) {
@@ -23,6 +26,8 @@ inConfig(Test) {
     )
   )
 }
+
+unmanagedClasspath in Runtime += baseDirectory.value / "conf"
 
 lazy val IntegTest = config("it") extend(Test)
 configs(IntegTest)

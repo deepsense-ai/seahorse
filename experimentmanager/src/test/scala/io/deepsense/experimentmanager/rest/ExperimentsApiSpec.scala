@@ -17,6 +17,7 @@ import org.mockito.stubbing.Answer
 import spray.http.StatusCodes
 import spray.routing.Route
 
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.commons.auth.usercontext.{Role, TokenTranslator, UserContext}
 import io.deepsense.commons.models.Id
@@ -28,7 +29,7 @@ import io.deepsense.experimentmanager.models.Experiment.Status
 import io.deepsense.experimentmanager.models.{Experiment, InputExperiment}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
-import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider, StandardSpec, UnitTestSupport}
+import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 

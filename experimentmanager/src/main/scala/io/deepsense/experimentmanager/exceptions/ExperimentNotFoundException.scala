@@ -19,5 +19,5 @@ case class ExperimentNotFoundException(experimentId: Id)
   extends ExperimentManagerException(
     UUID.randomUUID(),
     ErrorCodes.ExperimentNotFound,
-    s"Experiment not found",
-    s"Experiment with id $experimentId not found", null, None)
+    "Experiment not found",
+    s"Experiment with id $experimentId not found", None, None)

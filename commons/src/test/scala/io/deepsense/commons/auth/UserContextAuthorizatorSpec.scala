@@ -12,9 +12,9 @@ import scala.util.Failure
 
 import org.mockito.Mockito._
 
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.exceptions.NoRoleException
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 
 class UserContextAuthorizatorSpec extends StandardSpec with UnitTestSupport {
 

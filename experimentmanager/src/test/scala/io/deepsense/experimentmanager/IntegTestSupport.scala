@@ -15,6 +15,7 @@ import com.google.inject.{AbstractModule, Guice, Provides}
 import com.typesafe.config.Config
 import org.scalatest.concurrent.IntegrationPatience
 
+import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.rest.{RestComponent, RestService}
 
 

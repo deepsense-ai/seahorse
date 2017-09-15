@@ -10,7 +10,7 @@ package io.deepsense.experimentmanager.rest.json
 import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
-import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.commons.json.{ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.graphjson.{GraphKnowledgeJsonProtocol, NodeJsonProtocol}
 
 /**

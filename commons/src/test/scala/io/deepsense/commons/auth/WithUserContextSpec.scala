@@ -13,9 +13,9 @@ import org.mockito.Mockito._
 import spray.routing.Directives._
 import spray.routing.MissingHeaderRejection
 
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.directives.AuthDirectives
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 
 class WithUserContextSpec
   extends StandardSpec

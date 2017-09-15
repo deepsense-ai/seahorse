@@ -63,7 +63,7 @@ object Dependencies {
 
   val entitystorage = Seq(
 
-  ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
+  ) ++ Seq(scalatest, mockitoCore, sprayTestkit).map(_ % "test")
 
   val commons = Seq(
     akkaActor,
@@ -74,7 +74,7 @@ object Dependencies {
     guice,
     guiceMultibindings,
     nscalaTime
-  )  ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % "test")
+  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % "test")
 
   val deeplang = Seq(
     nscalaTime,

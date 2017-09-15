@@ -11,7 +11,7 @@ import java.util.UUID
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.commons.json.{ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.models.{Experiment, InputExperiment}
 import io.deepsense.graph.Graph

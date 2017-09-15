@@ -17,7 +17,7 @@ import spray.routing.PathMatchers
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.rest.RestComponent
+import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.rest.json.DeepLangJsonProtocol
@@ -32,7 +32,7 @@ class OperationsApi @Inject() (
     authorizatorProvider: AuthorizatorProvider,
     @Named("operations.api.prefix") apiPrefix: String)
     (implicit ec: ExecutionContext)
-  extends RestService
+  extends RestApi
   with RestComponent
   with DeepLangJsonProtocol
   with SprayJsonSupport {
