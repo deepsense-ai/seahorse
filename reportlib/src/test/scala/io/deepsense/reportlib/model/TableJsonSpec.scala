@@ -42,8 +42,8 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
       }
       "rowsNames, columnNames and columTypes specified" in {
         val json = testTableWithLabels(
-          Some(columnNames),columnTypes, Some(rowNames), values).toJson
-        json shouldBe jsonTable(Some(columnNames),columnTypes , Some(rowNames), values)
+          Some(columnNames), columnTypes, Some(rowNames), values).toJson
+        json shouldBe jsonTable(Some(columnNames), columnTypes, Some(rowNames), values)
       }
       "is empty" in {
         val json = testEmptyTable.toJson
@@ -63,7 +63,7 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
       }
       "empty table" in {
         val json = jsonTable(None, List(), None, List())
-        json.convertTo[Table] shouldBe testTableWithLabels(None, List(), None,List())
+        json.convertTo[Table] shouldBe testTableWithLabels(None, List(), None, List())
       }
     }
   }

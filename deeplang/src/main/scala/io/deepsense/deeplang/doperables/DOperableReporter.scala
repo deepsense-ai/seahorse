@@ -40,33 +40,30 @@ case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
     DOperableReporter(title, tables :+ parametersTable)
   }
 
-  def withCoefficients(
-      description: String,
-      weights: Vector,
-      intercept: Double): DOperableReporter = {
+  def withWeights(featureColumns: Seq[String], weights: Seq[Double]): DOperableReporter = {
+    val rows = featureColumns.zip(weights).map {
+      case (name, weight) => List(Some(name), Some(DoubleUtils.double2String(weight)))
+    }.toList
 
-    val rows = if (weights.size == 0) {
-      List(List(Some(""), Some(DoubleUtils.double2String(intercept))))
-    } else {
-      val firstRow = List(
-        Some(DoubleUtils.double2String(weights.toArray.head)),
-        Some(DoubleUtils.double2String(intercept))
-      )
-      val otherRows = weights.toArray.tail
-        .map(weight => List(Some(DoubleUtils.double2String(weight)), Some("")))
-        .toList
-      firstRow +: otherRows
-    }
+    val weightsTable = Table(
+      name = "Model weights",
+      description = "",
+      columnNames = Some(List("Column", "Weight")),
+      columnTypes = List(ColumnType.string, ColumnType.numeric),
+      rowNames = None,
+      values = rows)
+    DOperableReporter(title, tables :+ weightsTable)
+  }
 
-    val parametersTable = Table(
-      "Coefficients",
-      description,
-      Some(List("Weights", "Intercept")),
-      List(ColumnType.numeric, ColumnType.numeric),
-      None,
-      rows)
-
-    DOperableReporter(title, tables :+ parametersTable)
+  def withIntercept(interceptValue: Double): DOperableReporter = {
+    val interceptTable = Table(
+      name = "Intercept",
+      description = "",
+      columnNames = None,
+      columnTypes = List(ColumnType.numeric),
+      rowNames = None,
+      values = List(List(Some(interceptValue.toString))))
+    DOperableReporter(title, tables :+ interceptTable)
   }
 
   def withVectorScoring(operable: VectorScoring): DOperableReporter = {

@@ -19,19 +19,20 @@ package io.deepsense.deeplang.doperables.machinelearning.ridgeregression
 import org.apache.spark.mllib.feature.{StandardScaler, StandardScalerModel}
 import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
 import io.deepsense.deeplang.doperables.Trainable.Parameters
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, Trainable}
+import io.deepsense.deeplang.doperations.RidgeRegressionParameters
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedRidgeRegression(
-    createModel: () => RidgeRegressionWithSGD)
+    createModel: () => RidgeRegressionWithSGD, modelParameters: RidgeRegressionParameters)
   extends RidgeRegression with Trainable {
 
-  def this() = this(() => null)
+  def this() = this(() => null, null)
 
   override def toInferrable: DOperable = new UntrainedRidgeRegression()
 
@@ -53,7 +54,7 @@ case class UntrainedRidgeRegression(
     scaledLabeledPoints.cache()
 
     val result = TrainedRidgeRegression(
-      createModel().run(scaledLabeledPoints),
+      modelParameters, createModel().run(scaledLabeledPoints),
       trainParameters.features,
       trainParameters.target,
       scaler)
@@ -69,8 +70,17 @@ case class UntrainedRidgeRegression(
       dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
     (DKnowledge(new TrainedRidgeRegression), InferenceWarnings.empty)
 
-  override def report(executionContext: ExecutionContext): Report =
-    Report(ReportContent("Report for UntrainedRidgeRegression"))
+  override def report(executionContext: ExecutionContext): Report = {
+    DOperableReporter("Report for UntrainedRidgeRegression")
+      .withParameters(
+        description = "",
+        ("Regularization parameter",
+          ColumnType.numeric, modelParameters.regularizationParameter.toString),
+        ("Iterations number", ColumnType.numeric, modelParameters.numberOfIterations.toString),
+        ("Mini batch fraction", ColumnType.numeric, modelParameters.miniBatchFraction.toString)
+      )
+      .report
+  }
 
   override def save(context: ExecutionContext)(path: String): Unit =
     throw new UnsupportedOperationException

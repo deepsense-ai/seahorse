@@ -26,10 +26,12 @@ import org.apache.spark.rdd.RDD
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
 import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.RidgeRegressionParameters
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
-import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedRidgeRegression(
+    modelParameters: RidgeRegressionParameters,
     model: RidgeRegressionModel,
     featureColumns: Seq[String],
     targetColumn: String,
@@ -39,7 +41,7 @@ case class TrainedRidgeRegression(
   with VectorScoring
   with DOperableSaver {
 
-  def this() = this(null, null, null, null)
+  def this() = this(null, null, null, null, null)
 
   def toInferrable: DOperable = new TrainedRidgeRegression()
 
@@ -56,38 +58,18 @@ case class TrainedRidgeRegression(
   override def predict(features: RDD[Vector]): RDD[Double] = preparedModel.predict(features)
 
   override def report(executionContext: ExecutionContext): Report = {
-    val featureColumnsColumn = featureColumns.toList
-    val weights: Array[Double] = model.weights.toArray
-    val rows = featureColumnsColumn.zip(weights).map {
-      case (name, weight) => List(Some(name), Some(weight.toString))
-    }
-    val weightsTable = Table(
-      name = "Model weights",
-      description = "",
-      columnNames = Some(List("Column", "Weight")),
-      columnTypes = List(ColumnType.string, ColumnType.numeric),
-      rowNames = None,
-      values = rows)
-
-    val targetTable = Table(
-      name = "Target column",
-      description = "",
-      columnNames = None,
-      columnTypes = List(ColumnType.string),
-      rowNames = None,
-      values = List(List(Some(targetColumn))))
-
-    val interceptTable = Table(
-      name = "Intercept",
-      description = "",
-      columnNames = None,
-      columnTypes = List(ColumnType.numeric),
-      rowNames = None,
-      values = List(List(Some(model.intercept.toString))))
-
-    Report(ReportContent(
-      "Report for TrainedRidgeRegression",
-      tables = List(weightsTable, targetTable, interceptTable)))
+    DOperableReporter("Report for TrainedRidgeRegression")
+      .withParameters(
+        description = "",
+        ("Regularization parameter",
+          ColumnType.numeric, modelParameters.regularizationParameter.toString),
+        ("Iterations number", ColumnType.numeric, modelParameters.numberOfIterations.toString),
+        ("Mini batch fraction", ColumnType.numeric, modelParameters.miniBatchFraction.toString)
+      )
+      .withWeights(featureColumns, model.weights.toArray)
+      .withIntercept(model.intercept)
+      .withVectorScoring(this)
+      .report
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = {
@@ -104,10 +86,12 @@ case class TrainedRidgeRegression(
 }
 
 object TrainedRidgeRegression {
-  def loadFromHdfs(context: ExecutionContext)(path: String): TrainedRidgeRegression = {
+  def loadFromHdfs(modelParameters: RidgeRegressionParameters,
+       context: ExecutionContext)(path: String): TrainedRidgeRegression = {
     val params: TrainedRidgeRegressionDescriptor =
       context.fsClient.readFileAsObject[TrainedRidgeRegressionDescriptor](path)
     TrainedRidgeRegression(
+      modelParameters,
       new RidgeRegressionModel(params.modelWeights, params.modelIntercept),
       params.featureColumns,
       params.targetColumn,

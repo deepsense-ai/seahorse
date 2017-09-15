@@ -57,9 +57,8 @@ class DOperableReporterSpec extends UnitSpec {
           )
           .report()
 
-        report.content should not be null
-        report.content.name shouldBe reportName
-        report.content.tables should not be Map.empty
+        verifyNotEmptyReportWasGenerated(report)
+
         val table = report.content.tables("Parameters")
         table.columnNames shouldBe Some(List(
           "Column 1", "Column 2", "Column 3"))
@@ -77,9 +76,8 @@ class DOperableReporterSpec extends UnitSpec {
           .withVectorScoring(operable)
           .report()
 
-        report.content should not be null
-        report.content.name shouldBe reportName
-        report.content.tables should not be Map.empty
+        verifyNotEmptyReportWasGenerated(report)
+
         val featuresTable = report.content.tables("Feature columns")
         featuresTable.columnNames shouldBe Some(List(
           "Feature columns"))
@@ -92,30 +90,34 @@ class DOperableReporterSpec extends UnitSpec {
           List(Some("target")))
       }
 
-      "coefficients are passed" in {
+      "weights are passed" in {
 
-        val weights = Vectors.dense(1.0, 2.0, 3.0)
-        val intercept = 4.0
-
+        val columns = List("Column 1", "Column 2", "Column 3")
+        val weights = Array(0.1, 0.2, 0.3)
         val report = DOperableReporter(reportName)
-          .withCoefficients(
-            description,
-            weights,
-            intercept
-          )
-          .report()
+          .withWeights(columns, weights)
+          .report
 
-        report.content should not be null
-        report.content.name shouldBe reportName
-        report.content.tables should not be Map.empty
-        val table = report.content.tables("Coefficients")
-        table.columnNames shouldBe Some(List(
-          "Weights", "Intercept"))
+        verifyNotEmptyReportWasGenerated(report)
+        val table = report.content.tables("Model weights")
+        table.columnNames shouldBe Some(List("Column", "Weight"))
         table.values shouldBe List(
-          List(Some(DoubleUtils.double2String(1.0)), Some(DoubleUtils.double2String(4.0))),
-          List(Some(DoubleUtils.double2String(2.0)), Some("")),
-          List(Some(DoubleUtils.double2String(3.0)), Some(""))
+          List(Some("Column 1"), Some("0.1")),
+          List(Some("Column 2"), Some("0.2")),
+          List(Some("Column 3"), Some("0.3"))
         )
+      }
+
+      "intercept is passed" in {
+
+        val interceptValue = 0.123
+        val report = DOperableReporter(reportName)
+          .withIntercept(interceptValue)
+          .report
+        verifyNotEmptyReportWasGenerated(report)
+        val table = report.content.tables("Intercept")
+        table.columnNames shouldBe None
+        table.values shouldBe List(List(Some(interceptValue.toString)))
       }
 
       "custom parameters are passed" in {
@@ -134,9 +136,7 @@ class DOperableReporterSpec extends UnitSpec {
           )
           .report()
 
-        report.content should not be null
-        report.content.name shouldBe reportName
-        report.content.tables should not be Map.empty
+        verifyNotEmptyReportWasGenerated(report)
         val table = report.content.tables("name")
         table.columnNames shouldBe Some(List(
           "Column 1", "Column 2", "Column 3"))
@@ -147,5 +147,11 @@ class DOperableReporterSpec extends UnitSpec {
         )
       }
     }
+  }
+
+  def verifyNotEmptyReportWasGenerated(report: Report): Unit = {
+    report.content should not be null
+    report.content.name shouldBe reportName
+    report.content.tables should not be Map.empty
   }
 }

@@ -20,6 +20,7 @@ import org.apache.spark.mllib.regression.{GeneralizedLinearAlgorithm, RidgeRegre
 import org.scalactic.EqualityPolicy.Spread
 
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{UntrainedRidgeRegression, TrainedRidgeRegression}
+import io.deepsense.deeplang.doperations.RidgeRegressionParameters
 
 class UntrainedRidgeRegressionIntegSpec
   extends UntrainedRegressionIntegSpec[RidgeRegressionModel] {
@@ -32,7 +33,8 @@ class UntrainedRidgeRegressionIntegSpec
 
   override def constructUntrainedModel(
       untrainedModelMock: GeneralizedLinearAlgorithm[RidgeRegressionModel]): Trainable =
-    UntrainedRidgeRegression(() => untrainedModelMock.asInstanceOf[RidgeRegressionWithSGD])
+    UntrainedRidgeRegression(() => untrainedModelMock.asInstanceOf[RidgeRegressionWithSGD],
+    mock[RidgeRegressionParameters])
 
   override def mockUntrainedModel(): GeneralizedLinearAlgorithm[RidgeRegressionModel] =
     mock[RidgeRegressionWithSGD]

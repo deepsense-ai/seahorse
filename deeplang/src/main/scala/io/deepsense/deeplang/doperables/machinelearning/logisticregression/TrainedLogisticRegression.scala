@@ -65,7 +65,8 @@ case class TrainedLogisticRegression(
         ("Tolerance", ColumnType.numeric,
           DoubleUtils.double2String(modelParameters.tolerance))
       )
-      .withCoefficients(description = "", model.weights, model.intercept)
+      .withWeights(featureColumns, model.weights.toArray)
+      .withIntercept(model.intercept)
       .withVectorScoring(this)
       .report()
   }

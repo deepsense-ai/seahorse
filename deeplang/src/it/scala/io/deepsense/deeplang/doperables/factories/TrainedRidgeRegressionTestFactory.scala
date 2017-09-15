@@ -21,10 +21,12 @@ import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.RidgeRegressionModel
 
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
+import io.deepsense.deeplang.doperations.RidgeRegressionParameters
 
 trait TrainedRidgeRegressionTestFactory {
 
   val testTrainedRidgeRegression = TrainedRidgeRegression(
+    RidgeRegressionParameters(0.1, 11, 0.3),
     new RidgeRegressionModel(Vectors.dense(1.0, 2.3, 3.5, 99.8), 101.4),
     Seq("column1", "column2", "column3"),
     "result",

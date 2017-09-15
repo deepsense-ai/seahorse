@@ -26,6 +26,7 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
+import io.deepsense.deeplang.doperations.RidgeRegressionParameters
 
 class TrainedRidgeRegressionIntegSpec extends TrainedRegressionIntegSpec[RidgeRegressionModel] {
 
@@ -40,6 +41,7 @@ class TrainedRidgeRegressionIntegSpec extends TrainedRegressionIntegSpec[RidgeRe
   override val inputVectorsTransformer: (Seq[SparkVector]) => Seq[SparkVector] = a => scaledVectors
   override val regressionConstructor: (GeneralizedLinearModel, Seq[String], String) => Scorable =
     (model, featureColumns, targetColumn) => TrainedRidgeRegression(
+      mock[RidgeRegressionParameters],
       model.asInstanceOf[RidgeRegressionModel],
       featureColumns,
       targetColumn,

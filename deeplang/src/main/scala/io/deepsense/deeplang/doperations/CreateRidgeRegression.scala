@@ -76,7 +76,8 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
     // We're passing a factory method here, instead of constructed object,
     // because the resulting UntrainedRidgeRegression could be used multiple times
     // in a workflow and its underlying Spark model is mutable
-    UntrainedRidgeRegression(createModelInstance)
+    val params = RidgeRegressionParameters(regParam, numberOfIterations, miniBatchFraction)
+    UntrainedRidgeRegression(createModelInstance, params)
   }
 }
 
@@ -90,3 +91,6 @@ object CreateRidgeRegression {
     createRidgeRegression
   }
 }
+
+case class RidgeRegressionParameters(
+  regularizationParameter: Double, numberOfIterations: Double, miniBatchFraction: Double)

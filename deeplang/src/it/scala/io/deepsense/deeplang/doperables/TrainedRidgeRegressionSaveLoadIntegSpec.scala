@@ -21,6 +21,7 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.factories.TrainedRidgeRegressionTestFactory
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
+import io.deepsense.deeplang.doperations.RidgeRegressionParameters
 
 class TrainedRidgeRegressionSaveLoadIntegSpec
   extends DeeplangIntegTestSupport
@@ -38,7 +39,8 @@ class TrainedRidgeRegressionSaveLoadIntegSpec
     "save and load from HDFS" in {
       testTrainedRidgeRegression.save(executionContext)(testFilePath)
 
-      val retrieved = TrainedRidgeRegression.loadFromHdfs(executionContext)(testFilePath)
+      val retrieved = TrainedRidgeRegression.loadFromHdfs(
+        mock[RidgeRegressionParameters],executionContext)(testFilePath)
 
       retrieved.model.intercept shouldBe testTrainedRidgeRegression.model.intercept
       retrieved.model.weights shouldBe testTrainedRidgeRegression.model.weights

@@ -23,9 +23,10 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
+import io.deepsense.deeplang.doperations.RidgeRegressionParameters
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
-class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
+class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression] {
   def scorableName: String = "TrainedRidgeRegression"
 
   def scorable: Scorable = new TrainedRidgeRegression()
@@ -39,8 +40,9 @@ class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
       val model = new RidgeRegressionModel(weights, intercept)
       val featureColumns = Seq("abc", "def", "ghi")
       val targetColumn = "xyz"
+      val params = RidgeRegressionParameters(0.1, 11, 0.9)
 
-      val regression = TrainedRidgeRegression(model, featureColumns, targetColumn, null)
+      val regression = TrainedRidgeRegression(params, model, featureColumns, targetColumn, null)
 
       regression.report(executionContext) shouldBe Report(ReportContent(
         "Report for TrainedRidgeRegression",
@@ -56,19 +58,39 @@ class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
               List(Some(featureColumns(2)), Some(weights(2).toString))
             )
           ),
-          "Target column" -> Table(
-            "Target column", "",
-            None,
-            List(ColumnType.string),
-            None,
-            List(List(Some(targetColumn)))
-          ),
           "Intercept" -> Table(
             "Intercept", "",
             None,
             List(ColumnType.numeric),
             None,
             List(List(Some(intercept.toString)))
+          ),
+          "Parameters" -> Table(
+            "Parameters", "",
+            Some(List(
+              "Regularization parameter",
+              "Iterations number",
+              "Mini batch fraction")),
+            List(ColumnType.numeric, ColumnType.numeric, ColumnType.numeric),
+            None,
+            List(
+              List(
+                params.regularizationParameter, params.numberOfIterations, params.miniBatchFraction
+              ).map(value => Some(value.toString)))
+          ),
+          "Target column" -> Table(
+            "Target column", "",
+            Some(List("Target column")),
+            List(ColumnType.string),
+            None,
+            List(List(Some(targetColumn)))
+          ),
+          "Feature columns" -> Table(
+            "Feature columns", "",
+            Some(List("Feature columns")),
+            List(ColumnType.string),
+            None,
+            featureColumns.map(value => List(Some(value))).toList
           )
         )
       ))
