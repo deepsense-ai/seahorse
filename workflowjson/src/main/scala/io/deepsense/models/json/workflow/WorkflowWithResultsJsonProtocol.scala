@@ -63,6 +63,7 @@ trait WorkflowWithResultsJsonProtocol extends WorkflowJsonProtocol {
   implicit val executionReportFormat = jsonFormat4(ExecutionReport)
 
   implicit val workflowWithResultsFormat =
-    jsonFormat(WorkflowWithResults, "metadata", "workflow", "thirdPartyData", "executionReport")
+    jsonFormat(WorkflowWithResults,
+      "id", "metadata", "workflow", "thirdPartyData", "executionReport")
 
 }

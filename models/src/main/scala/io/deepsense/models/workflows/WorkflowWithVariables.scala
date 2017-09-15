@@ -19,6 +19,7 @@ package io.deepsense.models.workflows
 import io.deepsense.graph.Graph
 
 case class WorkflowWithVariables(
+    id: Workflow.Id,
     metadata: WorkflowMetadata,
     graph: Graph,
     thirdPartyData: ThirdPartyData,

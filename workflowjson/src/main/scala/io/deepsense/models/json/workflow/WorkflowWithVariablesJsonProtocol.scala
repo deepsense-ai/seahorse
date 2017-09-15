@@ -25,5 +25,5 @@ trait WorkflowWithVariablesJsonProtocol extends WorkflowJsonProtocol {
   implicit val variablesFormat = jsonFormat0(Variables)
 
   implicit val workflowWithVariablesFormat =
-    jsonFormat(WorkflowWithVariables, "metadata", "workflow", "thirdPartyData", "variables")
+    jsonFormat(WorkflowWithVariables, "id", "metadata", "workflow", "thirdPartyData", "variables")
 }

@@ -40,15 +40,20 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
   }
 
   def workflowWithResultsFixture: (WorkflowWithResults, JsObject) = {
+
     val (executionReport, executionReportJson) = executionReportFixture
 
+    val workflowId = Workflow.Id.randomId
+
     val workflow = WorkflowWithResults(
+      workflowId,
       WorkflowMetadata(WorkflowType.Batch, "0.4.0"),
       graph,
       ThirdPartyData("{ \"example\": [1, 2, 3] }"),
       executionReport)
 
     val workflowJson = JsObject(
+      "id" -> JsString(workflowId.toString),
       "metadata" -> JsObject(
         "type" -> JsString("batch"),
         "apiVersion" -> JsString("0.4.0")
@@ -59,6 +64,7 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
       ),
       "executionReport" -> executionReportJson
     )
+
     (workflow, workflowJson)
   }
 

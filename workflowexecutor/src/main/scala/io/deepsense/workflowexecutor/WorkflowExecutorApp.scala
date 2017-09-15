@@ -78,6 +78,7 @@ object WorkflowExecutorApp extends Logging {
           case Failure(exception) => logger.error("Execution failed:", exception)
           case Success(value) =>
             val result = WorkflowWithResults(
+              workflowWithVariables.id,
               workflowWithVariables.metadata,
               workflowWithVariables.graph,
               workflowWithVariables.thirdPartyData,
@@ -95,6 +96,7 @@ object WorkflowExecutorApp extends Logging {
   private def loadWorkflow(filename: String): WorkflowWithVariables = {
     val tmpGraph: Graph = Graph(Set(Node(Node.Id.randomId, Noop())))
     WorkflowWithVariables(
+      Workflow.Id.randomId,
       WorkflowMetadata(WorkflowType.Batch, "1"),
       tmpGraph,
       ThirdPartyData("some data"),

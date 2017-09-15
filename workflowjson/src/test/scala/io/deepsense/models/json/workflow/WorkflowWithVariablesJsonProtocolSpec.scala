@@ -37,12 +37,18 @@ class WorkflowWithVariablesJsonProtocolSpec extends WorkflowJsonTestSupport
   }
 
   def workflowWithVariablesFixture: (WorkflowWithVariables, JsObject) = {
+
+    val workflowId = Workflow.Id.randomId
+
     val workflow = WorkflowWithVariables(
+      workflowId,
       WorkflowMetadata(WorkflowType.Batch, "0.4.0"),
       graph,
       ThirdPartyData("{ \"example\": [1, 2, 3] }"),
       Variables())
+
     val workflowJson = JsObject(
+      "id" -> JsString(workflowId.toString),
       "metadata" -> JsObject(
         "type" -> JsString("batch"),
         "apiVersion" -> JsString("0.4.0")
@@ -53,6 +59,7 @@ class WorkflowWithVariablesJsonProtocolSpec extends WorkflowJsonTestSupport
       ),
       "variables" -> JsObject()
     )
+
     (workflow, workflowJson)
   }
 
