@@ -1,2 +1,2 @@
-version in ThisBuild := "1.4.1"
+version in ThisBuild := "1.5.0-SNAPSHOT"
 // TODO add postfix to version
