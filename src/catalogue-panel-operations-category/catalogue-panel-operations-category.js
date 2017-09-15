@@ -50,6 +50,14 @@ function OperationsCategory(RecursionHelper) {
     },
     controllerAs: 'ocCtrl',
     controller: function() {
+      var ocCtrl = this;
+
+      ocCtrl.content = {};
+      ocCtrl.templateUrl = 'catalogue-panel-operations-category/popoverTemplate.html';
+
+      ocCtrl.selectContentForPopover = function(operation) {
+        ocCtrl.content = operation;
+      }
     },
     compile: function(element, scope) {
       // Use the compile function from the RecursionHelper,

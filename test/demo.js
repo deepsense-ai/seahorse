@@ -13,21 +13,25 @@ angular.module('test', ['deepsense-catalogue-panel'])
         {
           "id": "83bad450-f87c-11e4-b939-0800200c9a66",
           "name": "File To DataFrame",
+          "description" : "File To DataFrame description",
           "$$hashKey": "object:27"
         },
         {
           "id": "748975b2-38f0-40b4-8550-3faf4840b7c5",
           "name": "Read File",
+          "description" : "Reads a DataFrame from a file or database",
           "$$hashKey": "object:28"
         },
         {
           "id": "2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
           "name": "Load DataFrame",
+          "description" : "Load DataFrame from a file or database",
           "$$hashKey": "object:29"
         },
         {
           "id": "58025c36-e28b-11e4-8a00-1681e6b88ec1",
           "name": "Save DataFrame",
+          "description" : "Save DataFrame description",
           "$$hashKey": "object:30"
         }
       ],

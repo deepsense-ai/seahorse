@@ -13,10 +13,21 @@
         search="search"
     >
     </operations-category>
+
+
     <operation-item ng-repeat="item in category.items | filter:search"
+                    ng-mouseover="ocCtrl.selectContentForPopover(item)"
                     id="{{item.id}}"
                     icon="{{category.icon}}"
-                    name="{{item.name}}">
+                    name="{{item.name}}"
+                    popover-trigger="mouseenter"
+                    popover-placement="right"
+                    popover-append-to-body="true"
+                    uib-popover-template="ocCtrl.templateUrl"
+    >
     </operation-item>
+
+
   </ul>
 </li>
+
