@@ -159,7 +159,7 @@ function ExperimentController(
     }
   });
 
-  $scope.$on('Experiment.SAVE', (event, data) => {
+  $scope.$on('Experiment.SAVE', () => {
     internal.saveExperiment();
   });
 
@@ -218,10 +218,14 @@ function ExperimentController(
   });
 
   $scope.$on('Experiment.RUN', () => {
-    ExperimentApiClient.runExperiment(ExperimentService.getExperiment().getId()).then((data) => {
-      internal.handleExperimentStateChange(data);
-    }, (error) => {
-      console.log('experiment launch error', error);
+    internal.saveExperiment().then(() => {
+      ExperimentApiClient.runExperiment(
+        ExperimentService.getExperiment().getId()
+      ).then((data) => {
+        internal.handleExperimentStateChange(data);
+      }, (error) => {
+        console.log('experiment launch error', error);
+      });
     });
   });
 

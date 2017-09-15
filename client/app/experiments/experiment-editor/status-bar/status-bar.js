@@ -11,20 +11,18 @@ function ExperimentEditorStatusBar() {
     scope: {
       'status': '='
     },
-    link: function (scope, element) {
-      let runExperimentButton = element[0].querySelector('.run-experiment-button');
-      let abortExperimentButton = element[0].querySelector('.abort-experiment-button');
-      let saveExperimentButton = element[0].querySelector('.save-experiment-button');
-
-      runExperimentButton.addEventListener('click', () => {
+    link: function (scope) {
+      scope.runExperiment = function runExperiment () {
         scope.$emit('Experiment.RUN');
-      });
-      abortExperimentButton.addEventListener('click', () => {
+      };
+
+      scope.abortExperiment = function abortExperiment () {
         scope.$emit('Experiment.ABORT');
-      });
-      saveExperimentButton.addEventListener('click', () => {
+      };
+
+      scope.saveExperiment = function saveExperiment () {
         scope.$emit('Experiment.SAVE');
-      });
+      };
     }
   };
 }
