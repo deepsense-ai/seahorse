@@ -13,7 +13,8 @@
       </li>
     </ul>
   </script>
-  <ul>
+  <ul class="root">
+    <loading-spinner-sm ng-if="!experiment.getCatalog()"></loading-spinner-sm>
     <li class="operations-category"
         ng-repeat="category in ::experiment.getCatalog()"
         ng-include="'catalog-panel'"></li>
