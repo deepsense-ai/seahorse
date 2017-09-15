@@ -73,7 +73,7 @@
           "status": "COMPLETED",
           "started": "2015-01-20T20:06:33Z",
           "ended": "2015-01-20T20:07:33Z",
-          "results": ["test-01"]
+          "results": ["test-03"]
         },
         "938247-23569-245982": {
           "status": "RUNNING",
