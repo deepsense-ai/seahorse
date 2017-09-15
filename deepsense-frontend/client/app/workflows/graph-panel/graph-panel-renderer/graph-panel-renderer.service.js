@@ -93,7 +93,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       'selected': {
         endpointStyle: {
           fillStyle: "#2f4050",
-          radius: 20,
+          radius: 15,
           lineWidth: 2
         },
         cssClass: 'output-endpoint-selected-style-report-mode'

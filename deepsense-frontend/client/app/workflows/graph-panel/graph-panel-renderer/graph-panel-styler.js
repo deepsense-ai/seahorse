@@ -88,8 +88,8 @@ export class GraphPanelStyler {
       radius: 10,
       lineWidth: 2
     } : {
-      fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-      radius: 20,
+      fillStyle: '#216477',
+      radius: 15,
       lineWidth: 2
     };
   }
