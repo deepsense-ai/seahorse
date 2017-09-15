@@ -298,7 +298,7 @@ object Join {
 
     val rightColumn = SingleColumnSelectorParam(
       name = "right column",
-      description = "Column from the left DataFrame",
+      description = "Column from the right DataFrame",
       portIndex = 1)
 
     def getRightColumn: SingleColumnSelection = $(rightColumn)
