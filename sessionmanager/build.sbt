@@ -65,9 +65,14 @@ dockerBaseImage := {
 }
 
 dockerCommands ++= Seq(
+// Add Tini - so the python zombies can be collected
+  Cmd("ENV", "TINI_VERSION", "v0.10.0"),
+  Cmd("ADD", "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini", "/bin/tini"),
+  Cmd("RUN", "chmod", "+x", "/bin/tini"),
   Cmd("USER", "root"),
   Cmd("RUN", "/opt/conda/bin/pip install pika==0.10.0"),
-  ExecCmd("ENTRYPOINT", "bin/deepsense-sessionmanager")
+  ExecCmd("ENTRYPOINT", "/bin/tini", "--"),
+  ExecCmd("CMD", "bin/deepsense-sessionmanager")
 )
 dockerUpdateLatest := true
 
