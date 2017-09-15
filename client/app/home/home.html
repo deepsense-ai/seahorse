@@ -16,8 +16,11 @@
       <li class="c-main-menu__item">
         <a class="c-main-menu__link" href="#/experiments">New Workflow</a>
       </li>
-      <li class="c-main-menu__item">
-        <a class="c-main-menu__link" href="#/upload-workflow">Upload Workflow</a>
+      <li class="c-main-menu__item c-main-menu__item--upload">
+        <input type="file"
+               class="is-invisible has-absolute-cover has-cursor-pointer" />
+        <a class="c-main-menu__link" href="#/upload-workflow"
+            ng-click="uploadWorkflow($event)">Upload Workflow</a>
       </li>
       <li class="c-main-menu__item c-main-menu__item--upload">
         <input type="file"

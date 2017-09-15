@@ -9,6 +9,10 @@ function Home($rootScope, $scope, PageService) {
 
   $rootScope.stateData.dataIsLoaded = true;
 
+  $scope.uploadWorkflow = function uploadWorkflow (event) {
+    event.preventDefault();
+  };
+
   $scope.uploadExecutionReport = function uploadExecutionReport (event) {
     event.preventDefault();
   };
