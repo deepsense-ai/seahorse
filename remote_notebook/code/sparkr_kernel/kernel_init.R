@@ -27,5 +27,8 @@ dataframe <- function() {
         stop("Input operation is not yet executed")
     })
 
-    createDataFrame(SparkR:::toRDD(SparkR:::dataFrame(sdf, isCached = FALSE)))
+    SparkR:::dataFrame(SparkR:::callJMethod(spark,
+                                            "createDataFrame",
+                                            SparkR:::callJMethod(sdf, "rdd"),
+                                            SparkR:::callJMethod(sdf, "schema")))
 }
