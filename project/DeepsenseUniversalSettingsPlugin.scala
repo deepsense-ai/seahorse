@@ -2,6 +2,8 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
+import aether.AetherPlugin
+import aether.AetherKeys._
 import com.typesafe.sbt.GitPlugin
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.packager.SettingsHelper
@@ -16,7 +18,7 @@ object DeepsenseUniversalSettingsPlugin extends AutoPlugin {
 
   val gitVersionFile = taskKey[File]("Git version file")
 
-  override def requires = UniversalPlugin && GitPlugin
+  override def requires = CommonSettingsPlugin && UniversalPlugin && GitPlugin && AetherPlugin
 
   override def projectSettings = Seq(
     gitVersion := {
@@ -28,6 +30,7 @@ object DeepsenseUniversalSettingsPlugin extends AutoPlugin {
       IO.write(location, "")
       location
     },
-    mappings in Universal += gitVersionFile.value -> gitVersion.value
+    mappings in Universal += gitVersionFile.value -> gitVersion.value,
+    aetherPackageMain <<= packageBin in Universal
   ) ++ SettingsHelper.makeDeploymentSettings(Universal, packageBin in Universal, "zip")
 }

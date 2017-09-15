@@ -33,7 +33,8 @@ object CommonSettingsPlugin extends AutoPlugin {
       "-source", "1.7",
       "-target", "1.7"
     ),
-    resolvers ++= Dependencies.resolvers
+    resolvers ++= Dependencies.resolvers,
+    crossPaths := false
   ) ++ ouritSettings ++ testSettings ++ Seq(
     test <<= test in Test
   ) ++ Seq(

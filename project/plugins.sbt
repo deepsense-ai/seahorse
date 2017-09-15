@@ -22,3 +22,4 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.1")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.8.4")
 
+addSbtPlugin("no.arktekk.sbt" % "aether-deploy" % "0.14")
