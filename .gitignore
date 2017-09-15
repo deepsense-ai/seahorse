@@ -41,3 +41,4 @@ sessionmanager.trace.db
 # Other
 remote_notebook/notebook_executing_kernel.zip
 docker-compose.yml
+deployment/mesos-spark-docker/Dockerfile

@@ -17,4 +17,4 @@ cd `dirname $0`"/../"
 
 cd deployment/docker
 ./build-local-docker.sh ../ansible/roles/rabbitmq_dockerized/files/ deepsense-rabbitmq
-./publish-local-docker.sh ../ansible/roles/rabbitmq_dockerized/files/ deepsense-rabbitmq $SEAHORSE_BUILD_TAG
+./publish-local-docker.sh deepsense-rabbitmq $SEAHORSE_BUILD_TAG

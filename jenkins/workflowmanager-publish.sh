@@ -16,4 +16,4 @@ SBT_OPTS="-XX:MaxPermSize=4G" \
   sbt clean publishWeClasses compile it:compile workflowmanager/docker:publishLocal
 
 cd deployment/docker
-./publish-local-docker.sh ../../workflowmanager/ deepsense-workflowmanager $SEAHORSE_BUILD_TAG
+./publish-local-docker.sh deepsense-workflowmanager $SEAHORSE_BUILD_TAG

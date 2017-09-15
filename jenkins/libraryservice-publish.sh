@@ -19,4 +19,4 @@ SBT_OPTS="-XX:MaxPermSize=4G" \
   sbt clean publishWeClasses compile libraryservice/docker:publishLocal
 
 cd deployment/docker
-./publish-local-docker.sh ../../libraryservice/ deepsense-libraryservice $SEAHORSE_BUILD_TAG
+./publish-local-docker.sh deepsense-libraryservice $SEAHORSE_BUILD_TAG

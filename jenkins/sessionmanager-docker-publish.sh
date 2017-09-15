@@ -16,4 +16,4 @@ SBT_OPTS="-XX:MaxPermSize=4G" \
   sbt clean publishWeClasses sessionmanager/docker:publishLocal
 
 cd deployment/docker
-./publish-local-docker.sh ../../sessionmanager/ deepsense-sessionmanager $SEAHORSE_BUILD_TAG
+./publish-local-docker.sh deepsense-sessionmanager $SEAHORSE_BUILD_TAG

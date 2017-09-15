@@ -17,4 +17,4 @@ cd `dirname $0`"/../"
 
 cd deployment/docker
 ./build-local-docker.sh ../../remote_notebook/ deepsense-notebooks
-./publish-local-docker.sh ../../remote_notebook/ deepsense-notebooks $SEAHORSE_BUILD_TAG
+./publish-local-docker.sh deepsense-notebooks $SEAHORSE_BUILD_TAG

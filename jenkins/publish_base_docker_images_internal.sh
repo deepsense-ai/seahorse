@@ -10,31 +10,26 @@ cd `dirname $0`"/../"
 
 ./jenkins/scripts/checkout-submodules.sh
 
-# Check if number of parameters is correct
-if [ $# != 1 ]; then
-  echo "Usage: jenkins/publish_base_docker_images_internal.sh SEAHORSE_BUILD_TAG"
-  exit 1
-fi
+SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
+GIT_SHA=`git rev-parse HEAD`
 
-DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
-SEAHORSE_BUILD_TAG=$1
+( # build and publish deepsense-spark
+cd deployment/docker
 
-
-(
-echo "Building and publishing deepsense-spark:$SEAHORSE_BUILD_TAG"
-cd deployment/spark-docker
-docker build \
-    -t $DEEPSENSE_REGISTRY/deepsense-spark:$SEAHORSE_BUILD_TAG \
-    -t $DEEPSENSE_REGISTRY/deepsense-spark:latest \
-    .
-docker push $DEEPSENSE_REGISTRY/deepsense-spark:$SEAHORSE_BUILD_TAG
-docker push $DEEPSENSE_REGISTRY/deepsense-spark:latest
+./build-local-docker.sh ../spark-docker/ deepsense-spark
+./publish-local-docker.sh deepsense-spark $SEAHORSE_BUILD_TAG
 )
 
-(
-echo "Building and publishing deepsense-mesos-spark:$SEAHORSE_BUILD_TAG"
+( # Use just built `deepsense-spark` as a base image for following `mesos-spark-docker`
 cd deployment/mesos-spark-docker
-./build_mesos_base_docker_image.sh $SEAHORSE_BUILD_TAG
-docker push $DEEPSENSE_REGISTRY/deepsense-mesos-spark:$SEAHORSE_BUILD_TAG
-docker push $DEEPSENSE_REGISTRY/deepsense-mesos-spark:latest
+
+rm -f Dockerfile
+sed "s|\${BASE_IMAGE_TAG}|$GIT_SHA|g" Dockerfile.template >> Dockerfile
+)
+
+( # build and publish deepsense-mesos-spark
+cd deployment/docker
+
+./build-local-docker.sh ../mesos-spark-docker/ deepsense-mesos-spark
+./publish-local-docker.sh deepsense-mesos-spark $SEAHORSE_BUILD_TAG
 )
