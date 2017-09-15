@@ -18,6 +18,7 @@ import sbt._
 
 object Version {
   val akka          = "2.3.4-spark"
+  val amazonS3      = "1.10.16"
   val spark         = "1.4.0"
   val hadoop        = "2.6.0"
   val apacheCommons = "3.3.+"
@@ -39,6 +40,7 @@ object Library {
 
   val akkaActor          = akka("actor")
   val akkaTestkit        = akka("testkit")
+  val amazonS3           = "com.amazonaws"                     % "aws-java-sdk-s3"           % Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
   val apacheCommons      = "org.apache.commons"                %  "commons-lang3"            % Version.apacheCommons
   val log4JExtras        = "log4j"                             %  "apache-log4j-extras"      % "1.2.17"
   val nscalaTime         = "com.github.nscala-time"           %%  "nscala-time"              % Version.nsscalaTime
@@ -56,6 +58,7 @@ object Library {
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
   val sparkSql           = spark("sql")
+  val hadoopAWS          = hadoop("aws")
   val hadoopClient       = hadoop("client")
   val hadoopCommon       = hadoop("common")
 }
@@ -83,11 +86,13 @@ object Dependencies {
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
   val deeplang = Seq(
+    amazonS3,
     nscalaTime,
     scalaReflect,
     sparkSql,
     sparkMLLib,
     sparkCore,
+    hadoopAWS,
     hadoopClient,
     hadoopCommon
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)

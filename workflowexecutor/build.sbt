@@ -26,6 +26,7 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "INDEX.LIST")                => MergeStrategy.discard
   case PathList("META-INF", "ECLIPSEF.SF")               => MergeStrategy.discard
   case PathList("META-INF", "ECLIPSEF.RSA")              => MergeStrategy.discard
+  case PathList("META-INF", "services", "org.apache.hadoop.fs.FileSystem") => MergeStrategy.concat
   case _ => MergeStrategy.first
 }
 // Skip test while assembling uber-jar
