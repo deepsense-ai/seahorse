@@ -10,7 +10,7 @@
     <parameters>
       <parameter name="regex">true</parameter>
       <parameter name="header"><![CDATA[/\*\*
- \* Copyright \(c\) 2015, CodiLime Inc\.(?:
+ \* Copyright \(c\) 201[56], CodiLime Inc\.(?:
  \*
  \* .*(?:(?:
  \* .*)|(?:
