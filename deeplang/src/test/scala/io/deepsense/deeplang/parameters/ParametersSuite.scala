@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
 
+import scala.collection.immutable.ListMap
+
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.deeplang.parameters.exceptions.{NoSuchParameterException, TypeConversionException}
+import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
 
 class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 
@@ -94,7 +94,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Getting ChoiceParameter value from schema") {
     val choiceSchema = mock[ParametersSchema]
-    val possibleChoices = Map("onlyChoice" -> choiceSchema)
+    val possibleChoices = ListMap("onlyChoice" -> choiceSchema)
 
     val choice = ChoiceParameter("description", None, true, possibleChoices)
     choice.value = Some("onlyChoice")
@@ -105,7 +105,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Getting MultipleChoiceParameter value from schema") {
     val choiceSchema = mock[ParametersSchema]
-    val possibleChoices = Map("onlyChoice" -> choiceSchema)
+    val possibleChoices = ListMap("onlyChoice" -> choiceSchema)
     val multipleChoice = MultipleChoiceParameter("", None, true, possibleChoices)
     multipleChoice.value = Some(Traversable("onlyChoice"))
     val parametersSchema = ParametersSchema("multipleChoice" -> multipleChoice)
@@ -162,5 +162,14 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val mergedSchema = parametersSchema1 ++ parametersSchema2
     assert(mergedSchema.getNumericParameter("x1") eq param1)
     assert(mergedSchema.getNumericParameter("x2") eq param2)
+  }
+
+  test("Comparing two parameters") {
+    val param1 = BooleanParameter("xyz", None, required = false)
+    param1.value = Some(true)
+    val param2 = param1.copy()
+    assert(param1 == param2)
+    param2.value = Some(false)
+    assert(param1 != param2)
   }
 }

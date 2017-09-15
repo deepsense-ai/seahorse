@@ -1,23 +1,19 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- *  Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.entitystorage.exceptions
 
-import java.util.UUID
-
-import io.deepsense.commons.exception.{ExceptionDetails, DeepSenseException}
+import io.deepsense.commons.exception.DeepSenseException
+import io.deepsense.commons.exception.FailureCode.FailureCode
 
 /**
  * Base exception for all Entity Storage exceptions
  */
 abstract class EntityStorageException(
-    id: UUID,
-    code: Int,
+    code: FailureCode,
     title: String,
     message: String,
-    cause: Option[Throwable],
-    details: Option[ExceptionDetails])
-  extends DeepSenseException(id, code, title, message, cause, details)
+    cause: Option[Throwable] = None,
+    details: Map[String, String] = Map())
+  extends DeepSenseException(code, title, message, cause, details)

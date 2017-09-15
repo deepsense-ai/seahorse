@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
 package io.deepsense.deeplang.parameters
 
 import spray.json._
@@ -10,11 +14,10 @@ trait CanHaveDefault extends Parameter {
   /** Default value of the parameter. Can be None if not provided. */
   val default: Option[HeldValue]
 
-  override def toJson: JsObject = {
-    val result = super.toJson
+  override def jsDescription: Map[String, JsValue] = {
+    val result = super.jsDescription
     default match {
-      case Some(defaultValue) => JsObject(
-        result.fields.updated("default", defaultValueToJson(defaultValue)))
+      case Some(defaultValue) => result.updated("default", defaultValueToJson(defaultValue))
       case None => result
     }
   }

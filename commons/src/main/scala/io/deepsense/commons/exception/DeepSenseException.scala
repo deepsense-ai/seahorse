@@ -1,24 +1,29 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- *  Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.commons.exception
 
-import java.util.UUID
+import io.deepsense.commons.exception.FailureCode.FailureCode
 
 /**
  * Base exception for all DeepSense exceptions
  */
 abstract class DeepSenseException(
-    val id: UUID,
-    val code: Int,
-    val title: String,
-    val message: String,
-    val cause: Option[Throwable],
-    val details: Option[ExceptionDetails]) extends Exception(message, cause.orNull)
+  val code: FailureCode,
+  val title: String,
+  val message: String,
+  val cause: Option[Throwable] = None,
+  val details: Map[String, String] = Map()) extends Exception(message, cause.orNull) {
 
-trait ExceptionDetails
+  val id = DeepSenseFailure.Id.randomId
 
-case class StringExceptionDetails(details: String) extends ExceptionDetails
+  def failureDescription: FailureDescription = FailureDescription(
+    id,
+    code,
+    title,
+    Some(message),
+    details ++ additionalDetails)
+
+  protected def additionalDetails: Map[String, String] = Map()
+}

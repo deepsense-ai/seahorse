@@ -1,17 +1,14 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager
 
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
-import com.typesafe.config.ConfigFactory
 
-import io.deepsense.experimentmanager.execution.{ExecutionModule, MockRunningExperimentsActorModule, RunningExperimentsActorModule}
-import io.deepsense.experimentmanager.storage.ExperimentStorageModule
+import io.deepsense.experimentmanager.execution.ExecutionModule
+import io.deepsense.experimentmanager.storage.cassandra.ExperimentDaoCassandraModule
 
 /**
  * Configures services.
@@ -19,7 +16,7 @@ import io.deepsense.experimentmanager.storage.ExperimentStorageModule
 class ServicesModule extends AbstractModule {
   override def configure(): Unit = {
     install(new ExecutionModule)
-    install(new ExperimentStorageModule)
+    install(new ExperimentDaoCassandraModule)
     install(new FactoryModuleBuilder()
       .implement(classOf[ExperimentManager], classOf[ExperimentManagerImpl])
       .build(classOf[ExperimentManagerProvider]))

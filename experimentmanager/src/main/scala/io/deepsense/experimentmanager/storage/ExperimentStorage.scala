@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.storage
@@ -22,14 +20,14 @@ trait ExperimentStorage {
    * @param id Id of the experiment.
    * @return Experiment with the id or None.
    */
-  def get(id: Id): Future[Option[Experiment]]
+  def get(tenantId: String, id: Id): Future[Option[Experiment]]
 
   /**
    * Saves an experiment.
    * @param experiment Experiment to be saved.
    * @return Saved experiment.
    */
-  def save(experiment: Experiment): Future[Experiment]
+  def save(experiment: Experiment): Future[Unit]
 
   /**
    * Removes an experiment with the specified id.
@@ -38,11 +36,11 @@ trait ExperimentStorage {
    *         If there were hard failures (e.g. connection error) the returned
    *         future will fail.
    */
-  def delete(id: Id): Future[Unit]
+  def delete(tenantId: String, id: Id): Future[Unit]
 
   /**
    * Returns a list of experiment.
-   * @param tenant Owner of the experiments.
+   * @param tenantId Owner of the experiments.
    * @param limit Size of the list (page)
    * @param page Page number.
    * @param status Allows to filter experiments with the specified status.
@@ -50,8 +48,8 @@ trait ExperimentStorage {
    * @return A filtered list of experiments that is a certain page of a certain size.
    */
   def list(
-    tenant: HasTenantId,
+    tenantId: String,
     limit: Option[Int],
     page: Option[Int],
-    status: Option[Experiment.Status.Value]): Future[Seq[Experiment]]
+    status: Option[Experiment.Status.Value] = None): Future[Seq[Experiment]]
 }

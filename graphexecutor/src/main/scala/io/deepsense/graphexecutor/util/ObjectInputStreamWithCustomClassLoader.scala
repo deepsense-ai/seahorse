@@ -1,8 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Grzegorz Chilkiewicz
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.graphexecutor.util
 
 import java.io.{ByteArrayInputStream, ObjectInputStream}

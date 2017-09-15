@@ -12,12 +12,13 @@ object Version {
   val jclouds       = "1.9.0"
   val jsr305        = "3.0.0"
   val logback       = "1.1.2"
+  val metricsScala  = "3.5.1_a2.3"
   val mockito       = "1.10.19"
   val nsscalaTime   = "1.8.0"
   val scala         = "2.11.6"
   val scalacheck    = "1.12.2"
   val scalatest     = "3.0.0-SNAP4"
-  val spark         = "1.3.0"
+  val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
 }
@@ -53,6 +54,7 @@ object Library {
   val jcloudsNova        = jclouds("nova")
   val logbackClassic     = logback("classic")
   val logbackCore        = logback("core")
+  val metricsScala       = "nl.grons"                    %% "metrics-scala"       % Version.metricsScala
   val mockitoCore        = "org.mockito"                  % "mockito-core"        % Version.mockito
   val nscalaTime         = "com.github.nscala-time"      %% "nscala-time"         % Version.nsscalaTime
   val scalacheck         = "org.scalacheck"              %% "scalacheck"          % Version.scalacheck
@@ -114,6 +116,7 @@ object Dependencies {
     sprayRouting,
     guice,
     guiceMultibindings,
+    metricsScala,
     nscalaTime
   ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest, cassandraUnit).map(_ % Test)
 
@@ -150,7 +153,7 @@ object Dependencies {
     hadoopClient,
     avroCore,
     avroRpc
-  ) ++ Seq(sparkCore).map(_ % Provided) ++ Seq(scalatest).map(_ % s"$Test,it")
+  ) ++ Seq(sparkCore).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 
   val graphJson = Seq(
     nscalaTime,

@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Witold Jedrzejewski
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang
@@ -33,9 +31,9 @@ class DKnowledge[T <: DOperable](val types: Set[T]) {
 }
 
 object DKnowledge {
-  def apply[T <: DOperable](args: T*) = new DKnowledge[T](args: _*)
+  def apply[T <: DOperable](args: T*): DKnowledge[T] = new DKnowledge[T](args: _*)
 
-  def apply[T <: DOperable](types: Set[T]) = new DKnowledge[T](types)
+  def apply[T <: DOperable](types: Set[T]): DKnowledge[T] = new DKnowledge[T](types)
 
   def apply[T <: DOperable](dKnowledges: Traversable[DKnowledge[T]]): DKnowledge[T] =
     dKnowledges.foldLeft(DKnowledge[T]())(_ ++ _)

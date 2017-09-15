@@ -1,8 +1,10 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.deeplang.doperations
 
+import scala.collection.immutable.ListMap
 import scala.collection.mutable
 
 import org.apache.spark.mllib.evaluation.RegressionMetrics
@@ -16,30 +18,37 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
-class CrossValidateRegressor
+case class CrossValidateRegressor()
   extends DOperation2To2[Regressor with Trainable, DataFrame, Regressor with Scorable, Report]
   with WithTrainParameters {
 
+  import CrossValidateRegressor._
   override val parameters = trainParameters ++ ParametersSchema(
-    CrossValidateRegressor.numOfFoldsParamKey ->
+    numOfFoldsParamKey ->
       NumericParameter(
         "Number of folds",
         Some(10.0),
         required = true,
         validator = RangeValidator(0, Int.MaxValue / 2, true, true, Some(1.0))),
-    CrossValidateRegressor.shuffleParamKey ->
+    shuffleParamKey ->
       ChoiceParameter(
         "Perform shuffle",
-        Some(CrossValidateRegressor.shuffleYes),
+        Some(shuffleYes),
         required = true,
-        Map(
-          CrossValidateRegressor.shuffleNo -> ParametersSchema(),
-          CrossValidateRegressor.shuffleYes ->
-            ParametersSchema(CrossValidateRegressor.seedParamKey ->
-              NumericParameter("Seed value",
+        options = ListMap(
+          shuffleNo -> ParametersSchema(),
+          shuffleYes -> ParametersSchema(
+            seedParamKey ->
+              NumericParameter(
+                "Seed value",
                 default = Some(0.0),
                 required = true,
-                RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0)))))))
+                RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0))
+              )
+          )
+        )
+      )
+  )
 
   override val id: DOperation.Id = "95ca5225-b8e0-45c7-8ecd-a2c9d4d6861f"
 
@@ -49,13 +58,13 @@ class CrossValidateRegressor
                                  (trainable: Regressor with Trainable,
                                   dataFrame: DataFrame): (Regressor with Scorable, Report) = {
     logger.info("Execution of CrossValidateRegressor starts")
-    import CrossValidateRegressor._
+
     val dataFrameSize = dataFrame.sparkDataFrame.count()
     // If number of folds is too big, we use dataFrame size as folds number
     val effectiveNumberOfFolds = math.min(
       // If dataFrame is of size 1, no folds can be performed
       if (dataFrameSize == 1) 0 else dataFrameSize,
-      math.round(parameters.getDouble(numOfFoldsParamKey).get).toInt).toInt
+      math.round(parameters.getDouble(numOfFoldsParamKey).get)).toInt
     val performShuffle = parameters.getChoice(shuffleParamKey).get.label == shuffleYes
     val seed =
       if (performShuffle) {
@@ -73,7 +82,8 @@ class CrossValidateRegressor
     // during splitting DataFrame on training and test DataFrame.
     val shuffledDataFrame =
       if (performShuffle) {
-        context.dataFrameBuilder.buildDataFrame(dataFrame.sparkDataFrame.sample(false, 1.0, seed))
+        context.dataFrameBuilder.buildDataFrame(
+          dataFrame.sparkDataFrame.sample(withReplacement = false, 1.0, seed))
       } else {
         dataFrame
       }
@@ -84,7 +94,7 @@ class CrossValidateRegressor
       if (effectiveNumberOfFolds > 0) {
         generateCrossValidationReport(context, trainable, shuffledDataFrame, effectiveNumberOfFolds)
       } else {
-        new Report(ReportContent(CrossValidateRegressor.reportName))
+        Report(ReportContent(reportName))
       }
 
     logger.info("Train regressor on all data available")

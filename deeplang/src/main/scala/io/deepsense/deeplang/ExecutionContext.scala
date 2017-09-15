@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Witold Jedrzejewski
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang
@@ -20,6 +18,6 @@ class ExecutionContext {
   var entityStorageClient: EntityStorageClient = _
   var tenantId: String = _
   var hdfsClient: DSHdfsClient = _
-  def uniqueHdfsFileName(entityCategory: String) =
+  def uniqueHdfsFileName(entityCategory: String): String =
     UniqueFilenameUtil.getUniqueHdfsFilename(tenantId, entityCategory)
 }

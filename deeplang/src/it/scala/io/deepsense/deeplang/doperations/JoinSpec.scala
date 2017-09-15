@@ -78,7 +78,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected, false)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "with null values only in both DataFrames" is pending
       "with empty join column selection" is pending
@@ -142,11 +142,11 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(3), LongType)
     ))
     val rowsL = Seq(
-      (3.5, "a", 1.5, 5),
-      (3.6, "b", 1.6, 6),
-      (3.7, "c", 1.7, 10),
-      (4.6, "d", 1.6, 9),
-      (4.5, "e", 1.5, 11)
+      (3.5, "a", 1.5, 5L),
+      (3.6, "b", 1.6, 6L),
+      (3.7, "c", 1.7, 10L),
+      (4.6, "d", 1.6, 9L),
+      (4.5, "e", 1.5, 11L)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
 
@@ -198,9 +198,9 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(3), LongType)
     ))
     val rowsL = Seq(
-      (2.5, "a", 1.5, 5),
-      (3.6, "b", 1.6, 6),
-      (3.7, "c", 1.7, 10)
+      (2.5, "a", 1.5, 5L),
+      (3.6, "b", 1.6, 6L),
+      (3.7, "c", 1.7, 10L)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
 
@@ -437,10 +437,10 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(1), LongType)
     ))
     val rowsL = Seq(
-      ("pies", 3),
-      ("kot", 5),
-      ("krowa", 7),
-      ("pies", 1)
+      ("pies", 3L),
+      ("kot", 5L),
+      ("krowa", 7L),
+      ("pies", 1L)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
     val ldfCategorized =
@@ -453,7 +453,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val colsR = Vector(column1, "owner")
     val schemaR = StructType(Seq(
       StructField(colsL(0), StringType),
-      StructField(colsR(1), DoubleType)
+      StructField(colsR(1), StringType)
     ))
     val rowsR = Seq(
       ("kot", "Wojtek"),
@@ -472,10 +472,10 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (finalMapping.valueToId("pies"), 3, "Rafal"),
-      (finalMapping.valueToId("kot"), 5, "Wojtek"),
-      (finalMapping.valueToId("krowa"), 7, null),
-      (finalMapping.valueToId("pies"), 1, "Rafal")
+      (finalMapping.valueToId("pies"), 3L, "Rafal"),
+      (finalMapping.valueToId("kot"), 5L, "Wojtek"),
+      (finalMapping.valueToId("krowa"), 7L, null),
+      (finalMapping.valueToId("pies"), 1L, "Rafal")
     ).map(Row.fromTuple)
     val joinSchema = StructType(Seq(StructField(colsL(0), IntegerType)) ++ schemaL.fields.tail ++
       schemaR.fields.filterNot(_.name == column1))
@@ -507,7 +507,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val colsR = Vector(column1, "owner")
     val schemaR = StructType(Seq(
       StructField(colsL(0), StringType),
-      StructField(colsR(1), DoubleType)
+      StructField(colsR(1), StringType)
     ))
     val rowsR = Seq(
       ("kot", "Wojtek"),
@@ -566,7 +566,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val colsR = Vector(column1, "owner") ++ sameNameColumns.map { case (name, _) => name }
     val schemaR = StructType(Seq(
       StructField(colsL(0), StringType),
-      StructField(colsR(1), DoubleType)
+      StructField(colsR(1), StringType)
     ) ++ sameNameColumns.map { case (name, tpe) => StructField(name, tpe) })
     val rowsR = Seq(
       Seq("kot", "Wojtek") ++ sameNameColumns.map { case (_, t) => generate(t) },
@@ -577,7 +577,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (null, "s", 1, null, null, null, null)
+      (null, "s", 1, null, null, null)
     ).map(Row.fromTuple)
     val joinSchema = StructType(schemaL.fields ++
       schemaR.fields.filterNot(_.name == column1).map {

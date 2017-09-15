@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- *  Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.entitystorage.services
@@ -46,11 +44,13 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
    * Creates new entity using input params.
    */
   def createEntity(inputEntity: InputEntity): Future[Entity] = {
-    logger.debug("CreateEntity for inputEntity: {}", inputEntity)
+    val entityId = Entity.Id.randomId
+    logger.debug("CreateEntity - generated id: {}, inputEntity.name: {},  input.description: {}",
+      entityId, inputEntity.name, inputEntity.description)
     val now = DateTimeConverter.now
     val entity = Entity(
       inputEntity.tenantId,
-      Entity.Id.randomId,
+      entityId,
       inputEntity.name,
       inputEntity.description,
       inputEntity.dClass,
@@ -67,7 +67,8 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
    * Returns entity with Report if updated entity exists and None otherwise.
    */
   def updateEntity(tenantId: String, userEntity: UserEntityDescriptor): Future[Option[Entity]] = {
-    logger.debug("UpdateEntity for tenantId: {} and userEntity: {}", tenantId, userEntity)
+    logger.debug("UpdateEntity for tenantId: {}, userEntity.name: {}, userEntity.description {}",
+      tenantId, userEntity.name, userEntity.description)
     entityDao.get(tenantId, userEntity.id).flatMap {
       case Some(oldEntity) =>
         val newEntity = oldEntity.updateWith(userEntity)

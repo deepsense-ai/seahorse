@@ -1,17 +1,12 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.graphjson
 
-import java.util.UUID
-
 import org.mockito.Mockito._
 import spray.json._
 
-import io.deepsense.commons.models
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
@@ -30,9 +25,9 @@ class GraphReaderSpec extends GraphJsonTestSupport {
   when(catalog.createDOperation(operation2.id)).thenReturn(operation2)
   when(catalog.createDOperation(operation3.id)).thenReturn(operation3)
 
-  val node1Id = UUID.randomUUID()
-  val node2Id = UUID.randomUUID()
-  val node3Id = UUID.randomUUID()
+  val node1Id = Node.Id.randomId
+  val node2Id = Node.Id.randomId
+  val node3Id = Node.Id.randomId
 
   val parameters1 = JsObject("name" -> "param1".toJson)
   val parameters2 = JsObject("name" -> "param2".toJson)

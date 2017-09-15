@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.experimentmanager.rest.json
@@ -18,7 +16,7 @@ class GraphReaderModule extends AbstractModule {
 
   @Singleton
   @Provides
-  def provideGraphReader(dOperationsCatalog: DOperationsCatalog) = {
+  def provideGraphReader(dOperationsCatalog: DOperationsCatalog): GraphReader = {
     new GraphReader(dOperationsCatalog)
   }
 }

@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.entitystorage.storage.cassandra
@@ -13,7 +11,7 @@ import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.QueryBuilder._
 import com.datastax.driver.core.querybuilder.Select.Where
 import com.datastax.driver.core.querybuilder.Update.Assignments
-import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
+import com.datastax.driver.core.querybuilder.{Delete, QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 
@@ -71,7 +69,6 @@ class EntityDaoCassandraImpl @Inject() (
   }
 
   private def upsertReport(update: Update.Assignments, entity: Entity): Assignments = {
-    // TODO Reimplement when Report gets implemented
     entity.report match {
       case Some(report) =>
         update.and(set(EntityRowMapper.Report, report.jsonReport))
@@ -80,7 +77,7 @@ class EntityDaoCassandraImpl @Inject() (
     }
   }
 
-  private def deleteQuery(tenantId: String, id: Entity.Id) = {
+  private def deleteQuery(tenantId: String, id: Entity.Id): Delete.Where = {
     QueryBuilder.delete().from(table)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
       .and(QueryBuilder.eq(EntityRowMapper.Id, id.value))

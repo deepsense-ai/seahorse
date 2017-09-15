@@ -1,17 +1,15 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.graph
 
-import java.util.UUID
-
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.{DKnowledge, DOperable, InferContext}
 import io.deepsense.graph.Node.Id
+import io.deepsense.models.entities.Entity
 
 case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
   /** Maps ids of nodes to nodes. */
@@ -52,11 +50,11 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
 
   def markAsRunning(id: Node.Id): Graph = withChangedNode(id, _.markRunning)
 
-  def markAsCompleted(id: Node.Id, results: List[UUID]): Graph = {
+  def markAsCompleted(id: Node.Id, results: List[Entity.Id]): Graph =
     withChangedNode(id, _.markCompleted(results))
-  }
 
-  def markAsFailed(id: Node.Id): Graph = withChangedNode(id, _.markFailed)
+  def markAsFailed(id: Node.Id, failureDetails: FailureDescription): Graph =
+    withChangedNode(id, _.markFailed(failureDetails))
 
   def markAsAborted(id: Node.Id): Graph = withChangedNode(id, _.markAborted)
 
@@ -149,7 +147,14 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
   }
 
   private def withChangedNode(id: Node.Id, f: Node => Node): Graph = {
+    // TODO make it more efficient (change nodes to map)
     val changedNodes = nodes.map(node => if (node.id == id) f(node) else node)
+    copy(nodes = changedNodes)
+  }
+
+  def withChangedNode(node: Node): Graph = {
+    // TODO make it more efficient (change nodes to map)
+    val changedNodes = nodes.map(n => if (n.id == node.id) node else n)
     copy(nodes = changedNodes)
   }
 

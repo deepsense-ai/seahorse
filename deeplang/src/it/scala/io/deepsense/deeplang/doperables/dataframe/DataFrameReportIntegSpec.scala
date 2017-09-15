@@ -92,14 +92,14 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         report,
         DataFrameTestFactory.categoricalColumnName,
         1L,
-        Seq("summer", "winter", "autumn", "spring"),
-        Seq(5, 1, 1, 2))
+        Seq("autumn", "spring", "summer", "winter"),
+        Seq(1, 2, 5, 1))
       testContinuousDistribution(
         report,
         DataFrameTestFactory.longColumnName,
         1L,
         longTypeBuckets,
-        Seq(7, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 1),
+        Seq(7, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
         Statistics("432", "98798797", "1", "12091180.111111", "28.5", "5010000", Seq("98798797")))
       testContinuousDistribution(
         report,
@@ -314,5 +314,5 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       numberOfRows: Int,
       value: Option[String]): RDD[Row] =
     sparkContext.parallelize(
-      List.fill(numberOfRows)(Row(List.fill(numberOfColumns)(value.orNull):_*)))
+      List.fill(numberOfRows)(Row(List.fill(numberOfColumns)(value.orNull): _*)))
 }

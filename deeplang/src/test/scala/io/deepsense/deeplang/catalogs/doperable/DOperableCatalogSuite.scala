@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Witold Jedrzejewski
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.catalogs.doperable
@@ -14,64 +12,49 @@ import io.deepsense.deeplang.{ExecutionContext, DOperable}
 import io.deepsense.deeplang.catalogs.doperable.exceptions._
 import io.deepsense.deeplang.doperables.Report
 
+
+import io.deepsense.deeplang.doperables.DOperableMock
+
 object SampleInheritance {
   trait T1 extends DOperable
   trait T2 extends T1
   trait T3 extends T1
   trait T extends DOperable
-  abstract class A extends T3
-  class B extends A with T {
+  abstract class A extends T3 {
     override def report: Report = ???
-    override def equals(any: Any) = any.isInstanceOf[B]
-    override def save(context: ExecutionContext)(path: String): Unit = ???
+    override def save(executionContext: ExecutionContext)(path: String): Unit = ???
   }
-  class C extends A with T2 {
-    override def report: Report = ???
-    override def equals(any: Any) = any.isInstanceOf[C]
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
+  case class B() extends A with T
+  case class C() extends A with T2
 }
 
 object Parametrized {
-  trait T[T] extends DOperable
-  abstract class A[T] extends DOperable {
-    override def report: Report = ???
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
+  trait T[T] extends DOperableMock
+  abstract class A[T] extends DOperableMock
   class B extends A[Int]
 }
 
 object Constructors {
-  class NotParameterLess(val i: Int) extends DOperable {
-    override def report: Report = ???
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
-  class AuxiliaryParameterless(val i: Int) extends DOperable {
+
+  class NotParameterLess(val i: Int) extends DOperableMock
+
+  class AuxiliaryParameterless(val i: Int) extends DOperableMock {
     def this() = this(1)
-    override def report: Report = ???
-    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
-  class WithDefault(val i: Int = 1) extends DOperable {
-    override def report: Report = ???
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
+
+  class WithDefault(val i: Int = 1) extends DOperableMock
 }
 
 object TraitInheritance {
-  class C1 extends DOperable {
-    override def report: Report = ???
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
+  class C1 extends DOperableMock
   trait T1 extends C1
   trait T2 extends T1
   class C2 extends T2
 
   trait S1 extends DOperable
   trait S2 extends DOperable
-  class A1 extends DOperable {
-    override def report: Report = ???
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
+
+  class A1 extends DOperableMock
   trait S3 extends A1 with S1 with S2
 }
 
@@ -92,8 +75,8 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
     val b = new B
     val c = new C
 
-    def check[T <: DOperable : ru.TypeTag](expected: DOperable*) = {
-      testGettingSubclasses[T](h, expected:_*)
+    def check[T <: DOperable : ru.TypeTag](expected: DOperable*): Unit = {
+      testGettingSubclasses[T](h, expected: _*)
     }
 
     check[T with T1](b)

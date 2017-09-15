@@ -1,8 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Dominik Miszkiewicz
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.rdd.RDD
@@ -12,7 +11,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DOperation, DOperation1To2, ExecutionContext}
 
-class Split extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
+case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
   override val name: String = "Split"
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 

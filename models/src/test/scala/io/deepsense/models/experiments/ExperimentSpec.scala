@@ -7,32 +7,45 @@ package io.deepsense.models.experiments
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.{Graph, Node}
+import io.deepsense.models.experiments.Experiment
 
 class ExperimentSpec
   extends WordSpec
   with Matchers
   with MockitoSugar {
-  "Experiment" should {
-    "compute experiment state to be RUNNING" in {
-      val op = mock[DOperation]
-      val g = Graph(Set(
-        Node(Node.Id.randomId, op).markQueued,
-        Node(Node.Id.randomId, op).markRunning.withProgress(0).markCompleted(Seq.empty),
-        Node(Node.Id.randomId, op).markRunning.withProgress(0).markCompleted(Seq.empty),
-        Node(Node.Id.randomId, op).markRunning.withProgress(0).markCompleted(Seq.empty),
-        Node(Node.Id.randomId, op).markQueued,
-        Node(Node.Id.randomId, op).markQueued,
-        Node(Node.Id.randomId, op).markQueued,
-        Node(Node.Id.randomId, op).markRunning.withProgress(0).markCompleted(Seq.empty),
-        Node(Node.Id.randomId, op).markQueued,
-        Node(Node.Id.randomId, op).markRunning.withProgress(0).markCompleted(Seq.empty),
-        Node(Node.Id.randomId, op).markRunning.withProgress(0).markCompleted(Seq.empty),
-        Node(Node.Id.randomId, op).markRunning.withProgress(0).markCompleted(Seq.empty),
-        Node(Node.Id.randomId, op).markQueued,
-        Node(Node.Id.randomId, op).markRunning))
-      Experiment.computeExperimentState(g) shouldBe Experiment.State.running
+
+  "Experiment.computeExperimentState" should {
+    "return Completed on empty graph" in {
+      val experiment = newExperiment(Set.empty)
+      experiment.updateState().state shouldBe Experiment.State.completed
     }
+    "return Running on graph with at least one running node" is pending
+    "return Draft if all nodes are in draft" in {
+      val experiment = newExperiment(Set(
+        newNode().markDraft,
+        newNode().markDraft))
+      experiment.updateState().state shouldBe Experiment.State.draft
+    }
+    "return appropriate status for graph" is pending
   }
+
+  "Experiment" should {
+    "mark itself and all not finished nodes as aborted" is pending
+  }
+
+  private def newNode(): Node = {
+    val op = mock[DOperation]
+    Node(Node.Id.randomId, op)
+  }
+
+  private def newExperiment(nodes: Set[Node]): Experiment = Experiment(
+    id = Experiment.Id.randomId,
+    name = "some name",
+    tenantId = "some tenant",
+    graph = Graph(nodes)
+  )
+
 }

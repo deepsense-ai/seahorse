@@ -1,19 +1,16 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.experimentmanager.rest.json
-
-import java.util.UUID
 
 import org.joda.time.DateTime
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.json.envelope.EnvelopeJsonFormat
+import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.graph.Graph
@@ -41,6 +38,8 @@ trait ExperimentJsonProtocol
     override def write(obj: Graph): JsValue = obj.toJson(GraphWriter)
   }
 
+  implicit val experimentErrorFormat = jsonFormat5(FailureDescription.apply)
+
   implicit object ExperimentFormat extends RootJsonFormat[Experiment] {
 
     val Id = "id"
@@ -58,7 +57,7 @@ trait ExperimentJsonProtocol
 
     override def read(json: JsValue): Experiment = json match {
       case JsObject(fields) =>
-        val id = UUID.fromString(fields(Id).convertTo[String])
+        val id = Experiment.Id.fromString(fields(Id).convertTo[String])
         val tenantId = fields(TenantId).convertTo[String]
         val name = fields(Name).convertTo[String]
         val description = fields(Description).convertTo[String]
@@ -82,16 +81,16 @@ trait ExperimentJsonProtocol
         Updated -> experiment.updated.toJson,
         State -> JsObject(
           Status -> JsString(experiment.state.status.toString),
-          Error -> experiment.state.error.map(JsString(_)).getOrElse(JsNull),
+          Error -> experiment.state.error.toJson,
           Nodes -> JsObject(
-            experiment.graph.nodes.map(node => {
+            experiment.graph.nodes.map {node =>
               node.id.value.toString -> node.state.toJson
-            }).toMap)
+            }.toMap)
         ),
         TypeKnowledge -> JsObject(
-          experiment.graph.nodes.map(node => {
+          experiment.graph.nodes.map {node =>
             node.id.value.toString -> knowledge.getKnowledge(node.id).toJson
-          }).toMap
+          }.toMap
         )
       )
     }

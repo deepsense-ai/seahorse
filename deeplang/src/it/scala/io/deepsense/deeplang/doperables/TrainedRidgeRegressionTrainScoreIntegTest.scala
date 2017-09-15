@@ -41,7 +41,7 @@ class TrainedRidgeRegressionTrainScoreIntegTest
       logger.debug("Converting to DataFrame and splitting...")
       val (trainingData, scoreData) = split(fileToDataFrame(file))
       logger.debug("Training regression...")
-      val trained  = trainRidgeRegression(trainingData)
+      val trained = trainRidgeRegression(trainingData)
       logger.debug("Scoring...")
       val scoredDataFrame = scoreDataFrame(trained, scoreData)
       logger.debug("After score:")
@@ -85,7 +85,7 @@ class TrainedRidgeRegressionTrainScoreIntegTest
       .asInstanceOf[TrainedRidgeRegression]
   }
 
-  def scoreDataFrame(trained: TrainedRidgeRegression, dataFrame: DataFrame) = {
+  def scoreDataFrame(trained: TrainedRidgeRegression, dataFrame: DataFrame): DataFrame = {
     ScoreRegressor().execute(executionContext)(Vector(trained, dataFrame))
       .head
       .asInstanceOf[DataFrame]

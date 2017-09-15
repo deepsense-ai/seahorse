@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- *  Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.commons.serialization
@@ -33,6 +31,6 @@ trait Serialization {
   }
 
   def serializeDeserialize[T](obj: T): T = deserialize[T](serialize[T](obj))
-
-  object Serialization extends Serialization
 }
+
+object Serialization extends Serialization

@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.mllib.evaluation.RegressionMetrics
@@ -57,7 +58,7 @@ object EvaluateRegression {
   def apply(
       targetColumnName: String,
       predictionColumnName: String): EvaluateRegression = {
-    val operation = new EvaluateRegression
+    val operation = EvaluateRegression()
     val targetColumnParam =
       operation.parameters.getSingleColumnSelectorParameter(Evaluator.targetColumnParamKey)
     targetColumnParam.value = Some(NameSingleColumnSelection(targetColumnName))

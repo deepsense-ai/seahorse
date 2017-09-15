@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperations
@@ -64,7 +63,8 @@ class SaveDataFrameIntegSpec
 
     val loadedSparkDataFrame = sqlContext.parquetFile(filteredEntities.head.data.get.url)
     val loadedDataFrame = context.dataFrameBuilder.buildDataFrame(loadedSparkDataFrame)
-    assertDataFramesEqual(dataFrameToSave, loadedDataFrame)
+    // We cannot guarantee order of rows in loaded DataFrame
+    assertDataFramesEqual(dataFrameToSave, loadedDataFrame, checkRowOrder = false)
   }
 
   private def createDataFrameToSave(rowsSeq: Seq[Row]): DataFrame = {

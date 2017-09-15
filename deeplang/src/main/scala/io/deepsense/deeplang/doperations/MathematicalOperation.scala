@@ -12,7 +12,7 @@ import io.deepsense.deeplang.parameters.AcceptAllRegexValidator
 import io.deepsense.deeplang.parameters.StringParameter
 import io.deepsense.deeplang.parameters.ParametersSchema
 
-class MathematicalOperation extends DOperation0To1[Transformation] {
+case class MathematicalOperation() extends DOperation0To1[Transformation] {
 
   override val name : String = "Mathematical Operation"
 

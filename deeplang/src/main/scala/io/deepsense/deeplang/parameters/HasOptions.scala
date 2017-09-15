@@ -1,18 +1,19 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
 
+import scala.collection.immutable.ListMap
+
+import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 /**
  * Represents Parameter with possible choices.
  */
 trait HasOptions extends Parameter {
-  val options: Map[String, ParametersSchema]
+  val options: ListMap[String, ParametersSchema]
 
   /**
    * Validates schema assigned to chosen option.
@@ -21,10 +22,14 @@ trait HasOptions extends Parameter {
     options(chosenLabel).validate
   }
 
-  override def toJson: JsObject = {
-    val valuesField = "values" -> JsObject(options.mapValues({ option =>
-      if (option.isEmpty) JsNull else option.toJson}))
-    JsObject(super.toJson.fields + valuesField)
+  override def jsDescription: Map[String, JsValue] = {
+    val valuesField = "values" -> JsArray(options.map { case (name, schema) =>
+      JsObject(
+        "name" -> name.toJson,
+        "schema" -> (if (schema.isEmpty) JsNull else schema.toJson)
+      )
+    }.toVector)
+    super.jsDescription + valuesField
   }
 
   protected def choiceToJson(chosenLabel: String): (String, JsValue) = {

@@ -1,8 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Chilkiewicz
  */
+
 package io.deepsense.graphexecutor
 
 import com.google.inject.name.Named

@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
+
+import scala.collection.immutable.ListMap
 
 import org.mockito.Mockito._
 import org.scalatest.FunSuite
@@ -90,7 +90,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of choice parameter should validate chosen schema") {
     val mockSchema = mock[ParametersSchema]
-    val possibleChoices = Map("onlyChoice" -> mockSchema)
+    val possibleChoices = ListMap("onlyChoice" -> mockSchema)
     val choice = ChoiceParameter("choice", None, true, possibleChoices)
     choice.value = Some("onlyChoice")
     choice.validate
@@ -100,7 +100,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   test("Validation of multipleChoice parameter should validate chosen schemas") {
     val mockSchema1 = mock[ParametersSchema]
     val mockSchema2 = mock[ParametersSchema]
-    val possibleChoices = Map("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
+    val possibleChoices = ListMap("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
     val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
     multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
     multipleChoices.validate
@@ -114,5 +114,34 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     multiplicator.value = Some(Vector(mockSchema, mockSchema))
     multiplicator.validate
     verify(mockSchema, times(2)).validate
+  }
+
+  test("Validation of MultipleColumnSelection should validate inner selectors") {
+    val selections = Vector.fill(3)({mock[ColumnSelection]})
+    val selectorParameter = ColumnSelectorParameter("description", true)
+    val multipleColumnSelection = MultipleColumnSelection(selections)
+    selectorParameter.value = Some(multipleColumnSelection)
+    selectorParameter.validate
+    selections.foreach {
+      case selection => verify(selection).validate
+    }
+  }
+
+  test("Validation of IndexRangeColumnSelector should be valid only if lower <= upper bound") {
+    IndexRangeColumnSelection(Some(5), Some(5)).validate
+    IndexRangeColumnSelection(Some(5), Some(6)).validate
+
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(None, Some(5)).validate
+    }
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(Some(4), None).validate
+    }
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(None, None).validate
+    }
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(Some(5), Some(4)).validate
+    }
   }
 }

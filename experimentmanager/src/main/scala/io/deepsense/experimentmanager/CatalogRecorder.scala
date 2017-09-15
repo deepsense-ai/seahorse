@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager
@@ -18,7 +18,7 @@ import io.deepsense.deeplang.doperations.transformations.MathematicalTransformat
  */
 object CatalogRecorder {
 
-  def registerDOperables(catalog: DOperableCatalog) = {
+  def registerDOperables(catalog: DOperableCatalog): Unit = {
     catalog.registerDOperable[File]()
     catalog.registerDOperable[DataFrame]()
     catalog.registerDOperable[UntrainedRidgeRegression]()
@@ -29,7 +29,7 @@ object CatalogRecorder {
     catalog.registerDOperable[Report]()
   }
 
-  def registerDOperations(catalog: DOperationsCatalog) = {
+  def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
     catalog.registerDOperation[FileToDataFrame](
       DOperationCategories.IO,

@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.rest
@@ -13,7 +11,7 @@ import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
 import spray.http.StatusCodes
 import spray.httpx.SprayJsonSupport
-import spray.routing.PathMatchers
+import spray.routing.{PathMatchers, Route}
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.TokenTranslator
@@ -42,7 +40,7 @@ class OperationsApi @Inject() (
 
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
-  def route = {
+  def route: Route = {
     handleRejections(rejectionHandler) {
       handleExceptions(exceptionHandler) {
         pathPrefix(pathPrefixMatcher) {

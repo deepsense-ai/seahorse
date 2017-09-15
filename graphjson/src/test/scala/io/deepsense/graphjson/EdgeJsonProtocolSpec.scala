@@ -1,24 +1,20 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.graphjson
 
-import java.util.UUID
-
 import spray.json._
 
-import io.deepsense.graph.{Edge, Endpoint}
+import io.deepsense.graph.{Edge, Endpoint, Node}
 
 class EdgeJsonProtocolSpec extends GraphJsonTestSupport {
 
   import EdgeJsonProtocol._
 
-  val expectedFromId = UUID.randomUUID()
+  val expectedFromId: Node.Id = Node.Id.randomId
   val expectedFromPort = 1989
-  val expectedToId = UUID.randomUUID()
+  val expectedToId: Node.Id = Node.Id.randomId
   val expectedToPort = 1337
   val edge = Edge(
     Endpoint(expectedFromId, expectedFromPort),

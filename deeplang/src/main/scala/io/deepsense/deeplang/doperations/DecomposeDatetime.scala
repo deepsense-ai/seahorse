@@ -1,8 +1,10 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperations
+
+import scala.collection.immutable.ListMap
 
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
@@ -88,7 +90,7 @@ object DecomposeDatetime {
   /**
    * Possible options for multiChoice parameter representing parts of timestamp to extract
    */
-  private val timeUnits: Map[String, ParametersSchema] =
-    timestampParts.map(p => p.name -> ParametersSchema()).toMap
+  private val timeUnits: ListMap[String, ParametersSchema] =
+    ListMap(timestampParts.map(_.name -> ParametersSchema()): _*)
 
 }

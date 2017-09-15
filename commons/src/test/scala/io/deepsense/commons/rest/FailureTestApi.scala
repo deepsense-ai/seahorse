@@ -1,14 +1,12 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.commons.rest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-import spray.routing.Directives
+import spray.routing.{Directives, Route}
 
 /**
  * A simple REST API that uses a failing service.
@@ -20,7 +18,7 @@ class FailureTestApi(implicit ec: ExecutionContext)
   with Directives {
   val service = new FailureTestService
 
-  def route = {
+  def route: Route = {
     path("echo") {
       get {
         parameter('msg) { (required) =>

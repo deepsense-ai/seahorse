@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Witold Jedrzejewski
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang
@@ -39,8 +37,5 @@ abstract class DOperation extends Serializable with Logging {
 
 object DOperation {
   type Id = models.Id
-
-  object Id {
-    def randomId: Id = models.Id.randomId
-  }
+  val Id = models.Id
 }

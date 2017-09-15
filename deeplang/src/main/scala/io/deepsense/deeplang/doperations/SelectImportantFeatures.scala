@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.collection.immutable.ListMap
+
 import io.deepsense.deeplang.DOperation._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{ChoiceParameter, ParametersSchema}
@@ -23,14 +25,14 @@ case class SelectImportantFeatures() extends DOperation1To1[DataFrame, DataFrame
       description = "Method of selecting features",
       default = Some(MethodLabels.StepAIC),
       required = true,
-      options = Map(
+      options = ListMap(
         MethodLabels.StepAIC -> ParametersSchema())
     )
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     context.dataFrameBuilder.buildDataFrame(
-      dataFrame.sparkDataFrame.select(ColumnsNames.head, ColumnsNames.tail:_*))
+      dataFrame.sparkDataFrame.select(ColumnsNames.head, ColumnsNames.tail: _*))
   }
 }
 

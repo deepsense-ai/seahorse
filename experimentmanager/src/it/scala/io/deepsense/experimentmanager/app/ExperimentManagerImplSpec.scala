@@ -4,10 +4,9 @@
 
 package io.deepsense.experimentmanager.app
 
-import java.util.UUID
-
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.util.Success
 
 import akka.actor.ActorRef
 import akka.testkit.TestProbe
@@ -17,13 +16,12 @@ import org.scalactic.Equality
 
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.experimentmanager.ExperimentManagerImpl
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
-import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.messages._
 
 class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
@@ -68,31 +66,31 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
   "ExperimentManager.get(...)" should {
     "return None" when {
       "the requested experiment does not exist" in {
-        when(storage.get(any()))
+        when(storage.get(any(), any()))
           .thenReturn(Future.successful(None))
 
-        val eventualExperiment = experimentManager.get(Id(UUID.randomUUID()))
+        val eventualExperiment = experimentManager.get(Experiment.Id.randomId)
         whenReady(eventualExperiment) { _ shouldBe None }
       }
     }
     "return experiment from the storage when the experiment is not running" in {
-      when(storage.get(any()))
+      when(storage.get(any(), any()))
         .thenReturn(Future.successful(Some(storedExperiment)))
-      val id = UUID.randomUUID()
+      val id = Experiment.Id.randomId
 
       val eventualExperiment = experimentManager.get(id)
-      probe.expectMsg(GetStatus(id))
-      probe.reply(Status(None))
+      probe.expectMsg(io.deepsense.models.messages.Get(id))
+      probe.reply(None)
       whenReady(eventualExperiment) { _.get shouldEqual storedExperiment }
     }
     "return running experiment" in {
       val runningExperiment = mock[Experiment]
-      when(storage.get(any()))
+      when(storage.get(any(), any()))
         .thenReturn(Future.successful(Some(storedExperiment)))
 
       val eventualExperiment = experimentManager.get(storedExperiment.id)
-      probe.expectMsg(GetStatus(storedExperiment.id))
-      probe.reply(Status(Some(runningExperiment)))
+      probe.expectMsg(io.deepsense.models.messages.Get(storedExperiment.id))
+      probe.reply(Some(runningExperiment))
       whenReady(eventualExperiment) { _.get shouldEqual runningExperiment }
     }
   }
@@ -101,19 +99,17 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     "launch experiment and return it" when {
       "the experiment exists" in {
         val launchedExperiment = mock[Experiment]
-        when(storage.get(any()))
-          .thenReturn(Future.successful(Some(storedExperiment)))
+        when(storage.get(any(), any())).thenReturn(Future.successful(Some(storedExperiment)))
 
         val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         probe.expectMsg(Launch(storedExperiment))
-        probe.reply(Launched(launchedExperiment))
+        probe.reply(Success(launchedExperiment))
         whenReady(eventualExperiment) { _ shouldEqual launchedExperiment }
       }
     }
-    "return fail" when {
+    "fail" when {
       "the experiment does not exists" in {
-        when(storage.get(any()))
-          .thenReturn(Future.successful(None))
+        when(storage.get(any(), any())).thenReturn(Future.successful(None))
 
         val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         whenReady(eventualExperiment.failed) {
@@ -121,11 +117,14 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         }
       }
     }
+    "fail" when {
+      "the experiment is already running" is pending
+    }
   }
 
   "ExperimentManager.abort(...)" should {
     "abort experiment and return it" when {
-      "the experiment exists" in pending
+      "the experiment exists" is pending
 //        {
 //        val abortedExperiment = mock[Experiment]
 //        val storage: ExperimentStorage = mock[ExperimentStorage]
@@ -141,7 +140,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return fail" when {
       "the experiment does not exists" in {
-        when(storage.get(any())).thenReturn(Future.successful(None))
+        when(storage.get(any(), any())).thenReturn(Future.successful(None))
         val eventualExperiment = experimentManager.abort(storedExperiment.id, Seq.empty)
         whenReady(eventualExperiment.failed) {
           _ shouldBe new ExperimentNotFoundException(storedExperiment.id)
@@ -152,15 +151,15 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
 
   "ExperimentManager.list(...)" should {
     "contain running experiments" in {
-      val runningExperimentId = Id(UUID.randomUUID())
+      val runningExperimentId = Experiment.Id.randomId
       val e1 = mock[Experiment]
       val e2 = mock[Experiment]
       val e3 = mock[Experiment]
       val e4 = mock[Experiment]
-      when(e1.id).thenReturn(UUID.randomUUID())
+      when(e1.id).thenReturn(Experiment.Id.randomId)
       when(e2.id).thenReturn(runningExperimentId)
-      when(e3.id).thenReturn(UUID.randomUUID())
-      when(e4.id).thenReturn(UUID.randomUUID())
+      when(e3.id).thenReturn(Experiment.Id.randomId)
+      when(e4.id).thenReturn(Experiment.Id.randomId)
 
       val runningExperiment = mock[Experiment]
       when(runningExperiment.id).thenReturn(runningExperimentId)
@@ -170,7 +169,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         .thenReturn(Future.successful(storedExperiments))
 
       val mergedExperiments = experimentManager.experiments(None, None, None)
-      probe.expectMsg(ExperimentsByTenant(Some(tenantId)))
+      probe.expectMsg(GetAllByTenantId(tenantId))
       probe.reply(ExperimentsMap(Map(tenantId -> Set(runningExperiment))))
       whenReady(mergedExperiments) { experimentsLists =>
         val experiments = experimentsLists.experiments

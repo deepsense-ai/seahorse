@@ -1,6 +1,6 @@
-.. Copyright (c) 2015, CodiLime, Inc.
+.. Copyright (c) 2015, CodiLime Inc.
 
-Score regressor
+Score Regressor
 ===============
 
 ==========

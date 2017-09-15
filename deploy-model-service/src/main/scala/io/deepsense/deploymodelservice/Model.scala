@@ -4,6 +4,8 @@
 
 package io.deepsense.deploymodelservice
 
+import io.deepsense.commons.models
+
 case class Model(
     isLogistic: Boolean,
     intercept: Double,
@@ -20,7 +22,11 @@ case class Model(
   }
 
   private def sigmoid(x: Double): Double = {
-    return 1.0 / (1.0 + math.pow(math.E, -x))
+    1.0 / (1.0 + math.pow(math.E, -x))
   }
+}
 
+object Model {
+  type Id = models.Id
+  val Id = models.Id
 }

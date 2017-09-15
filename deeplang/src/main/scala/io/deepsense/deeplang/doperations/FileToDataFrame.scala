@@ -4,6 +4,7 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
@@ -17,7 +18,7 @@ import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-class FileToDataFrame extends DOperation1To1[File, DataFrame] {
+case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
   import io.deepsense.deeplang.doperations.FileToDataFrame._
   override val name: String = "File To DataFrame"
   override val id: Id = "83bad450-f87c-11e4-b939-0800200c9a66"
@@ -26,7 +27,7 @@ class FileToDataFrame extends DOperation1To1[File, DataFrame] {
       "Format of the input file",
       Some(CSV.name),
       required = true,
-      Map(CSV.name -> ParametersSchema(
+      ListMap(CSV.name -> ParametersSchema(
         separatorParameter -> StringParameter(
           "Column separator",
           Some(","),
@@ -66,7 +67,8 @@ class FileToDataFrame extends DOperation1To1[File, DataFrame] {
     val firstLine = lines.first()
     val columnsNo = firstLine.length
     val (columnNames, dataLines) = if (namesIncluded) {
-      (safeColumnNames(firstLine), removeFirstLine(lines).cache())
+      val processedFirstLine = firstLine.map(removeQuotes).map(safeColumnName)
+      (processedFirstLine, removeFirstLine(lines).cache())
     } else {
       (generateColumnNames(columnsNo), lines)
     }
@@ -100,10 +102,8 @@ class FileToDataFrame extends DOperation1To1[File, DataFrame] {
     context.dataFrameBuilder.buildDataFrame(convertedSchema, convertedData, categoricalColumnNames)
   }
 
-  private def safeColumnNames(firstLine: Seq[String]): Seq[String] = {
-    firstLine.map(_.replace(".", "_"))
-    // TODO: remove replace when spark upgraded to 1.4. DS-635
-  }
+  // TODO: remove replace when spark upgraded to 1.4. DS-635
+  private def safeColumnName(name: String): String = name.replace(".", "_")
 
   /**
    * Designates indices and names of columns selected to be categorized.

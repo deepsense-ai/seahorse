@@ -58,7 +58,7 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
 
       when(mockUntrainedModel.run(any[RDD[LabeledPoint]]())).thenAnswer(
         new Answer[GeneralizedLinearModel] {
-          override def answer(invocationOnMock: InvocationOnMock) = {
+          override def answer(invocationOnMock: InvocationOnMock): GeneralizedLinearModel = {
             val receivedRDD = invocationOnMock.getArgumentAt(0, classOf[RDD[LabeledPoint]])
             val collected = receivedRDD.collect()
             val allLabels = collected.map(_.label)

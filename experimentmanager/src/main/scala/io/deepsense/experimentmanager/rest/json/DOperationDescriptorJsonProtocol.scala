@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.experimentmanager.rest.json
@@ -11,7 +9,7 @@ import scala.reflect.runtime.universe.Type
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.json.{IdJsonProtocol, UUIDJsonProtocol}
+import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.catalogs.doperations.DOperationDescriptor
 
 /**
@@ -20,7 +18,6 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationDescriptor
  */
 trait DOperationDescriptorJsonProtocol
   extends DefaultJsonProtocol
-  with UUIDJsonProtocol
   with IdJsonProtocol
   with SprayJsonSupport {
 

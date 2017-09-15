@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Witold Jedrzejewski
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang
@@ -35,12 +33,16 @@ class DKnowledgeSuite extends FunSuite with Matchers {
   }
 
   test("DKnowledge[_] objects with same content are equal") {
-    def isAOrB(any: Any) = any.isInstanceOf[A] || any.isInstanceOf[B]
+
+    def isAOrB(any: Any): Boolean = any.isInstanceOf[A] || any.isInstanceOf[B]
+
     class A extends DOperableMock {
-      override def equals(any: Any) = isAOrB(any)
+      override def equals(any: Any): Boolean = isAOrB(any)
+      override def hashCode: Int = ???
     }
     class B extends DOperableMock {
-      override def equals(any: Any) = isAOrB(any)
+      override def equals(any: Any): Boolean = isAOrB(any)
+      override def hashCode: Int = ???
     }
 
     val knowledge1: DKnowledge[A] = DKnowledge(new A)

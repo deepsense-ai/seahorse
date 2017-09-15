@@ -1,8 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Witold Jedrzejewski
- *
  * This is a place for all types of values that can be put in Parameters.
  */
 
@@ -105,7 +103,9 @@ object NameSingleColumnSelection {
  * Subset selected by this class can be considered as sum of subsets selected by 'selections'.
  * @param selections list of selections
  */
-case class MultipleColumnSelection(selections: Vector[ColumnSelection])
+case class MultipleColumnSelection(selections: Vector[ColumnSelection]) {
+  def validate: Unit = selections.foreach(_.validate)
+}
 
 object MultipleColumnSelection {
   def fromJson(jsValue: JsValue): MultipleColumnSelection = jsValue match {

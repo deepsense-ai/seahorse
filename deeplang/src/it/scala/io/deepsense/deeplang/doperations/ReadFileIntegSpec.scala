@@ -86,7 +86,7 @@ class ReadFileIntegSpec
     }
   }
 
-  def readFile(fileName:String, separator:String) : File = {
+  def readFile(fileName: String, separator: String) : File = {
     val operation = new ReadFile()
     operation.parameters.getStringParameter(ReadFile.pathParam).value =
       Some(testDir + "/" + fileName)

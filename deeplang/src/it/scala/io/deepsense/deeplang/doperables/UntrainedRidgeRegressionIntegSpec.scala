@@ -22,8 +22,11 @@ class UntrainedRidgeRegressionIntegSpec
   override val mockUntrainedModel: GeneralizedLinearAlgorithm[RidgeRegressionModel] =
     mock[RidgeRegressionWithSGD]
 
-  override val featuresValues: Seq[Spread[Double]] =
-    Seq(Spread(0.0, 0.0), (-0.755 +- 0.01), Spread(0.0, 0.0), (-0.377 +- 0.01), Spread(0.0, 0.0), (1.133 +- 0.01))
+  override val featuresValues: Seq[Spread[Double]] = Seq(
+    Spread(0.0, 0.0), -0.755 +- 0.01,
+    Spread(0.0, 0.0), -0.377 +- 0.01,
+    Spread(0.0, 0.0), 1.133 +- 0.01
+  )
 
   override def validateResult(
     mockTrainedModel: RidgeRegressionModel,

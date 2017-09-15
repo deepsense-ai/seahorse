@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Witold Jedrzejewski
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.{DeserializationException, JsNull, JsObject, JsValue}
+import scala.collection.immutable.ListMap
+
+import spray.json._
 
 import io.deepsense.deeplang.parameters.ParameterConversions._
 import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
@@ -15,7 +15,7 @@ import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
  * Schema for a given set of DOperation parameters
  * Holds Parameters that are passed to DOperation.
  */
-class ParametersSchema protected (private val schemaMap: Map[String, Parameter] = Map.empty)
+class ParametersSchema protected (private val schemaMap: ListMap[String, Parameter] = ListMap.empty)
   extends Serializable {
 
   def validate: Unit = schemaMap.values.foreach(_.validate)
@@ -51,7 +51,9 @@ class ParametersSchema protected (private val schemaMap: Map[String, Parameter] 
   /**
    * Json representation describing parameters of this schema.
    */
-  def toJson: JsValue = JsObject(schemaMap.mapValues(_.toJson))
+  def toJson: JsValue = JsArray(schemaMap.map { case (name, parameter) =>
+    JsObject(parameter.jsDescription + ("name" -> JsString(name)))
+  }.toVector)
 
   /**
    * Json representation of values held by this schema's parameters.
@@ -126,5 +128,5 @@ class ParametersSchema protected (private val schemaMap: Map[String, Parameter] 
 }
 
 object ParametersSchema {
-  def apply(args: (String, Parameter)*) = new ParametersSchema(Map(args: _*))
+  def apply(args: (String, Parameter)*): ParametersSchema = new ParametersSchema(ListMap(args: _*))
 }

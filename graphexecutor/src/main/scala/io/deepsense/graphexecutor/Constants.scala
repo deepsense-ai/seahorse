@@ -1,13 +1,12 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Grzegorz Chilkiewicz
+ * Copyright (c) 2015, CodiLime Inc.
  *
  * Wraps all constants. This class is an ersatz of configuration library.
  *
  * TODO: This class usage should be replaced with usage
  * of deepsense confguration library & specific configuration files.
  */
+
 package io.deepsense.graphexecutor
 
 object Constants {
@@ -60,9 +59,15 @@ object Constants {
   val DeepSenseIoDeploymentDirectory = "/deepsense"
 
   /**
-   * Location of Graph Executor library on cluster HDFS
+   * Location of Graph Executor dependencies jar on cluster HDFS
    */
-  val GraphExecutorLibraryLocation = DeepSenseIoDeploymentDirectory + "/lib" + "/graphexecutor.jar"
+  val GraphExecutorDepsJarLocation =
+    DeepSenseIoDeploymentDirectory + "/lib" + "/graphexecutor-deps.jar"
+
+  /**
+   * Location of Graph Executor jar on cluster HDFS
+   */
+  val GraphExecutorJarLocation = DeepSenseIoDeploymentDirectory + "/lib" + "/graphexecutor.jar"
 
   /**
    *  Configuration file's name on cluster HDFS
@@ -73,4 +78,25 @@ object Constants {
    * Location of configuration file on cluster HDFS
    */
   val GraphExecutorConfigLocation = DeepSenseIoDeploymentDirectory + "/etc/" + GraphExecutorConfName
+
+  /**
+   *  Configuration file's name on cluster HDFS
+   */
+  val EntityStorageConfName = "entitystorage-communication.conf"
+
+  /**
+   * Location of configuration file on cluster HDFS
+   */
+  val EntityStorageConfigLocation =
+    DeepSenseIoDeploymentDirectory + "/etc/" + EntityStorageConfName
+
+  /**
+   *  Configuration file's name on cluster HDFS
+   */
+  val Log4jPropertiesName = "log4j.properties"
+
+  /**
+   * Location of configuration file on cluster HDFS
+   */
+  val Log4jPropertiesLocation = DeepSenseIoDeploymentDirectory + "/etc/" + Log4jPropertiesName
 }

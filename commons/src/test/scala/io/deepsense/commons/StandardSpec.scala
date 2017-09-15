@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.commons

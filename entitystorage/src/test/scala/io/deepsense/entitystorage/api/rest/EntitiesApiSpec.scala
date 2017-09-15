@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- *  Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.entitystorage.api.rest
@@ -167,7 +165,7 @@ class EntitiesApiSpec
     entityService
   }
 
-  private def createRestComponent(tokenTranslator: TokenTranslator): Route  =  new EntitiesApi(
+  private def createRestComponent(tokenTranslator: TokenTranslator): Route = new EntitiesApi(
     tokenTranslator,
     entityService,
     new AllAllowedAuthorizationProvider(),

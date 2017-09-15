@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.rest
@@ -15,15 +15,21 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access
 import org.scalatest.BeforeAndAfter
 import spray.routing.Route
 
-import io.deepsense.experimentmanager.ExperimentManagerIntegTestSupport
+import io.deepsense.commons.cassandra.CassandraTestSupport
+import io.deepsense.experimentmanager.storage.cassandra.ExperimentDaoCassandraImpl
+import io.deepsense.experimentmanager.{ExperimentsTableCreator, ExperimentManagerIntegTestSupport}
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.graph.Graph
 import io.deepsense.models.experiments.Experiment
 
 class ExperimentsApiIntegSpec
-  extends ExperimentsApiSpec
-  with ExperimentManagerIntegTestSupport
-  with BeforeAndAfter {
+    extends ExperimentsApiSpec
+    with ExperimentManagerIntegTestSupport
+    with CassandraTestSupport
+    with BeforeAndAfter {
+
+  override def cassandraTableName: String = "experiments"
+  override def cassandraKeySpaceName: String = "experimentmanager"
 
   var experimentA: Experiment = null
   var experimentB: Experiment = null
@@ -35,8 +41,8 @@ class ExperimentsApiIntegSpec
   lazy val tenantA = tenantId("userA")
   lazy val tenantB = tenantId("userB")
 
-  override def experimentOfTenantA = experimentA
-  override def experimentOfTenantB = experimentB
+  override def experimentOfTenantA: Experiment = experimentA
+  override def experimentOfTenantB: Experiment = experimentB
 
   override val tenantAId: String = tenantA
 
@@ -58,6 +64,8 @@ class ExperimentsApiIntegSpec
   override val apiPrefix: String = apiPrefixFromConfig
 
   before {
+    ExperimentsTableCreator.create(cassandraTableName, session)
+
     experimentA = Experiment(
       Experiment.Id.randomId,
       tenantAId,
@@ -81,8 +89,8 @@ class ExperimentsApiIntegSpec
   }
 
   after {
-    experimentStorage.delete(experimentA.id)
-    experimentStorage.delete(experimentB.id)
+    experimentStorage.delete(tenantAId, experimentA.id)
+    experimentStorage.delete(tenantBId, experimentB.id)
   }
 
   private def tenantId(user: String): String = accessForUser(user).getToken.getTenant.get.getId

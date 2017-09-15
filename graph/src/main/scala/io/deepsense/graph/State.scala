@@ -1,16 +1,14 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.graph
 
-import java.util.UUID
-
 import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.models.entities.Entity
 
 /**
  * Represents the state of execution node.
@@ -24,18 +22,18 @@ case class State private[graph](
     started: Option[DateTime] = None,
     ended: Option[DateTime] = None,
     progress: Option[Progress] = None,
-    // TODO: results should be changed to list of datasets UUIDs
-    results: Option[Seq[UUID]] = None) {
+    results: Option[Seq[Entity.Id]] = None,
+    error: Option[FailureDescription] = None) {
 
-  private[graph] def completed(results: Seq[UUID]): State = {
+  private[graph] def completed(results: Seq[Entity.Id]): State = {
     copy(status = Status.Completed,
       ended = Some(DateTimeConverter.now),
       progress = Some(Progress(progress.get.total, progress.get.total)),
       results = Some(results))
   }
 
-  private[graph] def failed: State =
-    copy(status = Status.Failed, ended = Some(DateTimeConverter.now))
+  private[graph] def failed(error: FailureDescription): State =
+    copy(status = Status.Failed, ended = Some(DateTimeConverter.now), error = Some(error))
 
   private[graph] def aborted: State =
     copy(status = Status.Aborted, ended = Some(DateTimeConverter.now))

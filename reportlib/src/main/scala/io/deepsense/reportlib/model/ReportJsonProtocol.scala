@@ -55,7 +55,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
         DistributionJsonProtocol.descriptionKey -> JsString(distribution.description),
         DistributionJsonProtocol.missingValuesKey -> JsNumber(distribution.missingValues)
       )
-      distribution match  {
+      distribution match {
         case d: ContinuousDistribution => JsObject(basicFields ++ Map(
           DistributionJsonProtocol.bucketsKey -> d.buckets.toJson,
           DistributionJsonProtocol.countsKey -> d.counts.toJson,

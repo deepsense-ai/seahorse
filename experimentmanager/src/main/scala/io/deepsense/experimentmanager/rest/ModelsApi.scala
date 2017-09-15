@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
 package io.deepsense.experimentmanager.rest
 
 import java.net.URI
@@ -11,7 +15,8 @@ import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.DFSClient
-import spray.routing.PathMatchers
+import spray.http.StatusCodes
+import spray.routing.{PathMatchers, Route}
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
@@ -19,7 +24,7 @@ import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang
 import io.deepsense.deeplang.{DSHdfsClient, ExecutionContext => DExecutionContext}
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
-import io.deepsense.entitystorage.EntityStorageClientFactoryImpl
+import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactoryImpl}
 import io.deepsense.experimentmanager.rest.actions.DeployModel
 
 
@@ -35,26 +40,30 @@ class ModelsApi @Inject()(
   require(StringUtils.isNotBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
+  val config = ConfigFactory.load("application.conf")
+  val entityStorageHostname = config.getString("entityStorage.hostname")
+  val entityStoragePort = config.getInt("entityStorage.port")
+  val hdfsHostname = config.getString("hdfs.hostname")
+  val hdfsPort = config.getString("hdfs.port")
+
   val deeplangContext: deeplang.ExecutionContext = {
-    val config = ConfigFactory.load("application.conf")
-    val entityStorageHostname = config.getString("entityStorage.hostname")
-    val entityStoragePort = config.getInt("entityStorage.port")
-    val hdfsHostname = config.getString("hdfs.hostname")
-    val hdfsPort = config.getString("hdfs.port")
     val ctx = new DExecutionContext
     ctx.hdfsClient = new DSHdfsClient(
       new DFSClient(new URI(s"hdfs://$hdfsHostname:$hdfsPort"), new Configuration()))
-    val esFactory = EntityStorageClientFactoryImpl()
-    ctx.entityStorageClient = Try(
-      esFactory.create(
-        "root-actor-system",
-        entityStorageHostname,
-        entityStoragePort,
-        "EntitiesApiActor", 10)).getOrElse(null)
     ctx
   }
 
-  override def route = {
+  val esFactory = EntityStorageClientFactoryImpl()
+
+  def entityStorageClient(): EntityStorageClient = {
+    esFactory.create(
+      "root-actor-system",
+      entityStorageHostname,
+      entityStoragePort,
+      "EntitiesApiActor", 10)
+  }
+
+  override def route: Route = {
     handleRejections(rejectionHandler) {
       handleExceptions(exceptionHandler) {
         pathPrefix(pathPrefixMatcher) {
@@ -65,9 +74,13 @@ class ModelsApi @Inject()(
                   case Success(uc: UserContext) =>
                     import scala.concurrent.duration._
                     implicit val timeout = 15.seconds
-                    onComplete(deployModel.deploy(id, uc, deeplangContext)) {
-                      case Success(r) => complete(r)
-                      case Failure(e) => failWith(e)
+                    Try(entityStorageClient()) match {
+                      case Failure(exception) => complete(StatusCodes.ServiceUnavailable)
+                      case Success(client) =>
+                        onComplete(deployModel.deploy(id, uc, deeplangContext, client)) {
+                          case Success(r) => complete(r)
+                          case Failure(e) => failWith(e)
+                        }
                     }
                   case Failure(e) => failWith(e)
                 }

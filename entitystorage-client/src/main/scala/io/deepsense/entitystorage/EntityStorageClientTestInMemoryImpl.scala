@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.entitystorage
@@ -20,7 +19,7 @@ case class EntityStorageClientTestInMemoryImpl(initState: Map[(String, Entity.Id
 
   implicit val timeout = FiniteDuration(5, TimeUnit.SECONDS)
 
-  val storage = TrieMap[(String, Entity.Id), Entity](initState.toSeq:_*)
+  val storage = TrieMap[(String, Entity.Id), Entity](initState.toSeq: _*)
 
   override def getEntityData(tenantId: String, id: Id)
     (implicit duration: FiniteDuration): Future[Option[Entity]] = {

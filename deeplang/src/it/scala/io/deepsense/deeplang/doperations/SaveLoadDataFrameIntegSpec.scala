@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperations
@@ -32,7 +31,7 @@ class SaveLoadDataFrameIntegSpec
       val dataFrameId = saveDataFrame(context, dataFrame, "test name", "test description")
 
       val retrievedDataFrame = loadDataFrame(context, dataFrameId)
-      assertDataFramesEqual(dataFrame, retrievedDataFrame)
+      assertDataFramesEqual(dataFrame, retrievedDataFrame, checkRowOrder = false)
     }
   }
 

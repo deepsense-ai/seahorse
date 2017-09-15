@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperables.dataframe
@@ -33,7 +31,7 @@ class DataFrameBuilder private (sqlContext: SQLContext) extends HasSchemaValidat
     // TODO: validation will be removed. Just for testing purposes.
     validateSchema(schema)
     val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
-    CategoricalMapper(buildDataFrame(dataFrame), this).categorized(categoricalColumns:_*)
+    CategoricalMapper(buildDataFrame(dataFrame), this).categorized(categoricalColumns: _*)
   }
 
   def buildDataFrame(sparkDataFrame: sql.DataFrame): DataFrame = {

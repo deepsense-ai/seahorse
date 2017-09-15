@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Witold Jedrzejewski
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang
@@ -37,7 +35,7 @@ private[deeplang] object TypeUtils {
     constructorForClass(typeToClass(t))
   }
 
-  def createInstance[T](constructor: Constructor[_]) = {
+  def createInstance[T](constructor: Constructor[_]): T = {
     constructor.newInstance().asInstanceOf[T]
   }
 }

@@ -1,13 +1,8 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.models.experiments
-
-import java.util.UUID
-
 
 import org.joda.time.DateTime
 
@@ -30,7 +25,7 @@ case class InputExperiment(name: String, description: String = "", graph: Graph)
    */
   def toExperimentOf(owner: HasTenantId, creationDateTime: DateTime): Experiment = {
     Experiment(
-      UUID.randomUUID(),
+      Experiment.Id.randomId  ,
       owner.tenantId,
       name,
       graph,

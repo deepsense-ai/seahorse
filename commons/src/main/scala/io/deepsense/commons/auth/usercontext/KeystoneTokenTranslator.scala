@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.commons.auth.usercontext
@@ -46,7 +44,7 @@ class KeystoneTokenTranslator @Inject()(
     val userFuture: Future[User] = userKeystoneFuture.map(toUser)
 
     val userContext = for {
-      token <-tokenFuture
+      token <- tokenFuture
       tenant <- tenantFuture
       user <- userFuture
       roles <- rolesFuture

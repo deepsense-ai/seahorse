@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
@@ -15,7 +13,7 @@ import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
 trait Validator[ParameterType] extends Serializable {
   val validatorType: ValidatorType
 
-  def validate(parameter: ParameterType)
+  def validate(parameter: ParameterType): Unit
 
   final def toJson: JsObject = {
     import DefaultJsonProtocol._

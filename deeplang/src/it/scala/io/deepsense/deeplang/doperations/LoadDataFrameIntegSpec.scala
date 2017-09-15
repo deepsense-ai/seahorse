@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperations
@@ -45,7 +44,8 @@ class LoadDataFrameIntegSpec
       logger.info("Loading dataframe from entity id: {}", entity.id)
       val operationResult = operation.execute(context)(Vector.empty[DOperable])
       val operationDataFrame = operationResult.head.asInstanceOf[DataFrame]
-      assertDataFramesEqual(dataFrame, operationDataFrame)
+      // We cannot guarantee order of rows in loaded DataFrame
+      assertDataFramesEqual(dataFrame, operationDataFrame, checkRowOrder = false)
     }
   }
 

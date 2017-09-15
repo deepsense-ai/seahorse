@@ -1,19 +1,17 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.experimentmanager.rest.json
 
 import spray.json._
 
-import io.deepsense.commons.json.UUIDJsonProtocol
+import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.catalogs.doperations.DOperationCategoryNode
 
 trait DOperationCategoryNodeJsonProtocol
   extends DefaultJsonProtocol
-  with UUIDJsonProtocol
+  with IdJsonProtocol
   with DOperationDescriptorJsonProtocol {
 
   implicit object DOperationCategoryNodeFormat extends RootJsonFormat[DOperationCategoryNode] {

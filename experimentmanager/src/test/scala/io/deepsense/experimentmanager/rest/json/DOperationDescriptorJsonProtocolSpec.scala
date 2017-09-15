@@ -1,20 +1,17 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.experimentmanager.rest.json
 
-import java.util.UUID
-
-import scala.reflect.runtime.universe.{typeOf, TypeTag}
+import scala.reflect.runtime.universe.{TypeTag, typeOf}
 
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 import spray.json._
 
+import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationDescriptor}
 import io.deepsense.deeplang.parameters.ParametersSchema
 
@@ -48,15 +45,20 @@ class DOperationDescriptorJsonProtocolSpec
     import HelperTypes._
 
     val category = mock[DOperationCategory]
-    when(category.id) thenReturn UUID.randomUUID
+    when(category.id) thenReturn DOperationCategory.Id.randomId
 
     val parameters = mock[ParametersSchema]
     val parametersJsRepresentation = JsString("Mock parameters representation")
     when(parameters.toJson) thenReturn parametersJsRepresentation
 
     val operationDescriptor = DOperationDescriptor(
-      UUID.randomUUID, "operation name", "0.1.0", "operation description", category, parameters,
-      Seq(typeOf[A], typeOf[A with T1]), Seq(typeOf[B], typeOf[B with T2]))
+      DOperation.Id.randomId,
+      "operation name", "0.1.0",
+      "operation description",
+      category,
+      parameters,
+      Seq(typeOf[A], typeOf[A with T1]),
+      Seq(typeOf[B], typeOf[B with T2]))
 
     def name[T: TypeTag]: String = typeOf[T].typeSymbol.fullName
 

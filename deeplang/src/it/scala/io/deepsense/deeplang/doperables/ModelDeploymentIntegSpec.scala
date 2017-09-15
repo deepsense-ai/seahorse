@@ -11,7 +11,7 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.factories.TrainedRidgeRegressionTestFactory
-import io.deepsense.deploymodelservice.{CreateResult, Model}
+import io.deepsense.deploymodelservice.{CreateModelResponse, Model}
 import io.deepsense.models.entities.{DataObjectReference, Entity, InputEntity}
 
 
@@ -47,7 +47,7 @@ class ModelDeploymentIntegSpec
         executionContext.entityStorageClient)(
         DeployableLoader.loadFromHdfs(executionContext.hdfsClient))(
         executionContext.tenantId, id)
-      val response = CreateResult("testId")
+      val response = CreateModelResponse("testId")
       val toService = (model: Model) => {
         import scala.concurrent.ExecutionContext.Implicits.global
         Future(response)
@@ -55,7 +55,7 @@ class ModelDeploymentIntegSpec
       val deploymentResult = retrieved.deploy(toService)
       import scala.concurrent.ExecutionContext.Implicits.global
       deploymentResult.onComplete {
-        case Success(value) =>value shouldBe response
+        case Success(value) => value shouldBe response
         case _ =>
       }
     }

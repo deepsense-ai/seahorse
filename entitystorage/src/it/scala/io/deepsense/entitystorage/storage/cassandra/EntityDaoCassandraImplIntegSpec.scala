@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.entitystorage.storage.cassandra
@@ -14,9 +12,10 @@ import org.scalatest.concurrent.ScalaFutures
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.entitystorage.{EntitiesTableCreator, CassandraTestSupport}
+import io.deepsense.entitystorage.EntitiesTableCreator
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.models.entities.{DataObjectReference, Entity}
+import io.deepsense.commons.cassandra.CassandraTestSupport
 
 class EntityDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -28,9 +27,12 @@ class EntityDaoCassandraImplIntegSpec
 
   var entities: EntityDaoCassandraImpl = _
 
+  def cassandraTableName : String = "entities"
+  def cassandraKeySpaceName : String = "entitystorage"
+
   before {
-    EntitiesTableCreator.create(table, session)
-    entities = new EntityDaoCassandraImpl(table, session)
+    EntitiesTableCreator.create(cassandraTableName, session)
+    entities = new EntityDaoCassandraImpl(cassandraTableName, session)
   }
 
   // Fixture
@@ -105,7 +107,7 @@ class EntityDaoCassandraImplIntegSpec
     try {
       testCode
     } finally {
-      session.execute(QueryBuilder.truncate(table))
+      session.execute(QueryBuilder.truncate(cassandraTableName))
     }
   }
 }

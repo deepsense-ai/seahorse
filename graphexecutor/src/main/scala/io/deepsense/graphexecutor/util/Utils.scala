@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Grzegorz Chilkiewicz
- *
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
+/**
  * Utilities for submitting YARN applications.
  */
 package io.deepsense.graphexecutor.util
@@ -33,6 +33,9 @@ object Utils {
    */
   def getConfiguredLocalResource(resourcePath: Path)
                         (implicit conf: Configuration): LocalResource = {
+    // scalastyle:off println
+    println(s"Configuration: $conf")
+    // scalastyle:on println
     val resource = Records.newRecord(classOf[LocalResource])
     val jarPath = FileSystem.get(conf).makeQualified(resourcePath)
     val jarStat = FileSystem.get(conf).getFileStatus(jarPath)
@@ -49,12 +52,12 @@ object Utils {
    * @param conf
    * @return mutable map of environment variables
    */
-  def getConfiguredEnvironmentVariables(implicit conf:YarnConfiguration): Map[String, String] = {
+  def getConfiguredEnvironmentVariables(implicit conf: YarnConfiguration): Map[String, String] = {
     val env = collection.mutable.Map[String, String]()
     val classPath =
       conf.getStrings(
         YarnConfiguration.YARN_APPLICATION_CLASSPATH,
-        YarnConfiguration.DEFAULT_YARN_APPLICATION_CLASSPATH:_*)
+        YarnConfiguration.DEFAULT_YARN_APPLICATION_CLASSPATH: _*)
     for (c <- classPath){
       Apps.addToEnvironment(env.asJava, Environment.CLASSPATH.name(), c.trim(), File.pathSeparator)
     }

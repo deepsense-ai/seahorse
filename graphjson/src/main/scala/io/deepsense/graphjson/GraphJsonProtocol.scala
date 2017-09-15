@@ -1,12 +1,8 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.graphjson
-
-import java.util.UUID
 
 import spray.json._
 
@@ -40,7 +36,7 @@ object GraphJsonProtocol {
       case JsObject(fields) =>
         val nodeId = fields(NodeId).convertTo[String]
         val operation = nodeJs.convertTo[DOperation](dOperationReader)
-        Node(UUID.fromString(nodeId), operation)
+        Node(Node.Id.fromString(nodeId), operation)
       case x =>
         throw new DeserializationException(s"Expected JsObject with a node but got $x")
     }

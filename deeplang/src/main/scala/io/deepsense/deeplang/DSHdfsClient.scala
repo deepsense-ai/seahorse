@@ -24,7 +24,7 @@ case class DSHdfsClient(hdfsClient: DFSClient) extends Serialization {
    * Serializes given object using default java serialization
    * and saves it to a file under the given path
    */
-  def saveObjectToFile[T <: Serializable](path: String, instance: T) = {
+  def saveObjectToFile[T <: Serializable](path: String, instance: T): Unit = {
     val inputStream = new BufferedInputStream(new ByteArrayInputStream(serialize(instance)))
     try {
       saveInputStreamToFile(inputStream, path)
@@ -55,7 +55,7 @@ case class DSHdfsClient(hdfsClient: DFSClient) extends Serialization {
   /**
    * Saves content of the given input stream to the file on hdfs under the given path.
    */
-  def saveInputStreamToFile(inputStream: InputStream, destinationPath: String) = {
+  def saveInputStreamToFile(inputStream: InputStream, destinationPath: String): Unit = {
     val fos = new BufferedOutputStream(hdfsClient.create(destinationPath, false))
     try {
       org.apache.commons.io.IOUtils.copy(inputStream, fos)

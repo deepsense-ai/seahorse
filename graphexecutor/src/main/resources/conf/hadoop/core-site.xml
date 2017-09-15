@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
-  Copyright (c) 2015, CodiLime, Inc.
-
-  Owner: Grzegorz Chilkiewicz
+  Copyright (c) 2015, CodiLime Inc.
 
   Hadoop cluster configuration for Development Environment (vagrant)
 -->

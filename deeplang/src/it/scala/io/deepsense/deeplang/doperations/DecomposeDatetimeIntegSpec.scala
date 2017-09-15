@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperations
@@ -32,7 +32,6 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       val expectedData: Seq[Row] = Seq(
         createDecomposedTimestampRow(schema, 0, t1), createDecomposedTimestampRow(schema, 1, t2)
       )
-
       shouldDecomposeTimestamp(schema, data, expectedData, expectedColumnsLevel = 0)
     }
   }
@@ -176,7 +175,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
   }
 
   private def createData(timestamps: Seq[Option[Timestamp]]): RDD[Row] = {
-    sparkContext.parallelize(timestamps.zipWithIndex.map(p => Row(p._2, p._1.orNull, null)))
+    sparkContext.parallelize(timestamps.zipWithIndex.map(p => Row(p._2, p._1.orNull)))
   }
 
   private def createSchema: StructType = {

@@ -33,7 +33,7 @@ trait DataFrameReportGenerator {
     safeDataFrameCache(sparkDataFrame)
     val columnsSubset: List[String] =
       sparkDataFrame.columns.toList.take(DataFrameReportGenerator.maxColumnsNumberInReport)
-    val limitedDataFrame = sparkDataFrame.select(columnsSubset.map(new ColumnName(_)):_*)
+    val limitedDataFrame = sparkDataFrame.select(columnsSubset.map(new ColumnName(_)): _*)
     val categoricalMetadata = CategoricalMetadata(sparkDataFrame)
 
     val (distributions, dataFrameSize) =
@@ -49,7 +49,7 @@ trait DataFrameReportGenerator {
   private def dataSampleTable(
       sparkDataFrame: org.apache.spark.sql.DataFrame,
       categoricalMetadata: CategoricalMetadata): Table = {
-    val columnsNames:List[String] = sparkDataFrame.schema.fieldNames.toList
+    val columnsNames: List[String] = sparkDataFrame.schema.fieldNames.toList
     val columnsNumber = columnsNames.size
     val rows: Array[Row] = sparkDataFrame.take(DataFrameReportGenerator.maxRowsNumberInReport)
     val values: List[List[Option[String]]] = rows.map(row =>
@@ -298,7 +298,7 @@ trait DataFrameReportGenerator {
     case DoubleType => Continuous
     case StringType => Categorical
     case BooleanType => Categorical
-    case IntegerType if categoricalMetadata.isCategorical(structField.name)  => Categorical
+    case IntegerType if categoricalMetadata.isCategorical(structField.name) => Categorical
   }
 
   private def categorical2Double(value: String, possibleValues: List[String]): Double =

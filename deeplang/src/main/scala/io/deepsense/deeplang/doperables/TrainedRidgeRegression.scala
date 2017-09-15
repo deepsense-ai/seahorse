@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.doperables
@@ -14,7 +12,7 @@ import org.apache.spark.mllib.regression.RidgeRegressionModel
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
-import io.deepsense.deploymodelservice.{CreateResult, Model}
+import io.deepsense.deploymodelservice.{CreateModelResponse, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedRidgeRegression(
@@ -85,7 +83,7 @@ case class TrainedRidgeRegressionDescriptor(
   targetColumn: String,
   scaleStd: Vector,
   scalerMean: Vector) extends Deployable {
-  override def deploy(f: Model => Future[CreateResult]): Future[CreateResult] = {
+  override def deploy(f: Model => Future[CreateModelResponse]): Future[CreateModelResponse] = {
     val model = new Model(false, modelIntercept, modelWeights.toArray.toSeq,
       scalerMean.toArray.toSeq, scaleStd.toArray.toSeq)
       f(model)

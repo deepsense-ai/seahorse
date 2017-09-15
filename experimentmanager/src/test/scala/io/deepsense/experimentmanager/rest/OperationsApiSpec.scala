@@ -1,12 +1,8 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Rafal Hryciuk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.rest
-
-import java.util.UUID
 
 import scala.concurrent._
 
@@ -16,14 +12,15 @@ import spray.http.StatusCodes
 import spray.json._
 import spray.routing.Route
 
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, DOperableCatalog, HierarchyDescriptor, TraitDescriptor}
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationCategoryNode, DOperationDescriptor, DOperationsCatalog}
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.experimentmanager.rest.json.DeepLangJsonProtocol
+import io.deepsense.models.experiments.Experiment
 
 class OperationsApiSpec
   extends StandardSpec
@@ -49,7 +46,7 @@ class OperationsApiSpec
 
   val existingOperationId = DOperation.Id.randomId
   val mockCategory = mock[DOperationCategory]
-  when(mockCategory.id) thenReturn UUID.randomUUID()
+  when(mockCategory.id) thenReturn DOperationCategory.Id.randomId
   when(mockCategory.name) thenReturn "some category name"
 
   val existingOperationDescriptor = DOperationDescriptor(
@@ -64,7 +61,7 @@ class OperationsApiSpec
   val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), Map.empty, Set.empty)
   when(dOperationsCatalog.categoryTree) thenReturn categoryTreeMock
 
-  override def createRestComponent(tokenTranslator: TokenTranslator): Route  = {
+  override def createRestComponent(tokenTranslator: TokenTranslator): Route = {
     new OperationsApi(
       tokenTranslator,
       dOperableCatalog,
@@ -153,7 +150,7 @@ class OperationsApiSpec
     }
     "return Not found" when {
       "asked for non existing Experiment" in {
-        Get(s"/$apiPrefix/${UUID.randomUUID()}") ~>
+        Get(s"/$apiPrefix/${Experiment.Id.randomId}") ~>
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }

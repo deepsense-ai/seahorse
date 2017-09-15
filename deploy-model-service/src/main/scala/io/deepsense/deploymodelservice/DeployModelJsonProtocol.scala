@@ -1,6 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
  */
 
 package io.deepsense.deploymodelservice
@@ -8,9 +7,15 @@ package io.deepsense.deploymodelservice
 import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
-object DeployModelJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val modelFormat = jsonFormat5(Model)
-  implicit val createResultFormat = jsonFormat1(CreateResult)
+import io.deepsense.commons.json.IdJsonProtocol
+
+object DeployModelJsonProtocol
+  extends DefaultJsonProtocol
+  with IdJsonProtocol
+  with SprayJsonSupport {
+
+  implicit val modelFormat = jsonFormat5(Model.apply)
+  implicit val createModelResponseFormat = jsonFormat1(CreateModelResponse)
   implicit val getScoringRequestFormat = jsonFormat1(GetScoringRequest)
-  implicit val scoreResult = jsonFormat1(ScoreResult)
+  implicit val scoreModelResponseFormat = jsonFormat1(ScoreModelResponse)
 }

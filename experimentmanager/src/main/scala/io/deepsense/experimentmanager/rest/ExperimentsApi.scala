@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.rest
@@ -13,18 +11,16 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
 import spray.http.StatusCodes
-import spray.routing.{ExceptionHandler, PathMatchers}
+import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
-import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException,
-  ExperimentRunningException}
+import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.rest.actions.Action
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -45,7 +41,7 @@ class ExperimentsApi @Inject() (
   assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
-  def route = {
+  def route: Route = {
     handleRejections(rejectionHandler) {
       handleExceptions(exceptionHandler) {
         path("") {
@@ -139,9 +135,9 @@ class ExperimentsApi @Inject() (
   override def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
     super.exceptionHandler(log) orElse ExceptionHandler {
         case e: ExperimentNotFoundException =>
-          complete(StatusCodes.NotFound, FailureDescription.fromException(e))
+          complete(StatusCodes.NotFound, e.failureDescription)
         case e: ExperimentRunningException =>
-          complete(StatusCodes.Conflict, FailureDescription.fromException(e))
+          complete(StatusCodes.Conflict, e.failureDescription)
     }
   }
 }

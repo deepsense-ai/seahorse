@@ -1,7 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Grzegorz Chilkiewicz
+ * Copyright (c) 2015, CodiLime Inc.
  */
 package io.deepsense.graphexecutor
 
@@ -52,7 +50,7 @@ trait HdfsIntegTestSupport
     config.addResource(getClass().getResource("/conf/hadoop/yarn-site.xml"))
     config.addResource(getClass().getResource("/conf/hadoop/hdfs-site.xml"))
     import HdfsForIntegTestsProperties._
-    cli = Some(new DFSClient( new URI("hdfs://" + MasterHostname + ":" + HdfsNameNodePort), config))
+    cli = Some(new DFSClient(new URI("hdfs://" + MasterHostname + ":" + HdfsNameNodePort), config))
     dsHdfsClient = Some(new DSHdfsClient(cli.get))
 
     // Deploy test-specific files

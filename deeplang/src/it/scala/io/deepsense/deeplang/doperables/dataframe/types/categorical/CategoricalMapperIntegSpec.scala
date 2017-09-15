@@ -39,14 +39,14 @@ class CategoricalMapperIntegSpec extends DeeplangIntegTestSupport {
       categoricalMetadata.isCategorical(cat1) shouldBe true
       categoricalMetadata.isCategorical(cat2) shouldBe true
 
-      def expectedCategories(value: String) = {
+      def expectedCategories(value: String): (String, String) = {
         val categories = value.split("_")
         val category2 = if (categories(1) == "null") null else categories(1)
         (categories(0), category2)
       }
 
       categorized.sparkDataFrame.collect().foreach(r => {
-        def mapIdToName(column: Int) =
+        def mapIdToName(column: Int): String =
           if (r.isNullAt(column)) {
             null
           } else {

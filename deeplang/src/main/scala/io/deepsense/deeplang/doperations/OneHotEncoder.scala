@@ -51,7 +51,7 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
           columnName, dataFrame.columnType(columnName), ColumnType.categorical)
       }
     }
-    val resultSparkDataFrame = dataFrame.sparkDataFrame.selectExpr("*" +: expressions.flatten:_*)
+    val resultSparkDataFrame = dataFrame.sparkDataFrame.selectExpr("*" +: expressions.flatten: _*)
     context.dataFrameBuilder.buildDataFrame(resultSparkDataFrame)
   }
 }

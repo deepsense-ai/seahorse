@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperables.dataframe
@@ -80,7 +80,7 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
    */
   def withColumns(context: ExecutionContext, newColumns: Traversable[sql.Column]): DataFrame = {
     val columns: List[sql.Column] = new sql.ColumnName("*") :: newColumns.toList
-    val newSparkDataFrame = sparkDataFrame.select(columns:_*)
+    val newSparkDataFrame = sparkDataFrame.select(columns: _*)
     context.dataFrameBuilder.buildDataFrame(newSparkDataFrame)
   }
 
@@ -92,7 +92,7 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
    */
   def toSparkVectorRDD(columns: Seq[String]): RDD[SparkVector] = {
     DataFrame.assertColumnNamesValid(sparkDataFrame.schema, columns)
-    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(columns.head, columns.tail:_*)
+    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(columns.head, columns.tail: _*)
     DataFrame.assertExpectedColumnType(sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
     sparkDataFrameWithSelectedColumns.map(row =>
       Vectors.dense(row.toSeq.asInstanceOf[Seq[Double]].toArray))
@@ -107,7 +107,7 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
   def toSparkLabeledPointRDD(
       columns: Seq[String], labelColumn: String): RDD[LabeledPoint] = {
     DataFrame.assertColumnNamesValid(sparkDataFrame.schema, columns)
-    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(labelColumn, columns:_*)
+    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(labelColumn, columns: _*)
     DataFrame.assertExpectedColumnType(sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
     sparkDataFrameWithSelectedColumns.map(row => {
       val doubles = row.toSeq.asInstanceOf[Seq[Double]]
@@ -171,7 +171,7 @@ object DataFrame {
    * E. g. createColumnName('xyz', 'a', 3) returns 'xyz_a_3',
    * and createColumnName('xyz', 'a', 0) returns 'xyz_a'.
    */
-  private [deeplang] def createColumnName(
+  private[deeplang] def createColumnName(
     baseColumnName: String,
     addedPart: String,
     level: Int): String = {
@@ -251,7 +251,7 @@ object DataFrame {
    * @param selection Selection of columns.
    * @return True iff column meets selection's criteria.
    */
-  private [DataFrame] def isFieldSelected(
+  private[DataFrame] def isFieldSelected(
       columnName: String,
       columnIndex: Int,
       columnType: ColumnType,

@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
+
+import scala.collection.immutable.ListMap
 
 import spray.json.DefaultJsonProtocol._
 import spray.json._
@@ -12,7 +12,8 @@ import spray.json._
 case class BooleanParameter(
     description: String,
     default: Option[Boolean],
-    required: Boolean)
+    required: Boolean,
+    var value: Option[Boolean] = None)
   extends Parameter
   with CanHaveDefault {
 
@@ -35,7 +36,8 @@ case class NumericParameter(
     description: String,
     default: Option[Double],
     required: Boolean,
-    validator: Validator[Double])
+    validator: Validator[Double],
+    var value: Option[Double] = None)
   extends Parameter
   with HasValidator
   with CanHaveDefault {
@@ -59,7 +61,8 @@ case class StringParameter(
     description: String,
     default: Option[String],
     required: Boolean,
-    validator: Validator[String])
+    validator: Validator[String],
+    var value: Option[String] = None)
   extends Parameter
   with HasValidator
   with CanHaveDefault {
@@ -89,7 +92,8 @@ case class ChoiceParameter(
     description: String,
     default: Option[String],
     required: Boolean,
-    options: Map[String, ParametersSchema])
+    options: ListMap[String, ParametersSchema],
+    var value: Option[String] = None)
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -139,7 +143,8 @@ case class MultipleChoiceParameter(
     description: String,
     default: Option[Traversable[String]],
     required: Boolean,
-    options: Map[String, ParametersSchema])
+    options: ListMap[String, ParametersSchema],
+    var value: Option[Traversable[String]] = None)
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -192,7 +197,8 @@ case class MultipleChoiceParameter(
 case class ParametersSequence(
     description: String,
     required: Boolean,
-    predefinedSchema: ParametersSchema)
+    predefinedSchema: ParametersSchema,
+    var value: Option[Vector[ParametersSchema]] = None)
   extends Parameter {
   type HeldValue = Vector[ParametersSchema]
 
@@ -208,13 +214,12 @@ case class ParametersSequence(
 
   private[parameters] def replicate: Parameter = copy()
 
-  override def toJson: JsObject = {
-    JsObject(basicJsonFields + ("values" -> predefinedSchema.toJson))
-  }
+  override def jsDescription: Map[String, JsValue] =
+    super.jsDescription + ("values" -> predefinedSchema.toJson)
 
   override protected def definedValueToJson(definedValue: Vector[ParametersSchema]): JsValue = {
     val fields = for (schema <- definedValue) yield schema.valueToJson
-    JsArray(fields:_*)
+    JsArray(fields: _*)
   }
 
   /**
@@ -244,9 +249,8 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
   /** Tells if this selectors selects single column or many. */
   protected val isSingle: Boolean
 
-  override def toJson: JsObject = {
-    JsObject(basicJsonFields + ("isSingle" -> isSingle.toJson))
-  }
+  override def jsDescription: Map[String, JsValue] =
+    super.jsDescription + ("isSingle" -> isSingle.toJson)
 }
 
 /**
@@ -254,7 +258,8 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
  */
 case class SingleColumnSelectorParameter(
     description: String,
-    required: Boolean)
+    required: Boolean,
+    var value: Option[SingleColumnSelection] = None)
   extends AbstractColumnSelectorParameter {
   type HeldValue = SingleColumnSelection
 
@@ -276,7 +281,8 @@ case class SingleColumnSelectorParameter(
  */
 case class ColumnSelectorParameter(
     description: String,
-    required: Boolean)
+    required: Boolean,
+    var value: Option[MultipleColumnSelection] = None)
   extends AbstractColumnSelectorParameter {
   type HeldValue = MultipleColumnSelection
 
@@ -286,10 +292,14 @@ case class ColumnSelectorParameter(
 
   override protected def definedValueToJson(definedValue: MultipleColumnSelection): JsValue = {
     val fields = definedValue.selections.map(_.toJson)
-    JsArray(fields:_*)
+    JsArray(fields: _*)
   }
 
   override protected def valueFromDefinedJson(jsValue: JsValue): MultipleColumnSelection = {
     MultipleColumnSelection.fromJson(jsValue)
+  }
+
+  override protected def validateDefined(definedValue: HeldValue): Unit = {
+    definedValue.validate
   }
 }
