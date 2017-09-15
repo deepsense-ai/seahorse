@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.models.workflows
 
-import spray.json.{RootJsonFormat, DefaultJsonProtocol}
+import io.deepsense.graph.nodestate.NodeStatus
+import io.deepsense.models.entities.Entity
 
-import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.workflows.Workflow
+case class NodeState(nodeStatus: NodeStatus, reports: Option[EntitiesMap]) {
 
-case class GetPythonGatewayAddress(workflowId: Workflow.Id) extends ReadMessageMQ
-
-object GetPythonGatewayAddress {
-  val messageType: String = "getPythonGatewayAddress"
+  def reportEntities(): Map[Entity.Id, EntitiesMap.Entry] = {
+    reports.map(_.entities).getOrElse(Map())
+  }
 }
 
-trait GetPythonGatewayAddressJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val getPythonGatewayAddressFormat: RootJsonFormat[GetPythonGatewayAddress] =
-    jsonFormat1(GetPythonGatewayAddress.apply)
-}

@@ -27,13 +27,13 @@ import io.deepsense.models.entities.Entity
 
 case class StatefulGraph(
     directedGraph: DirectedGraph,
-    states: Map[Node.Id, NodeState],
+    statuses: Map[Node.Id, NodeStatus],
     executionFailure: Option[FailureDescription])
   extends TopologicallySortable
   with KnowledgeInference
   with NodeInferenceImpl {
 
-  require(states.size == directedGraph.nodes.size,
+  require(statuses.size == directedGraph.nodes.size,
     "A graph should know states of all its nodes (and only its nodes)!")
 
   /**
@@ -64,15 +64,15 @@ case class StatefulGraph(
    * than node exception that makes execution impossible.
    */
   def fail(errors: FailureDescription): StatefulGraph = {
-    val updatedStates = abortUnfinished(states)
-    copy(states = updatedStates, executionFailure = Some(errors))
+    val updatedStates = abortUnfinished(statuses)
+    copy(statuses = updatedStates, executionFailure = Some(errors))
   }
 
   /**
    * Lists all nodes that can be executed (that is: all their predecessors completed successfully).
    */
   def readyNodes: Seq[ReadyNode] = {
-    val queuedIds = states.collect { case (id, nodestate.Queued) => id }
+    val queuedIds = statuses.collect { case (id, nodestate.Queued) => id }
     val inputs = queuedIds.collect { case id if predecessorsReady(id) => (id, inputFor(id).get) }
     inputs.map { case (id, input) => ReadyNode(directedGraph.node(id), input) }.toSeq
   }
@@ -84,15 +84,15 @@ case class StatefulGraph(
     if (isRunning) {
       throw new IllegalStateException("Cannot enqueue running graph")
     }
-    val updatedStates = states.mapValues(_.enqueue)
-    copy(states = updatedStates)
+    val updatedStates = statuses.mapValues(_.enqueue)
+    copy(statuses = updatedStates)
   }
 
-  def isRunning: Boolean = states.valuesIterator.exists(s => s.isQueued || s.isRunning)
+  def isRunning: Boolean = statuses.valuesIterator.exists(s => s.isQueued || s.isRunning)
 
   def withoutFailedNodes: Boolean = !hasFailedNodes
 
-  def hasFailedNodes: Boolean = states.valuesIterator.exists(_.isFailed)
+  def hasFailedNodes: Boolean = statuses.valuesIterator.exists(_.isFailed)
 
   def size: Int = directedGraph.size
 
@@ -104,7 +104,7 @@ case class StatefulGraph(
     * Discards the current state of the graph. Creates a new graph
     * that is structurally the same, but is in Draft state.
     */
-  def reset: StatefulGraph = copy(states = states.mapValues(_ => nodestate.Draft))
+  def reset: StatefulGraph = copy(statuses = statuses.mapValues(_ => nodestate.Draft))
 
   // Delegated methods (TopologicallySortable)
 
@@ -133,38 +133,40 @@ case class StatefulGraph(
     }
   }
 
-  def updateStates(changedGraph: StatefulGraph): StatefulGraph = {
-    val updatedStates = states ++ changedGraph.states
+  def updateStatuses(changedGraph: StatefulGraph): StatefulGraph = {
+    val updatedStatuses = statuses ++ changedGraph.statuses
     copy(
-      states = updatedStates,
+      statuses = updatedStatuses,
       executionFailure = executionFailure.orElse(changedGraph.executionFailure))
   }
 
   def subgraph(nodes: Set[Node.Id]): StatefulGraph = {
     val directedsubgraph = directedGraph.subgraph(nodes)
-    val substates = states.filter { case (id, _) => directedsubgraph.nodes.map(_.id).contains(id) }
-    copy(directedsubgraph, substates)
+    val substatuses = statuses.filter {
+      case (id, _) => directedsubgraph.nodes.map(_.id).contains(id)
+    }
+    copy(directedsubgraph, substatuses)
   }
 
   def draft(nodeId: Node.Id): StatefulGraph = {
-    copy(states = markChildrenDraft(states, nodeId))
+    copy(statuses = markChildrenDraft(statuses, nodeId))
   }
 
   def enqueueDraft: StatefulGraph = {
-    val enqueued = states.mapValues(s => if (s.isDraft) s.enqueue else s)
-    copy(states = enqueued)
+    val enqueued = statuses.mapValues(s => if (s.isDraft) s.enqueue else s)
+    copy(statuses = enqueued)
   }
 
   def abort: StatefulGraph = {
-    val aborted = states.mapValues(state =>
+    val aborted = statuses.mapValues(state =>
       if (state.isQueued) state.abort else state
     )
-    copy(states = aborted)
+    copy(statuses = aborted)
   }
 
   private def markChildrenDraft(
-    states: Map[Node.Id, NodeState],
-    draftNodeId: Node.Id): Map[Node.Id, NodeState] = {
+    states: Map[Node.Id, NodeStatus],
+    draftNodeId: Node.Id): Map[Node.Id, NodeStatus] = {
     val children = directedGraph.successorsOf(draftNodeId)
     val draftedState = states.updated(draftNodeId, nodestate.Draft)
     if (children.isEmpty) {
@@ -187,18 +189,18 @@ case class StatefulGraph(
           case (id, errors) => (id.toString, errors.map(_.toString).mkString("\n"))
         }
       )
-      val updatedStates = states.mapValues(_.abort)
-      copy(states = updatedStates, executionFailure = Some(description))
+      val updatedStates = statuses.mapValues(_.abort)
+      copy(statuses = updatedStates, executionFailure = Some(description))
     } else {
       this
     }
   }
 
-  protected def updateStates(knowledge: GraphKnowledge): Map[Id, NodeState] = {
-    knowledge.errors.toSeq.foldLeft(states) {
-      case (modifiedStates, (id, nodeErrors)) =>
-        modifiedStates
-          .updated(id, states(id).fail(nodeErrorsFailureDescription(id, nodeErrors)))
+  protected def updateStatuses(knowledge: GraphKnowledge): Map[Id, NodeStatus] = {
+    knowledge.errors.toSeq.foldLeft(statuses) {
+      case (modifiedStatuses, (id, nodeErrors)) =>
+        modifiedStatuses
+          .updated(id, statuses(id).fail(nodeErrorsFailureDescription(id, nodeErrors)))
     }
   }
 
@@ -214,14 +216,14 @@ case class StatefulGraph(
   }
 
   protected def predecessorsReady(id: Node.Id): Boolean =
-    StatefulGraph.predecessorsReady(id, directedGraph, states)
+    StatefulGraph.predecessorsReady(id, directedGraph, statuses)
 
   protected def inputFor(id: Node.Id): Option[Seq[Entity.Id]] = {
     if (predecessorsReady(id)) {
       val entities = directedGraph
         .predecessors(id).flatten.map {
         case Endpoint(predecessorId, portIndex) =>
-          states(predecessorId) match {
+          statuses(predecessorId) match {
             case nodestate.Completed(_, _, results) => results(portIndex)
             case otherState => throw new IllegalStateException(
               s"Cannot collect inputs for node ${directedGraph.node(id)}" +
@@ -235,15 +237,15 @@ case class StatefulGraph(
     }
   }
 
-  protected def changeStatus(id: Node.Id)(f: (NodeState) => NodeState): StatefulGraph = {
-    val updatedStates = states.updated(id, f(states(id)))
+  protected def changeStatus(id: Node.Id)(f: (NodeStatus) => NodeStatus): StatefulGraph = {
+    val updatedStates = statuses.updated(id, f(statuses(id)))
     if (nodeRunningOrReadyNodeExist(updatedStates)) {
-      copy(states = updatedStates)
+      copy(statuses = updatedStates)
     } else {
       if (allNodesCompleted(updatedStates)) {
-        copy(states = updatedStates)
+        copy(statuses = updatedStates)
       } else {
-        copy(states = abortUnfinished(updatedStates))
+        copy(statuses = abortUnfinished(updatedStates))
       }
     }
   }
@@ -257,20 +259,20 @@ case class StatefulGraph(
   }
 
   private def nodeRunningOrReadyNodeExist(
-      states: Map[Node.Id, NodeState]): Boolean = {
-    val readyNodeExists = states.exists {
+      statuses: Map[Node.Id, NodeStatus]): Boolean = {
+    val readyNodeExists = statuses.exists {
       case (id, s) if s.isQueued =>
-        StatefulGraph.predecessorsReady(id, directedGraph, states)
+        StatefulGraph.predecessorsReady(id, directedGraph, statuses)
       case _ => false
     }
 
-    states.values.exists(_.isRunning)  || readyNodeExists
+    statuses.values.exists(_.isRunning)  || readyNodeExists
   }
 
-  private def allNodesCompleted(states: Map[Node.Id, NodeState]): Boolean =
+  private def allNodesCompleted(states: Map[Node.Id, NodeStatus]): Boolean =
     states.values.forall(_.isCompleted)
 
-  private def abortUnfinished(unfinished: Map[Id, NodeState]): Map[Id, NodeState] = {
+  private def abortUnfinished(unfinished: Map[Id, NodeStatus]): Map[Id, NodeStatus] = {
     unfinished.mapValues {
       case r: Running => r.abort
       case nodestate.Queued => nodestate.Queued.abort
@@ -291,10 +293,10 @@ object StatefulGraph {
   protected def predecessorsReady(
       id: Node.Id,
       directedGraph: DirectedGraph,
-      states: Map[Node.Id, NodeState]): Boolean = {
+      statuses: Map[Node.Id, NodeStatus]): Boolean = {
     directedGraph.predecessors(id).forall {
       case Some(Endpoint(nodeId, _)) =>
-        states(nodeId).isCompleted
+        statuses(nodeId).isCompleted
       case None =>
         false
     }

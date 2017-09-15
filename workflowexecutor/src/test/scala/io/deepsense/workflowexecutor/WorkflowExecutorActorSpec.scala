@@ -34,13 +34,13 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
-import io.deepsense.graph.nodestate.{Aborted, Completed, NodeState, Queued, Running}
+import io.deepsense.graph.nodestate.{Aborted, Completed, NodeStatus, Queued, Running}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.{EntitiesMap, Workflow}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
-import io.deepsense.workflowexecutor.communication.{ExecutionStatus, StatusRequest}
+import io.deepsense.workflowexecutor.communication.{ExecutionStatusMQ, StatusRequestMQ}
 import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 class WorkflowExecutorActorSpec
@@ -67,7 +67,7 @@ class WorkflowExecutorActorSpec
             Some(statusListener.ref),
             Some(system.actorSelection(publisher.ref.path))),
             Id.randomId.toString)
-          probe.send(wea, StatusRequest(Workflow.Id.randomId))
+          probe.send(wea, StatusRequestMQ(Workflow.Id.randomId))
           verifyStatusSent(Seq(publisher))
         }
       }
@@ -76,13 +76,13 @@ class WorkflowExecutorActorSpec
           val ids: IndexedSeq[Id] = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
           val (_, execution) = simpleRunningExecution(ids, Some(ids.head))
           val (probe, wea, _, _, statusListeners, _) = launchedStateFixture(execution)
-          probe.send(wea, StatusRequest(Workflow.Id.randomId))
+          probe.send(wea, StatusRequestMQ(Workflow.Id.randomId))
           eventually {
             statusListeners.foreach { receiver =>
-              val status = receiver.expectMsgClass(classOf[ExecutionStatus])
-              status.executionFailure shouldBe None
-              status.nodes shouldBe execution.states
-              status.resultEntities shouldBe EntitiesMap()
+              val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+              status.executionReport.error shouldBe None
+              status.executionReport.nodesStatuses shouldBe execution.statuses
+              status.executionReport.resultEntities shouldBe EntitiesMap()
             }
           }
         }
@@ -94,15 +94,15 @@ class WorkflowExecutorActorSpec
           launchedStateFixture(mock[RunningExecution])
         val abortedExecution = mock[AbortedExecution]
         val nodeId = Node.Id.randomId
-        when(execution.states).thenReturn(Map(
+        when(execution.statuses).thenReturn(Map(
           nodeId -> nodestate.Queued
         ))
 
         when(execution.abort).thenReturn(abortedExecution)
-        val abortedStates: Map[Id, NodeState] = Map(
+        val abortedStatuses: Map[Id, NodeStatus] = Map(
           nodeId -> nodestate.Aborted
         )
-        when(abortedExecution.states).thenReturn(abortedStates)
+        when(abortedExecution.statuses).thenReturn(abortedStatuses)
         when(abortedExecution.error).thenReturn(None)
 
         probe.send(wea, Abort())
@@ -112,10 +112,10 @@ class WorkflowExecutorActorSpec
 
         eventually {
           statusListeners.foreach { receiver =>
-            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
-            status.executionFailure shouldBe None
-            status.nodes shouldBe abortedStates
-            status.resultEntities shouldBe EntitiesMap()
+            val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+            status.executionReport.error shouldBe None
+            status.executionReport.nodesStatuses shouldBe abortedStatuses
+            status.executionReport.resultEntities shouldBe EntitiesMap()
           }
         }
       }
@@ -136,10 +136,10 @@ class WorkflowExecutorActorSpec
         val (graph, _) = simpleExecution(nodesIds, None)
         probe.send(wea, Launch(graph, nodesIds))
         eventually {
-          val status = publisher.expectMsgClass(classOf[ExecutionStatus])
-          status.executionFailure shouldBe None
-          status.nodes.size shouldBe 3
-          nodesIds.foreach(status.nodes(_) shouldBe a[Queued.type])
+          val status = publisher.expectMsgClass(classOf[ExecutionStatusMQ])
+          status.executionReport.error shouldBe None
+          status.executionReport.nodesStatuses.size shouldBe 3
+          nodesIds.foreach(status.executionReport.nodesStatuses(_) shouldBe a[Queued.type])
         }
       }
       "enqueue graph" in {
@@ -189,7 +189,9 @@ class WorkflowExecutorActorSpec
           verify(execution).inferAndApplyKnowledge(executionContext.inferContext)
         }
 
-        verifyStatus(Seq(subscriber, publisher)){ _.executionFailure.isDefined shouldBe true }
+        verifyStatus(Seq(subscriber, publisher)) {
+          _.executionReport.error.isDefined shouldBe true
+        }
       }
       "after relaunch send statuses for all nodes that changed" in {
         val testProbe = TestProbe()
@@ -209,12 +211,12 @@ class WorkflowExecutorActorSpec
         val id4 = Id.randomId
         val id5 = Id.randomId
 
-        def completedState(): NodeState = {
+        def completedStatus(): NodeStatus = {
           nodestate.Completed(DateTime.now(), DateTime.now(), Seq())
         }
 
-        val oldStates = Map(
-          id1 -> completedState(),
+        val oldStatuses = Map(
+          id1 -> completedStatus(),
           id2 -> nodestate.Draft,
           id3 -> nodestate.Queued
         )
@@ -224,27 +226,28 @@ class WorkflowExecutorActorSpec
         when(finishedExecution.error).thenReturn(None)
         when(finishedExecution.inferAndApplyKnowledge(any())).thenReturn(finishedExecution)
         when(finishedExecution.enqueue).thenReturn(differentExecution)
-        when(finishedExecution.states).thenReturn(oldStates)
+        when(finishedExecution.statuses).thenReturn(oldStatuses)
 
-        val newStates = Map(
-          id1 -> completedState(),
+        val newStatuses = Map(
+          id1 -> completedStatus(),
           id2 -> nodestate.Draft,
-          id4 -> completedState(),
+          id4 -> completedStatus(),
           id5 -> nodestate.Draft
         )
 
-        when(differentExecution.states).thenReturn(newStates)
+        when(differentExecution.statuses).thenReturn(newStatuses)
 
-        val expectedStates = Map(
-          id1 -> newStates(id1),
-          id4 -> newStates(id4),
-          id5 -> newStates(id5)
+        val expectedStatuses = Map(
+          id1 -> newStatuses(id1),
+          id4 -> newStatuses(id4),
+          id5 -> newStatuses(id5)
         )
 
         sendLaunch(TestProbe(), wea)
         eventually {
-          val executionStatus = testProbe.expectMsgType[ExecutionStatus]
-          executionStatus.nodes should contain theSameElementsAs expectedStates
+          val executionStatus = testProbe.expectMsgType[ExecutionStatusMQ]
+          executionStatus.executionReport.nodesStatuses should contain theSameElementsAs
+            expectedStatuses
         }
       }
       "after relaunch reset dOperableCache and reports only for nodes that changed" in {
@@ -266,12 +269,12 @@ class WorkflowExecutorActorSpec
         wea.underlyingActor.dOperableCache.put(entityId1, doperable1)
         wea.underlyingActor.dOperableCache.put(entityId2, mock[DOperable])
 
-        def nodeCompleted(entity: Entity.Id): NodeState = {
+        def nodeCompleted(entity: Entity.Id): NodeStatus = {
           nodestate.Completed(DateTime.now(), DateTime.now(), Seq(entity))
         }
 
         val finishedExecution = mock[IdleExecution]
-        val states = Map(
+        val statuses = Map(
           Node.Id.randomId -> nodeCompleted(entityId1),
           Node.Id.randomId -> nodestate.Draft,
           Node.Id.randomId -> nodestate.Draft
@@ -279,12 +282,12 @@ class WorkflowExecutorActorSpec
 
         val enqueued = mock[RunningExecution]
         when(enqueued.readyNodes).thenReturn(Seq())
-        when(finishedExecution.states).thenReturn(states)
+        when(finishedExecution.statuses).thenReturn(statuses)
         when(finishedExecution.error).thenReturn(None)
         when(finishedExecution.updateStructure(any(), any())).thenReturn(finishedExecution)
         when(finishedExecution.inferAndApplyKnowledge(any())).thenReturn(finishedExecution)
         when(finishedExecution.enqueue).thenReturn(enqueued)
-        when(enqueued.states).thenReturn(states)
+        when(enqueued.statuses).thenReturn(statuses)
         becomeFinished(wea, finishedExecution)
 
         sendLaunch(TestProbe(), wea)
@@ -327,12 +330,12 @@ class WorkflowExecutorActorSpec
           probe.send(wea, nodeCompletedMessage)
           eventually {
             statusListeners.foreach { receiver =>
-              val status = receiver.expectMsgClass(classOf[ExecutionStatus])
-              status.executionFailure shouldBe None
-              status.nodes.size shouldBe 2
-              status.nodes(nodesIds.head) shouldBe a[Completed]
-              status.nodes(nodesIds(1)) shouldBe a[Running]
-              status.resultEntities shouldBe entitiesMap
+              val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+              status.executionReport.error shouldBe None
+              status.executionReport.nodesStatuses.size shouldBe 2
+              status.executionReport.nodesStatuses(nodesIds.head) shouldBe a[Completed]
+              status.executionReport.nodesStatuses(nodesIds(1)) shouldBe a[Running]
+              status.executionReport.resultEntities shouldBe entitiesMap
             }
           }
         }
@@ -357,11 +360,11 @@ class WorkflowExecutorActorSpec
         probe.send(wea, nodeCompletedMessage)
         eventually {
           (statusListeners :+ endStateSubscriber).foreach { receiver =>
-            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
-            status.executionFailure shouldBe None
-            status.nodes.size shouldBe 1
-            status.nodes(nodesIds.head) shouldBe a[Completed]
-            status.resultEntities shouldBe entitiesMap
+            val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+            status.executionReport.error shouldBe None
+            status.executionReport.nodesStatuses.size shouldBe 1
+            status.executionReport.nodesStatuses(nodesIds.head) shouldBe a[Completed]
+            status.executionReport.resultEntities shouldBe entitiesMap
 
           }
         }
@@ -403,11 +406,11 @@ class WorkflowExecutorActorSpec
         probe.send(wea, nodeFailedMsg)
         eventually {
           statusListeners.foreach { receiver =>
-            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
-            status.executionFailure shouldBe None
-            status.nodes.size shouldBe 2
-            status.nodes(nodesIds.head) shouldBe a[nodestate.Failed]
-            status.nodes(nodesIds(1)) shouldBe a[Aborted.type]
+            val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+            status.executionReport.error shouldBe None
+            status.executionReport.nodesStatuses.size shouldBe 2
+            status.executionReport.nodesStatuses(nodesIds.head) shouldBe a[nodestate.Failed]
+            status.executionReport.nodesStatuses(nodesIds(1)) shouldBe a[Aborted.type]
           }
         }
       }
@@ -420,12 +423,12 @@ class WorkflowExecutorActorSpec
         val (_, nodeFailedMessage, _) = nodeFailed()
         probe.send(wea, nodeFailedMessage)
 
-        verifyStatus(statusListeners){ _.executionFailure.isDefined shouldBe true }
-        verifyStatus(Seq(endStateSubscriber)){ _.executionFailure.isDefined shouldBe true }
+        verifyStatus(statusListeners){ _.executionReport.error.isDefined shouldBe true }
+        verifyStatus(Seq(endStateSubscriber)){ _.executionReport.error.isDefined shouldBe true }
 
-        probe.send(wea, StatusRequest(Workflow.Id.randomId)) // Id doesn't matter
+        probe.send(wea, StatusRequestMQ(Workflow.Id.randomId)) // Id doesn't matter
         eventually {
-          verifyStatus(statusListeners){ _.executionFailure.isDefined shouldBe true }
+          verifyStatus(statusListeners){ _.executionReport.error.isDefined shouldBe true }
         }
       }
     }
@@ -458,10 +461,10 @@ class WorkflowExecutorActorSpec
     verifyStatus(receivers)(_ => ())
   }
 
-  def verifyStatus(receivers: Seq[TestProbe])(f: (ExecutionStatus) => Unit): Unit = {
+  def verifyStatus(receivers: Seq[TestProbe])(f: (ExecutionStatusMQ) => Unit): Unit = {
     eventually {
       receivers.foreach { receiver =>
-        f(receiver.expectMsgClass(classOf[ExecutionStatus]))
+        f(receiver.expectMsgClass(classOf[ExecutionStatusMQ]))
       }
     }
   }
@@ -528,7 +531,7 @@ class WorkflowExecutorActorSpec
 
   def runningExecutionWithReadyNodes(readyNodes: Seq[ReadyNode]): RunningExecution = {
     val execution = mock[RunningExecution]
-    when(execution.states).thenReturn(Map[Node.Id, NodeState]())
+    when(execution.statuses).thenReturn(Map[Node.Id, NodeStatus]())
     when(execution.readyNodes).thenReturn(readyNodes)
     when(execution.nodeStarted(any())).thenReturn(execution)
     when(execution.error).thenReturn(None)
@@ -556,7 +559,7 @@ class WorkflowExecutorActorSpec
 
   def failedExecution(): IdleExecution = {
     val execution = mock[IdleExecution]
-    when(execution.states).thenReturn(Map[Node.Id, NodeState]())
+    when(execution.statuses).thenReturn(Map[Node.Id, NodeStatus]())
     when(execution.error).thenReturn(Some(
       FailureDescription(
         DeepSenseFailure.Id.randomId,
@@ -570,7 +573,7 @@ class WorkflowExecutorActorSpec
 
   def completedExecution(): Execution = {
     val execution = mock[Execution]
-    when(execution.states).thenReturn(Map[Node.Id, NodeState]())
+    when(execution.statuses).thenReturn(Map[Node.Id, NodeStatus]())
     when(execution.readyNodes).thenReturn(Seq())
     when(execution.isRunning).thenReturn(false)
     when(execution.error).thenReturn(None)

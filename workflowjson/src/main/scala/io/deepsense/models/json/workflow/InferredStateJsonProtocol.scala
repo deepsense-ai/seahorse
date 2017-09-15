@@ -19,29 +19,26 @@ package io.deepsense.models.json.workflow
 import spray.json._
 
 import io.deepsense.graph.NodeInferenceResult
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
 import io.deepsense.models.json.graph.GraphKnowledgeJsonProtocol
-import io.deepsense.models.workflows.WorkflowWithKnowledge
+import io.deepsense.models.workflows.InferredState
 
 /**
- * Deserialization of WorkflowWithKnowledge is not supported.
+ * Deserialization of Knowledge is not supported.
  */
-trait WorkflowWithKnowledgeJsonProtocol extends WorkflowJsonProtocol
-    with GraphKnowledgeJsonProtocol {
+trait InferredStateJsonProtocol
+  extends WorkflowJsonProtocol
+  with GraphKnowledgeJsonProtocol
+  with ExecutionReportJsonProtocol {
 
   implicit val nodeInferenceResultFormat = jsonFormat3(NodeInferenceResult.apply)
 
-  implicit val workflowWithKnowledgeFormat: RootJsonFormat[WorkflowWithKnowledge] =
-    new RootJsonFormat[WorkflowWithKnowledge] {
-      override def read(json: JsValue): WorkflowWithKnowledge = ???
-
-      override def write(workflow: WorkflowWithKnowledge): JsValue = {
+  implicit val knowledgeFormat: RootJsonWriter[InferredState] =
+    new RootJsonWriter[InferredState] {
+      override def write(knowledge: InferredState): JsValue = {
         JsObject(
-          "id" -> workflow.id.toJson,
-          "metadata" -> workflow.metadata.toJson,
-          "workflow" -> workflow.graph.toJson(GraphWriter),
-          "thirdPartyData" -> workflow.thirdPartyData.toJson,
-          "knowledge" -> workflow.knowledge.results.toJson)
+          "id" -> knowledge.id.toJson,
+          "knowledge" -> knowledge.graphKnowledge.results.toJson,
+          "states" -> knowledge.states.toJson)
       }
     }
 }

@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.json.workflow
+package io.deepsense.workflowexecutor.communication
 
-import io.deepsense.models.json.graph.NodeStatusJsonProtocol
-import io.deepsense.models.workflows._
+import spray.json._
 
-trait WorkflowWithResultsJsonProtocol
-  extends WorkflowJsonProtocol
-  with NodeStatusJsonProtocol
-  with ExecutionReportJsonProtocol {
+import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.models.workflows.Workflow
 
-  implicit val workflowWithResultsFormat =
-    jsonFormat(WorkflowWithResults,
-      "id", "metadata", "workflow", "thirdPartyData", "executionReport")
+case class ConnectMQ(workflowId: Workflow.Id) extends ReadMessageMQ
+
+object ConnectMQ {
+  val messageType: String = "connect"
 }
+
+trait ConnectMQJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
+  implicit val connectFormat: RootJsonFormat[ConnectMQ] = jsonFormat1(ConnectMQ.apply)
+}
+
+object ConnectMQJsonProtocol extends ConnectMQJsonProtocol

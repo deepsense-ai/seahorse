@@ -57,7 +57,7 @@ class ProtocolDeserializerSpec
 
       verify(graphReader).read(graphJs)
 
-      readMessage shouldBe Launch(
+      readMessage shouldBe LaunchMQ(
         workflowId,
         graph,
         nodesToExecute)
@@ -74,7 +74,7 @@ class ProtocolDeserializerSpec
       )
 
       val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe Abort(workflowId)
+      readMessage shouldBe AbortMQ(workflowId)
     }
     "deserialize Connect messages" in {
       val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
@@ -88,7 +88,7 @@ class ProtocolDeserializerSpec
       )
 
       val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe Connect(workflowId)
+      readMessage shouldBe ConnectMQ(workflowId)
     }
     "deserialize StatusRequest messages" in {
       val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
@@ -102,7 +102,7 @@ class ProtocolDeserializerSpec
       )
 
       val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe StatusRequest(workflowId)
+      readMessage shouldBe StatusRequestMQ(workflowId)
     }
   }
 

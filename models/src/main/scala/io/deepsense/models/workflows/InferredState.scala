@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.models.workflows
 
-import spray.json._
+import io.deepsense.graph.GraphKnowledge
 
-import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.workflows.Workflow
-
-case class Connect(workflowId: Workflow.Id) extends ReadMessageMQ
-
-object Connect {
-  val messageType: String = "connect"
-}
-
-trait ConnectJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val connectFormat: RootJsonFormat[Connect] = jsonFormat1(Connect.apply)
-}
-
-object ConnectJsonProtocol extends ConnectJsonProtocol
+case class InferredState(
+  id: Workflow.Id,
+  graphKnowledge: GraphKnowledge,
+  states: ExecutionReport)

@@ -22,9 +22,8 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import spray.json._
 
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.{Logging, Version}
-import io.deepsense.graph.{DirectedGraph, StatefulGraph}
+import io.deepsense.graph.DirectedGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionFormatException
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
@@ -113,11 +112,8 @@ class WorkflowVersionUtilSpec
     correctVersionMeta,
     DirectedGraph(),
     ThirdPartyData("{}"),
-    ExecutionReport(
-      DateTimeConverter.now,
-      DateTimeConverter.now,
-      Map(),
-      EntitiesMap()))
+    ExecutionReport(Map(),
+      EntitiesMap(), None))
 
   val workflowWithResultsString = workflowWithResults.toJson.compactPrint
 
@@ -129,10 +125,8 @@ class WorkflowVersionUtilSpec
     ExecutionReportWithId(
       ExecutionReportWithId.Id.randomId,
       ExecutionReport(
-        DateTimeConverter.now,
-        DateTimeConverter.now,
         Map(),
-        EntitiesMap())))
+        EntitiesMap(), None)))
 
   val workflowWithSavedResultsString = workflowWithSavedResults.toJson.prettyPrint
 }

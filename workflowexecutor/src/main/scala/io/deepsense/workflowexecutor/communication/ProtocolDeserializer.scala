@@ -25,11 +25,11 @@ case class ProtocolDeserializer(
     override val graphReader: GraphReader)
   extends MQMessageDeserializer
   with WorkflowJsonProtocol
-  with ConnectJsonProtocol
-  with LaunchJsonProtocol
-  with AbortJsonProtocol
-  with StatusRequestJsonProtocol
-  with GetPythonGatewayAddressJsonProtocol {
+  with ConnectMQJsonProtocol
+  with LaunchMQJsonProtocol
+  with AbortMQJsonProtocol
+  with StatusRequestMQJsonProtocol
+  with GetPythonGatewayAddressMQJsonProtocol {
 
   override protected def deserializeJson(jsObject: JsObject): ReadMessageMQ = {
     val fields = jsObject.fields
@@ -37,11 +37,11 @@ case class ProtocolDeserializer(
     val body = fields(MessageMQ.messageBodyKey)
 
     messageType match {
-      case Connect.messageType => body.convertTo[Connect]
-      case Launch.messageType => body.convertTo[Launch]
-      case Abort.messageType => body.convertTo[Abort]
-      case StatusRequest.messageType => body.convertTo[StatusRequest]
-      case GetPythonGatewayAddress.messageType => body.convertTo[GetPythonGatewayAddress]
+      case ConnectMQ.messageType => body.convertTo[ConnectMQ]
+      case LaunchMQ.messageType => body.convertTo[LaunchMQ]
+      case AbortMQ.messageType => body.convertTo[AbortMQ]
+      case StatusRequestMQ.messageType => body.convertTo[StatusRequestMQ]
+      case GetPythonGatewayAddressMQ.messageType => body.convertTo[GetPythonGatewayAddressMQ]
     }
   }
 }

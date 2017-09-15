@@ -26,7 +26,7 @@ import io.deepsense.models.entities.Entity
 class NodeStateJsonProtocolSpec extends GraphJsonTestSupport {
 
   import io.deepsense.commons.json.DateTimeJsonProtocol._
-  import io.deepsense.models.json.graph.NodeStateJsonProtocol._
+  import io.deepsense.models.json.graph.NodeStatusJsonProtocol._
 
   "NodeStateJsonProtocol" should {
     "transform Draft to Json" in {
@@ -68,22 +68,22 @@ class NodeStateJsonProtocolSpec extends GraphJsonTestSupport {
     }
   }
 
-  def fromJs(queuedJson: JsObject): NodeState = {
-    queuedJson.convertTo[NodeState]
+  def fromJs(queuedJson: JsObject): NodeStatus = {
+    queuedJson.convertTo[NodeStatus]
   }
 
-  def toJs(state: NodeState): JsValue = state.toJson
+  def toJs(state: NodeStatus): JsValue = state.toJson
 
   def js(state: String, fields: (String, JsValue)*): JsObject = {
     val emptyMap = Seq(
-      NodeStateJsonProtocol.Status,
-      NodeStateJsonProtocol.Started,
-      NodeStateJsonProtocol.Ended,
-      NodeStateJsonProtocol.Results,
-      NodeStateJsonProtocol.Error).map(key => key -> None).toMap[String, Option[JsValue]]
+      NodeStatusJsonProtocol.Status,
+      NodeStatusJsonProtocol.Started,
+      NodeStatusJsonProtocol.Ended,
+      NodeStatusJsonProtocol.Results,
+      NodeStatusJsonProtocol.Error).map(key => key -> None).toMap[String, Option[JsValue]]
 
     val jsFields = (emptyMap ++ fields.toMap.mapValues(Some(_)) +
-        (NodeStateJsonProtocol.Status -> Some(JsString(state)))).mapValues {
+        (NodeStatusJsonProtocol.Status -> Some(JsString(state)))).mapValues {
       case None => JsNull
       case Some(v) => v
     }

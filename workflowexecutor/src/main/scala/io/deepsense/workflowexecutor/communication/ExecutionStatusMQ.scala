@@ -22,42 +22,36 @@ import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.graph.Node
-import io.deepsense.graph.nodestate.NodeState
-import io.deepsense.models.json.graph.NodeStateJsonProtocol
-import io.deepsense.models.json.workflow.EntitiesMapJsonProtocol
-import io.deepsense.models.workflows.EntitiesMap
+import io.deepsense.graph.nodestate.NodeStatus
+import io.deepsense.models.json.graph.NodeStatusJsonProtocol
+import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, EntitiesMapJsonProtocol}
+import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport}
 
-case class ExecutionStatus(
-    nodes: Map[Node.Id, NodeState],
-    resultEntities: EntitiesMap,
-    executionFailure: Option[FailureDescription] = None)
+case class ExecutionStatusMQ(executionReport: ExecutionReport)
   extends WriteMessageMQ {
 
-  override protected def jsMessageType: JsValue = JsString(ExecutionStatus.messageType)
+  override protected def jsMessageType: JsValue = JsString(ExecutionStatusMQ.messageType)
 
-  override protected def jsMessageBody: JsValue = ExecutionStatus.toJsonView(this)
+  override protected def jsMessageBody: JsValue = ExecutionStatusMQ.toJsonView(this)
 }
 
-object ExecutionStatus
+object ExecutionStatusMQ
   extends DefaultJsonProtocol
   with FailureDescriptionJsonProtocol
-  with NodeStateJsonProtocol
+  with NodeStatusJsonProtocol
   with IdJsonProtocol
-  with EntitiesMapJsonProtocol {
+  with ExecutionReportJsonProtocol {
 
-  val messageType = "executionStatus"
-  val protocol = jsonFormat3(JsonExecutionStatus.apply)
-
-  def toJsonView(executionStatus: ExecutionStatus): JsValue = {
-    JsonExecutionStatus(
-      executionStatus.executionFailure,
-      executionStatus.nodes,
-      executionStatus.resultEntities
-    ).toJson(protocol)
+  def apply(
+      nodes: Map[Node.Id, NodeStatus],
+      resultEntities: EntitiesMap,
+      error: Option[FailureDescription] = None): ExecutionStatusMQ = {
+    ExecutionStatusMQ(ExecutionReport(nodes, resultEntities, error))
   }
 
-  case class JsonExecutionStatus(
-    error: Option[FailureDescription],
-    nodes: Map[Node.Id, NodeState],
-    resultEntities: EntitiesMap)
+  val messageType = "executionStatus"
+
+  def toJsonView(executionStatus: ExecutionStatusMQ): JsValue = {
+    executionStatus.executionReport.toJson
+  }
 }

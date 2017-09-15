@@ -23,9 +23,7 @@ import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.entities.Entity.Id
 
-// NodeState
-
-sealed abstract class NodeState(val name: String) extends Serializable {
+sealed abstract class NodeStatus(val name: String) extends Serializable {
   def start: Running
   def finish(results: Seq[Id]): Completed
   def fail(error: FailureDescription): Failed
@@ -68,7 +66,7 @@ sealed abstract class NodeState(val name: String) extends Serializable {
     new IllegalStateException(s"State ${this.getClass.getSimpleName} cannot $what()")
 }
 
-case object Draft extends NodeState("DRAFT") {
+case object Draft extends NodeStatus("DRAFT") {
   override def start: Running = throw stateCannot("start")
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
   override def abort: Aborted.type = Aborted
@@ -76,7 +74,7 @@ case object Draft extends NodeState("DRAFT") {
   override def enqueue: Queued.type = Queued
 }
 
-case object Queued extends NodeState("QUEUED") {
+case object Queued extends NodeStatus("QUEUED") {
   override def start: Running = Running(DateTimeConverter.now)
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
   override def abort: Aborted.type = Aborted
@@ -87,7 +85,7 @@ case object Queued extends NodeState("QUEUED") {
   override def enqueue: Queued.type = throw stateCannot("enqueue")
 }
 
-final case class Running(started: DateTime) extends NodeState("RUNNING") {
+final case class Running(started: DateTime) extends NodeStatus("RUNNING") {
   override def start: Running = throw stateCannot("start")
   override def abort: Aborted.type = Aborted
   override def fail(error: FailureDescription): Failed =
@@ -98,7 +96,7 @@ final case class Running(started: DateTime) extends NodeState("RUNNING") {
 }
 
 sealed trait FinalState {
-  self: NodeState =>
+  self: NodeStatus =>
   override def start: Running = throw stateCannot("start")
   override def finish(results: Seq[Id]): Completed = throw stateCannot("finish")
   override def abort: Aborted.type = throw stateCannot("abort")
@@ -107,8 +105,8 @@ sealed trait FinalState {
 }
 
 final case class Completed(started: DateTime, ended: DateTime, results: Seq[Id])
-  extends NodeState("COMPLETED") with FinalState
+  extends NodeStatus("COMPLETED") with FinalState
 final case class Failed(started: DateTime, ended: DateTime, error: FailureDescription)
-  extends NodeState("FAILED") with FinalState
-case object Aborted extends NodeState("ABORTED") with FinalState
+  extends NodeStatus("FAILED") with FinalState
+case object Aborted extends NodeStatus("ABORTED") with FinalState
 

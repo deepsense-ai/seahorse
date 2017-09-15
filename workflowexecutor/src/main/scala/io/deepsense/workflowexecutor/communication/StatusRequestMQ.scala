@@ -21,14 +21,15 @@ import spray.json.{RootJsonFormat, DefaultJsonProtocol}
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.models.workflows.Workflow
 
-case class StatusRequest(workflowId: Workflow.Id) extends ReadMessageMQ
+case class StatusRequestMQ(workflowId: Workflow.Id) extends ReadMessageMQ
 
-object StatusRequest {
+object StatusRequestMQ {
   val messageType: String = "statusRequest"
 }
 
-trait StatusRequestJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val statusRequestFormat: RootJsonFormat[StatusRequest] = jsonFormat1(StatusRequest.apply)
+trait StatusRequestMQJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
+  implicit val statusRequestFormat: RootJsonFormat[StatusRequestMQ] =
+    jsonFormat1(StatusRequestMQ.apply)
 }
 
-object StatusRequestJsonProtocol extends StatusRequestJsonProtocol
+object StatusRequestMQJsonProtocol extends StatusRequestMQJsonProtocol

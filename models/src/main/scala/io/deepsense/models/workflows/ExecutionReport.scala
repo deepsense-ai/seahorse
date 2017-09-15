@@ -16,15 +16,44 @@
 
 package io.deepsense.models.workflows
 
-import org.joda.time.DateTime
-
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.graph.Node
-import io.deepsense.graph.nodestate.NodeState
+import io.deepsense.graph.nodestate.{Completed, NodeStatus}
 
 case class ExecutionReport(
-    started: DateTime,
-    ended: DateTime,
-    nodes: Map[Node.Id, NodeState],
-    resultEntities: EntitiesMap,
-    error: Option[FailureDescription] = None)
+    states: Map[Node.Id, NodeState],
+    error: Option[FailureDescription] = None) {
+
+  def nodesStatuses: Map[Node.Id, NodeStatus] = states.mapValues(_.nodeStatus)
+
+  def resultEntities: EntitiesMap = {
+    val combinedEntities = states.valuesIterator.flatMap(_.reportEntities().toSeq).toMap
+    EntitiesMap(combinedEntities)
+  }
+}
+
+object ExecutionReport {
+
+  def apply(
+      nodes: Map[Node.Id, NodeStatus],
+      resultEntities: EntitiesMap,
+      error: Option[FailureDescription]): ExecutionReport = {
+    ExecutionReport(toNodeStates(nodes, resultEntities), error)
+  }
+
+  def statesOnly(
+      nodes: Map[Node.Id, NodeStatus],
+      error: Option[FailureDescription]): ExecutionReport = {
+    ExecutionReport(nodes.mapValues(status => NodeState(status, None)), error)
+  }
+
+  private def toNodeStates(
+      nodes: Map[Node.Id, NodeStatus],
+      resultEntities: EntitiesMap): Map[Node.Id, NodeState] = {
+    nodes.map {case (id, status) => status match {
+      case Completed(_, _, results) =>
+        id -> NodeState(status, Some(resultEntities.subMap(results.toSet)))
+      case _ => id -> NodeState(status, None)
+    }}
+  }
+}

@@ -25,11 +25,11 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
-import io.deepsense.graph.nodestate.{Completed, NodeState}
+import io.deepsense.graph.nodestate.{Completed, NodeStatus}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.communication.{StatusRequest, Connect, ExecutionStatus}
+import io.deepsense.workflowexecutor.communication.{ExecutionStatusMQ, StatusRequestMQ}
 import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 /**
@@ -59,7 +59,7 @@ class WorkflowExecutorActor(
         execution)
     case NodeFailed(id, failureDescription) =>
       nodeFailed(id, failureDescription, execution)
-    case StatusRequest(_) =>
+    case StatusRequestMQ(_) =>
       sendExecutionStatus(executionToStatus(execution))
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
@@ -83,7 +83,7 @@ class WorkflowExecutorActor(
    * the last execution (it remains Completed).
    */
   private def invalidateCache(execution: Execution): Unit = {
-    val completedNodes = execution.states.valuesIterator.filter(_.isCompleted)
+    val completedNodes = execution.statuses.valuesIterator.filter(_.isCompleted)
     val validDOperables: Set[Entity.Id] = completedNodes.flatMap {
       case nodestate.Completed(_, _, results) => results
       case _ => Seq()
@@ -101,7 +101,7 @@ class WorkflowExecutorActor(
       val nodeSet = nodes.toSet
       val updatedStructure = finishedExecution.updateStructure(graph, nodeSet)
       launch(finishedExecution, updatedStructure, nodes)
-    case StatusRequest(_) =>
+    case StatusRequestMQ(_) =>
       sendExecutionStatus(executionToStatus(finishedExecution))
   }
 
@@ -110,8 +110,8 @@ class WorkflowExecutorActor(
       val execution = executionFactory.create(graph, nodes)
       // Received Launch for the first time. Use an empty execution as the previous state.
       launch(Execution.empty, execution, nodes)
-    case StatusRequest(_) =>
-      sendExecutionStatus(ExecutionStatus(Map.empty, EntitiesMap()))
+    case StatusRequestMQ(_) =>
+      sendExecutionStatus(ExecutionStatusMQ(Map.empty, EntitiesMap()))
   }
 
   def launch(
@@ -147,28 +147,28 @@ class WorkflowExecutorActor(
         aborted
     }
 
-    val executionStatus: ExecutionStatus =
+    val executionStatus: ExecutionStatusMQ =
       calculateExecutionStatus(previous, updated)
     sendExecutionStatus(executionStatus)
   }
 
   private def calculateExecutionStatus(
       originalExecution: Execution,
-      updatedExecution: Execution): ExecutionStatus = {
-    val updatedStates: Map[Id, NodeState] = getChangedNodes(originalExecution, updatedExecution)
-    val entitiesMap: EntitiesMap = createEntitiesMap(updatedStates.values.toSeq)
-    ExecutionStatus(updatedStates, entitiesMap, updatedExecution.error)
+      updatedExecution: Execution): ExecutionStatusMQ = {
+    val updatedStatuses: Map[Id, NodeStatus] = getChangedNodes(originalExecution, updatedExecution)
+    val entitiesMap: EntitiesMap = createEntitiesMap(updatedStatuses.values.toSeq)
+    ExecutionStatusMQ(updatedStatuses, entitiesMap, updatedExecution.error)
   }
 
   private def getChangedNodes(
       originalExecution: Execution,
-      updatedExecution: Execution): Map[Id, NodeState] = {
-    updatedExecution.states.filterNot { case (id, state) =>
-      originalExecution.states.contains(id) && state == originalExecution.states(id)
+      updatedExecution: Execution): Map[Id, NodeStatus] = {
+    updatedExecution.statuses.filterNot { case (id, state) =>
+      originalExecution.statuses.contains(id) && state == originalExecution.statuses(id)
     }
   }
 
-  private def createEntitiesMap(states: Seq[NodeState]): EntitiesMap = {
+  private def createEntitiesMap(states: Seq[NodeStatus]): EntitiesMap = {
     val entities: Seq[Entity.Id] = states.flatMap {
       case Completed(_, _, results: Seq[Id]) => results
       case _ => Seq.empty
@@ -178,15 +178,15 @@ class WorkflowExecutorActor(
     EntitiesMap(dOperables, reportsContents)
   }
 
-  def sendExecutionStatus(executionStatus: ExecutionStatus): Unit = {
-    logger.debug(s"Status for '$workflowId': Error: ${executionStatus.executionFailure}, " +
-      s"States of nodes: ${executionStatus.nodes.mkString("\n")}")
+  def sendExecutionStatus(executionStatus: ExecutionStatusMQ): Unit = {
+    logger.debug(s"Status for '$workflowId': Error: ${executionStatus.executionReport.error}, " +
+      s"States of nodes: ${executionStatus.executionReport.nodesStatuses.mkString("\n")}")
     publisher.foreach(_ ! executionStatus)
   }
 
-  def executionToStatus(execution: Execution): ExecutionStatus = {
-    ExecutionStatus(
-      execution.states,
+  def executionToStatus(execution: Execution): ExecutionStatusMQ = {
+    ExecutionStatusMQ(
+      execution.statuses,
       EntitiesMap(dOperableCache.toMap, reports.toMap), execution.error)
   }
 
@@ -313,7 +313,7 @@ class PartialExecutionFactoryImpl extends ExecutionFactory {
 // This is a separate class in order to make logs look better.
 case class WorkflowProgress() extends Logging {
   def logProgress(execution: Execution): Unit = {
-    val states = execution.states.values
+    val states = execution.statuses.values
     val completed = states.count(_.isCompleted)
     logger.info(
       s"$completed ${if (completed == 1) "node" else "nodes"} successfully completed, " +

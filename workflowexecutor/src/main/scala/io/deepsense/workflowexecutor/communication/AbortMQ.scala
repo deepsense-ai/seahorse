@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.workflows
+package io.deepsense.workflowexecutor.communication
 
-import io.deepsense.graph.{DirectedGraph, GraphKnowledge}
+import spray.json.RootJsonFormat
 
-case class WorkflowWithKnowledge(
-    id: Workflow.Id,
-    metadata: WorkflowMetadata,
-    graph: DirectedGraph,
-    thirdPartyData: ThirdPartyData,
-    knowledge: GraphKnowledge)
+import io.deepsense.commons.utils.Logging
+import io.deepsense.models.json.workflow.WorkflowJsonProtocol
+import io.deepsense.models.workflows.Workflow
+
+case class AbortMQ(workflowId: Workflow.Id) extends ReadMessageMQ
+
+object AbortMQ {
+  val messageType: String = "abort"
+}
+
+trait AbortMQJsonProtocol
+  extends Logging {
+  self: WorkflowJsonProtocol =>
+
+  implicit val abortFormat: RootJsonFormat[AbortMQ] = jsonFormat1(AbortMQ.apply)
+}

@@ -18,6 +18,7 @@ package io.deepsense.models.workflows
 
 import io.deepsense.graph.DirectedGraph
 
+@Deprecated
 case class WorkflowWithSavedResults(
   id: Workflow.Id,
   metadata: WorkflowMetadata,
@@ -25,6 +26,7 @@ case class WorkflowWithSavedResults(
   thirdPartyData: ThirdPartyData,
   executionReport: ExecutionReportWithId)
 
+@Deprecated
 object WorkflowWithSavedResults {
   def apply(
       resultsId: ExecutionReportWithId.Id,

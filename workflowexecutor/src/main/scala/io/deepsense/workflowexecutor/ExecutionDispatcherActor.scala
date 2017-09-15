@@ -27,7 +27,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
-import io.deepsense.workflowexecutor.communication.Connect
+import io.deepsense.workflowexecutor.communication.ConnectMQ
 import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 
@@ -48,7 +48,7 @@ class ExecutionDispatcherActor(
   // TODO handle child's exceptions
 
   override def receive: Receive = {
-    case msg @ WorkflowConnect(connect @ Connect(workflowId), publisherPath) =>
+    case msg @ WorkflowConnect(connect @ ConnectMQ(workflowId), publisherPath) =>
       logger.debug(s"Received $msg")
       val existingExecutor: Option[ActorRef] = findExecutor(workflowId)
       val publisher = context.actorSelection(publisherPath)

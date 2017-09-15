@@ -25,44 +25,44 @@ import io.deepsense.commons.json.DateTimeJsonProtocol._
 import io.deepsense.graph.nodestate._
 import io.deepsense.models.entities.Entity
 
-trait NodeStateJsonProtocol
+trait NodeStatusJsonProtocol
   extends DefaultJsonProtocol
   with FailureDescriptionJsonProtocol
   with NullOptions {
 
-  implicit object NodeStateFormat
-    extends JsonFormat[NodeState]
+  implicit object NodeStatusFormat
+    extends JsonFormat[NodeStatus]
     with DefaultJsonProtocol
     with NullOptions {
 
-    val viewFormat = jsonFormat5(NodeStateView)
+    val viewFormat = jsonFormat5(NodeStatusView)
     val runningFormat = jsonFormat1(Running)
     val completedFormat = jsonFormat3(Completed)
     val failedFormat = jsonFormat3(Failed)
 
-    override def write(state: NodeState): JsValue = {
+    override def write(state: NodeStatus): JsValue = {
 
       val view = state match {
 
-        case Running(started) => NodeStateView(state.name, started = Some(started))
+        case Running(started) => NodeStatusView(state.name, started = Some(started))
         case Completed(started, ended, results) =>
-          NodeStateView(state.name,
+          NodeStatusView(state.name,
             started = Some(started),
             ended = Some(ended),
             results = Some(results))
         case Failed(started, ended, error) =>
-          NodeStateView(state.name,
+          NodeStatusView(state.name,
             started = Some(started),
             ended = Some(ended),
             error = Some(error)
           )
-        case _ => NodeStateView(state.name)
+        case _ => NodeStatusView(state.name)
       }
 
       view.toJson(viewFormat)
     }
 
-    override def read(json: JsValue): NodeState = {
+    override def read(json: JsValue): NodeStatus = {
       val jsObject = json.asJsObject
       val status = jsObject.fields.get("status")
       if (status.isEmpty) {
@@ -79,7 +79,7 @@ trait NodeStateJsonProtocol
       }
     }
 
-    case class NodeStateView(
+    case class NodeStatusView(
       status: String,
       started: Option[DateTime] = None,
       ended: Option[DateTime] = None,
@@ -88,7 +88,7 @@ trait NodeStateJsonProtocol
   }
 }
 
-object NodeStateJsonProtocol extends NodeStateJsonProtocol {
+object NodeStatusJsonProtocol extends NodeStatusJsonProtocol {
   val Status = "status"
   val Started = "started"
   val Ended = "ended"

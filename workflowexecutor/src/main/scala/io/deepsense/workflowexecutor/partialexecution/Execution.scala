@@ -19,7 +19,7 @@ package io.deepsense.workflowexecutor.partialexecution
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.Node.Id
-import io.deepsense.graph.nodestate.NodeState
+import io.deepsense.graph.nodestate.NodeStatus
 import io.deepsense.graph.{DirectedGraph, Node, ReadyNode, StatefulGraph, nodestate}
 import io.deepsense.models.entities.Entity
 
@@ -40,7 +40,7 @@ object Execution {
 }
 
 sealed trait ExecutionLike {
-  type NodeStates = Map[Node.Id, NodeState]
+  type NodeStatuses = Map[Node.Id, NodeStatus]
 
   def node(id: Node.Id): Node
   def nodeStarted(id: Node.Id): Execution
@@ -49,7 +49,7 @@ sealed trait ExecutionLike {
   def enqueue: Execution
   def readyNodes: Seq[ReadyNode]
   def error: Option[FailureDescription]
-  def states: NodeStates
+  def statuses: NodeStatuses
   def isRunning: Boolean
   def inferAndApplyKnowledge(inferContext: InferContext): Execution
   def updateStructure(directedGraph: DirectedGraph, nodes: Set[Node.Id]): Execution
@@ -67,7 +67,7 @@ case class IdleExecution(
     selectedNodes: Set[Node.Id])
   extends Execution(graph, running = false) {
 
-  override def states: NodeStates = graph.states
+  override def statuses: NodeStatuses = graph.statuses
 
   override def nodeFinished(id: Node.Id, results: Seq[Entity.Id]): Execution = {
     throw new IllegalStateException("A node cannot finish in IdleExecution")
@@ -85,8 +85,8 @@ case class IdleExecution(
   override def updateStructure(newStructure: DirectedGraph, nodes: Set[Id]): IdleExecution = {
     val selected = Execution.selectedNodes(newStructure, nodes.toSeq)
     val substructure = newStructure.subgraph(selected)
-    val newState = findStates(newStructure, substructure, selected)
-    val graph = StatefulGraph(newStructure, newState, None)
+    val newStatus = findStatuses(newStructure, substructure, selected)
+    val graph = StatefulGraph(newStructure, newStatus, None)
     IdleExecution(graph, selected)
   }
 
@@ -107,7 +107,7 @@ case class IdleExecution(
   override def inferAndApplyKnowledge(inferContext: InferContext): IdleExecution = {
     val (_, subgraph: StatefulGraph) = selectedSubgraph
     val inferred = subgraph.inferAndApplyKnowledge(inferContext)
-    copy(graph = graph.updateStates(inferred))
+    copy(graph = graph.updateStatuses(inferred))
   }
 
   override def abort: Execution = {
@@ -120,29 +120,29 @@ case class IdleExecution(
     (selected, subgraph)
   }
 
-  private def findStates(
+  private def findStatuses(
       newStructure: DirectedGraph,
       substructure: DirectedGraph,
-      nodes: Set[Node.Id]): NodeStates = {
+      nodes: Set[Node.Id]): NodeStatuses = {
     if (newStructure.containsCycle) {
       newStructure.nodes.map(n => n.id -> nodestate.Draft).toMap
     } else {
-      val noMissingStates = newStructure.nodes.map {
-        case Node(id, _) => id -> states.getOrElse(id, nodestate.Draft)
+      val noMissingStatuses = newStructure.nodes.map {
+        case Node(id, _) => id -> statuses.getOrElse(id, nodestate.Draft)
       }.toMap
 
-      val wholeGraph = StatefulGraph(newStructure, noMissingStates, None)
+      val wholeGraph = StatefulGraph(newStructure, noMissingStatuses, None)
       val newNodes = newStructure.nodes.diff(graph.directedGraph.nodes).map(_.id)
 
       val nodesToExecute = substructure.nodes.filter { case Node(id, _) =>
-        nodes.contains(id) || !wholeGraph.states(id).isCompleted
+        nodes.contains(id) || !wholeGraph.statuses(id).isCompleted
       }.map(_.id)
 
       val nodesNeedingDrafting = newNodes ++ nodesToExecute
 
       nodesNeedingDrafting.foldLeft(wholeGraph) {
         case (g, id) => g.draft(id)
-      }.states
+      }.statuses
     }
   }
 
@@ -156,7 +156,7 @@ abstract class StartedExecution(
   selectedNodes: Set[Node.Id])
   extends Execution(graph, running = true) {
 
-  override def states: NodeStates = graph.states ++ runningPart.states
+  override def statuses: NodeStatuses = graph.statuses ++ runningPart.statuses
 
   override def readyNodes: Seq[ReadyNode] = runningPart.readyNodes
 
@@ -181,7 +181,7 @@ abstract class StartedExecution(
 
   private def withRunningPartUpdated(update: (StatefulGraph) => StatefulGraph): Execution = {
     val updatedRunningPart = update(runningPart)
-    val updatedGraph = graph.updateStates(updatedRunningPart)
+    val updatedGraph = graph.updateStatuses(updatedRunningPart)
 
     if (updatedRunningPart.isRunning) {
       updateState(updatedRunningPart, updatedGraph)
@@ -203,7 +203,7 @@ case class RunningExecution(
 
   override def nodeStarted(id: Id): RunningExecution = {
     val updatedRunningPart = runningPart.nodeStarted(id)
-    val updatedGraph = graph.updateStates(updatedRunningPart)
+    val updatedGraph = graph.updateStatuses(updatedRunningPart)
     copy(graph = updatedGraph, runningPart = updatedRunningPart)
   }
 

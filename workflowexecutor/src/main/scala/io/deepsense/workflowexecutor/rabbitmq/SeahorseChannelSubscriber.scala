@@ -36,7 +36,7 @@ case class SeahorseChannelSubscriber(
   var publishers: Map[Workflow.Id, ActorRef] = Map()
 
   override def receive(): Actor.Receive = {
-    case c @ Connect(workflowId) =>
+    case c @ ConnectMQ(workflowId) =>
       val workflowIdString = workflowId.toString
       if (!publishers.contains(workflowId)) {
         val subscriberActor =
@@ -50,7 +50,7 @@ case class SeahorseChannelSubscriber(
       val publisherPath: ActorPath = publishers(workflowId).path
       executionDispatcher ! WorkflowConnect(c, publisherPath)
 
-    case get: GetPythonGatewayAddress =>
+    case get: GetPythonGatewayAddressMQ =>
       pythonGateway.listeningPort foreach { port =>
         publisher.publish(
           MQCommunication.kernelTopic,
@@ -59,7 +59,7 @@ case class SeahorseChannelSubscriber(
   }
 }
 
-case class WorkflowConnect(connect: Connect, publisherPath: ActorPath)
+case class WorkflowConnect(connect: ConnectMQ, publisherPath: ActorPath)
 
 object SeahorseChannelSubscriber {
   def props(

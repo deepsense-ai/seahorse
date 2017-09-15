@@ -20,17 +20,17 @@ import scala.concurrent.Promise
 
 import akka.actor.{Actor, Props}
 
-import io.deepsense.workflowexecutor.communication.ExecutionStatus
+import io.deepsense.workflowexecutor.communication.ExecutionStatusMQ
 
-class TerminationListenerActor(finishedExecutionStatus: Promise[ExecutionStatus]) extends Actor {
+class TerminationListenerActor(finishedExecutionStatus: Promise[ExecutionStatusMQ]) extends Actor {
   override def receive: Receive = {
-    case status: ExecutionStatus =>
+    case status: ExecutionStatusMQ =>
       finishedExecutionStatus.success(status)
       context.system.shutdown()
   }
 }
 
 object TerminationListenerActor {
-  def props(finishedExecutionStatus: Promise[ExecutionStatus]): Props =
+  def props(finishedExecutionStatus: Promise[ExecutionStatusMQ]): Props =
     Props(new TerminationListenerActor(finishedExecutionStatus))
 }

@@ -37,21 +37,21 @@ class ExecutionSpec
     "have all nodes Draft" when {
       "empty" in {
         val execution = Execution.empty
-        execution.states.values.toSet should have size 0
+        execution.statuses.values.toSet should have size 0
       }
       "non empty" in {
         val execution = Execution(directedGraph)
-        execution.states should have size execution.selectedNodes.size
+        execution.statuses should have size execution.selectedNodes.size
         execution.selectedNodes.foreach {
-          n => execution.states(n) shouldBe nodestate.Draft
+          n => execution.statuses(n) shouldBe nodestate.Draft
         }
         execution shouldBe an[IdleExecution]
       }
       "created with selection" in {
         val execution = Execution(directedGraph, Seq(idA, idB))
-        execution.states should have size execution.graph.size
+        execution.statuses should have size execution.graph.size
         execution.selectedNodes.foreach {
-          n => execution.states(n) shouldBe nodestate.Draft
+          n => execution.statuses(n) shouldBe nodestate.Draft
         }
       }
     }
@@ -67,7 +67,7 @@ class ExecutionSpec
 
       val inferenceResult = mock[StatefulGraph]
       when(subgraph.inferAndApplyKnowledge(any())).thenReturn(inferenceResult)
-      when(graph.updateStates(any())).thenReturn(inferenceResult)
+      when(graph.updateStatuses(any())).thenReturn(inferenceResult)
 
       val inferContext = mock[InferContext]
       val inferred = execution.inferAndApplyKnowledge(inferContext)
@@ -96,11 +96,11 @@ class ExecutionSpec
         val updated =
           execution.updateStructure(statefulGraph.directedGraph, Set(idC))
 
-        updated.states(idA) shouldBe execution.states(idA)
-        updated.states(idB) shouldBe nodestate.Draft
-        updated.states(idC) shouldBe nodestate.Draft
-        updated.states(idD) shouldBe nodestate.Draft
-        updated.states(idE) shouldBe nodestate.Draft
+        updated.statuses(idA) shouldBe execution.statuses(idA)
+        updated.statuses(idB) shouldBe nodestate.Draft
+        updated.statuses(idC) shouldBe nodestate.Draft
+        updated.statuses(idD) shouldBe nodestate.Draft
+        updated.statuses(idE) shouldBe nodestate.Draft
     }
     "enqueue all nodes" when {
       "all nodes or no nodes where specified" in {
@@ -128,7 +128,7 @@ class ExecutionSpec
             queuedGraph,
             allNodesIds.toSet)
 
-        enqueued.states.forall { case (_, state) => state.isQueued } shouldBe true
+        enqueued.statuses.forall { case (_, state) => state.isQueued } shouldBe true
       }
     }
     "mark all selected nodes as Draft" in {
@@ -151,11 +151,11 @@ class ExecutionSpec
       val updated =
         execution.updateStructure(statefulGraph.directedGraph, Set(idC, idE))
 
-      updated.states(idA) shouldBe execution.states(idA)
-      updated.states(idB) shouldBe execution.states(idB)
-      updated.states(idC) shouldBe nodestate.Draft
-      updated.states(idD) shouldBe nodestate.Draft
-      updated.states(idE) shouldBe nodestate.Draft
+      updated.statuses(idA) shouldBe execution.statuses(idA)
+      updated.statuses(idB) shouldBe execution.statuses(idB)
+      updated.statuses(idC) shouldBe nodestate.Draft
+      updated.statuses(idD) shouldBe nodestate.Draft
+      updated.statuses(idE) shouldBe nodestate.Draft
     }
     "not execute operations that are already completed (if they are not selected)" +
       "finish execution if the selected subgraph finished" in {
@@ -179,11 +179,11 @@ class ExecutionSpec
           .updateStructure(statefulGraph.directedGraph, Set(idC, idE))
           .enqueue
 
-      enqueued.states(idA) shouldBe execution.states(idA)
-      enqueued.states(idB) shouldBe execution.states(idB)
-      enqueued.states(idC) shouldBe nodestate.Queued
-      enqueued.states(idD) shouldBe nodestate.Draft
-      enqueued.states(idE) shouldBe nodestate.Queued
+      enqueued.statuses(idA) shouldBe execution.statuses(idA)
+      enqueued.statuses(idB) shouldBe execution.statuses(idB)
+      enqueued.statuses(idC) shouldBe nodestate.Queued
+      enqueued.statuses(idD) shouldBe nodestate.Draft
+      enqueued.statuses(idE) shouldBe nodestate.Queued
 
       enqueued.readyNodes.map(rn => rn.node) should contain theSameElementsAs List(nodeC, nodeE)
       val cStarted = enqueued.nodeStarted(idC)
@@ -208,7 +208,7 @@ class ExecutionSpec
       when(graph.directedGraph).thenReturn(directedGraph)
       when(graph.subgraph(any())).thenReturn(graph)
       when(graph.inferAndApplyKnowledge(any())).thenReturn(failedGraph)
-      when(graph.updateStates(any())).thenReturn(failedGraph)
+      when(graph.updateStatuses(any())).thenReturn(failedGraph)
       when(graph.executionFailure).thenReturn(None)
 
       val execution = IdleExecution(graph, Set())
@@ -278,17 +278,17 @@ class ExecutionSpec
       statefulGraph.nodes.map(_.id))
 
     val updatedExecution = execution.updateStructure(updatedGraph, Set(idE))
-    updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
-    updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
-    updatedExecution.states(changedC.id) shouldBe nodestate.Draft
-    updatedExecution.states(idD) shouldBe nodestate.Draft
-    updatedExecution.states(idE) shouldBe nodestate.Draft
+    updatedExecution.statuses(idA) shouldBe statefulGraph.statuses(idA)
+    updatedExecution.statuses(idB) shouldBe statefulGraph.statuses(idB)
+    updatedExecution.statuses(changedC.id) shouldBe nodestate.Draft
+    updatedExecution.statuses(idD) shouldBe nodestate.Draft
+    updatedExecution.statuses(idE) shouldBe nodestate.Draft
 
     val queuedExecution = updatedExecution.enqueue
-    queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
-    queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
-    queuedExecution.states(changedC.id) shouldBe nodestate.Draft
-    queuedExecution.states(idD) shouldBe nodestate.Draft
-    queuedExecution.states(idE) shouldBe nodestate.Queued
+    queuedExecution.statuses(idA) shouldBe statefulGraph.statuses(idA)
+    queuedExecution.statuses(idB) shouldBe statefulGraph.statuses(idB)
+    queuedExecution.statuses(changedC.id) shouldBe nodestate.Draft
+    queuedExecution.statuses(idD) shouldBe nodestate.Draft
+    queuedExecution.statuses(idE) shouldBe nodestate.Queued
   }
 }

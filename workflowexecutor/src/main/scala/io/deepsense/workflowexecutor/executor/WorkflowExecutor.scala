@@ -41,7 +41,7 @@ import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
-import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
+import io.deepsense.workflowexecutor.communication.{ConnectMQ, ExecutionStatusMQ}
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{ExecutionParams, ReportUploadClient, WorkflowDownloadClient, WorkflowExecutorActor}
@@ -65,7 +65,7 @@ case class WorkflowExecutor(
       CustomOperationExecutorStub())
 
     val actorSystem = ActorSystem(actorSystemName)
-    val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
+    val finishedExecutionStatus: Promise[ExecutionStatusMQ] = Promise()
     val statusReceiverActor =
       actorSystem.actorOf(TerminationListenerActor.props(finishedExecutionStatus))
     val workflowExecutorActor = actorSystem.actorOf(
@@ -73,7 +73,7 @@ case class WorkflowExecutor(
       workflow.id.toString)
 
     val startedTime = DateTimeConverter.now
-    workflowExecutorActor ! Connect(workflow.id)
+    workflowExecutorActor ! ConnectMQ(workflow.id)
     workflowExecutorActor ! Launch(workflow.graph)
 
     logger.debug("Awaiting execution end...")
@@ -83,14 +83,9 @@ case class WorkflowExecutor(
       case Failure(exception) => // WEA failed with an exception
         logger.error("WorkflowExecutorActor failed: ", exception)
         throw exception
-      case Success(ExecutionStatus(nodes, entitiesMap, failure)) =>
+      case Success(ExecutionStatusMQ(executionReport)) =>
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
-        Try(ExecutionReport(
-          startedTime,
-          DateTimeConverter.now,
-          nodes,
-          entitiesMap
-        ))
+        Try(executionReport)
     }
 
     cleanup(actorSystem, executionContext)

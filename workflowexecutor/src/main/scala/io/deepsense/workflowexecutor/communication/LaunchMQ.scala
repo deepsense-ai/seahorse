@@ -16,21 +16,27 @@
 
 package io.deepsense.workflowexecutor.communication
 
-import spray.json.RootJsonFormat
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.graph.{DirectedGraph, Node}
 import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows.Workflow
 
-case class Abort(workflowId: Workflow.Id) extends ReadMessageMQ
+case class LaunchMQ(
+    workflowId: Workflow.Id,
+    workflow: DirectedGraph,
+    nodesToExecute: Seq[Node.Id])
+  extends ReadMessageMQ
 
-object Abort {
-  val messageType: String = "abort"
+object LaunchMQ {
+  val messageType: String = "launch"
 }
 
-trait AbortJsonProtocol
-  extends Logging {
+trait LaunchMQJsonProtocol
+    extends DefaultJsonProtocol
+    with Logging {
   self: WorkflowJsonProtocol =>
 
-  implicit val abortFormat: RootJsonFormat[Abort] = jsonFormat1(Abort.apply)
+  implicit val launchFormat: RootJsonFormat[LaunchMQ] = jsonFormat3(LaunchMQ.apply)
 }

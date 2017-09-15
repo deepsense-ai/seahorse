@@ -19,8 +19,8 @@ package io.deepsense.models.workflows
 import io.deepsense.graph.DirectedGraph
 
 case class WorkflowWithResults(
-    id: Workflow.Id,
-    metadata: WorkflowMetadata,
-    graph: DirectedGraph,
-    thirdPartyData: ThirdPartyData,
-    executionReport: ExecutionReport)
+  id: Workflow.Id,
+  metadata: WorkflowMetadata,
+  graph: DirectedGraph,
+  thirdPartyData: ThirdPartyData,
+  executionReport: ExecutionReport)
