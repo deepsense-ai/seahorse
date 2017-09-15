@@ -118,7 +118,7 @@ class ReadDatasource()
   private def wrapAsSubQuery(query: String): String = {
     // Note that oracle alias column name cannot exceed 30 characters, hence .take(16).
     // "tmp" prefix is needed so that name always starts with character.
-    s"($query) as tmp${UUID.randomUUID.toString.replace("-", "").take(16)}"
+    s"($query) tmp${UUID.randomUUID.toString.replace("-", "").take(16)}"
   }
 }
 
