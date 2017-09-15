@@ -6,7 +6,10 @@ function ReportOptionsService($rootScope) {
   internal.elements = [];
   internal.port = null;
   internal.node = null;
-  internal.IS_DEPLOYABLE = 'io.deepsense.deeplang.doperables.Scorable';
+  internal.DEPLOYABLE_TYPES = [
+    'io.deepsense.deeplang.doperables.TrainedRidgeRegression',
+    'io.deepsense.deeplang.doperables.TrainedLogisticRegression'
+  ];
 
   internal.goToDeploy = function goToDeploy() {
     $rootScope.$broadcast('Model.DEPLOY', {id: that.getReportId()});
@@ -44,7 +47,9 @@ function ReportOptionsService($rootScope) {
   that.isDeployable = function isDeployable() {
     let nodeOutputPorts = that.getCurrentNode().output;
     let currentPort = nodeOutputPorts[that.getCurrentPortIndex()];
-    return currentPort.typeQualifier.indexOf(internal.IS_DEPLOYABLE) > -1;
+    return _.any(_.map(internal.DEPLOYABLE_TYPES, (deployableType) => {
+      return currentPort.typeQualifier.indexOf(deployableType) > -1;
+    }));
   };
 
   that.isCompleted = function isCompleted() {
