@@ -4,6 +4,7 @@
 
 import com.typesafe.sbt.SbtGit
 import com.typesafe.sbt.packager.docker._
+import sbt.ProjectRef
 
 name := "deepsense-sessionmanager"
 
@@ -17,29 +18,12 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 // If there are many `App` objects in project, docker image will crash with cryptic message
 mainClass in Compile := Some("io.deepsense.sessionmanager.SessionManagerApp")
 
-lazy val weJar = taskKey[File]("Workflow executor runnable jar")
 lazy val weSparkVersion = DeepsenseUniversalSettingsPlugin.weSparkVersion
 
-weJar := {
-  val jar =
-    new File(s"seahorse-workflow-executor/target/workflowexecutor.jar")
-
-  val assemblyCmd = s"sbt -DsparkVersion=$weSparkVersion workflowexecutor/assembly"
-
-  if (jar.exists()) {
-    println(
-      s"""
-         |Workflow executor jar in nested repo already exist. Assuming it's up to date.
-         |If you need to rebuild we.jar run `$assemblyCmd` in embedded WE repo.
-          """.stripMargin
-    )
-  } else {
-    val shell = Seq("bash", "-c")
-    shell :+ s"cd seahorse-workflow-executor; $assemblyCmd" !!
-  }
-
-  jar
-}
+lazy val workflowExecutorProject = ProjectRef(file("./seahorse-workflow-executor"), "workflowexecutor")
+lazy val assembly = taskKey[File]("Copied from sbt-assembly's keys.")
+lazy val weJar = taskKey[File]("Workflow executor runnable jar")
+weJar := (assembly in workflowExecutorProject).value
 
 mappings in Universal += weJar.value -> "we.jar"
 

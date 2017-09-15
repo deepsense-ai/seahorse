@@ -16,7 +16,7 @@ mkdir $WE_DEPS_CONTENT
 
 echo "Copying python and R executors from workflowexecutor jar"
 
-WE_JAR="../../../../seahorse-workflow-executor/target/workflowexecutor.jar"
+WE_JAR="../../../../target/workflowexecutor.jar"
 (cd $WE_DEPS_CONTENT; jar xf $WE_JAR pyexecutor)
 (cd $WE_DEPS_CONTENT; jar xf $WE_JAR r_executor.R)
 

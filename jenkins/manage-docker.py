@@ -24,12 +24,6 @@ sbt_type = 'sbt'
 # https://github.com/sbt/sbt/issues/896
 sbt_clean_more_cmd = "(find . -name target -type d -exec rm -rf {} \; || true) && sbt clean &&"
 
-# This is a workaround for sessionmanager sbt building workflowexecutor using subprocess
-# It should be solved by sessionmanager sbt task calling sbt task from workflowexecutor subproject
-def sessionmanager():
-    command = sbt_clean_more_cmd + "cd seahorse-workflow-executor/ && sbt -DsparkVersion=2.0.0 workflowexecutor/assembly && cd .. && sbt sessionmanager/docker:publishLocal"
-    return simple_command_docker("deepsense-sessionmanager", command)
-
 
 def simple_docker(docker_image_name, docker_file_path, project_name):
     command = "./jenkins/scripts/build-local-docker.sh {} {}".format(docker_file_path, project_name)
@@ -51,7 +45,7 @@ image_confs = [
     simple_docker("deepsense-spark", "deployment/spark-docker", "deepsense-spark"),
     simple_command_docker("deepsense-mesos-spark", "./jenkins/build_spark_docker_mesos.sh"),
     sbt_docker("deepsense-schedulingmanager", "schedulingmanager"),
-    sessionmanager(),
+    sbt_docker('deepsense-sessionmanager', "sessionmanager"),
     sbt_docker("deepsense-workflowmanager", "workflowmanager"),
     sbt_docker("deepsense-datasourcemanager", "datasourcemanager"),
     sbt_docker("deepsense-libraryservice", "libraryservice"),
