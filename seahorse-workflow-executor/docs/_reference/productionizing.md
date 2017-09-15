@@ -16,7 +16,7 @@ description: Productionizing Workflows with Seahorse Batch Workflow Executor
 Production-ready workflows can be exported as standalone
 Apache Spark applications and executed on any cluster in a batch mode.
 
-Seahorse Batch Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }} is an Apache Spark
+Seahorse Batch Workflow Executor is an Apache Spark
 application that allows you to execute standalone workflows.
 This functionality can facilitate integration of Seahorse with other data processing systems
 and manage the execution of workflows outside of Seahorse Editor.
