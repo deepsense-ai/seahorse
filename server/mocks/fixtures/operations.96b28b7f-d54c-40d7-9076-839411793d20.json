@@ -1,0 +1,29 @@
+{
+  "operation": {
+    "name": "Project Columns",
+    "description": "Projects selected columns of a DataFrame",
+    "ports": {
+      "input": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"],
+        "required": true
+      }],
+      "output": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+      }]
+    },
+    "version": "0.1.0",
+    "id": "96b28b7f-d54c-40d7-9076-839411793d20",
+    "category": "6c730c11-9708-4a84-9dbd-3845903f32ac",
+    "deterministic": false,
+    "parameters": {
+      "selectedColumns": {
+        "type": "selector",
+        "description": "Columns to be included in the output DataFrame",
+        "required": true,
+        "isSingle": false
+      }
+    }
+  }
+}
