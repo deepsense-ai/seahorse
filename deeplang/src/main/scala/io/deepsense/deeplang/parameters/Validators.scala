@@ -25,7 +25,6 @@ import io.deepsense.deeplang.parameters.exceptions.{MatchException, OutOfRangeEx
 
 /**
  * Validates if NumericParameter value is within range bounds.
- * TODO: take into account an epsilon when comparing floating point numbers.
  */
 case class RangeValidator(
     begin: Double,
@@ -35,9 +34,12 @@ case class RangeValidator(
     step: Option[Double] = None)
   extends Validator[Double] {
 
+  import RangeValidator.Epsilon
+
   require(begin <= end)
   step.foreach(s => require(s > 0))
-  step.foreach(s => require(takeSteps(countStepsTo(end, s), s) == end,
+  step.foreach(s => require(
+    math.abs(takeSteps(countStepsTo(end, s), s) - end) < Epsilon,
     "Length of range should be divisible by step."))
 
   val validatorType = ValidatorType.Range
@@ -55,7 +57,7 @@ case class RangeValidator(
   /** Validates if parameter value can be reached using given step */
   private def validateStep(value: Double): Vector[DeepLangException] = {
     step.foreach {
-      s => if (takeSteps(countStepsTo(value, s), s) != value) {
+      s => if (math.abs(takeSteps(countStepsTo(value, s), s) - value) >= Epsilon) {
         return Vector(OutOfRangeWithStepException(value, begin, end, s))
       }
     }
@@ -66,15 +68,20 @@ case class RangeValidator(
    * Counts number of steps that needs to be taken to get to the given value.
    * If number of steps is not an integer then the floor of that number is returned.
    */
-  private def countStepsTo(value: Double, step: Double): Int = ((value - begin)/step).floor.toInt
+  private def countStepsTo(value: Double, step: Double): Long =
+    ((value - begin) / step).floor.toLong
 
   /** Computes the value after given number of steps starting at `begin` of range. */
-  private def takeSteps(count: Int, step: Double): Double = begin + step * count
+  private def takeSteps(count: Long, step: Double): Double = begin + step * count
 
   override def configurationToJson: JsObject = {
     import ValidatorsJsonProtocol.rangeValidatorFormat
     rangeValidatorFormat.write(this).asJsObject
   }
+}
+
+object RangeValidator {
+  val Epsilon = 1e-10
 }
 
 /**

@@ -41,7 +41,7 @@ case class MultipleSelection(choices: Traversable[Selection])
  */
 @SerialVersionUID(1)
 sealed abstract class SingleColumnSelection(
-    typeName: String)
+    val typeName: String)
   extends Serializable {
 
   final def toJson: JsValue = {

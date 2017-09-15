@@ -33,6 +33,6 @@ object ValidatorsJsonProtocol extends DefaultJsonProtocol {
   }
 
   val rangeValidatorFormat = jsonFormat(
-    RangeValidator, "begin", "end", "beginIncluded", "endIncluded", "step")
+    RangeValidator.apply, "begin", "end", "beginIncluded", "endIncluded", "step")
   val regexValidatorFormat = jsonFormat(RegexValidator, "regex")
 }

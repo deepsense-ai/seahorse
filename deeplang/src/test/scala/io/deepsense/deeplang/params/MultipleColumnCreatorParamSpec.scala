@@ -20,7 +20,7 @@ import spray.json._
 import spray.json.DefaultJsonProtocol._
 
 class MultipleColumnCreatorParamSpec
-  extends AbstractParamSpec[Vector[String], MultipleColumnCreatorParam] {
+  extends AbstractParamSpec[Array[String], MultipleColumnCreatorParam] {
 
   override def className: String = "MultipleColumnCreatorParam"
 
@@ -37,8 +37,8 @@ class MultipleColumnCreatorParamSpec
     (param, expectedJson)
   }
 
-  override def valueFixture: (Vector[String], JsValue) = {
-    val value = Vector("a", "b", "c")
+  override def valueFixture: (Array[String], JsValue) = {
+    val value = Array("a", "b", "c")
     (value, value.toJson)
   }
 }

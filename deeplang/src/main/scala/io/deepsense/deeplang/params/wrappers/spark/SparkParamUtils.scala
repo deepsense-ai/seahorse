@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.wrappers.spark
 
-import io.deepsense.deeplang.parameters.{SingleColumnSelectionProtocol, ParameterType, SingleColumnSelection}
+import org.apache.spark.ml.param.Param
 
-import SingleColumnSelectionProtocol._
+object SparkParamUtils {
 
-case class SingleColumnSelectorParam(
-    name: String,
-    description: String,
-    portIndex: Int,
-    override val index: Int = 0)
-  extends AbstractColumnSelectorParam[SingleColumnSelection]
-  with SingleColumnSelectionProtocol {
+  def defaultName(sparkParam: Param[_]): String =
+    sparkParam.name.replaceAll("([A-Z])", " $1").toUpperCase
 
-  override val parameterType = ParameterType.ColumnSelector
-  override val isSingle = true
+  def defaultDescription(sparkParam: Param[_]): String =
+    sparkParam.doc.substring(0, 1).toUpperCase + sparkParam.doc.substring(1)
+
 }

@@ -30,7 +30,7 @@ import io.deepsense.deeplang.parameters.exceptions.IllegalIndexRangeColumnSelect
  */
 @SerialVersionUID(1)
 sealed abstract class ColumnSelection(
-    typeName: String)
+    val typeName: String)
   extends Serializable {
 
   final def toJson: JsValue = JsObject(

@@ -24,7 +24,7 @@ case class MultipleColumnCreatorParam(
     name: String,
     description: String,
     override val index: Int = 0)
-  extends ParamWithJsFormat[Vector[String]] {
+  extends ParamWithJsFormat[Array[String]] {
 
   val parameterType = ParameterType.MultipleColumnCreator
 }
