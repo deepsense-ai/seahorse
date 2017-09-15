@@ -9,7 +9,7 @@
 function AttributeMultipleChoiceType($compile) {
   return {
     restrict: 'E',
-    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-multiple-choice-type.html',
+    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-multiple-choice/attribute-multiple-choice-type.html',
     scope: true,
     replace: true,
     link: function (scope, element, attrs) {

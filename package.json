@@ -77,7 +77,8 @@
   },
   "browserify-shim": {
     "angular": "global:angular",
-    "jsPlumb": "global:jsPlumb"
+    "jsPlumb": "global:jsPlumb",
+    "_": ""
   },
   "files": {
     "build": {
@@ -114,7 +115,8 @@
           "./node_modules/angular-ui-router/release/angular-ui-router.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.js",
           "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js",
-          "./bower_components/mousetrap/mousetrap.js"
+          "./bower_components/mousetrap/mousetrap.js",
+          "./bower_components/lodash/lodash.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -127,7 +129,8 @@
           "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
           "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4-min.js",
-          "./bower_components/mousetrap/mousetrap.js.min"
+          "./bower_components/mousetrap/mousetrap.min.js",
+          "./bower_components/lodash/lodash.min.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

@@ -193,11 +193,29 @@
         ]
       },
       "parameters": {
-        "column_name": {
-
+        "sample-selectors": {
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": false
         },
-        "condition_type": {
-
+        "sample-single-index-selector": {
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": true
+        },
+        "sample-single-column-selector": {
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": true
         },
         "condition_threshold": {
           "type": "numeric",

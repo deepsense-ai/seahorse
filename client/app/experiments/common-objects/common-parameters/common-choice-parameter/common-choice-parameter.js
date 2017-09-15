@@ -6,7 +6,7 @@
 
 'use strict';
 
-let GenericParameter = require('./common-generic-parameter.js');
+let GenericParameter = require('./../common-generic-parameter.js');
 
 function ChoiceParameter() {}
 

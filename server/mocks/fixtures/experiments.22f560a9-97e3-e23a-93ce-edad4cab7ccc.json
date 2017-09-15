@@ -36,8 +36,32 @@
             "version": "1.0.3"
           },
           "parameters": {
-            "column_name": "ExampleColumn",
-            "condition_type": "less_than",
+            "sample-selectors": [
+              {
+                "type": "columnList",
+                "values": ["columnName1", "columnName2"]
+              },
+              {
+                "type": "roleList",
+                "values": ["target", "feature"]
+              },
+              {
+                "type": "indexList",
+                "values": [1, 500]
+              },
+              {
+                "type": "typeList",
+                "values": ["string", "numeric"]
+              }
+            ],
+            "sample-single-index-selector": {
+              "type": "index",
+              "value": 42
+            },
+            "sample-single-column-selector": {
+              "type": "column",
+              "value": "example-42-column"
+            },
             "condition_threshold": 5
           }
         },

@@ -1,5 +1,5 @@
 <div>
-  <div class="panel panel-default" ng-repeat="parameter in parametersList.parameters">
+  <div class="panel panel-default parameter-item" ng-repeat="parameter in parametersList.parameters">
     <div class="panel-heading"><label for="attr-{{ ::parameter.name }}">{{ ::parameter.name }}</label></div>
     <div class="panel-body">
       <div class="attributes-value-view" ng-switch="::parameter.schema.type">
@@ -14,6 +14,8 @@
         <attribute-snippet-type ng-switch-when="snippet"></attribute-snippet-type>
 
         <attribute-string-type ng-switch-when="string"></attribute-string-type>
+
+        <attribute-selector-type ng-switch-when="selector"></attribute-selector-type>
       </div>
     </div>
   </div>

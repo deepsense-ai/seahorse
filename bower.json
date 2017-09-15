@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "jsPlumb": "1.7.4",
-    "mousetrap": "~1.5.2"
+    "mousetrap": "~1.5.2",
+    "lodash": "~3.7.0"
   }
 }

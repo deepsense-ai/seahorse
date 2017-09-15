@@ -9,7 +9,7 @@
 function AttributeSnippetType() {
   return {
     restrict: 'E',
-    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-snippet-type.html',
+    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-snippet/attribute-snippet-type.html',
     replace: true
   };
 }

@@ -9,7 +9,7 @@
 function GenericParameter() {}
 
 GenericParameter.prototype.initValue = function(paramValue, paramSchema) {
-  if (typeof paramValue === 'undefined') {
+  if (_.isUndefined(paramValue)) {
     return paramSchema.default;
   } else {
     return paramValue;

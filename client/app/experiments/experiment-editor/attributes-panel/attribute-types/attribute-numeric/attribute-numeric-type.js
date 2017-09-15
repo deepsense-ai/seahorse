@@ -9,7 +9,7 @@
 function AttributeNumericType() {
   return {
     restrict: 'E',
-    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-numeric-type.html',
+    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-numeric/attribute-numeric-type.html',
     replace: true,
     link: function(scope, element) {
       let validator = scope.parameter.validator;

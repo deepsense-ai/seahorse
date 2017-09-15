@@ -18,9 +18,14 @@ MultipleChoiceParameter.prototype = new ChoiceParameter();
 MultipleChoiceParameter.prototype.constructor = ChoiceParameter;
 
 MultipleChoiceParameter.prototype.initChoices = function (options) {
-  return typeof options.value === 'undefined' ?
-    options.schema.default.slice() :
-    Object.keys(options.value);
+  if (options.value) {
+    return Object.keys(options.value);
+  } else {
+    let defaultValue = options.schema.default;
+    return defaultValue ?
+      defaultValue.slice() :
+      [];
+  }
 };
 
 module.exports = MultipleChoiceParameter;

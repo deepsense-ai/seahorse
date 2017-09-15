@@ -11,8 +11,9 @@ let NumericParameterConstructor = require('./common-parameters/common-numeric-pa
 let StringParameterConstructor = require('./common-parameters/common-string-parameter.js');
 let BooleanParameterConstructor = require('./common-parameters/common-boolean-parameter.js');
 let SnippetParameterConstructor = require('./common-parameters/common-snippet-parameter.js');
-let SingleChoiceParameterConstructor = require('./common-parameters/common-single-choice-parameter.js');
-let MultipleChoiceParameterConstructor = require('./common-parameters/common-multiple-choice-parameter.js');
+let SingleChoiceParameterConstructor = require('./common-parameters/common-choice-parameter/common-single-choice-parameter.js');
+let MultipleChoiceParameterConstructor = require('./common-parameters/common-choice-parameter/common-multiple-choice-parameter.js');
+let SelectorParameterConstructor = require('./common-parameters/common-selector/common-selector-parameter.js');
 
 /*
  * (API parameter's type value) => (constructor)
@@ -23,7 +24,8 @@ let parameterConstructors = {
   'boolean': BooleanParameterConstructor,
   'snippet': SnippetParameterConstructor,
   'choice': SingleChoiceParameterConstructor,
-  'multipleChoice': MultipleChoiceParameterConstructor
+  'multipleChoice': MultipleChoiceParameterConstructor,
+  'selector': SelectorParameterConstructor
 };
 
 let ParameterFactory = {

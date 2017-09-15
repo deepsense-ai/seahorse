@@ -12,7 +12,8 @@
     "angular": true,
     "jsPlumb": true,
     "console": true,
-    "Mousetrap": true
+    "Mousetrap": true,
+    "_": true
   },
   "globalstrict": false,
   "jasmine": true,

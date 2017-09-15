@@ -18,9 +18,14 @@ SingleChoiceParameter.prototype = new ChoiceParameter();
 SingleChoiceParameter.prototype.constructor = ChoiceParameter;
 
 SingleChoiceParameter.prototype.initChoices = function (options) {
-  return typeof options.value === 'undefined' ?
-    [options.schema.default] :
-    Object.keys(options.value);
+  if (options.value) {
+    return Object.keys(options.value);
+  } else {
+    let defaultValue = options.schema.default;
+    return defaultValue ?
+      [ defaultValue ] :
+      [];
+  }
 };
 
 SingleChoiceParameter.prototype.serialize = function () {

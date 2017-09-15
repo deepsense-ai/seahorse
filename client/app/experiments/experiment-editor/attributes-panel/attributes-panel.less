@@ -6,7 +6,7 @@
 .operation-attributes-panel {
   position: absolute;
   width: 250px;
-  height: 500px;
+  height: 550px;
   background: rgba(255, 255, 255, 0.8);
   right: 0;
   top: 40px;
@@ -85,26 +85,24 @@
     width: 100%;
   }
 
-  .nested-attributes-view > *:first-child {
-    margin-top: 20px;
+  .nested-attributes-view {
+    & > *:first-child > .parameter-item:first-child {
+      margin-top: 20px;
+    }
+
+    .no-parameters {
+      display: none;
+    }
   }
 
   .no-parameters {
     text-align: center;
   }
 
-  .multiple-choice-panel {
-    & > * {
-      text-align: left;
-      padding: 5px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-  }
-
   .invalid-param-value {
     border: 1px solid red;
   }
+
+  @import "./attribute-types/attribute-multiple-choice/attribute-multiple-choice-type.less";
+  @import "./attribute-types/attribute-column-selector/attribute-column-selector.less";
 }

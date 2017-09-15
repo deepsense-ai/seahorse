@@ -9,7 +9,7 @@
 function AttributeStringType() {
   return {
     restrict: 'E',
-    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-string-type.html',
+    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attribute-types/attribute-string/attribute-string-type.html',
     replace: true
   };
 }
