@@ -307,12 +307,11 @@ class WorkflowManagerBridgeNetwork(WorkflowManager):
         return 'workflowmanager'
 
     def environment(self):
-        return Env(
-            WM_HOST='0.0.0.0',
-            WM_PORT=self.port_mapping().get().internal,
-            JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager'),
-            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_datasource_url()) + \
-               self.credentials().as_env()
+        return super(WorkflowManagerBridgeNetwork, self).environment() + \
+               Env(WM_HOST='0.0.0.0',
+                   WM_PORT=self.port_mapping().get().internal,
+                   JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager'),
+                   DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_datasource_url())
 
 
 class Frontend(Service):
@@ -414,11 +413,10 @@ class NotebooksBridgeNetwork(Notebooks):
         return 'notebooks'
 
     def environment(self):
-        return Env(
-            WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address().as_string()),
-            JUPYTER_LISTENING_IP='0.0.0.0',
-            JUPYTER_LISTENING_PORT=self.port_mapping().get().internal) \
-               + self.services.WorkflowManager.credentials().as_env() \
+        return super(NotebooksBridgeNetwork, self).environment() + \
+               Env(WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address().as_string()),
+                   JUPYTER_LISTENING_IP='0.0.0.0',
+                   JUPYTER_LISTENING_PORT=self.port_mapping().get().internal) \
                + self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
 
 
