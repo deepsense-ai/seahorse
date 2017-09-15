@@ -1,14 +1,12 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- * Owner: Rafal Hryciuk
  */
 
 package io.deepsense.deeplang
 
 import java.net.URI
 
-import com.typesafe.config.ConfigFactory
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.DFSClient
 import org.apache.spark.sql.{Row, SQLContext}
@@ -16,7 +14,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory, EntityStorageClientFactoryImpl}
+import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
+import io.deepsense.models.entities.Entity
 
 /**
  * Adds features to facilitate integration testing using Spark and entitystorage
@@ -31,7 +30,6 @@ trait DOperationIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   var sparkContext: SparkContext = _
   var sqlContext: SQLContext = _
   var hdfsClient: DFSClient = _
-  var entityStorageClientFactory: EntityStorageClientFactoryImpl = _
 
 
   override def beforeAll: Unit = {
@@ -43,14 +41,13 @@ trait DOperationIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     executionContext = new ExecutionContext
     executionContext.sqlContext = sqlContext
     executionContext.dataFrameBuilder = DataFrameBuilder(sqlContext)
-    entityStorageClientFactory = EntityStorageClientFactoryImpl()
-    executionContext.entityStorageClient = createEntityStorageClient(entityStorageClientFactory)
+    executionContext.entityStorageClient =
+      EntityStorageClientTestInMemoryImpl(entityStorageInitState)
     executionContext.tenantId = "testTenantId"
   }
 
   override def afterAll: Unit = {
     sparkContext.stop()
-    entityStorageClientFactory.close()
   }
 
   protected def assertDataFramesEqual(dt1: DataFrame, dt2: DataFrame): Unit = {
@@ -60,14 +57,5 @@ trait DOperationIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     collectedRows1 should be (collectedRows2)
   }
 
-  private def createEntityStorageClient(entityStorageClientFactory: EntityStorageClientFactory)
-  : EntityStorageClient = {
-    val config = ConfigFactory.load("entitystorage-communication.conf")
-    val actorSystemName = config.getString("entityStorage.actorSystemName")
-    val hostName = config.getString("entityStorage.hostname")
-    val port = config.getInt("entityStorage.port")
-    val actorName = config.getString("entityStorage.actorName")
-    val timeoutSeconds = config.getInt("entityStorage.timeoutSeconds")
-    entityStorageClientFactory.create(actorSystemName, hostName, port, actorName, timeoutSeconds)
-  }
+  protected def entityStorageInitState(): Map[(String, Entity.Id), Entity] = Map()
 }

@@ -9,7 +9,8 @@ lazy val models                 = project dependsOn graph
 lazy val deeplang               = project dependsOn (
   commons,
   `entitystorage-model`,
-  `entitystorage-client`)
+  `entitystorage-client`,
+  `entitystorage-client` % "test->test")
 lazy val `entitystorage-model`  = project dependsOn commons
 lazy val entitystorage          = project dependsOn (
   commons,

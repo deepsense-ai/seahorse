@@ -1,7 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- * Owner: Radoslaw Kotowski
  */
 
 package io.deepsense.deeplang.doperations
@@ -14,10 +13,13 @@ import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperationIntegTestSupport, DOperable}
 
-class WriteDataFrameIntegSpec extends DOperationIntegTestSupport with BeforeAndAfter {
+class WriteDataFrameIntegSpec
+  extends DOperationIntegTestSupport
+  with BeforeAndAfter
+  with DOperationsFactory {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
   val testDir = "/tests/WriteDataFrameTest"
@@ -47,36 +49,29 @@ class WriteDataFrameIntegSpec extends DOperationIntegTestSupport with BeforeAndA
 
   def testSimpleDataFrameSchemaWithRowsSeq(rowsSeq: Seq[Row]): Unit = {
     val context = executionContext
-    val operation = new WriteDataFrame
-    val nameParameter = operation.parameters.getStringParameter(WriteDataFrame.nameParam)
-    nameParameter.value = Some("test WriteDF name")
-    val descriptionParameter =
-      operation.parameters.getStringParameter(WriteDataFrame.descriptionParam)
-    descriptionParameter.value = Some("test WriteDF description")
+    val operation: WriteDataFrame = createWriteDataFrameOperation("testName", "test description")
+    val dataFrameToSave: DataFrame = createDataFrameToSave(rowsSeq)
 
-    val schema: StructType = StructType(List(
-      StructField("column1", StringType, true),
-      StructField("column2", LongType, true),
-      StructField("column3", DoubleType, true),
-      StructField("column4", TimestampType, true)))
-
-    val manualRDD: RDD[Row] = sparkContext.parallelize(rowsSeq)
-
-    val sparkDataFrame = sqlContext.createDataFrame(manualRDD, schema)
-    val builder = DataFrameBuilder(sqlContext)
-    val dataFrameToSave = builder.buildDataFrame(sparkDataFrame)
     operation.execute(context)(Vector[DOperable](dataFrameToSave))
 
-    // TODO: maybe WriteDF should have param hidden from user: path?
-    val loadedDataFrame = sqlContext.parquetFile(testDir)
+    val loadedSparkDataFrame = sqlContext.parquetFile(testDir)
+    val loadedDataFrame = context.dataFrameBuilder.buildDataFrame(loadedSparkDataFrame)
+    assertDataFramesEqual(dataFrameToSave, loadedDataFrame)
+  }
 
-    val loadedDataFrameRows = loadedDataFrame.orderBy("column1").collect()
-    val savedDataFrameRows = dataFrameToSave.sparkDataFrame.collect()
+  private def createDataFrameToSave(rowsSeq: Seq[Row]): DataFrame = {
+    val schema: StructType = createSchema
+    val manualRDD: RDD[Row] = sparkContext.parallelize(rowsSeq)
+    val sparkDataFrame = sqlContext.createDataFrame(manualRDD, schema)
+    val builder = DataFrameBuilder(sqlContext)
+    builder.buildDataFrame(sparkDataFrame)
+  }
 
-    assert(loadedDataFrameRows.length == savedDataFrameRows.length)
-
-    val zipped = loadedDataFrameRows zip savedDataFrameRows
-    assert(zipped.forall(rowPair => rowPair._1 == rowPair._2))
-    assert(zipped.forall(rowPair => rowPair._1.schema == rowPair._2.schema))
+  private def createSchema: StructType = {
+    StructType(List(
+      StructField("column1", StringType),
+      StructField("column2", LongType),
+      StructField("column3", DoubleType),
+      StructField("column4", TimestampType)))
   }
 }

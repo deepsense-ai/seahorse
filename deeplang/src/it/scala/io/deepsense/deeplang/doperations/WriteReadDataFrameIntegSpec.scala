@@ -1,7 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- * Owner: Rafal Hryciuk
  */
 
 package io.deepsense.deeplang.doperations
@@ -9,10 +8,11 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.scalatest.{BeforeAndAfter, Ignore}
+import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DOperationIntegTestSupport, DOperable, ExecutionContext}
+import io.deepsense.deeplang.{DOperable, DOperationIntegTestSupport, ExecutionContext}
+import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
 /**
  * This test requirements:
@@ -20,10 +20,10 @@ import io.deepsense.deeplang.{DOperationIntegTestSupport, DOperable, ExecutionCo
  * - /tests directory with read,write privileges to Your user on HDFS
  * - /etc/hosts entry: 172.28.128.100 ds-dev-env-master
  */
-// TODO: shouldn't it be WriteReadDataFrameIntegSpec ?
-// NOTE: ignored because of impossibility to pass id of written DF to readDF operation
-@Ignore
-class ReadWriteDataFrameIntegSpec extends DOperationIntegTestSupport with BeforeAndAfter {
+class WriteReadDataFrameIntegSpec
+  extends DOperationIntegTestSupport
+  with BeforeAndAfter
+  with DOperationsFactory {
 
   val testDir = "/tests/readWriteDataFrameTest"
 
@@ -35,11 +35,9 @@ class ReadWriteDataFrameIntegSpec extends DOperationIntegTestSupport with Before
     val context = executionContext
     val dataFrame: DataFrame = createDataFrame
 
-    writeDataFrame(context, dataFrame, "test name", "test description")
-    // TODO: is it possible to get entity id by its name & description?
-    val entityId = "???"
-    val retrievedDataFrame = readDataFrame(context, entityId)
+    val dataFrameId = writeDataFrame(context, dataFrame, "test name", "test description")
 
+    val retrievedDataFrame = readDataFrame(context, dataFrameId)
     assertDataFramesEqual(dataFrame, retrievedDataFrame)
   }
 
@@ -65,23 +63,17 @@ class ReadWriteDataFrameIntegSpec extends DOperationIntegTestSupport with Before
       context: ExecutionContext,
       dataFrame: DataFrame,
       name: String,
-      description: String): Unit = {
-    val writeDataFrameOperation = new WriteDataFrame
-    val nameParameter =
-      writeDataFrameOperation.parameters.getStringParameter(WriteDataFrame.nameParam)
-    nameParameter.value = Some(name)
-    val descriptionParameter =
-      writeDataFrameOperation.parameters.getStringParameter(WriteDataFrame.descriptionParam)
-    descriptionParameter.value = Some(description)
-
+      description: String): String = {
+    val writeDataFrameOperation = createWriteDataFrameOperation(name, description)
     writeDataFrameOperation.execute(context)(Vector[DOperable](dataFrame))
+    val entities =
+      context.entityStorageClient.asInstanceOf[EntityStorageClientTestInMemoryImpl].getAllEntities
+    assert(entities.length == 1, "For this test one entity should be created.")
+    entities.head.id.toString
   }
 
   private def readDataFrame(context: ExecutionContext, entityId: String): DataFrame = {
-    val readDataFrameOperation = new ReadDataFrame
-    val idParameter = readDataFrameOperation.parameters.getStringParameter(ReadDataFrame.idParam)
-    idParameter.value = Some(entityId)
-
+    val readDataFrameOperation = createReadDataFrameOperation(entityId)
     val operationResult = readDataFrameOperation.execute(context)(Vector.empty[DOperable])
     operationResult.head.asInstanceOf[DataFrame]
   }
