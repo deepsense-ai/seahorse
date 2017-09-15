@@ -6,6 +6,7 @@
 
 describe('graphNode', () => {
   var GraphNode = require('../common-graph-node.js');
+  var ParameterFactory = require('./../common-parameter-factory.js');
 
   var initId = '111-111-111',
       initOperationId = '55-55-55',
@@ -13,10 +14,6 @@ describe('graphNode', () => {
       initVersion = '1.1',
       initX = 100,
       initY = 200,
-      initParameters = [{
-        'id': '3-3',
-        'value': 5
-      }],
       initData = {
         'id': initId,
         'operationId': initOperationId,
@@ -27,7 +24,7 @@ describe('graphNode', () => {
         'y': initY,
         'input': [],
         'output': [],
-        'parameters': initParameters
+        'parameters': ParameterFactory.createParametersList({}, {})
       },
       serializedData = {
         'id': initId,
@@ -40,7 +37,7 @@ describe('graphNode', () => {
           'x': initX,
           'y': initY
         },
-        'parameters': initParameters
+        'parameters': {}
       };
 
 
@@ -50,7 +47,7 @@ describe('graphNode', () => {
   });
 
 
-  it('should have serialaze method', () => {
+  it('should have serialize method', () => {
     let graphNode = new GraphNode(initData);
     expect(graphNode.serialize).toEqual(jasmine.any(Function));
     expect(graphNode.serialize()).toEqual(serializedData);

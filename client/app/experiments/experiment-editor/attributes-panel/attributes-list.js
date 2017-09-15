@@ -12,11 +12,10 @@ function AttributesList() {
     templateUrl: 'app/experiments/experiment-editor/attributes-panel/attributes-list.html',
     replace: true,
     scope: {
-      'paramSchemas': '=',
-      'paramValues': '='
+      'parametersList': '='
     },
     link: function (scope, element, attrs) {
-      scope.noParamValues = (Object.keys(scope.paramSchemas).length === 0);
+      scope.noParamValues = () => (Object.keys(scope.parametersList.parameters).length === 0);
     }
   };
 }

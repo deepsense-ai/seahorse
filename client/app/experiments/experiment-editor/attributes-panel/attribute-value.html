@@ -1,13 +1,13 @@
-<div class="attributes-value-view" ng-switch="::paramSchemas[paramName].type">
-  <input ng-switch-when="numeric" type="number" id="attr-{{ ::paramName }}" type="text" class="form-control" ng-model="paramValues[paramName]">
+<div class="attributes-value-view" ng-switch="::parameter.schema.type">
+  <attribute-boolean-type ng-switch-when="boolean"></attribute-boolean-type>
 
-  <input ng-switch-when="string" id="attr-{{ ::paramName }}" type="text" class="form-control" ng-model="paramValues[paramName]">
+  <attribute-single-choice-type ng-switch-when="choice"></attribute-single-choice-type>
 
-  <input ng-switch-when="boolean" id="attr-{{ ::paramName }}" type="checkbox" ng-model="paramValues[paramName]">
+  <attribute-multiple-choice-type ng-switch-when="multipleChoice"></attribute-multiple-choice-type>
 
-  <textarea ng-switch-when="snippet" id="attr-{{ ::paramName }}" class="form-control" ng-model="paramValues[paramName]" rows="4"></textarea>
+  <attribute-numeric-type ng-switch-when="numeric"></attribute-numeric-type>
 
-  <attribute-choice-type ng-switch-when="choice"></attribute-choice-type>
+  <attribute-snippet-type ng-switch-when="snippet"></attribute-snippet-type>
 
-  <div ng-switch-default>TODO: {{ paramValues[paramName] }} {{ paramSchemas[paramName].type }} </div>
+  <attribute-string-type ng-switch-when="string"></attribute-string-type>
 </div>

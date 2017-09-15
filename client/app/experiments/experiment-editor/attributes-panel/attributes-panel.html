@@ -4,10 +4,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closePanel()"><span aria-hidden="true">&times;</span></button>
   </div>
   <div class="panel-body">
-    <attributes-list
-      param-schemas="experiment.getParametersSchemaById(experiment.getSelectedNode().operationId)"
-      param-values="experiment.getSelectedNode().parameters"
-    ></attributes-list>
+    <attributes-list parameters-list="experiment.getSelectedNode().parameters"></attributes-list>
   </div>
   <div class="panel-footer">
     {{ experiment.getSelectedNode().description }}

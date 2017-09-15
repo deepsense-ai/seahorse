@@ -48,7 +48,7 @@ GraphNode.prototype.serialize = function serialize() {
       'name': this.name,
       'version': this.version
     },
-    'parameters': this.parameters,
+    'parameters': this.parameters.serialize(),
     'ui': {
       'x': this.x,
       'y': this.y

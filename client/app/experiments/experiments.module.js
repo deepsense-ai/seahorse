@@ -24,6 +24,11 @@ require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(e
 require('./experiment-editor/attributes-panel/attributes-panel.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-list.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attribute-value.js').inject(experiments);
-require('./experiment-editor/attributes-panel/attribute-choice-type.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-types/attribute-boolean-type.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-types/attribute-single-choice-type.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-types/attribute-multiple-choice-type.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-types/attribute-numeric-type.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-types/attribute-snippet-type.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-types/attribute-string-type.js').inject(experiments);
 
 module.exports = experiments;

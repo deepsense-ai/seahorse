@@ -5,6 +5,7 @@
 
 var Edge = require('./common-edge.js');
 var GraphNode = require('./common-graph-node.js');
+var ParameterFactory = require('./common-parameter-factory.js');
 
 function Experiment() {
 
@@ -33,19 +34,20 @@ function Experiment() {
 
   that.createNode = function createNode(nodeID, operation, paramValues = {}, x = 0, y = 0) {
     let paramSchemas = operation.parameters || {};
-
-    return new GraphNode({
+    let node = new GraphNode({
       id: nodeID,
       name: operation.name,
       operationId: operation.id,
       version: operation.version,
-      parameters: internal.assignParamDefaults({}, paramValues, paramSchemas),
+      parameters: ParameterFactory.createParametersList(paramValues, paramSchemas),
       description: operation.description,
       input: operation.ports.input,
       output: operation.ports.output,
       x: x,
       y: y
     });
+
+    return node;
   };
 
   that.createNodes = function createNodes(nodes, operations) {
@@ -103,36 +105,6 @@ function Experiment() {
         internal.parameters[operationId] = operations[operationId].parameters;
       }
     }
-  };
-
-  internal.assignParamDefaults = function(result, paramValues, paramSchemas) {
-    for (let paramName in paramSchemas) {
-      if (paramName in paramValues) {
-        switch (paramSchemas[paramName].type) {
-          case 'choice':
-            let choice = Object.keys(paramValues[paramName])[0];
-            result[paramName] = {};
-            result[paramName][choice] = internal.assignParamDefaults({}, paramValues[paramName][choice], paramSchemas[paramName].values[choice]);
-            break;
-          default:
-            result[paramName] = paramValues[paramName];
-            break;
-        }
-      } else {
-        switch (paramSchemas[paramName].type) {
-          case 'choice':
-            result[paramName] = {};
-            let defaultChoice = paramSchemas[paramName].default;
-            result[paramName][defaultChoice] = internal.assignParamDefaults({}, {}, paramSchemas[paramName].values[defaultChoice]);
-            break;
-          default:
-            result[paramName] = paramSchemas[paramName].default;
-            break;
-        }
-      }
-    }
-
-    return result;
   };
 
   /**

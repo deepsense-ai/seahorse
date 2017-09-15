@@ -17,7 +17,15 @@
           "note": "My super note",
           "parameters": {
             "connection_string": "jdbc:mysql://localhost/test",
-            "boolean_attr_test": false
+            "boolean_attr_test": false,
+            "sample_multiple_choice": {
+              "choice1-long-text": {
+                "name_001": 42.42
+              },
+              "choice2-some-example-text": {
+                "name_002": "42-42+42"
+              }
+            }
           }
         },
         {
@@ -45,7 +53,7 @@
             "sample_snippet": "R <- 42",
             "sample_choice": {
               "choice2": {
-                "name12": true,
+                "name12": false,
                 "name22": "K <- 42"
               }
             }

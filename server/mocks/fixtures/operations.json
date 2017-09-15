@@ -46,6 +46,46 @@
           "description": "boolean attr test",
           "default": true,
           "required": true
+        },
+        "sample_multiple_choice": {
+          "type": "multipleChoice",
+          "description": "sample multiple choice description",
+          "default": ["choice2-some-example-text"],
+          "required": true,
+          "values": {
+            "choice1-long-text": {
+              "name_001": {
+                "type": "numeric",
+                "description": "sample sum field",
+                "default": 101,
+                "required": false,
+                "validator": {
+                  "type": "range",
+                  "configuration": {
+                    "begin": 100,
+                    "end": 102,
+                    "beginIncluded": false,
+                    "endIncluded": false,
+                    "step": 1
+                  }
+                }
+              }
+            },
+            "choice2-some-example-text": {
+              "name_002": {
+                "type": "string",
+                "description": "string param",
+                "default": "2+2+2",
+                "required": true,
+                "validator": {
+                  "type": "regex",
+                  "configuration": {
+                    "regex": "^\\d+[+-]\\d+[+=]\\d+$"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -162,7 +202,7 @@
         "condition_threshold": {
           "type": "numeric",
           "description": "condition threshold",
-          "default": 5,
+          "default": 6,
           "required": true,
           "validator": {
             "type": "range",

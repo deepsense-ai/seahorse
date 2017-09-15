@@ -1,9 +1,9 @@
 <div>
-  <div class="panel panel-default" ng-repeat="(paramName, paramValue) in paramSchemas">
-    <div class="panel-heading"><label for="attr-{{ ::paramName }}">{{ ::paramName }}</label></div>
+  <div class="panel panel-default" ng-repeat="parameter in parametersList.parameters">
+    <div class="panel-heading"><label for="attr-{{ ::parameter.name }}">{{ ::parameter.name }}</label></div>
     <div class="panel-body">
       <attribute-value></attribute-value>
     </div>
   </div>
-  <div class="lead" ng-if="noParamValues">No parameters</div>
+  <div class="lead no-parameters" ng-if="noParamValues()">No parameters</div>
 </div>
