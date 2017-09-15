@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function UploadWorkflowExecutionReportModalController(WorkflowsApiClient, $modalInstance, Upload) {
+function UploadWorkflowExecutionReportModalController(WorkflowsApiClient, $uibModalInstance, Upload) {
   const STATUS_PREPARING = 'preparing';
   const STATUS_LOADING = 'loading';
   const STATUS_SUCCESS = 'success';
@@ -12,40 +12,37 @@ function UploadWorkflowExecutionReportModalController(WorkflowsApiClient, $modal
     errorMessage: '',
     progress: '',
     close: () => {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     },
     upload: function(file) {
       this.status = STATUS_FAILURE;
-      Upload.
-      upload({
+      Upload
+        .upload({
           url: WorkflowsApiClient.getUploadReportMethodUrl(),
           method: 'POST',
           file: file,
           fileFormDataName: 'workflowFile'
         })
-        .
-      progress((evt) => {
+        .progress((evt) => {
           this.status = STATUS_LOADING;
           this.progress = parseInt(100.0 * evt.loaded / evt.total);
         })
-        .
-      then((response) => {
+        .then((response) => {
           this.status = STATUS_SUCCESS;
-          $modalInstance.close(response.data.executionReport.id);
+          $uibModalInstance.close(response.data.executionReport.id);
         })
-        .
-      catch(({
-        data
-      } = {}) => {
-        let {
-          message
-        } = (data || {});
-        this.status = STATUS_FAILURE;
-        this.errorMessage = message || 'Server error';
-      });
+        .catch(({
+          data
+        } = {}) => {
+          let {
+            message
+          } = (data || {});
+          this.status = STATUS_FAILURE;
+          this.errorMessage = message || 'Server error';
+        });
     },
     ok: function() {
-      $modalInstance.close();
+      $uibModalInstance.close();
     }
   });
 }

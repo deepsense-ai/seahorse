@@ -1,7 +1,7 @@
 <aside class="ibox o-general-data-panel o-panel o-panel--scroll-right animated fadeInRight">
   <header class="o-general-data-panel__ibox-title--editor-mode" ng-if="!controller.isReportMode">
     <h4 class="ibox-title__name"
-        tooltip="{{controller.name ? 'Edit workflow name' : ''}}"
+        uib-tooltip="{{controller.name ? 'Edit workflow name' : ''}}"
         tooltip-placement="left"
         tooltip-append-to-body="true">
       <span editable-text="controller.name"
@@ -18,12 +18,12 @@
     <header>
       <auto-text-area value="controller.description"
                       ng-if="!controller.isReportMode"
-                      tooltip="Edit workflow's description"
+                      uib-tooltip="Edit workflow's description"
                       tooltip-placement="left"
                       tooltip-append-to-body="true"></auto-text-area>
       <p ng-if="controller.isReportMode"
          class="o-panel__description o-panel__description--read-only"
-         tooltip="{{::controller.description}}"
+         uib-tooltip="{{::controller.description}}"
          tooltip-placement="left"
          tooltip-append-to-body="true">
         {{::controller.description}}
@@ -36,7 +36,7 @@
             'label-success': controller.state.status === 'status_completed',
             'label-danger': controller.state.status === 'status_failed',
             'label-warning': controller.state.status === 'status_aborted'
-           }" tooltip="Status" tooltip-placement="left" tooltip-append-to-body="true">
+           }" uib-tooltip="Status" tooltip-placement="left" tooltip-append-to-body="true">
           {{ ::controller.getVerboseStatus() }}
         </p>
         <button ng-show="::controller.state.status === 'status_failed'"

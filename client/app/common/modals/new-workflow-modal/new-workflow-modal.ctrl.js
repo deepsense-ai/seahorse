@@ -1,13 +1,13 @@
 'use strict';
 
 /* @ngInject */
-function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
+function NewWorkflowModalController($uibModalInstance, WorkflowsApiClient) {
   _.assign(this, {
     name: '',
     description: '',
     loading: false,
     close: () => {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     },
     ok: () => {
       const DEFAULT_NAME = 'Draft workflow';
@@ -18,20 +18,18 @@ function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
           name: this.name || DEFAULT_NAME,
           description: this.description || ''
         })
-        .
-      then((response) => {
-          $modalInstance.close(response.id);
+        .then((response) => {
+          $uibModalInstance.close(response.id);
         })
-        .
-      catch(({
-        data
-      } = {}) => {
-        let {
-          message
-        } = (data || {});
-        this.loading = false;
-        this.errorMessage = message || 'Server error';
-      });
+        .catch(({
+          data
+        } = {}) => {
+          let {
+            message
+          } = (data || {});
+          this.loading = false;
+          this.errorMessage = message || 'Server error';
+        });
     }
   });
 }

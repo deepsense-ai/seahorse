@@ -25,13 +25,13 @@
     "angular-mocks": "^1.4.4",
     "angular-sanitize": "^1.4.6",
     "angular-toastr": "^1.4.1",
-    "angular-ui-bootstrap": "^0.14.2",
+    "angular-ui-bootstrap": "^0.14.3",
     "angular-ui-router": "^0.2.15",
     "angular-xeditable": "0.0.1",
     "animate.css": "^3.2.5",
     "autosize": "^3.0.11",
     "bootstrap": "^3.3.4",
-    "deepsense-attributes-panel": "0.0.45",
+    "deepsense-attributes-panel": "0.0.46",
     "deepsense-catalogue-panel": "0.0.8",
     "deepsense-context-menu": "0.0.1",
     "deepsense-cycle-analyser": "0.0.1",
@@ -51,7 +51,6 @@
     "stompjs": "^2.3.3"
   },
   "devDependencies": {
-    "angular-ui-bootstrap": "^0.13.4",
     "babelify": "^6.3.0",
     "browser-sync": "^2.7.12",
     "browserify": "^12.0.1",

@@ -6,7 +6,7 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function ReportCtrl(report, $scope, $state, $modal, PageService) {
+function ReportCtrl(report, $scope, $state, $uibModal, PageService) {
   PageService.setTitle(`Report: ${report.name}`);
 
   let that = this;
@@ -55,13 +55,14 @@ function ReportCtrl(report, $scope, $state, $modal, PageService) {
     let distObject = that.getDistributionObject(data.colName);
 
     if (!_.isUndefined(distObject)) {
-      $modal.open({
+      $uibModal.open({
         size: 'lg',
         templateUrl: 'app/workflows/reports/report-chart-panel.html',
-        controller: function($scope, $modalInstance) {
+        /* @ngInject */
+        controller: function($scope, $uibModalInstance) {
           _.assign(this, {
             close: () => {
-              $modalInstance.close();
+              $uibModalInstance.close();
             },
             distObject: distObject,
             columnNames: _.keys(internal.distributions),

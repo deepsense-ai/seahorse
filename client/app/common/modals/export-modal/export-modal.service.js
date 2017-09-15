@@ -2,12 +2,12 @@
 
 class ExportModalService {
   /* @ngInject */
-  constructor($modal) {
-    this.$modal = $modal;
+  constructor($uibModal) {
+    this.$uibModal = $uibModal;
   }
 
   showModal() {
-    let modal = this.$modal.open({
+    let modal = this.$uibModal.open({
       animation: true,
       templateUrl: 'app/common/modals/export-modal/export-modal.html',
       controller: 'ExportModalController as controller',

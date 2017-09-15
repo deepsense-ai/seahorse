@@ -1,13 +1,13 @@
 'use strict';
 
 /* @ngInject */
-function GeneralDataPanelController($modal, $scope, $timeout, WorkflowService) {
+function GeneralDataPanelController($uibModal, $scope, $timeout, WorkflowService) {
   this.saveWorkflow = () => {
     WorkflowService.saveWorkflow();
   };
 
   this.showErrorMessage = () => {
-    $modal.open({
+    $uibModal.open({
       scope: $scope,
       template: `
         <h2>Error title:</h2>
@@ -19,8 +19,7 @@ function GeneralDataPanelController($modal, $scope, $timeout, WorkflowService) {
     });
   };
 
-  this.getVerboseStatus = () => this.state.status.toUpperCase()
-    .split('_')[1];
+  this.getVerboseStatus = () => this.state.status.toUpperCase().split('_')[1];
 
   this.delaySave = function delaySave() {
     $timeout(this.saveWorkflow, 0, false);

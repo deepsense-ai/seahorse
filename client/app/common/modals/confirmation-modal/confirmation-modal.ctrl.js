@@ -1,14 +1,14 @@
 'use strict';
 
 /* @ngInject */
-function ConfirmationModalController($modalInstance, message) {
+function ConfirmationModalController($uibModalInstance, message) {
   _.assign(this, {
     message: message,
     close: () => {
-      $modalInstance.dismiss();
+      $uibModalInstance.dismiss();
     },
     ok: () => {
-      $modalInstance.close();
+      $uibModalInstance.close();
     }
   });
 }

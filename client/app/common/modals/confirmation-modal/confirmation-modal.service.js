@@ -2,14 +2,14 @@
 
 class ConfirmationModalService {
   /* @ngInject */
-  constructor($modal) {
-    this.$modal = $modal;
+  constructor($uibModal) {
+    this.$uibModal = $uibModal;
   }
 
   showModal(options = {
     message: ''
   }) {
-    let modal = this.$modal.open({
+    let modal = this.$uibModal.open({
       animation: true,
       templateUrl: 'app/common/modals/confirmation-modal/confirmation-modal.html',
       controller: 'ConfirmationModalController as controller',

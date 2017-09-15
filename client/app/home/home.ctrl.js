@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $modal, $state, PageService, config) {
+function Home($rootScope, $uibModal, $state, PageService, config) {
 
   this.init = () => {
     PageService.setTitle('Home');
@@ -14,7 +14,7 @@ function Home($rootScope, $modal, $state, PageService, config) {
   this.displayCreateWorkflowPopup = function displayCreateWorkflowPopup(event) {
     event.preventDefault();
 
-    let modal = $modal.open({
+    let modal = $uibModal.open({
       animation: true,
       templateUrl: 'app/common/modals/new-workflow-modal/new-workflow-modal.html',
       controller: 'NewWorkflowModalController as controller',
@@ -33,7 +33,7 @@ function Home($rootScope, $modal, $state, PageService, config) {
   this.displayUploadWorkflowPopup = function displayUploadWorkflowPopup(event) {
     event.preventDefault();
 
-    let modal = $modal.open({
+    let modal = $uibModal.open({
       animation: true,
       templateUrl: 'app/common/modals/upload-workflow-modal/upload-workflow-modal.html',
       controller: 'UploadWorkflowModalController as controller',
@@ -52,7 +52,7 @@ function Home($rootScope, $modal, $state, PageService, config) {
   this.displayUploadExecutionWorkflowPopup = function displayUploadExecutionWorkflowPopup(event) {
     event.preventDefault();
 
-    let modal = $modal.open({
+    let modal = $uibModal.open({
       animation: false,
       templateUrl: 'app/common/modals/upload-execution-report-modal/upload-execution-report-modal.html',
       controller: 'UploadWorkflowExecutionReportModalController as controller',
