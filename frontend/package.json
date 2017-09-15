@@ -1,14 +1,14 @@
 {
-  "name": "DeepSense.io",
-  "version": "1.2.0-SNAPSHOT",
+  "name": "deepsense.ai",
+  "version": "1.4.1-SNAPSHOT",
   "private": true,
-  "description": "DeepSense.io LAB application",
+  "description": "Seahorse",
   "author": "CodiLime, Inc.",
   "license": "ISC",
   "homepage": "http://deepsense.io/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/codilime/deepsense-frontend.git"
+    "url": "https://github.com/deeepsense-ai/seahorse.git"
   },
   "scripts": {
     "clean": "rimraf dist/*",
