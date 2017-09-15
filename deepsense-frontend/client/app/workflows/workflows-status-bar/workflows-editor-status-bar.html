@@ -14,18 +14,25 @@
     </div>
   </div>
   <div class="c-workflows-status-bar__lower-section">
-    <menu-item ng-repeat="item in getMenuItems(workflow)"
-               label="{{item.label}}"
-               for-owner-only="{{item.forOwnerOnly}}"
-               icon="{{item.icon}}"
-               call-function="item.callFunction()"
-               href="{{item.href}}"
-               target="{{item.target}}"
-               color="{{item.color}}"
-               additional-class="{{item.additionalClass}}"
-               additional-icon-class="{{item.additionalIconClass}}"
-               additional-html-for-owner="{{item.additionalHtmlForOwner}}"
-    >
-    </menu-item>
+    <div class="c-workflows-status-bar__container">
+      <menu-item ng-repeat="item in getMenuItems(workflow)"
+                 label="{{item.label}}"
+                 for-owner-only="{{item.forOwnerOnly}}"
+                 icon="{{item.icon}}"
+                 call-function="item.callFunction()"
+                 href="{{item.href}}"
+                 target="{{item.target}}"
+                 color="{{item.color}}"
+                 additional-class="{{item.additionalClass}}"
+                 additional-icon-class="{{item.additionalIconClass}}"
+                 additional-html-for-owner="{{item.additionalHtmlForOwner}}"
+      >
+      </menu-item>
+      <div class="separator"></div>
+      <selection-items></selection-items>
+    </div>
+    <div class="c-workflows-status-bar__container">
+      <documentation-link></documentation-link>
+    </div>
   </div>
 </div>

@@ -10,32 +10,17 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   const isOwner = () => WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id;
 
   const menuItems = {
-    clear: {
-      label: 'Clear',
-      forOwnerOnly: true,
-      icon: 'fa-trash-o',
-      callFunction: () => $rootScope.$broadcast('StatusBar.CLEAR_CLICK')
-    },
-    documentation: {
-      label: 'Documentation',
-      icon: 'fa-book',
-      href: config.docsHost + '/docs/' + version.getDocsVersion() + '/index.html',
-      target: '_blank'
-    },
     clone: {
       label: 'Clone',
-      icon: 'fa-clone',
       callFunction: () => $rootScope.$broadcast('StatusBar.CLONE_WORKFLOW')
     },
     export: {
       label: 'Export',
-      icon: 'fa-angle-double-down',
       callFunction: () => $rootScope.$broadcast('StatusBar.EXPORT_CLICK')
     },
     run: {
       label: 'Run',
       forOwnerOnly: true,
-      icon: 'fa-play',
       callFunction: () => $rootScope.$broadcast('StatusBar.RUN')
     },
     startEditing: {
@@ -55,30 +40,25 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     executorError: {
       label: 'Executor error',
       icon: 'fa-ban',
-      color: '#BF2828',
       additionalClass: 'disabled',
       additionalHtmlForOwner: 'app/workflows/workflows-status-bar/additional-html/executor-error.html'
     },
     stopEditing: {
       label: 'Stop editing',
-      icon: 'fa-ban',
+      icon: 'fa-stop',
       callFunction: () => $rootScope.$emit('StatusBar.STOP_EDITING')
     },
     abort: {
       label: 'Abort',
-      icon: 'fa-ban',
       callFunction: () => $rootScope.$broadcast('StatusBar.ABORT')
     },
     aborting: {
       label: 'Aborting...',
-      icon: 'fa-ban',
-      color: '#216477',
       additionalClass: 'menu-item-disabled'
     },
     closeInnerWorkflow: {
       label: 'Close inner workflow',
       icon: 'fa-ban',
-      color: '#216477',
       callFunction: () => $rootScope.$broadcast('StatusBar.CLOSE-INNER-WORKFLOW')
     }
   };
@@ -92,9 +72,6 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   menuItems.disabledStopEditing = angular.copy(menuItems.stopEditing);
   menuItems.disabledStopEditing.additionalClass = 'menu-item-disabled';
 
-  menuItems.disabledClear = angular.copy(menuItems.clear);
-  menuItems.disabledClear.additionalClass = 'menu-item-disabled';
-
   menuItems.disabledExport = angular.copy(menuItems.export);
   menuItems.disabledExport.additionalClass = 'menu-item-disabled';
 
@@ -102,14 +79,14 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   menuItems.disabledRun.additionalClass = 'menu-item-disabled';
 
   const _menuItemViews = {
-    editorExecutorRunning: [menuItems.export, menuItems.clone, menuItems.stopEditing, menuItems.clear, menuItems.run, menuItems.documentation],
-    editorExecutorCreating: [menuItems.export, menuItems.clone, menuItems.startingEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorExecutorNotRunning: [menuItems.export, menuItems.clone, menuItems.startEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorExecutorError: [menuItems.export, menuItems.clone, menuItems.executorError, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorReadOnlyForNotOwner: [menuItems.export, menuItems.clone, menuItems.disabledStartEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    running: [menuItems.export, menuItems.clone, menuItems.disabledStopEditing, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
-    aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.aborting, menuItems.documentation],
-    editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
+    editorExecutorRunning: [menuItems.stopEditing, menuItems.clone, menuItems.run, menuItems.export],
+    editorExecutorCreating: [menuItems.startingEditing, menuItems.clone, menuItems.disabledRun, menuItems.export],
+    editorExecutorNotRunning: [menuItems.startEditing, menuItems.clone, menuItems.disabledRun,  menuItems.export],
+    editorExecutorError: [menuItems.executorError, menuItems.clone, menuItems.disabledRun, menuItems.export],
+    editorReadOnlyForNotOwner: [menuItems.disabledStartEditing, menuItems.clone,  menuItems.disabledRun, menuItems.export],
+    running: [menuItems.disabledStopEditing, menuItems.clone, menuItems.abort,  menuItems.export],
+    aborting: [menuItems.disabledStopEditing, menuItems.disabledClone, menuItems.aborting, menuItems.disabledExport],
+    editInnerWorkflow: [menuItems.closeInnerWorkflow]
   };
 
   function getMenuItems(workflow) {
@@ -122,7 +99,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     switch (workflow.workflowType) {
       case 'root':
         if (!isOwner()) {
-          return 'editorReadOnlyForNotOwner'
+          return 'editorReadOnlyForNotOwner';
         }
         switch (workflow.workflowStatus) {
           case 'editor':

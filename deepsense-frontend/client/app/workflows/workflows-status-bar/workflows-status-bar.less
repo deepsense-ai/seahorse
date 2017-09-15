@@ -80,112 +80,76 @@
   &__lower-section {
     display: flex;
     width: 100%;
+    font-size: 16px;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  &__container {
+    display: flex;
+    align-items: baseline;
   }
 
   &__item {
-    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row-reverse;
-    padding: 0;
+    align-items: baseline;
+    padding: 0 10px;
     position: relative;
     border: none;
+    text-transform: uppercase;
+    color: @seahorse-blue;
+    transition: background-color 0.3s ease;
 
-    &:before {
-      transition: all 0.15s ease-in-out;
-      content: "";
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 0;
-      height: 100%;
-      width: 0;
-      background: rgba(255, 255, 255, 0.35);
-    }
-
-    &:hover:before {
-      width: 100%;
+    &:hover {
+      background-color: @seahorse-blue;
+      color: #fff;
     }
   }
 
   &__text {
     height: 40px;
-
-    flex: 0.85;
-    font-size: 14px;
     font-weight: bold;
-
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-start;
-
-    @media (max-width: @media-break) {
-      flex: 1;
-    }
-
-    @media (max-width: @media-break) {
-      display: none;
-    }
-
-    &-label {
-      font-size: 15px;
-      margin-left: 10px;
-
-      @media (max-width: @bigger-media-break) {
-        font-size: 12px;
-        margin-left: 5px;
-      }
-    }
+    align-items: baseline;
 
     &-small-label {
-      font-size: 10px;
-      margin-left: 10px;
+      font-size: 9px;
+    }
 
-      @media (max-width: @bigger-media-break) {
-        margin-left: 5px;
-      }
+    &:hover {
+      color: #fff;
     }
   }
 
   &__icon {
-    background-color: rgba(0, 0, 0, 0.15);
-    padding: 4px 3px;
-    transition: all 0.5s;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin: 0 5px;
 
-    @media (max-width: @bigger-media-break) {
-      & i {
-        font-size: 18px;
-      }
+    i {
+      width: 15px;
+      height: 15px;
     }
-
-    @media (max-width: @media-break) {
-      flex: 1;
-    }
-
-    flex: 0.15;
   }
 
   &__popover-span {
-    display: block;
-    @media (min-width: @media-break) {
-      display: none;
-    }
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    display: none;
   }
 
   .menu-item-disabled {
     pointer-events: none;
-    background-color: lightgrey;
+    color: @seahorse-grey;
+  }
+
+  .disabled {
+    background-color: @seahorse-error-red;
+    color: #fff;
+  }
+
+  .separator {
+    border-left: 1px solid #000;
+    height: 40px;
+    align-self: center;
+    margin: 0 10px;
   }
 }

@@ -2,40 +2,19 @@
 
 .button-wrapper {
   display: flex;
-  flex: 1;
   position: relative;
-
-  @media (max-width: @media-break) {
-    margin: 0 5px 0 0;
-
-    &:last-child {
-      margin: 0;
-    }
-  }
 }
 
 .info-popup {
   position: absolute;
-  top: 40px;
+  top: 45px;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 5px;
+  right: -20px;
   background-color: white;
   z-index: 1000;
   border-radius: 2px;
   color: black;
-
-  @media (max-width: @bigger-media-break) {
-    @offset: -25px;
-    left: @offset;
-    right: @offset;
-  }
-
-  @media (max-width: @media-break) {
-    @offset: -50px;
-    left: @offset;
-    right: @offset;
-  }
 
   &__content {
     box-shadow: 0 10px 25px 5px rgba(13, 61, 61, 0.4);

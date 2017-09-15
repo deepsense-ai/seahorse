@@ -6,7 +6,8 @@ class WorkflowsEditorController {
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations, WorkflowCloneService,
               GraphNode, Edge, config, Report, MultiSelectionService, Operations, GraphPanelRendererService,
               WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus, UserService) {
+              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus,
+              EventsService, UserService) {
 
     WorkflowService.initRootWorkflow(workflowWithResults);
 
@@ -15,7 +16,7 @@ class WorkflowsEditorController {
       WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, Operations,
       GraphPanelRendererService, WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
       GraphNodesService, NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService,
-      NodeCopyPasteVisitorService, SessionStatus, UserService
+      NodeCopyPasteVisitorService, SessionStatus, UserService, EventsService
     });
 
     $rootScope.$watch(() => this.WorkflowService.getCurrentWorkflow().name, (newValue) => {
@@ -190,40 +191,8 @@ class WorkflowsEditorController {
         this.$rootScope.$apply();
       }),
 
-      this.$scope.$on('StatusBar.CLEAR_CLICK', () => {
-        this.ConfirmationModalService.showModal({
-          message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
-        }).then(() => {
-          this.WorkflowService.clearGraph();
-          this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
-        });
-      }),
-
-      this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
-        if (!this.isEditable()) {
-          console.log('WorkflowsEditorController', 'Cannot remove nodes if not editable');
-          return;
-        }
-
-        let selectedNodeIds = this.MultiSelectionService.getSelectedNodeIds();
-        let sinkOrSourceNodeIds = _.filter(selectedNodeIds, (nodeId) => {
-          let node = this.getWorkflow().getNodeById(nodeId);
-          return this.GraphNodesService.isSinkOrSource(node);
-        });
-        if (sinkOrSourceNodeIds.length > 0) {
-          let msg = 'Cannot delete source nor sink nodes';
-          this.NotificationService.showError({
-            title: 'Illegal node deletion',
-            message: msg
-          }, msg);
-        }
-        let nodeIdsToBeRemoved = _.difference(selectedNodeIds, sinkOrSourceNodeIds);
-        this.getWorkflow().removeNodes(nodeIdsToBeRemoved);
-        this.MultiSelectionService.clearSelection();
-        this.unselectNode();
-        this.selectedPortObject = null;
-        this.GraphPanelRendererService.removeNodes(nodeIdsToBeRemoved);
-      }),
+      this.$scope.$on('Keyboard.KEY_PRESSED_DEL', this._handleDelete.bind(this)),
+      this.EventsService.on(this.EventsService.EVENTS.WORKFLOW_DELETE_SELECTED_ELEMENT, this._handleDelete.bind(this)),
 
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
         if (newValue !== oldValue) {
@@ -244,7 +213,7 @@ class WorkflowsEditorController {
       this.$scope.$on('$destroy', () => {
         this.GraphPanelRendererService.clearWorkflow();
         this.NotificationService.clearToasts();
-      }),
+      })
 
     ];
   }
@@ -336,13 +305,38 @@ class WorkflowsEditorController {
 
   isEditable() {
     const workflow = this.WorkflowService.getCurrentWorkflow();
-    let isOwner = workflow.owner.id === this.UserService.getSeahorseUser().id;
     return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && this._isOwner();
   }
 
   _isOwner() {
     const workflow = this.WorkflowService.getCurrentWorkflow();
     return workflow.owner.id === this.UserService.getSeahorseUser().id;
+  }
+
+  _handleDelete() {
+    if (!this.isEditable()) {
+      console.log('WorkflowsEditorController', 'Cannot remove nodes if not editable');
+      return;
+    }
+
+    let selectedNodeIds = this.MultiSelectionService.getSelectedNodeIds();
+    let sinkOrSourceNodeIds = _.filter(selectedNodeIds, (nodeId) => {
+      let node = this.getWorkflow().getNodeById(nodeId);
+      return this.GraphNodesService.isSinkOrSource(node);
+    });
+    if (sinkOrSourceNodeIds.length > 0) {
+      let msg = 'Cannot delete source nor sink nodes';
+      this.NotificationService.showError({
+        title: 'Illegal node deletion',
+        message: msg
+      }, msg);
+    }
+    let nodeIdsToBeRemoved = _.difference(selectedNodeIds, sinkOrSourceNodeIds);
+    this.getWorkflow().removeNodes(nodeIdsToBeRemoved);
+    this.MultiSelectionService.clearSelection();
+    this.unselectNode();
+    this.selectedPortObject = null;
+    this.GraphPanelRendererService.removeNodes(nodeIdsToBeRemoved);
   }
 
 }

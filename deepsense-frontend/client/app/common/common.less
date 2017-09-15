@@ -6,15 +6,43 @@
 @import "./services/notification.service.less";
 @import "./sticky-window/sticky-window.less";
 
-.o-action-btn {
-  min-width: 60px;
-  text-transform: uppercase;
-  transition: all .5s;
-  border-radius: 0;
-  height: 100%;
-  min-height: 34px;
+@import "../../css/variables.less";
+@font-face {
+  font-family: 'seahorse-symbol';
+  src: url('../../fonts/seahorse-symbol.eot');
+  src: url('../../fonts/seahorse-symbol.woff') format('woff'),
+  url('../../fonts/seahorse-symbol.ttf') format('truetype'),
+  url('../../fonts/seahorse-symbol.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
 
-  &:hover {
-    box-shadow: 0 0 10px #A8A8A8 inset;
+label {
+  font-weight: normal;
+  cursor: pointer;
+  line-height: 1em;
+
+  input[type=checkbox] {
+    display: none;
+  }
+
+  input[type=checkbox] + span:before {
+    font-family: seahorse-symbol;
+    content: "\0057";
+    display: inline-block;
+    background: #ffffff;
+    background: linear-gradient(to bottom, #ffffff 0%,#dedede 100%);
+    border: 1px solid @deepsense-blue;
+    border-radius: 2px;
+    transition: background ease-in 0.2s;
+    width: 1em;
+    height: 1em;
+  }
+
+  input[type=checkbox]:checked + span:before {
+    content: "\0056";
+    color: #fff;
+    background: @seahorse-blue;
   }
 }
+
