@@ -476,11 +476,11 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
         "type" -> JsString("columnList"),
         "values" -> JsArray(JsString("abc"), JsString("def"))),
       JsObject(
-        "type" -> JsString("indexListOld"),
+        "type" -> JsString("indexList"),
         "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
       ),
       JsObject(
-        "type" -> JsString("indexList"),
+        "type" -> JsString("indexRange"),
         "values" -> JsArray(JsNumber(5), JsNumber(6))
       ),
       JsObject(
@@ -498,11 +498,11 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
         "type" -> JsString("columnList"),
         "values" -> JsArray(JsString("abc"), JsString("def"))),
       JsObject(
-        "type" -> JsString("indexListOld"),
+        "type" -> JsString("indexList"),
         "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
       ),
       JsObject(
-        "type" -> JsString("indexList"),
+        "type" -> JsString("indexRange"),
         "values" -> JsArray(JsNumber(5), JsNumber(6))
       ),
       JsObject(
@@ -524,5 +524,37 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
     val columnSelectorParameter = ColumnSelectorParameter("", required = false)
     columnSelectorParameter.fillValueWithJson(JsNull)
     assert(columnSelectorParameter.value == None)
+  }
+
+  test("IndexRangeColumnSelection can be filled with an empty or too short list") {
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false)
+    columnSelectorParameter.fillValueWithJson(JsArray(
+      JsObject(
+        "type" -> JsString("indexRange"),
+        "values" -> JsArray()
+      ),
+      JsObject(
+        "type" -> JsString("indexRange"),
+        "values" -> JsArray(JsNumber(1))
+      )
+    ))
+
+    val expectedValue = Some(MultipleColumnSelection(Vector(
+      IndexRangeColumnSelection(None, None),
+      IndexRangeColumnSelection(Some(1), Some(1))
+    )))
+    assert(columnSelectorParameter.value == expectedValue)
+  }
+
+  test("IndexRangeColumnSelection can not be filled with a too long list") {
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false)
+    intercept[DeserializationException] {
+      columnSelectorParameter.fillValueWithJson(JsArray(
+        JsObject(
+          "type" -> JsString("indexRange"),
+          "values" -> JsArray(JsNumber(1), JsNumber(2), JsNumber(3))
+        )
+      ))
+    }
   }
 }

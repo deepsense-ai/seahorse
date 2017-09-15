@@ -115,4 +115,33 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     multiplicator.validate
     verify(mockSchema, times(2)).validate
   }
+
+  test("Validation of MultipleColumnSelection should validate inner selectors") {
+    val selections = Vector.fill(3)({mock[ColumnSelection]})
+    val selectorParameter = ColumnSelectorParameter("description", true)
+    val multipleColumnSelection = MultipleColumnSelection(selections)
+    selectorParameter.value = Some(multipleColumnSelection)
+    selectorParameter.validate
+    selections.foreach {
+      case selection => verify(selection).validate
+    }
+  }
+
+  test("Validation of IndexRangeColumnSelector should be valid only if lower <= upper bound") {
+    IndexRangeColumnSelection(Some(5), Some(5)).validate
+    IndexRangeColumnSelection(Some(5), Some(6)).validate
+
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(None, Some(5)).validate
+    }
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(Some(4), None).validate
+    }
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(None, None).validate
+    }
+    intercept[IllegalIndexRangeColumnSelectionException]{
+      IndexRangeColumnSelection(Some(5), Some(4)).validate
+    }
+  }
 }

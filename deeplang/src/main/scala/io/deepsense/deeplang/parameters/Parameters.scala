@@ -292,4 +292,8 @@ case class ColumnSelectorParameter(
   override protected def valueFromDefinedJson(jsValue: JsValue): MultipleColumnSelection = {
     MultipleColumnSelection.fromJson(jsValue)
   }
+
+  override protected def validateDefined(definedValue: HeldValue): Unit = {
+    definedValue.validate
+  }
 }
