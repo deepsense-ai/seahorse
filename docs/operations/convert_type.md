@@ -7,26 +7,26 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Converts types of columns in a DataFrame. It can convert one or more columns at once.
-All of the selected columns are converted to the same (selected) type.
+Converts types of columns in a [DataFrame](../classes/dataframe.html). One or more columns
+can be converted at the same time. Every selected column is converted to the same (selected) type.
 
 Supports conversions from all types to String, Boolean, Timestamp, Double, Float, Long,
 and Integer type.
 
 Every null value stays a null value in the result DataFrame (despite the column type change).
-When a Timestamp column is converted to Numeric then each value is represented
+When a Timestamp column is converted to Numeric, then each value is represented
 by the number of milliseconds since 1 January 1970.
 
 Boolean converted to String generates a column of 'true' and 'false' strings.
 
-String column can be converted to Numeric as long as all values in the column represent a numeric value.
+String column can be converted to Numeric only if all values in the column represent a numeric value.
 
 A column converted to its type is not modified.
 If one or more column can not be converted,
 the operation will fail at runtime with TypeConversionException.
 
-Returns also a [Transformer](../classes/transformer.html) that can be later applied
-to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
+This operation also returns a [Transformer](../classes/transformer.html) that can be later applied
+to another DataFrame with Transform operation.
 
 **Since**: Seahorse 0.4.0
 
