@@ -49,6 +49,7 @@ List of all currently supported operations:
     * [Normalize](operations/normalize.html)
     * [One Hot Encoder](operations/one_hot_encoder.html)
     * [Polynomial Expansion](operations/polynomial_expansion.html)
+    * [Quantile Discretizer](operations/quantile_discretizer.html)
     * [String Indexer](operations/string_indexer.html)
     * [Vector Indexer](operations/vector_indexer.html)
   * Feature Scaling

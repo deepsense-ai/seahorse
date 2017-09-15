@@ -87,6 +87,8 @@ object CatalogRecorder {
     catalog.registerDOperable[GBTClassificationModel]()
     catalog.registerDOperable[MultilayerPerceptronClassifier]()
     catalog.registerDOperable[MultilayerPerceptronClassifierModel]()
+    catalog.registerDOperable[QuantileDiscretizerEstimator]()
+    catalog.registerDOperable[QuantileDiscretizerModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -216,6 +218,9 @@ object CatalogRecorder {
 
     // operations generated from Spark estimators
     catalog.registerDOperation[VectorIndexer](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[QuantileDiscretizer](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[StandardScaler](
