@@ -11,27 +11,35 @@
       <label>
         {{ ::parameter.name }}
       </label>
-      <span ng-if="::(isInnerWorkflow() && isRootLevelParameter && !isDynamic(parameter))" ng-switch="getVisibility(parameter.name)">
-        <i class="attributes-list__icon fa fa-lock toggleable-icon"
-           ng-switch-when="private"
-           ng-click="setVisibility(parameter.name, 'public')"
-           popover-placement="left"
-           uib-popover="This parameter is currently PRIVATE. Click to make it public"
-           popover-trigger="mouseenter"
-           popover-append-to-body="true"></i>
-        <i class="attributes-list__icon fa fa-unlock toggleable-icon"
-           ng-switch-when="public"
-           ng-click="setVisibility(parameter.name, 'private')"
-           popover-placement="left"
-           uib-popover="This parameter is currently PUBLIC. Click to make it private"
-           popover-trigger="mouseenter"
-           popover-append-to-body="true"></i>
+      <span
+        ng-if="::(isInnerWorkflow() && isRootLevelParameter && !isDynamic(parameter))"
+        ng-switch="getVisibility(parameter.name)">
+        <i
+          class="attributes-list__icon fa fa-lock toggleable-icon"
+          ng-switch-when="private"
+          ng-click="setVisibility(parameter.name, 'public')"
+          popover-placement="left"
+          uib-popover="This parameter is currently PRIVATE. Click to make it public"
+          popover-trigger="mouseenter"
+          popover-append-to-body="true"
+        ></i>
+        <i
+          class="attributes-list__icon fa fa-unlock toggleable-icon"
+          ng-switch-when="public"
+          ng-click="setVisibility(parameter.name, 'private')"
+          popover-placement="left"
+          uib-popover="This parameter is currently PUBLIC. Click to make it private"
+          popover-trigger="mouseenter"
+          popover-append-to-body="true"
+        ></i>
       </span>
-      <i class="attributes-list__icon attributes-list__icon--help fa fa-question-circle"
-         popover-placement="left"
-         uib-popover="{{ ::parameter.schema.description }}"
-         popover-trigger="mouseenter"
-         popover-append-to-body="true"></i>
+      <i
+        ng-if="parameter.schema.description"
+        class="attributes-list__icon attributes-list__icon--help fa fa-question-circle"
+        uib-popover="{{ ::parameter.schema.description }}"
+        popover-placement="left"
+        popover-trigger="mouseenter"
+        popover-append-to-body="true"></i>
     </div>
     <div class="ibox-content">
       <div class="attributes-value-view" ng-switch="::parameter.schema.type">
@@ -39,7 +47,8 @@
         <attribute-single-choice-type ng-switch-when="choice"></attribute-single-choice-type>
         <attribute-multiple-choice-type ng-switch-when="multipleChoice"></attribute-multiple-choice-type>
         <attribute-numeric-type ng-switch-when="numeric"></attribute-numeric-type>
-        <attribute-code-snippet-type ng-switch-when="codeSnippet" value="parameter.value" language="parameter.schema.language.name"></attribute-code-snippet-type>
+        <attribute-code-snippet-type ng-switch-when="codeSnippet" value="parameter.value"
+                                     language="parameter.schema.language.name"></attribute-code-snippet-type>
         <attribute-workflow-type ng-switch-when="workflow" parameter-name="parameter.name"></attribute-workflow-type>
         <attribute-string-type ng-switch-when="string"></attribute-string-type>
         <attribute-creator-type ng-switch-when="creator"></attribute-creator-type>

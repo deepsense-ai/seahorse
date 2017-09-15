@@ -1,6 +1,7 @@
 <div class="operations-list">
   <div class="operations-list__wrapper">
     <div
+      title="{{category.description}}"
       class="operations-list__item"
       ng-repeat="category in $ctrl.items track by category.id"
       ng-mouseover="$ctrl.showItem($event, $index)"
@@ -9,19 +10,19 @@
     >
       <div
         class="operations-list__name"
-        title="{{category.name}}"
       >
         {{category.name}}
       </div>
       <div
         ng-if="category.type === 'category'"
         class="operations-list__icon"
-      > > </div>
+      > &gt; </div>
     </div>
   </div>
-  <div class="operations-list__next-level"
-       ng-if="$ctrl.selectedItems"
-       ng-style="$ctrl.getNextLevelStyle()"
+  <div
+    ng-if="$ctrl.selectedItems"
+    ng-style="$ctrl.getNextLevelStyle()"
+    class="operations-list__next-level"
   >
     <operations-list
       containment="$ctrl.containment"
