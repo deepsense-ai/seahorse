@@ -69,7 +69,7 @@ class WorkflowManagerClientActor(
   }
 
   private def saveState(workflowId: Workflow.Id, state: ExecutionReport): Future[Unit] = {
-    pipeline(Post(saveStateUrl(workflowId), state))
+    pipeline(Put(saveStateUrl(workflowId), state))
       .map(handleUploadResponse)
   }
 

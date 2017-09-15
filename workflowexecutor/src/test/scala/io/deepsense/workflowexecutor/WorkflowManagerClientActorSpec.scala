@@ -172,7 +172,7 @@ class WorkflowManagerClientActorSpec
     "requested to save status" should {
 
       "upload execution report and receive OK" in {
-        stubFor(post(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
           .willReturn(aResponse()
             .withStatus(StatusCodes.OK.intValue)
           ))
@@ -185,7 +185,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "upload execution report and receive Created" in {
-        stubFor(post(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
           .willReturn(aResponse()
             .withStatus(StatusCodes.Created.intValue)
           ))
@@ -198,7 +198,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "fail on HTTP error" in {
-        stubFor(post(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
           .willReturn(aResponse()
             .withStatus(StatusCodes.InternalServerError.intValue)
           ))
