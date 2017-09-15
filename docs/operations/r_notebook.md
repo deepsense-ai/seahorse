@@ -34,7 +34,7 @@ Everytime the input `DataFrame` changes, the `dataframe()` returns the updated `
 
 **Since**: Seahorse 1.3.0
 
-####Examples
+#### Examples
 
 {% highlight R %}
 head(dataframe())

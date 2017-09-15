@@ -41,7 +41,7 @@ Data visualization can be achieved using the
 
 **Since**: Seahorse 1.0.0
 
-####Examples
+#### Examples
 
 {% highlight python %}
 dataframe().show()
