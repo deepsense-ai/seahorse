@@ -19,6 +19,6 @@ WORKFLOW_EXECUTOR_SPARK_VERSION: 1.6.0
 WORKFLOW_EXECUTOR_GITHUB_URL: https://github.com/deepsense-io/seahorse-workflow-executor
 WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor
 
-SEAHORSE_EDITOR_ADDRESS: http://localhost:8000
+SEAHORSE_EDITOR_ADDRESS: http://172.28.128.100:8000
 
 PANDAS_LIBRARY_ADDRESS: http://pandas.pydata.org

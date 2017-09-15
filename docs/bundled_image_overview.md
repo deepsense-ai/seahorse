@@ -28,10 +28,6 @@ Seahorse bundled image is a virtual machine containing all necessary components 
 * <a target="_blank" href="https://www.virtualbox.org/">VirtualBox</a> (tested on version 5.0.10, there is an issue with version 5.0.12)
 * <a target="_blank" href="https://www.google.com/chrome/">Google Chrome</a> (version >= 41)
 
-Seahorse virtual machine requires several ports to be free on user host to run as expected:
-
-    [8000, 9080, 8080, 15674, 61613, 15672, 8888].
-
 ### Download Seahorse Bundled Image
 
 Vagrantfile describing image containing all necessary components of Seahorse can be downloaded from
@@ -44,8 +40,7 @@ To run Seahorse bundled image you have to navigate to the directory where you do
 
     vagrant up
 
-After that you can navigate to <a target="_blank" href="http://localhost:8000">http://localhost:8000</a>
-and use Seahorse Editor.
+After that you can navigate to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a>.
 
 ### Shutdown Command
 To stop Seahorse bundled image you need to execute:
