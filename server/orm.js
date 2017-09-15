@@ -1,5 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Piotr Zarówny
  */
 'use strict';
 
@@ -28,7 +30,7 @@ var config = {
 module.exports = function(callback) {
   waterline.initialize(config, function(err, models) {
     if(err) {
-      throw console.log(err);
+      throw new Error(err.message);
     }
     callback(waterline);
   });

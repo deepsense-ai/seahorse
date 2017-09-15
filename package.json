@@ -10,16 +10,18 @@
     "type": "git",
     "url": "https://github.com/codilime/deepsense-frontend.git"
   },
-  "main": "./gulpfile.js",
   "scripts": {
     "postinstall": "bower install",
     "prestart": "npm install",
     "start": "gulp start",
     "predev": "npm install",
     "dev": "gulp start --dev",
-    "server": "node server/app.js",
+    "prejasmine": "npm install",
     "jasmine": "jasmine-node server/tests --captureExceptions",
-    "karma": "karma start"
+    "prekarma": "npm install",
+    "karma": "karma start",
+    "pree2e": "npm install",
+    "e2e": "protractor"
   },
   "dependencies": {
     "body-parser": "^1.12.0",
@@ -48,16 +50,19 @@
     "gulp-jshint": "^1.9.0",
     "gulp-less": "^3.0.0",
     "gulp-minify-css": "^0.4.6",
+    "gulp-nodemon": "^1.0.5",
     "gulp-size": "^1.2.0",
     "gulp-uglify": "^1.1.0",
-    "gulp-util": "^3.0.2",
+    "gulp-util": "^3.0.3",
     "http-server": "latest",
     "jasmine": "^2.1.1",
+    "jasmine-core": "^2.2.0",
     "jasmine-node": "^1.14.5",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.12.31",
     "karma-browserify": "^3.0.2",
     "karma-chrome-launcher": "^0.1.7",
+    "karma-cli": "0.0.4",
     "karma-jasmine": "^0.3.5",
     "protractor": "^1.7.0",
     "run-sequence": "^1.0.2",
@@ -93,6 +98,10 @@
       "html": "**/*.html",
       "fonts": "fonts/*"
     },
+    "server": {
+      "path": "./server/",
+      "app": "app.js"
+    },
     "libs": {
       "js": [
         "./node_modules/angular/angular.min.js",
@@ -109,9 +118,10 @@
       "e2e": "./e2e-tests/**/*.spec.js"
     }
   },
-  "dev": {
-    "server": {
-      "port": 3000
+  "env": {
+    "dev": {
+      "host": "http://localhost",
+      "port": 8000
     }
   }
 }

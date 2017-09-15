@@ -1,11 +1,14 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Piotr Zarówny
  */
 'use strict';
 
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
     runSequence = require('run-sequence'),
+    nodemon = require('gulp-nodemon'),
     browserSync = require('browser-sync'),
     browserify = require('browserify'),
     browserifyShim = require('browserify-shim'),
@@ -24,22 +27,46 @@ require('jshint-stylish');
 
 var config = require('./package.json'),
     client = config.files.client,
+    server = config.files.server,
     build = config.files.build,
     libs = config.files.libs,
     devMode = !!gutil.env.dev;
 
+var BROWSER_SYNC_RELOAD_DELAY = 1500;
+
 
 gulp.task('clean', function () {
-  return del(['./build/','./build/*']);
+  return del([build.path]);
 });
 
-gulp.task('browser-sync', function () {
+
+gulp.task('nodemon', function (callback) {
+  var called = false;
+  return nodemon({
+        execMap: {
+          'js': 'node --harmony'
+      },
+      script: server.path + server.app,
+      verbose: true,
+      watch: [server.path]
+    })
+    .on('start', function () {
+      if (!called) {
+        callback();
+      }
+      called = true;
+    })
+    .on('restart', function () {
+      setTimeout(function () {
+        browserSync.reload();
+      }, BROWSER_SYNC_RELOAD_DELAY);
+    });
+});
+
+gulp.task('browser-sync', ['nodemon'], function () {
   return browserSync({
-    server: {
-      baseDir: build.path,
-      port: config.dev.server.port
-    },
-    open: !devMode
+    open: !devMode,
+    proxy: config.env.dev.host + ':' + config.env.dev.port
   });
 });
 
@@ -88,8 +115,11 @@ gulp.task('libs:js', function () {
 gulp.task('jshint', function () {
   return gulp.src([
       client.path + client.js,
-      './gulpfile.js',
-      './protractor.conf.js'
+      server.path + server.js,
+      config.files.tests.e2e,
+      './karma.conf.js',
+      './protractor.conf.js',
+      './gulpfile.js'
     ])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
@@ -131,6 +161,14 @@ gulp.task('start', function (callback) {
     gulp.watch(client.path + client.less, ['less', browserSync.reload]);
     gulp.watch(client.path + client.js, ['jshint', 'browserify', browserSync.reload]);
   }
+});
+
+gulp.task('watch', function (callback) {
+  devMode = true;
+  runSequence('browser-sync', callback);
+  gulp.watch(client.path + client.html, ['html', browserSync.reload]);
+  gulp.watch(client.path + client.less, ['less', browserSync.reload]);
+  gulp.watch(client.path + client.js, ['jshint', 'browserify', browserSync.reload]);
 });
 
 

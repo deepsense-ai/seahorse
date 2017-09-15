@@ -1,5 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Piotr Zarówny
  */
 'use strict';
 
@@ -18,7 +20,7 @@ module.exports = function(waterline) {
     };
   };
   for (var collection in wc) {
-    if (wc.hasOwnProperty(collection)) {
+    if (wc.hasOwnProperty(collection)) { /*jshint -W083 */
       var model = wc[collection];
 
       router.route('/' + collection + '/:id')

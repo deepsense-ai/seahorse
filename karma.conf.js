@@ -1,5 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Piotr Zarówny
  */
 'use strict';
 
@@ -32,7 +34,7 @@ module.exports = function(config){
     },
 
     browserify: {
-      transform: ['browserify-shim', '6to5ify']
+      transform: ['browserify-shim', 'babelify']
     },
 
     junitReporter : {

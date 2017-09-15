@@ -1,6 +1,9 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Piotr Zarówny
  */
+/*global console*/
 'use strict';
 
 var http     = require('http');
@@ -15,6 +18,9 @@ var httpProxy = require('http-proxy');
 var proxies = [];
 
 var settingsFile = 'settings.json';
+
+var config = require('./../package.json');
+
 Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, 'utf-8')
  .catch(function() {
   console.log('Error reading settings file');
@@ -53,16 +59,12 @@ Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, 'utf-8')
   }
 
   require('./orm.js')(function(waterline) {
-      console.log('ORM ready');
-
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(bodyParser.json());
       app.use('/apimock', require('./mock.js'));
       app.use('/api', require('./rest.js')(waterline));
       app.use('/', express.static(__dirname + '/../build'));
 
-      var port = 8000;
-      http.listen(port);
-      console.log('Listening on port ' + port + '.');
+      http.listen(config.env.dev.port);
   });
 });
