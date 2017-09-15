@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.dataframe
 import java.sql.Timestamp
 
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -71,7 +71,7 @@ trait DataFrameTestFactory {
     StructField(arrayColumnName, ArrayType(IntegerType)),
     StructField(mapColumnName, DataTypes.createMapType(StringType, IntegerType)),
     StructField(structColumnName, StructType(Seq(StructField("x", IntegerType)))),
-    StructField(vectorColumnName, new VectorUDT)
+    StructField(vectorColumnName, new org.apache.spark.hacks.SparkVectors.VectorUDT)
   ))
 
   def testRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(

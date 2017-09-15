@@ -24,8 +24,8 @@ entryPoint <- SparkR:::getJobj(entryPointId)
 
 assign(".sc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = SparkR:::.sparkREnv)
 assign("sc", get(".sc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
-assign(".sqlc", SparkR:::callJMethod(entryPoint, "getSqlContext"), envir = SparkR:::.sparkREnv)
-assign("sqlContext", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+assign(".sqlc", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
+assign("sparkSession", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 sdf <- SparkR:::callJMethod(entryPoint, "retrieveInputDataFrame", workflowId, nodeId, as.integer(0))
 df <- SparkR:::dataFrame(sdf, isCached = FALSE)
 
@@ -34,7 +34,7 @@ tryCatch({
   eval(parse(text = code))
   transformedDF <- transform(df)
   if (class(transformedDF) != "DataFrame") {
-    transformedDF <- createDataFrame(sqlContext, data.frame(transformedDF))
+    transformedDF <- createDataFrame(sparkSession, data.frame(transformedDF))
   }
 
   SparkR:::callJMethod(entryPoint, "registerOutputDataFrame", workflowId, nodeId, as.integer(0), transformedDF@sdf)

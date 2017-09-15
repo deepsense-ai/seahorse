@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.report
 import scala.language.reflectiveCalls
 import scala.util.Try
 
-import org.apache.spark.mllib.linalg.DenseMatrix
+import org.apache.spark.ml.linalg.DenseMatrix
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.report.ReportUtils.{formatValues, shortenLongTableValues}

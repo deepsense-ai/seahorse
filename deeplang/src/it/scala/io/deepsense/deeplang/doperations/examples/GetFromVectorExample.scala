@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.ml.linalg.Vectors
 
 import io.deepsense.deeplang.doperables.GetFromVectorTransformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -39,6 +39,6 @@ class GetFromVectorExample extends AbstractOperationExample[GetFromVector] {
       Vectors.sparse(3, Seq((1, 0.91), (2, 3.2))),
       Vectors.sparse(3, Seq((0, 5.7), (2, 2.7))),
       Vectors.sparse(3, Seq()).toDense).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
   }
 }

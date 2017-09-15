@@ -30,7 +30,7 @@ Everytime the input `DataFrame` changes, the `dataframe()` returns the updated `
 
 * `sc` - Spark Context
 
-* `sqlContext` - SQL Context
+* `sparkSession` - SQL Context
 
 Data visualization can be achieved using the
 <a target="_blank" href="{{ site.PANDAS_LIBRARY_ADDRESS }}">pandas</a> library.

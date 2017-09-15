@@ -101,7 +101,7 @@ case class Split()
     val inputDataFrameId =
       "split_conditional_" + java.util.UUID.randomUUID.toString.replace('-', '_')
 
-    df.sparkDataFrame.registerTempTable(inputDataFrameId)
+    df.sparkDataFrame.createOrReplaceTempView(inputDataFrameId)
     logger.debug(s"Table '$inputDataFrameId' registered. Executing the expression")
 
     val selectFromExpression = s"SELECT * FROM $inputDataFrameId"
@@ -112,7 +112,7 @@ case class Split()
        s"$selectFromExpression WHERE not ($condition)")
 
     def runExpression(expression: String): DataFrame = {
-      val sqlResult = df.sparkDataFrame.sqlContext.sql(expression)
+      val sqlResult = df.sparkDataFrame.sparkSession.sql(expression)
       DataFrame.fromSparkDataFrame(sqlResult)
     }
 
@@ -126,7 +126,7 @@ case class Split()
     results.onComplete {
       _ =>
         logger.debug(s"Unregistering the temporary table '$inputDataFrameId'")
-        df.sparkDataFrame.sqlContext.dropTempTable(inputDataFrameId)
+        df.sparkDataFrame.sparkSession.catalog.dropTempView(inputDataFrameId)
     }
 
     Await.result(results, Duration.Inf)

@@ -21,7 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 import org.apache.spark.ml.param.{BooleanParam, DoubleParam, ParamMap}
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
+import org.apache.spark.sql.{DataFrame => SparkDataFrame, Dataset}
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.doperables.report.Report
@@ -62,7 +62,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
 
     def setNumericParam(value: Double): this.type = set(numericParam, value)
 
-    override def fit(dataset: SparkDataFrame): ExampleSparkModel = {
+    override def fit(dataset: Dataset[_]): ExampleSparkModel = {
       require($(numericParam) == paramValueToSet)
       fitModel
     }
@@ -97,7 +97,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
     override def copy(extra: ParamMap): ExampleSparkModel =
       extra.toSeq.foldLeft(new ExampleSparkModel())((model, paramPair) => model.set(paramPair))
 
-    override def transform(dataset: SparkDataFrame): SparkDataFrame = {
+    override def transform(dataset: Dataset[_]): SparkDataFrame = {
       require($(numericParam) == paramValueToSet)
       fitDataFrame
     }

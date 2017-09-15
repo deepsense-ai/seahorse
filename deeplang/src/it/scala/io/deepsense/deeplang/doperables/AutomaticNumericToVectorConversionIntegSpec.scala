@@ -18,7 +18,7 @@ package io.deepsense.deeplang.doperables
 
 import java.sql.Timestamp
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
@@ -40,7 +40,7 @@ class AutomaticNumericToVectorConversionIntegSpec
   val columns = Seq(
     StructField("c", DoubleType),
     StructField("b", StringType),
-    StructField("a", new VectorUDT()),
+    StructField("a", new org.apache.spark.hacks.SparkVectors.VectorUDT()),
     StructField("x", TimestampType),
     StructField("z", BooleanType))
 
@@ -110,12 +110,14 @@ class AutomaticNumericToVectorConversionIntegSpec
     "work correctly on double type column in noInPlace mode" in {
       transformer.setSingleOrMultiChoice(singleNoInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedNoInPlaceSchema(new VectorUDT).treeString
+      transformed.schema.get.treeString shouldBe
+        expectedNoInPlaceSchema(new org.apache.spark.hacks.SparkVectors.VectorUDT).treeString
     }
     "work correctly on double type column in inPlace mode" in {
       transformer.setSingleOrMultiChoice(singleInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedInPlaceSchema(new VectorUDT).treeString
+      transformed.schema.get.treeString shouldBe
+        expectedInPlaceSchema(new org.apache.spark.hacks.SparkVectors.VectorUDT).treeString
     }
   }
 }

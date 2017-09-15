@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperables.spark.wrappers.evaluators
 
 import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, MulticlassMetrics}
-import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.ml.linalg.Vector
 import org.apache.spark.sql.Row
 
 import io.deepsense.commons.types.ColumnType
@@ -63,7 +63,7 @@ class BinaryClassificationEvaluator
       rawChoice: RawPredictionMetric): Double = {
     val rawPredictionColumnName = dataFrame.getColumnName(rawChoice.getRawPredictionColumnParam)
     val scoreAndLabels = dataFrame.sparkDataFrame.select(rawPredictionColumnName, labelColumnName)
-      .map { case Row(rawPrediction: Vector, label: Double) =>
+        .rdd.map { case Row(rawPrediction: Vector, label: Double) =>
       (rawPrediction(1), label)
     }
     val metrics = new BinaryClassificationMetrics(scoreAndLabels)
@@ -81,7 +81,7 @@ class BinaryClassificationEvaluator
       predChoice: PredictionMetric): Double = {
     val predictionColumnName = dataFrame.getColumnName(predChoice.getPredictionColumnParam)
     val predictionAndLabels = dataFrame.sparkDataFrame.select(predictionColumnName, labelColumnName)
-      .map { case Row(prediction: Double, label: Double) =>
+        .rdd.map { case Row(prediction: Double, label: Double) =>
       (prediction, label)
     }
     val metrics = new MulticlassMetrics(predictionAndLabels)

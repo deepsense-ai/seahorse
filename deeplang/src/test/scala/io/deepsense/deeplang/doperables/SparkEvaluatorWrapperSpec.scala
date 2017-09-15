@@ -21,7 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 import org.apache.spark.ml.param.{DoubleParam, ParamMap}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
+import org.apache.spark.sql.Dataset
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
@@ -118,7 +118,7 @@ object SparkEvaluatorWrapperSpec {
     def setNumericParam(value: Double): this.type = set(numericParam, value)
     def setColumnParam(value: String): this.type = set(columnParam, value)
 
-    override def evaluate(dataset: SparkDataFrame): Double = {
+    override def evaluate(dataset: Dataset[_]): Double = {
       $(numericParam)
     }
 

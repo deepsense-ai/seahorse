@@ -18,7 +18,7 @@ package io.deepsense.deeplang
 
 import java.io.File
 
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkContext, SparkConf}
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
@@ -34,19 +34,19 @@ object StandaloneSparkClusterForTests {
     System.setProperty("HADOOP_USER_NAME", "hdfs")
 
     val sparkConf: SparkConf = new SparkConf()
-      .setMaster("spark://10.10.1.199:7077")
+      .setMaster("spark://10.10.1.121:7077")
       .setAppName("TestApp")
       .setJars(Seq(
-        "./deeplang/target/scala-2.10/" +
-          "deepsense-seahorse-deeplang-assembly-1.2.0-DESKTOP-SNAPSHOT.jar"
+        "./deeplang/target/scala-2.11/" +
+          "deepsense-seahorse-deeplang-assembly-1.2.0-DESKTOP-NEWSPARK-SNAPSHOT.jar"
       ))
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
 
     val sparkContext = new SparkContext(sparkConf)
-    val sqlContext = new SQLContext(sparkContext)
+    val sparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
 
-    UserDefinedFunctions.registerFunctions(sqlContext.udf)
+    UserDefinedFunctions.registerFunctions(sparkSession.udf)
 
     val dOperableCatalog = {
       val catalog = new DOperableCatalog
@@ -55,14 +55,14 @@ object StandaloneSparkClusterForTests {
     }
 
     val inferContext = InferContext(
-      DataFrameBuilder(sqlContext),
+      DataFrameBuilder(sparkSession),
       "testTenantId",
       dOperableCatalog,
       mock[InnerWorkflowParser])
 
     new MockedExecutionContext(
       sparkContext,
-      sqlContext,
+      sparkSession,
       inferContext,
       LocalFileSystemClient(),
       "testTenantId",

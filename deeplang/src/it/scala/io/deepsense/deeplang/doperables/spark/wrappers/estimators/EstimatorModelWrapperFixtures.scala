@@ -22,7 +22,7 @@ import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml
 import org.apache.spark.ml.Estimator
 import org.apache.spark.ml.param.{ParamMap, Param => SparkParam}
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, Dataset}
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 
 import io.deepsense.deeplang.ExecutionContext
@@ -47,7 +47,7 @@ object EstimatorModelWrapperFixtures {
 
     override def copy(extra: ParamMap): this.type = defaultCopy(extra)
 
-    override def transform(dataset: DataFrame): DataFrame = {
+    override def transform(dataset: Dataset[_]): DataFrame = {
       dataset.selectExpr("*", "1 as " + $(predictionCol))
     }
 
@@ -63,7 +63,7 @@ object EstimatorModelWrapperFixtures {
 
     val predictionCol = new SparkParam[String](uid, "name", "description")
 
-    override def fit(dataset: DataFrame): SimpleSparkModel =
+    override def fit(dataset: Dataset[_]): SimpleSparkModel =
       new SimpleSparkModel().setPredictionCol($(predictionCol))
 
     override def copy(extra: ParamMap): Estimator[SimpleSparkModel] = defaultCopy(extra)

@@ -68,7 +68,7 @@ abstract class CustomCodeColumnTransformer() extends MultiColumnTransformer {
               "Operation finished successfully, but did not produce a DataFrame.")
           }
 
-        val newSparkDataFrame = context.sqlContext.createDataFrame(
+        val newSparkDataFrame = context.sparkSession.createDataFrame(
           sparkDataFrame.rdd,
           transformSingleColumnSchema(inputColumn, outputColumn, dataFrame.schema.get).get)
         DataFrame.fromSparkDataFrame(newSparkDataFrame)

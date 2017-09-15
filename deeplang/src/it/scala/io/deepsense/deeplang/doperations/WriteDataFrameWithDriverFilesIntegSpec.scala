@@ -55,7 +55,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
 
   def quote(value: String, sep: String): String = {
     def escapeQuotes(x: Any): String =
-      s"$x".replace(quoteChar, quoteChar + quoteChar)
+      s"$x".replace(quoteChar, "\\" + quoteChar)
 
     def optionallyQuote(x: String): String = {
       if (x.contains(sep) || x.contains(quoteChar)) {
@@ -75,16 +75,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
       Seq("0", "3.14159", "Hello, world!", DateTimeConverter.toString(dateTime)),
       Seq("", "", "", "")
     ).map { row => row.map(quote(_, sep)).mkString(sep) }
-
-    // this is something that Spark-CSV writer does.
-    // It's compliant with CSV standard, although unnecessary
-    rows.map {
-      row => if (row.startsWith(sep)) {
-        "\"\"" + row
-      } else {
-        row
-      }
-    }
+    rows
   }
 
   lazy val dataframe = createDataFrame(rows, schema)
@@ -278,7 +269,9 @@ class WriteDataFrameWithDriverFilesIntegSpec
     }
 
     for (idx <- rows.indices) {
-      lines(idx) shouldBe rowsAsCsv(separator)(idx)
+      val got = lines(idx)
+      val expected = rowsAsCsv(separator)(idx)
+      got shouldEqual expected
     }
   }
 }

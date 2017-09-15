@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.ml.linalg.Vectors
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.MinMaxScaler
@@ -39,6 +39,6 @@ class MinMaxScalerExample extends AbstractOperationExample[MinMaxScaler] {
       Vectors.sparse(3, Array(0, 2), Array(3, Long.MaxValue)).toDense,
       Vectors.sparse(3, Array(0), Array(1.5)).toDense
     ).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
   }
 }

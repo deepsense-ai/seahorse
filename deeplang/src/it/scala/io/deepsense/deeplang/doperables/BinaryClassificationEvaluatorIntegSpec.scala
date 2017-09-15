@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -34,7 +34,7 @@ class BinaryClassificationEvaluatorIntegSpec extends DeeplangIntegTestSupport {
     def simpleSchema: StructType = StructType(Seq(
       StructField("label", DoubleType),
       StructField("prediction", DoubleType),
-      StructField("rawPrediction", new VectorUDT())))
+      StructField("rawPrediction", new org.apache.spark.hacks.SparkVectors.VectorUDT())))
     val simpleData = Seq(
       Seq(0.0, 1.0, Vectors.dense(-0.001, 0.001)),
       Seq(1.0, 1.0, Vectors.dense(-0.001, 0.001)),
@@ -99,7 +99,7 @@ class BinaryClassificationEvaluatorIntegSpec extends DeeplangIntegTestSupport {
 
       val evalRenamed = new BinaryClassificationEvaluator()
       evalRenamed.setLabelColumn(new NameSingleColumnSelection("labe"))
-      val predSel =  new NameSingleColumnSelection("pred")
+      val predSel = new NameSingleColumnSelection("pred")
       val precision = evalRenamed.setMetricName(new Precision().setPredictionColumnParam(predSel))
         .evaluate(executionContext)()(dogDFRenamed)
       precision.value shouldBe 4.0 / 7.0

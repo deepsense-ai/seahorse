@@ -19,7 +19,7 @@ package io.deepsense.deeplang
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.{SQLContext, DataFrame => SparkDataFrame}
+import org.apache.spark.sql.{SparkSession, DataFrame => SparkDataFrame}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
@@ -28,7 +28,7 @@ import io.deepsense.deeplang.inference.InferContext
 
 case class CommonExecutionContext(
     sparkContext: SparkContext,
-    sqlContext: SQLContext,
+    sparkSession: SparkSession,
     inferContext: InferContext,
     fsClient: FileSystemClient,
     tempPath: String,
@@ -40,7 +40,7 @@ case class CommonExecutionContext(
   def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
     ExecutionContext(
       sparkContext,
-      sqlContext,
+      sparkSession,
       inferContext,
       fsClient,
       tempPath,
@@ -55,7 +55,7 @@ object CommonExecutionContext {
   def apply(context: ExecutionContext): CommonExecutionContext =
     CommonExecutionContext(
       context.sparkContext,
-      context.sqlContext,
+      context.sparkSession,
       context.inferContext,
       context.fsClient,
       context.tempPath,
@@ -68,7 +68,7 @@ object CommonExecutionContext {
 /** Holds information needed by DOperations and DMethods during execution. */
 case class ExecutionContext(
     sparkContext: SparkContext,
-    sqlContext: SQLContext,
+    sparkSession: SparkSession,
     inferContext: InferContext,
     fsClient: FileSystemClient,
     tempPath: String,

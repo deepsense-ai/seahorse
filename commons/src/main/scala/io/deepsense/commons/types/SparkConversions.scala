@@ -17,7 +17,6 @@
 package io.deepsense.commons.types
 
 import org.apache.spark.sql.types._
-import org.apache.spark.mllib.linalg.VectorUDT
 import io.deepsense.commons.types.ColumnType._
 
 object SparkConversions {
@@ -29,7 +28,7 @@ object SparkConversions {
       case _: BooleanType => ColumnType.boolean
       case _: TimestampType => ColumnType.timestamp
       case _: ArrayType => ColumnType.array
-      case _: VectorUDT => ColumnType.vector
+      case _: org.apache.spark.hacks.SparkVectors.VectorUDT => ColumnType.vector
       case _ => ColumnType.other
     }
   }

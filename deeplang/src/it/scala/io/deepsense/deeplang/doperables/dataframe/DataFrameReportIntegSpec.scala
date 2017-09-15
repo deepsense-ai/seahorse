@@ -230,7 +230,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       cellValue: Option[String],
       columnNameBase: String,
       dataFrameColumnsNumber: Int,
-      dataFrameRowsNumber: Int): Registration = {
+      dataFrameRowsNumber: Int) = {
     val dataFrame = executionContext.dataFrameBuilder.buildDataFrame(
       buildSchema(dataFrameColumnsNumber, columnNameBase),
       buildRDDWithStringValues(dataFrameColumnsNumber, dataFrameRowsNumber, cellValue))
@@ -251,7 +251,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       columnNameBase: String,
       dataFrameColumnsNumber: Int,
       dataFrameRowsNumber: Int,
-      report: Report): Registration = {
+      report: Report) = {
     val dataSampleTable = report.content.tableByName(
       DataFrameReportGenerator.DataSampleTableName).get
     val expectedRowsNumber: Int =
@@ -266,7 +266,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
   private def testDataFrameSizeTable(
       report: Report,
       numberOfColumns: Int,
-      numberOfRows: Long): Registration = {
+      numberOfRows: Long) = {
     val dataFrameSizeTable = report.content.tableByName(
       DataFrameReportGenerator.DataFrameSizeTableName).get
     dataFrameSizeTable.columnNames shouldBe Some(List("Number of columns", "Number of rows"))

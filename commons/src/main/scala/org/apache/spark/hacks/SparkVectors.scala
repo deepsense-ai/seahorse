@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
+package org.apache.spark.hacks
 
-package io.deepsense.deeplang.doperables.serialization
-
-import org.apache.spark.ml.Model
-import org.apache.spark.ml.util.MLReader
-
-import io.deepsense.deeplang.doperables.Transformer
-
-class SerializableSparkModelMLReader[M <: Model[M]] extends MLReader[SerializableSparkModel[M]] {
-
-  override def load(path: String): SerializableSparkModel[M] = {
-    val modelPath = Transformer.modelFilePath(path)
-    new SerializableSparkModel(CustomPersistence.load[M](sparkSession.sparkContext, modelPath))
-  }
+/**
+ * This object necessary to make org.apache.spark.ml.linalg.VectorUDT visible
+ * outside of org.apache.spark package
+ */
+object SparkVectors {
+  type VectorUDT = org.apache.spark.ml.linalg.VectorUDT
 }

@@ -16,8 +16,8 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.mllib
-import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.ml
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
@@ -51,7 +51,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest
       TestDataFrameRow(0.0, 1.0, Vectors.dense(32.0, 11.0, 9.0), 4, 3, 0.2, 0.0, 0.1,
         Seq("b", "d", "d", "f", "f", "g").toArray, Vectors.dense(0.1, 0.2, 0.1))
     )
-    val sparkDF = sqlContext.createDataFrame(rowSeq)
+    val sparkDF = sparkSession.createDataFrame(rowSeq)
     DataFrame.fromSparkDataFrame(sparkDF)
   }
 
@@ -128,12 +128,12 @@ object AbstractEstimatorModelWrapperSmokeTest {
   case class TestDataFrameRow(
     myLabel: Double,
     myWeight: Double,
-    myFeatures: mllib.linalg.Vector,
+    myFeatures: ml.linalg.Vector,
     myItemId: Int,
     myUserId: Int,
     myRating: Double,
     myCensor: Double,
     myNoZeroLabel: Double,
     myStringFeatures: Array[String],
-    myStandardizedFeatures: mllib.linalg.Vector)
+    myStandardizedFeatures: ml.linalg.Vector)
 }

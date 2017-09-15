@@ -16,7 +16,7 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.BuildInfo
@@ -38,7 +38,7 @@ trait Executor extends Logging {
       dataFrameStorage: DataFrameStorage,
       customCodeExecutionProvider: CustomCodeExecutionProvider,
       sparkContext: SparkContext,
-      sqlContext: SQLContext,
+      sparkSession: SparkSession,
       tempPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
@@ -50,14 +50,14 @@ trait Executor extends Logging {
       new GraphReader(createDOperationsCatalog()))
 
     val inferContext = InferContext(
-      DataFrameBuilder(sqlContext),
+      DataFrameBuilder(sparkSession),
       tenantId,
       catalog,
       innerWorkflowExecutor)
 
     CommonExecutionContext(
       sparkContext,
-      sqlContext,
+      sparkSession,
       inferContext,
       FileSystemClientStub(), // temporarily mocked
       tempPath,
@@ -77,10 +77,10 @@ trait Executor extends Logging {
     sparkContext
   }
 
-  def createSqlContext(sparkContext: SparkContext): SQLContext = {
-    val sqlContext = new SQLContext(sparkContext)
-    UserDefinedFunctions.registerFunctions(sqlContext.udf)
-    sqlContext
+  def createSparkSession(sparkContext: SparkContext): SparkSession = {
+    val sparkSession = SparkSession.builder().config(sparkContext.getConf).getOrCreate()
+    UserDefinedFunctions.registerFunctions(sparkSession.udf)
+    sparkSession
   }
 
   def createDOperableCatalog(): DOperableCatalog = {

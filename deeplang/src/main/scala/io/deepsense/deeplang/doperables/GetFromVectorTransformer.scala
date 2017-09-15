@@ -45,8 +45,8 @@ case class GetFromVectorTransformer() extends MultiColumnTransformer {
       dataFrame: DataFrame): DataFrame = {
     val inputColumnIndex = dataFrame.schema.get.fieldIndex(inputColumn)
     val indexInVector = getIndex
-    val transformedRdd = dataFrame.sparkDataFrame.map { case r =>
-      val vector = r.get(inputColumnIndex).asInstanceOf[org.apache.spark.mllib.linalg.Vector]
+    val transformedRdd = dataFrame.sparkDataFrame.rdd.map { case r =>
+      val vector = r.get(inputColumnIndex).asInstanceOf[org.apache.spark.ml.linalg.Vector]
       // Append output column as the last column
       if (vector != null) {
         Row.fromSeq(r.toSeq :+ vector.apply(indexInVector))
@@ -56,7 +56,7 @@ case class GetFromVectorTransformer() extends MultiColumnTransformer {
     }
     val expectedSchema =
       transformSingleColumnSchema(inputColumn, outputColumn, dataFrame.schema.get).get
-    val transformedDataFrame = context.sqlContext.createDataFrame(transformedRdd, expectedSchema)
+    val transformedDataFrame = context.sparkSession.createDataFrame(transformedRdd, expectedSchema)
     DataFrame.fromSparkDataFrame(transformedDataFrame)
   }
 
