@@ -41,7 +41,7 @@ function checkUserQuota(req, res, next) {
     const handleScimUserResponse = function(error, response, body) {
         if (!error && response.statusCode == 200) {
           console.error(body);
-          users = JSON.parse(body)
+          const users = JSON.parse(body)
           if (users.totalResults < user_quota) {
               next()
           } else {
