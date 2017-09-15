@@ -77,7 +77,6 @@ object Library {
   // to suppress "Nullable" warning, as per
   // http://stackoverflow.com/questions/13162671/missing-dependency-class-javax-annotation-nullable.
   val findBugs = "com.google.code.findbugs" % "jsr305" % "3.0.1"
-  val javaMail = "javax.mail" % "mail" % "1.4.7"
 
 }
 
@@ -191,8 +190,7 @@ object Dependencies {
     flyway,
     scalajs,
     slick,
-    quartz,
-    javaMail
+    quartz
   ) ++ Seq(scalatest).map(_ % Test)
 
   val integrationtests = Seq(

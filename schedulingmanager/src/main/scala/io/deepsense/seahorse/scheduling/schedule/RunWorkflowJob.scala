@@ -4,27 +4,12 @@
 
 package io.deepsense.seahorse.scheduling.schedule
 
-import java.net.URL
 import java.util.UUID
-import java.util.concurrent.TimeUnit
-
-import akka.actor.ActorSystem
-import akka.util.Timeout
-import spray.http.BasicHttpCredentials
 
 import scala.concurrent.Future
-import scala.concurrent.duration.FiniteDuration
 
-import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.LoggerForCallerClass
-import io.deepsense.graph.nodestate.name.NodeStatusName
 import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
-import io.deepsense.seahorse.scheduling.SchedulingManagerConfig
-import io.deepsense.seahorse.scheduling.mail.{EmailSender, EmailSenderConfig}
-import io.deepsense.sessionmanager.rest.client.SessionManagerClient
-import io.deepsense.sessionmanager.service.{Session, Status}
-import io.deepsense.workflowmanager.client.{PresetsClient, WorkflowManagerClient}
-import io.deepsense.workflowmanager.model.WorkflowDescription
 
 class RunWorkflowJob extends WorkflowJob {
   import scala.concurrent.ExecutionContext.Implicits.global
