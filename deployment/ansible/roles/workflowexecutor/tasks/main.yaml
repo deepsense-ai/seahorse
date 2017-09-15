@@ -14,7 +14,7 @@
     program: {
       name: 'WorkflowExecutor',
       environment: 'SPARK_HOME="{{spark_install_dir}}/spark", PYTHONPATH="{{spark_install_dir}}/spark/python:{{spark_install_dir}}/spark/python/build:$PYTHONPATH"',
-      command: '{{spark_install_dir}}/spark/bin/spark-submit --class io.deepsense.workflowexecutor.WorkflowExecutorApp --master local[8] --driver-class-path {{workflowexecutor_artifact_id}}.jar {{workflowexecutor_artifact_id}}.jar --interactive-mode -m localhost -p python/pyexecutor/pyexecutor.py',
+      command: '{{spark_install_dir}}/spark/bin/spark-submit --class io.deepsense.workflowexecutor.WorkflowExecutorApp --master local[8] --driver-class-path {{workflowexecutor_artifact_id}}.jar {{workflowexecutor_artifact_id}}.jar --interactive-mode -m localhost -p {{workflowexecutor_artifact_id}}.jar',
       directory: "{{install_dir}}",
       autostart: true,
       autorestart: true,
