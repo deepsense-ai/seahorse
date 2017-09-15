@@ -36,7 +36,7 @@ function ExperimentService(OperationsHierarchyService, Experiment) {
   };
 
   that.updateTypeKnowledge = function updateTypeKnowledge (data) {
-    internal.experiment.updateTypeKnowledge(data.experiment.typeKnowledge);
+    internal.experiment.updateTypeKnowledge(data.experiment.knowledge);
   };
 
   that.updateEdgesStates = function () {
