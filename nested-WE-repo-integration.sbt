@@ -1,5 +1,3 @@
-import sbt.Keys._
-
 // scalastyle:off println
 
 val cleanWe = TaskKey[Unit]("cleanWe", "Execute clean in WE repo")

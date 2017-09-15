@@ -82,8 +82,6 @@ object Dependencies {
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
     "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/",
-    "embedded-ivy-repo-for-workflow-executor" at
-      s"file://$projectAbsPath/seahorse-workflow-executor/target/ds-workflow-executor-ivy-repo",
     Classpaths.typesafeReleases
   )
 

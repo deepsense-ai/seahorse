@@ -34,6 +34,6 @@ docker inspect --format='{{.Name}}-{{range .NetworkSettings.Networks}}{{.IPAddre
 ## Run sbt tests
 
 export SPARK_STANDALONE_MASTER_IP=$SPARK_STANDALONE_MASTER_IP
-sbt e2etests/clean publishWeClasses e2etests/test
+sbt e2etests/clean e2etests/test
 SBT_EXIT_CODE=$?
 exit $SBT_EXIT_CODE

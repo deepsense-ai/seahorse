@@ -5,9 +5,6 @@
 git submodule init
 git submodule update
 
-# Compile classes from workflow-executor that are needed to compile deepsense-backend
-sbt publishWeClasses
-
 # Setting up gerrit
 cd seahorse-workflow-executor
 git remote remove origin
