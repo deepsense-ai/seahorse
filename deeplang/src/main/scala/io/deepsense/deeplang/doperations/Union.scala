@@ -71,6 +71,7 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
 
     if (!similar) {
       throw new SchemaMismatchException(
+        "SchemaMismatch. Expected schema " +
         s"${first.sparkDataFrame.schema.treeString}" +
           s" differs from ${second.sparkDataFrame.schema.treeString}")
     }
