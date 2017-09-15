@@ -23,9 +23,12 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Validator}
 import scala.reflect.runtime.{universe => ru}
+
+import io.deepsense.entitystorage.EntityStorageClient
 
 
 object DClassesForDOperations {
@@ -46,7 +49,7 @@ object DOperationForPortTypes {
   }
 }
 
-class DOperationSuite extends FunSuite with MockitoSugar {
+class DOperationSuite extends FunSuite with DeeplangTestSupport {
 
   test("It is possible to implement simple operations") {
     import DClassesForDOperations._
@@ -81,7 +84,7 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     val h = new DOperableCatalog
     h.registerDOperable[A1]()
     h.registerDOperable[A2]()
-    val context = new InferContext(h)
+    val context = createInferContext(h, fullInference = false)
 
     val knowledge = Vector[DKnowledge[DOperable]](DKnowledge(A1()), DKnowledge(A2()))
     val (result, warnings) = firstPicker.inferKnowledge(context)(knowledge)
@@ -113,7 +116,7 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     val h = new DOperableCatalog
     h.registerDOperable[A1]()
     h.registerDOperable[A2]()
-    val context = new InferContext(h)
+    val context = createInferContext(h, fullInference = false)
 
     val (results, warnings) = generator.inferKnowledge(context)(Vector())
     assert(results == Vector(DKnowledge(A1(), A2())))

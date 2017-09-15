@@ -40,7 +40,7 @@ abstract class BaseTrainedLinearRegressionSpec extends ScorableSpec[TrainedRidge
 
   scorableName should {
     "generate report" in {
-      val executionContext = new ExecutionContext(mock[DOperableCatalog])
+      val executionContext = mock[ExecutionContext]
 
       val weights = Vectors.dense(0.4, 10.3, -2.7)
       val intercept = -3.14

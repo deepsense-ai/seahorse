@@ -21,18 +21,16 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, DataFrameMetadata, DataFrame}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{UnitSpec, DKnowledge}
+import io.deepsense.deeplang.{DeeplangTestSupport, UnitSpec, DKnowledge}
 
-class SplitSpec extends UnitSpec {
+class SplitSpec extends UnitSpec with DeeplangTestSupport {
 
   "Split" should {
     "infer proper metadata information" in {
       val schema = createMultiColumnSchema
       val inputMetadata = DataFrameMetadata.fromSchema(schema)
       val df = DataFrameBuilder.buildDataFrameForInference(inputMetadata)
-      val inferContext = InferContext(
-        mock[DOperableCatalog],
-        fullInference = true)
+      val inferContext = createInferContext(mock[DOperableCatalog], fullInference = true)
 
       val (knowledge, warnings) = Split(0.1, 1L)
         .inferKnowledge(inferContext)(Vector(new DKnowledge[DataFrame](df)))

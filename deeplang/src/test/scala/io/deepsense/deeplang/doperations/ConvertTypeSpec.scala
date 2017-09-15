@@ -23,16 +23,15 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{MappingMetadataConverter, CategoriesMapping}
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.inference.{MultipleColumnsMayNotExistWarning, ConversionMayNotBePossibleWarning, InferContext}
-import io.deepsense.deeplang.{DKnowledge, UnitSpec}
+import io.deepsense.deeplang.{DeeplangTestSupport, DKnowledge, UnitSpec}
+import io.deepsense.entitystorage.EntityStorageClient
 
-class ConvertTypeSpec extends UnitSpec {
+class ConvertTypeSpec extends UnitSpec with DeeplangTestSupport {
 
   "ConvertType" should {
     "return properly converted metadata without warnings" in {
       val df = DataFrameBuilder.buildDataFrameForInference(metadata)
-      val inferContext = InferContext(
-        mock[DOperableCatalog],
-        fullInference = true)
+      val inferContext = createInferContext(mock[DOperableCatalog], fullInference = true)
 
       val (knowledge, warnings) = ConvertType(
         ColumnType.categorical,
@@ -56,9 +55,7 @@ class ConvertTypeSpec extends UnitSpec {
 
     "produce warning when type may not be convertible" in {
       val df = DataFrameBuilder.buildDataFrameForInference(metadata)
-      val inferContext = InferContext(
-        mock[DOperableCatalog],
-        fullInference = true)
+      val inferContext = createInferContext(mock[DOperableCatalog], fullInference = true)
 
       val (knowledge, warnings) = ConvertType(
         ColumnType.numeric,
@@ -88,9 +85,7 @@ class ConvertTypeSpec extends UnitSpec {
     "return properly converted metadata when run on fuzzy metadata warnings" in {
 
       val df = DataFrameBuilder.buildDataFrameForInference(fuzzyMetadata)
-      val inferContext = InferContext(
-        mock[DOperableCatalog],
-        fullInference = true)
+      val inferContext = createInferContext(mock[DOperableCatalog], fullInference = true)
 
       val (knowledge, warnings) = ConvertType(ColumnType.categorical,
         // numericColumn does not exist, stringColumn does

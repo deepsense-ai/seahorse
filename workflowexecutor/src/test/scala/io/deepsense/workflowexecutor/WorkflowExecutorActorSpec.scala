@@ -29,6 +29,7 @@ import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph.nodestate.NodeState
@@ -61,7 +62,7 @@ class WorkflowExecutorActorSpec
         val (probe, wea, graph, _, _) = readyNodesFixture()
         probe.send(wea, Launch(graph, mock[Promise[GraphFinished]]))
         eventually {
-          verify(graph).inferAndApplyKnowledge(executionContext)
+          verify(graph).inferAndApplyKnowledge(executionContext.inferContext)
         }
       }
       "launch ready nodes if inference ok" in {
@@ -78,7 +79,7 @@ class WorkflowExecutorActorSpec
 
         probe.send(wea, Launch(graph, resultPromise))
         eventually {
-          verify(graph).inferAndApplyKnowledge(executionContext)
+          verify(graph).inferAndApplyKnowledge(executionContext.inferContext)
 
           resultPromise shouldBe 'Completed
           whenReady(resultPromise.future) { result =>
@@ -256,7 +257,7 @@ class WorkflowExecutorActorSpec
     val (graph, _) = readyGraph()
     when(graph.enqueue).thenReturn(graph)
     val failed = failedGraph()
-    when(graph.inferAndApplyKnowledge(any(classOf[ExecutionContext])))
+    when(graph.inferAndApplyKnowledge(any(classOf[InferContext])))
       .thenReturn(failed)
 
     graph

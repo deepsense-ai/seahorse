@@ -23,7 +23,9 @@ import io.deepsense.deeplang.doperables.DOperableMock
 
 import org.scalatest.mock.MockitoSugar
 
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.entitystorage.EntityStorageClient
 
 object DClassesForDMethods {
   class S extends DOperableMock
@@ -31,7 +33,8 @@ object DClassesForDMethods {
   case class B(i: Int) extends S { def this() = this(0) }
 }
 
-class DMethodSuite extends FunSuite with MockitoSugar {
+class DMethodSuite extends FunSuite with DeeplangTestSupport {
+
   test("It is possible to implement class having DMethod") {
     import DClassesForDMethods._
 
@@ -50,7 +53,7 @@ class DMethodSuite extends FunSuite with MockitoSugar {
     h.registerDOperable[A]()
     h.registerDOperable[B]()
 
-    val context = new InferContext(h)
+    val context = createInferContext(h, fullInference = false)
     val (result, warnings) = c.f.infer(context)(2)(DKnowledge(new A()))
     assert(result == DKnowledge(new B()))
     assert(warnings == InferenceWarnings.empty)
@@ -77,7 +80,7 @@ class DMethodSuite extends FunSuite with MockitoSugar {
     h.registerDOperable[A]()
     h.registerDOperable[B]()
 
-    val context = new InferContext(h)
+    val context = createInferContext(h, fullInference = false)
     val (result, warnings) = c.f.infer(context)(2)()
     assert(result == DKnowledge(new A()))
     assert(warnings == mockedWarnings)

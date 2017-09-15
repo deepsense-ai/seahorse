@@ -19,20 +19,19 @@ package io.deepsense.graph
 import scala.reflect.runtime.{universe => ru}
 
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.parameters.exceptions.ValidationException
-import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation2To1, ExecutionContext}
 
 
 class AbstractInferenceSpec
   extends WordSpec
-  with MockitoSugar
+  with DeeplangTestSupport
   with Matchers {
 
   import io.deepsense.graph.DClassesForDOperations._
@@ -46,8 +45,8 @@ class AbstractInferenceSpec
   val knowledgeA2: DKnowledge[DOperable] = DKnowledge(A2())
   val knowledgeA12: DKnowledge[DOperable] = DKnowledge(A1(), A2())
 
-  val typeInferenceCtx: InferContext = new InferContext(hierarchy, fullInference = false)
-  val fullInferenceCtx: InferContext = new InferContext(hierarchy, fullInference = true)
+  val typeInferenceCtx: InferContext = createInferContext(hierarchy, fullInference = false)
+  val fullInferenceCtx: InferContext = typeInferenceCtx.copy(fullInference = true)
 
   /**
    * This operation can be set to:

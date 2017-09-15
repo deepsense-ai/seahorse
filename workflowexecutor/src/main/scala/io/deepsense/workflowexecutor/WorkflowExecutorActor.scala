@@ -60,7 +60,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext,
   }
 
   def launch(graph: StatefulGraph, result: Promise[GraphFinished]): Unit = {
-    val inferred = graph.inferAndApplyKnowledge(executionContext)
+    val inferred = graph.inferAndApplyKnowledge(executionContext.inferContext)
     val enqueued = if (inferred.state.isFailed) {
       inferred
     } else {

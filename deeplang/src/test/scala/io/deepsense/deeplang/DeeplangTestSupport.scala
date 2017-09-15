@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.inference
+package io.deepsense.deeplang
+
+import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.entitystorage.EntityStorageClient
 
-/**
- * Holds information needed by DOperations and DMethods during knowledge inference.
- * @param dOperableCatalog object responsible for registering and validating the type hierarchy
- * @param fullInference if set to true, infer metadata and types; otherwise infer the types only
- */
-case class InferContext(
-    dataFrameBuilder: DataFrameBuilder,
-    entityStorageClient: EntityStorageClient,
-    tenantId: String,
-    dOperableCatalog: DOperableCatalog,
-    fullInference: Boolean)
+trait DeeplangTestSupport extends MockitoSugar {
+
+  protected def createInferContext(
+      dOperableCatalog: DOperableCatalog,
+      fullInference: Boolean): InferContext =
+    InferContext(
+      mock[DataFrameBuilder],
+      mock[EntityStorageClient],
+      "testTenantId",
+      dOperableCatalog,
+      fullInference = fullInference)
+}

@@ -16,14 +16,13 @@
 
 package io.deepsense.deeplang.doperables.file
 
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
 class FileSpec extends UnitSpec {
 
   "File" should {
     "produce proper report" in {
-      val executionContext = new ExecutionContext(mock[DOperableCatalog])
+      val executionContext = mock[ExecutionContext]
 
       val params = Map("Size" -> "3GB", "Rows" -> "100000")
       val file = File(None, Some(params))

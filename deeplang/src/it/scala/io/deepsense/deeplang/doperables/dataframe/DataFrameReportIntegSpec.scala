@@ -35,8 +35,6 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    // Tests verify correctness of reports at HIGH level of report details
-    executionContext.reportLevel = ReportLevel.HIGH
   }
 
   "DataFrame" should {

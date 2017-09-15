@@ -19,22 +19,23 @@ package io.deepsense.deeplang
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.entitystorage.UniqueFilenameUtil
+import io.deepsense.entitystorage.{EntityStorageClient, UniqueFilenameUtil}
 
 /** Holds information needed by DOperations and DMethods during execution. */
-class ExecutionContext(
-    override val dOperableCatalog: DOperableCatalog)
-  extends InferContext(dOperableCatalog, fullInference = true) {
+case class ExecutionContext(
+    sparkContext: SparkContext,
+    sqlContext: SQLContext,
+    inferContext: InferContext,
+    fsClient: FileSystemClient,
+    reportLevel: ReportLevel,
+    tenantId: String) {
 
-  var sparkContext: SparkContext = _
-  var sqlContext: SQLContext = _
-  var fsClient: FileSystemClient = _
+  def dataFrameBuilder: DataFrameBuilder = inferContext.dataFrameBuilder
 
-  // Level of details for generated reports
-  var reportLevel: ReportLevel = _
+  def entityStorageClient: EntityStorageClient = inferContext.entityStorageClient
 
   def uniqueFsFileName(entityCategory: String): String =
     UniqueFilenameUtil.getUniqueFsFilename(tenantId, entityCategory)

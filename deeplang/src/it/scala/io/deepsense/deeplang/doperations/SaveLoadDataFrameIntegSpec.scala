@@ -38,7 +38,7 @@ class SaveLoadDataFrameIntegSpec
 
   before {
     // Reset entity storage client state
-    prepareEntityStorageClient
+    executionContext = prepareExecutionContext()
   }
 
   "Save and Load DataFrame operations" should {
@@ -57,7 +57,7 @@ class SaveLoadDataFrameIntegSpec
       val dataFrameId = saveDataFrame(context, dataFrame, "test name", "test description")
       val doperableCatalog = mock[DOperableCatalog]
       val loadDF = LoadDataFrame(dataFrameId)
-      val (knowledge, warnings) = loadDF.inferKnowledge(context)(Vector.empty)
+      val (knowledge, warnings) = loadDF.inferKnowledge(context.inferContext)(Vector.empty)
 
       warnings.warnings should have size 0
       knowledge should have size 1
@@ -89,7 +89,8 @@ class SaveLoadDataFrameIntegSpec
     saveDataFrameOperation.execute(context)(Vector[DOperable](dataFrame))
 
     val entities =
-      context.entityStorageClient.asInstanceOf[EntityStorageClientInMemoryImpl].getAllEntities
+      context.entityStorageClient
+        .asInstanceOf[EntityStorageClientInMemoryImpl].getAllEntities
     assert(entities.length == 1, "For this test one entity should be created.")
     entities.head.info.entityId.toString
   }

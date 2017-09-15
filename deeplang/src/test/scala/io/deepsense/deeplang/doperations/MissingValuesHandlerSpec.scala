@@ -19,21 +19,19 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.parameters.{IndexRangeColumnSelection, MultipleColumnSelection}
-import io.deepsense.deeplang.{DKnowledge, UnitSpec}
+import io.deepsense.deeplang.{DeeplangTestSupport, DKnowledge, UnitSpec}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder, DataFrameMetadata}
 import io.deepsense.deeplang.inference.InferContext
 
-class MissingValuesHandlerSpec extends UnitSpec {
+class MissingValuesHandlerSpec extends UnitSpec with DeeplangTestSupport {
 
   "Missing Values Handler" should {
     "infer proper metadata information" in {
       val schema = createMultiColumnSchema
       val inputMetadata = DataFrameMetadata.fromSchema(schema)
       val df = DataFrameBuilder.buildDataFrameForInference(inputMetadata)
-      val inferContext = InferContext(
-        mock[DOperableCatalog],
-        fullInference = true)
+      val inferContext = createInferContext(mock[DOperableCatalog], fullInference = true)
 
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(2))))

@@ -26,7 +26,9 @@ import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.ReportLevel
+import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 import io.deepsense.models.entities.Entity
 
@@ -46,23 +48,24 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
     fileSystemClient = LocalFileSystemClient()
-    prepareExecutionContext()
+    executionContext = prepareExecutionContext()
   }
 
-  protected def prepareExecutionContext(): Unit = {
-    executionContext = new MockedExecutionContext
-    executionContext.sparkContext = sparkContext
-    executionContext.sqlContext = sqlContext
-    executionContext.dataFrameBuilder = DataFrameBuilder(sqlContext)
-    executionContext.tenantId = "testTenantId"
-    executionContext.fsClient = fileSystemClient
-    executionContext.reportLevel = ReportLevel.HIGH
-    prepareEntityStorageClient()
-  }
+  protected def prepareExecutionContext(): ExecutionContext = {
+    val inferContext = InferContext(
+      DataFrameBuilder(sqlContext),
+      EntityStorageClientInMemoryImpl(entityStorageInitState),
+      "testTenantId",
+      dOperableCatalog = null,
+      fullInference = true)
 
-  protected def prepareEntityStorageClient(): Unit = {
-    executionContext.entityStorageClient =
-      EntityStorageClientInMemoryImpl(entityStorageInitState)
+    new MockedExecutionContext(
+      sparkContext,
+      sqlContext,
+      inferContext,
+      fileSystemClient,
+      ReportLevel.HIGH,
+      "testTenantId")
   }
 
   protected def assertDataFramesEqual(
@@ -120,7 +123,21 @@ object DeeplangIntegTestSupport {
   UserDefinedFunctions.registerFunctions(sqlContext.udf)
 }
 
-private class MockedExecutionContext extends ExecutionContext(null) {
+private class MockedExecutionContext(
+    override val sparkContext: SparkContext,
+    override val sqlContext: SQLContext,
+    override val inferContext: InferContext,
+    override val fsClient: FileSystemClient,
+    override val reportLevel: ReportLevel,
+    override val tenantId: String)
+  extends ExecutionContext(
+    sparkContext,
+    sqlContext,
+    inferContext,
+    fsClient,
+    reportLevel,
+    tenantId) {
+
   override def uniqueFsFileName(entityCategory: String): String =
     s"target/tests/$entityCategory/" + UUID.randomUUID().toString
 }

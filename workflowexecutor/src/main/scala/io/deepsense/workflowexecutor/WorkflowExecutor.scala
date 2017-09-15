@@ -33,6 +33,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{GraphFinished, Launch}
@@ -82,17 +83,28 @@ case class WorkflowExecutor(
   }
 
   private def createExecutionContext(): ExecutionContext = {
+    val sparkContext = createSparkContext()
+    val sqlContext = createSqlContext(sparkContext)
+
     val dOperableCatalog = new DOperableCatalog
     CatalogRecorder.registerDOperables(dOperableCatalog)
-    val executionContext = new ExecutionContext(dOperableCatalog)
 
-    executionContext.sparkContext = createSparkContext()
-    executionContext.sqlContext = createSqlContext(executionContext.sparkContext)
-    executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
-    executionContext.fsClient = FileSystemClientStub() // TODO temporarily mocked
-    executionContext.entityStorageClient = null // Not used
-    executionContext.reportLevel = reportLevel
-    executionContext
+    val tenantId = ""
+
+    val inferContext = InferContext(
+      DataFrameBuilder(sqlContext),
+      entityStorageClient = null,  // temporarily not used
+      tenantId,
+      dOperableCatalog,
+      fullInference = true)
+
+    ExecutionContext(
+      sparkContext,
+      sqlContext,
+      inferContext,
+      FileSystemClientStub(), // temporarily mocked
+      reportLevel,
+      tenantId)
   }
 
   private def createSparkContext(): SparkContext = {

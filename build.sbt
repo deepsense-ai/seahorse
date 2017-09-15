@@ -28,6 +28,7 @@ lazy val graph                  = project dependsOn (
   commons,
   commons % "test->test",
   deeplang,
+  deeplang % "test->test",
   reportlib)
 lazy val workflowjson           = project dependsOn (commons, deeplang, graph, models)
 lazy val models                 = project dependsOn (commons, graph)

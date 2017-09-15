@@ -37,6 +37,9 @@ case class Report(content: ReportContent = ReportContent("empty report"))
   override def save(context: ExecutionContext)(path: String): Unit = ???
 }
 
+/**
+  * Level of details for generated reports
+  */
 object ReportLevel extends Enumeration {
   type ReportLevel = Value
   val HIGH, MEDIUM, LOW = Value

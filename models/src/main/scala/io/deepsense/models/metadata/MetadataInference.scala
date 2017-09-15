@@ -34,7 +34,7 @@ object MetadataInference {
       portIndex: Int,
       baseContext: InferContext): MetadataInferenceResult = {
 
-    val inferContext = InferContext(baseContext, true)
+    val inferContext = baseContext.copy(fullInference = true)
     val singlePortInferenceResult = graph.inferKnowledge(nodeId, portIndex, inferContext)
 
     MetadataInferenceResult(
