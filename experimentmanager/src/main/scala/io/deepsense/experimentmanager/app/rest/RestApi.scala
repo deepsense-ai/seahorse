@@ -12,7 +12,7 @@ import com.google.inject.Inject
 import spray.routing.Directives
 
 import io.deepsense.experimentmanager.app.ExperimentManager
-import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment}
+import io.deepsense.experimentmanager.app.models.{Id, Experiment, InputExperiment}
 import io.deepsense.experimentmanager.app.rest.actions.Action
 import io.deepsense.experimentmanager.rest.RestComponent
 
@@ -33,7 +33,7 @@ class RestApi @Inject() (experimentManager: ExperimentManager)(implicit ec: Exec
       }
     } ~
       path("experiments" / JavaUUID) { idParameter =>
-        val experimentId = Experiment.Id(idParameter)
+        val experimentId = Id(idParameter)
         get {
           complete {
             experimentManager.get(experimentId)

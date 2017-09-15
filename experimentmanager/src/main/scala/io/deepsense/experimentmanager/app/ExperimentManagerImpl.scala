@@ -15,7 +15,8 @@ import scala.concurrent._
 import com.google.inject.Inject
 
 import io.deepsense.experimentmanager.app.models.Experiment.{Id, Status}
-import io.deepsense.experimentmanager.app.models.{Experiment, Graph, InputExperiment, Node}
+import io.deepsense.experimentmanager.app.models.Graph.Node
+import io.deepsense.experimentmanager.app.models.{Experiment, Graph, InputExperiment}
 
 /**
  * Implementation of Experiment Manager (currently a mock)

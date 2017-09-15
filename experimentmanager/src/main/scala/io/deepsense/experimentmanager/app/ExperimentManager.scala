@@ -9,7 +9,8 @@ package io.deepsense.experimentmanager.app
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Future
 
-import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment, Node}
+import io.deepsense.experimentmanager.app.models.Graph.Node
+import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment}
 
 /**
  * Experiment Manager's API

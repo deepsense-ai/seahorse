@@ -17,13 +17,13 @@ import org.mockito.stubbing.Answer
 import spray.http.StatusCodes
 
 import io.deepsense.experimentmanager.app.ExperimentManager
-import io.deepsense.experimentmanager.app.models.{Graph, Experiment}
+import io.deepsense.experimentmanager.app.models.{Id, Graph, Experiment}
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
 class RestApiSpec extends StandardSpec with UnitTestSupport {
 
-  val unknownId = Experiment.Id(UUID.randomUUID())
+  val unknownId = Id(UUID.randomUUID())
   val experiments = List(
     Experiment(UUID.randomUUID(), "experiment 1", "", Graph()),
     Experiment(UUID.randomUUID(), "experiment 2", "Description", Graph()))
