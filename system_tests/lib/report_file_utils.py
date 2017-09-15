@@ -19,8 +19,8 @@ class PM:
   class Any: pass  # As dict key: keys not ignored and not directly specified
 
 
-MAX_RELATIVE_ERROR = 0.2
-MAX_ABSOLUTE_ERROR = 0.02
+MAX_RELATIVE_ERROR = 0.5
+MAX_ABSOLUTE_ERROR = 1
 
 REPORT_PATTERN = {
   'workflow': PM.Ignore,
@@ -51,6 +51,7 @@ REPORT_PATTERN = {
             PM.Any: {
               'description': PM.Ignore,
               'buckets': PM.Ignore,
+              'counts': PM.Ignore,
               'statistics': {
                   'min': PM.Match,
                   'max': PM.Match,
@@ -134,8 +135,8 @@ def extract_dict_pattern(source, pattern):
 
 
 def extract_list_pattern(source, pattern):
-  if pattern is []:
-    if source is not []:
+  if pattern == []:
+    if source != []:
       raise Exception("List pattern " + str(pattern) + " can't be applied to " + str(source))
     else:
       return source
@@ -145,6 +146,14 @@ def extract_list_pattern(source, pattern):
 
   return [extract_pattern(el, pattern[0]) for el in source]
 
+def match_report(expected_report_path, result_report_path):
+  json_result = load_json(result_report_path)
+  json_pattern = load_json(expected_report_path)
+  mapped_json_pattern = map_pattern_result_entities_ids(json_pattern, json_result)
+  try:
+    check_json_containment(mapped_json_pattern, json_result)
+  except Exception as e:
+    raise AssertionError('Actual report does not match pattern. ' + str(e))
 
 def check_json_containment(contained, container):
   """ `contained` is contained by `container` if all keys from `contained`        """
@@ -182,8 +191,8 @@ def check_json_containment(contained, container):
             (isinstance(container, unicode) or isinstance(container, str)):
           try:
             if not are_in_error_margin(float(container), float(contained)):
-              raise Exception("Number is not within margin error " + str(contained) + " !~ " + str(
-                container) + ")")
+              raise Exception("String number is not within margin error " +
+                              str(contained) + " !~ " + str(container) + ")")
           except ValueError:
             raise Exception(str(contained) + " != " + str(container))
         else:
@@ -227,8 +236,8 @@ def map_pattern_result_entities_ids(json_pattern, json_result):
           mapped_json_pattern['executionReport']['resultEntities'][
             result_entity_id] = entity_pattern
     else:
-      if not ((result_entities is None or result_entities is []) and
-                (expected_entities is None or expected_entities is [])):
+      if not ((result_entities is None or result_entities == []) and
+                (expected_entities is None or expected_entities == [])):
         raise AssertionError(
           "Actual report contains unexpected entities value: " + str(result_entities) +
           " != " + str(expected_entities))

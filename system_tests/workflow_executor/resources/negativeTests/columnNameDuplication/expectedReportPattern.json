@@ -112,44 +112,18 @@
             "y": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                5, 
-                0
-              ], 
               "name": "y", 
               "missingValues": 0
             }, 
             "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "5", 
                 "mean": "3", 
                 "min": "1"
               }, 
               "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }

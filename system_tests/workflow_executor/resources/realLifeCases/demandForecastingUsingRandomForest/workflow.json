@@ -28,7 +28,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "hdfs://spark-cluster-1/system_tests/demandForecastingRF/weather.csv",
+            "source": "hdfs://spark-cluster-1/system_tests/demandForecastingUsingRandomForest/weather.csv",
             "format": {
               "CSV": {
                 "separator": {
@@ -109,7 +109,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "hdfs://spark-cluster-1/system_tests/demandForecastingRF/demand.csv",
+            "source": "hdfs://spark-cluster-1/system_tests/demandForecastingUsingRandomForest/demand.csv",
             "format": {
               "CSV": {
                 "separator": {

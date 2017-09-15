@@ -2,7 +2,7 @@
 
 import commons
 import subprocess
-from report_file_utils import check_json_containment, load_json, map_pattern_result_entities_ids
+from report_file_utils import match_report
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -19,9 +19,9 @@ class WorkflowExecutorClient(object):
     if spark_master is None:
       spark_master = self.spark_master
     if workflow_file_path is None:
-      workflow_file_path = get_defined_workflow_path()
+      workflow_file_path = get_workflow_path()
     if output_path is None:
-      output_path = get_defined_output_path()
+      output_path = get_output_path()
 
     command = spark_submit_command(
       we_class=self.workflow_executor_class,
@@ -45,19 +45,15 @@ class WorkflowExecutorClient(object):
 
   def run_workflow_local(self, workflow_file_path=None, spark_submit_options=""):
     if workflow_file_path is None:
-      workflow_file_path = get_defined_workflow_path()
+      workflow_file_path = get_workflow_path()
     self.run_workflow(workflow_file_path, "local[4]", spark_submit_options)
 
-  def check_report(self, report_pattern_path=None):
+  def check_report(self, report_pattern_path=None, result_report_path=None):
     if report_pattern_path is None:
       report_pattern_path = get_expected_report_path()
-    json_result = load_json(get_defined_output_path() + "result.json")
-    json_pattern = load_json(report_pattern_path)
-    mapped_json_pattern = map_pattern_result_entities_ids(json_pattern, json_result)
-    try:
-      check_json_containment(mapped_json_pattern, json_result)
-    except Exception as e:
-      raise AssertionError('Actual report does not match pattern. ' + str(e))
+    if result_report_path is None:
+      result_report_path = get_result_report_path()
+    match_report(report_pattern_path, result_report_path)
 
 
 def spark_submit_command(**kwargs):
@@ -75,13 +71,16 @@ def spark_submit_command(**kwargs):
     spark_submit_options=kwargs['spark_submit_options'])
 
 
-def get_defined_output_path():
+def get_output_path():
   return BuiltIn().get_variable_value("${OUTPUT PATH}")
 
 
-def get_defined_workflow_path():
+def get_workflow_path():
   return BuiltIn().get_variable_value("${WORKFLOW PATH}")
 
 
 def get_expected_report_path():
   return BuiltIn().get_variable_value("${EXPECTED REPORT PATH}")
+
+def get_result_report_path():
+  return BuiltIn().get_variable_value("${RESULT REPORT PATH}")

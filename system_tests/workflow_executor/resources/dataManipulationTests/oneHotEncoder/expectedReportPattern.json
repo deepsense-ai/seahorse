@@ -4,28 +4,28 @@
       "316d43ea-3825-5095-6d78-efbb42775b16": {
         "status": "COMPLETED", 
         "results": [
-          "e4ab47e5-6ac9-46bc-8c7e-dc3ac1b8bea8"
+          "c2829bb1-d033-45e1-9623-eac999e9591b"
         ], 
         "error": null
       }, 
       "21e12847-c1d4-4c2c-f83b-e04ef9cee839": {
         "status": "COMPLETED", 
         "results": [
-          "a178eab2-d9ce-4135-84e7-b6ee15b726a9"
+          "d960192a-0bf1-4e78-bf1b-0c529644b0fb"
         ], 
         "error": null
       }, 
       "594a9c23-c19a-7720-2503-da101d0e8c02": {
         "status": "COMPLETED", 
         "results": [
-          "4e46f165-81be-4774-8ab4-2c777e93838d"
+          "0a079bb4-2c18-4a9b-9c17-50433039b46d"
         ], 
         "error": null
       }, 
       "3369f18c-204c-eb1c-b6ea-d53aad3e9f4d": {
         "status": "COMPLETED", 
         "results": [
-          "e64ccaea-ba80-49d4-b5f0-8f43d129c9ce"
+          "36c3206d-49e9-470b-8d94-b2cbbd686ba9"
         ], 
         "error": null
       }, 
@@ -37,27 +37,549 @@
       "6be4cd00-33ae-012a-0a44-018a681f37be": {
         "status": "COMPLETED", 
         "results": [
-          "b4247377-ef6f-44f6-9062-004b8a4d11ad"
+          "cfff5387-46af-4bbf-8e7a-f59d34a70ee1"
         ], 
         "error": null
       }, 
       "3cd040c9-dd19-e890-8ab3-cae5f28e44d5": {
         "status": "COMPLETED", 
         "results": [
-          "6bd738e4-469f-4851-ab37-642f1cb2133a"
+          "a7433969-3b79-4d76-9d58-4c7815d2fea9"
         ], 
         "error": null
       }, 
       "04658430-edd5-93e3-def8-c73f1469b1ef": {
         "status": "COMPLETED", 
         "results": [
-          "8b8b1d17-ad42-49a1-9c0d-b4d54ee5d4b1"
+          "2311777a-6420-4fe3-ba3a-263b5760f12b"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "b4247377-ef6f-44f6-9062-004b8a4d11ad": {
+      "0a079bb4-2c18-4a9b-9c17-50433039b46d": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "color_red * 2", 
+                  "multiplied"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "2311777a-6420-4fe3-ba3a-263b5760f12b": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "7", 
+                  "20"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "color_blue", 
+                "color_green", 
+                "color_red", 
+                "prefix_hardness_hard", 
+                "prefix_hardness_medium", 
+                "prefix_hardness_soft", 
+                "multiplied"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "2"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "1", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "2"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "1", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "2"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "multiplied": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "2", 
+                "mean": "0.6", 
+                "min": "0"
+              }, 
+              "name": "multiplied", 
+              "missingValues": 0
+            }, 
+            "color_green": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.35", 
+                "min": "0"
+              }, 
+              "name": "color_green", 
+              "missingValues": 0
+            }, 
+            "color_blue": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.35", 
+                "min": "0"
+              }, 
+              "name": "color_blue", 
+              "missingValues": 0
+            }, 
+            "prefix_hardness_hard": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.35", 
+                "min": "0"
+              }, 
+              "name": "prefix_hardness_hard", 
+              "missingValues": 0
+            }, 
+            "prefix_hardness_soft": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.45", 
+                "min": "0"
+              }, 
+              "name": "prefix_hardness_soft", 
+              "missingValues": 0
+            }, 
+            "color_red": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.3", 
+                "min": "0"
+              }, 
+              "name": "color_red", 
+              "missingValues": 0
+            }, 
+            "prefix_hardness_medium": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.2", 
+                "min": "0"
+              }, 
+              "name": "prefix_hardness_medium", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "a7433969-3b79-4d76-9d58-4c7815d2fea9": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "20"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "color", 
+                "hardness"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "red", 
+                  "soft"
+                ], 
+                [
+                  "blue", 
+                  "medium"
+                ], 
+                [
+                  "green", 
+                  "hard"
+                ], 
+                [
+                  "red", 
+                  "hard"
+                ], 
+                [
+                  "red", 
+                  "hard"
+                ], 
+                [
+                  "blue", 
+                  "soft"
+                ], 
+                [
+                  "blue", 
+                  "medium"
+                ], 
+                [
+                  "blue", 
+                  "soft"
+                ], 
+                [
+                  "green", 
+                  "soft"
+                ], 
+                [
+                  "green", 
+                  "hard"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "36c3206d-49e9-470b-8d94-b2cbbd686ba9": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "6", 
+                  "20"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "color_blue", 
+                "color_green", 
+                "color_red", 
+                "prefix_hardness_hard", 
+                "prefix_hardness_medium", 
+                "prefix_hardness_soft"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "1"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "1", 
+                  "1", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "1", 
+                  "1", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "1"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "color_green": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.35", 
+                "min": "0"
+              }, 
+              "name": "color_green", 
+              "missingValues": 0
+            }, 
+            "color_blue": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.35", 
+                "min": "0"
+              }, 
+              "name": "color_blue", 
+              "missingValues": 0
+            }, 
+            "prefix_hardness_hard": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.35", 
+                "min": "0"
+              }, 
+              "name": "prefix_hardness_hard", 
+              "missingValues": 0
+            }, 
+            "prefix_hardness_soft": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.45", 
+                "min": "0"
+              }, 
+              "name": "prefix_hardness_soft", 
+              "missingValues": 0
+            }, 
+            "color_red": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.3", 
+                "min": "0"
+              }, 
+              "name": "color_red", 
+              "missingValues": 0
+            }, 
+            "prefix_hardness_medium": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.2", 
+                "min": "0"
+              }, 
+              "name": "prefix_hardness_medium", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "cfff5387-46af-4bbf-8e7a-f59d34a70ee1": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -139,268 +661,19 @@
             "color": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                7, 
-                7, 
-                6
-              ], 
               "name": "color", 
               "missingValues": 0
             }, 
             "hardness": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                9, 
-                7, 
-                4
-              ], 
               "name": "hardness", 
               "missingValues": 0
             }
           }
         }
       }, 
-      "e4ab47e5-6ac9-46bc-8c7e-dc3ac1b8bea8": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "5", 
-                  "20"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "color", 
-                "hardness", 
-                "color_blue", 
-                "color_green", 
-                "color_red"
-              ], 
-              "columnTypes": [
-                "categorical", 
-                "categorical", 
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "red", 
-                  "soft", 
-                  "0", 
-                  "0", 
-                  "1"
-                ], 
-                [
-                  "blue", 
-                  "medium", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "green", 
-                  "hard", 
-                  "0", 
-                  "1", 
-                  "0"
-                ], 
-                [
-                  "red", 
-                  "hard", 
-                  "0", 
-                  "0", 
-                  "1"
-                ], 
-                [
-                  "red", 
-                  "hard", 
-                  "0", 
-                  "0", 
-                  "1"
-                ], 
-                [
-                  "blue", 
-                  "soft", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "blue", 
-                  "medium", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "blue", 
-                  "soft", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "green", 
-                  "soft", 
-                  "0", 
-                  "1", 
-                  "0"
-                ], 
-                [
-                  "green", 
-                  "hard", 
-                  "0", 
-                  "1", 
-                  "0"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "color": {
-              "subtype": "categorical", 
-              "blockType": "distribution", 
-              "counts": [
-                7, 
-                7, 
-                6
-              ], 
-              "name": "color", 
-              "missingValues": 0
-            }, 
-            "color_green": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.35", 
-                "min": "0"
-              }, 
-              "name": "color_green", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "color_red": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.3", 
-                "min": "0"
-              }, 
-              "name": "color_red", 
-              "subtype": "continuous", 
-              "counts": [
-                14, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                6
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "color_blue": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.35", 
-                "min": "0"
-              }, 
-              "name": "color_blue", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "hardness": {
-              "subtype": "categorical", 
-              "blockType": "distribution", 
-              "counts": [
-                9, 
-                7, 
-                4
-              ], 
-              "name": "hardness", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "a178eab2-d9ce-4135-84e7-b6ee15b726a9": {
+      "d960192a-0bf1-4e78-bf1b-0c529644b0fb": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -552,229 +825,87 @@
           }, 
           "distributions": {
             "color_green": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.35", 
                 "min": "0"
               }, 
               "name": "color_green", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "color_blue": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.35", 
                 "min": "0"
               }, 
               "name": "color_blue", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "prefix_hardness_hard": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.35", 
                 "min": "0"
               }, 
               "name": "prefix_hardness_hard", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "color": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                7, 
-                7, 
-                6
-              ], 
               "name": "color", 
               "missingValues": 0
             }, 
             "color_red": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.3", 
                 "min": "0"
               }, 
               "name": "color_red", 
-              "subtype": "continuous", 
-              "counts": [
-                14, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                6
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "prefix_hardness_soft": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.45", 
                 "min": "0"
               }, 
               "name": "prefix_hardness_soft", 
-              "subtype": "continuous", 
-              "counts": [
-                11, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                9
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "hardness": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                9, 
-                7, 
-                4
-              ], 
               "name": "hardness", 
               "missingValues": 0
             }, 
             "prefix_hardness_medium": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.2", 
                 "min": "0"
               }, 
               "name": "prefix_hardness_medium", 
-              "subtype": "continuous", 
-              "counts": [
-                16, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                4
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }
         }
       }, 
-      "6bd738e4-469f-4851-ab37-642f1cb2133a": {
+      "c2829bb1-d033-45e1-9623-eac999e9591b": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -790,7 +921,7 @@
               "rowNames": null, 
               "values": [
                 [
-                  "2", 
+                  "5", 
                   "20"
                 ]
               ], 
@@ -800,97 +931,14 @@
               "name": "Data Sample", 
               "columnNames": [
                 "color", 
-                "hardness"
-              ], 
-              "columnTypes": [
-                "string", 
-                "string"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "red", 
-                  "soft"
-                ], 
-                [
-                  "blue", 
-                  "medium"
-                ], 
-                [
-                  "green", 
-                  "hard"
-                ], 
-                [
-                  "red", 
-                  "hard"
-                ], 
-                [
-                  "red", 
-                  "hard"
-                ], 
-                [
-                  "blue", 
-                  "soft"
-                ], 
-                [
-                  "blue", 
-                  "medium"
-                ], 
-                [
-                  "blue", 
-                  "soft"
-                ], 
-                [
-                  "green", 
-                  "soft"
-                ], 
-                [
-                  "green", 
-                  "hard"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {}
-        }
-      }, 
-      "e64ccaea-ba80-49d4-b5f0-8f43d129c9ce": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "6", 
-                  "20"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
+                "hardness", 
                 "color_blue", 
                 "color_green", 
-                "color_red", 
-                "prefix_hardness_hard", 
-                "prefix_hardness_medium", 
-                "prefix_hardness_soft"
+                "color_red"
               ], 
               "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric", 
+                "categorical", 
+                "categorical", 
                 "numeric", 
                 "numeric", 
                 "numeric"
@@ -898,83 +946,73 @@
               "rowNames": null, 
               "values": [
                 [
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0", 
-                  "1"
-                ], 
-                [
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0"
-                ], 
-                [
-                  "0", 
-                  "1", 
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "0", 
-                  "0", 
-                  "1", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "0", 
-                  "0", 
-                  "1", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "1", 
-                  "0", 
-                  "0", 
+                  "red", 
+                  "soft", 
                   "0", 
                   "0", 
                   "1"
                 ], 
                 [
+                  "blue", 
+                  "medium", 
                   "1", 
                   "0", 
-                  "0", 
+                  "0"
+                ], 
+                [
+                  "green", 
+                  "hard", 
                   "0", 
                   "1", 
                   "0"
                 ], 
                 [
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "1"
-                ], 
-                [
-                  "0", 
-                  "1", 
-                  "0", 
+                  "red", 
+                  "hard", 
                   "0", 
                   "0", 
                   "1"
                 ], 
                 [
+                  "red", 
+                  "hard", 
                   "0", 
+                  "0", 
+                  "1"
+                ], 
+                [
+                  "blue", 
+                  "soft", 
                   "1", 
                   "0", 
+                  "0"
+                ], 
+                [
+                  "blue", 
+                  "medium", 
                   "1", 
                   "0", 
+                  "0"
+                ], 
+                [
+                  "blue", 
+                  "soft", 
+                  "1", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "green", 
+                  "soft", 
+                  "0", 
+                  "1", 
+                  "0"
+                ], 
+                [
+                  "green", 
+                  "hard", 
+                  "0", 
+                  "1", 
                   "0"
                 ]
               ], 
@@ -982,601 +1020,49 @@
             }
           }, 
           "distributions": {
+            "color": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "name": "color", 
+              "missingValues": 0
+            }, 
             "color_green": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.35", 
                 "min": "0"
               }, 
               "name": "color_green", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "color_blue": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.35", 
-                "min": "0"
-              }, 
-              "name": "color_blue", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "prefix_hardness_hard": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.35", 
-                "min": "0"
-              }, 
-              "name": "prefix_hardness_hard", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "prefix_hardness_soft": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.45", 
-                "min": "0"
-              }, 
-              "name": "prefix_hardness_soft", 
-              "subtype": "continuous", 
-              "counts": [
-                11, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                9
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "color_red": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.3", 
                 "min": "0"
               }, 
               "name": "color_red", 
-              "subtype": "continuous", 
-              "counts": [
-                14, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                6
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "prefix_hardness_medium": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.2", 
-                "min": "0"
-              }, 
-              "name": "prefix_hardness_medium", 
-              "subtype": "continuous", 
-              "counts": [
-                16, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                4
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "4e46f165-81be-4774-8ab4-2c777e93838d": {
-        "report": {
-          "tables": {
-            "Mathematical Formula": {
-              "name": "Mathematical Formula", 
-              "columnNames": [
-                "Formula", 
-                "Column name"
-              ], 
-              "columnTypes": [
-                "string", 
-                "string"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "color_red * 2", 
-                  "multiplied"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {}
-        }
-      }, 
-      "8b8b1d17-ad42-49a1-9c0d-b4d54ee5d4b1": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "7", 
-                  "20"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "color_blue", 
-                "color_green", 
-                "color_red", 
-                "prefix_hardness_hard", 
-                "prefix_hardness_medium", 
-                "prefix_hardness_soft", 
-                "multiplied"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0", 
-                  "1", 
-                  "2"
-                ], 
-                [
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "0", 
-                  "1", 
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "0", 
-                  "0", 
-                  "1", 
-                  "1", 
-                  "0", 
-                  "0", 
-                  "2"
-                ], 
-                [
-                  "0", 
-                  "0", 
-                  "1", 
-                  "1", 
-                  "0", 
-                  "0", 
-                  "2"
-                ], 
-                [
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0"
-                ], 
-                [
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0"
-                ], 
-                [
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0", 
-                  "1", 
-                  "0"
-                ], 
-                [
-                  "0", 
-                  "1", 
-                  "0", 
-                  "1", 
-                  "0", 
-                  "0", 
-                  "0"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "multiplied": {
-              "statistics": {
-                "max": "2", 
-                "mean": "0.6", 
-                "min": "0"
-              }, 
-              "name": "multiplied", 
-              "subtype": "continuous", 
-              "counts": [
-                14, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                6
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "color_green": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.35", 
-                "min": "0"
-              }, 
-              "name": "color_green", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "color_blue": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.35", 
                 "min": "0"
               }, 
               "name": "color_blue", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
-            "prefix_hardness_hard": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.35", 
-                "min": "0"
-              }, 
-              "name": "prefix_hardness_hard", 
-              "subtype": "continuous", 
-              "counts": [
-                13, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                7
-              ], 
+            "hardness": {
+              "subtype": "categorical", 
               "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "prefix_hardness_soft": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.45", 
-                "min": "0"
-              }, 
-              "name": "prefix_hardness_soft", 
-              "subtype": "continuous", 
-              "counts": [
-                11, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                9
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "color_red": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.3", 
-                "min": "0"
-              }, 
-              "name": "color_red", 
-              "subtype": "continuous", 
-              "counts": [
-                14, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                6
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "prefix_hardness_medium": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.2", 
-                "min": "0"
-              }, 
-              "name": "prefix_hardness_medium", 
-              "subtype": "continuous", 
-              "counts": [
-                16, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                4
-              ], 
-              "blockType": "distribution", 
+              "name": "hardness", 
               "missingValues": 0
             }
           }

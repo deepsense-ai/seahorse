@@ -4,14 +4,14 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "dde515bf-8ce6-4ac2-ae99-8550cfb91b31"
+          "8b9ab6e4-0024-49fd-9dd4-e441e7fb2f69"
         ], 
         "error": null
       }, 
       "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
         "status": "COMPLETED", 
         "results": [
-          "5c52f794-f29b-434a-9d69-07ca681b707a"
+          "964a5430-e709-410b-89be-ecffe2155862"
         ], 
         "error": null
       }, 
@@ -22,7 +22,7 @@
       }
     }, 
     "resultEntities": {
-      "5c52f794-f29b-434a-9d69-07ca681b707a": {
+      "964a5430-e709-410b-89be-ecffe2155862": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -74,42 +74,20 @@
           }, 
           "distributions": {
             "avg_salary": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "8840", 
                 "mean": "7131.666667", 
                 "min": "5555"
               }, 
               "name": "avg_salary", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }
         }
       }, 
-      "dde515bf-8ce6-4ac2-ae99-8550cfb91b31": {
+      "8b9ab6e4-0024-49fd-9dd4-e441e7fb2f69": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -213,102 +191,36 @@
           }, 
           "distributions": {
             "salary": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "12000", 
                 "mean": "6170", 
                 "min": "1000"
               }, 
               "name": "salary", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                0, 
-                0, 
-                1, 
-                0, 
-                2, 
-                1, 
-                0, 
-                2, 
-                0, 
-                1, 
-                0, 
-                3, 
-                1, 
-                2, 
-                0, 
-                0, 
-                0, 
-                1, 
-                2
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "employee_id": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "20", 
                 "mean": "10.5", 
                 "min": "1"
               }, 
               "name": "employee_id", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "work_time": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.9125", 
                 "min": "0.5"
               }, 
               "name": "work_time", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                16
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }

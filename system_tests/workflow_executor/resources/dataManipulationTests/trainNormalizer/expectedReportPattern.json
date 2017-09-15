@@ -4,15 +4,15 @@
       "5c114e9a-fb80-269f-5783-76ea2c9fc709": {
         "status": "COMPLETED", 
         "results": [
-          "6e06bc40-8a6e-42fc-9518-2ad717419eb3"
+          "a3399c32-ceb7-476a-8e83-e7f21ce47db5"
         ], 
         "error": null
       }, 
       "8223aac0-024d-3a10-5382-7dd5667fe730": {
         "status": "COMPLETED", 
         "results": [
-          "9905ead8-4e6c-4247-aca5-ece4d71c2520", 
-          "2308e675-093c-428e-9b27-d7b2c88dce79"
+          "4abdd26d-18dd-4630-89dc-a40d052088a9", 
+          "de5c0cdc-8b34-4a0c-8d60-358965109241"
         ], 
         "error": null
       }, 
@@ -24,14 +24,14 @@
       "c21d9612-9d23-4053-80e5-121879c67c0e": {
         "status": "COMPLETED", 
         "results": [
-          "d80983ea-f4a4-4502-8491-4aaad794abbb"
+          "55886b84-e63b-4d92-98a4-bfcbf233fc28"
         ], 
         "error": null
       }, 
       "ef2e9d7c-d515-7859-46dd-0212e33bc5eb": {
         "status": "COMPLETED", 
         "results": [
-          "f40c805d-ea40-47a0-8b68-1570f2d09e2e"
+          "8e406df7-ae8f-46d2-bb39-b47580fdfd93"
         ], 
         "error": null
       }, 
@@ -42,485 +42,7 @@
       }
     }, 
     "resultEntities": {
-      "d80983ea-f4a4-4502-8491-4aaad794abbb": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "40"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "x", 
-                "y"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "894.199036", 
-                  "1879.589049"
-                ], 
-                [
-                  "-1575.532319", 
-                  "-2164.314304"
-                ], 
-                [
-                  "1271.460854", 
-                  "128.802023"
-                ], 
-                [
-                  "-580.048314", 
-                  "1820.990839"
-                ], 
-                [
-                  "-845.250592", 
-                  "154.447908"
-                ], 
-                [
-                  "-132.297873", 
-                  "-35.733352"
-                ], 
-                [
-                  "-113.677732", 
-                  "758.587705"
-                ], 
-                [
-                  "-931.453038", 
-                  "-1875.128968"
-                ], 
-                [
-                  "2159.963677", 
-                  "-336.162137"
-                ], 
-                [
-                  "760.019411", 
-                  "482.342172"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "y": {
-              "statistics": {
-                "max": "2001.598526", 
-                "mean": "270.991783", 
-                "min": "-2164.314304"
-              }, 
-              "name": "y", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                2, 
-                1, 
-                0, 
-                3, 
-                1, 
-                1, 
-                1, 
-                3, 
-                0, 
-                2, 
-                2, 
-                1, 
-                4, 
-                4, 
-                1, 
-                3, 
-                1, 
-                2, 
-                6
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x": {
-              "statistics": {
-                "max": "2375.19361", 
-                "mean": "162.124553", 
-                "min": "-2386.20837"
-              }, 
-              "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                1, 
-                0, 
-                1, 
-                2, 
-                3, 
-                4, 
-                2, 
-                3, 
-                5, 
-                2, 
-                0, 
-                1, 
-                3, 
-                1, 
-                2, 
-                1, 
-                2, 
-                2, 
-                4
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "2308e675-093c-428e-9b27-d7b2c88dce79": {
-        "report": {
-          "tables": {
-            "Statistics": {
-              "name": "Statistics", 
-              "columnNames": [
-                "Column", 
-                "Mean", 
-                "Std"
-              ], 
-              "columnTypes": [
-                "string", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "x", 
-                  "17.986327", 
-                  "1253.781295"
-                ], 
-                [
-                  "y", 
-                  "-511.476832", 
-                  "1371.370518"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {}
-        }
-      }, 
-      "f40c805d-ea40-47a0-8b68-1570f2d09e2e": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "40"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "x", 
-                "y"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "0.698856", 
-                  "1.743559"
-                ], 
-                [
-                  "-1.27097", 
-                  "-1.205245"
-                ], 
-                [
-                  "0.999755", 
-                  "0.46689"
-                ], 
-                [
-                  "-0.476985", 
-                  "1.70083"
-                ], 
-                [
-                  "-0.688507", 
-                  "0.485591"
-                ], 
-                [
-                  "-0.119865", 
-                  "0.346911"
-                ], 
-                [
-                  "-0.105014", 
-                  "0.926128"
-                ], 
-                [
-                  "-0.757261", 
-                  "-0.994372"
-                ], 
-                [
-                  "1.708414", 
-                  "0.127839"
-                ], 
-                [
-                  "0.591836", 
-                  "0.72469"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "y": {
-              "statistics": {
-                "max": "1.832528", 
-                "mean": "0.570574", 
-                "min": "-1.205245"
-              }, 
-              "name": "y", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                2, 
-                1, 
-                0, 
-                3, 
-                1, 
-                1, 
-                1, 
-                3, 
-                0, 
-                2, 
-                2, 
-                1, 
-                4, 
-                4, 
-                1, 
-                3, 
-                1, 
-                2, 
-                6
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x": {
-              "statistics": {
-                "max": "1.880079", 
-                "mean": "0.114963", 
-                "min": "-1.917555"
-              }, 
-              "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                1, 
-                0, 
-                1, 
-                2, 
-                3, 
-                4, 
-                2, 
-                3, 
-                5, 
-                2, 
-                0, 
-                1, 
-                3, 
-                1, 
-                2, 
-                1, 
-                2, 
-                2, 
-                4
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "6e06bc40-8a6e-42fc-9518-2ad717419eb3": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "40"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "x", 
-                "y"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "-564.128006", 
-                  "293.944693"
-                ], 
-                [
-                  "1654.94036", 
-                  "-2096.856098"
-                ], 
-                [
-                  "169.772991", 
-                  "286.959702"
-                ], 
-                [
-                  "600.7087", 
-                  "-344.701277"
-                ], 
-                [
-                  "237.190479", 
-                  "-2008.766501"
-                ], 
-                [
-                  "-2337.024701", 
-                  "-2254.989127"
-                ], 
-                [
-                  "-389.576949", 
-                  "1718.538665"
-                ], 
-                [
-                  "976.219689", 
-                  "-2301.838909"
-                ], 
-                [
-                  "-568.365288", 
-                  "-2092.266369"
-                ], 
-                [
-                  "-1079.286874", 
-                  "-441.030384"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "y": {
-              "statistics": {
-                "max": "2218.223584", 
-                "mean": "-511.476832", 
-                "min": "-2404.220043"
-              }, 
-              "name": "y", 
-              "subtype": "continuous", 
-              "counts": [
-                5, 
-                3, 
-                3, 
-                2, 
-                1, 
-                3, 
-                1, 
-                2, 
-                3, 
-                3, 
-                0, 
-                3, 
-                1, 
-                4, 
-                0, 
-                1, 
-                0, 
-                3, 
-                0, 
-                2
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x": {
-              "statistics": {
-                "max": "2317.511291", 
-                "mean": "17.986327", 
-                "min": "-2498.104854"
-              }, 
-              "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                0, 
-                4, 
-                1, 
-                0, 
-                1, 
-                1, 
-                3, 
-                3, 
-                2, 
-                2, 
-                5, 
-                3, 
-                0, 
-                3, 
-                4, 
-                2, 
-                3, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "9905ead8-4e6c-4247-aca5-ece4d71c2520": {
+      "4abdd26d-18dd-4630-89dc-a40d052088a9": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -600,72 +122,374 @@
           }, 
           "distributions": {
             "y": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1.990491", 
                 "mean": "0", 
                 "min": "-1.380184"
               }, 
               "name": "y", 
-              "subtype": "continuous", 
-              "counts": [
-                5, 
-                3, 
-                3, 
-                2, 
-                1, 
-                3, 
-                1, 
-                2, 
-                3, 
-                3, 
-                0, 
-                3, 
-                1, 
-                4, 
-                0, 
-                1, 
-                0, 
-                3, 
-                0, 
-                2
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1.834072", 
                 "mean": "-0", 
                 "min": "-2.006802"
               }, 
               "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                0, 
-                4, 
-                1, 
-                0, 
-                1, 
-                1, 
-                3, 
-                3, 
-                2, 
-                2, 
-                5, 
-                3, 
-                0, 
-                3, 
-                4, 
-                2, 
-                3, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }
+        }
+      }, 
+      "a3399c32-ceb7-476a-8e83-e7f21ce47db5": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "40"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-564.128006", 
+                  "293.944693"
+                ], 
+                [
+                  "1654.94036", 
+                  "-2096.856098"
+                ], 
+                [
+                  "169.772991", 
+                  "286.959702"
+                ], 
+                [
+                  "600.7087", 
+                  "-344.701277"
+                ], 
+                [
+                  "237.190479", 
+                  "-2008.766501"
+                ], 
+                [
+                  "-2337.024701", 
+                  "-2254.989127"
+                ], 
+                [
+                  "-389.576949", 
+                  "1718.538665"
+                ], 
+                [
+                  "976.219689", 
+                  "-2301.838909"
+                ], 
+                [
+                  "-568.365288", 
+                  "-2092.266369"
+                ], 
+                [
+                  "-1079.286874", 
+                  "-441.030384"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "2218.223584", 
+                "mean": "-511.476832", 
+                "min": "-2404.220043"
+              }, 
+              "name": "y", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "2317.511291", 
+                "mean": "17.986327", 
+                "min": "-2498.104854"
+              }, 
+              "name": "x", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "8e406df7-ae8f-46d2-bb39-b47580fdfd93": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "40"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.698856", 
+                  "1.743559"
+                ], 
+                [
+                  "-1.27097", 
+                  "-1.205245"
+                ], 
+                [
+                  "0.999755", 
+                  "0.46689"
+                ], 
+                [
+                  "-0.476985", 
+                  "1.70083"
+                ], 
+                [
+                  "-0.688507", 
+                  "0.485591"
+                ], 
+                [
+                  "-0.119865", 
+                  "0.346911"
+                ], 
+                [
+                  "-0.105014", 
+                  "0.926128"
+                ], 
+                [
+                  "-0.757261", 
+                  "-0.994372"
+                ], 
+                [
+                  "1.708414", 
+                  "0.127839"
+                ], 
+                [
+                  "0.591836", 
+                  "0.72469"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1.832528", 
+                "mean": "0.570574", 
+                "min": "-1.205245"
+              }, 
+              "name": "y", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1.880079", 
+                "mean": "0.114963", 
+                "min": "-1.917555"
+              }, 
+              "name": "x", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "55886b84-e63b-4d92-98a4-bfcbf233fc28": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "40"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "894.199036", 
+                  "1879.589049"
+                ], 
+                [
+                  "-1575.532319", 
+                  "-2164.314304"
+                ], 
+                [
+                  "1271.460854", 
+                  "128.802023"
+                ], 
+                [
+                  "-580.048314", 
+                  "1820.990839"
+                ], 
+                [
+                  "-845.250592", 
+                  "154.447908"
+                ], 
+                [
+                  "-132.297873", 
+                  "-35.733352"
+                ], 
+                [
+                  "-113.677732", 
+                  "758.587705"
+                ], 
+                [
+                  "-931.453038", 
+                  "-1875.128968"
+                ], 
+                [
+                  "2159.963677", 
+                  "-336.162137"
+                ], 
+                [
+                  "760.019411", 
+                  "482.342172"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "2001.598526", 
+                "mean": "270.991783", 
+                "min": "-2164.314304"
+              }, 
+              "name": "y", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "2375.19361", 
+                "mean": "162.124553", 
+                "min": "-2386.20837"
+              }, 
+              "name": "x", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "de5c0cdc-8b34-4a0c-8d60-358965109241": {
+        "report": {
+          "tables": {
+            "Statistics": {
+              "name": "Statistics", 
+              "columnNames": [
+                "Column", 
+                "Mean", 
+                "Std"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x", 
+                  "17.986327", 
+                  "1253.781295"
+                ], 
+                [
+                  "y", 
+                  "-511.476832", 
+                  "1371.370518"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
         }
       }
     }, 

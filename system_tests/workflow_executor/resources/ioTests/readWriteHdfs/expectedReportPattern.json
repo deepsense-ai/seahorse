@@ -9,13 +9,13 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "1a507610-5504-47dc-b6a8-09b4b412482a"
+          "e43af66e-3a00-4948-9e53-8919424f9fc6"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "1a507610-5504-47dc-b6a8-09b4b412482a": {
+      "e43af66e-3a00-4948-9e53-8919424f9fc6": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -119,112 +119,42 @@
           }, 
           "distributions": {
             "unnamed_0": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "25", 
                 "mean": "13", 
                 "min": "1"
               }, 
               "name": "unnamed_0", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                2
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "unnamed_1": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                24, 
-                1
-              ], 
               "name": "unnamed_1", 
               "missingValues": 0
             }, 
             "unnamed_2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "100.1", 
                 "mean": "52.1", 
                 "min": "4.1"
               }, 
               "name": "unnamed_2", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                2
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "unnamed_3": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "200.1", 
                 "mean": "104.1", 
                 "min": "8.1"
               }, 
               "name": "unnamed_3", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                2
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }

@@ -36,7 +36,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "hdfs://spark-cluster-1/system_tests/pointCloud2/input.csv",
+            "source": "hdfs://spark-cluster-1/system_tests/pointCloudUsingRandomForestClassification/input.csv",
             "format": {
               "CSV": {
                 "separator": {

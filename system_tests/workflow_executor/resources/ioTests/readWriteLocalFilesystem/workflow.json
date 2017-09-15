@@ -50,7 +50,7 @@
                 "write header": true
               }
             },
-            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/readWriteLocalFilesystem/output.csv"
+            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystem/output.csv"
           }
         }
       }

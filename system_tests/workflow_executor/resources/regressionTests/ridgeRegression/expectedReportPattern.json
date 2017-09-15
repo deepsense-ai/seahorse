@@ -4,14 +4,14 @@
       "35d18089-bfac-8744-ebf3-f9a043a98d4b": {
         "status": "COMPLETED", 
         "results": [
-          "56e22c84-3c5e-49c6-9c43-8aca4aa25c3b"
+          "21c39400-13b4-448e-9e41-b925dfacf5bf"
         ], 
         "error": null
       }, 
       "645b1ec5-3242-acd3-027d-6f42db0b3f55": {
         "status": "COMPLETED", 
         "results": [
-          "980d9855-b828-4879-a004-1db7d939ef53"
+          "04629b81-eb5b-481e-a8ab-dc0bcc321d20"
         ], 
         "error": null
       }, 
@@ -23,57 +23,86 @@
       "c1555b5c-9eb8-9c32-f526-e54c9219dbd3": {
         "status": "COMPLETED", 
         "results": [
-          "55bc9140-dac4-4449-9900-c9374cf43d19", 
-          "2edc6882-672c-4c9c-83a7-b4a906a63875"
+          "a93fcdd2-72af-4e87-b4be-85960553fa97", 
+          "49a221a4-99bc-42ff-a6d4-de2e82cd7b2f"
         ], 
         "error": null
       }, 
       "bbf9f00c-a0de-156e-7586-297908535113": {
         "status": "COMPLETED", 
         "results": [
-          "5e40f10c-9b17-4bc1-9deb-8d3525e264cf"
+          "8bf13404-ca6c-41cd-a62f-6236461bd956"
         ], 
         "error": null
       }, 
       "ecdcf75a-25d5-c393-4592-068a9e70b5ec": {
         "status": "COMPLETED", 
         "results": [
-          "3daeed5a-a9d3-483b-aad1-48089157fcda"
+          "9fbaaa1e-88c4-461f-a0da-9720fd8a9980"
         ], 
         "error": null
       }, 
       "3a978f24-6996-89d5-9492-e8a7caa1572f": {
         "status": "COMPLETED", 
         "results": [
-          "21d38224-0aba-4ef7-ac49-61f1bbdcf09f"
+          "303ed097-70b5-4f6f-beae-6b86440f4bb6"
         ], 
         "error": null
       }, 
       "07c2a748-9312-4bc1-7b64-71cfa2e47547": {
         "status": "COMPLETED", 
         "results": [
-          "6b41a93c-a796-434f-8222-0d2f1888cbd6"
+          "3fc25d03-0056-4f1b-a94b-207f877ea125"
         ], 
         "error": null
       }, 
       "2a743933-9198-2f0c-a736-aa2567e6b7a3": {
         "status": "COMPLETED", 
         "results": [
-          "7a9346a6-0c22-4cd2-a55d-edf4b14b751a"
+          "524784a7-3d03-4519-9492-f1e4db397557"
         ], 
         "error": null
       }, 
       "1bae8b7c-dee5-8ac5-bbf8-babd1eec04c8": {
         "status": "COMPLETED", 
         "results": [
-          "e139dfb5-26ea-4b8d-9e22-5deef1072658", 
-          "407b5af0-b741-47ac-a19c-647dcd2b1a74"
+          "2dac1ec4-8cb4-4db9-840d-1b901c1b2473", 
+          "968ca1e1-8d53-4f1c-b3b2-fbf8e93b6061"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "55bc9140-dac4-4449-9900-c9374cf43d19": {
+      "04629b81-eb5b-481e-a8ab-dc0bcc321d20": {
+        "report": {
+          "tables": {
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Regularization parameter", 
+                "Iterations number", 
+                "Mini batch fraction"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.0", 
+                  "10.0", 
+                  "1.0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "a93fcdd2-72af-4e87-b4be-85960553fa97": {
         "report": {
           "tables": {
             "Intercept": {
@@ -181,7 +210,7 @@
           "distributions": {}
         }
       }, 
-      "6b41a93c-a796-434f-8222-0d2f1888cbd6": {
+      "968ca1e1-8d53-4f1c-b3b2-fbf8e93b6061": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -198,7 +227,284 @@
               "values": [
                 [
                   "4", 
-                  "401"
+                  "148"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "x2", 
+                "x3", 
+                "value"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-9.8", 
+                  "96.04", 
+                  "-941.192", 
+                  "-20458.52"
+                ], 
+                [
+                  "-9.7", 
+                  "94.09", 
+                  "-912.673", 
+                  "-19974.83"
+                ], 
+                [
+                  "-9.55", 
+                  "91.2025", 
+                  "-870.983875", 
+                  "-19263.56375"
+                ], 
+                [
+                  "-9.4", 
+                  "88.36", 
+                  "-830.584", 
+                  "-18569.24"
+                ], 
+                [
+                  "-9.2", 
+                  "84.64", 
+                  "-778.688", 
+                  "-17669.48"
+                ], 
+                [
+                  "-9.15", 
+                  "83.7225", 
+                  "-766.060875", 
+                  "-17449.13375"
+                ], 
+                [
+                  "-8.95", 
+                  "80.1025", 
+                  "-716.917375", 
+                  "-16585.89875"
+                ], 
+                [
+                  "-8.9", 
+                  "79.21", 
+                  "-704.969", 
+                  "-16374.59"
+                ], 
+                [
+                  "-8.85", 
+                  "78.3225", 
+                  "-693.154125", 
+                  "-16165.06625"
+                ], 
+                [
+                  "-8.75", 
+                  "76.5625", 
+                  "-669.921875", 
+                  "-15751.34375"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "x2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "98.01", 
+                "mean": "35.641081", 
+                "min": "0.0625"
+              }, 
+              "name": "x2", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "9.9", 
+                "mean": "0.174324", 
+                "min": "-9.8"
+              }, 
+              "name": "x", 
+              "missingValues": 0
+            }, 
+            "value": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "3010.09", 
+                "mean": "-3118.283801", 
+                "min": "-20458.52"
+              }, 
+              "name": "value", 
+              "missingValues": 0
+            }, 
+            "x3": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "970.299", 
+                "mean": "19.83189", 
+                "min": "-941.192"
+              }, 
+              "name": "x3", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "8bf13404-ca6c-41cd-a62f-6236461bd956": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "10"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "x2", 
+                "x3"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-21.55", 
+                  "464.4025", 
+                  "-10007.873875"
+                ], 
+                [
+                  "20.38", 
+                  "415.3444", 
+                  "8464.718872"
+                ], 
+                [
+                  "100.5", 
+                  "10100.25", 
+                  "1015075.125"
+                ], 
+                [
+                  "-213.1", 
+                  "45411.61", 
+                  "-9677214.091"
+                ], 
+                [
+                  "238.412", 
+                  "56840.281744", 
+                  "13551405.251151"
+                ], 
+                [
+                  "43.11", 
+                  "1858.4721", 
+                  "80118.732231"
+                ], 
+                [
+                  "123.11", 
+                  "15156.0721", 
+                  "1865864.036231"
+                ], 
+                [
+                  "83.02", 
+                  "6892.3204", 
+                  "572200.439608"
+                ], 
+                [
+                  "-99.3", 
+                  "9860.49", 
+                  "-979146.657"
+                ], 
+                [
+                  "-10.5", 
+                  "110.25", 
+                  "-1157.625"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "x2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "56840.281744", 
+                "mean": "14710.949324", 
+                "min": "110.25"
+              }, 
+              "name": "x2", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "238.412", 
+                "mean": "26.4082", 
+                "min": "-213.1"
+              }, 
+              "name": "x", 
+              "missingValues": 0
+            }, 
+            "x3": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "13551405.251151", 
+                "mean": "642560.205622", 
+                "min": "-9677214.091"
+              }, 
+              "name": "x3", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "2dac1ec4-8cb4-4db9-840d-1b901c1b2473": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "253"
                 ]
               ], 
               "blockType": "table"
@@ -244,22 +550,10 @@
                   "-20703.24125"
                 ], 
                 [
-                  "-9.8", 
-                  "96.04", 
-                  "-941.192", 
-                  "-20458.52"
-                ], 
-                [
                   "-9.75", 
                   "95.0625", 
                   "-926.859375", 
                   "-20215.71875"
-                ], 
-                [
-                  "-9.7", 
-                  "94.09", 
-                  "-912.673", 
-                  "-19974.83"
                 ], 
                 [
                   "-9.65", 
@@ -274,10 +568,22 @@
                   "-19498.76"
                 ], 
                 [
-                  "-9.55", 
-                  "91.2025", 
-                  "-870.983875", 
-                  "-19263.56375"
+                  "-9.5", 
+                  "90.25", 
+                  "-857.375", 
+                  "-19030.25"
+                ], 
+                [
+                  "-9.45", 
+                  "89.3025", 
+                  "-843.908625", 
+                  "-18798.81125"
+                ], 
+                [
+                  "-9.35", 
+                  "87.4225", 
+                  "-817.400375", 
+                  "-18341.52875"
                 ]
               ], 
               "blockType": "table"
@@ -285,186 +591,311 @@
           }, 
           "distributions": {
             "x2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "100", 
-                "mean": "33.5", 
+                "mean": "32.24751", 
                 "min": "0"
               }, 
               "name": "x2", 
-              "subtype": "continuous", 
-              "counts": [
-                89, 
-                38, 
-                28, 
-                24, 
-                20, 
-                20, 
-                18, 
-                16, 
-                16, 
-                14, 
-                14, 
-                12, 
-                14, 
-                12, 
-                12, 
-                10, 
-                12, 
-                10, 
-                10, 
-                12
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "10", 
-                "mean": "0", 
+                "mean": "-0.101976", 
                 "min": "-10"
               }, 
               "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                20, 
-                21
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "value": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "3151", 
-                "mean": "-3164", 
+                "mean": "-3190.743073", 
                 "min": "-21449"
               }, 
               "name": "value", 
-              "subtype": "continuous", 
-              "counts": [
-                5, 
-                6, 
-                5, 
-                6, 
-                6, 
-                6, 
-                7, 
-                7, 
-                7, 
-                9, 
-                9, 
-                10, 
-                11, 
-                13, 
-                16, 
-                20, 
-                35, 
-                171, 
-                32, 
-                20
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x3": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1000", 
-                "mean": "0", 
+                "mean": "-11.601264", 
                 "min": "-1000"
               }, 
               "name": "x3", 
-              "subtype": "continuous", 
-              "counts": [
-                7, 
-                8, 
-                8, 
-                9, 
-                10, 
-                11, 
-                14, 
-                17, 
-                24, 
-                93, 
-                92, 
-                24, 
-                17, 
-                14, 
-                11, 
-                10, 
-                9, 
-                8, 
-                8, 
-                7
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }
         }
       }, 
-      "2edc6882-672c-4c9c-83a7-b4a906a63875": {
+      "524784a7-3d03-4519-9492-f1e4db397557": {
         "report": {
           "tables": {
-            "Cross-validate Regression Report": {
-              "name": "Cross-validate Regression Report", 
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
               "columnNames": [
-                "Fold Number", 
-                "Training Set Size", 
-                "Test Set Size", 
-                "Explained Variance", 
-                "Mean Absolute Error", 
-                "Mean Squared Error", 
-                "r2", 
-                "Root Mean Squared Error"
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "10"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "x2", 
+                "x3", 
+                "prediction"
               ], 
               "columnTypes": [
                 "numeric", 
                 "numeric", 
                 "numeric", 
-                "numeric", 
-                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-21.55", 
+                  "464.4025", 
+                  "-10007.873875", 
+                  "-128783.751259"
+                ], 
+                [
+                  "20.38", 
+                  "415.3444", 
+                  "8464.718872", 
+                  "36714.382905"
+                ], 
+                [
+                  "100.5", 
+                  "10100.25", 
+                  "1015075.125", 
+                  "7128471.921294"
+                ], 
+                [
+                  "-213.1", 
+                  "45411.61", 
+                  "-9677214.091", 
+                  "-80438725.719771"
+                ], 
+                [
+                  "238.412", 
+                  "56840.281744", 
+                  "13551405.251151", 
+                  "101780390.206008"
+                ], 
+                [
+                  "43.11", 
+                  "1858.4721", 
+                  "80118.732231", 
+                  "479984.985865"
+                ], 
+                [
+                  "123.11", 
+                  "15156.0721", 
+                  "1865864.036231", 
+                  "13387463.068915"
+                ], 
+                [
+                  "83.02", 
+                  "6892.3204", 
+                  "572200.439608", 
+                  "3920122.7383"
+                ], 
+                [
+                  "-99.3", 
+                  "9860.49", 
+                  "-979146.657", 
+                  "-8641599.10215"
+                ], 
+                [
+                  "-10.5", 
+                  "110.25", 
+                  "-1157.625", 
+                  "-23073.844135"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "x2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "56840.281744", 
+                "mean": "14710.949324", 
+                "min": "110.25"
+              }, 
+              "name": "x2", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "238.412", 
+                "mean": "26.4082", 
+                "min": "-213.1"
+              }, 
+              "name": "x", 
+              "missingValues": 0
+            }, 
+            "prediction": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "101780390.206008", 
+                "mean": "3750096.488597", 
+                "min": "-80438725.719771"
+              }, 
+              "name": "prediction", 
+              "missingValues": 0
+            }, 
+            "x3": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "13551405.251151", 
+                "mean": "642560.205622", 
+                "min": "-9677214.091"
+              }, 
+              "name": "x3", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "21c39400-13b4-448e-9e41-b925dfacf5bf": {
+        "report": {
+          "tables": {
+            "Intercept": {
+              "name": "Intercept", 
+              "columnNames": null, 
+              "columnTypes": [
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-3163.9999999999136"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Feature columns": {
+              "name": "Feature columns", 
+              "columnNames": [
+                "Feature columns"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x"
+                ], 
+                [
+                  "x2"
+                ], 
+                [
+                  "x3"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Regularization parameter", 
+                "Iterations number", 
+                "Mini batch fraction"
+              ], 
+              "columnTypes": [
                 "numeric", 
                 "numeric", 
                 "numeric"
               ], 
-              "rowNames": [
-                "1", 
-                "2", 
-                "3", 
-                "4", 
-                "5", 
-                "6", 
-                "7", 
-                "8", 
-                "9", 
-                "10", 
-                "average"
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.0", 
+                  "10.0", 
+                  "1.0"
+                ]
               ], 
-              "blockType": "table", 
-              "description": "Cross-validate regression metrics"
+              "blockType": "table"
+            }, 
+            "Target column": {
+              "name": "Target column", 
+              "columnNames": [
+                "Target column"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "value"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Model weights": {
+              "name": "Model weights", 
+              "columnNames": [
+                "Column", 
+                "Weight"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x", 
+                  "2140.541019"
+                ], 
+                [
+                  "x2", 
+                  "-2700.016045"
+                ], 
+                [
+                  "x3", 
+                  "3005.083427"
+                ]
+              ], 
+              "blockType": "table"
             }
           }, 
           "distributions": {}
         }
       }, 
-      "21d38224-0aba-4ef7-ac49-61f1bbdcf09f": {
+      "303ed097-70b5-4f6f-beae-6b86440f4bb6": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -580,412 +1011,138 @@
           }, 
           "distributions": {
             "x2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "98.01", 
                 "mean": "35.641081", 
                 "min": "0.0625"
               }, 
               "name": "x2", 
-              "subtype": "continuous", 
-              "counts": [
-                35, 
-                11, 
-                9, 
-                4, 
-                10, 
-                7, 
-                8, 
-                5, 
-                4, 
-                4, 
-                6, 
-                6, 
-                5, 
-                3, 
-                6, 
-                4, 
-                6, 
-                3, 
-                6, 
-                6
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "9.9", 
                 "mean": "0.174324", 
                 "min": "-9.8"
               }, 
               "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                9, 
-                6, 
-                10, 
-                6, 
-                10, 
-                5, 
-                5, 
-                6, 
-                12, 
-                4, 
-                7, 
-                6, 
-                8, 
-                8, 
-                8, 
-                6, 
-                6, 
-                5, 
-                9, 
-                12
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "prediction": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "2283.87014", 
                 "mean": "-3148.291155", 
                 "min": "-19915.540587"
               }, 
               "name": "prediction", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                1, 
-                2, 
-                4, 
-                2, 
-                2, 
-                2, 
-                4, 
-                5, 
-                1, 
-                3, 
-                4, 
-                5, 
-                6, 
-                2, 
-                5, 
-                9, 
-                19, 
-                51, 
-                18
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "value": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "3010.09", 
                 "mean": "-3118.283801", 
                 "min": "-20458.52"
               }, 
               "name": "value", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                2, 
-                2, 
-                3, 
-                3, 
-                2, 
-                1, 
-                4, 
-                6, 
-                0, 
-                3, 
-                5, 
-                5, 
-                5, 
-                3, 
-                6, 
-                15, 
-                57, 
-                12, 
-                12
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x3": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "970.299", 
                 "mean": "19.83189", 
                 "min": "-941.192"
               }, 
               "name": "x3", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                3, 
-                4, 
-                4, 
-                3, 
-                7, 
-                2, 
-                8, 
-                11, 
-                44, 
-                18, 
-                8, 
-                6, 
-                3, 
-                3, 
-                4, 
-                4, 
-                4, 
-                4, 
-                5
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }
         }
       }, 
-      "7a9346a6-0c22-4cd2-a55d-edf4b14b751a": {
+      "9fbaaa1e-88c4-461f-a0da-9720fd8a9980": {
         "report": {
           "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
+            "Evaluate Regression Report": {
+              "name": "Evaluate Regression Report", 
               "columnNames": [
-                "Number of columns", 
-                "Number of rows"
+                "DataFrame Size", 
+                "Explained Variance", 
+                "Mean Absolute Error", 
+                "Mean Squared Error", 
+                "r2", 
+                "Root Mean Squared Error"
               ], 
               "columnTypes": [
                 "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "10"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "x", 
-                "x2", 
-                "x3", 
-                "prediction"
-              ], 
-              "columnTypes": [
+                "numeric", 
                 "numeric", 
                 "numeric", 
                 "numeric", 
                 "numeric"
               ], 
               "rowNames": null, 
-              "values": [
-                [
-                  "-21.55", 
-                  "464.4025", 
-                  "-10007.873875", 
-                  "-128783.751259"
-                ], 
-                [
-                  "20.38", 
-                  "415.3444", 
-                  "8464.718872", 
-                  "36714.382905"
-                ], 
-                [
-                  "100.5", 
-                  "10100.25", 
-                  "1015075.125", 
-                  "7128471.921294"
-                ], 
-                [
-                  "-213.1", 
-                  "45411.61", 
-                  "-9677214.091", 
-                  "-80438725.719771"
-                ], 
-                [
-                  "238.412", 
-                  "56840.281744", 
-                  "13551405.251151", 
-                  "101780390.206008"
-                ], 
-                [
-                  "43.11", 
-                  "1858.4721", 
-                  "80118.732231", 
-                  "479984.985865"
-                ], 
-                [
-                  "123.11", 
-                  "15156.0721", 
-                  "1865864.036231", 
-                  "13387463.068915"
-                ], 
-                [
-                  "83.02", 
-                  "6892.3204", 
-                  "572200.439608", 
-                  "3920122.7383"
-                ], 
-                [
-                  "-99.3", 
-                  "9860.49", 
-                  "-979146.657", 
-                  "-8641599.10215"
-                ], 
-                [
-                  "-10.5", 
-                  "110.25", 
-                  "-1157.625", 
-                  "-23073.844135"
-                ]
-              ], 
-              "blockType": "table"
+              "blockType": "table", 
+              "description": "Evaluate regression metrics"
             }
           }, 
-          "distributions": {
-            "x2": {
-              "statistics": {
-                "max": "56840.281744", 
-                "mean": "14710.949324", 
-                "min": "110.25"
-              }, 
-              "name": "x2", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                0, 
-                1, 
-                2, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x": {
-              "statistics": {
-                "max": "238.412", 
-                "mean": "26.4082", 
-                "min": "-213.1"
-              }, 
-              "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                2, 
-                0, 
-                1, 
-                1, 
-                0, 
-                2, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "prediction": {
-              "statistics": {
-                "max": "101780390.206008", 
-                "mean": "3750096.488597", 
-                "min": "-80438725.719771"
-              }, 
-              "name": "prediction", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                4, 
-                2, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x3": {
-              "statistics": {
-                "max": "13551405.251151", 
-                "mean": "642560.205622", 
-                "min": "-9677214.091"
-              }, 
-              "name": "x3", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                5, 
-                2, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
+          "distributions": {}
         }
       }, 
-      "e139dfb5-26ea-4b8d-9e22-5deef1072658": {
+      "49a221a4-99bc-42ff-a6d4-de2e82cd7b2f": {
+        "report": {
+          "tables": {
+            "Cross-validate Regression Report": {
+              "name": "Cross-validate Regression Report", 
+              "columnNames": [
+                "Fold Number", 
+                "Training Set Size", 
+                "Test Set Size", 
+                "Explained Variance", 
+                "Mean Absolute Error", 
+                "Mean Squared Error", 
+                "r2", 
+                "Root Mean Squared Error"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": [
+                "1", 
+                "2", 
+                "3", 
+                "4", 
+                "5", 
+                "6", 
+                "7", 
+                "8", 
+                "9", 
+                "10", 
+                "average"
+              ], 
+              "blockType": "table", 
+              "description": "Cross-validate regression metrics"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "3fc25d03-0056-4f1b-a94b-207f877ea125": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -1002,7 +1159,7 @@
               "values": [
                 [
                   "4", 
-                  "253"
+                  "401"
                 ]
               ], 
               "blockType": "table"
@@ -1048,10 +1205,22 @@
                   "-20703.24125"
                 ], 
                 [
+                  "-9.8", 
+                  "96.04", 
+                  "-941.192", 
+                  "-20458.52"
+                ], 
+                [
                   "-9.75", 
                   "95.0625", 
                   "-926.859375", 
                   "-20215.71875"
+                ], 
+                [
+                  "-9.7", 
+                  "94.09", 
+                  "-912.673", 
+                  "-19974.83"
                 ], 
                 [
                   "-9.65", 
@@ -1066,619 +1235,10 @@
                   "-19498.76"
                 ], 
                 [
-                  "-9.5", 
-                  "90.25", 
-                  "-857.375", 
-                  "-19030.25"
-                ], 
-                [
-                  "-9.45", 
-                  "89.3025", 
-                  "-843.908625", 
-                  "-18798.81125"
-                ], 
-                [
-                  "-9.35", 
-                  "87.4225", 
-                  "-817.400375", 
-                  "-18341.52875"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "x2": {
-              "statistics": {
-                "max": "100", 
-                "mean": "32.24751", 
-                "min": "0"
-              }, 
-              "name": "x2", 
-              "subtype": "continuous", 
-              "counts": [
-                54, 
-                27, 
-                19, 
-                20, 
-                10, 
-                11, 
-                11, 
-                11, 
-                10, 
-                12, 
-                8, 
-                6, 
-                10, 
-                8, 
-                6, 
-                5, 
-                6, 
-                7, 
-                4, 
-                8
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x": {
-              "statistics": {
-                "max": "10", 
-                "mean": "-0.101976", 
-                "min": "-10"
-              }, 
-              "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                14, 
-                12, 
-                9, 
-                16, 
-                8, 
-                15, 
-                16, 
-                15, 
-                8, 
-                14, 
-                14, 
-                14, 
-                12, 
-                11, 
-                12, 
-                14, 
-                14, 
-                14, 
-                12, 
-                9
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "value": {
-              "statistics": {
-                "max": "3151", 
-                "mean": "-3190.743073", 
-                "min": "-21449"
-              }, 
-              "name": "value", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                4, 
-                4, 
-                3, 
-                3, 
-                3, 
-                6, 
-                3, 
-                3, 
-                6, 
-                7, 
-                6, 
-                4, 
-                9, 
-                12, 
-                14, 
-                21, 
-                113, 
-                19, 
-                9
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x3": {
-              "statistics": {
-                "max": "1000", 
-                "mean": "-11.601264", 
-                "min": "-1000"
-              }, 
-              "name": "x3", 
-              "subtype": "continuous", 
-              "counts": [
-                5, 
-                6, 
-                4, 
-                5, 
-                8, 
-                4, 
-                10, 
-                10, 
-                14, 
-                62, 
-                59, 
-                16, 
-                11, 
-                10, 
-                8, 
-                6, 
-                5, 
-                4, 
-                2, 
-                4
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "3daeed5a-a9d3-483b-aad1-48089157fcda": {
-        "report": {
-          "tables": {
-            "Evaluate Regression Report": {
-              "name": "Evaluate Regression Report", 
-              "columnNames": [
-                "DataFrame Size", 
-                "Explained Variance", 
-                "Mean Absolute Error", 
-                "Mean Squared Error", 
-                "r2", 
-                "Root Mean Squared Error"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "blockType": "table", 
-              "description": "Evaluate regression metrics"
-            }
-          }, 
-          "distributions": {}
-        }
-      }, 
-      "980d9855-b828-4879-a004-1db7d939ef53": {
-        "report": {
-          "tables": {
-            "Parameters": {
-              "name": "Parameters", 
-              "columnNames": [
-                "Regularization parameter", 
-                "Iterations number", 
-                "Mini batch fraction"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "0.0", 
-                  "10.0", 
-                  "1.0"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {}
-        }
-      }, 
-      "56e22c84-3c5e-49c6-9c43-8aca4aa25c3b": {
-        "report": {
-          "tables": {
-            "Intercept": {
-              "name": "Intercept", 
-              "columnNames": null, 
-              "columnTypes": [
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "-3163.9999999999136"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Feature columns": {
-              "name": "Feature columns", 
-              "columnNames": [
-                "Feature columns"
-              ], 
-              "columnTypes": [
-                "string"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "x"
-                ], 
-                [
-                  "x2"
-                ], 
-                [
-                  "x3"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Parameters": {
-              "name": "Parameters", 
-              "columnNames": [
-                "Regularization parameter", 
-                "Iterations number", 
-                "Mini batch fraction"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "0.0", 
-                  "10.0", 
-                  "1.0"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Target column": {
-              "name": "Target column", 
-              "columnNames": [
-                "Target column"
-              ], 
-              "columnTypes": [
-                "string"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "value"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Model weights": {
-              "name": "Model weights", 
-              "columnNames": [
-                "Column", 
-                "Weight"
-              ], 
-              "columnTypes": [
-                "string", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "x", 
-                  "2140.541019"
-                ], 
-                [
-                  "x2", 
-                  "-2700.016045"
-                ], 
-                [
-                  "x3", 
-                  "3005.083427"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {}
-        }
-      }, 
-      "5e40f10c-9b17-4bc1-9deb-8d3525e264cf": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "3", 
-                  "10"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "x", 
-                "x2", 
-                "x3"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "-21.55", 
-                  "464.4025", 
-                  "-10007.873875"
-                ], 
-                [
-                  "20.38", 
-                  "415.3444", 
-                  "8464.718872"
-                ], 
-                [
-                  "100.5", 
-                  "10100.25", 
-                  "1015075.125"
-                ], 
-                [
-                  "-213.1", 
-                  "45411.61", 
-                  "-9677214.091"
-                ], 
-                [
-                  "238.412", 
-                  "56840.281744", 
-                  "13551405.251151"
-                ], 
-                [
-                  "43.11", 
-                  "1858.4721", 
-                  "80118.732231"
-                ], 
-                [
-                  "123.11", 
-                  "15156.0721", 
-                  "1865864.036231"
-                ], 
-                [
-                  "83.02", 
-                  "6892.3204", 
-                  "572200.439608"
-                ], 
-                [
-                  "-99.3", 
-                  "9860.49", 
-                  "-979146.657"
-                ], 
-                [
-                  "-10.5", 
-                  "110.25", 
-                  "-1157.625"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "x2": {
-              "statistics": {
-                "max": "56840.281744", 
-                "mean": "14710.949324", 
-                "min": "110.25"
-              }, 
-              "name": "x2", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                0, 
-                1, 
-                2, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x": {
-              "statistics": {
-                "max": "238.412", 
-                "mean": "26.4082", 
-                "min": "-213.1"
-              }, 
-              "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                2, 
-                0, 
-                1, 
-                1, 
-                0, 
-                2, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x3": {
-              "statistics": {
-                "max": "13551405.251151", 
-                "mean": "642560.205622", 
-                "min": "-9677214.091"
-              }, 
-              "name": "x3", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                5, 
-                2, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "407b5af0-b741-47ac-a19c-647dcd2b1a74": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "148"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "x", 
-                "x2", 
-                "x3", 
-                "value"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "-9.8", 
-                  "96.04", 
-                  "-941.192", 
-                  "-20458.52"
-                ], 
-                [
-                  "-9.7", 
-                  "94.09", 
-                  "-912.673", 
-                  "-19974.83"
-                ], 
-                [
                   "-9.55", 
                   "91.2025", 
                   "-870.983875", 
                   "-19263.56375"
-                ], 
-                [
-                  "-9.4", 
-                  "88.36", 
-                  "-830.584", 
-                  "-18569.24"
-                ], 
-                [
-                  "-9.2", 
-                  "84.64", 
-                  "-778.688", 
-                  "-17669.48"
-                ], 
-                [
-                  "-9.15", 
-                  "83.7225", 
-                  "-766.060875", 
-                  "-17449.13375"
-                ], 
-                [
-                  "-8.95", 
-                  "80.1025", 
-                  "-716.917375", 
-                  "-16585.89875"
-                ], 
-                [
-                  "-8.9", 
-                  "79.21", 
-                  "-704.969", 
-                  "-16374.59"
-                ], 
-                [
-                  "-8.85", 
-                  "78.3225", 
-                  "-693.154125", 
-                  "-16165.06625"
-                ], 
-                [
-                  "-8.75", 
-                  "76.5625", 
-                  "-669.921875", 
-                  "-15751.34375"
                 ]
               ], 
               "blockType": "table"
@@ -1686,135 +1246,47 @@
           }, 
           "distributions": {
             "x2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
-                "max": "98.01", 
-                "mean": "35.641081", 
-                "min": "0.0625"
+                "max": "100", 
+                "mean": "33.5", 
+                "min": "0"
               }, 
               "name": "x2", 
-              "subtype": "continuous", 
-              "counts": [
-                35, 
-                11, 
-                9, 
-                4, 
-                10, 
-                7, 
-                8, 
-                5, 
-                4, 
-                4, 
-                6, 
-                6, 
-                5, 
-                3, 
-                6, 
-                4, 
-                6, 
-                3, 
-                6, 
-                6
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
-                "max": "9.9", 
-                "mean": "0.174324", 
-                "min": "-9.8"
+                "max": "10", 
+                "mean": "0", 
+                "min": "-10"
               }, 
               "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                9, 
-                6, 
-                10, 
-                6, 
-                10, 
-                5, 
-                5, 
-                6, 
-                12, 
-                4, 
-                7, 
-                6, 
-                8, 
-                8, 
-                8, 
-                6, 
-                6, 
-                5, 
-                9, 
-                12
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "value": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
-                "max": "3010.09", 
-                "mean": "-3118.283801", 
-                "min": "-20458.52"
+                "max": "3151", 
+                "mean": "-3164", 
+                "min": "-21449"
               }, 
               "name": "value", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                2, 
-                2, 
-                3, 
-                3, 
-                2, 
-                1, 
-                4, 
-                6, 
-                0, 
-                3, 
-                5, 
-                5, 
-                5, 
-                3, 
-                6, 
-                15, 
-                57, 
-                12, 
-                12
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x3": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
-                "max": "970.299", 
-                "mean": "19.83189", 
-                "min": "-941.192"
+                "max": "1000", 
+                "mean": "0", 
+                "min": "-1000"
               }, 
               "name": "x3", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                3, 
-                4, 
-                4, 
-                3, 
-                7, 
-                2, 
-                8, 
-                11, 
-                44, 
-                18, 
-                8, 
-                6, 
-                3, 
-                3, 
-                4, 
-                4, 
-                4, 
-                4, 
-                5
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }

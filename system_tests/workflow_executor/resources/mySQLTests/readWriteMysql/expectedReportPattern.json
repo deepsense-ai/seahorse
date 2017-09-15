@@ -4,7 +4,7 @@
       "02f14ccc-c877-c242-bb82-534d0cac90d3": {
         "status": "COMPLETED", 
         "results": [
-          "1fd4ae5c-ac64-4359-96a8-c52d1a566d22"
+          "d9bb7f88-b9d9-47c2-a8aa-5c4aa33e1b38"
         ], 
         "error": null
       }, 
@@ -15,7 +15,7 @@
       }
     }, 
     "resultEntities": {
-      "1fd4ae5c-ac64-4359-96a8-c52d1a566d22": {
+      "d9bb7f88-b9d9-47c2-a8aa-5c4aa33e1b38": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -84,87 +84,35 @@
             "categorical_col": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                2, 
-                1
-              ], 
               "name": "categorical_col", 
               "missingValues": 0
             }, 
             "numeric_col": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "7.41", 
                 "mean": "4.629833", 
                 "min": "2.3461"
               }, 
               "name": "numeric_col", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "boolean_col": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                1, 
-                2
-              ], 
               "name": "boolean_col", 
               "missingValues": 0
             }, 
             "timestamp_col": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "2013-08-05T18:19:03.000Z", 
                 "mean": "2013-08-05T18:19:02.000Z", 
                 "min": "2013-08-05T18:19:01.000Z"
               }, 
               "name": "timestamp_col", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }

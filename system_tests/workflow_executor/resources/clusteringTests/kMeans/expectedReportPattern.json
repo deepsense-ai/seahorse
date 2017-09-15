@@ -9,259 +9,35 @@
       "954eac78-14a3-9f7d-bb63-c26ab919943a": {
         "status": "COMPLETED", 
         "results": [
-          "bb2d9299-c834-4822-aa9e-5f256dda1da3", 
-          "6b93d484-e9bc-45a8-b203-e01ba2044e1e"
+          "c3b7a549-8725-42fc-94fe-856a43b5a4a0", 
+          "c5a7b4c2-98b0-4047-a8d7-c9c69d6a47ea"
         ], 
         "error": null
       }, 
       "87a2c267-d792-c237-b8f0-4c8eebe50f75": {
         "status": "COMPLETED", 
         "results": [
-          "32970997-72ed-4b9b-af29-2ac4734a800e"
+          "93bdea58-d1bd-4f8b-8dc7-2a62ffee7ffb"
         ], 
         "error": null
       }, 
       "2578fa83-8098-163b-d2bb-b4774f1b9140": {
         "status": "COMPLETED", 
         "results": [
-          "a4a4ece9-96db-4bf6-aea3-03d074dd67a3"
+          "a82642a1-7fac-4c5d-837b-04a9cbcf7965"
         ], 
         "error": null
       }, 
       "7c8a56b0-81e3-f963-5e45-a442ba4bbb6a": {
         "status": "COMPLETED", 
         "results": [
-          "1d49cc15-8e95-45c3-aaf2-f8354011e7c6"
+          "57684fbb-967d-4735-9ada-33a651367879"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "1d49cc15-8e95-45c3-aaf2-f8354011e7c6": {
-        "report": {
-          "tables": {
-            "Parameters": {
-              "name": "Parameters", 
-              "columnNames": [
-                "Number of clusters", 
-                "Max iterations", 
-                "Initialization mode", 
-                "Initialization steps", 
-                "Seed", 
-                "Runs", 
-                "Epsilon"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "string", 
-                "numeric", 
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "100", 
-                  "random", 
-                  "", 
-                  "600", 
-                  "1", 
-                  "1.0E-5"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {}
-        }
-      }, 
-      "6b93d484-e9bc-45a8-b203-e01ba2044e1e": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "3", 
-                  "8"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "x", 
-                "y", 
-                "prediction"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "0", 
-                  "0", 
-                  "0"
-                ], 
-                [
-                  "1", 
-                  "1", 
-                  "0"
-                ], 
-                [
-                  "0.5", 
-                  "0.5", 
-                  "0"
-                ], 
-                [
-                  "-1", 
-                  "-1", 
-                  "0"
-                ], 
-                [
-                  "25", 
-                  "25", 
-                  "1"
-                ], 
-                [
-                  "27", 
-                  "27", 
-                  "1"
-                ], 
-                [
-                  "16", 
-                  "20", 
-                  "1"
-                ], 
-                [
-                  "14.5", 
-                  "30.2", 
-                  "1"
-                ]
-              ], 
-              "blockType": "table"
-            }
-          }, 
-          "distributions": {
-            "y": {
-              "statistics": {
-                "max": "30.2", 
-                "mean": "12.8375", 
-                "min": "-1"
-              }, 
-              "name": "y", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "x": {
-              "statistics": {
-                "max": "27", 
-                "mean": "10.375", 
-                "min": "-1"
-              }, 
-              "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                2, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                1
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "prediction": {
-              "statistics": {
-                "max": "1", 
-                "mean": "0.5", 
-                "min": "0"
-              }, 
-              "name": "prediction", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                4
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }
-          }
-        }
-      }, 
-      "32970997-72ed-4b9b-af29-2ac4734a800e": {
+      "93bdea58-d1bd-4f8b-8dc7-2a62ffee7ffb": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -333,75 +109,31 @@
           }, 
           "distributions": {
             "y": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "30.2", 
                 "mean": "12.8375", 
                 "min": "-1"
               }, 
               "name": "y", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "27", 
                 "mean": "10.375", 
                 "min": "-1"
               }, 
               "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                2, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }
         }
       }, 
-      "a4a4ece9-96db-4bf6-aea3-03d074dd67a3": {
+      "c5a7b4c2-98b0-4047-a8d7-c9c69d6a47ea": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -483,108 +215,42 @@
           }, 
           "distributions": {
             "y": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "30.2", 
                 "mean": "12.8375", 
                 "min": "-1"
               }, 
               "name": "y", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "27", 
                 "mean": "10.375", 
                 "min": "-1"
               }, 
               "name": "x", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                2, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "prediction": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.5", 
                 "min": "0"
               }, 
               "name": "prediction", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                4
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }
         }
       }, 
-      "bb2d9299-c834-4822-aa9e-5f256dda1da3": {
+      "c3b7a549-8725-42fc-94fe-856a43b5a4a0": {
         "report": {
           "tables": {
             "Centers of clusters": {
@@ -665,6 +331,164 @@
             }
           }, 
           "distributions": {}
+        }
+      }, 
+      "57684fbb-967d-4735-9ada-33a651367879": {
+        "report": {
+          "tables": {
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Number of clusters", 
+                "Max iterations", 
+                "Initialization mode", 
+                "Initialization steps", 
+                "Seed", 
+                "Runs", 
+                "Epsilon"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "string", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "100", 
+                  "random", 
+                  "", 
+                  "600", 
+                  "1", 
+                  "1.0E-5"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "a82642a1-7fac-4c5d-837b-04a9cbcf7965": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "8"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "prediction"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "1", 
+                  "0"
+                ], 
+                [
+                  "0.5", 
+                  "0.5", 
+                  "0"
+                ], 
+                [
+                  "-1", 
+                  "-1", 
+                  "0"
+                ], 
+                [
+                  "25", 
+                  "25", 
+                  "1"
+                ], 
+                [
+                  "27", 
+                  "27", 
+                  "1"
+                ], 
+                [
+                  "16", 
+                  "20", 
+                  "1"
+                ], 
+                [
+                  "14.5", 
+                  "30.2", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "30.2", 
+                "mean": "12.8375", 
+                "min": "-1"
+              }, 
+              "name": "y", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "27", 
+                "mean": "10.375", 
+                "min": "-1"
+              }, 
+              "name": "x", 
+              "missingValues": 0
+            }, 
+            "prediction": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.5", 
+                "min": "0"
+              }, 
+              "name": "prediction", 
+              "missingValues": 0
+            }
+          }
         }
       }
     }, 

@@ -4,7 +4,7 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "b1f9f706-b30b-48ab-b59c-9cb100fcfa2a"
+          "c3808f77-0225-4a46-9929-8d8831f04c61"
         ], 
         "error": null
       }, 
@@ -22,7 +22,7 @@
       }
     }, 
     "resultEntities": {
-      "b1f9f706-b30b-48ab-b59c-9cb100fcfa2a": {
+      "c3808f77-0225-4a46-9929-8d8831f04c61": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -126,102 +126,36 @@
           }, 
           "distributions": {
             "salary": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "12000", 
                 "mean": "6170", 
                 "min": "1000"
               }, 
               "name": "salary", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                0, 
-                0, 
-                1, 
-                0, 
-                2, 
-                1, 
-                0, 
-                2, 
-                0, 
-                1, 
-                0, 
-                3, 
-                1, 
-                2, 
-                0, 
-                0, 
-                0, 
-                1, 
-                2
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "employee_id": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "20", 
                 "mean": "10.5", 
                 "min": "1"
               }, 
               "name": "employee_id", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "work_time": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.9125", 
                 "min": "0.5"
               }, 
               "name": "work_time", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                1, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                0, 
-                16
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }

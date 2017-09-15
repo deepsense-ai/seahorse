@@ -128,110 +128,41 @@
           }, 
           "distributions": {
             "numer": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "80", 
                 "mean": "40.5", 
                 "min": "1"
               }, 
               "name": "numer", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "numer2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "160", 
                 "mean": "81", 
                 "min": "2"
               }, 
               "name": "numer2", 
-              "subtype": "continuous", 
-              "counts": [
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "target": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "134.200033", 
                 "mean": "68.138725", 
                 "min": "2.186883"
               }, 
               "name": "target", 
-              "subtype": "continuous", 
-              "counts": [
-                5, 
-                3, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                4, 
-                3, 
-                4, 
-                5
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "cat": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                80
-              ], 
               "name": "cat", 
               "missingValues": 0
             }

@@ -43,6 +43,9 @@ class CommonSetupsAndTeardowns(object):
     self.output_path = output_path
     BuiltIn().set_test_variable("${WORKFLOW PATH}", workflow_path)
     self.workflow_path = workflow_path
+    result_report_path = output_path + "result.json"
+    BuiltIn().set_test_variable("${RESULT REPORT PATH}", result_report_path)
+    self.result_report_path = result_report_path
     BuiltIn().set_test_variable("${EXPECTED REPORT PATH}", expected_report_path)
     self.expected_report_path = expected_report_path
 

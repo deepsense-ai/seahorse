@@ -9,13 +9,13 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "36527fea-4728-42ac-b36a-e757c996faa3"
+          "35671e49-0ea5-4066-a376-2419c7eb9750"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "36527fea-4728-42ac-b36a-e757c996faa3": {
+      "35671e49-0ea5-4066-a376-2419c7eb9750": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -131,168 +131,58 @@
           }, 
           "distributions": {
             "col_b": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "20", 
                 "mean": "11", 
                 "min": "2"
               }, 
               "name": "col_b", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "col_c": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "40", 
                 "mean": "22", 
                 "min": "4"
               }, 
               "name": "col_c", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "col_a": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "10", 
                 "mean": "5.5", 
                 "min": "1"
               }, 
               "name": "col_a", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "col_d": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "80", 
                 "mean": "44", 
                 "min": "8"
               }, 
               "name": "col_d", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "col_e": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "160", 
                 "mean": "88", 
                 "min": "16"
               }, 
               "name": "col_e", 
-              "subtype": "continuous", 
-              "counts": [
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1, 
-                0, 
-                1
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }
           }

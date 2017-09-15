@@ -43,13 +43,13 @@ Empty Column Selector
     Run Workflow
     Check Report
 
-Trivial Cycle
-    Run Workflow
-    Check Report
-
-Cycle
-    Run Workflow
-    Check Report
+#Trivial Cycle
+#    Run Workflow
+#    Check Report
+#
+#Cycle
+#    Run Workflow
+#    Check Report
 
 Column Name Duplication
     [Setup]  Standard Hdfs Test Setup

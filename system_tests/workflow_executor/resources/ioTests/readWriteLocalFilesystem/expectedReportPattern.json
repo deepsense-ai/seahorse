@@ -9,13 +9,13 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "47c25aaf-9dd8-46f9-9d72-bed026b4cfb7"
+          "f2652000-6182-4787-8338-72da258494c6"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "47c25aaf-9dd8-46f9-9d72-bed026b4cfb7": {
+      "f2652000-6182-4787-8338-72da258494c6": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -107,45 +107,19 @@
           }, 
           "distributions": {
             "col_b": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
               "statistics": {
                 "max": "9.75", 
                 "mean": "3.625", 
                 "min": "-2.5"
               }, 
               "name": "col_b", 
-              "subtype": "continuous", 
-              "counts": [
-                3, 
-                2, 
-                3, 
-                2, 
-                3, 
-                2, 
-                3, 
-                2, 
-                3, 
-                2, 
-                2, 
-                3, 
-                2, 
-                3, 
-                2, 
-                3, 
-                2, 
-                3, 
-                2, 
-                3
-              ], 
-              "blockType": "distribution", 
               "missingValues": 0
             }, 
             "col_a": {
               "subtype": "categorical", 
               "blockType": "distribution", 
-              "counts": [
-                25, 
-                25
-              ], 
               "name": "col_a", 
               "missingValues": 0
             }

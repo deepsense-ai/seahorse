@@ -5,7 +5,7 @@
 import sys, getopt
 from os import path, listdir, makedirs
 
-sys.path.append("./lib")
+sys.path.append("lib")
 from report_file_utils import create_extracted_pattern_file
 
 
@@ -15,7 +15,7 @@ def main(argv):
   try:
     opts, args = getopt.getopt(argv, "hi:o:", [])
   except getopt.GetoptError:
-    print 'test.py -i <input_dir> -o <output_dir>'
+    print __file__ + ' -i <input_dir> -o <output_dir>'
     sys.exit(2)
   for opt, arg in opts:
     if opt == '-h':
@@ -48,7 +48,6 @@ def main(argv):
         print "Report pattern created: " + output_file
         counter += 1
   print str(counter) + " report patterns created"
-
 
 if __name__ == "__main__":
   main(sys.argv[1:])
