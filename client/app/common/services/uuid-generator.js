@@ -1,7 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
-
 'use strict';
 
 function UUIDGenerator() {

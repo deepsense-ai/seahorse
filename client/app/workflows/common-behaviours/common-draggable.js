@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 22.07.15.
- */
-
 'use strict';
 
 /* @ngInject */

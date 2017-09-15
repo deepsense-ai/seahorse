@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 06.05.15.
- */
-
 'use strict';
 
 function ReportTableHeader() {

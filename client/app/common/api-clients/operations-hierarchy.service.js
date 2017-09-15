@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by: Grzegorz Swatowski
- */
-
 'use strict';
 
 function Graph () {
@@ -82,11 +76,6 @@ function OperationsHierarchyService($q, OperationsApiClient) {
   let graph = new Graph();
   let isLoaded = false;
 
-  /**
-   * Loads operations' hierarchy data.
-   *
-   * @return {Promise}
-   */
   service.load = function load() {
     if (isLoaded) {
       let deferred = $q.defer();
@@ -102,13 +91,6 @@ function OperationsHierarchyService($q, OperationsApiClient) {
     }
   };
 
-  /**
-   * Checks if the given node is a descendant of given nodes in the hierarchy
-   *
-   * @param {string} node
-   * @param {string[]} ancestors
-   * @return {boolean}
-   */
   service.IsDescendantOf = (node, ancestors) => graph.IsDescendantOf(node, ancestors);
 
   return service;

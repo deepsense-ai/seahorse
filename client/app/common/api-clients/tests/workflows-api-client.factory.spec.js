@@ -1,8 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Piotr Zarówny
- */
 'use strict';
 
 let resultIsPromise = require('./utils/result-is-promise.js');

@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by: Grzegorz Swatowski
- */
-
 'use strict';
 
 module.exports = function promiseIsRejected ($httpBackend, mockRequest, functionReturningPromise, expectRequest) {

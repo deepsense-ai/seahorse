@@ -82,7 +82,7 @@ gulp.task('config', function () {
 
 gulp.task('copy:scripts', function () {
   return gulp.src([client.path + client.externalScripts])
-    .pipe(gulp.dest(build.path+'/js/'));
+    .pipe(gulp.dest(build.path + '/js/'));
 });
 
 gulp.task('html:index', function () {
@@ -117,8 +117,8 @@ gulp.task('replace', function () {
 });
 
 gulp.task('copy:images', function () {
-  return gulp.src([client.path + client.icheckImages]).
-    pipe(gulp.dest(build.path + build.css));
+  return gulp.src([client.path + client.icheckImages])
+    .pipe(gulp.dest(build.path + build.css));
 });
 
 gulp.task('favicon', function () {
@@ -175,10 +175,10 @@ gulp.task('libs:js', function () {
 
 gulp.task('jshint', function () {
   return gulp.src([
-    server.path + server.js,
-    './gulpfile.js',
-    client.path + client.js
-  ])
+      server.path + server.js,
+      './gulpfile.js',
+      client.path + client.js
+    ])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(CIMode ? jshint.reporter('fail') : gutil.noop())

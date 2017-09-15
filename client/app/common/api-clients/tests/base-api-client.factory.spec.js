@@ -1,13 +1,6 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Piotr Zarówny
- */
 /*global inject*/
 
 'use strict';
-
-// TODO: needs refactoring
 
 describe('BaseApiClient', () => {
   var module,

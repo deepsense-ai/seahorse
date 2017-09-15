@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Konrad Szałwiński
- */
-
 'use strict';
 
 /* @ngInject */

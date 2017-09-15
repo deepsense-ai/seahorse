@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Piotr Zarówny
- */
-
 'use strict';
 
 /* @ngInject */
@@ -26,13 +20,6 @@ function OperationsFactory(OperationsApiClient, $q) {
       catalogData = {},
       categoryMap = {};
 
-
-  /**
-   * Creates category map.
-   *
-   * @param {object} catalog
-   * @param {string} parentId
-   */
   var createCategoryMap = function createCategoryMap(catalog, parentId) {
     for (let i = catalog.length - 1; i >= 0; i--) {
       let category = catalog[i];
@@ -46,9 +33,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     }
   };
 
-  /**
-   * Updates each category with its own icon or inherited from parent category.
-   */
   var updateCategoryIcons = function updateCategoryIcons() {
     for (let id in categoryMap) {
       let category = categoryMap[id];
@@ -70,9 +54,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     }
   };
 
-  /**
-   * Updates each operation with its category icon.
-   */
   var updateOperationIcons = function updateOperationIcons() {
     for (let id in operationsData) {
       let operation = operationsData[id];
@@ -82,11 +63,6 @@ function OperationsFactory(OperationsApiClient, $q) {
   };
 
 
-  /**
-   * Loads operations list from API.
-   *
-   * @return {Promise}
-   */
   var loadData = function loadData() {
     return OperationsApiClient.getAll().then((data) => {
       operationsData = data.operations;
@@ -95,13 +71,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     });
   };
 
-  /**
-   * Loads full operation data from API.
-   *
-   * @param {string} id
-   *
-   * @return {Promise}
-   */
   var loadOperationData = function loadOperationData(id) {
     return OperationsApiClient.get(id).then((data) => {
       if (_.isUndefined(operationsData[id].parameters)) {
@@ -114,11 +83,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     });
   };
 
-  /**
-   * Loads catalog & category data from API.
-   *
-   * @return {Promise}
-   */
   var loadCatalog = function loadCatalog() {
     return OperationsApiClient.getCatalog().then((data) => {
       catalogData = data.catalog;
@@ -132,12 +96,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     });
   };
 
-
-  /**
-   * Loads operations catalog & data.
-   *
-   * @return {Promise}
-   */
   service.load = function load() {
     if (isLoaded) {
       let deferred = $q.defer();
@@ -152,11 +110,6 @@ function OperationsFactory(OperationsApiClient, $q) {
       });
   };
 
-  /**
-   * Returns operations list data.
-   *
-   * @return {object}
-   */
   service.getData = function getData(id) {
     if (!isLoaded) {
       console.error('Operations not loaded!');
@@ -165,13 +118,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     return operationsData;
   };
 
-  /**
-   * Returns operation data.
-   *
-   * @param {string} id
-   *
-   * @return {object}
-   */
   service.get = function get(id) {
     if (!isLoaded) {
       console.error('Operations not loaded!');
@@ -180,13 +126,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     return operationsData[id] || null;
   };
 
-  /**
-   * Returns operation data with params schema.
-   *
-   * @param {string} id
-   *
-   * @return {Promise}
-   */
   service.getWithParams = function getWithParams(id) {
     if (!isLoaded) {
       console.error('Operations not loaded!');
@@ -200,25 +139,11 @@ function OperationsFactory(OperationsApiClient, $q) {
     return loadOperationData(id);
   };
 
-  /**
-   * Checks if details for the particular operation has been fetched.
-   *
-   * @param {string} id
-   *
-   * @return {boolean}
-   */
   service.hasWithParams = function hasWithParams(id) {
     let operation = operationsData[id] || null;
     return !!(isLoaded && operation && operation.parameters);
   };
 
-  /**
-   * Returns category catalog data.
-   *
-   * @param {string} id
-   *
-   * @return {object}
-   */
   service.getCatalog = function getCatalog(id) {
     if (!isLoaded) {
       console.error('Operations not loaded!');
@@ -227,13 +152,6 @@ function OperationsFactory(OperationsApiClient, $q) {
     return catalogData;
   };
 
-  /**
-   * Returns category data.
-   *
-   * @param {string} id
-   *
-   * @return {object}
-   */
   service.getCategory = function getCategory(id) {
     if (!isLoaded) {
       console.error('Operations not loaded!');

@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 03.06.15.
- */
-
 'use strict';
 
 /* @ngInject */
@@ -21,14 +15,6 @@ function MouseEvent() {
     return 1;
   };
 
-  /**
-   * Implements Window.scrollY, Window.scrollX
-   * https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollY
-   * https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollX
-   *
-   * @param {Event} event
-   * @returns {{x: number, y: number}}
-   */
   that.getWindowScroll = function getWindowScroll(event) {
     var supportPageOffset = window.pageXOffset !== undefined;
     var isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
@@ -39,15 +25,6 @@ function MouseEvent() {
     };
   };
 
-  /**
-   * Implements MouseEvent.offsetX, MouseEvent.offsetY
-   * https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetX
-   * https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetY
-   *
-   * @param {Event} event
-   * @param {HTMLElement} element
-   * @returns {{x: number, y: number}}
-   */
   that.getEventOffsetOfElement = function getEventOffsetOfElement(event, element) {
     var scroll = that.getWindowScroll(event);
     var scale = internal.getScale(element);

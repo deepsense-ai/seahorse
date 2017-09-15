@@ -1,12 +1,4 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by: Piotr Zarówny
- */
-
 'use strict';
-
-// TODO: needs refactoring
 
 describe('OperationsApiClient', () => {
   let globalInternal = {

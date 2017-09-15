@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 06.05.15.
- */
-
 'use strict';
 
 let REPORT_EVENTS = require('../../reports.controller.js').EVENTS;
