@@ -78,7 +78,6 @@ One Category Feature
     Remove Hdfs Path    /system_tests/oneCategoryFeature
 
 Trivial Cycle
-    [Timeout]    20s
     ${dir} =    Set Variable    resources/negativeTests/trivialCycle/
     Remove Directory    trivialCycleOutput    recursive=True
     Create Output Directory    trivialCycleOutput
@@ -88,7 +87,6 @@ Trivial Cycle
     Clean Output Directory
 
 Cycle
-    [Timeout]    20s
     ${dir} =    Set Variable    resources/negativeTests/cycle/
     Remove Directory    cycleOutput    recursive=True
     Create Output Directory    cycleOutput
