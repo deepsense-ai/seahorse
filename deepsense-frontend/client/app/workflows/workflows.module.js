@@ -36,7 +36,7 @@ require('./session-manager.service.js').inject(workflows);
 require('./navigation-bar/navigation-bar.module.js').inject(workflows);
 require('./cluster-settings-modals/choose-cluster-modal.ctrl.js').inject(workflows);
 require('./cluster-settings-modals/cluster-modal.srv.js').inject(workflows);
-require('./cluster-settings-modals/preset-modal/preset-modal.ctrl.js').inject(workflows);
+require('./cluster-settings-modals/preset-modal/preset-modal.controller.js').inject(workflows);
 require('./cluster-settings-modals/preset-modal/preset-modal-labels.js').inject(workflows);
 require('./dataframe-library-modal/dataframe-library-modal.ctrl.js').inject(workflows);
 require('./dataframe-library-modal/dataframe-library-modal.srv.js').inject(workflows);
