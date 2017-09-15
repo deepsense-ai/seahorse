@@ -59,7 +59,11 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
       assertDataFramesEqual(result, expectedDataFrame)
       assertTableUnregistered()
     }
-    "correctly infer output DataFrame schema" in {
+
+    // The following 4 tests are ignored due to a rollback with SqlTransformer
+    // to a state without schema inference. They should be un-ignored after migration
+    // to Spark 1.6.2 and replacing our SqlTransformer with the one Spark offers.
+    "correctly infer output DataFrame schema" ignore {
       val expression = s"select $firstColumn, $thirdColumn from $dataFrameId"
       val result = executeSqlSchemaTransformation(expression, dataFrameId, schema)
       val selectedColumnsIndices = Seq(0, 2)
@@ -67,19 +71,19 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
       assertSchemaEqual(result, expectedSchema)
       assertTableUnregistered()
     }
-    "throw the appropriate exception when the table does not exist" in {
+    "throw the appropriate exception when the table does not exist" ignore {
       val expression = s"SELECT * FROM notexistanttable"
       a [SqlExpressionException] should be thrownBy {
         executeSqlSchemaTransformation(expression, dataFrameId, schema)
       }
     }
-    "throw the appropriate exception when trying to infer schema with invalid statement" in {
+    "throw the appropriate exception when trying to infer schema with invalid statement" ignore {
       val expression = s"SELEC * FRMO $dataFrameId"
       a [SqlExpressionException] should be thrownBy {
         executeSqlSchemaTransformation(expression, dataFrameId, schema)
       }
     }
-    "throw the appropriate exception when no tables are used" in {
+    "throw the appropriate exception when no tables are used" ignore {
       val expression = s"SELECT *"
       a [SqlExpressionException] should be thrownBy {
         executeSqlSchemaTransformation(expression, dataFrameId, schema)
