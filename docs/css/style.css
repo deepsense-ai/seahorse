@@ -360,10 +360,17 @@ p.footer-text span {
 }
 
 .contact-block-button {
+  display: table-cell;
+  vertical-align: middle;
   background-color: #418ecc;
   color: white;
   border: 2px solid #418ecc;
   height: 60px;
+}
+
+.contact-block-container {
+  display: table;
+  vertical-align: middle;
 }
 
 .contact-block-button > a {
