@@ -9,5 +9,10 @@
 - name: Copy image_cleanup.sh.j2 template file
   copy: src=image_cleanup.sh.j2 dest=vagrant/image_cleanup.sh.j2
 
-- name: Remove old box file
-  file: path=vagrant/deepsense-vm.box state=absent
+- name: Remove old logs and old image file
+  file: path=vagrant/{{item}} state=absent
+  with_items:
+    - deepsense-vm.box
+    - destroy.log
+    - install.log
+    - package.log
