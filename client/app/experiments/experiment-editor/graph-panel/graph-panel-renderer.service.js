@@ -374,14 +374,16 @@ function GraphPanelRendererService($rootScope, $document) {
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
       var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
-      if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
+      if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
         $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
       }
     });
 
     jsPlumb.bind('connectionMoved', function (info) {
       var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
-      $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
+      if (edge) {
+        $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
+      }
     });
 
     jsPlumb.bind('connectionDrag', () => {
