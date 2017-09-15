@@ -99,7 +99,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
       val report = dataFrame.report(executionContext)
 
-      testCategoricalDistribution(report, DataFrameTestFactory.stringColumnName, 1L, Seq(), Seq())
+      testEmptyDistribution(report, DataFrameTestFactory.stringColumnName)
       testCategoricalDistribution(
         report,
         DataFrameTestFactory.booleanColumnName,
@@ -147,7 +147,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
       val report = dataFrame.report(executionContext)
 
-      testCategoricalDistribution(report, DataFrameTestFactory.stringColumnName, 0L, Seq(), Seq())
+      testEmptyDistribution(report, DataFrameTestFactory.stringColumnName)
       testCategoricalDistribution(
         report,
         DataFrameTestFactory.booleanColumnName,
@@ -199,7 +199,6 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           StructField("string", StringType),
           StructField("numeric", DoubleType),
           StructField("categorical", IntegerType, metadata = metadata),
-          StructField("ordinal", LongType),
           StructField("timestamp", TimestampType),
           StructField("boolean", BooleanType)))
         val emptyDataFrame = executionContext.dataFrameBuilder.buildDataFrame(
@@ -211,14 +210,13 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         val tables = report.content.tables
         val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
         dataSampleTable.columnNames shouldBe
-          Some(List("string", "numeric", "categorical", "ordinal", "timestamp", "boolean"))
+          Some(List("string", "numeric", "categorical", "timestamp", "boolean"))
         dataSampleTable.rowNames shouldBe None
         dataSampleTable.values shouldBe List.empty
-        testDataFrameSizeTable(tables, 6, 0)
-        testCategoricalDistribution(report, "string", 0L, Seq.empty, Seq.empty)
+        testDataFrameSizeTable(tables, 5, 0)
+        testEmptyDistribution(report, "string")
         testContinuousDistribution(report, "numeric", 0L, Seq.empty, Seq.empty, Statistics())
         testCategoricalDistribution(report, "categorical", 0L, categories, Seq(0, 0, 0))
-        testContinuousDistribution(report, "ordinal", 0L, Seq.empty, Seq.empty, Statistics())
         testContinuousDistribution(report, "timestamp", 0L, Seq.empty, Seq.empty, Statistics())
         testCategoricalDistribution(report, "boolean", 0L, Seq("false", "true"), Seq(0, 0))
       }
@@ -242,6 +240,12 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     "1990-09-30T20:39:03.000Z", "1993-07-02T07:24:54.000Z", "1996-04-02T18:10:45.000Z",
     "1999-01-03T04:56:36.000Z", "2001-10-04T15:42:27.000Z", "2004-07-06T02:28:18.000Z",
     "2007-04-07T13:14:09.000Z")
+
+  private def testEmptyDistribution(
+      report: Report,
+      columnName: String): Unit = {
+    report.content.distributions.contains(columnName) shouldBe false
+  }
 
   private def testCategoricalDistribution(
       report: Report,

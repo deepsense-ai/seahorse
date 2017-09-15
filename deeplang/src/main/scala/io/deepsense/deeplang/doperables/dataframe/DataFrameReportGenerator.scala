@@ -37,7 +37,7 @@ import io.deepsense.reportlib.model._
 
 private object StatType extends Enumeration {
   type StatType = Value
-  val Categorical, Continuous = Value
+  val Categorical, Continuous, Empty = Value
 }
 import io.deepsense.deeplang.doperables.dataframe.StatType._
 
@@ -111,21 +111,23 @@ trait DataFrameReportGenerator {
       // Turn off generating any distributions when reportLevel == LOW
       (Map(), dataFrameSize)
     } else {
-      val distributions = sparkDataFrame.schema.zipWithIndex.map(p => {
+      val distributions = sparkDataFrame.schema.zipWithIndex.flatMap(p => {
         val rdd: RDD[Double] =
           columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, categoricalMetadata, p._2)
         rdd.cache()
         distributionType(p._1, categoricalMetadata) match {
           case Continuous =>
-            continuousDistribution(
+            Some(continuousDistribution(
               p._1,
               rdd,
               basicStats.map(_.min(p._2)),
               basicStats.map(_.max(p._2)),
               dataFrameSize,
               categoricalMetadata,
-              executionContext.reportLevel)
-          case Categorical => categoricalDistribution(dataFrameSize, p._1, rdd, categoricalMetadata)
+              executionContext.reportLevel))
+          case Categorical =>
+            Some(categoricalDistribution(dataFrameSize, p._1, rdd, categoricalMetadata))
+          case Empty => None
         }
       })
       (distributions.map(d => d.name -> d).toMap, dataFrameSize)
@@ -324,7 +326,7 @@ trait DataFrameReportGenerator {
     case LongType => Continuous
     case TimestampType => Continuous
     case DoubleType => Continuous
-    case StringType => Categorical
+    case StringType => Empty
     case BooleanType => Categorical
     case IntegerType if categoricalMetadata.isCategorical(structField.name) => Categorical
   }
