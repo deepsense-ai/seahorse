@@ -17,12 +17,13 @@
 package io.deepsense.deeplang.doperables.multicolumn
 
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.YesInPlaceChoice
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
 
 trait HasSingleInPlaceParam extends Params {
-  val singleInPlaceParam = ChoiceParam[SingleColumnInPlaceChoice](
-    name = "singleInPlace",
-    description = "Should the transformation be done in-place?"
+  val singleInPlaceChoice = ChoiceParam[SingleColumnInPlaceChoice](
+    name = "output",
+    description = "Output generation mode."
   )
 }

@@ -18,18 +18,15 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param
 
 class IDFModel
-  extends SparkModelWrapper[SparkIDFModel, SparkIDF]
-  with HasInputColumn
-  with HasOutputColumn {
+  extends SparkSingleColumnModelWrapper[SparkIDFModel, SparkIDF] {
 
-  override val params: Array[Param[_]] = declareParams(inputColumn, outputColumn)
+  override protected def getSpecificParams: Array[Param[_]] = Array()
 
   override def report: Report = {
     val summary =
@@ -42,4 +39,5 @@ class IDFModel
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
+
 }

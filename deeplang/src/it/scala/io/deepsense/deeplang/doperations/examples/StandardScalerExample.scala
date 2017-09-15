@@ -26,7 +26,7 @@ class StandardScalerExample extends AbstractOperationExample[StandardScaler] {
     val op = new StandardScaler()
     op.estimator
       .setInputColumn("features")
-      .setOutputColumn("scaled")
+      .setNoInPlace("scaled")
     op.set(op.estimator.extractParamMap())
   }
 

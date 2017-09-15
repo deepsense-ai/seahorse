@@ -68,21 +68,21 @@ For scala docs details, see
 <tbody>
 
 <tr>
-<td><code>min documents frequency</code></td>
-<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The minimum of documents in which a term should appear.</td>
-</tr>
-
-<tr>
 <td><code>input column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>The input column name.</td>
 </tr>
 
 <tr>
-<td><code>output column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The output column name.</td>
+<td><code>output</code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
+<td>Output generation mode. Possible values: <code>["replace input column", "append new column"]</code></td>
+</tr>
+
+<tr>
+<td><code>min documents frequency</code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
+<td>The minimum of documents in which a term should appear.</td>
 </tr>
 
 </tbody>

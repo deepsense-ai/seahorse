@@ -21,6 +21,7 @@ import scala.reflect.runtime.universe.TypeTag
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.doperables.multicolumn.{HasSingleInPlaceParam, HasSpecificParams}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
 import io.deepsense.deeplang.params.Param
@@ -38,10 +39,14 @@ abstract class SparkSingleColumnEstimatorWrapper[
   with HasSpecificParams {
 
   override lazy val params: Array[Param[_]] =
-    Array(inputColumn, singleInPlaceParam) ++ getSpecificParams
+    Array(inputColumn, singleInPlaceChoice) ++ getSpecificParams
 
   def setSingleInPlaceParam(value: SingleColumnInPlaceChoice): this.type = {
-    set(singleInPlaceParam -> value)
+    set(singleInPlaceChoice -> value)
+  }
+
+  def setNoInPlace(outputColumn: String): this.type = {
+    setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn(outputColumn))
   }
 }
 

@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -30,6 +31,6 @@ class CountVectorizerEstimatorSmokeTest
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     inputColumn -> NameSingleColumnSelection("myStringFeatures"),
-    outputColumn -> "testOutputColumn"
+    singleInPlaceChoice -> NoInPlaceChoice().setOutputColumn("testOutputColumn")
   )
 }

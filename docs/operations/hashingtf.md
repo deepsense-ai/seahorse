@@ -68,7 +68,7 @@ For scala docs details, see
 <tbody>
 
 <tr>
-<td><code>numFeatures</code></td>
+<td><code>num features</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The number of features.</td>
 </tr>

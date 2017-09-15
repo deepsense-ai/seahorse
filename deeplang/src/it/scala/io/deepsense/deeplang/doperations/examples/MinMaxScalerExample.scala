@@ -26,7 +26,7 @@ class MinMaxScalerExample extends AbstractOperationExample[MinMaxScaler] {
     val op = new MinMaxScaler()
     op.estimator
       .setInputColumn("features")
-      .setOutputColumn("scaled")
+      .setNoInPlace("scaled")
       .setMax(5)
       .setMin(-5)
     op.set(op.estimator.extractParamMap())

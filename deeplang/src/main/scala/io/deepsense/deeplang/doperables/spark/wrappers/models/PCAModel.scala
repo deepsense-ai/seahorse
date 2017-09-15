@@ -19,25 +19,21 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml
 import org.apache.spark.ml.feature.{PCA => SparkPCA, PCAModel => SparkPCAModel}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 class PCAModel
-  extends SparkModelWrapper[SparkPCAModel, SparkPCA]
-  with HasInputColumn
-  with HasOutputColumn {
-
+  extends SparkSingleColumnModelWrapper[SparkPCAModel, SparkPCA] {
   val k = new IntParamWrapper[ml.param.Params { val k: ml.param.IntParam }](
     name = "k",
     description = "Number of principal components.",
     sparkParamGetter = _.k,
     validator = RangeValidator.positiveIntegers)
 
-  override val params: Array[Param[_]] = declareParams(k, inputColumn, outputColumn)
+  override protected def getSpecificParams: Array[Param[_]] = Array(k)
 
   override def report: Report = {
     super.report

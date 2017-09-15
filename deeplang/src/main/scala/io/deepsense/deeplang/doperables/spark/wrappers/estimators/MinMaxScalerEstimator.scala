@@ -18,16 +18,19 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.feature.{MinMaxScaler => SparkMinMaxScaler, MinMaxScalerModel => SparkMinMaxScalerModel}
 
-import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.MinMaxScalerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn, MinMaxParams}
 import io.deepsense.deeplang.params.Param
 
 class MinMaxScalerEstimator
-  extends SparkEstimatorWrapper[SparkMinMaxScalerModel, SparkMinMaxScaler, MinMaxScalerModel]
+  extends SparkSingleColumnEstimatorWrapper[
+    SparkMinMaxScalerModel,
+    SparkMinMaxScaler,
+    MinMaxScalerModel]
   with MinMaxParams
   with HasInputColumn
   with HasOutputColumn {
 
-  override val params: Array[Param[_]] = declareParams(min, max, inputColumn, outputColumn)
+  override def getSpecificParams: Array[Param[_]] = Array(min, max)
 }

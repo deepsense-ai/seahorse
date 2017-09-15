@@ -18,17 +18,17 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorIndexerModel => SparkVectorIndexerModel}
 
-import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.VectorIndexerModel
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 class VectorIndexerEstimator
-  extends SparkEstimatorWrapper[SparkVectorIndexerModel, SparkVectorIndexer, VectorIndexerModel]
-  with HasInputColumn
-  with HasOutputColumn {
+  extends SparkSingleColumnEstimatorWrapper[
+    SparkVectorIndexerModel,
+    SparkVectorIndexer,
+    VectorIndexerModel] {
 
   val maxCategories = new IntParamWrapper[SparkVectorIndexer](
     name = "max categories",
@@ -39,7 +39,7 @@ class VectorIndexerEstimator
     validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(maxCategories, 20.0)
 
-  override val params: Array[Param[_]] = declareParams(maxCategories, inputColumn, outputColumn)
+  override protected def getSpecificParams: Array[Param[_]] = Array(maxCategories)
 
   def setMaxCategories(value: Int): this.type = {
     set(maxCategories -> value)

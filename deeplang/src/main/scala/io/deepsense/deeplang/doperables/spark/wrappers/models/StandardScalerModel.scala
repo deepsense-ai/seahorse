@@ -18,18 +18,15 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
 import io.deepsense.deeplang.params.Param
 
 class StandardScalerModel
-  extends SparkModelWrapper[SparkStandardScalerModel, SparkStandardScaler]
-  with HasInputColumn
-  with HasOutputColumn {
+  extends SparkSingleColumnModelWrapper[SparkStandardScalerModel, SparkStandardScaler] {
 
-  override val params: Array[Param[_]] = declareParams(inputColumn, outputColumn)
+  override protected def getSpecificParams: Array[Param[_]] = Array()
 
   override def report: Report = {
     val summary =

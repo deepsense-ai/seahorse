@@ -70,22 +70,22 @@ For scala docs details, see
 <tbody>
 
 <tr>
-<td><code>max categories</code></td>
-<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The threshold for the number of values a categorical feature can take.
-If a feature is found to have more values, then it is declared continuous.</td>
-</tr>
-
-<tr>
 <td><code>input column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>The input column name.</td>
 </tr>
 
 <tr>
-<td><code>output column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The output column name.</td>
+<td><code>output</code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
+<td>Output generation mode. Possible values: <code>["replace input column", "append new column"]</code></td>
+</tr>
+
+<tr>
+<td><code>max categories</code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
+<td>The threshold for the number of values a categorical feature can take.
+If a feature is found to have more values, then it is declared continuous.</td>
 </tr>
 
 </tbody>

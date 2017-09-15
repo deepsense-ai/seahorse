@@ -27,7 +27,7 @@ class VectorIndexerExample extends AbstractOperationExample[VectorIndexer] {
     op.estimator
       .setMaxCategories(3)
       .setInputColumn("vectors")
-      .setOutputColumn("indexed")
+      .setNoInPlace("indexed")
     op.set(op.estimator.extractParamMap())
   }
 

@@ -26,7 +26,7 @@ class PCAExample extends AbstractOperationExample[PCA] {
     val op = new PCA()
     op.estimator
       .setInputColumn("features")
-      .setOutputColumn("pca_features")
+      .setNoInPlace("pca_features")
       .setK(3)
     op.set(op.estimator.extractParamMap())
   }

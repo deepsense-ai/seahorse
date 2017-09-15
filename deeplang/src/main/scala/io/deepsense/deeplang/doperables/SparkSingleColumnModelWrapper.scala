@@ -42,10 +42,10 @@ abstract class SparkSingleColumnModelWrapper[
   private var outputColumnValue: Option[String] = None
 
   override lazy val params: Array[Param[_]] =
-    Array(inputColumn, singleInPlaceParam) ++ getSpecificParams
+    Array(inputColumn, singleInPlaceChoice) ++ getSpecificParams
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    $(singleInPlaceParam) match {
+    $(singleInPlaceChoice) match {
       case YesInPlaceChoice() =>
         SingleColumnTransformerUtils.transformSingleColumnInPlace(
           df.getColumnName($(inputColumn)),
@@ -58,7 +58,7 @@ abstract class SparkSingleColumnModelWrapper[
   }
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
-    $(singleInPlaceParam) match {
+    $(singleInPlaceChoice) match {
       case YesInPlaceChoice() =>
         val inputColumnName = DataFrameColumnsGetter.getColumnName(schema, $(inputColumn))
         val temporaryColumnName =
@@ -90,7 +90,7 @@ abstract class SparkSingleColumnModelWrapper[
   }
 
   def setSingleInPlaceParam(value: SingleColumnInPlaceChoice): this.type = {
-    set(singleInPlaceParam -> value)
+    set(singleInPlaceChoice -> value)
   }
 
   private def transformTo(

@@ -21,7 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
-import io.deepsense.deeplang.doperables.spark.wrappers.models.{StringIndexerModel, SingleColumnStringIndexerModel, MultiColumnStringIndexerModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{MultiColumnStringIndexerModel, SingleColumnStringIndexerModel, StringIndexerModel}
 import io.deepsense.deeplang.doperables.{SparkMultiColumnEstimatorWrapper, SparkSingleColumnEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 

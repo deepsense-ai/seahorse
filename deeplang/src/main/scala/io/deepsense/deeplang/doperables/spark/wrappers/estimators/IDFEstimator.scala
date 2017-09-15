@@ -18,18 +18,14 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
 
-import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.IDFModel
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 
-class IDFEstimator
-  extends SparkEstimatorWrapper[SparkIDFModel, SparkIDF, IDFModel]
-  with HasInputColumn
-  with HasOutputColumn {
+class IDFEstimator extends SparkSingleColumnEstimatorWrapper[SparkIDFModel, SparkIDF, IDFModel] {
 
   val minDocFreq = new IntParamWrapper[SparkIDF](
     name = "min documents frequency",
@@ -38,5 +34,5 @@ class IDFEstimator
     validator = RangeValidator(begin = 0.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(minDocFreq, 0.0)
 
-  override val params: Array[Param[_]] = declareParams(minDocFreq, inputColumn, outputColumn)
+  override protected def getSpecificParams: Array[Param[_]] = Array(minDocFreq)
 }

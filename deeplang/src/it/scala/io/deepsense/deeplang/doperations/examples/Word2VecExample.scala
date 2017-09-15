@@ -24,7 +24,7 @@ class Word2VecExample extends AbstractOperationExample[Word2Vec] {
     val op = new Word2Vec()
     op.estimator
       .setInputColumn("words")
-      .setOutputColumn("vectors")
+      .setNoInPlace("vectors")
       .setMinCount(2)
       .setVectorSize(5)
     op.set(op.estimator.extractParamMap())

@@ -27,7 +27,7 @@ class CountVectorizerExample extends AbstractOperationExample[CountVectorizer]{
     val op = new CountVectorizer()
     op.estimator
       .setInputColumn("lines")
-      .setOutputColumn("lines_out")
+      .setNoInPlace("lines_out")
       .setMinTF(3)
     op.set(op.estimator.extractParamMap())
   }

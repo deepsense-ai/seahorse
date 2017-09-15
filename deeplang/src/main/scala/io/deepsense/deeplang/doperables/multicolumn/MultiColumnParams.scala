@@ -61,7 +61,7 @@ object MultiColumnParams {
     val choiceOrder: List[Class[_ <: Choice]] =
       List(classOf[SingleColumnChoice], classOf[MultiColumnChoice])
 
-    case class SingleColumnChoice() extends SingleOrMultiColumnChoice {
+    case class SingleColumnChoice() extends SingleOrMultiColumnChoice with HasSingleInPlaceParam {
       override val name: String = "one column"
 
       val inputColumn = SingleColumnSelectorParam(
@@ -69,12 +69,6 @@ object MultiColumnParams {
         description = "Column to transform.",
         portIndex = 0
       )
-
-      val singleInPlaceChoice = ChoiceParam[SingleColumnInPlaceChoice](
-        name = "output",
-        description = "Output generation mode."
-      )
-      setDefault(singleInPlaceChoice, YesInPlaceChoice())
 
       override val params: Array[Param[_]] =
         declareParams(inputColumn, singleInPlaceChoice)
@@ -99,7 +93,7 @@ object MultiColumnParams {
         name = "output",
         description = "Output generation mode."
       )
-      setDefault(multiInPlaceChoiceParam, MultiColumnYesInPlace());
+      setDefault(multiInPlaceChoiceParam, MultiColumnYesInPlace())
 
       override val params: Array[Param[_]] = declareParams(
         inputColumnsParam,

@@ -27,7 +27,7 @@ class IDFExample extends AbstractOperationExample[IDF] {
     val op = new IDF()
     op.estimator
       .setInputColumn("features")
-      .setOutputColumn("values")
+      .setNoInPlace("values")
     op.set(op.estimator.extractParamMap())
   }
 

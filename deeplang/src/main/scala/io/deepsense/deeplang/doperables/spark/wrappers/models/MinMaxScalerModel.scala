@@ -18,19 +18,17 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{MinMaxScaler => SparkMinMaxScaler, MinMaxScalerModel => SparkMinMaxScalerModel}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn, MinMaxParams}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.MinMaxParams
 import io.deepsense.deeplang.params.Param
 
 class MinMaxScalerModel
-  extends SparkModelWrapper[SparkMinMaxScalerModel, SparkMinMaxScaler]
-  with MinMaxParams
-  with HasInputColumn
-  with HasOutputColumn {
+  extends SparkSingleColumnModelWrapper[SparkMinMaxScalerModel, SparkMinMaxScaler]
+  with MinMaxParams {
 
-  override val params: Array[Param[_]] = declareParams(min, max, inputColumn, outputColumn)
+  override protected def getSpecificParams: Array[Param[_]] = Array(min, max)
 
   override def report: Report = {
     val summary =
@@ -47,4 +45,5 @@ class MinMaxScalerModel
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
+
 }

@@ -26,8 +26,6 @@ import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 trait Word2VecParams extends Params
-  with HasInputColumn
-  with HasOutputColumn
   with HasMaxIterationsParam
   with HasStepSizeParam
   with HasSeedParam {

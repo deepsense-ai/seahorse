@@ -18,16 +18,16 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
-import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.StandardScalerModel
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.BooleanParamWrapper
 
 class StandardScalerEstimator
-  extends SparkEstimatorWrapper[SparkStandardScalerModel, SparkStandardScaler, StandardScalerModel]
-  with HasInputColumn
-  with HasOutputColumn {
+  extends SparkSingleColumnEstimatorWrapper[
+    SparkStandardScalerModel,
+    SparkStandardScaler,
+    StandardScalerModel] {
 
   val withMean = new BooleanParamWrapper[SparkStandardScaler](
     name = "with mean",
@@ -41,5 +41,5 @@ class StandardScalerEstimator
     sparkParamGetter = _.withStd)
   setDefault(withStd, true)
 
-  override val params: Array[Param[_]] = declareParams(withMean, withStd, inputColumn, outputColumn)
+  override protected def getSpecificParams: Array[Param[_]] = Array(withMean, withStd)
 }

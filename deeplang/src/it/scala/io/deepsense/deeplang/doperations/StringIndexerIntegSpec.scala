@@ -44,7 +44,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
     val choiceParamMap = choice.extractParamMap()
     val paramMap = t.extractParamMap()
     paramMap.get(t.inputColumn) shouldBe choiceParamMap.get(choice.inputColumn)
-    paramMap.get(t.singleInPlaceParam) shouldBe choiceParamMap.get(choice.singleInPlaceChoice)
+    paramMap.get(t.singleInPlaceChoice) shouldBe choiceParamMap.get(choice.singleInPlaceChoice)
   }
 
   def validateMultiColumnParams(

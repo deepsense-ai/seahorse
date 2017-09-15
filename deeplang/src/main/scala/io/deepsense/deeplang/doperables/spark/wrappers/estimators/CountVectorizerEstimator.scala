@@ -21,7 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 import org.apache.spark.ml.feature.{CountVectorizer => SparkCountVectorizer, CountVectorizerModel => SparkCountVectorizerModel}
 
-import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.SparkSingleColumnEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.CountVectorizerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param
@@ -29,7 +29,7 @@ import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.{DoubleParamWrapper, IntParamWrapper}
 
 class CountVectorizerEstimator
-  extends SparkEstimatorWrapper[
+  extends SparkSingleColumnEstimatorWrapper[
     SparkCountVectorizerModel,
     SparkCountVectorizer,
     CountVectorizerModel]
@@ -50,6 +50,5 @@ class CountVectorizerEstimator
     RangeValidator(0.0, Int.MaxValue, beginIncluded = false, step = Some(1.0)))
   setDefault(vocabSize, (1 << 18).toDouble)
 
-  override val params: Array[Param[_]] =
-    declareParams(inputColumn, outputColumn, minDF, minTF, vocabSize)
+  override protected def getSpecificParams: Array[Param[_]] = Array(minDF, minTF, vocabSize)
 }

@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -32,6 +33,6 @@ class MinMaxScalerEstimatorSmokeTest
     min -> 0.0,
     max -> 1.0,
     inputColumn -> NameSingleColumnSelection("myFeatures"),
-    outputColumn -> "testOutputColumn"
+    singleInPlaceChoice -> NoInPlaceChoice().setOutputColumn("testOutputColumn")
   )
 }
