@@ -3,12 +3,32 @@
 import footerTpl from '../modal-footer/modal-footer.html';
 
 class GoogleSpreadsheetModalController {
-  constructor($uibModalInstance) {
+  constructor($scope, $log, $uibModalInstance, datasourcesService) {
     'ngInject';
 
+    _.assign(this, {$log, $uibModalInstance, datasourcesService});
     this.footerTpl = footerTpl;
 
-    _.assign(this, {$uibModalInstance});
+    this.datasourceParams = {
+      name: '',
+      visibility: 'privateVisibility',
+      datasourceType: 'googleSpreadsheet',
+      googleSpreadsheetParams: {
+        googleSpreadsheetId: '',
+        googleServiceAccountCredentials: ''
+      }
+    };
+
+    $scope.$watch(() => this.datasourceParams, (newSettings) => {
+      this.datasourceParams = newSettings;
+      this.canAddNewDatasource = this.checkCanAddNewDatasource();
+    }, true);
+  }
+
+  checkCanAddNewDatasource() {
+    return this.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId !== '' &&
+      this.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials !== '' &&
+      this.datasourceParams.name !== '';
   }
 
   cancel() {
@@ -16,7 +36,14 @@ class GoogleSpreadsheetModalController {
   }
 
   ok() {
-    this.$uibModalInstance.close();
+    this.datasourcesService.addDatasource(this.datasourceParams)
+      .then((result) => {
+        this.$log.info('result ', result);
+        this.$uibModalInstance.close();
+      })
+      .catch((error) => {
+        this.$log.info('error ', error);
+      });
   }
 }
 

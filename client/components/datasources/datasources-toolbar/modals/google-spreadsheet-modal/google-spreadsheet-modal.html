@@ -8,39 +8,69 @@
       <label class="title">Google sheet ID</label>
       <div class="google-spreadsheet-input">
         <input
+          ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId"
           type="text"
           class="form-control"
           placeholder="Connection string"
         />
-        <div class="google-spreadsheet-input__status"></div>
+        <div class="google-spreadsheet-input__status">
+          <div
+            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId !== ''"
+            class="sa sa-ok google-spreadsheet-input__status--ok"
+          >
+          </div>
+          <div
+            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId === ''"
+            class="sa sa-cross google-spreadsheet-input__status--error"
+          >
+          </div>
+        </div>
       </div>
-
     </div>
 
     <div class="datasources-modal__body-row">
       <label class="title">Google service account credentials JSON</label>
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Connection string"
-      />
+      <div class="google-spreadsheet-input">
+        <input
+          ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials"
+          type="text"
+          class="form-control"
+          placeholder="JSON credentials"
+        />
+        <div class="google-spreadsheet-input__status">
+          <div
+            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials !== ''"
+            class="sa sa-ok google-spreadsheet-input__status--ok"
+          >
+          </div>
+          <div
+            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials === ''"
+            class="sa sa-cross google-spreadsheet-input__status--error"
+          >
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="datasources-modal__body-row">
       <div class="checkbox-row">
         <div class="checkbox-wrapper">
           <label class="format-form-label"
-                 ng-class="{'active': $ctrl.includesNames}">
+                 ng-class="{'active': $ctrl.datasourceParams.googleSpreadsheetParams.includesNames}">
             <input type="checkbox"
-                   ng-model="$ctrl.includesNames"/>
+                   ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.includesNames"/>
             <span>First row includes column names</span>
           </label>
         </div>
         <div class="checkbox-wrapper">
-          <label class="format-form-label"
-                 ng-class="{'active': $ctrl.convert}">
-            <input type="checkbox"
-                   ng-model="$ctrl.convert"/>
+          <label
+            class="format-form-label"
+            ng-class="{'active': $ctrl.datasourceParams.googleSpreadsheetParams.convert01ToBoolean}"
+          >
+            <input
+              ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.convert01ToBoolean"
+              type="checkbox"
+            />
             <span>Convert 0 and 1 to boolean</span>
           </label>
         </div>
@@ -50,10 +80,16 @@
     <div class="datasources-modal__body-row">
       <div class="public-param-row">
         <div class="checkbox-wrapper">
-          <label class="format-form-label"
-                 ng-class="{'active': $ctrl.public}">
-            <input type="checkbox"
-                   ng-model="$ctrl.public"/>
+          <label
+            ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+            class="format-form-label"
+          >
+            <input
+              ng-model="$ctrl.datasourceParams.visibility"
+              ng-true-value="'publicVisibility'"
+              ng-false-value="'privateVisibility'"
+              type="checkbox"
+            />
             <span>Public</span>
           </label>
         </div>
