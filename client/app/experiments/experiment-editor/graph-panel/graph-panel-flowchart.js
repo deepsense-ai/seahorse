@@ -30,7 +30,9 @@ function FlowChartBox() {
 
 /* @ngInject */
 function FlowChartBoxController($scope, $element, $window,
-                                ExperimentService, ReportOptionsService, GraphPanelRendererService, DeployModelService) {
+                                ExperimentService, ReportOptionsService,
+                                GraphPanelRendererService, DeployModelService,
+                                MouseEvent) {
   var that = this;
   var internal = {};
 
@@ -117,6 +119,22 @@ function FlowChartBoxController($scope, $element, $window,
 
   $scope.$on('Model.DEPLOY', (event, data) => {
     DeployModelService.showModal(data);
+  });
+
+  $scope.$on('Drag.START', (event, dragEvent, dragEventElement) => {
+
+  });
+
+  $scope.$on('Drop.EXACT', (event, dropEvent, droppedElement, droppedElementType) => {
+    if (droppedElementType === 'graphNode') {
+      let data = {};
+
+      data.dropEvent = dropEvent;
+      data.elementId = dropEvent.dataTransfer.getData('elementId');
+      data.target = dropEvent.target;
+
+      $scope.$emit('FlowChartBox.ELEMENT_DROPPED', data);
+    }
   });
 
   $scope.$on('$destroy', () => {

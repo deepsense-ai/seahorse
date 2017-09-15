@@ -4,7 +4,9 @@
     catalog-collection="::experiment.getCatalog()"
     freeze="{{experiment.getExperiment().getStatus()}}"
     freeze-on="status_running"
-    custom-scroll-bar>
+    custom-scroll-bar
+    draggable="true"
+    draggable-type="frame">
   </operation-catalogue>
   <flow-chart-box></flow-chart-box>
   <deepsense-operation-attributes
@@ -13,6 +15,8 @@
     freeze="{{experiment.getExperiment().getStatus()}}"
     freeze-on="status_running"
     freeze-animation-in="fadeInDown"
-    freeze-animation-out="fadeOutUp">
+    freeze-animation-out="fadeOutUp"
+    draggable="true"
+    draggable-type="frame">
   </deepsense-operation-attributes>
 </div>

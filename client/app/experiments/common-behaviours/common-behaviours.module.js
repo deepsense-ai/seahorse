@@ -7,9 +7,10 @@
 'use strict';
 
 exports.inject = function (module) {
+  require('./common-jsplumb-draggable.js').inject(module);
   require('./common-draggable.js').inject(module);
   require('./common-droppable.js').inject(module);
-  require('./common-drop-target.js').inject(module);
+  require('./common-drag-and-drop.service.js').inject(module);
   require('./common-render-finish.js').inject(module);
   require('./common-keyboard.js').inject(module);
   require('./common-stick-onscroll.js').inject(module);

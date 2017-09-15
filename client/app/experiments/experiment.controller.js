@@ -7,7 +7,8 @@
 function ExperimentController(
   experiment,
   $http, $modal, $timeout, $scope,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentApiClient, UUIDGenerator, MouseEvent,
+  PageService, Operations, GraphPanelRendererService, ExperimentService,
+  ExperimentApiClient, UUIDGenerator, MouseEvent,
   DeepsenseNodeParameters, FreezeService
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
@@ -195,7 +196,7 @@ function ExperimentController(
   });
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    let dropElementOffset = MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target[0]);
+    let dropElementOffset = MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
     let operation = Operations.get(args.elementId);
     let offsetX = dropElementOffset.x;
     let offsetY = dropElementOffset.y;
