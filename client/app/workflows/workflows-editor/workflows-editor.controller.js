@@ -40,6 +40,8 @@ function WorkflowsEditorController(workflow,
 
   that.getWorkflow = WorkflowService.getWorkflow;
 
+  that.getPredefColors = WorkflowService.getPredefColors;
+
   that.getSelectedNode = function getSelectedNode() {
     return internal.selectedNode;
   };

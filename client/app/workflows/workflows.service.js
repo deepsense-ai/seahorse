@@ -13,11 +13,13 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
 
     createWorkflow(workflowData, operations) {
       let workflow = new Workflow();
+
       let thirdPartyData = workflowData.thirdPartyData || {};
 
       workflow.id = workflowData.id;
       workflow.name = (thirdPartyData.gui || {}).name;
       workflow.description = (thirdPartyData.gui || {}).description;
+      workflow.predefColors = (thirdPartyData.gui || {}).predefColors || workflow.predefColors;
 
       workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
       workflow.createEdges(workflowData.workflow.connections);
@@ -30,6 +32,10 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
 
     getWorkflow () {
       return internal.workflow;
+    }
+
+    getPredefColors () {
+      return internal.workflow.predefColors;
     }
 
     clearGraph() {
