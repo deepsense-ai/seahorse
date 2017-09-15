@@ -40,6 +40,10 @@ object CatalogRecorder {
       DOperationCategories.Utils,
       "Splits DataFrame into two DataFrames")
 
+    catalog.registerDOperation[CreateRidgeRegression](
+      DOperationCategories.ML.Regression,
+      "Creates untrained ridge regression model")
+
     catalog.registerDOperation[TrainRegressor](
       DOperationCategories.ML.Regression,
       "Trains linear regression model")

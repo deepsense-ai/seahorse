@@ -6,13 +6,12 @@
 package io.deepsense.deeplang.doperations
 
 import org.mockito.Mockito.when
-import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.Scorable
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
-class ScoreRegressorSpec extends UnitSpec with MockitoSugar {
+class ScoreRegressorSpec extends UnitSpec {
 
   val scoreRegressor = new ScoreRegressor
 
