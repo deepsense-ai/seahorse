@@ -23,5 +23,5 @@ trait WorkflowResultsStorage {
    * @param results WorkflowResults to be saved.
    * @return Saved workflow.
    */
-  def save(id: Id, results: WorkflowWithResults): Future[Unit]
+  def save(results: WorkflowWithResults): Future[Unit]
 }

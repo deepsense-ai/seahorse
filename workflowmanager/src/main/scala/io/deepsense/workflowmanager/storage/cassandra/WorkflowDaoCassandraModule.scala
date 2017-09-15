@@ -7,7 +7,7 @@ package io.deepsense.workflowmanager.storage.cassandra
 import com.google.inject.{PrivateModule, Scopes}
 
 import io.deepsense.commons.cassandra.CassandraFactoriesModule
-import io.deepsense.workflowmanager.storage.WorkflowStorage
+import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
 
 class WorkflowDaoCassandraModule extends PrivateModule {
   override def configure(): Unit = {
@@ -17,5 +17,10 @@ class WorkflowDaoCassandraModule extends PrivateModule {
       .to(classOf[WorkflowDaoCassandraImpl])
       .in(Scopes.SINGLETON)
     expose(classOf[WorkflowStorage])
+
+    bind(classOf[WorkflowResultsStorage])
+      .to(classOf[WorkflowResultsDaoCassandraImpl])
+      .in(Scopes.SINGLETON)
+    expose(classOf[WorkflowResultsStorage])
   }
 }

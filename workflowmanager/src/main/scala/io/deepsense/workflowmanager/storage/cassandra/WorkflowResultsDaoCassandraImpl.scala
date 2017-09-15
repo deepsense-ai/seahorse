@@ -28,8 +28,8 @@ class WorkflowResultsDaoCassandraImpl @Inject() (
       .map(rs => Option(rs.one()).map(workflowResultsRowMapper.fromRow).getOrElse(List()))
   }
 
-  override def save(id: Id, results: WorkflowWithResults): Future[Unit] = {
-    Future(session.execute(appendQuery(id, results)))
+  override def save(results: WorkflowWithResults): Future[Unit] = {
+    Future(session.execute(appendQuery(results)))
   }
 
   private def getQuery(id: Workflow.Id): Select = {
@@ -38,9 +38,9 @@ class WorkflowResultsDaoCassandraImpl @Inject() (
       .limit(1)
   }
 
-  private def appendQuery(id: Workflow.Id, results: WorkflowWithResults): Update.Where = {
+  private def appendQuery(results: WorkflowWithResults): Update.Where = {
     val update = QueryBuilder.update(table).`with`(append(
       WorkflowResultsRowMapper.Results, workflowResultsRowMapper.resultToCell(results)))
-    update.where(QueryBuilder.eq(WorkflowResultsRowMapper.Id, id.value))
+    update.where(QueryBuilder.eq(WorkflowResultsRowMapper.Id, results.id.value))
   }
 }

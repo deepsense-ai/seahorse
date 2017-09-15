@@ -8,7 +8,8 @@ import com.google.inject.Guice
 import org.scalatest.FlatSpec
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.workflowmanager.rest.{InsecureWorkflowApi, InsecureOperationsApi, OperationsApi}
+import io.deepsense.workflowmanager.rest.InsecureWorkflowApi
+import io.deepsense.workflowmanager.rest.InsecureOperationsApi
 
 class WorkflowManagerContextIntegSpec extends FlatSpec {
 

@@ -73,26 +73,13 @@ class WorkflowResultsDaoCassandraImplIntegSpec
     }
 
     "save and get workflow results" in {
-      whenReady(workflowResultsDao.save(workflowId, result1)) { _ =>
-        whenReady(workflowResultsDao.save(workflowId, result2)) { _ =>
+      whenReady(workflowResultsDao.save(result1)) { _ =>
+        whenReady(workflowResultsDao.save(result2)) { _ =>
           whenReady(workflowResultsDao.get(workflowId)) { results =>
             results shouldBe List(result1, result2)
           }
         }
       }
-    }
-  }
-
-  private def withStoredWorkflows(
-      storedWorkflows: Set[(Workflow.Id, WorkflowWithResults)])(testCode: => Any): Unit = {
-    val s = Future.sequence(storedWorkflows.map {
-      case (id, workflow) => workflowResultsDao.save(id, workflow)
-    })
-    Await.ready(s, operationDuration)
-    try {
-      testCode
-    } finally {
-      session.execute(QueryBuilder.truncate(cassandraTableName))
     }
   }
 

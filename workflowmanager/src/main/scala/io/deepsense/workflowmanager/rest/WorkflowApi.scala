@@ -23,10 +23,11 @@ import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{MetadataInferenceResultJsonProtocol, WorkflowJsonProtocol, WorkflowWithKnowledgeJsonProtocol, WorkflowWithVariablesJsonProtocol}
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.models.json.workflow._
+import io.deepsense.models.workflows.{Workflow, WorkflowWithResults}
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
+import io.deepsense.workflowmanager.storage.WorkflowResultsStorage
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -34,6 +35,7 @@ import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowN
 abstract class WorkflowApi @Inject() (
     val tokenTranslator: TokenTranslator,
     workflowManagerProvider: WorkflowManagerProvider,
+    workflowResultsStorage: WorkflowResultsStorage,
     @Named("workflows.api.prefix") apiPrefix: String,
     override val graphReader: GraphReader,
     override val inferContext: InferContext)
@@ -44,12 +46,15 @@ abstract class WorkflowApi @Inject() (
   with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with MetadataInferenceResultJsonProtocol
+  with WorkflowWithResultsJsonProtocol
   with Cors {
 
   self: AbstractAuthDirectives =>
 
   assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
+
+  private val workflowFileMultipartId = "workflowFile"
 
   def route: Route = {
     handleRejections(rejectionHandler) {
@@ -117,22 +122,38 @@ abstract class WorkflowApi @Inject() (
               post {
                 withUserContext { userContext =>
                   entity(as[MultipartFormData]) {
-                    def workflowFileContent(formData: MultipartFormData): String =
-                      formData.fields
-                        .filter(_.name.get == "workflowFile")
-                        .map(_.entity.asString)
-                        .foldLeft("")(_ + _)
-
-                    def readWorkflow(s: String): Workflow =
-                      workflowFormat.read(JsonParser(ParserInput(s)))
+                    def readWorkflow(multipartFormData: MultipartFormData): Workflow =
+                      workflowFormat.read(JsonParser(ParserInput(
+                        selectFormPart(multipartFormData, workflowFileMultipartId))))
 
                     formData => onComplete(
                       workflowManagerProvider
                         .forContext(userContext)
-                        .create(readWorkflow(workflowFileContent(formData)))) {
+                        .create(readWorkflow(formData))) {
                       case Success(workflowWithKnowledge) => complete(
                         StatusCodes.Created, workflowWithKnowledge)
                       case Failure(exception) => failWith(exception)
+                    }
+                  }
+                }
+              }
+            } ~
+            path("report" / "upload") {
+              post {
+                withUserContext { userContext =>
+                  entity(as[MultipartFormData]) {
+                    def readWorkflow(multipartFormData: MultipartFormData): WorkflowWithResults =
+                      workflowWithResultsFormat.read(JsonParser(ParserInput(
+                        selectFormPart(multipartFormData, workflowFileMultipartId))))
+
+                    formData => {
+                      val workflowWithResults = readWorkflow(formData)
+                      onComplete(
+                        workflowResultsStorage.save(workflowWithResults)) {
+                        case Success(_) => complete(
+                          StatusCodes.Created, workflowWithResults)
+                        case Failure(exception) => failWith(exception)
+                      }
                     }
                   }
                 }
@@ -170,11 +191,18 @@ abstract class WorkflowApi @Inject() (
           complete(StatusCodes.BadRequest, e.failureDescription)
     }
   }
+
+  private def selectFormPart(multipartFormData: MultipartFormData, partName: String): String =
+    multipartFormData.fields
+      .filter(_.name.get == partName)
+      .map(_.entity.asString)
+      .mkString
 }
 
 class SecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
+  workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") apiPrefix: String,
   override val graphReader: GraphReader,
   override val inferContext: InferContext)
@@ -182,6 +210,7 @@ class SecureWorkflowApi @Inject() (
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
+    workflowResultsStorage,
     apiPrefix,
     graphReader,
     inferContext)
@@ -190,6 +219,7 @@ class SecureWorkflowApi @Inject() (
 class InsecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
+  workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") apiPrefix: String,
   override val graphReader: GraphReader,
   override val inferContext: InferContext)
@@ -197,6 +227,7 @@ class InsecureWorkflowApi @Inject() (
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
+    workflowResultsStorage,
     apiPrefix,
     graphReader,
     inferContext)

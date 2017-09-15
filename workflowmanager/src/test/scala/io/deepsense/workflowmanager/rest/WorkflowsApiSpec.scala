@@ -15,9 +15,9 @@ import spray.http._
 import spray.json._
 import spray.routing.Route
 
-import io.deepsense.commons.auth.directives.AuthDirectives
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperationCategories
@@ -27,9 +27,9 @@ import io.deepsense.deeplang.doperations.FileToDataFrame
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{WorkflowJsonProtocol, WorkflowWithKnowledgeJsonProtocol, WorkflowWithVariablesJsonProtocol}
+import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.WorkflowStorage
+import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec
@@ -38,7 +38,8 @@ class WorkflowsApiSpec
   with ApiSpecSupport
   with WorkflowJsonProtocol
   with WorkflowWithKnowledgeJsonProtocol
-  with WorkflowWithVariablesJsonProtocol {
+  with WorkflowWithVariablesJsonProtocol
+  with WorkflowWithResultsJsonProtocol {
 
   val catalog = DOperationsCatalog()
   catalog.registerDOperation[FileToDataFrame](
@@ -59,6 +60,19 @@ class WorkflowsApiSpec
     val knowledge = graph.inferKnowledge(inferContext)
     val workflow = Workflow(metadata, graph, thirdPartyData)
     (workflow, knowledge)
+  }
+
+  def newWorkflowWithResults: WorkflowWithResults = {
+    val (wf, _) = newWorkflowAndKnowledge
+    val executionReport = ExecutionReport(
+      Status.Failed,
+      Some(FailureDescription(
+        DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
+      Map(Node.Id.randomId -> State(Status.Failed)),
+      EntitiesMap())
+
+    WorkflowWithResults(
+      Workflow.Id.randomId, wf.metadata, wf.graph, wf.additionalData, executionReport)
   }
 
   val (workflowA, knowledgeA) = newWorkflowAndKnowledge
@@ -119,7 +133,11 @@ class WorkflowsApiSpec
       }
     })
 
-    new SecureWorkflowApi(tokenTranslator, workflowManagerProvider,
+    val workflowResultsStorage = mock[WorkflowResultsStorage]
+    when(workflowResultsStorage.save(any(classOf[WorkflowWithResults])))
+      .thenReturn(Promise.successful(()).future)
+
+    new SecureWorkflowApi(tokenTranslator, workflowManagerProvider, workflowResultsStorage,
       apiPrefix, graphReader, inferContext).route
   }
 
@@ -340,14 +358,10 @@ class WorkflowsApiSpec
       "workflow file is sent" in {
         val (createdWorkflow, knowledge) = newWorkflowAndKnowledge
 
-        val workflowJsonString =
-          jsonFormat(Workflow.apply, "metadata", "workflow", "thirdPartyData")
-            .write(createdWorkflow).toString()
-
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
             ContentType(MediaTypes.`application/json`),
-            workflowJsonString)
+            workflowFormat.write(createdWorkflow).toString())
           )))
 
         Post(s"/$apiPrefix/upload", multipartData) ~>
@@ -366,6 +380,34 @@ class WorkflowsApiSpec
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields("knowledge") shouldBe knowledge.toJson.asJsObject.fields("resultsMap")
           resultJs.fields should contain key "id"
+        }
+        ()
+      }
+    }
+  }
+
+  "POST /workflows/report/upload" should {
+    "return created" when {
+      "execution report file is sent" in {
+        val workflowWithResults = newWorkflowWithResults
+
+        val multipartData = MultipartFormData(Map(
+          "workflowFile" -> BodyPart(HttpEntity(
+            ContentType(MediaTypes.`application/json`),
+            workflowWithResultsFormat.write(workflowWithResults).toString())
+          )))
+
+        Post(s"/$apiPrefix/report/upload", multipartData) ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be (StatusCodes.Created)
+
+          val returnedReport = responseAs[WorkflowWithResults]
+          returnedReport should have (
+            'metadata (workflowWithResults.metadata),
+            'graph (workflowWithResults.graph),
+            'thirdPartyData (workflowWithResults.thirdPartyData),
+            'executionReport (workflowWithResults.executionReport))
         }
         ()
       }
