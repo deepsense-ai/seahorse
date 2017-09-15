@@ -201,6 +201,19 @@ abstract class WorkflowApi @Inject() (
                   }
                 }
               }
+            } ~
+            path(JavaUUID / "download") { idParameter =>
+              val reportId = ExecutionReportWithId.Id(idParameter)
+              get {
+                withUserContext { userContext =>
+                  respondWithHeader(
+                    `Content-Disposition`("attachment", Map("filename" -> "report.json"))) {
+                    complete {
+                      workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
+                    }
+                  }
+                }
+              }
             }
           }
         }

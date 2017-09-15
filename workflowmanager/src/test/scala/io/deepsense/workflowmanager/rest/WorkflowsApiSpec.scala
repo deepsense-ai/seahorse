@@ -29,7 +29,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
-import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
+import io.deepsense.workflowmanager.model.{WorkflowWithSavedResults, ExecutionReportWithId}
 import io.deepsense.workflowmanager.storage.{InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowStorage}
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
@@ -292,6 +292,55 @@ class WorkflowsApiSpec
             workflowA.additionalData,
             Variables()
           )
+        }
+        ()
+      }
+    }
+  }
+
+  s"GET /reports/:reportId/download" should {
+    "return Unauthorized" when {
+      "invalid auth token was send (when InvalidTokenException occurs)" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}/download") ~>
+          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "the user does not have the requested role (on NoRoleException)" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}/download") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}/download") ~>
+          testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+    }
+    "return Not found" when {
+      "asked for non existing Workflow" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}/download") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+    "return the report" when {
+      "auth token is correct, user has roles" in {
+        Get(s"/$reportsPrefix/${workflowBWithSavedResults.executionReport.id}/download") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`("attachment", Map("filename" -> "report.json")))
+
+          val returnedWorkflow = responseAs[WorkflowWithSavedResults]
+          returnedWorkflow.executionReport.id shouldBe workflowBWithSavedResults.executionReport.id
         }
         ()
       }
