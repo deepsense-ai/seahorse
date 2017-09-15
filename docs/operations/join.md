@@ -8,22 +8,22 @@ includeOperationsMenu: true
 ---
 
 Joins two [DataFrames](../classes/dataframe.html).
-Creates a new DataFrame that consists of the values from all the columns of the left DataFrame
-and the columns not used in the join conditions from the right DataFrame.
+Creates a new `DataFrame` that consists of the values from all the columns of the left `DataFrame`
+and the columns not used in the join conditions from the right `DataFrame`.
 Two rows match when the all of equality conditions created by ``join columns`` are satisfied.
 That is, the values are in the rows are equal. The order of the columns is preserved.
 
-The operation joins two DataFrames by the column pairs given in ``join columns`` parameter.
-For each given pair, both columns must be of the same type. If column pairs in ``join columns``
-are not present in their DataFrames (left DataFrame and right DataFrame, respectively),
-``ColumnDoesNotExistException`` is thrown. If columns from one pair have different types,
-``WrongColumnTypeException`` is thrown.
+The operation joins two `DataFrames` by the column pairs given in ``join columns`` parameter.
+For each given pair, both columns must be of the same type. If the column pairs in ``join columns``
+are not present in their `DataFrames` (left `DataFrame` and right `DataFrame`, respectively),
+a ``ColumnDoesNotExistException`` is thrown. If columns from one pair have different types,
+a ``WrongColumnTypeException`` is thrown.
 
 If values of ``left prefix`` and/or ``right prefix`` are provided,
-the columns in the output DataFrame are renamed by prepending the prefix
-(followed by underscore) proper for the table, which they come from.
+the columns in the output `DataFrame` are renamed by prepending the prefix
+(followed by an underscore) proper for the table, which they come from.
 
-If the columns' names in the resulting DataFrame are not to be unique,
+If the columns' names in the resulting `DataFrame` are not to be unique,
 random strings will be appended to them.
 
 **Since**: Seahorse 0.4.0
@@ -42,12 +42,12 @@ random strings will be appended to them.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>Left-side DataFrame.</td>
+<td>The left-side <code>DataFrame</code>.</td>
 </tr>
 <tr>
 <td><code>1</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>Right-side DataFrame.</td>
+<td>The right-side <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -66,7 +66,7 @@ random strings will be appended to them.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame containing all the columns of the left DataFrame and the columns
+<td>The DataFrame containing all the columns of the left DataFrame and the columns
    of the right DataFrame not used in join condition (in <code>join columns</code> parameter).</td>
 </tr>
 </tbody>
@@ -86,7 +86,7 @@ random strings will be appended to them.
 <tr>
 <td><code id="join-type">join type</code></td>
 <td><code><a href="../parameter_types.html#single_choice">Single Choice</a></code></td>
-<td>A type of the join to perform. Possible values are:
+<td>The type of the join to perform. Possible values are:
    <code>Inner</code>, <code>Outer</code>, <code>Left outer</code>, <code>Right outer</code>.
    Default value: <code>Inner</code>.</td>
 </tr>
@@ -94,7 +94,7 @@ random strings will be appended to them.
 <tr>
 <td><code id="join-columns">join columns</code></td>
 <td><code><a href="../parameter_types.html#parameters-sequence">Parameters Sequence</a></code></td>
-<td>Sequence of pairs (<code>left column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>,
+<td>The sequence of column pairs (<code>left column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>,
    <code>right column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>) defining condition for the JOIN operation.
    Empty join condition is not supported and exception <code>ColumnDoesNotExistException</code> is thrown.
    When a column selected by name or by index does not exist, <code>ColumnDoesNotExistException</code> is thrown.
