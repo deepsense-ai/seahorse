@@ -1,0 +1,9 @@
+<div class="multiple-choice-panel">
+  <div ng-repeat="(choiceName, parametersList) in ::parameter.possibleChoicesList" class="panel panel-default choice-item">
+    <label>
+      <input type="checkbox" ng-model="parameter.choices[choiceName]">
+      <span>{{ choiceName }}</span>
+    </label>
+    <div id="attr-list-{{ ::parameter.name }}-{{ ::choiceName }}" class="nested-attributes-view"></div>
+  </div>
+</div>

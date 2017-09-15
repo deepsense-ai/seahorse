@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html ng-app="test">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Component test</title>
+
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.css" type="text/css"/>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" type="text/css"/>
+    <link rel="stylesheet" href="../node_modules/animate.css/animate.css" />
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body { padding: 20px; }
+    </style>
+</head>
+<body ng-controller="TestCtrl">
+    <div class="container">
+        <div class="row text-center well">
+            <div class="col-md-4 col-lg-offset-4">
+                <select ng-model="currentNode" class="form-control" ng-options="node.id as node.name for node in testData"></select>
+            </div>
+        </div>
+    </div>
+
+    <deepsense-operation-attributes
+        node="getNode()"
+        ng-if="getNode()">
+    </deepsense-operation-attributes>
+
+    <script src="../node_modules/angular/angular.js"></script>
+    <script src="../node_modules/lodash/index.js"></script>
+
+    <script src="../node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.js"></script>
+    <script src="../node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js"></script>
+
+    <script src="../dist/deepsense-attributes-panel.js"></script>
+    <link rel="stylesheet" href="../dist/deepsense-attributes-panel.css" />
+
+    <script src="demo.js"></script>
+    <script src="demo.data.js"></script>
+</body>
+</html>
