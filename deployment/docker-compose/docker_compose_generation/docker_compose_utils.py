@@ -1,6 +1,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
-class Dependencies(object):
+
+class Services(object):
     def __init__(self):
         self.services = []
 

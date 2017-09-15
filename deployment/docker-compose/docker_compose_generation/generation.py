@@ -64,13 +64,16 @@ class ConfigurationGeneration(object):
 
     def __init__(self, configuration):
         self.configuration = configuration
-        self.dependencies = Dependencies()
-        self.service_instances = [s(self.dependencies) for s in self.configuration.services]
+        self.services = Services()
+
+        # Each service receives a full list of service instances so that it may use
+        # their properties (like addresses, port numbers, etc)
+        self.service_instances = [s(self.services) for s in self.configuration.services]
         for si in self.service_instances:
-            self.dependencies.add_service(si)
+            self.services.add_service(si)
 
     def generate(self, generation_config):
-        self.dependencies.Frontend.API_VERSION = generation_config.api_version
+        self.services.Frontend.API_VERSION = generation_config.api_version
 
         return {
             'version': '2',

@@ -57,7 +57,7 @@ def main():
     if args.custom_frontend is not None:
         frontend_address = args.custom_frontend.split(':')
         frontend_address = (frontend_address[0], int(frontend_address[1]))
-        configuration.direct_to_custom_frontend(frontend_address)
+        configuration.replace(custom_frontend(frontend_address))
 
     docker_compose = dump_yaml_to_string(
         ConfigurationGeneration(configuration).generate(

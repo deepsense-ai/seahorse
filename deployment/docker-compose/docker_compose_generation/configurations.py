@@ -31,8 +31,8 @@ class Service(object):
 
     enable_authorization = 'false'
 
-    def __init__(self, deps):
-        self.deps = deps
+    def __init__(self, services):
+        self.services = services
 
     def exposed_address(self, name=None):
         return Address('127.0.0.1', self.port_mapping().get(name).exposed)
@@ -73,6 +73,7 @@ class Mail(Service):
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(25, 60111))
 
+
 class Proxy(Service):
 
     network_mode = 'host'
@@ -95,13 +96,13 @@ class Proxy(Service):
             ENABLE_AUTHORIZATION=self.enable_authorization,
             FORCE_HTTPS='false',
             PORT=33321) + \
-               self.deps.WorkflowManager.credentials().as_env()
+               self.services.WorkflowManager.credentials().as_env()
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(33321, 33321))
 
     def service_address(self, service, name=None):
-        return getattr(self.deps, service.name()).exposed_address(name).as_string()
+        return getattr(self.services, service.name()).exposed_address(name).as_string()
 
     def vcap_services(self):
         def service_desc(service_name, service):
@@ -141,9 +142,8 @@ class Proxy(Service):
             ]
         }
 
+
 class SchedulingManagerBase(Service):
-    def exposed_port(self):
-        return 60110
 
     def depends_on(self):
         return [
@@ -155,12 +155,13 @@ class SchedulingManagerBase(Service):
 
     def environment(self):
         return (Env(
-            PORT=self.exposed_port(),
+            PORT=self.port_mapping().get().internal,
             SEAHORSE_EXTERNAL_URL="http://localhost:33321/") +
-                self.deps.WorkflowManager.credentials().as_env())
+                self.services.WorkflowManager.credentials().as_env())
 
     def port_mapping(self):
-        return PortMappings().add(PortMappings.Mapping(self.exposed_port(), self.exposed_port()))
+        return PortMappings().add(PortMappings.Mapping(60110, 60110))
+
 
 class SchedulingManager(SchedulingManagerBase):
 
@@ -169,10 +170,11 @@ class SchedulingManager(SchedulingManagerBase):
     def environment(self):
         return super(SchedulingManager, self).environment() + \
                Env(
-                   JDBC_URL=self.deps.Database.exposed_jdbc_url(db='schedulingmanager'),
-                   SM_URL='http://{}'.format(self.deps.SessionManager.exposed_address()),
-                   WM_URL='http://{}'.format(self.deps.WorkflowManager.exposed_address()),
+                   JDBC_URL=self.services.Database.exposed_jdbc_url(db='schedulingmanager'),
+                   SM_URL='http://{}'.format(self.services.SessionManager.exposed_address()),
+                   WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address()),
                )
+
 
 class SessionManager(Service):
 
@@ -190,10 +192,10 @@ class SessionManager(Service):
         return Env(
             SM_HOST='127.0.0.1',
             SM_PORT=self.port_mapping().get().exposed,
-            JDBC_URL=self.deps.Database.exposed_jdbc_url(db='sessionmanager'),
-            MAIL_SERVER_HOST=self.deps.Mail.exposed_address().host,
-            MAIL_SERVER_PORT=self.deps.Mail.exposed_address().port,
-            NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.deps.Notebooks.exposed_address().as_string()),
+            JDBC_URL=self.services.Database.exposed_jdbc_url(db='sessionmanager'),
+            MAIL_SERVER_HOST=self.services.Mail.exposed_address().host,
+            MAIL_SERVER_PORT=self.services.Mail.exposed_address().port,
+            NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.exposed_address().as_string()),
             SX_PARAM_SESSION_EXECUTOR_PATH='/opt/docker/we.jar',
             SX_PARAM_SESSION_EXECUTOR_DEPS_PATH='/opt/docker/we-deps.zip',
             SX_PARAM_PYTHON_EXECUTOR_BINARY='python',
@@ -201,10 +203,10 @@ class SessionManager(Service):
             SX_PARAM_SPARK_APPLICATIONS_LOGS_DIR='/spark_applications_logs',
             SX_PARAM_TEMP_DIR='/tmp/seahorse/download',
             SX_PARAM_PYTHON_DRIVER_BINARY='/opt/conda/bin/python',
-            SX_PARAM_WM_ADDRESS=self.deps.WorkflowManager.exposed_address().as_string()) + \
-               self.deps.RabbitMQ.credentials().as_env() + \
-               self.deps.RabbitMQ.exposed_address().as_env('MQ_HOST', 'MQ_PORT') + \
-               self.deps.WorkflowManager.credentials().as_env('SX_PARAM_WM_AUTH_USER', 'SX_PARAM_WM_AUTH_PASS')
+            SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.exposed_address().as_string()) + \
+               self.services.RabbitMQ.credentials().as_env() + \
+               self.services.RabbitMQ.exposed_address().as_env('MQ_HOST', 'MQ_PORT') + \
+               self.services.WorkflowManager.credentials().as_env('SX_PARAM_WM_AUTH_USER', 'SX_PARAM_WM_AUTH_PASS')
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(9082, 60100))
@@ -228,7 +230,7 @@ class WorkflowManager(Service):
 
     def environment(self):
         return Env(
-            JDBC_URL=self.deps.Database.internal_jdbc_url(db='workflowmanager')) + \
+            JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager')) + \
                self.credentials().as_env()
 
     @staticmethod
@@ -265,7 +267,7 @@ class Frontend(Service):
             SESSION_POLLING_INTERVAL=1000,
             PORT=80,
             API_VERSION=self.API_VERSION) +\
-               self.deps.RabbitMQ.credentials().as_env()
+               self.services.RabbitMQ.credentials().as_env()
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(80, 60106))
@@ -315,11 +317,11 @@ class Notebooks(Service):
     def environment(self):
         return Env(
             MISSED_HEARTBEAT_LIMIT=30,
-            WM_URL='http://{}'.format(self.deps.WorkflowManager.internal_address()),
+            WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address()),
             HEARTBEAT_INTERVAL=2.0) \
-               + self.deps.RabbitMQ.credentials().as_env() \
-               + self.deps.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT') \
-               + self.deps.WorkflowManager.credentials().as_env()
+               + self.services.RabbitMQ.credentials().as_env() \
+               + self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT') \
+               + self.services.WorkflowManager.credentials().as_env()
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8888, 60105))
@@ -349,7 +351,7 @@ class DataSourceManager(Service):
 
     def environment(self):
         return Env(
-            JDBC_URL=self.deps.Database.internal_jdbc_url(db='datasourcemanager'))
+            JDBC_URL=self.services.Database.internal_jdbc_url(db='datasourcemanager'))
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8080, 60108))
@@ -388,7 +390,7 @@ class ProxyBridgeNetwork(Proxy):
                    HOST='0.0.0.0')
 
     def service_address(self, service, name=None):
-        return getattr(self.deps, service.name()).internal_address(name).as_string()
+        return getattr(self.services, service.name()).internal_address(name).as_string()
 
 
 class SchedulingManagerBridgeNetwork(SchedulingManagerBase):
@@ -406,10 +408,11 @@ class SchedulingManagerBridgeNetwork(SchedulingManagerBase):
         return super(SchedulingManagerBridgeNetwork, self).environment() + \
                Env(
                    HOST='0.0.0.0',
-                   JDBC_URL=self.deps.Database.internal_jdbc_url(db='schedulingmanager'),
-                   SM_URL='http://{}'.format(self.deps.SessionManager.internal_address()),
-                   WM_URL='http://{}'.format(self.deps.WorkflowManager.internal_address()),
+                   JDBC_URL=self.services.Database.internal_jdbc_url(db='schedulingmanager'),
+                   SM_URL='http://{}'.format(self.services.SessionManager.internal_address()),
+                   WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address()),
                )
+
 
 class SessionManagerBridgeNetwork(SessionManager):
 
@@ -428,36 +431,41 @@ class SessionManagerBridgeNetwork(SessionManager):
                Env(
                    SM_HOST='0.0.0.0',
                    SM_PORT=self.port_mapping().get().internal,
-                   JDBC_URL=self.deps.Database.internal_jdbc_url(db='sessionmanager'),
-                   MAIL_SERVER_HOST=self.deps.Mail.internal_address().host,
-                   MAIL_SERVER_PORT=self.deps.Mail.internal_address().port,
-                   NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.deps.Notebooks.internal_address().as_string()),
-                   SX_PARAM_WM_ADDRESS=self.deps.WorkflowManager.internal_address().as_string()) + \
-               self.deps.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
+                   JDBC_URL=self.services.Database.internal_jdbc_url(db='sessionmanager'),
+                   MAIL_SERVER_HOST=self.services.Mail.internal_address().host,
+                   MAIL_SERVER_PORT=self.services.Mail.internal_address().port,
+                   NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.internal_address().as_string()),
+                   SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.internal_address().as_string()) + \
+               self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
+
+
+def custom_frontend(frontend_address):
+    class CustomFrontend(Frontend):
+        @classmethod
+        def name(cls):
+            return 'frontend'
+
+        @classmethod
+        def image_name(cls):
+            return 'frontend'
+
+        # noinspection PyUnusedLocal,PyMethodMayBeStatic
+        def get_address(self, name=None):
+            return Address(frontend_address[0], frontend_address[1])
+
+        exposed_address = get_address
+        internal_address = get_address
+
+    return CustomFrontend
+
 
 class Configuration(object):
     services = []
     volumes = []
 
     @classmethod
-    def direct_to_custom_frontend(cls, frontend_address):
-        class CustomFrontend(Frontend):
-            @classmethod
-            def name(cls):
-                return 'frontend'
-
-            @classmethod
-            def image_name(cls):
-                return 'sessionmanager'
-
-            # noinspection PyUnusedLocal,PyMethodMayBeStatic
-            def get_address(self, name=None):
-                return Address(frontend_address[0], frontend_address[1])
-
-            exposed_address = get_address
-            internal_address = get_address
-
-        cls.services = [s for s in cls.services if s.name().lower() != 'frontend'] + [CustomFrontend]
+    def replace(cls, service):
+        cls.services = [service] + [s for s in cls.services if s.name().lower() != service.name().lower()]
 
 
 class LinuxConfiguration(Configuration):
