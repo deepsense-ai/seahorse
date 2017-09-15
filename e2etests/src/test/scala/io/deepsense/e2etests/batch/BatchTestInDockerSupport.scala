@@ -132,7 +132,11 @@ trait BatchTestInDockerSupport extends BatchTestSupport {
   private def executeProcessGatherOutput(cmd: Seq[String]): Either[ProcExitError, ProcExitSuccessful] = {
     val out = new StringBuilder
     val err = new StringBuilder
-    val exitCode = cmd ! ProcessLogger(out ++= _, err ++= _)
+    def appendLn(sb: StringBuilder)(s: String): Unit = {
+      sb ++= s
+      sb += '\n'
+    }
+    val exitCode = cmd ! ProcessLogger(appendLn(out) , appendLn(err))
 
     if (exitCode == 0) {
       Right(ProcExitSuccessful(out.toString, err.toString))

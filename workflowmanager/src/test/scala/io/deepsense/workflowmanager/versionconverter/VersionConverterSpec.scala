@@ -29,7 +29,7 @@ class VersionConverterSpec extends WordSpec with Matchers {
 
     val customTransformerId = "65240399-2987-41bd-ba7e-2944d60a3404"
 
-    val workflowResourceName = "versionconverter/workflow_1_3_2.json"
+    val workflowResourceName = "versionconverter/workflow_1_3_2.json.ignored"
 
     val ownerId = UUID.fromString("0-0-0-0-0")
     val ownerName = "seahorse test"

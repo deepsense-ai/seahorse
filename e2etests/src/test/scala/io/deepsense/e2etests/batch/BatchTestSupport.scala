@@ -56,8 +56,20 @@ trait BatchTestSupport
         "--class", "io.deepsense.workflowexecutor.WorkflowExecutorApp",
         "--master", masterString,
         "--files", workflowPath,
-        "--jars", additionalJars.map(_.toString).mkString("\"", ",", "\"")
-      ) ++
+        if (additionalJars.nonEmpty) {
+          "--jars " + additionalJars.map(_.toString).mkString("\"", ",", "\"")
+        } else {
+          /*
+             We cannot pass a --jars <empty string> option because it would later get translated into a real path,
+             equal to whichever the current working directory is (most probably /opt/docker), and that in turn would be
+             considered by spark to be a (non-existing) jar name. This will ultimately result in a strange error
+             mentioning something about a stream that cannot be open (we had stumbled upon a stream named /jars/docker
+             - the /jars part is hardcoded somewhere in the entrails of spark/netty, and the docker part was the name
+             of our "jar"), hence - no --jars option at all.
+           */
+          ""
+        }
+      ).filterNot(_.toString.isEmpty) ++
         specialFlags ++
         Seq(
           weJarPath,
