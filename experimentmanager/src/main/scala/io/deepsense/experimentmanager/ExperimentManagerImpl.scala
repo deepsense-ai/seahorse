@@ -18,6 +18,7 @@ import io.deepsense.commons.auth.usercontext.UserContext
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.utils.Logging
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
@@ -42,13 +43,14 @@ class ExperimentManagerImpl @Inject()(
     @Named("RunningExperimentsActor") runningExperimentsActor: ActorRef,
     @Named("runningexperiments.timeout") timeoutMillis: Long)
     (implicit ec: ExecutionContext)
-  extends ExperimentManager {
+  extends ExperimentManager with Logging {
 
   implicit val runningExperimentsTimeout = Timeout(timeoutMillis, TimeUnit.MILLISECONDS)
 
   private def authorizator: Authorizator = authorizatorProvider.forContext(userContextFuture)
 
   def get(id: Id): Future[Option[Experiment]] = {
+    logger.debug("Get experiment id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
       val experiment = storage.get(id).flatMap {
         case Some(storedExperiment) =>
@@ -64,6 +66,7 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def update(experimentId: Id, experiment: InputExperiment): Future[Experiment] = {
+    logger.debug("Update experiment id: {}, experiment: {}", experimentId, experiment)
     val now = DateTimeConverter.now
     authorizator.withRole(roleUpdate) { userContext =>
       val oldExperimentOption = storage.get(experimentId)
@@ -86,6 +89,7 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def create(inputExperiment: InputExperiment): Future[Experiment] = {
+    logger.debug("Create experiment inputExperiment: {}", inputExperiment)
     val now = DateTimeConverter.now
     authorizator.withRole(roleCreate) { userContext =>
       storage.save(inputExperiment.toExperimentOf(userContext, now))
@@ -96,6 +100,7 @@ class ExperimentManagerImpl @Inject()(
       limit: Option[Int],
       page: Option[Int],
       status: Option[Experiment.Status.Value]): Future[ExperimentsList] = {
+    logger.debug("List experiments limit: {}, page: {}, status: {}", limit, page, status)
     authorizator.withRole(roleList) { userContext =>
       val tenantExperimentsFuture: Future[Seq[Experiment]] =
         storage.list(userContext, limit, page, status)
@@ -118,6 +123,7 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def delete(id: Id): Future[Boolean] = {
+    logger.debug("Delete experiment id: {}", id)
     authorizator.withRole(roleDelete) { userContext =>
       storage.get(id).flatMap {
         case Some(experiment) =>
@@ -131,6 +137,7 @@ class ExperimentManagerImpl @Inject()(
   def launch(
       id: Id,
       targetNodes: Seq[Node.Id]): Future[Experiment] = {
+    logger.debug("Launch experiment id: {}, targetNodes: {}", id, targetNodes)
     authorizator.withRole(roleLaunch) { userContext =>
       val experimentFuture = storage.get(id)
       experimentFuture.flatMap {
@@ -146,6 +153,7 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def abort(id: Id, nodes: Seq[Node.Id]): Future[Experiment] = {
+    logger.debug("Abort experiment id: {}, targetNodes: {}", id, nodes)
     authorizator.withRole(roleAbort) { userContext =>
       val experimentFuture = storage.get(id)
       experimentFuture.flatMap {
