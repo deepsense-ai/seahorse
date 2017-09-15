@@ -74,9 +74,6 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
             workflow.value("ownerName").asInstanceOf[JsString].value == "seahorse"
           }.sortBy { workflow =>
             workflow.value("name").asInstanceOf[JsString].value
-          }.filterNot { workflow =>
-            // US Baby Names takes too much time. TODO make it faster
-            workflow.value("name").asInstanceOf[JsString].value.contains("EXAMPLE 9: US Baby Names")
           }
 
           examples.map(_.value("id").asInstanceOf[JsString].value)
