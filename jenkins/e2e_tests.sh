@@ -46,7 +46,7 @@ cd `dirname $0`"/../"
 export CLUSTER_ID="E2E_CLUSTER_ID"
 export NETWORK_NAME="sbt-test-$CLUSTER_ID"
 
-BACKEND_TAG=`git rev-parse HEAD`
+export BACKEND_TAG=`git rev-parse HEAD`
 
 FRONTEND_TAG="${FRONTEND_TAG:-$SEAHORSE_BUILD_TAG}" # If FRONTEND_TAG not defined try to use SEAHORSE_BUILD_TAG
 FRONTEND_TAG="${FRONTEND_TAG:-master-latest}" # If it's still undefined fallback to master-latest
