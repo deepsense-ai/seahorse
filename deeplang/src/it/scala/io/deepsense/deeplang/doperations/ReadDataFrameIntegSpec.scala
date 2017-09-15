@@ -16,12 +16,15 @@
 
 package io.deepsense.deeplang.doperations
 
+import java.sql.Timestamp
+
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame.FileSource
 import io.deepsense.deeplang.doperations.ReadDataFrame.LineSeparator.LineSeparator
@@ -141,18 +144,33 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         csvNamesIncluded = false
       )
 
+      import DateTimeConverter.{parseTimestamp => toTimestamp}
+
       assertDataFramesEqual(
         dataFrame,
         expectedDataFrame(
           Seq(
-            Row(2.0, true, null, "1.1", " hello world ", asTimeStamp("2015-08-21T19:40:56.823Z")),
+            Row(2.0, true, null, "1.1", " hello world ", toTimestamp("2015-08-21T19:40:56.823Z")),
             Row(3.2, false, null, "1.2", "unquoted string", null),
-            Row(1.1, true, null, "1", "\"quoted string\"", asTimeStamp("2015-08-20T09:40:56.823Z"))
+            Row(1.1, true, null, "1", "\"quoted string\"", toTimestamp("2015-08-20T09:40:56.823Z"))
           ),
           schemaWithDefaultColumnNames(
             Seq(DoubleType, BooleanType, BooleanType, StringType, StringType, TimestampType)
           )
         ))
+    }
+
+    "read file so that obtained dataframe can provide report without throwing an exception" in {
+      // This test case was introduced because Row allow to put anything into it,
+      // disregarding schema. Incorrectly built DataFrames were throwing exceptions later
+      // - while generating reports.
+      val dataFrame = readDataFrame(
+        fileName = "with_inferable_columns.csv",
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
+        csvColumnSeparator = ",",
+        csvNamesIncluded = false
+      )
+      dataFrame.report shouldBe an[Report]
     }
 
     "read categorical columns provided by index" in {
@@ -243,6 +261,4 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
 
   def schemaWithDefaultColumnNames(types: Seq[DataType]) : StructType =
     schemaOf(generatedColumnNames(types.length), types)
-
-  def asTimeStamp(s: String) : DateTime = DateTimeConverter.parseDateTime(s)
 }

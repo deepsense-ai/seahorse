@@ -71,6 +71,7 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
     }
   }
 
+  // TODO https://codilime.atlassian.net/browse/DS-1351
   private def dataFrameFromCSV(
       context: ExecutionContext,
       file: File,
@@ -218,7 +219,7 @@ object FileToDataFrameSparkHelper {
       targetType match {
         case types.BooleanType => trimmedCell.toDouble == 1
         case types.DoubleType => trimmedCell.toDouble
-        case types.TimestampType => DateTimeConverter.parseDateTime(trimmedCell)
+        case types.TimestampType => DateTimeConverter.parseTimestamp(trimmedCell)
       }
     }
   }

@@ -16,6 +16,8 @@
 
 package io.deepsense.commons.datetime
 
+import java.sql.Timestamp
+
 import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
 import org.joda.time.{DateTime, DateTimeZone}
 
@@ -24,6 +26,7 @@ trait DateTimeConverter {
   val dateTimeFormatter: DateTimeFormatter = ISODateTimeFormat.dateTime()
   def toString(dateTime: DateTime): String = dateTime.toString(dateTimeFormatter)
   def parseDateTime(s: String): DateTime = dateTimeFormatter.parseDateTime(s).withZone(zone)
+  def parseTimestamp(s: String): Timestamp = new Timestamp(parseDateTime(s).getMillis)
   def now: DateTime = new DateTime(zone)
   def fromMillis(millis: Long): DateTime = new DateTime(zone).withMillis(millis)
 }

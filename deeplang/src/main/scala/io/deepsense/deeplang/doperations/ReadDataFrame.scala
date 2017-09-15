@@ -17,14 +17,11 @@
 package io.deepsense.deeplang.doperations
 
 
-import java.io.FileNotFoundException
 import java.util.NoSuchElementException
-import scala.reflect.runtime._
-import scala.reflect.runtime.{universe => ru}
-
 
 import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
+import scala.reflect.runtime.{universe => ru}
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.io.{LongWritable, Text}
@@ -36,14 +33,13 @@ import org.apache.spark.sql.{Row, types}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations.exceptions.InvalidFileException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
 
 case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameParameters {
-  import ReadDataFrame._
+  import io.deepsense.deeplang.doperations.ReadDataFrame._
 
   override val id: Id = "c48dd54c-6aef-42df-ad7a-42fc59a09f0e"
   override val name = "Read DataFrame"
@@ -117,6 +113,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
     }
   }
 
+  // TODO https://codilime.atlassian.net/browse/DS-1351
   private def dataFrameFromCSV(
       context: ExecutionContext,
       rdd: RDD[String],
@@ -166,7 +163,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
 }
 
 trait ReadDataFrameParameters {
-  import ReadDataFrame._
+  import io.deepsense.deeplang.doperations.ReadDataFrame._
 
   val csvColumnSeparatorParameter = StringParameter(
     "Column separator",
@@ -378,7 +375,7 @@ object ReadDataFrame {
       targetType match {
         case types.BooleanType => trimmedCell.toDouble == 1
         case types.DoubleType => trimmedCell.toDouble
-        case types.TimestampType => DateTimeConverter.parseDateTime(trimmedCell)
+        case types.TimestampType => DateTimeConverter.parseTimestamp(trimmedCell)
       }
     }
   }

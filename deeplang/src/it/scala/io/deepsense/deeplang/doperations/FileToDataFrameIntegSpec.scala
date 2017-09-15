@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import java.sql.Timestamp
+
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -143,8 +145,9 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
   val columnsIndices = 0 until namesFromFile.size
   val namesGenerated = columnsIndices.map(generateName)
 
-  val timestamps = Seq.fill(6){ DateTimeConverter.now }
-  val strTimestamps = timestamps.map(DateTimeConverter.toString)
+  val datetimes = Seq.fill(6)(DateTimeConverter.now)
+  val timestamps = datetimes.map(dt => new Timestamp(dt.getMillis))
+  val strTimestamps = datetimes.map(DateTimeConverter.toString)
 
   val lines = Seq(
     Seq("",    "a test A",  "1.1",  "CAT1", "1", "", strTimestamps(0),         "1"),
