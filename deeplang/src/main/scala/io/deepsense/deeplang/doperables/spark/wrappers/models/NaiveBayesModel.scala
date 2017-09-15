@@ -22,6 +22,7 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ProbabilisticClassifierParams
 import io.deepsense.deeplang.params.Param
 
@@ -40,12 +41,12 @@ class NaiveBayesModel
   override def report: Report = {
     val pi = SparkSummaryEntry(
       name = "pi",
-      value = model.pi,
+      value = sparkModel.pi,
       description = "Log of class priors, whose dimension is C (number of classes)")
 
     val theta = SparkSummaryEntry(
       name = "theta",
-      value = model.theta,
+      value = sparkModel.theta,
       description = "Log of class conditional probabilities, " +
         "whose dimension is C (number of classes) by D (number of features)")
 
@@ -53,7 +54,9 @@ class NaiveBayesModel
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(pi) ++ List(theta)))
   }
 
-  override protected def loadModel(ctx: ExecutionContext, path: String): SparkNaiveBayesModel = {
-    SparkNaiveBayesModel.load(path)
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkNaiveBayesModel] = {
+    new SerializableSparkModel(SparkNaiveBayesModel.load(path))
   }
 }

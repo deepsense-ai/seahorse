@@ -43,10 +43,12 @@ class GBTClassifier private (val vanillaGBTClassifier: VanillaGBTClassifier)
 
 class VanillaGBTClassifier()
   extends SparkEstimatorWrapper[
-    SparkGBTClassificationModel, SparkGBTClassifier, VanillaGBTClassificationModel]
-    with GBTParams
-    with HasClassificationImpurityParam
-    with Logging {
+    SparkGBTClassificationModel,
+    SparkGBTClassifier,
+    VanillaGBTClassificationModel]
+  with GBTParams
+  with HasClassificationImpurityParam
+  with Logging {
 
   import GBTClassifier._
 

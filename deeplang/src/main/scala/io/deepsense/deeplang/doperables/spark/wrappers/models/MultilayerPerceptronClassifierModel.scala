@@ -19,10 +19,10 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.classification.{MultilayerPerceptronClassificationModel => SparkMultilayerPerceptronClassifierModel, MultilayerPerceptronClassifier => SparkMultilayerPerceptronClassifier}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.{SparkModelWrapper, Transformer}
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.CustomPersistence
+import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, SerializableSparkModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
 import io.deepsense.deeplang.params.Param
 
@@ -40,13 +40,13 @@ class MultilayerPerceptronClassifierModel
     val numberOfFeatures =
       SparkSummaryEntry(
         name = "number of features",
-        value = model.numFeatures,
+        value = sparkModel.numFeatures,
         description = "Number of features.")
 
     val layers =
       SparkSummaryEntry(
         name = "layers",
-        value = model.layers,
+        value = sparkModel.layers,
         description =
           """The list of layer sizes that includes the input layer size as the first number
             |and the output layer size as the last number.""".stripMargin)
@@ -54,7 +54,7 @@ class MultilayerPerceptronClassifierModel
     val weights =
       SparkSummaryEntry(
         name = "weights",
-        value = model.weights,
+        value = sparkModel.weights,
         description = "The vector of perceptron layers' weights.")
 
     super.report
@@ -67,7 +67,10 @@ class MultilayerPerceptronClassifierModel
 
   override protected def loadModel(
       ctx: ExecutionContext,
-      path: String): SparkMultilayerPerceptronClassifierModel = {
-    CustomPersistence.load(ctx.sparkContext, path)
+      path: String): SerializableSparkModel[SparkMultilayerPerceptronClassifierModel] = {
+    val modelPath = Transformer.modelFilePath(path)
+    CustomPersistence.load[SerializableSparkModel[SparkMultilayerPerceptronClassifierModel]](
+      ctx.sparkContext,
+      modelPath)
   }
 }

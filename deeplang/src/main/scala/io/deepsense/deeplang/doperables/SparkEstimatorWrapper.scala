@@ -22,7 +22,7 @@ import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.serialization.{Loadable, ParamsSerialization}
+import io.deepsense.deeplang.doperables.serialization.{Loadable, ParamsSerialization, SerializableSparkEstimator, SerializableSparkModel}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
@@ -32,23 +32,29 @@ import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
  *
  * We assume that every ml.Estimator and SparkModelWrapper has a no-arg constructor.
  *
- * @tparam MD Type of wrapped ml.Model
+ * @tparam M Type of wrapped ml.Model
  * @tparam E Type of wrapped ml.Estimator
  * @tparam MW Type of used model wrapper
  */
-abstract class SparkEstimatorWrapper
-    [MD <: ml.Model[MD], E <: ml.Estimator[MD], MW <: SparkModelWrapper[MD, E]]
-    (implicit val modelWrapperTag: TypeTag[MW], implicit val estimatorTag: TypeTag[E])
+abstract class SparkEstimatorWrapper[
+    M <: ml.Model[M],
+    E <: ml.Estimator[M],
+    MW <: SparkModelWrapper[M, E]](
+    implicit val modelWrapperTag: TypeTag[MW],
+    implicit val estimatorTag: TypeTag[E])
   extends Estimator[MW]
   with ParamsWithSparkWrappers
   with ParamsSerialization
   with Loadable {
 
-  val sparkEstimator: E = createEstimatorInstance()
+  val serializableEstimator: SerializableSparkEstimator[M, E] = createEstimatorInstance()
+
+  def sparkEstimator: E = serializableEstimator.sparkEstimator
 
   override private[deeplang] def _fit(ctx: ExecutionContext, dataFrame: DataFrame): MW = {
-    val sparkParams = sparkParamMap(sparkEstimator, dataFrame.sparkDataFrame.schema)
-    val sparkModel = sparkEstimator.fit(
+    val sparkParams =
+      sparkParamMap(sparkEstimator, dataFrame.sparkDataFrame.schema)
+    val sparkModel = serializableEstimator.fit(
       dataFrame.sparkDataFrame,
       sparkParams)
     createModelWrapperInstance().setModel(sparkModel).setParent(this)
@@ -60,7 +66,8 @@ abstract class SparkEstimatorWrapper
     createModelWrapperInstance().setParent(this)
   }
 
-  def createEstimatorInstance(): E = TypeUtils.instanceOfType(estimatorTag)
+  def createEstimatorInstance(): SerializableSparkEstimator[M, E] =
+    new SerializableSparkEstimator[M, E](TypeUtils.instanceOfType(estimatorTag))
 
   def createModelWrapperInstance(): MW = TypeUtils.instanceOfType(modelWrapperTag)
 

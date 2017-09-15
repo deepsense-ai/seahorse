@@ -33,8 +33,8 @@ import io.deepsense.deeplang.params.{Param, ParamMap}
   * Concrete models (like GBTClassificationModel) must be concrete classes (leaves in hierarchy).
   * That's why this class must be abstract.
   */
-abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[MD]](
-    private var wrappedModel: SparkModelWrapper[MD, E]) extends Transformer {
+abstract class StringIndexingWrapperModel[M <: ml.Model[M], E <: ml.Estimator[M]](
+    private var wrappedModel: SparkModelWrapper[M, E]) extends Transformer {
 
   private var pipelinedModel: PipelineModel = null
 
@@ -45,7 +45,7 @@ abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[
   }
 
   private[stringindexingwrapper] def setWrappedModel(
-      wrappedModel: SparkModelWrapper[MD, E]): this.type = {
+      wrappedModel: SparkModelWrapper[M, E]): this.type = {
     this.wrappedModel = wrappedModel
     this
   }
@@ -82,7 +82,8 @@ abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[
 
     this
       .setPipelinedModel(loadedPipelineModel)
-      .setWrappedModel(loadedWrappedModel.asInstanceOf[SparkModelWrapper[MD, E]])
+      .setWrappedModel(loadedWrappedModel.asInstanceOf[SparkModelWrapper[M, E]])
+      .setParamsFromJson(loadedWrappedModel.paramValuesToJson)
   }
 
   override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {

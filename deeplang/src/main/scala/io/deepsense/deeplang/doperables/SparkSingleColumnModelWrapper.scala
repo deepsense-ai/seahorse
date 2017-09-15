@@ -78,11 +78,12 @@ abstract class SparkSingleColumnModelWrapper[
   }
 
   override def sparkParamMap(sparkEntity: Params, schema: StructType): SparkParamMap = {
-    val map = super.sparkParamMap(sparkEntity, schema)
-      .put(ml.param.ParamPair(parentEstimator.sparkEstimator.outputCol, outputColumnValue.orNull))
+    val map = super.sparkParamMap(sparkEntity, schema).put(
+      ml.param.ParamPair(
+        parentEstimator.sparkEstimator.outputCol, outputColumnValue.orNull))
 
-    if (model != null) {
-      map.put(ml.param.ParamPair(model.outputCol, outputColumnValue.orNull))
+    if (serializableModel != null) {
+      map.put(ml.param.ParamPair(sparkModel.outputCol, outputColumnValue.orNull))
     } else {
       map
     }
@@ -119,7 +120,7 @@ abstract class SparkSingleColumnModelWrapper[
 
   override def replicate(
       extra: io.deepsense.deeplang.params.ParamMap): SparkSingleColumnModelWrapper.this.type = {
-    val model = super.replicate(extractParamMap(extra)).asInstanceOf[this.type]
+    val model = super.replicate(extractParamMap(extra))
     model.outputColumnValue = outputColumnValue
     model
   }

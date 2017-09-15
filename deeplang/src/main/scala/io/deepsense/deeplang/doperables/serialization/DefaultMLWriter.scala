@@ -20,9 +20,9 @@ package io.deepsense.deeplang.doperables.serialization
 import org.apache.hadoop.fs.Path
 import org.apache.spark.SparkContext
 import org.apache.spark.ml.param.{ParamPair, Params}
-import org.apache.spark.ml.util.{DefaultParamsWriter, MLWriter}
-import org.json4s._
+import org.apache.spark.ml.util.MLWriter
 import org.json4s.JsonDSL._
+import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 import io.deepsense.deeplang.doperables.Transformer

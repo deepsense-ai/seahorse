@@ -22,6 +22,7 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.MinMaxParams
 import io.deepsense.deeplang.params.Param
 
@@ -36,18 +37,20 @@ class MinMaxScalerModel
       List(
         SparkSummaryEntry(
           name = "original min",
-          value = model.originalMin,
+          value = sparkModel.originalMin,
           description = "Minimal value for each original column during fitting."),
         SparkSummaryEntry(
           name = "original max",
-          value = model.originalMax,
+          value = sparkModel.originalMax,
           description = "Maximum value for each original column during fitting."))
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 
-  override protected def loadModel(ctx: ExecutionContext, path: String): SparkMinMaxScalerModel = {
-    SparkMinMaxScalerModel.load(path)
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkMinMaxScalerModel] = {
+    new SerializableSparkModel(SparkMinMaxScalerModel.load(path))
   }
 }

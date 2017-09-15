@@ -17,33 +17,28 @@
 
 package io.deepsense.deeplang.doperables.serialization
 
-import org.apache.spark.annotation.DeveloperApi
-import org.apache.spark.ml
 import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.util.{MLWritable, MLWriter}
 import org.apache.spark.ml.{Estimator, Model}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
 
-class SerializableSparkEstimator[T <: Model[T]](e: ml.Estimator[T])
-  extends Estimator[T]
+class SerializableSparkEstimator[T <: Model[T], E <: Estimator[T]](val sparkEstimator: E)
+  extends Estimator[SerializableSparkModel[T]]
   with MLWritable {
-
 
   override val uid: String = "e2a121fe-da6e-4ef2-9c5e-56ee558c14f0"
 
-  override def fit(dataset: DataFrame): T = {
-    val result = e.fit(dataset)
-    result match {
-      case w: MLWritable => result
-      case _ => new SerializableSparkModel[T](result).asInstanceOf[T]
-    }
+  override def fit(dataset: DataFrame): SerializableSparkModel[T] = {
+    val result: T = sparkEstimator.fit(dataset)
+    new SerializableSparkModel[T](result)
   }
 
-  override def copy(extra: ParamMap): Estimator[T] =
-    new SerializableSparkEstimator[T](e.copy(extra))
+  override def copy(extra: ParamMap): Estimator[SerializableSparkModel[T]] =
+    new SerializableSparkEstimator[T, E](sparkEstimator.copy(extra).asInstanceOf[E])
 
   override def write: MLWriter = new DefaultMLWriter(this)
 
-  override def transformSchema(schema: StructType): StructType = e.transformSchema(schema)
+  override def transformSchema(schema: StructType): StructType =
+    sparkEstimator.transformSchema(schema)
 }

@@ -21,6 +21,7 @@ import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringI
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.{MultiColumnModel, SparkSingleColumnModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
@@ -44,8 +45,10 @@ case class MultiColumnStringIndexerModel()
           seqTables.foldRight(accReport)((t, r) => r.withAdditionalTable(t)))
   }
 
-  override protected def loadModel(ctx: ExecutionContext, path: String): SparkStringIndexerModel = {
-    SparkStringIndexerModel.load(path)
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkStringIndexerModel] = {
+    new SerializableSparkModel(SparkStringIndexerModel.load(path))
   }
 }
 
@@ -60,15 +63,17 @@ class SingleColumnStringIndexerModel
       List(
         SparkSummaryEntry(
           name = "labels",
-          value = model.labels,
+          value = sparkModel.labels,
           description = "Ordered list of labels, corresponding to indices to be assigned."))
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 
-  override protected def loadModel(ctx: ExecutionContext, path: String): SparkStringIndexerModel = {
-    SparkStringIndexerModel.load(path)
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkStringIndexerModel] = {
+    new SerializableSparkModel(SparkStringIndexerModel.load(path))
   }
 }
 

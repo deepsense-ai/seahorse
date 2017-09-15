@@ -22,6 +22,7 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
 
 class StandardScalerModel
@@ -34,11 +35,11 @@ class StandardScalerModel
       List(
         SparkSummaryEntry(
           name = "std",
-          value = model.std,
+          value = sparkModel.std,
           description = "Vector of standard deviations of the model."),
         SparkSummaryEntry(
           name = "mean",
-          value = model.mean,
+          value = sparkModel.mean,
           description = "Vector of means of the model."))
 
 
@@ -47,8 +48,8 @@ class StandardScalerModel
   }
 
   override protected def loadModel(
-    ctx: ExecutionContext,
-    path: String): SparkStandardScalerModel = {
-    SparkStandardScalerModel.load(path)
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkStandardScalerModel] = {
+    new SerializableSparkModel(SparkStandardScalerModel.load(path))
   }
 }

@@ -21,6 +21,7 @@ import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorI
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
 
 class VectorIndexerModel
@@ -29,11 +30,13 @@ class VectorIndexerModel
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
   override def report: Report = {
-    super.report
-      .withAdditionalTable(CommonTablesGenerators.categoryMaps(model.categoryMaps))
+    super.report.withAdditionalTable(
+      CommonTablesGenerators.categoryMaps(sparkModel.categoryMaps))
   }
 
-  override protected def loadModel(ctx: ExecutionContext, path: String): SparkVectorIndexerModel = {
-    SparkVectorIndexerModel.load(path)
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkVectorIndexerModel] = {
+    new SerializableSparkModel(SparkVectorIndexerModel.load(path))
   }
 }

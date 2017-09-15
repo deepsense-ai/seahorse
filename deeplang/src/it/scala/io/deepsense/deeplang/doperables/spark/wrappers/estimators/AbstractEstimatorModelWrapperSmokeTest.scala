@@ -102,11 +102,25 @@ abstract class AbstractEstimatorModelWrapperSmokeTest
     transformer: Transformer,
     dataFrame: DataFrame): (DataFrame, Option[StructType]) = {
 
+    transformer.paramValuesToJson
+    checkTransformerCorrectness(transformer)
     val deserialized = transformer.loadSerializedTransformer(tempDir)
     val resultDF = deserialized.transform.apply(executionContext)(())(dataFrame)
     val resultSchema = deserialized._transformSchema(dataFrame.sparkDataFrame.schema)
-    deserialized.report
+    checkTransformerCorrectness(deserialized)
     (resultDF, resultSchema)
+  }
+
+  /**
+    * Checks correctness of the transformer e.g.
+    * report generation (crucial thing in our system) etc.
+    * @param transformer
+    */
+  private def checkTransformerCorrectness(transformer: Transformer): Unit = {
+    // Generating reports is one of the most important functionality of our product,
+    // when report is generated without error it very often means that everything went fine,
+    // and user won't see any errors.
+    transformer.report
   }
 }
 

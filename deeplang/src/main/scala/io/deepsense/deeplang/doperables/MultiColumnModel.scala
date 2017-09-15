@@ -135,7 +135,7 @@ abstract class MultiColumnModel[
   private def replicateWithParent(m: SCW): SCW = {
     m.replicate()
       .setParent(m.parentEstimator)
-      .setModel(m.model)
+      .setModel(m.serializableModel)
   }
 
   def setModels(models: Seq[SCW]): this.type = {
