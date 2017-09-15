@@ -53,7 +53,7 @@ def unitFilter(name: String) = name.endsWith("Spec") && !integFilter(name)
 
 enablePlugins(BuildInfoPlugin)
 
-buildInfoPackage := "io.deepsense.commons.buildinfo"
+buildInfoPackage := "ai.deepsense.commons.buildinfo"
 
 buildInfoKeys ++= {
   val slices = 3

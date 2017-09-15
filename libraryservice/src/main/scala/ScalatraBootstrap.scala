@@ -16,7 +16,7 @@
 
 import javax.servlet.ServletContext
 
-import io.deepsense.libraryservice.LibraryServlet
+import ai.deepsense.libraryservice.LibraryServlet
 import org.scalatra.LifeCycle
 
 class ScalatraBootstrap extends LifeCycle {

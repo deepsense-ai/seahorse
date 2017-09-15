@@ -29,7 +29,7 @@ fi
 # Settings
 SEAHORSE_BUILD_TAG=$1
 ARTIFACT_NAME="docker-compose-internal.yml"
-COMPOSE_FILE="http://artifactory.deepsense.codilime.com:8081/artifactory/seahorse-distribution/io/deepsense/$SEAHORSE_BUILD_TAG/dockercompose/$ARTIFACT_NAME"
+COMPOSE_FILE="http://artifactory.deepsense.codilime.com:8081/artifactory/seahorse-distribution/ai/deepsense/$SEAHORSE_BUILD_TAG/dockercompose/$ARTIFACT_NAME"
 VAGRANT_BOX_NAME="seahorse-vm"
 PUBLISH_DIR="../image_publication"
 

@@ -36,7 +36,7 @@
     </layout>
   </appender>
 
-  <logger name="io.deepsense">
+  <logger name="ai.deepsense">
     <level value="DEBUG" />
   </logger>
 

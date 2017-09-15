@@ -36,7 +36,7 @@ LINK_TO_DOCKER_COMPOSE_FILE=
 TMP_FILE=$(mktemp /tmp/dc-tmp.XXXXXX)
 wget \
   --output-document=$TMP_FILE \
-  "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/dockercompose/docker-compose-internal.yml"
+  "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/ai/deepsense/${SEAHORSE_BUILD_TAG}/dockercompose/docker-compose-internal.yml"
 
 DOCKER_IMAGES=(`cat $TMP_FILE | grep image: | cut -d":" -f 2,3 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
 rm $TMP_FILE

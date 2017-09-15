@@ -29,7 +29,7 @@ unmanagedResourceDirectories in Compile += { baseDirectory.value / "./rexecutor"
 
 enablePlugins(DeepsenseBuildInfoPlugin)
 
-buildInfoPackage := "io.deepsense.workflowexecutor.buildinfo"
+buildInfoPackage := "ai.deepsense.workflowexecutor.buildinfo"
 
 target in assembly := new File("target")
 assemblyJarName in assembly := "workflowexecutor.jar"

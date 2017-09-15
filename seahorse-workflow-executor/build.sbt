@@ -103,6 +103,6 @@ addCommandAlias("ds-it",
     ";workflowexecutor/it:test" +
     ";workflowexecutormqprotocol/it:test")
 
-addCommandAlias("generateExamples", "deeplang/it:testOnly io.deepsense.deeplang.doperations.examples.*")
+addCommandAlias("generateExamples", "deeplang/it:testOnly ai.deepsense.deeplang.doperations.examples.*")
 
 // scalastyle:on

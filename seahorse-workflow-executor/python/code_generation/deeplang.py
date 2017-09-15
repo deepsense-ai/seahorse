@@ -17,8 +17,8 @@
 """
     Generator of Scala code for DOperations and DMethods.
     Used to generate files in graph library:
-      * io.deepsense.deeplang.DOperations
-      * io.deepsense.deeplang.DMethods
+      * ai.deepsense.deeplang.DOperations
+      * ai.deepsense.deeplang.DMethods
 """
 
 import sys

@@ -35,4 +35,4 @@ deployment/docker-compose/docker-compose.py --generate-only --yaml-file $ARTIFAC
 
 echo "Sending $ARTIFACT_NAME to snapshot artifactory"
 source jenkins/publish_to_artifactory_function.sh
-publish_to_artifactory $ARTIFACT_NAME seahorse-distribution/io/deepsense/${SEAHORSE_BUILD_TAG}/dockercompose/${ARTIFACT_NAME}
+publish_to_artifactory $ARTIFACT_NAME seahorse-distribution/ai/deepsense/${SEAHORSE_BUILD_TAG}/dockercompose/${ARTIFACT_NAME}

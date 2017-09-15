@@ -5,7 +5,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
 	<servlet>
 		<servlet-name>scalatra</servlet-name>
 		<servlet-class>
-      io.deepsense.libraryservice.LibraryServlet
+      ai.deepsense.libraryservice.LibraryServlet
     </servlet-class>
     <multipart-config>
       <max-file-size>1000000000000</max-file-size>

@@ -61,4 +61,4 @@ def unitFilter(name: String) = name.endsWith("Spec") && !integFilter(name)
 
 enablePlugins(DeepsenseBuildInfoPlugin)
 
-buildInfoPackage := "io.deepsense.commons"
+buildInfoPackage := "ai.deepsense.commons"

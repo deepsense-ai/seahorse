@@ -41,7 +41,7 @@ For more detailed information about submitting Spark applications, visit:
     # Run application locally (on 8 cores)
     ./bin/spark-submit \
       --driver-class-path workflowexecutor.jar \
-      --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+      --class ai.deepsense.workflowexecutor.WorkflowExecutorApp \
       --master local[8] \
       --files workflow.json \
       workflowexecutor.jar \
@@ -53,7 +53,7 @@ For more detailed information about submitting Spark applications, visit:
     # Run on a Spark Standalone cluster in client deploy mode
     ./bin/spark-submit \
       --driver-class-path workflowexecutor.jar \
-      --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+      --class ai.deepsense.workflowexecutor.WorkflowExecutorApp \
       --master spark://207.184.161.138:7077 \
       --files workflow.json \
       workflowexecutor.jar \
@@ -66,7 +66,7 @@ For more detailed information about submitting Spark applications, visit:
     export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
     ./bin/spark-submit \
       --driver-class-path workflowexecutor.jar \
-      --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+      --class ai.deepsense.workflowexecutor.WorkflowExecutorApp \
       --master yarn-cluster \  # can also be `yarn-client` for client mode
       --files workflow.json \
       workflowexecutor.jar \
@@ -92,7 +92,7 @@ Hadoop 2.7.0 package (Seahorse uses Scala 2.11, Spark has to be built with Scala
 
 Detailed information about command line parameters can be obtained by executing command:
 
-``java -classpath workflowexecutor.jar io.deepsense.workflowexecutor.WorkflowExecutorApp --help``
+``java -classpath workflowexecutor.jar ai.deepsense.workflowexecutor.WorkflowExecutorApp --help``
 
 #### Command Line Parameters Details
 

@@ -73,7 +73,7 @@ parallelExecution in ThisBuild := false
 // Additionally, check if all input workflows for e2e tests can be parsed - we want to have quick feedback
 // if any of those workflows ceased to be correct.
 addCommandAlias("ds-it",
-    ";e2etests/test:testOnly io.deepsense.e2etests.AllInputWorkflowsCorrectTest " +
+    ";e2etests/test:testOnly ai.deepsense.e2etests.AllInputWorkflowsCorrectTest " +
     ";backendcommons/it:test " +
     ";sessionmanager/it:test " +
     ";workflowmanager/it:test " +

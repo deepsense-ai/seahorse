@@ -61,7 +61,7 @@ For more detailed information about submitting Apache Spark applications visit
 # Run Application Locally (on 8 cores)
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
-  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --class ai.deepsense.workflowexecutor.WorkflowExecutorApp \
   --master local[8] \
   --files workflow.json \
   workflowexecutor.jar \
@@ -75,7 +75,7 @@ For more detailed information about submitting Apache Spark applications visit
 # Run on Apache Spark Standalone Cluster in Client Deploy Mode
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
-  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --class ai.deepsense.workflowexecutor.WorkflowExecutorApp \
   --master spark://207.184.161.138:7077 \
   --files workflow.json \
   workflowexecutor.jar \
@@ -90,7 +90,7 @@ For more detailed information about submitting Apache Spark applications visit
 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
-  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --class ai.deepsense.workflowexecutor.WorkflowExecutorApp \
   --master yarn \
   --deploy-mode client \
   --files workflow.json \
@@ -107,7 +107,7 @@ export LIBPROCESS_ADVERTISE_IP={user-machine-IP}   # IP addres of user's machine
 export LIBPROCESS_IP={user-machine-IP}   # IP addres of user's machine, visible from Mesos cluster
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
-  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --class ai.deepsense.workflowexecutor.WorkflowExecutorApp \
   --master mesos://207.184.161.138:5050 \
   --deploy-mode client \
   --supervise \
@@ -170,7 +170,7 @@ For more information, please visit
 
 Detailed information about command line parameters can be obtained by executing command:
 
-``java -classpath workflowexecutor.jar io.deepsense.workflowexecutor.WorkflowExecutorApp --help``
+``java -classpath workflowexecutor.jar ai.deepsense.workflowexecutor.WorkflowExecutorApp --help``
 
 #### Command Line Parameters Details
 

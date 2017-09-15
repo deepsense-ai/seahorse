@@ -27,7 +27,7 @@ build_and_publish () {
     SPARK_VERSION=$1
     SCALA_VERSION=$2
     sbt -DsparkVersion=$SPARK_VERSION -Dsbt.log.noformat=true clean workflowexecutor/assembly
-    publish_to_artifactory target/workflowexecutor.jar seahorse-distribution/io/deepsense/$SEAHORSE_BUILD_TAG/workflowexecutor/workflowexecutor-$SCALA_VERSION-$SPARK_VERSION.jar
+    publish_to_artifactory target/workflowexecutor.jar seahorse-distribution/ai/deepsense/$SEAHORSE_BUILD_TAG/workflowexecutor/workflowexecutor-$SCALA_VERSION-$SPARK_VERSION.jar
 }
 
 build_and_publish "1.6.1" "2.10"

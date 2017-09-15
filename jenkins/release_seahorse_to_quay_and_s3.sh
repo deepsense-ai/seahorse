@@ -58,14 +58,14 @@ echo "Publish to S3 workflowexecutor uber-jars"
 rm -f workflowexecutor.jar
 
 wget --output-document=workflowexecutor.jar \
-  "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/workflowexecutor/workflowexecutor-2.11-2.1.1.jar"
+  "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/ai/deepsense/${SEAHORSE_BUILD_TAG}/workflowexecutor/workflowexecutor-2.11-2.1.1.jar"
 aws s3 cp workflowexecutor.jar s3://${WE_RELEASE_PATH}/workflowexecutor_2.11-${API_VERSION}-2.1.1.jar --acl public-read
 
 
 DOCKER_COMPOSE_YML="docker-compose.yml"
 echo "Publish to S3 $DOCKER_COMPOSE_YML"
 rm -f $DOCKER_COMPOSE_YML
-wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/dockercompose/$DOCKER_COMPOSE_YML"
+wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/ai/deepsense/${SEAHORSE_BUILD_TAG}/dockercompose/$DOCKER_COMPOSE_YML"
 aws s3 cp $DOCKER_COMPOSE_YML s3://${RELEASE_PATH}/$DOCKER_COMPOSE_YML --acl public-read
 
 
@@ -77,7 +77,7 @@ aws s3 cp $DOCKER_COMPOSE_YML s3://${RELEASE_PATH}/$DOCKER_COMPOSE_YML --acl pub
 #sed -e "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" -e "s#SEAHORSE_BOX_NAME_VARIABLE#seahorse-vm-${API_VERSION}#" -e "s#SEAHORSE_BOX_HOSTNAME_VARIABLE#seahorse-vm-${API_VERSION//./-}#" deployment/image_publication/Vagrantfile.template > $VAGRANTFILE
 #
 #source jenkins/publish_to_artifactory_function.sh
-#publish_to_artifactory $VAGRANTFILE ${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${VAGRANTFILE}
+#publish_to_artifactory $VAGRANTFILE ${SEAHORSE_DISTRIBUTION_REPOSITORY}/ai/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${VAGRANTFILE}
 #
 #
 #echo "Publish to S3 $VAGRANTFILE"
@@ -85,5 +85,5 @@ aws s3 cp $DOCKER_COMPOSE_YML s3://${RELEASE_PATH}/$DOCKER_COMPOSE_YML --acl pub
 #
 #echo "Publish to S3 $SEAHORSE_VM_BOX_FILE"
 #rm -f $SEAHORSE_VM_BOX_FILE
-#wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/$SEAHORSE_VM_BOX_FILE"
+#wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/ai/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/$SEAHORSE_VM_BOX_FILE"
 #aws s3 cp $SEAHORSE_VM_BOX_FILE s3://${RELEASE_PATH}/$SEAHORSE_VM_BOX_FILE --acl public-read

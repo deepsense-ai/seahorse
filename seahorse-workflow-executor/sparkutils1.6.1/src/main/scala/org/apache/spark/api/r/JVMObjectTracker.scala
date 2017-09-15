@@ -37,7 +37,7 @@
  * - Add logging to JVMObjectTracker
  * - This works because we are running WorkflowExecutor using:
  *   "java" "-cp" "/opt/docker/we.jar:/opt/spark-2.0.2/conf/ \
- *   "io.deepsense.workflowexecutor.WorkflowExecutorApp"
+ *   "ai.deepsense.workflowexecutor.WorkflowExecutorApp"
  * - JVMObjectTracker from we.jar gets loaded first as "Specification order" on page
  *   http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/classpath.html states
  */

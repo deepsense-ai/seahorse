@@ -54,8 +54,8 @@ docker-compose up -d > /dev/null
 pushd "$PROJECT_ROOT" > /dev/null
 
 sbt "e2etests/clean" \
-    "e2etests/test:testOnly io.deepsense.e2etests.session.AllExampleWorkflowsWorkOnLocalClusterSessionTest" \
-    "e2etests/test:testOnly io.deepsense.e2etests.batch.AllExampleWorkflowsWorkOnLocalClusterBatchTest"
+    "e2etests/test:testOnly ai.deepsense.e2etests.session.AllExampleWorkflowsWorkOnLocalClusterSessionTest" \
+    "e2etests/test:testOnly ai.deepsense.e2etests.batch.AllExampleWorkflowsWorkOnLocalClusterBatchTest"
 
 popd > /dev/null
 

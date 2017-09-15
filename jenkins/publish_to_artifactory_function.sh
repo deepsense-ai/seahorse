@@ -16,7 +16,7 @@
 # Function for publishing artifacts to deepsense.ai internal artifactory
 # Usage:
 # source jenkins/publish_to_artifactory_function.sh
-# publish_to_artifactory jenkins/test test-local/io/deepsense/testing
+# publish_to_artifactory jenkins/test test-local/ai/deepsense/testing
 
 function publish_to_artifactory {
   if [ "$#" -ne 2 ]; then

@@ -84,7 +84,7 @@
     <level value="INFO"/>
   </logger>
 
-  <logger name="io.deepsense.workflowexecutor.rabbitmq.PublisherActor">
+  <logger name="ai.deepsense.workflowexecutor.rabbitmq.PublisherActor">
     <level value="WARN"/>
   </logger>
 

@@ -36,9 +36,9 @@ function calculate_is_snapshot_version() {
 function calculate_repository_url() {
   if [[ $IS_SNAPSHOT == true ]]
   then
-    export REPOSITORY_URL="$ARTIFACTORY_URL/$SNAPSHOT_REPOSITORY/io/deepsense"
+    export REPOSITORY_URL="$ARTIFACTORY_URL/$SNAPSHOT_REPOSITORY/ai/deepsense"
   else
-    export REPOSITORY_URL="$ARTIFACTORY_URL/$RELEASE_REPOSITORY/io/deepsense"
+    export REPOSITORY_URL="$ARTIFACTORY_URL/$RELEASE_REPOSITORY/ai/deepsense"
   fi
 }
 

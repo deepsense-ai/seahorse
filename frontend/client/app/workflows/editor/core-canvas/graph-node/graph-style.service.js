@@ -16,10 +16,10 @@
 
 import jsPlumb from 'jsplumb';
 
-const ESTIMATOR = ['io.deepsense.deeplang.doperables.Estimator'];
-const TRANSFORMER = ['io.deepsense.deeplang.doperables.Transformer'];
-const EVALUATOR = ['io.deepsense.deeplang.doperables.Evaluator'];
-const DATAFRAME = ['io.deepsense.deeplang.doperables.dataframe.DataFrame'];
+const ESTIMATOR = ['ai.deepsense.deeplang.doperables.Estimator'];
+const TRANSFORMER = ['ai.deepsense.deeplang.doperables.Transformer'];
+const EVALUATOR = ['ai.deepsense.deeplang.doperables.Evaluator'];
+const DATAFRAME = ['ai.deepsense.deeplang.doperables.dataframe.DataFrame'];
 
 // output types
 const DOT_ENDPOINT = 'Dot';

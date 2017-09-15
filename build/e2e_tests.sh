@@ -137,10 +137,10 @@ export YARN_MASTER_IP=10.254.1.2
 ## Run sbt tests
 TESTS_TO_RUN=""
 if [ "${RUN_SESSION_TESTS}" = true ]; then
-  TESTS_TO_RUN="${TESTS_TO_RUN} io.deepsense.e2etests.session.*"
+  TESTS_TO_RUN="${TESTS_TO_RUN} ai.deepsense.e2etests.session.*"
 fi
 if [ "${RUN_BATCH_TESTS}" = true ]; then
-  TESTS_TO_RUN="${TESTS_TO_RUN} io.deepsense.e2etests.batch.*"
+  TESTS_TO_RUN="${TESTS_TO_RUN} ai.deepsense.e2etests.batch.*"
 fi
 sbt "e2etests/clean" "e2etests/test:testOnly ${TESTS_TO_RUN}"
 
