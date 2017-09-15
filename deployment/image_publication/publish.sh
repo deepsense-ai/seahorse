@@ -1,14 +1,18 @@
 #!/bin/bash
 
 # Copyright (c) 2015, CodiLime Inc.
-#
-# Prepares frontend zip and publishes it to artifactory.
-# This script expects no external parameters.
-# Version is calculated from current git sha, current time and BASE_VERSION variable
 
 
-REPOSITORY="seahorse-bundled-image"
-VERSION=$(date +%s)
+VERSION=$1
+if [ -z ${VERSION+x} ]
+then
+    VERSION=$(date +"%d-%m-%Y_%H:%M:%S")
+    REPOSITORY="seahorse-bundled-image"
+else
+    echo "VERSION='$VERSION'"
+    REPOSITORY="seahorse-bundled-image-release"
+fi
+
 BOX_NAME="seahorse-vm.box"
 
 #Publishes file (first parameter) with given version (second parameter)
