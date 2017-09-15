@@ -36,10 +36,6 @@ const outputAnchorByPosition = {
   right: 'BottomRight'
 };
 
-/* beautify preserve:start */
-import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
-/* beautify preserve:end */
-
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
   DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, GraphPanelStyler) {
@@ -75,10 +71,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   let that = this;
   let internal = {
     currentZoomRatio: 1.0,
-    renderMode: null,
+    isRunning: false,
 
-    edgesAreDetachable() {
-      return internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE;
+    areEdgesDetachable() {
+      return !internal.isRunning;
     },
 
     reset() {
@@ -128,7 +124,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.clearWorkflow = function clearWorkflow() {
-    internal.renderMode = null;
     internal.reset();
   };
 
@@ -175,6 +170,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     let edges = workflow.getEdges();
     let outputPrefix = 'output';
     let inputPrefix = 'input';
+
     for (let id in edges) {
       if (edges.hasOwnProperty(id)) {
         let edge = edges[id];
@@ -183,7 +179,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
             outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
             inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
           ],
-          detachable: internal.edgesAreDetachable()
+          detachable: internal.areEdgesDetachable()
         });
         connection.setParameter('edgeId', edge.id);
       }
@@ -224,7 +220,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       });
     }
 
-    if (internal.renderMode === GraphPanelRendererBase.RUNNING_RENDER_MODE) {
+    if (internal.isRunning) {
       outputStyle.isSource = false;
     }
 
@@ -242,10 +238,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       GraphPanelStyler.styleSelectedOutputEndpoint(jsPlumbPort);
     }
 
-    // FIXME Quickfix to make reports browseable in read-only mode.
-    // There is a conflict between multiselection and output port click when isSource = false.
-    let eventForLeftClick = internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? 'click' : 'mousedown';
-    jsPlumbPort.bind(eventForLeftClick, (clickedPort, event) => {
+    const emitLeftClick = (clickedPort, event) => {
       if (hasReport) {
         $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
           reference: clickedPort,
@@ -253,7 +246,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
           event: event
         });
       }
-    });
+    };
+    // FIXME Quickfix to make reports browseable in disabled mode.
+    // There is a conflict between multiselection and output port click when isSource = false.
+    // For isSource=true works 'click' event
+    // For isSource=false works 'mousedown' event
+    jsPlumbPort.bind('click', emitLeftClick);
+    jsPlumbPort.bind('mousedown', emitLeftClick);
 
     jsPlumbPort.bind('mouseover', (endpoint) => {
       internal.emitMouseOverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, port);
@@ -355,9 +354,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       $rootScope.$broadcast(Edge.DRAG);
 
       /* During detaching an edge, hints should be displayed as well */
-      if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE &&
-        _.isArray(connection.endpoints)
-      ) {
+      if (internal.areEdgesDetachable() && _.isArray(connection.endpoints)) {
         let port = connection.endpoints[0];
         ConnectionHinterService.highlightMatchedAndDismatchedPorts(workflow, port);
         ConnectionHinterService.highlightOperations(workflow, port);
@@ -366,13 +363,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   };
 
-  that.setRenderMode = function setRenderMode(renderMode) {
-    if (renderMode !== GraphPanelRendererBase.EDITOR_RENDER_MODE &&
-      renderMode !== GraphPanelRendererBase.RUNNING_RENDER_MODE) {
-      throw `render mode should be either 'editor' or 'report'`;
-    }
-
-    internal.renderMode = renderMode;
+  that.setRunningMode = (isRunning) => {
+    internal.isRunning = isRunning;
   };
 
   that.disablePortHighlightings = function disablePortHighlightings(workflow) {

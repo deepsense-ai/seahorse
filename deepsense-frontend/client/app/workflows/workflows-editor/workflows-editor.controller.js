@@ -1,9 +1,5 @@
 'use strict';
 
-/* beautify preserve:start */
-import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
-/* beautify preserve:end */
-
 class WorkflowsEditorController {
 
   /* @ngInject */
@@ -67,7 +63,6 @@ class WorkflowsEditorController {
 
   init(workflowWithResults) {
     this.PageService.setTitle('Workflow editor');
-    this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();

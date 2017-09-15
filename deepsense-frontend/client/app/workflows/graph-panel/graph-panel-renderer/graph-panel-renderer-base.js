@@ -7,6 +7,3 @@ export class GraphPanelRendererBase {
     return document.querySelector(`#node-${id}`);
   }
 }
-
-GraphPanelRendererBase.EDITOR_RENDER_MODE = Symbol('editor_render_mode');
-GraphPanelRendererBase.RUNNING_RENDER_MODE = Symbol('running_render_mode');

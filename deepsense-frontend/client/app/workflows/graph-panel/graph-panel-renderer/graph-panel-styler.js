@@ -72,7 +72,7 @@ function GraphPanelStyler() {
       endpoint.addType('input');
     },
     styleOutputEndpointDefault: (endpoint, hasReport) => {
-      if(hasReport) {
+      if (hasReport) {
         endpoint.addType('outputWithReport');
       } else {
         endpoint.addType('outputNoReport');
