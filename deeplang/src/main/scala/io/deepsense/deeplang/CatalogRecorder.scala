@@ -53,6 +53,7 @@ object CatalogRecorder {
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
     catalog.registerDOperable[DiscreteCosineTransformer]()
+    catalog.registerDOperable[NGramTransformer]()
     catalog.registerDOperable[Normalizer]()
     catalog.registerDOperable[OneHotEncoder]()
     catalog.registerDOperable[PolynomialExpander]()
@@ -132,6 +133,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[DCT](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[ConvertToNGrams](
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[Normalize](
