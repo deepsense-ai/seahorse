@@ -6,5 +6,8 @@
 # https://github.com/sbt/sbt/issues/896
 find . -name target -type d -exec rm -rf {} \; || true
 
+# Test that sdk's tests pass - it is not sbt submodule of deepsense-backend
+(cd seahorse-sdk-example; sbt clean; sbt test)
+
 sbt clean
 sbt scalastylebackend test ds-it
