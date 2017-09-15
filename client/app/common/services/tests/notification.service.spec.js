@@ -78,7 +78,7 @@ describe('NotificationService', function () {
   describe('should have event listeners as static and dynamic messages', function () {
     it('should have static messages', function () {
       var staticMessagesLength = Object.keys(NotificationService.staticMessages).length;
-      expect(staticMessagesLength).not.toEqual(0);
+      expect(staticMessagesLength).toEqual(0);
     });
 
     it('should have dynamic messages', function () {
