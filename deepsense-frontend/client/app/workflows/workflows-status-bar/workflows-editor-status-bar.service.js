@@ -109,7 +109,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     editorExecutorNotRunning: [menuItems.export, menuItems.clone, menuItems.startEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorExecutorError: [menuItems.export, menuItems.clone, menuItems.executorError, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorReadOnlyForNotOwner: [menuItems.export, menuItems.clone, menuItems.disabledStartEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    running: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
+    running: [menuItems.export, menuItems.clone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
     aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.aborting, menuItems.documentation],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
   };

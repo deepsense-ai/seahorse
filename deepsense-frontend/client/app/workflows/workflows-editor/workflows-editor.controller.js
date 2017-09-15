@@ -149,6 +149,10 @@ class WorkflowsEditorController {
       this.WorkflowCloneService.openModal(this._goToWorkflow.bind(this), currentWorkflow);
     });
 
+    this.$scope.$on('StatusBar.EXPORT_CLICK', () => {
+      this.ExportModalService.showModal();
+    });
+
     this._reinitEditableModeListeners();
   }
 
@@ -190,10 +194,6 @@ class WorkflowsEditorController {
           this.WorkflowService.clearGraph();
           this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
         });
-      }),
-
-      this.$scope.$on('StatusBar.EXPORT_CLICK', () => {
-        this.ExportModalService.showModal();
       }),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
