@@ -8,6 +8,8 @@ var config = require('../config/config');
 var passport = oauth2.passport;
 var strategy = oauth2.strategy;
 
+var sso = config.getSso();
+
 module.exports = {
   init: init,
   login: login,
