@@ -41,7 +41,7 @@
   }
 
   &.action {
-    width: 55px;
+    width: 170px;
     height: 55px;
   }
 
@@ -53,36 +53,31 @@
   &__content {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-direction: column;
     padding: 0 10px;
     height: 100%;
     text-align: left;
     user-select: none;
 
-    .centered {
-      text-align: center;
-    }
-
     .custom-name {
+      text-align: center;
       font-weight: 600;
       width: 100%;
 
-      .action-letter {
-        text-align: center;
-        font-size: 20px;
-        font-weight: bold;
+      .action-icon {
+        font-size: 14px;
       }
     }
 
     .user-name {
-      color: @seahorse-blue;
-      font-weight: 600;
-      width: 100%;
+      font-style: italic;
+      font-size: 12px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-size: 12px;
-      padding-bottom: 5px;
+      text-align: center;
+      width: 100%;
     }
   }
 

@@ -9,19 +9,12 @@
   title={{$ctrl.node.description}}
 >
   <div class="graph-node__content">
-    <div
-      class="custom-name"
-      ng-class="{'centered': !$ctrl.node.uiName}"
-    >
-      <div ng-if="$ctrl.nodeType !== 'action'">
-        {{ $ctrl.node.name }}
-      </div>
-      <div
+    <div class="custom-name">
+      <span
         ng-if="$ctrl.nodeType === 'action'"
-        class="action-letter"
-      >
-        {{ $ctrl.firstNameLetters }}
-      </div>
+        class="action-icon sa {{::$ctrl.actionIcon}}"
+      ></span>
+      <span>{{ $ctrl.node.name }}</span>
     </div>
     <div
       class="user-name"

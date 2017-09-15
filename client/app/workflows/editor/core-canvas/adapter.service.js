@@ -7,9 +7,9 @@ const POSITION_MAP = {
     right: 'BottomRight'
   },
   INPUT: {
-    left: [0.25, 0, 0, -1], // Top middle left part
+    left: [0.10, 0, 0, -1], // Top middle left part
     center: 'TopCenter',
-    right: [0.75, 0, 0, -1] // Top middle right part
+    right: [0.90, 0, 0, -1] // Top middle right part
   }
 };
 

@@ -35,6 +35,12 @@ const CSS_CLASSES_MAP = {
   }
 };
 
+const actionIcons = {
+  [specialOperations.ACTIONS.EVALUATE]: 'sa-evaluate',
+  [specialOperations.ACTIONS.TRANSFORM]: 'sa-transform',
+  [specialOperations.ACTIONS.FIT]: 'sa-fit',
+  [specialOperations.ACTIONS.FIT_AND_TRANSFORM]: 'sa-fit-transform'
+};
 
 class GraphNodeController {
   constructor($rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService) {
@@ -42,12 +48,12 @@ class GraphNodeController {
 
     _.assign(this, {$rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService});
 
+    this.actionIcon = actionIcons[this.node.operationId];
     this.nodeType = this.getNodeType();
     if (this.nodeType === 'unknown') {
       this.statusClasses = this.getCssClasses();
       this.tooltipMessage = this.node.description;
     }
-    this.firstNameLetters = this.node.name.split(' ').map((item) => item[0]).join('');
 
     $scope.$watch(() => this.node.state, (newValue) => {
       if (newValue) {
