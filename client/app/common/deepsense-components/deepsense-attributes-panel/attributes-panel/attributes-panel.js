@@ -74,11 +74,9 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         };
 
         const encodedParams = btoa(JSON.stringify(notebookParams));
-
         const onlineUrlPart = $scope.disabledMode ? 'OfflineNotebook' : 'notebooks';
-        const paramsUrlPart = $scope.disabledMode ? '' : encodedParams;
 
-        const url = `${config.notebookHost}/${onlineUrlPart}/${$scope.workflowId}/${$scope.node.id}/${paramsUrlPart}`;
+        const url = `${config.notebookHost}/${onlineUrlPart}/${$scope.workflowId}/${$scope.node.id}/${encodedParams}`;
 
         return $sce.trustAsResourceUrl(url);
       };
