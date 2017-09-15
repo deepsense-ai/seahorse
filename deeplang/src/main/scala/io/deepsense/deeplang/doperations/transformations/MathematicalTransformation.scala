@@ -9,13 +9,15 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{MathematicalOperationExecutionException, DOperationExecutionException}
 import io.deepsense.reportlib.model.ReportContent
 
-class MathematicalTransformation(formula: String) extends Transformation {
+class MathematicalTransformation(formula: Option[String]) extends Transformation {
+
+  def this() = this(None)
 
   override def transform(dataFrame: DataFrame): DataFrame = {
     try {
-      DataFrame(Some(dataFrame.sparkDataFrame.selectExpr("*", formula)))
+      DataFrame(Some(dataFrame.sparkDataFrame.selectExpr("*", formula.get)))
     } catch {
-      case e: Exception => throw new MathematicalOperationExecutionException(formula, Some(e))
+      case e: Exception => throw new MathematicalOperationExecutionException(formula.get, Some(e))
     }
   }
 

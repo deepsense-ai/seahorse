@@ -10,6 +10,7 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations._
+import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
 
 /**
  * Object used to register all desired [[io.deepsense.deeplang.DOperable]]s
@@ -23,6 +24,7 @@ object CatalogRecorder {
     catalog.registerDOperable[UntrainedRidgeRegression]()
     catalog.registerDOperable[TrainedRidgeRegression]()
     catalog.registerDOperable[UntrainedLogisticRegression]()
+    catalog.registerDOperable[MathematicalTransformation]()
     catalog.registerDOperable[TrainedLogisticRegression]()
     catalog.registerDOperable[Report]()
   }

@@ -22,7 +22,7 @@ class MathematicalOperation extends DOperation0To1[Transformation] {
 
   override protected def _execute(context: ExecutionContext)(): Transformation = {
     val formula = parameters.getString(MathematicalOperation.formulaParam).get
-    new MathematicalTransformation(formula)
+    new MathematicalTransformation(Some(formula))
   }
 
   override val parameters = ParametersSchema(
