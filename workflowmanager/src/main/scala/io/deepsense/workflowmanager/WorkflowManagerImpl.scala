@@ -19,7 +19,7 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
-import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStorage}
 
 /**
  * Implementation of Workflow Manager.
@@ -28,6 +28,7 @@ class WorkflowManagerImpl @Inject()(
     authorizatorProvider: AuthorizatorProvider,
     workflowStorage: WorkflowStorage,
     workflowResultsStorage: WorkflowResultsStorage,
+    notebookStorage: NotebookStorage,
     inferContext: InferContext,
     @Assisted userContextFuture: Future[UserContext],
     @Named("roles.workflows.get") roleGet: String,
@@ -125,6 +126,18 @@ class WorkflowManagerImpl @Inject()(
       id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
     authorizator.withRole(roleGet) { userContext =>
       workflowResultsStorage.get(id)
+    }
+  }
+
+  override def getNotebook(workflowId: Workflow.Id): Future[Option[String]] = {
+    authorizator.withRole(roleGet) { _ =>
+      notebookStorage.get(workflowId)
+    }
+  }
+
+  override def saveNotebook(workflowId: Workflow.Id, notebook: String): Future[Unit] = {
+    authorizator.withRole(roleUpdate) { _ =>
+      notebookStorage.save(workflowId, notebook)
     }
   }
 

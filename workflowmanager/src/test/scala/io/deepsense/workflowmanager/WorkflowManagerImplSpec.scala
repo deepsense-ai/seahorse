@@ -17,7 +17,7 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.{GraphKnowledge, StatefulGraph, graphstate}
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStorage}
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
@@ -43,6 +43,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     storedWorkflowId, metadata, graph, thirdPartyData, knowledge)
   val workflowStorage: WorkflowStorage = mock[WorkflowStorage]
   val workflowResultStorage = mock[WorkflowResultsStorage]
+  val notebookStorage = mock[NotebookStorage]
   val workflowWithResults = WorkflowWithResults(
     Workflow.Id.randomId,
     mock[WorkflowMetadata],
@@ -63,6 +64,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     authorizatorProvider,
     workflowStorage,
     workflowResultStorage,
+    notebookStorage,
     inferContext,
     userContextFuture,
     roleForAll,

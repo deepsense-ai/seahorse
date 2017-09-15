@@ -17,3 +17,8 @@ create table if not exists workflowresults (
    id uuid,
    results text,
    primary key (id));
+
+create table if not exists notebooks (
+   id uuid,
+   notebook text,
+   primary key (id));

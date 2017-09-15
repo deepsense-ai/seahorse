@@ -35,7 +35,7 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.{InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage._
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec
@@ -85,6 +85,9 @@ class WorkflowsApiSpec
   val noVersionWorkflowResult = noVersionWorkflow
   val obsoleteVersionWorkflowResult = obsoleteVersionWorkflow
   val incorrectVersionFormatWorkflowResult = incorrectVersionFormatWorkflow
+
+  val notebookA = "notebook A content"
+  val notebookB = "notebook B content"
 
   def newWorkflowAndKnowledge(apiVersion: String = BuildInfo.version, name: String = workflowAName)
       : (Workflow, GraphKnowledge) = {
@@ -175,9 +178,10 @@ class WorkflowsApiSpec
           .thenReturn(authorizator)
 
         val workflowStorage = mockStorage()
+        val notebookStorage = mockNotebookStorage()
         new WorkflowManagerImpl(
-          authorizatorProvider, workflowStorage, workflowResultsStorage, inferContext,
-          futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
+          authorizatorProvider, workflowStorage, workflowResultsStorage, notebookStorage,
+          inferContext, futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
       }
     })
 
@@ -993,6 +997,42 @@ class WorkflowsApiSpec
     }
   }
 
+  "GET /workflows/:id/notebook" should {
+    "return notebook" when {
+      "notebook exists" in {
+        Get(s"/$apiPrefix/$workflowAId/notebook") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+
+          val returnedNotebook = responseAs[String]
+          returnedNotebook shouldBe notebookA
+        }
+        ()
+      }
+    }
+
+    "return Not found" when {
+      "notebook does not exists" in {
+        Get(s"/$apiPrefix/${Id.randomId}/notebook") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+  }
+
+  "POST /workflows/:id/notebook" should {
+    "create notebook" in {
+      val notebook = "notebook content"
+      Post(s"/$apiPrefix/${Id.randomId}/notebook", notebook) ~>
+        addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        status should be(StatusCodes.Created)
+      }
+      ()
+    }
+  }
+
   def assertFailureDescriptionHasVersionInfo(fd: FailureDescription): Unit = {
     fd.code shouldBe FailureCode.IncorrectWorkflow
     fd.details should (
@@ -1017,6 +1057,13 @@ class WorkflowsApiSpec
     storage.saveString(noVersionWorkflowId, noVersionWorkflow)
     storage.saveString(obsoleteVersionWorkflowId, obsoleteVersionWorkflow)
     storage.saveString(incorrectVersionFormatWorkflowId, incorrectVersionFormatWorkflow)
+    storage
+  }
+
+  def mockNotebookStorage(): NotebookStorage = {
+    val storage = new TestNotebookStorage
+    storage.save(workflowAId, notebookA)
+    storage.save(workflowBId, notebookB)
     storage
   }
 
@@ -1073,6 +1120,19 @@ class WorkflowsApiSpec
 
     def saveString(id: Id, stringWorkflow: String): Future[Unit] = {
       Future.successful(stringStorage.put(id, stringWorkflow))
+    }
+  }
+
+  class TestNotebookStorage extends NotebookStorage {
+
+    val notebooks: TrieMap[Id, String] = TrieMap()
+
+    override def get(id: Id): Future[Option[String]] = {
+      Future.successful(notebooks.get(id))
+    }
+
+    override def save(id: Id, notebook: String): Future[Unit] = {
+      Future.successful(notebooks.put(id, notebook))
     }
   }
 }

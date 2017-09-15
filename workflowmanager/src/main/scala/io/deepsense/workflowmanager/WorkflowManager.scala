@@ -87,4 +87,20 @@ trait WorkflowManager {
    *         for the specified id.
    */
   def getResultsUploadTime(workflowId: Workflow.Id): Future[Option[DateTime]]
+
+  /**
+   * Returns a notebook for workflow with the specified id.
+   *
+   * @param workflowId Id of the workflow.
+   * @return Notebook with the id as an object or None if the notebook does not exist.
+   */
+  def getNotebook(workflowId: Workflow.Id): Future[Option[String]]
+
+  /**
+   * Saves a notebook for workflow with the specified id.
+   *
+   * @param workflowId Id of the workflow.
+   * @param notebook Notebook to be saved.
+   */
+  def saveNotebook(workflowId: Workflow.Id, notebook: String): Future[Unit]
 }

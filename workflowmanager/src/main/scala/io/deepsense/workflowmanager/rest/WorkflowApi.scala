@@ -16,7 +16,6 @@ import spray.http._
 import spray.httpx.marshalling.Marshaller
 import spray.httpx.unmarshalling.Unmarshaller
 import spray.json._
-import spray.routing
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
@@ -245,6 +244,27 @@ abstract class WorkflowApi @Inject() (
                         case Success(saved) => complete(StatusCodes.Created, saved)
                         case Failure(exception) => failWith(exception)
                       }
+                    }
+                  }
+                }
+              }
+            } ~
+            path(JavaUUID / "notebook") { workflowId =>
+              get {
+                withUserContext { userContext =>
+                  complete {
+                    workflowManagerProvider.forContext(userContext)
+                      .getNotebook(workflowId)
+                  }
+                }
+              } ~
+              post {
+                withUserContext { userContext =>
+                  entity(as[String]) { notebook =>
+                    onComplete(workflowManagerProvider.forContext(userContext)
+                      .saveNotebook(workflowId, notebook)) {
+                      case Success(_) => complete(StatusCodes.Created)
+                      case Failure(exception) => failWith(exception)
                     }
                   }
                 }
