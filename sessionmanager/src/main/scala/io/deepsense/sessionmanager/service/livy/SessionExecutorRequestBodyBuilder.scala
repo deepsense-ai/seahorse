@@ -19,7 +19,6 @@ import io.deepsense.sessionmanager.service.HostAddressResolver
   *
   * @param className Class name of the application to execute.
   * @param applicationJarPath Path to JAR with the application code.
-  * @param queueHost MQ address.
   */
 class SessionExecutorRequestBodyBuilder @Inject() (
   @Named("session-executor.parameters.class-name") private val className: String,
@@ -32,7 +31,9 @@ class SessionExecutorRequestBodyBuilder @Inject() (
   @Named("session-executor.parameters.workflow-manager.host") private val wmHost: String,
   @Named("session-executor.parameters.workflow-manager.port") private val wmPort: String,
   @Named("session-executor.parameters.workflow-manager.autodetect-host")
-  private val wmHostAuto: Boolean
+  private val wmHostAuto: Boolean,
+  @Named("session-executor.parameters.workflow-manager.username") private val wmUsername: String,
+  @Named("session-executor.parameters.workflow-manager.password")private val wmPassword: String
 ) extends RequestBodyBuilder {
 
   private val wmAddress = if (wmHostAuto) {
@@ -52,8 +53,9 @@ class SessionExecutorRequestBodyBuilder @Inject() (
     * when executed, will spawn Session Executor
     *
     * @param workflowId An identifier of a workflow that SE will operate on.
+    * @param userId The identifier of the user initiating this action.
     */
-  def createSession(workflowId: Id): Create = {
+  def createSession(workflowId: Id, userId: String): Create = {
     Create(
       applicationJarPath,
       className,
@@ -63,7 +65,10 @@ class SessionExecutorRequestBodyBuilder @Inject() (
         "--message-queue-port", queuePort.toString,
         "--wm-address", wmAddress,
         "-j", workflowId.toString(),
-        "-d", getFileName(depsZipPath)
+        "-d", getFileName(depsZipPath),
+        "--wm-username", wmUsername,
+        "--wm-password", wmPassword,
+        "--user-id", userId
       ),
       files = Seq(depsZipPath),
       conf = Map(
@@ -74,6 +79,6 @@ class SessionExecutorRequestBodyBuilder @Inject() (
   }
 
   private def getFileName(path: String): String = {
-    new File(new URI(path).getPath()).getName
+    new File(new URI(path).getPath).getName
   }
 }

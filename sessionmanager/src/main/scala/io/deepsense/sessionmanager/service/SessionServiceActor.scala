@@ -40,8 +40,8 @@ class SessionServiceActor @Inject()(
         handleKill(id) pipeTo sender()
       case ListRequest() =>
         handleList() pipeTo sender()
-      case CreateRequest(id) =>
-        handleCreate(id) pipeTo sender()
+      case CreateRequest(workflowId, userId) =>
+        handleCreate(workflowId, userId) pipeTo sender()
     }
   }
 
@@ -62,10 +62,10 @@ class SessionServiceActor @Inject()(
     } yield seqRunning ++ seqCreating
   }
 
-  private def handleCreate(id: Id): Future[Id] = {
+  private def handleCreate(id: Id, userId: String): Future[Id] = {
     sessionStorage.create(id).flatMap {
       case Right(CreateSucceeded(version)) =>
-        val livyBatch = livyClient.createSession(id)
+        val livyBatch = livyClient.createSession(id, userId)
         livyBatch.onFailure {
           case ex => sessionStorage.delete(id, version)
         }
@@ -75,7 +75,7 @@ class SessionServiceActor @Inject()(
               case Right(SetBatchIdSucceeded(_)) =>
                 Future.successful(id)
               case Left(OptimisticLockFailed()) =>
-                livyClient.killSession(batch.id).flatMap(_ => handleCreate(id))
+                livyClient.killSession(batch.id).flatMap(_ => handleCreate(id, userId))
             }
         }
       case Left(CreateFailed()) => Future.successful(id)
@@ -163,5 +163,5 @@ object SessionServiceActor {
   case class GetRequest(id: Id) extends Request
   case class KillRequest(id: Id) extends Request
   case class ListRequest() extends Request
-  case class CreateRequest(workflowId: Id) extends Request
+  case class CreateRequest(workflowId: Id, userId: String) extends Request
 }

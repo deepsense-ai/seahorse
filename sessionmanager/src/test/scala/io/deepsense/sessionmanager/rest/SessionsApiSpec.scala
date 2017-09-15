@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import spray.http.StatusCodes
+import spray.http.{HttpRequest, StatusCodes}
 import spray.httpx.SprayJsonSupport
 import spray.json._
 import spray.routing.Route
@@ -72,6 +72,7 @@ class SessionsApiSpec
 
   "GET /sessions" should {
     "list all sessions" in {
+      val userId: String = Id.randomId.toString
       val workflowId1 = Id.randomId
       val workflowId2 = Id.randomId
       val workflowId3 = Id.randomId
@@ -88,7 +89,7 @@ class SessionsApiSpec
       when(service.listSessions())
         .thenReturn(Future.successful(ListSessionsResponse(sessions)))
 
-      Get(s"/$apiPrefix") ~> testRoute(service) ~> check {
+      Get(s"/$apiPrefix").withUserId(userId) ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         responseAs[ListSessionsResponse]
           sessions.map(s => (s.workflowId, s.status)) should contain theSameElementsAs
@@ -98,18 +99,24 @@ class SessionsApiSpec
             (workflowId3, status3))
       }
     }
+    "return 400 Bad Request when X-Seahorse-UserId is not present" in {
+      Get(s"/$apiPrefix") ~> testRoute(mock[SessionService]) ~> check {
+        status shouldBe StatusCodes.BadRequest
+      }
+    }
   }
 
   "GET /sessions/:id" should {
     "return session" when {
       "session exists" in {
         val workflowId: Id = Id.randomId
+        val userId: String = Id.randomId.toString
         val sessionStatus: Status.Value = Status.Error
         val s = session(workflowId, sessionStatus)
         val service = mock[SessionService]
         when(service.getSession(workflowId)).thenReturn(Future.successful(Some(s)))
 
-        Get(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
+        Get(s"/$apiPrefix/$workflowId").withUserId(userId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.OK
           val returnedSession = responseAs[Envelope[Session]].content
           returnedSession.workflowId shouldBe workflowId
@@ -120,11 +127,17 @@ class SessionsApiSpec
     "return NotFound" when {
       "session does not exist" in {
         val service = mock[SessionService]
+        val userId: String = Id.randomId.toString
         when(service.getSession(any())).thenReturn(Future.successful(None))
 
-        Get(s"/$apiPrefix/${Id.randomId}") ~> testRoute(service) ~> check {
+        Get(s"/$apiPrefix/${Id.randomId}").withUserId(userId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.NotFound
         }
+      }
+    }
+    "return 400 Bad Request when X-Seahorse-UserId is not present" in {
+      Get(s"/$apiPrefix/${Id.randomId}") ~> testRoute(mock[SessionService]) ~> check {
+        status shouldBe StatusCodes.BadRequest
       }
     }
   }
@@ -132,15 +145,22 @@ class SessionsApiSpec
   "POST /sessions" should {
     "return a session" in {
       val workflowId: Id = Id.randomId
-      val sessionStatus: Status.Value = Status.Error
+      val userId: String = Id.randomId.toString
       val s = workflowId
       val service = mock[SessionService]
-      when(service.createSession(workflowId)).thenReturn(Future.successful(s))
+      when(service.createSession(workflowId, userId)).thenReturn(Future.successful(s))
 
-      Post(s"/$apiPrefix", CreateSession(workflowId)) ~> testRoute(service) ~> check {
+      Post(s"/$apiPrefix", CreateSession(workflowId))
+        .withUserId(userId) ~> testRoute(service) ~> check {
+
         status shouldBe StatusCodes.OK
         val returnedSessionId = responseAs[Envelope[Id]].content
         returnedSessionId shouldBe workflowId
+      }
+    }
+    "return 400 Bad Request when X-Seahorse-UserId is not present" in {
+      Post(s"/$apiPrefix", CreateSession(Id.randomId)) ~> testRoute(mock[SessionService]) ~> check {
+        status shouldBe StatusCodes.BadRequest
       }
     }
   }
@@ -148,10 +168,11 @@ class SessionsApiSpec
   "DELETE /sessions/:id" should {
     "pass killing request to the service" in {
       val workflowId: Id = Id.randomId
+      val userId: String = Id.randomId.toString
       val service = mock[SessionService]
       when(service.killSession(workflowId)).thenReturn(Future.successful(()))
 
-      Delete(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
+      Delete(s"/$apiPrefix/$workflowId").withUserId(userId)  ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         verify(service, times(1)).killSession(workflowId)
       }
@@ -160,5 +181,10 @@ class SessionsApiSpec
 
   private def session(workflowId: Id, status: Status.Value): Session = {
     Session(LivySessionHandle(workflowId, 0), status)
+  }
+
+  private implicit class UserIdAddition(httpRequest: HttpRequest) {
+    def withUserId(userId: String): HttpRequest =
+      addHeader("X-Seahorse-UserId", userId)(httpRequest)
   }
 }

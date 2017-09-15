@@ -28,8 +28,8 @@ class SessionService @Inject() (
     (serviceActor ? SessionServiceActor.GetRequest(workflowId)).mapTo[Option[Session]]
   }
 
-  def createSession(workflowId: Id): Future[Id] = {
-    (serviceActor ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Id]
+  def createSession(workflowId: Id, userId: String): Future[Id] = {
+    (serviceActor ? SessionServiceActor.CreateRequest(workflowId, userId)).mapTo[Id]
   }
 
   def listSessions(): Future[ListSessionsResponse] = {

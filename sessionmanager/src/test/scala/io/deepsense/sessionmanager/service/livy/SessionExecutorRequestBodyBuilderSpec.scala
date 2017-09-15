@@ -23,6 +23,9 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
       val wmHost = "wmhost"
       val wmPort = "9080"
       val wmAddress = s"$wmScheme://$wmHost:$wmPort"
+      val wmUsername = "SomeUsername"
+      val wmPassword = "SomePassword"
+      val userId = "SomeUserId"
 
       val builder = new SessionExecutorRequestBodyBuilder(
         className,
@@ -34,10 +37,12 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
         wmScheme,
         wmHost,
         wmPort,
-        false
+        false,
+        wmUsername,
+        wmPassword
       )
 
-      val request = builder.createSession(workflowId)
+      val request = builder.createSession(workflowId, userId)
 
       val expected = Create(
         jarPath,
@@ -48,7 +53,10 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
           "--message-queue-port", queuePort.toString,
           "--wm-address", wmAddress,
           "-j", workflowId.toString(),
-          "-d", depsFile
+          "-d", depsFile,
+          "--wm-username", wmUsername,
+          "--wm-password", wmPassword,
+          "--user-id", userId
         ),
         Seq(
           depsPath

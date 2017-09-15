@@ -9,7 +9,7 @@ import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList}
 
 trait Livy {
-  def createSession(workflowId: Id): Future[Batch]
+  def createSession(workflowId: Id, userId: String): Future[Batch]
 
   def killSession(id: Int): Future[Boolean]
 

@@ -3,17 +3,19 @@ services:
   workflowmanager:
     ports:
      - "9080:9080"
-    image: docker-registry.intra.codilime.com/tap/deepsense-workflowmanager
+    image: docker-registry.intra.codilime.com/tap/deepsense-workflowmanager:seahorse_on_tap_multiuser-latest
   sessionmanager:
     ports:
      - "9082:9082"
-    image: docker-registry.intra.codilime.com/tap/deepsense-sessionmanager
+    image: docker-registry.intra.codilime.com/tap/deepsense-sessionmanager:seahorse_on_tap_multiuser-latest
     environment:
       - LIVY_BASE_URL=http://livy.seahorse.gotapaas.eu
       - MQ_HOST=10.10.10.110
       - MQ_PORT=$GENERATED_MQ_PORT
       - WM_HOST=10.10.10.110
       - WM_PORT=$GENERATED_WM_PORT
+      - WM_AUTH_USER=Some_User
+      - WM_AUTH_PASS=Some_Password
       - SESSION_EXECUTOR_PATH=hdfs://nameservice1/tmp/we-dev.jar
       - SESSION_EXECUTOR_DEPS_PATH=hdfs://nameservice1/tmp/we-deps-dev.zip
       - SM_MQ_HOST=rabbitmq
@@ -21,7 +23,7 @@ services:
     links:
       - rabbitmq
   frontend:
-    image: docker-registry.intra.codilime.com/tap/deepsense-frontend
+    image: docker-registry.intra.codilime.com/tap/deepsense-frontend:seahorse_on_tap_multiuser-latest
     environment:
       - API_HOST=http://localhost
       - API_PORT=8080
@@ -38,13 +40,13 @@ services:
       - sessionmanager
       - notebooks
   rabbitmq:
-    image: docker-registry.intra.codilime.com/tap/deepsense-rabbitmq
+    image: docker-registry.intra.codilime.com/tap/deepsense-rabbitmq:seahorse_on_tap_multiuser-latest
     ports:
      - "15674:15674"
      - "15672:15672"
      - "5672:5672"
   notebooks:
-    image: docker-registry.intra.codilime.com/tap/deepsense-notebooks
+    image: docker-registry.intra.codilime.com/tap/deepsense-notebooks:seahorse_on_tap_multiuser-latest
     links:
       - workflowmanager
       - rabbitmq
@@ -57,7 +59,7 @@ services:
       - HEARTBEAT_INTERVAL=2.0
       - MISSED_HEARTBEAT_LIMIT=30
   proxy:
-    image: docker-registry.intra.codilime.com/tap/deepsense-proxy
+    image: docker-registry.intra.codilime.com/tap/deepsense-proxy:seahorse_on_tap_multiuser-latest
     ports:
       - "8080:8080"
     environment:

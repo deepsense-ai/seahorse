@@ -44,13 +44,14 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
       "session does not exist" should {
         val livy = mock[Livy]
         val workflowId = Id.randomId
+        val userId = Id.randomId.toString
         val Some(batchId) = Some(5)
         val batchStatus = BatchState.Running
-        when(livy.createSession(workflowId))
+        when(livy.createSession(workflowId, userId))
           .thenReturn(Future.successful(Batch(batchId, batchStatus)))
         "create a session" in withActor(livy) {
           actor =>
-            whenReady(askCreate(actor, workflowId)) {
+            whenReady(askCreate(actor, workflowId, userId)) {
               _ shouldBe workflowId
             }
         }
@@ -58,6 +59,7 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
       "session exists" should {
         val row = randomRow()
         val workflowId: Id = row.workflowId
+        val userId = Id.randomId.toString
         val livy = mock[Livy]
         val batch = Batch(row.optBatchId.get, BatchState.Running)
         val expectedSession = Session(workflowId, batch)
@@ -65,17 +67,17 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
           .thenReturn(Future.successful(Some(batch)))
         "not create a new batch session but return existing" in
           withActor(livy, storageWithRows(row)) { actor =>
-            whenReady(askCreate(actor, workflowId)) {
+            whenReady(askCreate(actor, workflowId, userId)) {
               sessionId =>
                 sessionId shouldBe expectedSession.workflowId
-                verify(livy, never()).createSession(mockito.any())
+                verify(livy, never()).createSession(mockito.any(), mockito.any())
             }
           }
         "result in one batch in livy" in withActor(livy, storageWithRows(row)) { actor =>
-          whenReady(askCreate(actor, workflowId)) {
+          whenReady(askCreate(actor, workflowId, userId)) {
             sessionId =>
               sessionId shouldBe expectedSession.workflowId
-              verify(livy, never()).createSession(mockito.any())
+              verify(livy, never()).createSession(mockito.any(), mockito.any())
           }
         }
       }
@@ -235,8 +237,8 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
     (who ? SessionServiceActor.ListRequest()).mapTo[List[Session]]
   }
 
-  private def askCreate(who: ActorRef, workflowId: Id): Future[Id] = {
-    (who ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Id]
+  private def askCreate(who: ActorRef, workflowId: Id, userId: String): Future[Id] = {
+    (who ? SessionServiceActor.CreateRequest(workflowId, userId)).mapTo[Id]
   }
 
   private def randomRow(withBatch: Boolean = true): SessionRow =
