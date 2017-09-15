@@ -286,7 +286,7 @@ private object MissingValuesHandlerUtils {
         }
       }): _*)
 
-    context.dataFrameBuilder.buildDataFrame(resultSparkDF)
+    context.dataFrameBuilder.buildDataFrame(df.schema, resultSparkDF.rdd)
   }
 
 }

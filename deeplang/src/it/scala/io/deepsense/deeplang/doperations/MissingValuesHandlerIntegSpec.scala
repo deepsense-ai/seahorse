@@ -20,7 +20,6 @@ import java.sql.Timestamp
 
 import scala.collection.JavaConverters._
 
-import org.apache.spark.SparkException
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
@@ -28,7 +27,8 @@ import org.scalatest.Matchers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter, CategoricalMetadata, CategoricalMapper}
 import io.deepsense.deeplang.doperations.exceptions.{WrongReplacementValueException, MultipleTypesReplacementException}
 import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters.{IndexRangeColumnSelection, MultipleColumnSelection}
@@ -63,16 +63,20 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
 
       val resultDf = executeOperation(handler, df)
 
-      val expectedRows = List(
-        Row(1.0, null, false),
-        Row(2.0, null, false),
-        Row(4.0, 4.0, false),
-        Row(5.0, 5.0, false)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(1.0, null, false),
+          Row(2.0, null, false),
+          Row(4.0, 4.0, false),
+          Row(5.0, 5.0, false)),
+        StructType(List(
+          StructField("value1", DoubleType, nullable = true),
+          StructField("value2", DoubleType, nullable = true),
+          StructField("prefix_value1", BooleanType, nullable = false)
+        ))
       )
 
-      resultDf.sparkDataFrame.columns shouldBe Array(
-        "value1", "value2", "prefix_value1")
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "remove columns with empty values while using REMOVE_COLUMN strategy" in {
@@ -101,16 +105,22 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Some("prefix_")),
         df)
 
-      val expectedRows = List(
-        Row(1.0, null, false, true, false),
-        Row(2.0, null, false, false, false),
-        Row(3.0, null, false, false, false),
-        Row(4.0, null, false, false, true),
-        Row(5.0, null, false, false, false)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(1.0, null, false, true, false),
+          Row(2.0, null, false, false, false),
+          Row(3.0, null, false, false, false),
+          Row(4.0, null, false, false, true),
+          Row(5.0, null, false, false, false)),
+        StructType(List(
+          StructField("value1", DoubleType, nullable = true),
+          StructField("value4", StringType, nullable = true),
+          StructField("prefix_value1", BooleanType, nullable = false),
+          StructField("prefix_value2", BooleanType, nullable = false),
+          StructField("prefix_value3", BooleanType, nullable = false)))
       )
-      resultDf.sparkDataFrame.columns shouldBe Array(
-        "value1", "value4", "prefix_value1", "prefix_value2", "prefix_value3")
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "replace numerics while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
@@ -137,16 +147,19 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
 
       val resultDf = executeOperation(handler, df)
 
-      val expectedCols = Array("value1", "value2", "prefix_value1")
-
-      val expectedRows = List(
-        Row(1.0, null, false),
-        Row(2.0, null, false),
-        Row(3.0, null, true),
-        Row(4.0, null, false)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(1.0, null, false),
+          Row(2.0, null, false),
+          Row(3.0, null, true),
+          Row(4.0, null, false)),
+        StructType(List(
+          StructField("value1", DoubleType, nullable = true),
+          StructField("value2", StringType, nullable = true),
+          StructField("prefix_value1", BooleanType, nullable = false)))
       )
-      resultDf.sparkDataFrame.columns shouldBe expectedCols
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "replace strings while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
@@ -167,16 +180,20 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val resultDf = executeOperation(
         MissingValuesHandler.replaceWithCustomValue(columnSelection, "ccc"), df)
 
-      val expectedCols = Array("value1", "value2")
-
-      val expectedRows = List(
-        Row("aaa", null),
-        Row("bbb", null),
-        Row("ccc", null),
-        Row("ddd", null)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row("aaa", null),
+          Row("bbb", null),
+          Row("ccc", null),
+          Row("ddd", null)
+        ),
+        StructType(List(
+          StructField("value1", StringType, nullable = true),
+          StructField("value2", StringType, nullable = true)
+        ))
       )
-      resultDf.sparkDataFrame.columns shouldBe expectedCols
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "replace booleans while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
@@ -197,16 +214,20 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val resultDf = executeOperation(
         MissingValuesHandler.replaceWithCustomValue(columnSelection, "true"), df)
 
-      val expectedCols = Array("value1", "value2")
-
-      val expectedRows = List(
-        Row(true, null),
-        Row(false, null),
-        Row(true, null),
-        Row(false, null)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(true, null),
+          Row(false, null),
+          Row(true, null),
+          Row(false, null)
+        ),
+        StructType(List(
+          StructField("value1", BooleanType, nullable = true),
+          StructField("value2", StringType, nullable = true))
+        )
       )
-      resultDf.sparkDataFrame.columns shouldBe expectedCols
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "replace categoricals while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
@@ -231,15 +252,31 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val resultDf = executeOperation(
         MissingValuesHandler.replaceWithCustomValue(columnSelection, "blue"), df)
 
-      val expectedCols = Array("value1", "value2", "value3")
-      val expectedRows = List(
-        Row(1, 0, null),
-        Row(1, 1, null),
-        Row(0, 1, null),
-        Row(0, 0, null)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(1, 0, null),
+          Row(1, 1, null),
+          Row(0, 1, null),
+          Row(0, 0, null)
+        ),
+        StructType(List(
+          StructField(
+            "value1",
+            IntegerType,
+            nullable = true,
+            metadata = createMetadata(Seq("red", "blue"))),
+          StructField(
+            "value2",
+            IntegerType,
+            nullable = true,
+            metadata = createMetadata(Seq("green", "blue"))),
+          StructField(
+            "value3",
+            StringType,
+            nullable = true)))
       )
-      resultDf.sparkDataFrame.columns shouldBe expectedCols
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "replace timestamps while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
@@ -268,15 +305,20 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val resultDf = executeOperation(
         MissingValuesHandler.replaceWithCustomValue(columnSelection, "2015-03-30 15:25:00.0"), df)
 
-      val expectedCols = Array("value1", "value2")
-      val expectedRows = List(
-        Row(t1, null),
-        Row(t2, null),
-        Row(t3, null),
-        Row(t4, null)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(t1, null),
+          Row(t2, null),
+          Row(t3, null),
+          Row(t4, null)
+        ),
+        StructType(List(
+          StructField("value1", TimestampType, nullable = true),
+          StructField("value2", StringType, nullable = true)
+        ))
       )
-      resultDf.sparkDataFrame.columns shouldBe expectedCols
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "throw an exception with different types using REPLACE_WITH_CUSTOM_VALUE strategy" in {
@@ -346,50 +388,75 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
 
       val resultDf = executeOperation(handler, df)
 
-      val expectedRows = List(
-        Row(1.0, "aaa", null, false, true, true),
-        Row(1.0, "aaa", null, true, false, true),
-        Row(1.0, "aaa", null, false, false, true),
-        Row(1.0, "aaa", null, false, false, true),
-        Row(100.0, "bbb", null, false, false, true)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(1.0, "aaa", null, false, true, true),
+          Row(1.0, "aaa", null, true, false, true),
+          Row(1.0, "aaa", null, false, false, true),
+          Row(1.0, "aaa", null, false, false, true),
+          Row(100.0, "bbb", null, false, false, true)
+        ),
+        StructType(List(
+          StructField("value1", DoubleType, nullable = true),
+          StructField("value2", StringType, nullable = true),
+          StructField("value3", StringType, nullable = true),
+          StructField("prefix_value1", BooleanType, nullable = false),
+          StructField("prefix_value2", BooleanType, nullable = false),
+          StructField("prefix_value3", BooleanType, nullable = false)
+        ))
       )
-      resultDf.sparkDataFrame.columns shouldBe Array(
-        "value1", "value2", "value3", "prefix_value1", "prefix_value2", "prefix_value3")
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
     "replace with mode using REPLACE_WITH_MODE strategy in REMOVE mode" in {
       val values = Seq(
-        Row(1.0, null, null),
-        Row(null, 2.0, null),
-        Row(1.0, 2.0, null),
-        Row(1.0, 2.0, null),
-        Row(100.0, 100.0, null)
+        Row(1.0, null, "red", null),
+        Row(null, 2.0, "blue", null),
+        Row(1.0, 2.0, "blue", null),
+        Row(1.0, 2.0, "blue", null),
+        Row(100.0, 100.0, null, null)
       )
 
-      val df = createDataFrame(values, StructType(List(
+      val rawDf = createDataFrame(values, StructType(List(
         StructField("value1", DoubleType, nullable = true),
         StructField("value2", DoubleType, nullable = true),
-        StructField("value3", StringType, nullable = true)
+        StructField("value3", StringType, nullable = true),
+        StructField("value4", StringType, nullable = true)
       )))
 
+      val df = CategoricalMapper(rawDf, executionContext.dataFrameBuilder).categorized("value3")
+
       val columnSelection = MultipleColumnSelection(
-        Vector(IndexRangeColumnSelection(Some(0), Some(2))))
+        Vector(IndexRangeColumnSelection(Some(0), Some(3))))
       val resultDf = executeOperation(
         MissingValuesHandler.replaceWithMode(columnSelection,
           MissingValuesHandler.EmptyColumnsMode.REMOVE), df)
 
-      val expectedRows = List(
-        Row(1.0, 2.0),
-        Row(1.0, 2.0),
-        Row(1.0, 2.0),
-        Row(1.0, 2.0),
-        Row(100.0, 100.0)
+      val expectedDf = createDataFrame(
+        Seq(
+          Row(1.0, 2.0, 1),
+          Row(1.0, 2.0, 0),
+          Row(1.0, 2.0, 0),
+          Row(1.0, 2.0, 0),
+          Row(100.0, 100.0, 0)
+        ),
+        StructType(List(
+          StructField(
+            "value1", DoubleType, nullable = true),
+          StructField(
+            "value2", DoubleType, nullable = true),
+          StructField(
+            "value3", IntegerType, nullable = true, metadata = createMetadata(Seq("red", "blue")))
+        ))
       )
-      resultDf.sparkDataFrame.columns shouldBe Array("value1", "value2")
-      resultDf.sparkDataFrame.collectAsList().asScala.toList shouldBe expectedRows
+
+      assertDataFramesEqual(resultDf, expectedDf)
     }
 
   }
+
+  private def createMetadata(categoricalValues: Seq[String]) =
+    MappingMetadataConverter.mappingToMetadata(CategoriesMapping(categoricalValues))
 
 }
