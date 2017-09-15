@@ -31,6 +31,7 @@ var config = require('./package.json'),
     build = config.files.build,
     libs = config.files.libs,
     devMode = !!gutil.env.dev;
+client.path = __dirname + '/' + client.path;
 
 var BROWSER_SYNC_RELOAD_DELAY = 2000;
 
