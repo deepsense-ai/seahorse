@@ -43,10 +43,7 @@ class EditorController {
     this.$canvas.bind('wheel', (e) => {
       const cursorX = e.originalEvent.clientX - this.$element[0].getBoundingClientRect().left;
       const cursorY = e.originalEvent.clientY - this.$element[0].getBoundingClientRect().top;
-      let zoomDelta = ZOOM_STEP;
-      if (e.originalEvent.deltaY < 0) {
-        zoomDelta = -1 * ZOOM_STEP;
-      }
+      const zoomDelta = e.originalEvent.deltaY / 1000;
       this.CanvasService.zoomToPosition(zoomDelta, cursorX, cursorY);
     });
 
