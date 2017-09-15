@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import java.io._
+import java.net.UnknownHostException
 import java.nio.file.{Files, Paths}
 import java.util.UUID
 
@@ -30,7 +31,7 @@ import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame.ReadDataFrameParameters
-import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
+import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, DeepSenseUnknownHostException}
 import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe._
@@ -65,6 +66,7 @@ case class ReadDataFrame()
       }
       DataFrame.fromSparkDataFrame(dataframe)
     } catch {
+      case e: UnknownHostException => throw DeepSenseUnknownHostException(e)
       case e: IOException => throw DeepSenseIOException(e)
     }
   }
