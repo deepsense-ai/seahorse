@@ -28,46 +28,5 @@
         {{::controller.description}}
       </p>
     </header>
-    <section ng-if="controller.isReportMode">
-      <header>
-        <p class="o-state__status label font-bold"
-           ng-class="::{
-            'label-success': controller.state.status === 'status_completed',
-            'label-danger': controller.state.status === 'status_failed',
-            'label-warning': controller.state.status === 'status_aborted'
-           }" uib-tooltip="Status" tooltip-placement="left" tooltip-append-to-body="true">
-          {{ ::controller.getVerboseStatus() }}
-        </p>
-        <button ng-show="::controller.state.status === 'status_failed'"
-                ng-click="controller.showErrorMessage()"
-                class="btn btn-xs btn-success action-text fa fa-exclamation-triangle
-                  o-error-btn o-error-btn--full-width">
-          <span class="action-text__text-element">Click here to show errors</span>
-        </button>
-      </header>
-      <p class="o-state__time text-right text-uppercase font-bold navy-bg">
-        <span class="block">Last execution started</span>
-        <i class="fa fa-clock-o"></i>
-        <time datetime="{{::controller.state.started}}"
-              class="text-right">
-          {{::controller.state.started | date:'medium'}}
-        </time>
-      </p>
-      <p class="o-state__time text-right text-uppercase font-bold lazur-bg">
-        <span class="block">Last execution ended</span>
-        <i class="fa fa-clock-o"></i>
-        <time datetime="{{::controller.state.ended}}"
-              class="text-right">
-          {{::controller.state.ended | date:'medium'}}
-        </time>
-      </p>
-      <p class="o-state__time text-right text-uppercase font-bold gray-bg"
-         ng-show="::(controller.state.ended && controller.state.started)">
-        <span class="block">Execution time</span>
-        <i class="fa fa-clock-o"></i>
-        <time-diff start="controller.state.started"
-                   end="controller.state.ended"></time-diff>
-      </p>
-    </section>
   </section>
 </aside>

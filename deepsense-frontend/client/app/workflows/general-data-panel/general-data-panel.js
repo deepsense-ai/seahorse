@@ -12,7 +12,8 @@ function GeneralDataPanel() {
       'state': '=',
       'isReportMode': '='
     },
-    controller: 'GeneralDataPanelController as controller',
+    controller: () => {},
+    controllerAs: 'controller',
     bindToController: true
   };
 }
