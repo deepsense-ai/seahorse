@@ -11,31 +11,32 @@
       "9bceb22b-10d4-4c9d-9967-bfc4f2ba5dc5": {
         "status": "COMPLETED", 
         "results": [
-          "ea11251b-8f96-4966-a93c-ca05316b4acc"
+          "2d95a64c-c7f0-4e35-855b-e4723d5a147c"
         ], 
         "error": null
       }, 
       "06753647-d497-427c-b36e-671f7dcc02a3": {
         "status": "COMPLETED", 
         "results": [
-          "7342632a-faeb-4eda-a4e8-068620877d90"
+          "09f55f2d-d360-4151-afe0-e4ea63c54eef"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "7342632a-faeb-4eda-a4e8-068620877d90": {
+      "09f55f2d-d360-4151-afe0-e4ea63c54eef": {
         "report": {
+          "reportType": "Empty", 
           "tables": {}, 
           "distributions": {}, 
           "schema": null
         }
       }, 
-      "ea11251b-8f96-4966-a93c-ca05316b4acc": {
+      "2d95a64c-c7f0-4e35-855b-e4723d5a147c": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -51,10 +52,9 @@
                   "4"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "column1", 
                 "column2"
@@ -82,13 +82,12 @@
                   "8"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "column1": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "4", 
                 "mean": "2.5", 
@@ -99,7 +98,6 @@
             }, 
             "column2": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "8", 
                 "mean": "6.5", 
@@ -113,11 +111,13 @@
             "fields": [
               {
                 "dataType": "double", 
+                "deeplangType": "numeric", 
                 "name": "column1", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
+                "deeplangType": "numeric", 
                 "name": "column2", 
                 "nullable": true
               }

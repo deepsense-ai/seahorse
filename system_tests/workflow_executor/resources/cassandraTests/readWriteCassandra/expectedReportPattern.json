@@ -4,7 +4,7 @@
       "02f14ccc-c877-c242-bb82-534d0cac90d3": {
         "status": "COMPLETED", 
         "results": [
-          "d02ed587-8e3a-4764-8d91-32ea4841f01f"
+          "6f6f1920-692b-4b74-a2ef-ecd07fbd85e4"
         ], 
         "error": null
       }, 
@@ -15,11 +15,11 @@
       }
     }, 
     "resultEntities": {
-      "d02ed587-8e3a-4764-8d91-32ea4841f01f": {
+      "6f6f1920-692b-4b74-a2ef-ecd07fbd85e4": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -35,10 +35,9 @@
                   "3"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "string_col", 
                 "numeric_col", 
@@ -77,19 +76,17 @@
                   "2013-08-05T18:19:02.000Z"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "categorical_col": {
               "subtype": "discrete", 
-              "blockType": "distribution", 
               "name": "categorical_col", 
               "missingValues": 0
             }, 
             "numeric_col": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "7.41", 
                 "mean": "4.629833", 
@@ -100,19 +97,16 @@
             }, 
             "string_col": {
               "subtype": "discrete", 
-              "blockType": "distribution", 
               "name": "string_col", 
               "missingValues": 0
             }, 
             "boolean_col": {
               "subtype": "discrete", 
-              "blockType": "distribution", 
               "name": "boolean_col", 
               "missingValues": 0
             }, 
             "timestamp_col": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "2013-08-05T18:19:03.000Z", 
                 "mean": "2013-08-05T18:19:02.000Z", 
@@ -126,31 +120,31 @@
             "fields": [
               {
                 "dataType": "string", 
-                "metadata": {}, 
+                "deeplangType": "string", 
                 "name": "string_col", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "numeric_col", 
                 "nullable": true
               }, 
               {
                 "dataType": "boolean", 
-                "metadata": {}, 
+                "deeplangType": "boolean", 
                 "name": "boolean_col", 
                 "nullable": true
               }, 
               {
                 "dataType": "string", 
-                "metadata": {}, 
+                "deeplangType": "string", 
                 "name": "categorical_col", 
                 "nullable": true
               }, 
               {
                 "dataType": "timestamp", 
-                "metadata": {}, 
+                "deeplangType": "timestamp", 
                 "name": "timestamp_col", 
                 "nullable": true
               }

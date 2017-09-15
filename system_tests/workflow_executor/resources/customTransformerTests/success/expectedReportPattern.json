@@ -4,31 +4,31 @@
       "f4b2685b-8e80-4887-8683-1ec1edd009d2": {
         "status": "COMPLETED", 
         "results": [
-          "f0498eeb-4199-46df-b638-ef2309ed2235"
+          "51b00f42-9b26-4f01-8661-93ab0ec595e2"
         ], 
         "error": null
       }, 
       "9bceb22b-10d4-4c9d-9967-bfc4f2ba5dc5": {
         "status": "COMPLETED", 
         "results": [
-          "b7135f0e-3d8e-44e2-956a-676ecc14a7ea"
+          "1f0f5a4c-2960-4933-838c-4184f8be2d0c"
         ], 
         "error": null
       }, 
       "06753647-d497-427c-b36e-671f7dcc02a3": {
         "status": "COMPLETED", 
         "results": [
-          "8850d421-dfee-4caf-b7c5-25d36a823623"
+          "17853f72-492b-4208-bbe7-8b474859009e"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "f0498eeb-4199-46df-b638-ef2309ed2235": {
+      "51b00f42-9b26-4f01-8661-93ab0ec595e2": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -44,10 +44,9 @@
                   "4"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "column1", 
                 "column2", 
@@ -81,13 +80,12 @@
                   "8"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "output": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "8", 
                 "mean": "5", 
@@ -98,7 +96,6 @@
             }, 
             "column1": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "4", 
                 "mean": "2.5", 
@@ -109,7 +106,6 @@
             }, 
             "column2": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "8", 
                 "mean": "6.5", 
@@ -123,16 +119,19 @@
             "fields": [
               {
                 "dataType": "double", 
+                "deeplangType": "numeric", 
                 "name": "column1", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
+                "deeplangType": "numeric", 
                 "name": "column2", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
+                "deeplangType": "numeric", 
                 "name": "output", 
                 "nullable": true
               }
@@ -140,18 +139,19 @@
           }
         }
       }, 
-      "8850d421-dfee-4caf-b7c5-25d36a823623": {
+      "17853f72-492b-4208-bbe7-8b474859009e": {
         "report": {
+          "reportType": "Empty", 
           "tables": {}, 
           "distributions": {}, 
           "schema": null
         }
       }, 
-      "b7135f0e-3d8e-44e2-956a-676ecc14a7ea": {
+      "1f0f5a4c-2960-4933-838c-4184f8be2d0c": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -167,10 +167,9 @@
                   "4"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "column1", 
                 "column2"
@@ -198,13 +197,12 @@
                   "8"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "column1": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "4", 
                 "mean": "2.5", 
@@ -215,7 +213,6 @@
             }, 
             "column2": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "8", 
                 "mean": "6.5", 
@@ -229,11 +226,13 @@
             "fields": [
               {
                 "dataType": "double", 
+                "deeplangType": "numeric", 
                 "name": "column1", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
+                "deeplangType": "numeric", 
                 "name": "column2", 
                 "nullable": true
               }

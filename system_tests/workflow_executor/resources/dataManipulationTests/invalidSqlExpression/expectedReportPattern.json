@@ -4,7 +4,7 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "c3808f77-0225-4a46-9929-8d8831f04c61"
+          "3fe70f85-8b27-4df6-ac80-b6a0d5266c8c"
         ], 
         "error": null
       }, 
@@ -22,11 +22,11 @@
       }
     }, 
     "resultEntities": {
-      "c3808f77-0225-4a46-9929-8d8831f04c61": {
+      "3fe70f85-8b27-4df6-ac80-b6a0d5266c8c": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -42,10 +42,9 @@
                   "20"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "employee_id", 
                 "city", 
@@ -121,13 +120,12 @@
                   "1"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "salary": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "12000", 
                 "mean": "6170", 
@@ -136,9 +134,13 @@
               "name": "salary", 
               "missingValues": 0
             }, 
+            "city": {
+              "subtype": "discrete", 
+              "name": "city", 
+              "missingValues": 0
+            }, 
             "employee_id": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "20", 
                 "mean": "10.5", 
@@ -149,7 +151,6 @@
             }, 
             "work_time": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.9125", 
@@ -158,6 +159,34 @@
               "name": "work_time", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "deeplangType": "numeric", 
+                "name": "employee_id", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "deeplangType": "string", 
+                "name": "city", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "deeplangType": "numeric", 
+                "name": "salary", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "deeplangType": "numeric", 
+                "name": "work_time", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

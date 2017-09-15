@@ -9,17 +9,17 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "c14f634e-6195-4b79-a228-6e10edb90882"
+          "6106c4ba-04df-4860-bcd6-23ecd299a5e6"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "c14f634e-6195-4b79-a228-6e10edb90882": {
+      "6106c4ba-04df-4860-bcd6-23ecd299a5e6": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -35,10 +35,9 @@
                   "10"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "col_a", 
                 "col_b", 
@@ -126,13 +125,12 @@
                   "160"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "col_b": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "20", 
                 "mean": "11", 
@@ -143,7 +141,6 @@
             }, 
             "col_c": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "40", 
                 "mean": "22", 
@@ -154,7 +151,6 @@
             }, 
             "col_a": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "10", 
                 "mean": "5.5", 
@@ -165,7 +161,6 @@
             }, 
             "col_d": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "80", 
                 "mean": "44", 
@@ -176,7 +171,6 @@
             }, 
             "col_e": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "160", 
                 "mean": "88", 
@@ -190,31 +184,31 @@
             "fields": [
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "col_a", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "col_b", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "col_c", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "col_d", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "col_e", 
                 "nullable": true
               }

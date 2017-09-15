@@ -4,7 +4,7 @@
       "178880ae-e53d-519c-f819-8731c14fcf23": {
         "status": "COMPLETED", 
         "results": [
-          "dfd8489c-8891-496d-8c51-2ce2f4aa0e60"
+          "ef92f67c-420e-4e47-86e1-2e6ccbc988dc"
         ], 
         "error": null
       }, 
@@ -17,11 +17,11 @@
       }
     }, 
     "resultEntities": {
-      "dfd8489c-8891-496d-8c51-2ce2f4aa0e60": {
+      "ef92f67c-420e-4e47-86e1-2e6ccbc988dc": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -37,10 +37,9 @@
                   "5"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "z", 
                 "y"
@@ -72,13 +71,12 @@
                   "0.5"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "y": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "0.5", 
                 "mean": "0.5", 
@@ -89,7 +87,6 @@
             }, 
             "z": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "5", 
                 "mean": "3", 
@@ -103,13 +100,13 @@
             "fields": [
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "z", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "y", 
                 "nullable": true
               }

@@ -4,7 +4,7 @@
       "806d1a75-7f9b-3de1-3fc9-6f644684835d": {
         "status": "COMPLETED", 
         "results": [
-          "355b9069-e003-4845-b6a3-9e594cc6d6bb"
+          "0a1d01e4-e6fd-4526-9965-33c7f752180f"
         ], 
         "error": null
       }, 
@@ -17,11 +17,11 @@
       }
     }, 
     "resultEntities": {
-      "355b9069-e003-4845-b6a3-9e594cc6d6bb": {
+      "0a1d01e4-e6fd-4526-9965-33c7f752180f": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -37,10 +37,9 @@
                   "4"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "numbers"
               ], 
@@ -62,13 +61,12 @@
                   "4"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "numbers": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "4", 
                 "mean": "2.5", 
@@ -82,7 +80,7 @@
             "fields": [
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "numbers", 
                 "nullable": true
               }

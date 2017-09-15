@@ -11,17 +11,17 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "82e940c4-b507-4278-bcea-4b8ac03b27d3"
+          "4f16f0f4-2135-4ad8-ab84-1ec76437e2b4"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "82e940c4-b507-4278-bcea-4b8ac03b27d3": {
+      "4f16f0f4-2135-4ad8-ab84-1ec76437e2b4": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -37,10 +37,9 @@
                   "50"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "col_a", 
                 "col_b", 
@@ -104,13 +103,12 @@
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "col_b": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "9.75", 
                 "mean": "3.625", 
@@ -121,13 +119,11 @@
             }, 
             "col_c": {
               "subtype": "discrete", 
-              "blockType": "distribution", 
               "name": "col_c", 
               "missingValues": 0
             }, 
             "col_a": {
               "subtype": "discrete", 
-              "blockType": "distribution", 
               "name": "col_a", 
               "missingValues": 0
             }
@@ -136,19 +132,19 @@
             "fields": [
               {
                 "dataType": "string", 
-                "metadata": {}, 
+                "deeplangType": "string", 
                 "name": "col_a", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "col_b", 
                 "nullable": true
               }, 
               {
                 "dataType": "string", 
-                "metadata": {}, 
+                "deeplangType": "string", 
                 "name": "col_c", 
                 "nullable": true
               }

@@ -9,17 +9,17 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "e43af66e-3a00-4948-9e53-8919424f9fc6"
+          "f3225c05-e016-483d-9e70-8a76b9492d82"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "e43af66e-3a00-4948-9e53-8919424f9fc6": {
+      "f3225c05-e016-483d-9e70-8a76b9492d82": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -35,10 +35,9 @@
                   "25"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "unnamed_0", 
                 "unnamed_1", 
@@ -114,13 +113,12 @@
                   "80.1"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "unnamed_0": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "25", 
                 "mean": "13", 
@@ -131,13 +129,11 @@
             }, 
             "unnamed_1": {
               "subtype": "discrete", 
-              "blockType": "distribution", 
               "name": "unnamed_1", 
               "missingValues": 0
             }, 
             "unnamed_2": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "100.1", 
                 "mean": "52.1", 
@@ -148,7 +144,6 @@
             }, 
             "unnamed_3": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "200.1", 
                 "mean": "104.1", 
@@ -157,6 +152,34 @@
               "name": "unnamed_3", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "deeplangType": "numeric", 
+                "name": "unnamed_0", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "deeplangType": "string", 
+                "name": "unnamed_1", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "deeplangType": "numeric", 
+                "name": "unnamed_2", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "deeplangType": "numeric", 
+                "name": "unnamed_3", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

@@ -9,17 +9,17 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "9c5a57b1-694e-4e12-b06a-32715ceb3c12"
+          "ae2b4cd5-9a39-498d-8f47-ac19a4d1e736"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "9c5a57b1-694e-4e12-b06a-32715ceb3c12": {
+      "ae2b4cd5-9a39-498d-8f47-ac19a4d1e736": {
         "report": {
+          "reportType": "DataFrameFull", 
           "tables": {
             "DataFrame Size": {
-              "name": "DataFrame Size", 
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -35,10 +35,9 @@
                   "50"
                 ]
               ], 
-              "blockType": "table"
+              "name": "DataFrame Size"
             }, 
             "Data Sample": {
-              "name": "Data Sample", 
               "columnNames": [
                 "col_a", 
                 "col_b", 
@@ -102,13 +101,12 @@
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ]
               ], 
-              "blockType": "table"
+              "name": "Data Sample"
             }
           }, 
           "distributions": {
             "col_b": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "9.75", 
                 "mean": "3.625", 
@@ -119,13 +117,11 @@
             }, 
             "col_c": {
               "subtype": "discrete", 
-              "blockType": "distribution", 
               "name": "col_c", 
               "missingValues": 0
             }, 
             "col_a": {
               "subtype": "continuous", 
-              "blockType": "distribution", 
               "statistics": {
                 "max": "1", 
                 "mean": "0.5", 
@@ -139,28 +135,19 @@
             "fields": [
               {
                 "dataType": "integer", 
-                "metadata": {
-                  "categorical": {
-                    "blue": 0, 
-                    "values": [
-                      "blue", 
-                      "red"
-                    ], 
-                    "red": 1
-                  }
-                }, 
+                "deeplangType": "numeric", 
                 "name": "col_a", 
                 "nullable": true
               }, 
               {
                 "dataType": "double", 
-                "metadata": {}, 
+                "deeplangType": "numeric", 
                 "name": "col_b", 
                 "nullable": true
               }, 
               {
                 "dataType": "string", 
-                "metadata": {}, 
+                "deeplangType": "string", 
                 "name": "col_c", 
                 "nullable": true
               }
