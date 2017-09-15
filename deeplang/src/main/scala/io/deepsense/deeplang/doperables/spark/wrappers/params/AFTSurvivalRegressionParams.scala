@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.params
 
+import scala.language.reflectiveCalls
+
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._

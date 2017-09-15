@@ -19,10 +19,9 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.choice.ChoiceParam
 
 case class TypeConverter() extends MultiColumnTransformer {
 

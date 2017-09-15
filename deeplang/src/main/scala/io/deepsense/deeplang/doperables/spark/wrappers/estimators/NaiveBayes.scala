@@ -16,11 +16,13 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import scala.language.reflectiveCalls
+
 import org.apache.spark.ml
 import org.apache.spark.ml.classification.{NaiveBayes => SparkNaiveBayes, NaiveBayesModel => SparkNaiveBayesModel}
 
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.NaiveBayes.{Multinomial, ModelType}
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.NaiveBayes.{ModelType, Multinomial}
 import io.deepsense.deeplang.doperables.spark.wrappers.models.NaiveBayesModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param

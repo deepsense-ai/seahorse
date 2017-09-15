@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables.report
 
+import scala.language.reflectiveCalls
 import scala.util.Try
 
 import org.apache.spark.mllib.linalg.DenseMatrix

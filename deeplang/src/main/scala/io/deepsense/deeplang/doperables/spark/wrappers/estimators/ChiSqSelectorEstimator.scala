@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import scala.language.reflectiveCalls
+
 import org.apache.spark.ml
 import org.apache.spark.ml.feature.{ChiSqSelector => SparkChiSqSelector, ChiSqSelectorModel => SparkChiSqSelectorModel}
 
