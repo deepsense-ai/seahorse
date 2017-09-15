@@ -5,12 +5,14 @@
 
 describe('Home test', function () {
   beforeEach(() => {
-    let testModule = angular.module('test', []);
+    let testModule = angular.module('test', ['ui.router']);
 
     angular.mock.module('test');
     angular.mock.module('ui.router');
     angular.mock.module('ds.home');
 
+    require('../../app.run.js').inject(testModule);
+    require('../../app.config.js').inject(testModule);
     require('../home.module.js');
     require('../../common/page.service.js').inject(testModule);
   });
@@ -20,6 +22,9 @@ describe('Home test', function () {
     let ctrl;
 
     beforeEach(angular.mock.inject(($injector, $controller) => {
+      let $state = $injector.get('$state');
+      $state.go('lab.home');
+
       ctrl = $controller('Home');
       PageService = $injector.get('PageService');
     }));

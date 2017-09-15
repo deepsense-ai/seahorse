@@ -8,7 +8,7 @@
 
 /* @ngInject */
 function AppRun($rootScope, PageService) {
-  $rootScope.$on( '$stateChangeStart', () => {
+  $rootScope.$on('$stateChangeStart', () => {
     $rootScope.stateData = {
       isDataLoaded: undefined,
       errorMessage: undefined,
