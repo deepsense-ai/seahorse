@@ -1,1 +1,1 @@
-version in ThisBuild := "1.2.0-BDU-SNAPSHOT"
+version in ThisBuild := "1.2.0-DESKTOP-SNAPSHOT"
