@@ -177,26 +177,6 @@ class SchedulingManager(Service):
         return PortMappings().add(PortMappings.Mapping(60110, 60110))
 
 
-class SchedulingManagerBridgeNetwork(SchedulingManager):
-
-    @classmethod
-    def name(cls):
-        return 'schedulingmanager'
-
-    @classmethod
-    def image_name(cls):
-        return 'schedulingmanager'
-
-    def environment(self):
-        return super(SchedulingManagerBridgeNetwork, self).environment() + \
-               Env(
-                   HOST='0.0.0.0',
-                   JDBC_URL=self.services.Database.internal_jdbc_url(db='schedulingmanager'),
-                   SM_URL='http://{}'.format(self.services.SessionManager.internal_address()),
-                   WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address())) + \
-               self.services.Mail.internal_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
-
-
 class SessionManager(Service):
 
     network_mode = 'host'
@@ -303,26 +283,6 @@ class WorkflowManager(Service):
         ]
 
 
-class WorkflowManagerBridgeNetwork(WorkflowManager):
-
-    network_mode = None
-
-    @classmethod
-    def name(cls):
-        return 'workflowmanager'
-
-    @classmethod
-    def image_name(cls):
-        return 'workflowmanager'
-
-    def environment(self):
-        return super(WorkflowManagerBridgeNetwork, self).environment() + \
-               Env(WM_HOST='0.0.0.0',
-                   WM_PORT=self.port_mapping().get().internal,
-                   JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager'),
-                   DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_datasource_url())
-
-
 class Frontend(Service):
     API_VERSION = None  # This will be set during generation, in runtime
 
@@ -409,24 +369,6 @@ class Notebooks(Service):
         return PortMappings().add(PortMappings.Mapping(8888, 60105))
 
 
-class NotebooksBridgeNetwork(Notebooks):
-
-    network_mode = None
-
-    @classmethod
-    def name(cls):
-        return 'notebooks'
-
-    @classmethod
-    def image_name(cls):
-        return 'notebooks'
-
-    def environment(self):
-        return super(NotebooksBridgeNetwork, self).environment() + \
-               Env(WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address().as_string()),
-                   JUPYTER_LISTENING_IP='0.0.0.0',
-                   JUPYTER_LISTENING_PORT=self.port_mapping().get().internal) \
-               + self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
 
 
 class Authorization(Service):
@@ -488,25 +430,6 @@ class Library(Service):
             Directories.expose(Directories.library, '/library')
         ]
 
-
-class ProxyBridgeNetwork(Proxy):
-
-    network_mode = None
-
-    @classmethod
-    def name(cls):
-        return 'proxy'
-
-    @classmethod
-    def image_name(cls):
-        return 'proxy'
-
-    def environment(self):
-        return super(ProxyBridgeNetwork, self).environment() + \
-               Env(HOST='0.0.0.0')
-
-    def service_address(self, service, name=None):
-        return getattr(self.services, service.name()).internal_address(name).as_string()
 
 
 def custom_frontend(frontend_address):
@@ -588,15 +511,15 @@ class MacConfiguration(Configuration):
 
     services = [
         SessionManagerBridgeNetwork,
-        SchedulingManagerBridgeNetwork,
+        SchedulingManager,
         Mail,
-        ProxyBridgeNetwork,
+        Proxy,
         Frontend,
         Library,
         RabbitMQ,
         Authorization,
-        NotebooksBridgeNetwork,
-        WorkflowManagerBridgeNetwork,
+        Notebooks,
+        WorkflowManager,
         Database,
         DataSourceManager
     ]
