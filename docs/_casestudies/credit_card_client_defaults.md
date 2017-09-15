@@ -87,17 +87,17 @@ as the evaluation metric. This metric is applicable when one class (label) domin
 It is more sensitive to retrieval of defaults in data [than accuracy score](https://www.quora.com/Why-is-it-that-I-get-a-better-accuracy-score-when-using-unbalanced-classes-with-a-Random-Forest-classifier)
 (that is, the number of correctly classified instances regardless of their actual class).
 
-For demonstration purposes, we varied the parameters of on a relatively small grid: 20, 40, 80 for the number of trees in the forest
+For demonstration purposes, we varied the parameters of on a relatively small grid: 20, 40 for the number of trees in the forest
 and 5, 10, 20 for a tree depth. The results of the grid search are presented below:
 
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/credit_defaults/grid_search_results.png">
 
-We see that the optimal values for the number of trees and a tree depth are 80 and 10, respectively. Since there is little difference
-between choosing 20, 40 or 80 as the number of trees, we will stick with the smallest (and a less complex) forest consisting of 20 trees as our final model.
+We see that the optimal values for the number of trees and a tree depth are 40 and 10, respectively. Since there is little difference
+between choosing 20 or 40 as the number of trees, we will stick with the smaller forest consisting of 20 trees as our final model.
 
 ### Verifying Model Effectiveness On Test Data
 
-Finally, we evaluate the model on the remaining 1/3 part of data. It achieves a score of 0.7795 AUC on this hold-out dataset.
+Finally, we evaluate the model on the remaining 1/3 part of data. It achieves a score of 0.779738 AUC on this hold-out dataset.
 This means that our model learned reasonably well to distinguish between default and non-default customers. For the sake of more interpretable results,
 the confusion matrix may be helpful. In order to compute it, we will create another R notebook and attach it to the final data with computed predictions.
 
