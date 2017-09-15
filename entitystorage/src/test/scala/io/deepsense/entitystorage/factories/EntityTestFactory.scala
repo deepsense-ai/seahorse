@@ -1,7 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- *  Owner: Rafal Hryciuk
  */
 
 package io.deepsense.entitystorage.factories
@@ -11,10 +10,15 @@ import io.deepsense.models.entities._
 
 trait EntityTestFactory extends DataObjectFactory {
 
+  val testTenantId = "Mr Crowley"
+  val testName = "Operation"
+  val testDescription = "description"
+  val testDClass = "DataFrame"
+
   def testEntity: Entity = testEntity(Some(testDataObjectReference), Some(testDataObjectReport))
 
   def testEntity(data: Option[DataObjectReference], report: Option[DataObjectReport]): Entity =
-    testEntity("testTenantId", 0, data, report)
+    testEntity(testTenantId, 0, data, report)
 
   def testEntity(
       tenantId: String,
@@ -25,9 +29,9 @@ trait EntityTestFactory extends DataObjectFactory {
     Entity(
       tenantId,
       Entity.Id.randomId,
-      s"testEntity_$index",
-      s"entity Description_$index",
-      "DataFrame",
+      indexedValue(testName, index),
+      indexedValue(testDescription, index),
+      testDClass,
       data,
       report,
       now,
@@ -35,11 +39,14 @@ trait EntityTestFactory extends DataObjectFactory {
   }
 
   def testInputEntity: InputEntity = new InputEntity(
-    "Mr Crowley",
-    "Operation",
-    "super operation",
-    "DataFrame",
+    testTenantId,
+    testName,
+    testDescription,
+    testDClass,
     Some(testDataObjectReference),
     Some(testDataObjectReport),
     false)
+
+  private def indexedValue(value: String, index: Int): String =
+    if (index == 0) value else s"${value}_$index"
 }

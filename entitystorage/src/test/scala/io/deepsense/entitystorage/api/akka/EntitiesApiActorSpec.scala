@@ -1,7 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- *  Owner: Rafal Hryciuk
  */
 
 package io.deepsense.entitystorage.api.akka
@@ -42,6 +41,7 @@ class EntitiesApiActorSpec
   val tenantId = "tenantId"
   val notExistingEntityId = Entity.Id.randomId
   val entity = testEntity
+  val inputEntity = testInputEntity
   val existingEntityId = entity.id
 
   "EntityApiActor" should "send entity if exists" in {
@@ -57,10 +57,10 @@ class EntitiesApiActorSpec
   }
 
   it should "create Entity in the storage" in {
-    val inputEntity = testInputEntity
     testProbe.send(actorRef, Create(inputEntity))
 
     verify(entityService, times(1)).createEntity(inputEntity)
+    testProbe.expectMsgType[Entity] shouldBe entity
   }
 
   override def beforeAll(): Unit = {
@@ -80,6 +80,7 @@ class EntitiesApiActorSpec
       .thenReturn(Future.successful(None))
     when(entityService.getEntityData(tenantId, existingEntityId))
       .thenReturn(Future.successful(Some(entity.dataOnly)))
+    when(entityService.createEntity(inputEntity)).thenReturn(Future.successful(entity))
     entityService
   }
 }
