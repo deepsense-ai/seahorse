@@ -78,7 +78,9 @@ abstract class Param[T] {
    */
   protected def extraJsFields: Map[String, JsValue] = Map.empty
 
+  // scalastyle:off
   def ->(value: T): ParamPair[T] = ParamPair(this, value)
+  // scalastyle:on
 
   override def toString: String = s"Param($parameterType, $name)"
 
