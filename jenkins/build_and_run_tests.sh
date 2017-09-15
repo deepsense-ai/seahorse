@@ -6,4 +6,5 @@
 # https://github.com/sbt/sbt/issues/896
 find . -name target -type d -exec rm -rf {} \; || true
 
-sbt clean scalastylebackend test ds-it
+sbt clean
+sbt scalastylebackend test ds-it
