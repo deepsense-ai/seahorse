@@ -15,12 +15,12 @@ that lets users create advanced data processing and machine learning workflows.
 Deeplang workflow is a graph of connected operations,
 which are consuming and producing entities.
 
-### <a name="entities"></a>Entities, Classes and Traits
+### <a name="entities"></a>Entities and Classes
 Entities are the most crucial part of Deeplang. They represent data that is being processed in a workflow.
 
 Entities are immutable - they do not have state that could be changed. Any modifications are performed by creating new instances based on old ones.
 
-Each entity has certain _class_ - this concept is similar to class in object-oriented programming languages. A class can have _traits_ - similar to interfaces in Java or traits in Scala. Traits can be viewed as properties shared by all entities of the same class. Classes and traits form hierarchy - when a class has a trait, it means this class _inherits_ from this trait. A trait can inherit from other trait, but never from a class. When a class inherits from a trait, it also _inherits_ from all of traits that this trait is inheriting from.
+Each entity has certain _class_ - this concept is similar to class in object-oriented programming languages.
 
 ### Operations
 Operations are the base building blocks for workflows. Operations serve mainly to produce new entities. Each operation has
@@ -110,9 +110,9 @@ The trained model is a `Transformer` that can be used in **Transform** operation
 
 #### Evaluators
 
-$$Evaluator: DataFrame \rightarrow Double$$
+$$Evaluator: DataFrame \rightarrow MetricValue$$
 
-Evaluator is an abstraction of calculating `DataFrame` metrics. It consumes a `DataFrame` and produces a floating point value.
+Evaluator is an abstraction of calculating `DataFrame` metrics. It consumes a `DataFrame` and produces a `MetricValue`.
 
 Evaluators can be executed by **Evaluate** generic operation.
 

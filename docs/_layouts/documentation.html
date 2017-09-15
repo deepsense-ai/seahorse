@@ -49,14 +49,14 @@
                 <li class="{% if page.docTab == 'workflowfile' %}active{% endif %}"><a href="{{base}}/workflowfile.html">Workflow File</a></li>
               </ul>
             </li>
-            <li class="{% if page.includeDeeplangMenu %}active{% endif %} dropdown">
+            <li class="{% if page.includeDeeplangMenu or page.includeOperationsMenu or page.includeClassesMenu %}active{% endif %} dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Deeplang<span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li class="{% if page.docTab == 'deeplang_overview' %}active{% endif %}"><a href="{{base}}/deeplang_overview.html">Overview</a></li>
                 <li role="separator" class="divider"></li>
                 <li class="{% if page.docTab == 'parameters' %}active{% endif %}"><a href="{{base}}/parameters.html">Parameters</a></li>
                 <li class="{% if page.docTab == 'operations' or page.includeOperationsMenu %}active{% endif %}"><a href="{{base}}/operations.html">Operations</a></li>
-                <li class="{% if page.docTab == 'entities' or page.includeOperablesMenu %}active{% endif %}"><a href="{{base}}/classes.html">Classes and Traits</a></li>
+                <li class="{% if page.docTab == 'classes' or page.includeClassesMenu %}active{% endif %}"><a href="{{base}}/classes.html">Classes</a></li>
               </ul>
             </li>
             <li class="{% if page.menuTab == 'examples' %}active{% endif %}"><a href="{{base}}/examples.html">Examples</a></li>
@@ -69,7 +69,7 @@
   {% include operationsmenu.html %}
   {% endif %}
 
-  {% if page.includeOperablesMenu %}
+  {% if page.includeClassesMenu %}
   {% include operablesmenu.html %}
   {% endif %}
 

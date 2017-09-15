@@ -2,7 +2,7 @@
 layout: documentation
 displayTitle: DataFrame
 title: DataFrame
-includeOperablesMenu: true
+includeClassesMenu: true
 
 description: Seahorse documentation homepage
 ---

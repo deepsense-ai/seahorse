@@ -2,7 +2,7 @@
 layout: documentation
 displayTitle: Report
 title: Report
-includeOperablesMenu: true
+includeClassesMenu: true
 
 description: Seahorse documentation homepage
 ---
