@@ -55,9 +55,7 @@ case class PythonGateway(
     // Non-zero values might lead to the server shutting down unexpectedly.
     val connectTimeout = 0
     val readTimeout = 0
-
-    // FIXME tell the server to listen on a randomly chosen free port
-    val port = 25555
+    val port = 0 // Use a random available port.
 
     new GatewayServer(
       entryPoint,
