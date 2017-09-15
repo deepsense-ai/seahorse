@@ -21,7 +21,7 @@ import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.ParamPair
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
+import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 
 abstract class AbstractTransformerWrapperSmokeTest extends DeeplangIntegTestSupport {
 
@@ -32,13 +32,15 @@ abstract class AbstractTransformerWrapperSmokeTest extends DeeplangIntegTestSupp
   val transformerParams: Seq[ParamPair[_]]
 
   val inputDataFrameSchema = StructType(Seq(
-    StructField("s", StringType)
+    StructField("s", StringType),
+    StructField("i", IntegerType),
+    StructField("i2", IntegerType)
   ))
 
   val inputDataFrame: DataFrame = {
     val rowSeq = Seq(
-      Row("aAa bBb cCc"),
-      Row("das99213 99721 8i!#@!")
+      Row("aAa bBb cCc", 0, 0),
+      Row("das99213 99721 8i!#@!", 1, 1)
     )
     val sparkDF = sqlContext.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
     DataFrame.fromSparkDataFrame(sparkDF)
