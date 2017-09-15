@@ -18,17 +18,15 @@ package io.deepsense.workflowexecutor.communication.mq.serialization.json
 
 import java.nio.charset.StandardCharsets
 
-import org.mockito.Matchers._
-import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.graph.DirectedGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.workflows.{ThirdPartyData, WorkflowType, WorkflowMetadata, Workflow}
+import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
 import io.deepsense.workflowexecutor.communication.message.global.Connect
-import io.deepsense.workflowexecutor.communication.message.workflow.{UpdateWorkflow, Abort, Init, Launch}
+import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch, UpdateWorkflow}
 import io.deepsense.workflowexecutor.executor.Executor
 
 class ProtocolJsonDeserializerSpec
@@ -37,11 +35,7 @@ class ProtocolJsonDeserializerSpec
 
   "ProtocolJsonDeserializer" should {
     "deserialize Launch messages" in {
-      val graphReader = mock[GraphReader]
-      val graph = mock[DirectedGraph]("expectedGraph")
-      when(graphReader.read(any())).thenReturn(graph)
-      val graphJs = JsObject("graphJs" -> JsString(""))
-      val protocolDeserializer = ProtocolJsonDeserializer(graphReader)
+      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
 
       val workflowId = Workflow.Id.randomId
       val nodesToExecute = Vector(Workflow.Id.randomId, Workflow.Id.randomId, Workflow.Id.randomId)
@@ -51,19 +45,13 @@ class ProtocolJsonDeserializerSpec
         "messageType" -> JsString("launch"),
         "messageBody" -> JsObject(
           "workflowId" -> JsString(workflowId.toString),
-          "workflow" -> graphJs,
           "nodesToExecute" -> jsNodesToExecute
         )
       )
 
       val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
 
-      verify(graphReader).read(graphJs)
-
-      readMessage shouldBe Launch(
-        workflowId,
-        graph,
-        nodesToExecute.toSet)
+      readMessage shouldBe Launch(workflowId, nodesToExecute.toSet)
     }
     "deserialize Abort messages" in {
       val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])

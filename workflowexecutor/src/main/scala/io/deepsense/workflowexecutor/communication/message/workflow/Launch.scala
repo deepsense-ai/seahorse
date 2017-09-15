@@ -18,20 +18,17 @@ package io.deepsense.workflowexecutor.communication.message.workflow
 
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
+import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.utils.Logging
-import io.deepsense.graph.{DirectedGraph, Node}
-import io.deepsense.models.json.workflow.WorkflowJsonProtocol
+import io.deepsense.graph.Node
 import io.deepsense.models.workflows.Workflow
 
-case class Launch(
-    workflowId: Workflow.Id,
-    workflow: DirectedGraph,
-    nodesToExecute: Set[Node.Id])
+case class Launch(workflowId: Workflow.Id, nodesToExecute: Set[Node.Id])
 
 trait LaunchJsonProtocol
     extends DefaultJsonProtocol
+    with IdJsonProtocol
     with Logging {
-  self: WorkflowJsonProtocol =>
 
-  implicit val launchFormat: RootJsonFormat[Launch] = jsonFormat3(Launch.apply)
+  implicit val launchFormat: RootJsonFormat[Launch] = jsonFormat2(Launch.apply)
 }

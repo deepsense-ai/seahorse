@@ -27,14 +27,14 @@ import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQDeserializer
 
-case class ProtocolJsonDeserializer(override val graphReader: GraphReader)
+case class ProtocolJsonDeserializer(graphReader: GraphReader)
   extends MessageMQDeserializer
-  with WorkflowJsonProtocol
   with ConnectJsonProtocol
   with LaunchJsonProtocol
   with AbortJsonProtocol
   with InitJsonProtocol
-  with GetPythonGatewayAddressJsonProtocol {
+  with GetPythonGatewayAddressJsonProtocol
+  with WorkflowJsonProtocol {
 
   import JsonSerialization._
 
