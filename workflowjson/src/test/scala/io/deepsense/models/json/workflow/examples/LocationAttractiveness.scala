@@ -30,8 +30,9 @@ object LocationAttractiveness extends WorkflowCreator {
     testFilePath,
     (ReadDataFrame.LineSeparator.UNIX, None),
     ",",
-    true,
-    None)
+    csvNamesIncluded = true,
+    csvShouldConvertToBoolean = true,
+    categoricalColumns = None)
 
   // min(dist to SF, dist to LA)
   val distanceOperation: CreateMathematicalTransformation = {

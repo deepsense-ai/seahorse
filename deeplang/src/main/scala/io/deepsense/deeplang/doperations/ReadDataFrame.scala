@@ -130,7 +130,10 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
       (generateColumnNames(columnsNo = lines.first().length), lines)
     }
 
-    val linesInferences = dataLines.map(_.map(cellTypeInference))
+    val shouldConvertToBoolean = csvShouldConvertToBooleanParameter.value.get
+    val linesInferences = dataLines.map(_.map {
+      case cell => cellTypeInference(cell, shouldConvertToBoolean)
+    })
 
     val inferredTypes = linesInferences.reduce{ (lInf1, lInf2) =>
       lInf1.zip(lInf2).map(reduceTypeInferences)
@@ -177,6 +180,11 @@ trait ReadDataFrameParameters {
     default = Some(true),
     required = true)
 
+  val csvShouldConvertToBooleanParameter = BooleanParameter(
+    "Should columns containing only 0 and 1 be converted to Boolean?",
+    default = Some(false),
+    required = true)
+
   val categoricalColumnsParameter = ColumnSelectorParameter(
     "Categorical columns in the input file",
     required = false,
@@ -190,6 +198,7 @@ trait ReadDataFrameParameters {
       FileFormat.CSV.toString -> ParametersSchema(
         "separator" -> csvColumnSeparatorParameter,
         "names included" -> csvNamesIncludedParameter,
+        "convert to boolean" -> csvShouldConvertToBooleanParameter,
         "categorical columns" -> categoricalColumnsParameter),
       FileFormat.PARQUET.toString -> ParametersSchema(),
       FileFormat.JSON.toString -> ParametersSchema(
@@ -245,6 +254,7 @@ object ReadDataFrame {
       lineSeparator: (LineSeparator.LineSeparator, Option[String]),
       csvColumnSeparator: String,
       csvNamesIncluded: Boolean,
+      csvShouldConvertToBoolean: Boolean,
       categoricalColumns: Option[MultipleColumnSelection]): ReadDataFrame = {
 
     val operation = new ReadDataFrame()
@@ -257,6 +267,7 @@ object ReadDataFrame {
     operation.sourceFileParameter.value = Some(filePath)
     operation.csvColumnSeparatorParameter.value = Some(csvColumnSeparator)
     operation.csvNamesIncludedParameter.value = Some(csvNamesIncluded)
+    operation.csvShouldConvertToBooleanParameter.value = Some(csvShouldConvertToBoolean)
     operation.categoricalColumnsParameter.value = categoricalColumns
     operation
   }
@@ -280,15 +291,17 @@ object ReadDataFrame {
       canBeNumeric = inferences._1.canBeNumeric && inferences._2.canBeNumeric,
       canBeTimestamp = inferences._1.canBeTimestamp && inferences._2.canBeTimestamp)
 
-  private def cellTypeInference(cell: String): TypeInference = {
+  private def cellTypeInference(cell: String, convertToBoolean: Boolean): TypeInference = {
     val trimmedCell = cell.trim
     if (trimmedCell.isEmpty) {
-      return TypeInference(canBeBoolean = true, canBeNumeric = true, canBeTimestamp = true)
+      return TypeInference(
+        canBeBoolean = convertToBoolean, canBeNumeric = true, canBeTimestamp = true)
     }
 
     try {
       val d = trimmedCell.toDouble
-      TypeInference(canBeBoolean = d == 0 || d == 1, canBeNumeric = true, canBeTimestamp = false)
+      val canBeBoolean = convertToBoolean && (d == 0 || d == 1)
+      TypeInference(canBeBoolean = canBeBoolean, canBeNumeric = true, canBeTimestamp = false)
     } catch {
       case e: NumberFormatException => try {
         DateTimeConverter.parseDateTime(trimmedCell)

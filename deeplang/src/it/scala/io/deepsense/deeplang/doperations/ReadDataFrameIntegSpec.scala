@@ -56,7 +56,8 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         fileName = "sample.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
-        csvNamesIncluded = false)
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true)
 
       assertDataFramesEqual(
         dataFrame,
@@ -68,7 +69,8 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         fileName = "win_sample.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.WINDOWS),
         csvColumnSeparator = ",",
-        csvNamesIncluded = false)
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true)
 
       assertDataFramesEqual(
         dataFrame,
@@ -80,7 +82,8 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         fileName = "X_separated.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.CUSTOM, Some("X")),
         csvColumnSeparator = ",",
-        csvNamesIncluded = false)
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true)
 
       assertDataFramesEqual(
         dataFrame,
@@ -97,7 +100,8 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         fileName = "sample.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.WINDOWS),
         csvColumnSeparator = ",",
-        csvNamesIncluded = false)
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true)
 
       assertDataFramesEqual(
         dataFrame,
@@ -111,7 +115,8 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         fileName = "with_column_names.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
-        csvNamesIncluded = true)
+        csvNamesIncluded = true,
+        csvConvertToBoolean = true)
 
       assertDataFramesEqual(
         dataFrame,
@@ -129,15 +134,17 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         fileName = "empty.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
-        csvNamesIncluded = false)
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true)
     }
 
-    "infer column types" in {
+    "infer column types with conversion to Boolean" in {
       val dataFrame = readDataFrame(
         fileName = "with_inferable_columns.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
-        csvNamesIncluded = false
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true
       )
 
       import DateTimeConverter.{parseTimestamp => toTimestamp}
@@ -156,6 +163,31 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         ))
     }
 
+    "infer column types without conversion to Boolean" in {
+      val dataFrame = readDataFrame(
+        fileName = "with_inferable_columns.csv",
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
+        csvColumnSeparator = ",",
+        csvNamesIncluded = false,
+        csvConvertToBoolean = false
+      )
+
+      import DateTimeConverter.{parseTimestamp => toTimestamp}
+
+      assertDataFramesEqual(
+        dataFrame,
+        expectedDataFrame(
+          Seq(
+            Row(2.0, 1.0, null, "1.1", " hello world ", toTimestamp("2015-08-21T19:40:56.823Z")),
+            Row(3.2, 0.0, null, "1.2", "unquoted string", null),
+            Row(1.1, 1.0, null, "1", "\"quoted string\"", toTimestamp("2015-08-20T09:40:56.823Z"))
+          ),
+          schemaWithDefaultColumnNames(
+            Seq(DoubleType, DoubleType, DoubleType, StringType, StringType, TimestampType)
+          )
+        ))
+    }
+
     "read file so that obtained dataframe can provide report without throwing an exception" in {
       // This test case was introduced because Row allow to put anything into it,
       // disregarding schema. Incorrectly built DataFrames were throwing exceptions later
@@ -164,7 +196,8 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         fileName = "with_inferable_columns.csv",
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
-        csvNamesIncluded = false
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true
       )
       dataFrame.report(executionContext) shouldBe an[Report]
     }
@@ -175,6 +208,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = true,
+        csvConvertToBoolean = true,
         csvCategoricalColumns = Some(MultipleColumnSelection(
           Vector(IndexColumnSelection(Set(0, 1)))
         ))
@@ -198,6 +232,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = true,
+        csvConvertToBoolean = true,
         csvCategoricalColumns = Some(MultipleColumnSelection(
           Vector(NameColumnSelection(Set("col1", "col2")))
         ))
@@ -221,12 +256,14 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       lineSeparator: (LineSeparator, Option[String]),
       csvColumnSeparator: String,
       csvNamesIncluded: Boolean,
+      csvConvertToBoolean: Boolean,
       csvCategoricalColumns: Option[MultipleColumnSelection] = None) : DataFrame = {
     val operation = ReadDataFrame(
       absoluteTestsDirPath + "/" + fileName,
       lineSeparator,
       csvColumnSeparator,
       csvNamesIncluded,
+      csvConvertToBoolean,
       csvCategoricalColumns)
 
     operation
