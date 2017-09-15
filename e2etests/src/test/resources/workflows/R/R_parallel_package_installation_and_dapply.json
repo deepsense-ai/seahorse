@@ -34,6 +34,8 @@
         "name": "Join"
       },
       "parameters": {
+        "left prefix": "l",
+        "right prefix": "r",
         "join columns": [{
           "left column": {
             "type": "column",
