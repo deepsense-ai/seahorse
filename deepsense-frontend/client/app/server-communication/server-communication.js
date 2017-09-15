@@ -10,16 +10,20 @@ class ServerCommunication {
     this.exchangeSubscriptions = {};
 
     this.seahorseTopicListeningUri = () => {
-      return '/exchange/seahorse/seahorse.to';
+      return `/exchange/seahorse/seahorse.${this._getSessionId()}.to`;
     };
 
     this.workflowTopicListeningUri = () => {
-      return '/exchange/seahorse/workflow.' + this.workflowId + '.to';
+      return `/exchange/seahorse/workflow.${this._getSessionId()}.${this.workflowId}.to`;
     };
 
     this.workflowTopicSendingUri = () => {
-      return '/exchange/seahorse/workflow.' + this.workflowId + '.from';
+      return `/exchange/seahorse/workflow.${this._getSessionId()}.${this.workflowId}.from`;
     };
+  }
+
+  _getSessionId() {
+    return this.workflowId;
   }
 
   static isMessageKnown(msgType) {
@@ -41,6 +45,21 @@ class ServerCommunication {
     if (!ServerCommunication.isMessageKnown(parsedBody.messageType)) {
       this.$log.error('ServerCommunication messageHandler. Unknown message type "' + parsedBody.messageType + '"');
       return;
+    }
+
+    // When opening workflow two things happen:
+    // 1) calling session manager to create executor (we don't know if it already exist or will be created)
+    // 2) calling `init` to get workflow data
+    //
+    // BUT: when there were no executor already in step 1, message in step 2 will most likely not get to the
+    // executor, because it didn't have enough time to subscribe to the topic after getting created.
+    //
+    // That's why we have this code over here. In a case when executor is just created we need to send `init` only
+    // after receiving 'ready' message - only that way we are sure it will be reached.
+    //
+    // We cannot remove step 2 though, because we don't have prior knowledge if executor already existed.
+    if (parsedBody.messageType === 'ready') {
+      this.sendInitToWorkflowExchange();
     }
 
     this.$rootScope.$broadcast(
@@ -152,6 +171,7 @@ class ServerCommunication {
   }
 
   init(workflowId) {
+    console.log('ServerCommunication init', 'Server communication initialized with workflow id ' + workflowId);
     this.workflowId = workflowId;
     this.connectToWebSocket();
   }

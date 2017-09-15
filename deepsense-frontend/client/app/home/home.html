@@ -31,31 +31,31 @@
         <td class="col-md-2 color-gray sortable"
             ng-click="home.sortBy('name')">
           <b>Name</b>
-        <span>
-          <i ng-class="home.getClass('name')"></i>
-        </span>
+          <span>
+            <i ng-class="home.getClass('name')"></i>
+          </span>
         </td>
         <td class="col-md-3 color-gray sortable"
             ng-click="home.sortBy('description')">
           <b>Description</b>
-        <span>
-          <i ng-class="home.getClass('description')"></i>
-        </span>
+          <span>
+            <i ng-class="home.getClass('description')"></i>
+          </span>
         </td>
-        <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('updated')">
+        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('updated')">
           <b>Updated</b>
-        <span>
-          <i ng-class="home.getClass('updated')"></i>
-        </span>
+          <span>
+            <i ng-class="home.getClass('updated')"></i>
+          </span>
         </td>
-        <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('created')">
+        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('created')">
           <b>Created</b>
-        <span>
-          <i ng-class="home.getClass('created')"></i>
-        </span>
+          <span>
+            <i ng-class="home.getClass('created')"></i>
+          </span>
         </td>
         <td class="col-md-3 color-gray">
-          <b>Actions</b>
+          <b></b>
         </td>
       </tr>
       <tr ng-repeat="workflow in home.workflows |
@@ -92,12 +92,20 @@
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td class="vertical-align">
+        <td class="vertical-align actions-column">
+          <a ng-if="workflow.sessionStatus === 'running' || workflow.sessionStatus === 'error'">
+            <i ng-click="home.deleteSession(workflow.id)"
+               uib-popover="Stop session"
+               popover-trigger="mouseenter"
+               popover-append-to-body="true"
+               class="fa fa-power-off">
+            </i>
+          </a>
           <a popover-trigger="mouseenter"
-             popover-placement="left"
              uib-popover="Delete workflow"
              ng-click="home.deleteWorkflow(workflow)">
-            <span class="glyphicon glyphicon-remove"></span>
+            <i class="fa fa-trash-o">
+            </i>
           </a>
         </td>
       </tr>

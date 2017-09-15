@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, config) {
+function Home($rootScope, $uibModal, $state, $q, config, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi) {
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
@@ -13,15 +13,30 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
       descending: true
     };
 
-    WorkflowService.downloadWorkflows().then(() => {
-      this.workflows = WorkflowService.getAllWorkflows();
+    this.loadWorkflowsAndStatuses();
+  };
+
+  this.loadWorkflowsAndStatuses = () => {
+    $q.all([
+      WorkflowService.downloadWorkflows(),
+      SessionManagerApi.downloadSessions()
+    ]).then(([workflows, sessions]) => {
+      this.workflows = workflows;
       if (this.workflows && this.workflows.length === 0) {
         this.setWarning('fa-ban', 'No workflows found!');
-      } else {
-        this.canShowWorkflows = true;
+        return;
       }
+      this._assignStatusesToWorkflows(workflows, sessions);
+      this.canShowWorkflows = true;
     }, () => {
       this.setWarning('fa-exclamation-circle', 'Could not connect to the database. Try to reload the page.');
+    });
+  };
+
+  this._assignStatusesToWorkflows = (workflows, sessions) => {
+    let workflowById = _.object(_.map(workflows, (w) => [w.id, w]));
+    sessions.forEach((session) => {
+      workflowById[session.workflowId].sessionStatus = session.status;
     });
   };
 
@@ -64,7 +79,11 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
   };
 
   this.goToWorkflowEditor = (workflowId) => {
-    $state.go('workflows.editor', {id: workflowId});
+     SessionManagerApi.startSession(workflowId).then(() => {
+       $state.go('workflows.editor', {id: workflowId});
+     }, (error) => {
+       console.log('error', error);
+     });
   };
 
   this.deleteWorkflow = function(workflow) {
@@ -73,6 +92,13 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
     }).
     then(() => {
       WorkflowService.deleteWorkflow(workflow.id);
+      SessionManagerApi.deleteSessionById(workflow.id);
+    });
+  };
+
+  this.deleteSession = (workflowId) => {
+    SessionManagerApi.deleteSessionById(workflowId).then(() => {
+      this.loadWorkflowsAndStatuses();
     });
   };
 
