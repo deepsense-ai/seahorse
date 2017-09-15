@@ -39,7 +39,7 @@ var outputStyle = {
     lineWidth: 2
   },
   isSource: true,
-  connector: ['Bezier'],
+  connector: ['Bezier', { curviness: 75 }],
   connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
   hoverPaintStyle: endpointHoverStyle,
   connectorHoverStyle: connectorHoverStyle,
