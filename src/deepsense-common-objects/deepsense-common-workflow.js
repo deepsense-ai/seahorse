@@ -5,8 +5,8 @@
 'use strict';
 
 angular.module('deepsense.graph-model').
-  factory('Experiment', /*@ngInject*/function(GraphNode, Edge) {
-    function Experiment() {
+  factory('Workflow', /*@ngInject*/function(GraphNode, Edge) {
+    function Workflow() {
       var that = this;
       var internal = {};
       internal.nodes = {};
@@ -21,11 +21,6 @@ angular.module('deepsense.graph-model').
       };
       that.STATUS_DEFAULT = that.STATUS.DRAFT;
 
-      /**
-       * Returns experiment id.
-       *
-       * @return {string}
-       */
       that.getId = function getId() {
         return internal.id;
       };
@@ -57,13 +52,6 @@ angular.module('deepsense.graph-model').
         );
       };
 
-      /**
-       * Creates graph node.
-       *
-       * @param {object} options
-       *
-       * @return {GraphNode}
-       */
       that.createNode = function createNode(options) {
         let operation = options.operation;
 
@@ -83,7 +71,7 @@ angular.module('deepsense.graph-model').
         });
       };
 
-      that.createNodes = function createNodes(nodes, operations, state) {
+      that.createNodes = function createNodes(nodes, operations, thirdPartyData) {
         for (let i = 0; i < nodes.length; i++) {
           let data = nodes[i],
             id = data.id,
@@ -92,9 +80,9 @@ angular.module('deepsense.graph-model').
               'id': id,
               'operation': operation,
               'parameters': data.parameters,
-              'x': data.ui.x,
-              'y': data.ui.y,
-              'state': state.nodes[id]
+              'x': thirdPartyData.gui.nodes[id].coordinates.x,
+              'y': thirdPartyData.gui.nodes[id].coordinates.y
+              //'state': state.nodes[id]
             });
           that.addNode(node);
         }
@@ -116,31 +104,16 @@ angular.module('deepsense.graph-model').
         internal.description = data.description;
       };
 
-      /**
-       * Sets experiment status.
-       *
-       * @param {object} state
-       */
       that.setStatus = function setStatus(state) {
         if (state && state.status && Object.keys(that.STATUS).indexOf(state.status) > -1) {
           that.status = that.STATUS[state.status];
         }
       };
 
-      /**
-       * Returns experiment status.
-       *
-       * @return {[type]}
-       */
       that.getStatus = function getStatus() {
         return that.status || that.STATUS_DEFAULT;
       };
 
-      /**
-       * Updates experiment state.
-       *
-       * @param {object} state
-       */
       that.updateState = function updateState(state) {
         for (let id in state.nodes) {
           let node = internal.nodes[id];
@@ -151,20 +124,10 @@ angular.module('deepsense.graph-model').
         that.setStatus(state);
       };
 
-      /**
-       * Checks if experiment is in run state.
-       *
-       * @return {boolean}
-       */
       that.isRunning = function isRunning() {
         return that.getStatus() === that.STATUS.RUNNING;
       };
 
-      /**
-       * Add node from internal data.
-       *
-       * @param {Node} node
-       */
       that.addNode = function addNode(node) {
         if (that.getNodeById(node.id)) {
           throw new Error('Node ' + node.id + ' already exists');
@@ -172,11 +135,6 @@ angular.module('deepsense.graph-model').
         internal.nodes[node.id] = node;
       };
 
-      /**
-       * Add edge from internal data.
-       *
-       * @param {Edge} edge
-       */
       that.addEdge = function addEdge(edge) {
 
         if (!edge.id) {
@@ -194,11 +152,6 @@ angular.module('deepsense.graph-model').
         that.getNodeById(edge.endNodeId).edges[edge.id] = edge;
       };
 
-      /**
-       * Removes edge
-       *
-       * @param {Edge} edge
-       */
       that.removeEdge = function removeEdge(edge) {
         if (!edge.id) {
           throw new Error('Cannot remove edge. Edge id: ' + edge.id + ' doesn\'t exist.');
@@ -215,11 +168,6 @@ angular.module('deepsense.graph-model').
         delete internal.nodes[edge.endNodeId].edges[edge.id];
       };
 
-      /**
-       * Removes node
-       *
-       * @param {string} nodeId
-       */
       that.removeNode = function removeNode(nodeId) {
         try {
           that.removeEdges(nodeId);
@@ -230,13 +178,6 @@ angular.module('deepsense.graph-model').
         }
       };
 
-      /**
-       * Create edge.
-       *
-       * @param {object} data
-       *
-       * @return {Edge}
-       */
       that.createEdge = function createEdge(data) {
         var edge = new Edge({
           startNodeId: data.from.nodeId,
@@ -247,11 +188,6 @@ angular.module('deepsense.graph-model').
         return edge;
       };
 
-      /**
-       * Create edges.
-       *
-       * @param {object} edges
-       */
       that.createEdges = function createEdges(edges) {
         for (var i = 0; i < edges.length; i++) {
           var edge = that.createEdge(edges[i]);
@@ -259,11 +195,6 @@ angular.module('deepsense.graph-model').
         }
       };
 
-      /**
-       * Serializes full experiment data to transfer format.
-       *
-       * @return {object}
-       */
       that.serialize = function serialize() {
         let data = {
           'id': internal.id,
@@ -286,11 +217,6 @@ angular.module('deepsense.graph-model').
         return data;
       };
 
-      /**
-       * Updates type knowledge concerning output ports
-       *
-       * @param {Object} typeKnowledge
-       */
       that.updateTypeKnowledge = function (knowledge) {
         _.forEach(this.getNodes(), (node) => {
           if (knowledge[node.id] && knowledge[node.id].typeKnowledge) {
@@ -305,11 +231,6 @@ angular.module('deepsense.graph-model').
         });
       };
 
-      /**
-       * Updates all edges' states.
-       *
-       * @param {OperationsHierarchyService} OperationsHierarchyService
-       */
       that.updateEdgesStates = function (OperationsHierarchyService) {
         let nodes = this.getNodes();
 
@@ -337,5 +258,5 @@ angular.module('deepsense.graph-model').
       };
     }
 
-    return Experiment;
+    return Workflow;
   });

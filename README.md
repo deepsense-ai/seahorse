@@ -2,7 +2,7 @@
 
 The graph model. It constitutes the following notions:
 
-- experiment
+- workflow
 - graph node
 - edge
 - port
@@ -17,7 +17,7 @@ The graph model. It constitutes the following notions:
 
 The component provides with the following Angular factories:
 
-- Experiment
+- Workflow
 - GraphNode
 - Edge
 - Port
