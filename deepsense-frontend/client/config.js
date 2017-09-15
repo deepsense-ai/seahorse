@@ -7,7 +7,7 @@ angular.module('ds.lab').constant('config', {
   // localhost - from docker compose
   'apiHost': 'http://localhost',
   'docsHost': 'https://seahorse.deepsense.io',
-  'notebookHost': 'http://localhost:8080',
+  'notebookHost': 'http://localhost:8080/jupyter',
   'sessionApiPort': '8080',
   'sessionPollingInterval': 1000,
   'apiPort': '8080',
