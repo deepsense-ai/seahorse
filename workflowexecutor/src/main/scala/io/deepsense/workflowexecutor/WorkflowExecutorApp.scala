@@ -115,6 +115,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
 
+    opt[String]("python-binary") optional() valueName "PATH" action {
+      (x, c) => c.copy(pythonBinaryPath = Some(x))
+    } text "Python binary path"
+
     opt[String]('t', "temp-dir") optional() valueName "PATH" action {
       (x, c) => c.copy(tempPath = Some(x))
     } text "Temporary directory path"
@@ -191,7 +195,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         params.wmPassword.get,
         params.depsZip.get,
         params.userId.get,
-        params.tempPath.get
+        params.tempPath.get,
+        params.pythonBinaryPath
       ).execute()
     } else {
       // Running in non-interactive mode

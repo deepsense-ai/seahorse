@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference
 import scala.annotation.tailrec
 import scala.sys.process._
 
-import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
@@ -46,14 +45,11 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 class PythonExecutionCaretaker(
   pythonExecutorPath: String,
   pythonPathGenerator: PythonPathGenerator,
+  pythonBinary: String,
   val sparkContext: SparkContext,
   val sqlContext: SQLContext,
   val dataFrameStorage: DataFrameStorage,
   val hostAddress: InetAddress) extends Logging {
-
-  val config = ConfigFactory.load.getConfig("pythoncaretaker")
-  val pythonExecutable = config.getString("python-binary")
-
 
   def waitForPythonExecutor(): Unit = {
     pythonGateway.codeExecutor
@@ -108,7 +104,7 @@ class PythonExecutionCaretaker(
       gatewayPort: Int,
       pythonExecutorPath: String): Process = {
     logger.info(s"Initializing PyExecutor from: $pythonExecutorPath")
-    val command = s"$pythonExecutable $pythonExecutorPath " +
+    val command = s"$pythonBinary $pythonExecutorPath " +
       s"--gateway-address ${hostAddress.getHostAddress}:$gatewayPort"
     logger.info(s"Starting a new PyExecutor process: $command")
 

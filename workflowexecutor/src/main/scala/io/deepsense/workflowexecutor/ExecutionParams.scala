@@ -26,6 +26,7 @@ case class ExecutionParams(
   messageQueueUser: Option[String] = None,
   messageQueuePass: Option[String] = None,
   pyExecutorPath: Option[String] = None,
+  pythonBinaryPath: Option[String] = None,
   workflowId: Option[String] = None,
   wmAddress: Option[String] = None,
   wmUsername: Option[String] = None,

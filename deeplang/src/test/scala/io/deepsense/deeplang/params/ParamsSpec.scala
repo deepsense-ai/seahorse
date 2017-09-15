@@ -44,8 +44,8 @@ class ParamsSpec extends UnitSpec {
     "describe its params as json ordered as in declareParams()" in {
       val p = WithParams()
       p.paramsToJson shouldBe JsArray(
-        p.param2.toJson(default = None),
-        p.param1.toJson(default = Some(defaultForParam1))
+        p.param2.toJson(maybeDefault = None),
+        p.param1.toJson(maybeDefault = Some(defaultForParam1))
       )
     }
     "describe values of its params as json" in {
@@ -259,11 +259,6 @@ object ParamsSpec extends UnitSpec {
   case class MockParam(name: String) extends Param[Int] {
     override val description: String = "description"
     override val parameterType: ParameterType = mock[ParameterType]
-
-    override def toJson(default: Option[Any]): JsObject = JsObject(
-      "name" -> name.toJson,
-      "default" -> default.map(_.asInstanceOf[Int]).map(JsNumber(_)).getOrElse(JsNull)
-    )
 
     override def valueToJson(value: Int): JsValue = value.toJson
     override def valueFromJson(jsValue: JsValue): Int = jsValue.convertTo[Int]
