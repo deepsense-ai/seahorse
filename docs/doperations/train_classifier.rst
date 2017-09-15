@@ -1,13 +1,13 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-Train regressor
-===============
+Train classifier
+================
 
 ==========
 Descriptor
 ==========
 
-Trains regression model on DataFrame, returning trained model.
+Trains classifier model on DataFrame, returning trained model.
 
 **Operation version:** 1
 
@@ -24,7 +24,7 @@ Input
      - Data Type
      - Description
    * - 0
-     - Trainable with Regressor
+     - Trainable with Classifier
      - Model to train
    * - 1
      - DataFrame
@@ -48,7 +48,7 @@ Output
 ===========
 Description
 ===========
-Operation used to train classification model on DataFrame.
+An operation used to train a classifier model on a DataFrame.
 
 ------
 Params
@@ -62,3 +62,5 @@ Params
    (i. e. label to predict). If selected column has type different than ``Numeric``,
    ``WrongColumnTypeException`` will be thrown. If selected column does not exist,
    ``ColumnDoesNotExistException`` will be thrown.
+
+.. TODO what are requirements for values in target column? What if they are not met?

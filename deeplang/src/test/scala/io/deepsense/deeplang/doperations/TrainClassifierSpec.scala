@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.doperations
@@ -10,29 +8,29 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang._
+import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext, UnitSpec}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Regressor, Scorable, Trainable}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 
-class TrainRegressorSpec extends UnitSpec with MockitoSugar {
+class TrainClassifierSpec extends UnitSpec with MockitoSugar {
 
-  val regressor = TrainRegressor()
+  val classifier = TrainClassifier()
 
   val trainableParametersStub = Trainable.Parameters(
     mock[MultipleColumnSelection], mock[SingleColumnSelection])
 
-  regressor.parameters.
+  classifier.parameters.
     getSingleColumnSelectorParameter("target column").value =
-      Some(trainableParametersStub.targetColumn)
+    Some(trainableParametersStub.targetColumn)
 
-  regressor.parameters.
+  classifier.parameters.
     getColumnSelectorParameter("feature columns").value =
     Some(trainableParametersStub.featureColumns)
 
-  "TrainRegressor with parameters set" should {
+  "TrainClassifier with parameters set" should {
     "train untrained model on dataframe" in {
-      val trainableMock = mock[Trainable with Regressor]
+      val trainableMock = mock[Trainable with Classifier]
       val trainMethodMock = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       val executionContextStub = mock[ExecutionContext]
@@ -43,7 +41,7 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
       when(trainMethodMock.apply(
         executionContextStub)(trainableParametersStub)(dataframeStub)).thenReturn(scorableStub)
 
-      val result = regressor.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
+      val result = classifier.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
 
       result shouldBe Vector(scorableStub)
     }
@@ -57,10 +55,10 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
       val scorableKnowledgeStub2 = DKnowledge(Set(scorableStubs(1), scorableStubs(2)))
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]
 
-      val trainableMock1 = mock[Trainable with Regressor]
+      val trainableMock1 = mock[Trainable with Classifier]
       val trainMethodMock1 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
-      val trainableMock2 = mock[Trainable with Regressor]
+      val trainableMock2 = mock[Trainable with Classifier]
       val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)
@@ -69,7 +67,7 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
       when(trainableMock2.train).thenReturn(trainMethodMock2)
       when(trainMethodMock2.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub2)
 
-      val result = regressor.inferKnowledge(inferContextStub)(
+      val result = classifier.inferKnowledge(inferContextStub)(
         Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
 
       result shouldBe Vector(DKnowledge(scorableStubs.toSet))

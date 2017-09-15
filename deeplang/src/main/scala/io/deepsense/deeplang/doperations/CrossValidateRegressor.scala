@@ -15,9 +15,9 @@ import io.deepsense.reportlib.model.{ReportContent, Table}
 
 class CrossValidateRegressor
   extends DOperation2To2[Trainable, DataFrame, Scorable, Report]
-  with Trainer {
+  with WithTrainParameters {
 
-  override val parameters = trainerParameters ++ ParametersSchema(
+  override val parameters = trainParameters ++ ParametersSchema(
     CrossValidateRegressor.numOfFoldsParamKey ->
       NumericParameter(
         "Number of folds",
