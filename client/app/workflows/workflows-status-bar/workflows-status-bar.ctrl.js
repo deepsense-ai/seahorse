@@ -44,9 +44,7 @@ function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
           ago
         </div>`;
         } else {
-          return `<div class="c-workflows-status-bar__item--last-execution__tooltip--not-executed">
-          No report is available
-        </div>`;
+          return `No report is available`;
         }
       }
   });
