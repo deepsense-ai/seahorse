@@ -3,7 +3,7 @@
 ## Overview
 
 Workflow Executor is an <a target="_blank" href="http://spark.apache.org">Apache Spark</a>
-application that allows user to execute <a target="_blank" href="https://seahorse.deepsense.io/docs/latest/workflowfile.html">workflows</a> created by <a target="_blank" href="http://editor.seahorse.deepsense.io"/>Seahorse Editor</a>.
+application that allows user to execute <a target="_blank" href="http://seahorse.deepsense.io/docs/latest/workflowfile.html">workflows</a> created by <a target="_blank" href="http://editor.seahorse.deepsense.io"/>Seahorse Editor</a>.
 
 Workflow Executor requires:
 
