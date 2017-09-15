@@ -16,7 +16,7 @@ export const WorkflowSchedulesComponent = {
   },
 
   controller: class WorkflowSchedules {
-    constructor(WorkflowSchedulesService, PresetService, $log) {
+    constructor(WorkflowSchedulesService, PresetService, $log, $scope) {
       'ngInject';
 
       this.$log = $log;
@@ -33,6 +33,10 @@ export const WorkflowSchedulesComponent = {
       this.addingSchedule = false;
       this.schedules = [];
       this.getSchedules();
+
+      $scope.$watch(() => PresetService.getAll(), (newValue) => {
+        this.presets = newValue;
+      });
     }
 
 
