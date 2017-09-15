@@ -53,6 +53,7 @@ object CatalogRecorder {
     catalog.registerDOperable[Binarizer]()
     catalog.registerDOperable[DiscreteCosineTransformer]()
     catalog.registerDOperable[Normalizer]()
+    catalog.registerDOperable[OneHotEncoder]()
     catalog.registerDOperable[PolynomialExpander]()
     catalog.registerDOperable[RegexTokenizer]()
     catalog.registerDOperable[StringTokenizer]()
@@ -129,6 +130,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[Normalize](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[OneHotEncode](
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[PolynomialExpand](
