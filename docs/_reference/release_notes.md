@@ -67,6 +67,11 @@ please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-fo
   * [Sort](/1.4/operations/sort.html)
   * [SQL Combine](/1.4/operations/sql_combine.html)
 
+#### Known Issues
+
+* Seahorse Notebooks do not work with linux kernel 3.13.<br />
+  We recommend upgrading the kernel to the newer version.
+
 ### Seahorse 1.3
 
 #### What is New
