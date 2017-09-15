@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2016, CodiLime Inc.
+ */
+
 package io.deepsense.e2etests
 
 import java.util.UUID

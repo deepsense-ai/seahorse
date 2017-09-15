@@ -71,7 +71,7 @@ addCommandAlias("ds-it",
 
 // Scalastyle config for seahorse workflow executor is different and should not be run against backend scalastyle config
 // * Ex. Seahorse workflow executor have different file header (with APACHE license)
-lazy val projectsForScalastyle = seahorseBackendProjects // :+ e2etests // TODO Make e2etest compliant with scalastyle
+lazy val projectsForScalastyle = seahorseBackendProjects :+ e2etests
 lazy val scalastyleCmd = projectsForScalastyle.flatMap(p => Seq(
     s"${p.id}/scalastyle",
     s"${p.id}/it:scalastyle",

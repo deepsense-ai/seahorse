@@ -1,6 +1,6 @@
 /**
-  * Copyright (c) 2016, CodiLime Inc.
-  */
+ * Copyright (c) 2016, CodiLime Inc.
+ */
 
 package io.deepsense.e2etests
 
