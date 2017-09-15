@@ -40,7 +40,7 @@
       'c-workflows-status-bar__item--last-execution--report-not-uploaded': !controller.reportHasBeenUploaded()}"
      tooltip-placement="bottom"
      tooltip-append-to-body="true"
-     tooltip-html-unsafe="{{ controller.getLastExecutionTooltipMessage() }}"
+     tooltip-html="controller.getLastExecutionTooltipMessage()"
     >
     <i class="fa fa-backward fa-2x c-workflows-status-bar__icon
       c-workflows-status-bar__icon--last-execution"></i>

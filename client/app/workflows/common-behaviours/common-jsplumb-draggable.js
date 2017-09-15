@@ -20,7 +20,7 @@ function DraggableDirective(GraphNode) {
         containment: 'parent',
         stop: () => {
           reInitThisNodePosition();
-          scope.$emit(GraphNode.MOVE, {});
+          scope.$emit(GraphNode.MOVE);
         }
       });
 

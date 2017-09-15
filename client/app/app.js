@@ -7,6 +7,7 @@ if (browser.name === 'chrome') {
   var lab = angular.module('ds.lab', [
     'ui.router',
     'ui.bootstrap',
+    'ngSanitize',
     'debounce',
     'ds.lab.partials',
     'deepsense.spinner',

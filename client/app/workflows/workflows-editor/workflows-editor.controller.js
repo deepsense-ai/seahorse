@@ -70,6 +70,10 @@ function WorkflowsEditorController(workflow,
     }
   });
 
+  $scope.$on(GraphNode.MOVE, () => {
+    WorkflowService.saveWorkflow();
+  });
+
   $scope.$on(Edge.CREATE, (data, args)  => {
     WorkflowService.getWorkflow().addEdge(args.edge);
   });
