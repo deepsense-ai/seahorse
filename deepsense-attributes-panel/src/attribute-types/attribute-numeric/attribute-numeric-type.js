@@ -30,7 +30,11 @@ function AttributeNumericType() {
 
       let validator = scope.parameter.validator;
       if (validator && validator.schema && validator.schema.type === 'range') {
-        element[0].setAttribute('min', validator.schema.configuration.begin);
+        let begin = validator.schema.configuration.begin;
+
+        if (begin < -5e+324) {
+          element[0].setAttribute('min', begin);
+        }
         element[0].setAttribute('max', validator.schema.configuration.end);
         element[0].setAttribute('step', validator.schema.configuration.step || 0.1);
       }
