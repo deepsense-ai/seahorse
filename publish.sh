@@ -6,6 +6,8 @@
 # This script expects no external parameters.
 # Version is calculated from current git sha, current time and BASE_VERSION variable
 
+set -e
+
 function jsonValue() {
   KEY=$1
   num=$2
@@ -145,3 +147,5 @@ package
 publishVersion "${FULL_VERSION}.zip" "${FULL_VERSION}"
 publishLatest "${FULL_VERSION}.zip"
 clean
+
+set +e
