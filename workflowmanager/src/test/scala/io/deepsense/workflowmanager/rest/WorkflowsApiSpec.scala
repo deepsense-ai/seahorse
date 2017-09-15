@@ -691,7 +691,7 @@ class WorkflowsApiSpec
       })
     }
 
-    override def experiments(
+    override def workflows(
         limit: Option[Int],
         page: Option[Int],
         status: Option[Status.Value]): Future[WorkflowsList] = {

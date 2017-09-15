@@ -12,69 +12,69 @@ import io.deepsense.models.actions.Action
 import io.deepsense.models.workflows.{WorkflowsList, InputWorkflow, Workflow}
 
 /**
- * Experiment Manager's API
+ * Workflow Manager's API
  */
 trait WorkflowManager {
 
   /**
-   * Returns an experiment with the specified Id.
-   * @param id An identifier of the experiment.
-   * @return An experiment with the specified Id.
+   * Returns a workflow with the specified Id.
+   * @param id An identifier of the workflow.
+   * @return A workflow with the specified Id.
    */
   def get(id: Id): Future[Option[Workflow]]
 
   /**
-   * Updates an experiment.
-   * @param experimentId Id of experiment to be updated.
-   * @param experiment An experiment to be updated.
-   * @return The updated experiment.
+   * Updates an workflow.
+   * @param workflowId Id of workflow to be updated.
+   * @param workflow An workflow to be updated.
+   * @return The updated workflow.
    */
-  def update(experimentId: Id, experiment: InputWorkflow): Future[Workflow]
+  def update(workflowId: Id, workflow: InputWorkflow): Future[Workflow]
 
   /**
-   * Creates new experiment.
-   * @param experiment New experiment.
-   * @return Enhanced, saved version of the experiment (includes identifier etc).
+   * Creates new workflow.
+   * @param workflow New workflow.
+   * @return Enhanced, saved version of the workflow (includes identifier etc).
    */
-  def create(experiment: InputWorkflow): Future[Workflow]
+  def create(workflow: InputWorkflow): Future[Workflow]
 
   /**
-   * Lists experiments. Supports pagination.
+   * Lists workflows. Supports pagination.
    * @param limit Size of a page.
    * @param page Number of a page.
-   * @param status Filters experiments by their statuses.
-   * @return A filtered page of experiments.
+   * @param status Filters workflows by their statuses.
+   * @return A filtered page of workflows.
    */
-  def experiments(
+  def workflows(
       limit: Option[Int],
       page: Option[Int],
       status: Option[Workflow.Status.Value]): Future[WorkflowsList]
 
   /**
-   * Deletes an experiment by Id.
-   * @param id An identifier of the experiment to delete.
-   * @return True if the experiment was deleted.
+   * Deletes an workflow by Id.
+   * @param id An identifier of the workflow to delete.
+   * @return True if the workflow was deleted.
    *         Otherwise false.
    */
   def delete(id: Id): Future[Boolean]
 
   /**
-   * Launches an experiment with the specified Id.
-   * @param id The Id of an experiment to launch.
+   * Launches an workflow with the specified Id.
+   * @param id The Id of an workflow to launch.
    * @param targetNodes Nodes that should be calculated in the launch.
    *                    Empty means to calculate all.
-   * @return The launched experiment.
+   * @return The launched workflow.
    */
   def launch(
       id: Id,
       targetNodes: Seq[Node.Id]): Future[Workflow]
 
   /**
-   * Aborts an experiment. Allows to specify nodes to abort. If nodes list is
-   * empty aborts whole experiment.
-   * @param id An identifier of the experiment to abort.
-   * @param nodes List of experiment's nodes to abort.
-   * @return The aborted experiment.
+   * Aborts an workflow. Allows to specify nodes to abort. If nodes list is
+   * empty aborts whole workflow.
+   * @param id An identifier of the workflow to abort.
+   * @param nodes List of workflow's nodes to abort.
+   * @return The aborted workflow.
    */
   def abort(id: Id, nodes: Seq[Node.Id]): Future[Workflow]
 

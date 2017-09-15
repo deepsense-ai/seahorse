@@ -29,7 +29,7 @@ import io.deepsense.workflowmanager.exceptions.{WorkflowNotFoundException, Workf
 import io.deepsense.workflowmanager.storage.WorkflowStorage
 
 /**
- * Implementation of Experiment Manager
+ * Implementation of Workflow Manager
  */
 class WorkflowManagerImpl @Inject()(
     authorizatorProvider: AuthorizatorProvider,
@@ -42,7 +42,7 @@ class WorkflowManagerImpl @Inject()(
     @Named("roles.experiments.delete") roleDelete: String,
     @Named("roles.experiments.launch") roleLaunch: String,
     @Named("roles.experiments.abort") roleAbort: String,
-    @Named("RunningExperimentsActor") runningExperimentsActor: ActorRef,
+    @Named("RunningExperimentsActor") runningWorkflowsActor: ActorRef,
     @Named("runningexperiments.timeout") timeoutMillis: Long)
     (implicit ec: ExecutionContext)
   extends WorkflowManager with Logging {
@@ -52,95 +52,95 @@ class WorkflowManagerImpl @Inject()(
   private def authorizator: Authorizator = authorizatorProvider.forContext(userContextFuture)
 
   def get(id: Id): Future[Option[Workflow]] = {
-    logger.debug("Get experiment id: {}", id)
+    logger.debug("Get workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      val experiment = storage.get(userContext.tenantId, id).flatMap {
-        case Some(storedExperiment) =>
-          val ownedExperiment = storedExperiment.assureOwnedBy(userContext)
-          runningExperiment(id).map {
+      val workflow = storage.get(userContext.tenantId, id).flatMap {
+        case Some(storedWorkflow) =>
+          val ownedWorkflow = storedWorkflow.assureOwnedBy(userContext)
+          runningWorkflow(id).map {
             case running: Some[Workflow] => running
-            case None => Some(ownedExperiment)
+            case None => Some(ownedWorkflow)
           }
         case None => Future.successful(None)
       }
-      experiment
+      workflow
     }
   }
 
-  def update(experimentId: Id, experiment: InputWorkflow): Future[Workflow] = {
-    logger.debug("Update experiment id: {}, experiment: {}", experimentId, experiment)
-    if (experiment.graph.containsCycle) {
+  def update(workflowId: Id, workflow: InputWorkflow): Future[Workflow] = {
+    logger.debug("Update workflow id: {}, workflow: {}", workflowId, workflow)
+    if (workflow.graph.containsCycle) {
       Future.failed(new CyclicGraphException())
     } else {
       val now = DateTimeConverter.now
       authorizator.withRole(roleUpdate) { userContext =>
-        val oldExperimentOption = storage.get(userContext.tenantId, experimentId)
-        oldExperimentOption.flatMap {
-          case Some(oldExperiment) =>
-            runningExperiment(experimentId).flatMap {
-              case Some(runningExperiment)
-                if runningExperiment.state.status == Workflow.Status.Running =>
-                throw new WorkflowRunningException(experimentId)
+        val oldWorkflowOption = storage.get(userContext.tenantId, workflowId)
+        oldWorkflowOption.flatMap {
+          case Some(oldWorkflow) =>
+            runningWorkflow(workflowId).flatMap {
+              case Some(runningWorkflow)
+                if runningWorkflow.state.status == Workflow.Status.Running =>
+                throw new WorkflowRunningException(workflowId)
               case _ =>
-                runningExperimentsActor ! Delete(experimentId)
-                val updatedExperiment = oldExperiment
+                runningWorkflowsActor ! Delete(workflowId)
+                val updatedWorkflow = oldWorkflow
                   .assureOwnedBy(userContext)
-                  .updatedWith(experiment, now)
-                storage.save(updatedExperiment).map(_ => updatedExperiment)
+                  .updatedWith(workflow, now)
+                storage.save(updatedWorkflow).map(_ => updatedWorkflow)
             }
-          case None => throw new WorkflowNotFoundException(experimentId)
+          case None => throw new WorkflowNotFoundException(workflowId)
         }
       }
     }
   }
 
-  def create(inputExperiment: InputWorkflow): Future[Workflow] = {
-    logger.debug("Create experiment inputExperiment: {}", inputExperiment)
-    if (inputExperiment.graph.containsCycle) {
+  def create(inputWorkflow: InputWorkflow): Future[Workflow] = {
+    logger.debug("Create workflow inputWorkflow: {}", inputWorkflow)
+    if (inputWorkflow.graph.containsCycle) {
       Future.failed(new CyclicGraphException())
     } else {
       val now = DateTimeConverter.now
       authorizator.withRole(roleCreate) {
         userContext => {
-          val experiment = inputExperiment.toWorkflowOf(userContext, now)
-          storage.save(experiment).map(_ => experiment)
+          val workflow = inputWorkflow.toWorkflowOf(userContext, now)
+          storage.save(workflow).map(_ => workflow)
         }
       }
     }
   }
 
-  def experiments(
+  def workflows(
       limit: Option[Int],
       page: Option[Int],
       status: Option[Workflow.Status.Value]): Future[WorkflowsList] = {
-    logger.debug("List experiments limit: {}, page: {}, status: {}", limit, page, status)
+    logger.debug("List workflows limit: {}, page: {}, status: {}", limit, page, status)
     authorizator.withRole(roleList) { userContext =>
-      val tenantExperimentsFuture: Future[Seq[Workflow]] =
+      val tenantWorkflowsFuture: Future[Seq[Workflow]] =
         storage.list(userContext.tenantId, limit, page, status)
-      val runningExperimentsFuture: Future[Map[Id, Workflow]] = runningExperimentsActor
+      val runningWorkflowsFuture: Future[Map[Id, Workflow]] = runningWorkflowsActor
         .ask(GetAllByTenantId(userContext.tenantId))
         .mapTo[WorkflowsMap]
-        .map(_.experimentsByTenantId.getOrElse(userContext.tenantId, Set())
-          .map(experiment => experiment.id -> experiment).toMap)
+        .map(_.workflowsByTenantId.getOrElse(userContext.tenantId, Set())
+          .map(workflow => workflow.id -> workflow).toMap)
 
-      val runningAndStoredExperiments = for {
-        tenantExperiments <- tenantExperimentsFuture
-        runningExperiments <- runningExperimentsFuture
-      } yield tenantExperiments
-        .map(experiment => runningExperiments.getOrElse(experiment.id, experiment))
+      val runningAndStoredWorkflow = for {
+        tenantWorkflows <- tenantWorkflowsFuture
+        runningWorkflow <- runningWorkflowsFuture
+      } yield tenantWorkflows
+        .map(workflow => runningWorkflow.getOrElse(workflow.id, workflow))
 
-      runningAndStoredExperiments.map(rse => {
+      runningAndStoredWorkflow.map(rse => {
         WorkflowsList(Count(rse.size, rse.size), rse)
       })
     }
   }
 
   def delete(id: Id): Future[Boolean] = {
-    logger.debug("Delete experiment id: {}", id)
+    logger.debug("Delete workflow id: {}", id)
     authorizator.withRole(roleDelete) { userContext =>
       storage.get(userContext.tenantId, id).flatMap {
-        case Some(experiment) =>
-          experiment.assureOwnedBy(userContext)
+        case Some(workflow) =>
+          workflow.assureOwnedBy(userContext)
           storage.delete(userContext.tenantId, id).map(_ => true)
         case None => Future.successful(false)
       }
@@ -150,16 +150,16 @@ class WorkflowManagerImpl @Inject()(
   def launch(
       id: Id,
       targetNodes: Seq[Node.Id]): Future[Workflow] = {
-    logger.debug("Launch experiment id: {}, targetNodes: {}", id, targetNodes)
+    logger.debug("Launch workflow id: {}, targetNodes: {}", id, targetNodes)
     authorizator.withRole(roleLaunch) { userContext =>
       storage.get(userContext.tenantId, id).flatMap {
-        case Some(experiment) =>
-          val ownedExperiment = experiment.assureOwnedBy(userContext)
-          val launchedExp = runningExperimentsActor.ask(Launch(ownedExperiment))
+        case Some(workflow) =>
+          val ownedWorkflow = workflow.assureOwnedBy(userContext)
+          val launchedWorkflow = runningWorkflowsActor.ask(Launch(ownedWorkflow))
             .mapTo[Try[Workflow]]
-          launchedExp.map {
+          launchedWorkflow.map {
             case Success(e) => e
-            case Failure(e) => throw new WorkflowRunningException(experiment.id)
+            case Failure(e) => throw new WorkflowRunningException(workflow.id)
           }
         case None => throw new WorkflowNotFoundException(id)
       }
@@ -167,17 +167,17 @@ class WorkflowManagerImpl @Inject()(
   }
 
   def abort(id: Id, nodes: Seq[Node.Id]): Future[Workflow] = {
-    logger.debug("Abort experiment id: {}, targetNodes: {}", id, nodes)
+    logger.debug("Abort workflow id: {}, targetNodes: {}", id, nodes)
     authorizator.withRole(roleAbort) { userContext =>
-      val experimentFuture = storage.get(userContext.tenantId, id)
-      experimentFuture.flatMap {
-        case Some(experiment) =>
-          val ownedExperiment = experiment.assureOwnedBy(userContext)
-          runningExperimentsActor
-            .ask(Abort(ownedExperiment.id))
+      val workflowFuture = storage.get(userContext.tenantId, id)
+      workflowFuture.flatMap {
+        case Some(workflow) =>
+          val ownedWorkflow = workflow.assureOwnedBy(userContext)
+          runningWorkflowsActor
+            .ask(Abort(ownedWorkflow.id))
             .mapTo[Try[Workflow]]
             .map { _.recover { case e: WorkflowNotRunningException =>
-              experiment
+              workflow
             }.get
           }
         case None => throw new WorkflowNotFoundException(id)
@@ -190,8 +190,8 @@ class WorkflowManagerImpl @Inject()(
     case LaunchAction(nodes) => launch(id, nodes.getOrElse(List()))
   }
 
-  private def runningExperiment(id: Id): Future[Option[Workflow]] = {
-    runningExperimentsActor
+  private def runningWorkflow(id: Id): Future[Option[Workflow]] = {
+    runningWorkflowsActor
       .ask(Get(id))
       .mapTo[Option[Workflow]]
   }

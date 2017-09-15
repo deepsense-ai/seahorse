@@ -20,7 +20,6 @@ import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
-import io.deepsense.model.json.graph.GraphJsonProtocol
 import io.deepsense.model.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.State
@@ -35,7 +34,7 @@ class WorkflowDaoCassandraImplIntegSpec
   with CassandraTestSupport
   with GraphJsonTestSupport {
 
-  var experimentsDao : WorkflowDaoCassandraImpl = _
+  var workflowsDao : WorkflowDaoCassandraImpl = _
   val catalog = mock[DOperationsCatalog]
   val graphReader: GraphReader = new GraphReader(catalog)
   val rowMapper = new WorkflowRowMapper(graphReader)
@@ -56,84 +55,84 @@ class WorkflowDaoCassandraImplIntegSpec
   val tenantId2 = "TestTenantId2"
   val tenantId3 = "TestTenantId3"
 
-  val experiment1 = createExperiment(tenantId1, name = "name1", state = State.running)
-  val experiment2 = createExperiment(tenantId1, name = "name2", graph = createGraph)
-  val experiment3 = createExperiment(tenantId2, name = "name3")
-  val experiment4 = createExperiment(tenantId2, state = State.failed(createFailureDescription))
-  val experiment5 = createExperiment(tenantId2, graph = createGraph)
-  val storedExperiments = Set(experiment1, experiment2, experiment3, experiment4, experiment5)
+  val workflow1 = createWorkflow(tenantId1, name = "name1", state = State.running)
+  val workflow2 = createWorkflow(tenantId1, name = "name2", graph = createGraph)
+  val workflow3 = createWorkflow(tenantId2, name = "name3")
+  val workflow4 = createWorkflow(tenantId2, state = State.failed(createFailureDescription))
+  val workflow5 = createWorkflow(tenantId2, graph = createGraph)
+  val storedWorkflows = Set(workflow1, workflow2, workflow3, workflow4, workflow5)
 
-  def cassandraTableName : String = "experiments"
-  def cassandraKeySpaceName : String = "experimentmanager"
+  def cassandraTableName : String = "workflows"
+  def cassandraKeySpaceName : String = "workflowmanager"
 
   before {
     WorkflowTableCreator.create(cassandraTableName, session)
-    experimentsDao = new WorkflowDaoCassandraImpl(cassandraTableName, session, rowMapper)
+    workflowsDao = new WorkflowDaoCassandraImpl(cassandraTableName, session, rowMapper)
   }
 
-  "ExperimentsDao" should {
-    "select all rows owned by tenantId1" in withStoredExperiments(storedExperiments) {
-      whenReady(experimentsDao.list(tenantId1)) { experiments =>
-        experiments should contain theSameElementsAs Seq(experiment1, experiment2)
+  "WorkflowsDao" should {
+    "select all rows owned by tenantId1" in withStoredWorkflows(storedWorkflows) {
+      whenReady(workflowsDao.list(tenantId1)) { workflows =>
+        workflows should contain theSameElementsAs Seq(workflow1, workflow2)
       }
     }
-    "select all rows owned by tenantId2" in withStoredExperiments(storedExperiments) {
-      whenReady(experimentsDao.list(tenantId2)) { experiments =>
-        experiments should contain theSameElementsAs Seq(experiment3, experiment4, experiment5)
+    "select all rows owned by tenantId2" in withStoredWorkflows(storedWorkflows) {
+      whenReady(workflowsDao.list(tenantId2)) { workflows =>
+        workflows should contain theSameElementsAs Seq(workflow3, workflow4, workflow5)
       }
     }
 
-    "not list deleted experiment" in withStoredExperiments(storedExperiments) {
-      whenReady(experimentsDao.delete(tenantId2, experiment3.id)) { _ =>
-        whenReady(experimentsDao.list(tenantId2)) { experiments =>
-          experiments should contain theSameElementsAs Seq(experiment4, experiment5)
+    "not list deleted workflow" in withStoredWorkflows(storedWorkflows) {
+      whenReady(workflowsDao.delete(tenantId2, workflow3.id)) { _ =>
+        whenReady(workflowsDao.list(tenantId2)) { workflows =>
+          workflows should contain theSameElementsAs Seq(workflow4, workflow5)
         }
       }
     }
 
-    "not get deleted experiment" in withStoredExperiments(storedExperiments) {
-      whenReady(experimentsDao.delete(tenantId2, experiment3.id)) { _ =>
-        whenReady(experimentsDao.get(tenantId2, experiment3.id)) { experiment =>
-          experiment shouldBe None
+    "not get deleted workflow" in withStoredWorkflows(storedWorkflows) {
+      whenReady(workflowsDao.delete(tenantId2, workflow3.id)) { _ =>
+        whenReady(workflowsDao.get(tenantId2, workflow3.id)) { workflow =>
+          workflow shouldBe None
         }
       }
     }
 
-    "update text fields in experiment" in withStoredExperiments(storedExperiments) {
-      val modifiedExperiment3 = experiment3.copy(description = "Description2", name = "Name2")
-      whenReady(experimentsDao.save(modifiedExperiment3)) { _ =>
-        whenReady(experimentsDao.list(tenantId2)) { experiments =>
-          experiments should contain theSameElementsAs
-            Seq(modifiedExperiment3, experiment4, experiment5)
+    "update text fields in workflow" in withStoredWorkflows(storedWorkflows) {
+      val modifiedWorkflows3 = workflow3.copy(description = "Description2", name = "Name2")
+      whenReady(workflowsDao.save(modifiedWorkflows3)) { _ =>
+        whenReady(workflowsDao.list(tenantId2)) { workflows =>
+          workflows should contain theSameElementsAs
+            Seq(modifiedWorkflows3, workflow4, workflow5)
         }
       }
     }
 
-    "update json fields in experiment" in withStoredExperiments(storedExperiments) {
-      val modifiedExperiment3 = experiment3.copy(graph = createGraph)
-      whenReady(experimentsDao.save(modifiedExperiment3)) { _ =>
-        whenReady(experimentsDao.list(tenantId2)) { experiments =>
-          experiments should contain theSameElementsAs
-            Seq(modifiedExperiment3, experiment4, experiment5)
+    "update json fields in workflow" in withStoredWorkflows(storedWorkflows) {
+      val modifiedWorkflows3 = workflow3.copy(graph = createGraph)
+      whenReady(workflowsDao.save(modifiedWorkflows3)) { _ =>
+        whenReady(workflowsDao.list(tenantId2)) { workflows =>
+          workflows should contain theSameElementsAs
+            Seq(modifiedWorkflows3, workflow4, workflow5)
         }
       }
     }
 
-    "find experiment by id" in withStoredExperiments(storedExperiments) {
-      whenReady(experimentsDao.get(tenantId1, experiment1.id)) { experiment =>
-        experiment shouldBe Some(experiment1)
+    "find workflow by id" in withStoredWorkflows(storedWorkflows) {
+      whenReady(workflowsDao.get(tenantId1, workflow1.id)) { workflow =>
+        workflow shouldBe Some(workflow1)
       }
     }
 
-    "not find experiment if tenantId is not correct" in withStoredExperiments(storedExperiments) {
-      whenReady(experimentsDao.get(tenantId2, experiment1.id)) { experiment =>
-        experiment shouldBe None
+    "not find workflow if tenantId is not correct" in withStoredWorkflows(storedWorkflows) {
+      whenReady(workflowsDao.get(tenantId2, workflow1.id)) { workflow =>
+        workflow shouldBe None
       }
     }
   }
 
-  private def withStoredExperiments(storedExperiments: Set[Workflow])(testCode: => Any): Unit = {
-    val s = Future.sequence(storedExperiments.map(experimentsDao.save))
+  private def withStoredWorkflows(storedWorkflows: Set[Workflow])(testCode: => Any): Unit = {
+    val s = Future.sequence(storedWorkflows.map(workflowsDao.save))
     Await.ready(s, operationDuration)
     try {
       testCode
@@ -145,13 +144,13 @@ class WorkflowDaoCassandraImplIntegSpec
   def createFailureDescription() = {
     FailureDescription(
       id = DeepSenseFailure.Id.randomId,
-      code = FailureCode.ExperimentNotFound,
+      code = FailureCode.WorkflowNotFound,
       title = "Problem",
       message = Some("Problem"),
       details = Map("problem1" -> "description1", "problem2" -> "description2"))
   }
 
-  def createExperiment(
+  def createWorkflow(
       tenant: String,
       graph: Graph = new Graph(),
       name: String = "test",

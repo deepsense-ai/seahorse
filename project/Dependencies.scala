@@ -21,7 +21,7 @@ object Version {
   val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
-  val seahorse      = "0.1.4"
+  val seahorse      = "0.1.5"
 }
 
 object Library {
@@ -69,7 +69,7 @@ object Library {
   val seahorseESModel    = seahorse("entitystorage-model")
   val seahorseModels     = seahorse("models")
   val seahorseGraph      = seahorse("graph")
-  val seahorseGraphJson  = seahorse("graph-json")
+  val seahorseWorkflowJson  = seahorse("workflow-json")
   val seahorseReportlib  = seahorse("reportlib")
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
@@ -131,7 +131,7 @@ object Dependencies {
     guiceMultibindings,
     seahorseDeeplang,
     seahorseESModel,
-    seahorseGraphJson,
+    seahorseWorkflowJson,
     seahorseESModel,
     seahorseReportlib,
     sprayCan,

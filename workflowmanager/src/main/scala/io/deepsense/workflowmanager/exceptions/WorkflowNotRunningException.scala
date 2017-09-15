@@ -7,12 +7,12 @@ package io.deepsense.workflowmanager.exceptions
 import io.deepsense.commons.exception.FailureCode
 import io.deepsense.commons.models.Id
 
-class WorkflowNotRunningException(experimentId: Id)
+class WorkflowNotRunningException(workflowId: Id)
   extends WorkflowManagerException(
-    FailureCode.CannotUpdateRunningExperiment,
-    "Experiment is not running and cannot be aborted",
-    s"Experiment with id $experimentId is not running and can not be aborted.") {
+    FailureCode.CannotUpdateRunningWorkflow,
+    "Workflow is not running and cannot be aborted",
+    s"Workflow with id $workflowId is not running and can not be aborted.") {
   override protected def additionalDetails: Map[String, String] =
-    Map("experimentId" -> experimentId.toString)
+    Map("workflowId" -> workflowId.toString)
 }
 

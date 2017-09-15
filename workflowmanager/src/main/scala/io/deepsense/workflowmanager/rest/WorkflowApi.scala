@@ -160,7 +160,7 @@ class WorkflowApi @Inject() (
                   val statusEnum = status.map(Workflow.Status.withName)
                   complete(experimentManagerProvider
                     .forContext(userContext)
-                    .experiments(limitInt, pageInt, statusEnum))
+                    .workflows(limitInt, pageInt, statusEnum))
                 }
               }
             }

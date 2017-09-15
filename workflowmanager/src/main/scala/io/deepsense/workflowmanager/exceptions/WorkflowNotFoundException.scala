@@ -8,14 +8,14 @@ import io.deepsense.commons.exception.FailureCode
 import io.deepsense.models.workflows.Workflow
 
 /**
- * Thrown when the specified experiment was not found.
- * @param experimentId Identifier of the requested experiment
+ * Thrown when the specified workflow was not found.
+ * @param workflowId Identifier of the requested workflow
  */
-case class WorkflowNotFoundException(experimentId: Workflow.Id)
+case class WorkflowNotFoundException(workflowId: Workflow.Id)
   extends WorkflowManagerException(
-    FailureCode.ExperimentNotFound,
-    "Experiment not found",
-    s"Experiment with id $experimentId not found") {
+    FailureCode.WorkflowNotFound,
+    "Workflow not found",
+    s"Workflow with id $workflowId not found") {
   override protected def additionalDetails: Map[String, String] =
-    Map("experimentId" -> experimentId.toString)
+    Map("workflowId" -> workflowId.toString)
 }

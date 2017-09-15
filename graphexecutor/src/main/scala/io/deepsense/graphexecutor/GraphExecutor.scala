@@ -33,7 +33,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{CatalogRecorder, DOperable, DSHdfsClient, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.workflows.{Workflow, Workflow$}
+import io.deepsense.models.workflows.{Workflow}
 
 object GraphExecutor extends LazyLogging {
   val sparkEventLogDir = "/tmp/spark-events"
@@ -101,10 +101,11 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
 
-    executionContext.hdfsClient = new DSHdfsClient(
+    val dSHdfsClient = new DSHdfsClient(
       new DFSClient(new URI(getHdfsAddressFromConfig(geConfig)), new Configuration()))
-    // NOTE: GraphExecutor.sparkEventLogDir have to be created before Spark context
-    createHdfsDir(executionContext.hdfsClient, GraphExecutor.sparkEventLogDir)
+    executionContext.fsClient = dSHdfsClient
+      // NOTE: GraphExecutor.sparkEventLogDir have to be created before Spark context
+    createHdfsDir(dSHdfsClient, GraphExecutor.sparkEventLogDir)
 
     executionContext.sparkContext = new SparkContext(sparkConf)
     executionContext.sqlContext = new SQLContext(executionContext.sparkContext)

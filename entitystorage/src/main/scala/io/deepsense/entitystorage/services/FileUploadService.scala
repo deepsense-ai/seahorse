@@ -28,7 +28,7 @@ class FileUploadService @Inject() (
 
   def uploadFile(tenantId: String, name: String, content: InputStream): Future[Entity.Id] = {
 
-    val hdfsFile = UniqueFilenameUtil.getUniqueHdfsFilename(
+    val hdfsFile = UniqueFilenameUtil.getUniqueFsFilename(
       tenantId, UniqueFilenameUtil.FileEntityCategory)
 
     dsHdfsClient.saveInputStreamToFile(content, hdfsFile)

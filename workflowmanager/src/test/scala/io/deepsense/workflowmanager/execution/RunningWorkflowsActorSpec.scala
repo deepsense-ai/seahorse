@@ -178,8 +178,8 @@ class RunningWorkflowsActorSpec
 
         {
           val receivedExperiments = probe.expectMsgAnyClassOf(classOf[WorkflowsMap])
-          receivedExperiments.experimentsByTenantId should have size 1
-          receivedExperiments.experimentsByTenantId(experiment1.tenantId) should
+          receivedExperiments.workflowsByTenantId should have size 1
+          receivedExperiments.workflowsByTenantId(experiment1.tenantId) should
             contain theSameElementsAs expectedExperimentsOfTenant1(experiment1.tenantId)
         }
 
@@ -187,8 +187,8 @@ class RunningWorkflowsActorSpec
 
         {
           val receivedExperiments = probe.expectMsgAnyClassOf(classOf[WorkflowsMap])
-          receivedExperiments.experimentsByTenantId should have size 1
-          receivedExperiments.experimentsByTenantId(otherTenantId) should
+          receivedExperiments.workflowsByTenantId should have size 1
+          receivedExperiments.workflowsByTenantId(otherTenantId) should
             contain theSameElementsAs expectedExperimentsOfTenant2
         }
       }
@@ -198,7 +198,7 @@ class RunningWorkflowsActorSpec
       "received GetAllByTenantId with id of tenant that has no experiments" in new TestCase {
         probe.send(actorRef, GetAllByTenantId("tenantWithNoExperiments"))
         probe.expectMsgAnyClassOf(classOf[WorkflowsMap])
-          .experimentsByTenantId shouldBe Map.empty
+          .workflowsByTenantId shouldBe Map.empty
       }
     }
   }

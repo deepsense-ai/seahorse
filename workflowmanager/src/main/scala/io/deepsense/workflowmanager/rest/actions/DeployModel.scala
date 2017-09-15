@@ -28,7 +28,7 @@ class DeployModel {
       entityStorageClient: EntityStorageClient): Future[CreateModelResponse] = {
     val retrieved: Deployable = DOperableLoader.load(
       entityStorageClient)(
-        DeployableLoader.loadFromHdfs(ec.hdfsClient))(
+        DeployableLoader.loadFromFs(ec.fsClient))(
         uc.tenantId, id)
     val toService = (model: Model) => {
       implicit val system = ActorSystem()

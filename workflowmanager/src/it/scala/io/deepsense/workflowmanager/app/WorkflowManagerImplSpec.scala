@@ -35,7 +35,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val authorizatorProvider: AuthorizatorProvider = mock[AuthorizatorProvider]
   when(authorizatorProvider.forContext(any(classOf[Future[UserContext]]))).thenReturn(authorizator)
 
-  implicit val experimentEquality = new Equality[Workflow] {
+  implicit val workflowEquality = new Equality[Workflow] {
     def areEqual(a: Workflow, b: Any): Boolean =
       b match {
         case e: Workflow => e eq a
@@ -44,12 +44,12 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   }
 
   val probe = TestProbe()
-  val runningExperimentsActor: ActorRef = probe.testActor
+  val runningWorkflowssActor: ActorRef = probe.testActor
   val storedWorkflow = mock[Workflow]
   when(storedWorkflow.assureOwnedBy(any())).thenReturn(storedWorkflow)
   val storage: WorkflowStorage = mock[WorkflowStorage]
 
-  val experimentManager = new WorkflowManagerImpl(
+  val workflowManager = new WorkflowManagerImpl(
     authorizatorProvider,
     storage,
     userContextFuture,
@@ -60,71 +60,71 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     roleForAll,
     roleForAll,
     roleForAll,
-    runningExperimentsActor,
+    runningWorkflowssActor,
     3.seconds.toMillis)
 
-  "ExperimentManager.get(...)" should {
+  "WorkflowManager.get(...)" should {
     "return None" when {
-      "the requested experiment does not exist" in {
+      "the requested workflow does not exist" in {
         when(storage.get(any(), any()))
           .thenReturn(Future.successful(None))
 
-        val eventualExperiment = experimentManager.get(Workflow.Id.randomId)
-        whenReady(eventualExperiment) { _ shouldBe None }
+        val eventualWorkflow = workflowManager.get(Workflow.Id.randomId)
+        whenReady(eventualWorkflow) { _ shouldBe None }
       }
     }
-    "return experiment from the storage when the experiment is not running" in {
+    "return workflow from the storage when the workflow is not running" in {
       when(storage.get(any(), any()))
         .thenReturn(Future.successful(Some(storedWorkflow)))
       val id = Workflow.Id.randomId
 
-      val eventualExperiment = experimentManager.get(id)
+      val eventualWorkflow = workflowManager.get(id)
       probe.expectMsg(io.deepsense.models.messages.Get(id))
       probe.reply(None)
-      whenReady(eventualExperiment) { _.get shouldEqual storedWorkflow }
+      whenReady(eventualWorkflow) { _.get shouldEqual storedWorkflow }
     }
-    "return running experiment" in {
-      val runningExperiment = mock[Workflow]
+    "return running workflow" in {
+      val runningWorkflow = mock[Workflow]
       when(storage.get(any(), any()))
         .thenReturn(Future.successful(Some(storedWorkflow)))
 
-      val eventualExperiment = experimentManager.get(storedWorkflow.id)
+      val eventualWorkflow = workflowManager.get(storedWorkflow.id)
       probe.expectMsg(io.deepsense.models.messages.Get(storedWorkflow.id))
-      probe.reply(Some(runningExperiment))
-      whenReady(eventualExperiment) { _.get shouldEqual runningExperiment }
+      probe.reply(Some(runningWorkflow))
+      whenReady(eventualWorkflow) { _.get shouldEqual runningWorkflow }
     }
   }
 
-  "ExperimentManager.launch(...)" should {
-    "launch experiment and return it" when {
-      "the experiment exists" in {
-        val launchedExperiment = mock[Workflow]
+  "WorkflowManager.launch(...)" should {
+    "launch workflow and return it" when {
+      "the workflow exists" in {
+        val launchedWorkflow = mock[Workflow]
         when(storage.get(any(), any())).thenReturn(Future.successful(Some(storedWorkflow)))
 
-        val eventualExperiment = experimentManager.launch(storedWorkflow.id, Seq.empty)
+        val eventualWorkflow = workflowManager.launch(storedWorkflow.id, Seq.empty)
         probe.expectMsg(Launch(storedWorkflow))
-        probe.reply(Success(launchedExperiment))
-        whenReady(eventualExperiment) { _ shouldEqual launchedExperiment }
+        probe.reply(Success(launchedWorkflow))
+        whenReady(eventualWorkflow) { _ shouldEqual launchedWorkflow }
       }
     }
     "fail" when {
-      "the experiment does not exists" in {
+      "the workflow does not exists" in {
         when(storage.get(any(), any())).thenReturn(Future.successful(None))
 
-        val eventualExperiment = experimentManager.launch(storedWorkflow.id, Seq.empty)
-        whenReady(eventualExperiment.failed) {
+        val eventualWorkflow = workflowManager.launch(storedWorkflow.id, Seq.empty)
+        whenReady(eventualWorkflow.failed) {
           _ shouldBe new WorkflowNotFoundException(storedWorkflow.id)
         }
       }
     }
     "fail" when {
-      "the experiment is already running" is pending
+      "the workflow is already running" is pending
     }
   }
 
-  "ExperimentManager.abort(...)" should {
-    "abort experiment and return it" when {
-      "the experiment exists" is pending
+  "WorkflowManager.abort(...)" should {
+    "abort workflow and return it" when {
+      "the workflow exists" is pending
 //        {
 //        val abortedExperiment = mock[Experiment]
 //        val storage: ExperimentStorage = mock[ExperimentStorage]
@@ -139,46 +139,46 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
 //      }
     }
     "return fail" when {
-      "the experiment does not exists" in {
+      "the workflow does not exists" in {
         when(storage.get(any(), any())).thenReturn(Future.successful(None))
-        val eventualExperiment = experimentManager.abort(storedWorkflow.id, Seq.empty)
-        whenReady(eventualExperiment.failed) {
+        val eventualWorkflow = workflowManager.abort(storedWorkflow.id, Seq.empty)
+        whenReady(eventualWorkflow.failed) {
           _ shouldBe new WorkflowNotFoundException(storedWorkflow.id)
         }
       }
     }
   }
 
-  "ExperimentManager.list(...)" should {
-    "contain running experiments" in {
-      val runningExperimentId = Workflow.Id.randomId
+  "WorkflowManager.list(...)" should {
+    "contain running workflows" in {
+      val runningWorkflowId = Workflow.Id.randomId
       val e1 = mock[Workflow]
       val e2 = mock[Workflow]
       val e3 = mock[Workflow]
       val e4 = mock[Workflow]
       when(e1.id).thenReturn(Workflow.Id.randomId)
-      when(e2.id).thenReturn(runningExperimentId)
+      when(e2.id).thenReturn(runningWorkflowId)
       when(e3.id).thenReturn(Workflow.Id.randomId)
       when(e4.id).thenReturn(Workflow.Id.randomId)
 
-      val runningExperiment = mock[Workflow]
-      when(runningExperiment.id).thenReturn(runningExperimentId)
+      val runningWorkflow = mock[Workflow]
+      when(runningWorkflow.id).thenReturn(runningWorkflowId)
 
-      val storedExperiments = Seq(e1, e2, e3, e4)
+      val storedWorkflows = Seq(e1, e2, e3, e4)
       when(storage.list(any(), any(), any(), any()))
-        .thenReturn(Future.successful(storedExperiments))
+        .thenReturn(Future.successful(storedWorkflows))
 
-      val mergedExperiments = experimentManager.experiments(None, None, None)
+      val mergedWorkflows = workflowManager.workflows(None, None, None)
       probe.expectMsg(GetAllByTenantId(tenantId))
-      probe.reply(WorkflowsMap(Map(tenantId -> Set(runningExperiment))))
-      whenReady(mergedExperiments) { experimentsLists =>
-        val experiments = experimentsLists.experiments
-        val experimentsById = experiments.map( experiment => experiment.id -> experiment).toMap
-        experimentsById(e1.id) shouldBe e1
-        experimentsById(e2.id) shouldBe runningExperiment
-        experimentsById(e3.id) shouldBe e3
-        experimentsById(e4.id) shouldBe e4
-        experiments should have size 4
+      probe.reply(WorkflowsMap(Map(tenantId -> Set(runningWorkflow))))
+      whenReady(mergedWorkflows) { workflowsLists =>
+        val workflows = workflowsLists.workflows
+        val workflowsById = workflows.map( workflow => workflow.id -> workflow).toMap
+        workflowsById(e1.id) shouldBe e1
+        workflowsById(e2.id) shouldBe runningWorkflow
+        workflowsById(e3.id) shouldBe e3
+        workflowsById(e4.id) shouldBe e4
+        workflows should have size 4
       }
     }
   }
