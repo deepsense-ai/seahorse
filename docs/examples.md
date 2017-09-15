@@ -13,14 +13,13 @@ description: Seahorse documentation homepage
 
 ## Example 1 - Build a Simple Regression Model
 
-The goal of this exercise is to build a model predicting apartments prices
-basing on 3 apartments features:
+The goal of this exercise is to build a model predicting apartment prices based on 3 features:
 <code>beds</code>, <code>baths</code> and <code>sq_ft</code>.
 
-The dataset [transactions.csv](/_static/transactions.csv) has 5 columns and 1000 rows
+The dataset [transactions.csv](/_static/transactions.csv) has 5 columns and 1,000 rows
 (header row and 999 data rows).
 Each row provides information about the apartment:
-city, number of bedrooms, number of bathrooms, size of the apartment (in square feets) and its price.
+city, number of bedrooms, number of bathrooms, size of the apartment (in square feet) and its price.
 
     city,beds,baths,sq_ft,price
     CityB,4,1,1294,529377
@@ -41,12 +40,12 @@ the scoring will be produced (model performance report).
 1. Create an empty workflow
    * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a> and click **New workflow**
    * Put <code>machinelearning1</code> in the **Name** section - setting a meaningful name will help
-     when looking for a workflow in workflow list
+     when looking for a workflow in the workflow list
    * Press the **create** button
 
 2. Set the source of your data
    * Drag [Read DataFrame](operations/read_dataframe.html) operation to your canvas
-   * Click on **Read DataFrame** operation - menu on the right will show its parameters
+   * Click on **Read DataFrame** operation - menu on the right to show its parameters
    * Put <code>https://seahorse.deepsense.io/_static/transactions.csv</code> in the **SOURCE**
      parameter - once executed, the dataset will be downloaded from that location
 
@@ -54,10 +53,10 @@ the scoring will be produced (model performance report).
    containing selected features' values
    * Drag [Assemble Vector](operations/assemble_vector.html) to your canvas
    * In the **INPUT COLUMNS** section:
-     * Click **Edit selection**, this will open selection window for **INPUT COLUMNS** parameter
-     * Select **Excluding** mode in the top-right corner - this will include in the features
-       column all values except the ones selected
-     * Add <code>city</code> and <code>price</code> to the list - we have to exclude <code>city</code>
+     * Click **Edit selection**, this will open the selection window for **INPUT COLUMNS** parameter
+     * Select **Excluding** mode in the top-right corner - this will include all values
+         except the ones selected in the features column
+     * Add <code>city</code> and <code>price</code> to the list - we have to exclude the <code>city</code>
        column, because it doesn't contain numeric values and <code>price</code>, because it contains
        the actual results
    * Put <code>features</code> in the **OUTPUT COLUMN** parameter - the operation will add a column
@@ -70,7 +69,7 @@ the scoring will be produced (model performance report).
    * Put <code>0</code> in the **SEED** parameter - the split operation itself is not deterministic.
      You can put any value here - it will split the dataset differently, but in the same proportions.
 
-5. Use linear regression algorithm
+5. Use the linear regression algorithm
    * Drag [Linear Regression](operations/linear_regression.html) to your canvas
    * In the **FEATURES COLUMN** section:
      * Click **Edit selection**, this will open selection window for **FEATURES COLUMN** parameter
@@ -79,9 +78,9 @@ the scoring will be produced (model performance report).
    * In the **PREDICTION COLUMN** section put <code>prediction</code> - this new column will contain
      predicted values
    * In the **LABEL COLUMN** section:
-     * Click **Edit selection** - this will open selection window for **LABEL COLUMN** parameter
+     * Click **Edit selection** - this will open a selection window for **LABEL COLUMN** parameter
      * Click at **Select by name** and put <code>price</code> in the text field - <code>price</code>
-       column contains the actual values that we will evaluate out model against
+       column contains the actual values that we will evaluate our model against
 
 6. Prepare operations for model fitting and transforming the dataset
    * Drag [Fit](operations/fit.html) to your canvas - this operation will be used to fit model to
@@ -127,8 +126,8 @@ In the next example we will try to improve these metrics.
 
 ## Example 2 - Build a Better Model
 
-The goal of this exercise is to improve our previous models performance.
-In previous example we only used 3 features of the apartments:
+The goal of this exercise is to improve our previous model's performance.
+In the previous example we only used 3 features of the apartments:
 <code>beds</code>, <code>baths</code> and <code>sq_ft</code>.
 We will now add the <code>city</code> feature to the model.
 
@@ -202,7 +201,7 @@ and interactively analyze data.
 * Create an empty workflow
   * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a> and click **New workflow**
   * Put <code>notebook1</code> in the **Name** section
-  * Press the **create** button
+  * Press the **Create** button
 
 * Set the source of your data
   * Drag [Read DataFrame](operations/read_dataframe.html) operation
@@ -230,17 +229,15 @@ def transform(dataframe):
       "SELECT Math, English, get_fce(Certificates) as FCE FROM df")
 {% endhighlight %}
 
-* Use Notebook to interactively analyze data
-  * Drag [Notebook](operations/notebook.html) to your canvas
+* Use [Notebook](operations/notebook.html) to interactively analyze data
+  * Drag Notebook to your canvas
   * Connect operations as presented in the picture
 
 ### Execute and Edit the Notebook
 
-* Select the created Notebook node and click **run** button. This will execute the Notebook node and
-  all required predecessor nodes.
-* Once the workflow execution is finished, select Notebook node and click **Edit code** in the right
-  panel. A notebook window will be shown, where you can write Python code snippets, execute them and
-  see the execution results.
+Select the created Notebook node and click **Open notebook** in the right
+panel. A notebook window will be shown, where you can write Python code snippets, execute them and
+see the execution results.
 
 #### Use Spark Context
 {:.no_toc}
@@ -323,7 +320,7 @@ sqlContext.sql("SELECT FCE FROM notebook_df").toPandas().sample(5)
 #### Perform Operations on the Input DataFrame
 {:.no_toc}
 
-You can access the DataFrame passed to the Notebook node on first input port by calling the
+You can access the DataFrame passed to the Notebook node on the first input port by calling the
 `dataframe()` function.
 
 <table>

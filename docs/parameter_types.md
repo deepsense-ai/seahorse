@@ -13,7 +13,7 @@ Each [operation](deeplang_overview.html#operations) defines its parameters. In o
 There are several predefined types of parameters in Deeplang:
 
 ### Numeric
-Holds single numeric value. It can specify validation rules such as a range of accepted values etc.
+Holds a single numeric value. It can specify validation rules such as a range of accepted values etc.
 
 **Example of use:** number of iterations of a machine learning algorithm
 
@@ -43,7 +43,7 @@ Serves to specify a single column of a [DataFrame](classes/dataframe.html). Colu
 
 ### <a name="multiple_column_selector"></a>Multiple Column Selector
 Serves to specify a subset of columns of a [DataFrame](classes/dataframe.html). Columns can be specified by their names, indices (starting from 0) or types. Therefore, one selector can contain multiple names, index ranges and column types selections. All columns that meet a condition from at least one input selection will be included in the final subset of columns.
-The multiple column selector exposes additional boolean flag: _excluding_, which - if selected, changes selecting logic: the final subset contains all columns that do _not_ meet condition from any of input selections.
+The multiple column selector exposes additional boolean flag: _excluding_, which - if selected, changes selecting logic: the final subset contains all columns that do _not_ the meet condition from any of the input selections.
 
 **Example of use:** columns to be filtered in the `Filter Column` operation
 
@@ -54,8 +54,8 @@ Serves to specify input and output columns for an operation.
 
 There are two input column modes:
 
-* `one column` - operate on one input column and output one column
-* `multiple columns` - operate on multiple input columns and output that many columns
+* `one column` - operate on one input column and output to one column
+* `multiple columns` - operate on multiple input columns and output to many columns
 
 In both modes, input column(s) and output generation mode have to be specified.
 
@@ -64,11 +64,11 @@ Available output generation modes are:
 * `replace input column(s)` - output goes into input columns and replaces previous values
 * `append new column(s)` - output goes into new columns that are appended to the `DataFrame`
 
-For `one column` input mode with `append new column` output mode, a name for newly created column
+For `one column` input mode with `append new column` output mode, a name for the newly created column
 has to be specified.
 
-For `multiple columns` input mode with `append new columns` output mode, a prefix for newly created
-columns has to be specified. Every new column will have corresponding input column's name with
+For `multiple columns` input mode with `append new columns` output mode, a prefix for the newly created
+columns has to be specified. Every new column will have a corresponding input column's name with a
 given prefix prepended.
 
 #### Example of Use
@@ -91,17 +91,17 @@ A parameter of this type defines a set of options. Exactly one option must be se
 
 **Example of use:** a target type of conversion in operation converting types of columns of a [DataFrame](classes/dataframe.html)
 
-**Example of use:** In the `Read DataFrame` operation, user should specify `data storage type` parameter. The parameter exposes three options: `FILE`, `JDBC`, `CASSANDRA`.
-If user selects `FILE`, he additionally has to provide value for string parameter `source`.
+**Example of use:** In the `Read DataFrame` operation, the user should specify `data storage type` parameter. The parameter exposes three options: `FILE`, `JDBC`, `CASSANDRA`.
+If the user selects `FILE`, he additionally has to provide a value for the string parameter `source`.
 
 ### <a name="multiple_choice"></a>Multiple Choice
-This parameter is similar to [single choice selector](#single_choice), but here user is allowed to select multiple options at once. User does not have to select any option.
-Like in single choice selector, each option can have internal parameters that should be filled if this particular option is selected.
+This parameter is similar to [single choice selector](#single_choice), but here the user is allowed to select multiple options at once. User does not have to select any option.
+Like in a single choice selector, each option can have internal parameters that should be filled if this particular option is selected.
 
 **Example of use:** parts of DateTime on which the selected column is to be split in the `Decompose Datetime` operation.
 
 ### Code Snippet
-Holds code snippet string value. Different languages (language is chosen by operation creator) can be used to syntax validation and syntax highlighting.
+Holds code snippet string value. Different languages (language is chosen by operation creator) can be used for syntax validation and syntax highlighting.
 
 **Example of use:** code snippet parameter for Python language in `CustomOperation` operation
 
@@ -128,8 +128,8 @@ This parameter holds a JSON object.
 
 
 ### <a name="parameters_sequence"></a>Parameters Sequence
-This parameter can be used when operation requires user to specify the same group of parameters multiple times, possibly with different values. The parameters sequence defines an internal parameters schema. User can provide any number of sets of values for this schema.
+This parameter can be used when the operation requires the user to specify the same group of parameters multiple times, possibly with different values. The parameters sequence defines an internal parameters schema. User can provide any number of sets of values for this schema.
 
-**Example of use:** In the `Join` operation, user has to specify what columns to use in join. More precisely, she can provide any number of pairs of columns, each consisting of one column from left `DataFrame` and one column from right one.
+**Example of use:** Example of use: In the `Join` operation, the user has to specify what columns to use in join. More precisely, this operation can provide any number of pairs of columns, each consisting of one column from left `DataFrame` and one column from the right one.
 
 **Example value:** (left column = name: "x", right column = index: 3), (left column = name: "y", right column = name: "x")

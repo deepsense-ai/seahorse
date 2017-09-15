@@ -16,7 +16,7 @@ description: Seahorse Bundled Image
 ## Overview
 
 Seahorse is an <a target="_blank" href="http://spark.apache.org">Apache Spark</a>
-platform that allows you to create Spark applications using web-based, interactive user interface.
+platform that allows you to create Spark applications using a web-based interactive user interface.
 Seahorse bundled image is a virtual machine containing all necessary components to easily run Seahorse.
 
 <img class="img-responsive" src="./img/bundled_image_overview.png" />
@@ -71,8 +71,8 @@ If something went wrong during Seahorse exploration, please let us know about fa
 
 ## Replacing Seahorse Bundled Image With the Latest Version
 If you want to replace your Seahorse with the newest version you need to invoke
-the commands below. Please keep in mind that the current version of Seahorse will be
-completely erased, meaning that all workflows stored in Seahorse will be deleted, too.
+the commands below. ***Please keep in mind that the current version of Seahorse will be
+completely erased, meaning that all workflows stored in Seahorse will be deleted, too.***
 {% highlight bash %}
 # stop and delete current Seahorse
 vagrant destroy

@@ -17,7 +17,7 @@ description: Seahorse Batch Workflow Executor
 Additionally to the standard way,
 [workflows](workflowfile.html) can be executed on a cluster in a batch mode.
 It is an additional, very niche functionality reserved for advanced users.
-If You are starting work with Seahorse, skip this document and visit
+If you are starting work with Seahorse, skip this document and visit
 [Seahorse Bundled Image documentation](bundled_image_overview.html).
 
 Seahorse Batch Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }}
@@ -42,7 +42,7 @@ Compiled version of Seahorse Batch Workflow Executor is available at
 ## How to run Seahorse Batch Workflow Executor
 
 Seahorse Batch Workflow Executor can be submitted to Spark cluster as any other Spark application.
-Example spark-submit commands can be found in following subsections.
+Example spark-submit commands can be found in the following subsections.
 Replace `./bin/spark-submit` with a path to the script in Apache Spark's directory.
 For more detailed information about submitting Spark applications, visit:
 <a target="_blank" href="https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html">https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html</a>
@@ -93,11 +93,10 @@ export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster con
 Option ``--python-executor-path`` is required (workflowexecutor.jar contains PyExecutor).
 Option ``--files workflow.json`` is necessary to distribute workflow file to Spark cluster.
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
-in order to tell Seahorse Batch Workflow Executor under which name it should look for workflow file.
+in order to tell Seahorse Batch Workflow Executor under which name it should look for a workflow file.
 
 If spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar is already distributed
-on HDFS cluster, it is possible to reduce time necessary for files propagation on YARN cluster.
-Use spark-submit option
+on HDFS cluster, it is possible to reduce the time necessary for files propagation on the YARN cluster. Use the spark-submit option
 ``--conf spark.yarn.jar=hdfs:///path/to/spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar``
 with proper HDFS path.
 Spark assembly jar can be found in Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
@@ -143,7 +142,7 @@ Detailed information about command line parameters can be obtained by executing 
 * **NOTE:** Both parameters ``-w FILE`` and ``-o DIR`` (or their long names) have to be specified.
 * **NOTE:** When using ``--extra-var`` option,
 if variable name or value contains special characters (e.g. space),
-it have to be surrounded by quotation marks.
+it has to be surrounded by quotation marks (“”).
 
 
 ## Seahorse Batch Workflow Executor Logs
@@ -159,7 +158,7 @@ redirected to several locations, e.g.:
 
 * HDFS directory
 
-You have to look for detailed information about logging with regard to Your cluster configuration,
+You have to look for detailed information about logging with regard to your cluster configuration,
 for running Spark on YARN, visit:
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application</a>,
 for Spark Standalone cluster, visit:
