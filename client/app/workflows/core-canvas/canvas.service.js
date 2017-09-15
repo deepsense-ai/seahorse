@@ -1,6 +1,8 @@
 //TODO Move it to the nodeType table and get from there
 const NODE_WIDTH = 160;
-const NODE_HEIGHT = 50;
+const NODE_HEIGHT = 60;
+
+const OFFSET = 30;
 
 class CanvasService {
   /*@ngInject*/
@@ -91,18 +93,18 @@ class CanvasService {
     Object.keys(this.collection).forEach((key) => {
       boundaries.left = Math.min(boundaries.left, this.collection[key].x);
       boundaries.right = Math.max(boundaries.right, this.collection[key].x + NODE_WIDTH);
-      boundaries.top = Math.max(boundaries.top, this.collection[key].y);
-      boundaries.bottom = Math.min(boundaries.bottom, this.collection[key].y - NODE_HEIGHT);
+      boundaries.top = Math.max(boundaries.top, this.collection[key].y + NODE_HEIGHT);
+      boundaries.bottom = Math.min(boundaries.bottom, this.collection[key].y);
     });
 
     this.setZoom(Math.min(
-      this.windowSize.width / (boundaries.right - boundaries.left),
-      this.windowSize.height / (boundaries.top - boundaries.bottom)
+      (this.windowSize.width - OFFSET) / (boundaries.right - boundaries.left),
+      (this.windowSize.height - OFFSET) / (boundaries.top - boundaries.bottom)
     ));
 
     this.setPosition({
-      x: -this.scale * boundaries.left,
-      y: -this.scale * (boundaries.bottom + NODE_HEIGHT)
+      x: -this.scale * ((boundaries.left + boundaries.right) / 2) + (this.windowSize.width) / 2,
+      y: -this.scale * ((boundaries.top + boundaries.bottom) / 2) + (this.windowSize.height) / 2
     })
   }
 
