@@ -98,9 +98,9 @@ class Join extends DOperation2To1[DataFrame, DataFrame, DataFrame] with LazyLogg
     }
 
     logger.debug("Prepare joining condition")
-    @unchecked
+
     val joinCondition =
-      leftJoinColumnNames.toList match {
+      (leftJoinColumnNames.toList: @unchecked) match {
         case head :: tail =>
           tail.foldLeft(columnEqualityCondition(head, lsdf, renamedJoinColumns(head), rsdf)) {
             (acc, col) => acc && columnEqualityCondition(col, lsdf, renamedJoinColumns(col), rsdf)

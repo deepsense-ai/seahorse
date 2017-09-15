@@ -65,49 +65,8 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
    * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
    * or non-existing column names are selected.
    */
-  // TODO categorical
   def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] = {
-    assertColumnSelectionsValid(multipleColumnSelection)
-    val selectedColumns = for {
-      (column, index) <- sparkDataFrame.schema.fields.zipWithIndex
-      columnName = column.name
-      columnType = DataFrame.sparkColumnTypeToColumnType(column.dataType)
-      selection <- multipleColumnSelection.selections
-      if DataFrame.isFieldSelected(columnName, index, columnType, selection)
-    } yield columnName
-    selectedColumns.distinct
-  }
-
-  private def assertColumnSelectionsValid(
-      multipleColumnSelection: MultipleColumnSelection): Unit = {
-
-    val selections = multipleColumnSelection.selections
-    for (selection <- selections) {
-      if (!isSelectionValid(selection)) {
-        throw ColumnsDoNotExistException(selections, this)
-      }
-    }
-  }
-
-  private def assertColumnNamesValid(columns: Seq[String]): Unit = {
-    assertColumnSelectionsValid(
-      MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet))))
-  }
-
-  /**
-   * Checks if given selection is valid with regard to dataframe schema.
-   * Returns false if some specified names or indexes are incorrect.
-   */
-  private def isSelectionValid(selection: ColumnSelection): Boolean = selection match {
-    case IndexColumnSelection(indexes) =>
-      val length = sparkDataFrame.schema.length
-      val indexesOutOfBounds = indexes.filter(index => index < 0 || index >= length)
-      indexesOutOfBounds.isEmpty
-    case NameColumnSelection(names) =>
-      val allNames = sparkDataFrame.schema.fieldNames.toSet
-      val nonExistingNames = names.filter(!allNames.contains(_))
-      nonExistingNames.isEmpty
-    case TypeColumnSelection(_) => true
+    DataFrame.getColumnNames(sparkDataFrame.schema, multipleColumnSelection)
   }
 
   /**
@@ -132,7 +91,7 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
    * @param columns List of columns' names to use as vector fields.
    */
   def toSparkVectorRDD(columns: Seq[String]): RDD[SparkVector] = {
-    assertColumnNamesValid(columns)
+    DataFrame.assertColumnNamesValid(sparkDataFrame.schema, columns)
     val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(columns.head, columns.tail:_*)
     DataFrame.assertExpectedColumnType(sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
     sparkDataFrameWithSelectedColumns.map(row =>
@@ -147,7 +106,7 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
    */
   def toSparkLabeledPointRDD(
       columns: Seq[String], labelColumn: String): RDD[LabeledPoint] = {
-    assertColumnNamesValid(columns)
+    DataFrame.assertColumnNamesValid(sparkDataFrame.schema, columns)
     val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(labelColumn, columns:_*)
     DataFrame.assertExpectedColumnType(sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
     sparkDataFrameWithSelectedColumns.map(row => {
@@ -155,7 +114,6 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
       LabeledPoint(doubles.head, Vectors.dense(doubles.tail.toArray))
     })
   }
-
 
   /**
    * Method useful for generating names for new columns. When we want to add new columns
@@ -219,6 +177,65 @@ object DataFrame {
     level: Int): String = {
     val levelSuffix = if (level > 0) "_" + level else ""
     baseColumnName + "_" + addedPart + levelSuffix
+  }
+
+  /**
+   * Names of columns selected by provided selections.
+   * Order of returned columns is the same as in schema.
+   * If a column will occur in many selections, it won't be duplicated in result.
+   * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
+   * or non-existing column names are selected.
+   */
+  // TODO better support for categorical type
+  def getColumnNames(
+      schema: StructType,
+      multipleColumnSelection: MultipleColumnSelection): Seq[String] = {
+
+    assertColumnSelectionsValid(schema, multipleColumnSelection)
+    val selectedColumns = for {
+      (column, index) <- schema.fields.zipWithIndex
+      columnName = column.name
+      columnType = DataFrame.sparkColumnTypeToColumnType(column.dataType)
+      selection <- multipleColumnSelection.selections
+      if DataFrame.isFieldSelected(columnName, index, columnType, selection)
+    } yield columnName
+    selectedColumns.distinct
+  }
+
+  private def assertColumnSelectionsValid(
+      schema: StructType,
+      multipleColumnSelection: MultipleColumnSelection): Unit = {
+
+    val selections = multipleColumnSelection.selections
+    for (selection <- selections) {
+      if (!isSelectionValid(schema, selection)) {
+        throw ColumnsDoNotExistException(selections, schema)
+      }
+    }
+  }
+
+  private def assertColumnNamesValid(schema: StructType, columns: Seq[String]): Unit = {
+    assertColumnSelectionsValid(
+      schema, MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet))))
+  }
+
+  /**
+   * Checks if given selection is valid with regard to dataframe schema.
+   * Returns false if some specified names or indexes are incorrect.
+   */
+  private def isSelectionValid(
+      schema: StructType,
+      selection: ColumnSelection): Boolean = selection match {
+
+    case IndexColumnSelection(indexes) =>
+      val length = schema.length
+      val indexesOutOfBounds = indexes.filter(index => index < 0 || index >= length)
+      indexesOutOfBounds.isEmpty
+    case NameColumnSelection(names) =>
+      val allNames = schema.fieldNames.toSet
+      val nonExistingNames = names.filter(!allNames.contains(_))
+      nonExistingNames.isEmpty
+    case TypeColumnSelection(_) => true
   }
 
   /**

@@ -4,35 +4,34 @@
 
 package io.deepsense.deeplang.doperations
 
-import java.sql.Timestamp
-
-import scala.util.Try
-
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.joda.time.DateTime
-import org.scalatest.Ignore
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations.FileToDataFrame.CSV
+import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
 
-@Ignore
 class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
 
   val separator = ","
   val categoricalName = "category"
+  val categoricalDoubleName = "Id"
   val categoricalId = 3
-  val categoricalDoubleId = 2
+  val categoricalDoubleId = 0
 
   "FileToDataFrame" should {
     "infer columns types" in {
       val (file, expectedDataFrame) = fixture(namedColumns = false, mappedCategory = false)
-      val dataFrame =
-        executeFileToDataFrame(namesIncluded = false, separator, file, Set.empty, Set.empty)
+      val dataFrame = executeFileToDataFrame(
+        namesIncluded = false,
+        separator,
+        file,
+        "CSV",
+        None)
       assertDataFramesEqual(dataFrame, expectedDataFrame)
     }
     "categorize selected columns by index" in {
@@ -41,8 +40,11 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
         namesIncluded = false,
         separator,
         file,
-        Set.empty,
-        Set(categoricalId, categoricalDoubleId))
+        "CSV",
+        Some(MultipleColumnSelection(Vector(
+          IndexColumnSelection(Set(categoricalId, categoricalDoubleId))))
+        )
+      )
       assertDataFramesEqual(dataFrame, expectedDataFrame)
     }
     "categorize selected columns by name" in {
@@ -51,8 +53,11 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
         namesIncluded = true,
         separator,
         file,
-        Set(categoricalName),
-        Set.empty)
+        "CSV",
+        Some(MultipleColumnSelection(Vector(
+          NameColumnSelection(Set(categoricalName, categoricalDoubleName)))
+        ))
+      )
 
       assertDataFramesEqual(dataFrame, expectedDataFrame)
     }
@@ -62,19 +67,24 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
         namesIncluded = true,
         separator,
         file,
-        Set.empty,
-        Set.empty)
+        "CSV",
+        None)
 
       assertDataFramesEqual(dataFrame, expectedDataFrame)
     }
-    "fail when file type is different than CSV" in {
-      val file: File = emptyFile
-      an[NotImplementedError] should be thrownBy executeFileToDataFrame(
-        namesIncluded = true,
-        separator,
-        file,
-        Set.empty,
-        Set.empty)
+    "fail" when {
+      "non-existing columns are selected as categoricals" in {
+        val (file, _) = fixture(namedColumns = false, mappedCategory = true)
+        a[ColumnsDoNotExistException] should be thrownBy executeFileToDataFrame(
+          namesIncluded = true,
+          separator,
+          file,
+          "CSV",
+          Some(MultipleColumnSelection(Vector(
+            NameColumnSelection(Set("non-existing column name")))
+          ))
+        )
+      }
     }
   }
 
@@ -82,10 +92,9 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
       namesIncluded: Boolean,
       separator: String,
       file: File,
-      categoricalNames: Set[String],
-      categoricalIds: Set[Int]): DataFrame = {
+      fileTypeName: String,
+      categoricalColumnsSelection: Option[MultipleColumnSelection]): DataFrame = {
     val operation = new FileToDataFrame
-    val fileTypeName = CSV.name
 
     val formatParameter = operation.parameters.getChoiceParameter(FileToDataFrame.formatParameter)
     formatParameter.value = Some(fileTypeName)
@@ -100,9 +109,7 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
     val categoricalColumnsParam = operation.parameters
       .getColumnSelectorParameter(FileToDataFrame.categoricalColumnsParameter)
 
-    categoricalColumnsParam.value = Some(MultipleColumnSelection(Vector(
-      NameColumnSelection(categoricalNames),
-      IndexColumnSelection(categoricalIds))))
+    categoricalColumnsParam.value = categoricalColumnsSelection
 
     operation.execute(executionContext)(Vector(file)).head.asInstanceOf[DataFrame]
   }
@@ -113,90 +120,69 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
   }
 
   private def emptyFile: File = linesToFile(Seq.empty)
+
   private def generateName(i: Int) = s"column_$i"
 
-  val categories = Map("CAT1" -> 0, "CAT2" -> 1, "CAT3" -> 2)
-  val doubleCategories =
-    Map("1.2" -> 1, "1.1" -> 0, "1.6" -> 5, "1.5" -> 4, "1.4" -> 2, "1.0" -> 3)
 
-  val namesFromFile =
-    Seq("Id", "Msg", "Val", categoricalName, "Enabled", "NullOnly", "SomeDate", "Mixed")
+  val namesFromFile = Seq(
+    categoricalDoubleName, "Msg", "Val", categoricalName,
+    "Enabled", "NullOnly", "SomeDate", "Mixed")
+
   val columnsIndices = 0 until namesFromFile.size
   val namesGenerated = columnsIndices.map(generateName)
 
-  val rows = Seq(
-    Row(null, "This is a testA", 1.1,  "CAT1", false, null, generateTimestamp, 1),
-    Row(2,    null,              1.2,  "CAT2", true,  null, generateTimestamp, 2.2),
-    Row(3,    "This is a testB", null, "CAT3", false, null, null, generateTimestamp),
-    Row(4,    "This is a testC", 1.4,  null,   true,  null, generateTimestamp, null),
-    Row(5,    "This is a testD", 1  ,  "CAT2", null,  null, generateTimestamp, "4.5"),
-    Row(6,    "This is a testE", 1.6,  "CAT3", true,  null, generateTimestamp, true)
+  val timestamps = Seq.fill(6){ DateTimeConverter.now }
+  val strTimestamps = timestamps.map(DateTimeConverter.toString)
+
+  val lines = Seq(
+    Seq("",    "a test A",  "1.1",  "CAT1", "1", "", strTimestamps(0),         "1"),
+    Seq(" 2 ", "",          "1.2",  "CAT2", "1", "", s"${strTimestamps(1)} ",  "2.2"),
+    Seq(" 3",  q("oh,no"),  "",     "CAT3", "0", "", "",                       strTimestamps(5)),
+    Seq("4 ",  " test C  ", q("1"), "",     "1", "", s" ${strTimestamps(2)}",  ""),
+    Seq("5.4", "a test D ", "1"  ,  "CAT2", "",  "", strTimestamps(3),         q(q("x"))),
+    Seq("6",   q(" t E"),   "1.6",  "CAT3", "0", "", s" ${strTimestamps(4)} ", "0")
   )
-  val namedRows = Seq(Row(namesFromFile)) ++ rows
-  val typesWithoutCategorical = Seq(
-    DoubleType,
-    StringType,
-    DoubleType,
-    StringType,
-    BooleanType,
-    StringType,
-    TimestampType,
-    StringType)
-  val typesWithCategorical = Seq(
-    DoubleType,
-    StringType,
-    IntegerType,
-    IntegerType, // String mapped to int.
-    BooleanType,
-    StringType,
-    TimestampType,
-    StringType)
-
-  val mappedRows = rows.map { r =>
-    val category = r.getString(categoricalId)
-    val categoryMapped = if (category == null) null else categories(category)
-
-    val valueMapped = if (r.isNullAt(categoricalDoubleId)) {
-      null
-    } else {
-      val value = Try(r.getDouble(categoricalDoubleId))
-        .orElse(Try(r.getInt(categoricalDoubleId).toDouble)).get
-      doubleCategories(value.toString)
-    }
-
-    val rowValues = r.toSeq
-      .updated(categoricalId, categoryMapped)
-      .updated(categoricalDoubleId, valueMapped)
-    Row(rowValues: _*)
+  val rows = Seq(
+    Row(null, "a test A", "1.1", "CAT1", true,  null, timestamps(0), "1"),
+    Row(2.0,  "",         "1.2", "CAT2", true,  null, timestamps(1), "2.2"),
+    Row(3.0,  "oh,no",    "",    "CAT3", false, null, null,          strTimestamps(5)),
+    Row(4.0,  "test C",   "1",   "",     true,  null, timestamps(2), ""),
+    Row(5.4,  "a test D", "1",   "CAT2", null,  null, timestamps(3), q("x")),
+    Row(6.0,  " t E",     "1.6", "CAT3", false, null, timestamps(4), "0")
+  )
+  val rowsPreparedToBeCategorized = rows.zip(Seq("", "2", "3", "4", "5.4", "6")).map{
+    case (row, elem) => Row.fromSeq(elem +: row.toSeq.tail)
   }
 
-  private def fixture(namedColumns: Boolean, mappedCategory: Boolean) = {
+  val namedLines = Seq(namesFromFile) ++ lines
+  val types = Seq(
+    DoubleType,
+    StringType,
+    StringType,
+    StringType,
+    BooleanType,
+    BooleanType,
+    TimestampType,
+    StringType)
+  val typesPreparedToBeCategorized = StringType +: types.tail
+
+  private def fixture(namedColumns: Boolean, mappedCategory: Boolean): (File, DataFrame) = {
     val names = if (namedColumns) namesFromFile else namesGenerated
-    val types = if (mappedCategory) typesWithCategorical else typesWithoutCategorical
-    val data = if (mappedCategory) mappedRows else rows
+    val inputData = if (namedColumns) namedLines else lines
+    val outputData = if (mappedCategory) rowsPreparedToBeCategorized else rows
+    val outputTypes = if (mappedCategory) typesPreparedToBeCategorized else types
+    val schema = StructType(columnsIndices.map(i => StructField(names(i), outputTypes(i))))
+    val categoricalColumns = if (mappedCategory) {
+      Seq(names(0), names(3))
+    } else {
+      Seq.empty
+    }
+    val expectedDataFrame = createDataFrame(outputData, schema, categoricalColumns)
 
-    val schema = StructType(columnsIndices.map(i => StructField(names(i), types(i))))
-    val expectedDataFrame = createDataFrame(data, schema)
-
-    val lines = data.map(rowToCSV)
-    val file = linesToFile(lines)
+    val file = linesToFile(inputData.map{ l => l.mkString(separator) })
 
     (file, expectedDataFrame)
   }
 
-  private def generateTimestamp: Timestamp = new Timestamp(DateTime.now.getMillis)
-
-  private def rowToCSV(row: Row): String = {
-    row.toSeq.map {
-      case s: String => quote(s)
-      case timestamp: Timestamp =>
-        val datetime = DateTimeConverter.fromMillis(timestamp.getTime)
-        quote(DateTimeConverter.toString(datetime))
-      case b: Boolean => if (b) 1 else 0
-      case x => x
-    }.map(Option(_).getOrElse("").toString)
-      .mkString(separator)
-  }
-
-  private def quote(s: String): String = "\"" + s + "\""
+  private def q(s: String): String = "\"" + s + "\""
 }

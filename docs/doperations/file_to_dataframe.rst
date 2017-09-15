@@ -17,7 +17,7 @@ Converts a file to DataFrame.
 Input
 -----
 
-.. list-table:: Input
+.. list-table::
    :widths: 15 20 65
    :header-rows: 1
 
@@ -32,7 +32,7 @@ Input
 Output
 ------
 
-.. list-table:: Output
+.. list-table::
    :widths: 15 20 65
    :header-rows: 1
 
@@ -47,14 +47,37 @@ Output
 ===========
 Description
 ===========
+
 FileToDataFrame operation converts a file to a DataFrame. The operation infers column types.
 When a column contains values of different types, the narrowest possible type will be chosen,
 so that all the values can be represented in that type.
+Empty cells are treated as ``null``, unless column type is inferred as ``String`` - in this
+case, they are treated as empty strings.
+Column consisting of empty cells will be inferred as ``Boolean`` containing ``null`` values only.
+
 It is possible to select columns to be Categorical (by index or by name). When categorizing
-a non-string column all values will be cast to strings first.
+a non-string column all values will be cast to strings and trimmed first.
+
+Operation assumes that each line in file has the same number of fields.
+In other case, behavior of operation is undefined.
 
 If the file defines column names they will be used in the output DataFrame. Otherwise, column will
 be named :math:`column\_x`, where :math:`x` is column's index (starting from 0).
+
+Escaping of separator sign is done by double quotes sign.
+Moreover, all not escaped values will be trimmed before parsing.
+For example, assuming comma as separator, following line
+
+``1,abc,"a,b,c",""x"",, z  ," z  "``
+
+will be parsed as:
+
++---+-----+-------+-----+---+---+------+
+| 1 | abc | a,b,c | "x" | _ | z | _z__ |
++---+-----+-------+-----+---+---+------+
+
+where ``_`` denotes space.
+
 
 -----
 Input
