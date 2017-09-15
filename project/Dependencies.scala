@@ -88,7 +88,8 @@ object Dependencies {
     "seahorse.deepsense.io"  at
       "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-release",
     "seahorse.snapshot"  at "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-snapshot",
-    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/"
+    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/",
+    Classpaths.typesafeReleases
   )
 
   object Spark {
