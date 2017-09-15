@@ -289,8 +289,8 @@ case class StatefulGraph(
       case nodeStateWithResults@NodeStateWithResults(state@NodeState(status, _), _) =>
         val newStatus = status match {
         case r: Running => r.abort
-        case nodestate.Queued => nodestate.Queued.abort
-        case nodestate.Draft => nodestate.Draft.abort
+        case q: Queued => q.abort
+        case d: Draft => d.abort
         case x => x
       }
       nodeStateWithResults.copy(nodeState = state.copy(nodeStatus = newStatus))
@@ -303,7 +303,8 @@ object StatefulGraph {
     nodes: Set[Node] = Set(),
     edges: Set[Edge] = Set()): StatefulGraph = {
     val states = nodes.map(node =>
-      node.id -> NodeStateWithResults(NodeState(nodestate.Draft, Some(EntitiesMap())), Map())).toMap
+      node.id -> NodeStateWithResults(NodeState(nodestate.Draft(), Some(EntitiesMap())), Map())
+    ).toMap
     StatefulGraph(DirectedGraph(nodes, edges), states, None)
   }
 

@@ -20,6 +20,7 @@ import java.nio.charset.Charset
 
 import spray.json._
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, ExecutionReportJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.models.workflows.{InferredState, WorkflowWithResults}
@@ -32,7 +33,8 @@ case class ProtocolJsonSerializer(graphReader: GraphReader)
   with ExecutionReportJsonProtocol
   with PythonGatewayAddressJsonProtocol
   with WorkflowWithResultsJsonProtocol
-  with InferredStateJsonProtocol {
+  with InferredStateJsonProtocol
+  with Logging {
 
   import JsonSerialization._
 
@@ -44,7 +46,8 @@ case class ProtocolJsonSerializer(graphReader: GraphReader)
     message match {
       case m: ExecutionStatus =>
         toJsonMQMessage(OutMessages.executionStatus, m.executionReport.toJson)
-      case m: WorkflowWithResults => toJsonMQMessage(OutMessages.workflowWithResults, m.toJson)
+      case m: WorkflowWithResults =>
+        toJsonMQMessage(OutMessages.workflowWithResults, m.toJson)
       case m: InferredState => toJsonMQMessage(OutMessages.inferredState, m.toJson)
       case m: PythonGatewayAddress => toJsonMQMessage(OutMessages.pythonGatewayAddress, m.toJson)
     }

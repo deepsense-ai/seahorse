@@ -25,7 +25,8 @@ class PublisherActor(publisher: MQPublisher) extends Actor with Logging {
 
   override def receive: Receive = {
     case message: Any =>
-      logger.info(s"PublisherActor recv message from '${sender().path.name}'")
+      logger.info(s"PublisherActor recv message ${message.getClass.getSimpleName} " +
+        s"from '${sender().path.name}'")
       publisher.publish(MQCommunication.Topic.editor, message)
   }
 }

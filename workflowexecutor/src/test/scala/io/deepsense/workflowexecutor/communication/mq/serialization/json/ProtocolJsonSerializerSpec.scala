@@ -48,7 +48,7 @@ class ProtocolJsonSerializerSpec
 
     "serialize ExecutionStatus" in {
       val executionStatus = ExecutionStatus(
-        Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft),
+        Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft()),
         EntitiesMap(
           Map[Entity.Id, DOperable](
             Entity.Id.randomId -> new UntrainedRandomForestClassification()),

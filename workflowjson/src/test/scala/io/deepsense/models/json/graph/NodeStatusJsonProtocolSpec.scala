@@ -23,23 +23,23 @@ import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDes
 import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate._
 
-class NodeStateJsonProtocolSpec extends GraphJsonTestSupport {
+class NodeStatusJsonProtocolSpec extends GraphJsonTestSupport {
 
   import io.deepsense.commons.json.DateTimeJsonProtocol._
   import io.deepsense.models.json.graph.NodeStatusJsonProtocol._
 
   "NodeStateJsonProtocol" should {
     "transform Draft to Json" in {
-      toJs(Draft) shouldBe draftJson
+      toJs(Draft(results)) shouldBe draftJson
     }
     "read Draft from Json" in {
-      fromJs(draftJson) shouldBe Draft
+      fromJs(draftJson) shouldBe Draft(results)
     }
     "transform Queued to Json" in {
-      toJs(Queued).toJson shouldBe queuedJson
+      toJs(Queued(results)).toJson shouldBe queuedJson
     }
     "read Queued from Json" in {
-      fromJs(queuedJson) shouldBe Queued
+      fromJs(queuedJson) shouldBe Queued(results)
     }
     "transform Running to Json" in {
       toJs(running) shouldBe
@@ -61,10 +61,10 @@ class NodeStateJsonProtocolSpec extends GraphJsonTestSupport {
       fromJs(failedJson) shouldBe failed
     }
     "transform Aborted to Json" in {
-      toJs(Aborted) shouldBe abortedJson
+      toJs(Aborted(results)) shouldBe abortedJson
     }
     "read Aborted from Json" in {
-      fromJs(abortedJson) shouldBe Aborted
+      fromJs(abortedJson) shouldBe Aborted(results)
     }
   }
 
@@ -103,7 +103,7 @@ class NodeStateJsonProtocolSpec extends GraphJsonTestSupport {
 
   val failed = Failed(started, ended, error)
   val completed = Completed(started, ended, results)
-  val running: Running = Running(started)
+  val running: Running = Running(started, results)
   val failedJson: JsObject = js("FAILED",
     "started" -> started.toJson,
     "ended" -> ended.toJson,
@@ -112,8 +112,9 @@ class NodeStateJsonProtocolSpec extends GraphJsonTestSupport {
     "started" -> started.toJson,
     "ended" -> ended.toJson,
     "results" -> results.toJson)
-  val runningJson: JsObject = js("RUNNING", "started" -> started.toJson)
-  val abortedJson: JsObject = js("ABORTED")
-  val queuedJson: JsObject = js("QUEUED")
-  val draftJson: JsObject = js("DRAFT")
+  val runningJson: JsObject =
+    js("RUNNING", "started" -> started.toJson, "results" -> results.toJson)
+  val abortedJson: JsObject = js("ABORTED", "results" -> results.toJson)
+  val queuedJson: JsObject = js("QUEUED", "results" -> results.toJson)
+  val draftJson: JsObject = js("DRAFT", "results" -> results.toJson)
 }

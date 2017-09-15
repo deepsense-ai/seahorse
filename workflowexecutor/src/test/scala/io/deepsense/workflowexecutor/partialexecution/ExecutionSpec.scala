@@ -86,7 +86,7 @@ class ExecutionSpec
             idB -> nodeState(nodeFailed),
             idC -> nodeCompletedState,
             idD -> nodeCompletedState,
-            idE -> nodeState(nodestate.Aborted)
+            idE -> nodeState(nodestate.Aborted())
           ),
           None
         )
@@ -116,7 +116,7 @@ class ExecutionSpec
 
         val queuedGraph = StatefulGraph(
           directedGraph,
-          directedGraph.nodes.map(n => n.id -> nodeState(Queued)).toMap,
+          directedGraph.nodes.map(n => n.id -> nodeState(Queued())).toMap,
           None
         )
 
@@ -280,8 +280,8 @@ class ExecutionSpec
         val updatedExecution = execution.updateStructure(newStructure)
 
         updatedExecution.states(node1.id).nodeState.nodeStatus shouldBe a[Completed]
-        updatedExecution.states(node2.id).nodeState.nodeStatus shouldBe a[nodestate.Draft.type]
-        updatedExecution.states(node3.id).nodeState.nodeStatus shouldBe a[nodestate.Draft.type]
+        updatedExecution.states(node2.id).nodeState.nodeStatus shouldBe a[nodestate.Draft]
+        updatedExecution.states(node3.id).nodeState.nodeStatus shouldBe a[nodestate.Draft]
       }
     }
   }

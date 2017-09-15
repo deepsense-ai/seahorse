@@ -34,7 +34,7 @@ case class NodeState(nodeStatus: NodeStatus, reports: Option[EntitiesMap]) {
 
   def abort: NodeState = copy(nodeStatus = nodeStatus.abort)
   def enqueue: NodeState = copy(nodeStatus = nodeStatus.enqueue)
-  def draft: NodeState = copy(nodeStatus = Draft)
+  def draft: NodeState = copy(nodeStatus = Draft(nodeStatus.results))
   def fail(failureDescription: FailureDescription): NodeState = {
     // failure means reseting reports
     copy(nodeStatus = nodeStatus.fail(failureDescription), Some(EntitiesMap()))
@@ -57,5 +57,5 @@ case class NodeState(nodeStatus: NodeStatus, reports: Option[EntitiesMap]) {
 object NodeState {
 
   def draft: NodeState =
-    NodeState(Draft, Some(EntitiesMap()))
+    NodeState(Draft(), Some(EntitiesMap()))
 }

@@ -88,7 +88,7 @@ class WorkflowExecutorActorSpec
         val workflow = workflowWithResults(Workflow.Id.randomId)
         val (probe, wea, _, statusListeners, _, testWMClientProbe) = launchedStateFixture(workflow)
         val abortedStatuses: Map[Node.Id, NodeStatus] =
-          workflow.graph.nodes.map(_.id -> Aborted).toMap
+          workflow.graph.nodes.map(_.id -> Aborted()).toMap
 
         probe.send(wea, Abort())
 
@@ -130,7 +130,7 @@ class WorkflowExecutorActorSpec
             val status = receiver.expectMsgClass(classOf[ExecutionStatus])
             status.executionReport.error shouldBe None
             status.executionReport.nodesStatuses.size shouldBe 2
-            status.executionReport.nodesStatuses(node2.id) shouldBe nodestate.Queued
+            status.executionReport.nodesStatuses(node2.id) shouldBe a[Queued]
             status.executionReport.nodesStatuses(node1.id) shouldBe a[Running]
           }
         }
@@ -139,7 +139,7 @@ class WorkflowExecutorActorSpec
           saveState.workflowId shouldBe workflow.id
           saveState.state.error shouldBe None
           saveState.state.nodesStatuses.size shouldBe 2
-          saveState.state.nodesStatuses(node2.id) shouldBe nodestate.Queued
+          saveState.state.nodesStatuses(node2.id) shouldBe a[Queued]
           saveState.state.nodesStatuses(node1.id) shouldBe a[Running]
         }
       }
@@ -189,7 +189,7 @@ class WorkflowExecutorActorSpec
         val statefulWorkflow: StatefulWorkflow = mock[StatefulWorkflow]
         val workflow = workflowWithResults(Workflow.Id.randomId)
         val states: Map[Id, NodeStateWithResults] =
-          Map(node1.id -> nodeState(nodestate.Draft), node2.id -> nodeState(nodestate.Draft))
+          Map(node1.id -> nodeState(nodestate.Draft()), node2.id -> nodeState(nodestate.Draft()))
         when(statefulWorkflow.changesExecutionReport(any())).thenReturn(
           ExecutionReport(states.mapValues(_.nodeState)))
         when(statefulWorkflow.currentExecution).thenReturn(
@@ -225,7 +225,7 @@ class WorkflowExecutorActorSpec
           val statefulWorkflow: StatefulWorkflow = mock[StatefulWorkflow]
           val workflow = workflowWithResults(Workflow.Id.randomId)
           val states: Map[Id, NodeStateWithResults] =
-            Map(node1.id -> nodeState(nodestate.Draft), node2.id -> nodeState(nodestate.Draft))
+            Map(node1.id -> nodeState(nodestate.Draft()), node2.id -> nodeState(nodestate.Draft()))
           when(statefulWorkflow.changesExecutionReport(any())).thenReturn(
             ExecutionReport(states.mapValues(_.nodeState)))
           when(statefulWorkflow.currentExecution).thenReturn(
@@ -265,7 +265,7 @@ class WorkflowExecutorActorSpec
         val statefulWorkflow: StatefulWorkflow = mock[StatefulWorkflow]
         val workflow = workflowWithResults(Workflow.Id.randomId)
         val states: Map[Id, NodeStateWithResults] =
-          Map(node1.id -> nodeState(nodestate.Draft), node2.id -> nodeState(nodestate.Draft))
+          Map(node1.id -> nodeState(nodestate.Draft()), node2.id -> nodeState(nodestate.Draft()))
         when(statefulWorkflow.changesExecutionReport(any())).thenReturn(
           ExecutionReport(states.mapValues(_.nodeState)))
         when(statefulWorkflow.currentExecution).thenReturn(
@@ -605,7 +605,7 @@ class WorkflowExecutorActorSpec
     val runningNodeIdx: Int = runningNode.map(nodesIds.indexOf(_)).getOrElse(-1)
     val completedNodes = nodesIds.take(runningNodeIdx)
       .map(_ -> completedState())
-    val queuedNodes = nodesIds.drop(runningNodeIdx + 1).map(_ -> nodeState(Queued))
+    val queuedNodes = nodesIds.drop(runningNodeIdx + 1).map(_ -> nodeState(Queued()))
     val statefulGraph = StatefulGraph(
       DirectedGraph(nodes.toSet, edges.toSet),
       (completedNodes ++ Seq(nodesIds.head -> nodeState(Running(time))) ++ queuedNodes).toMap,

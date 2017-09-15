@@ -253,17 +253,17 @@ class StatefulGraphSpec
           idB -> nodeState(nodeFailed),
           idC -> nodeState(statusCompleted),
           idD -> nodeState(statusCompleted),
-          idE -> nodeState(nodestate.Aborted)
+          idE -> nodeState(nodestate.Aborted())
         ),
         None
       ).draft(idB)
 
       drafted.states should contain theSameElementsAs Map(
         idA -> nodeState(statusCompleted),
-        idB -> nodeState(nodestate.Draft),
-        idC -> nodeState(nodestate.Draft),
-        idD -> nodeState(nodestate.Draft),
-        idE -> nodeState(nodestate.Draft)
+        idB -> nodeState(nodestate.Draft()),
+        idC -> nodeState(nodestate.Draft()),
+        idD -> nodeState(nodestate.Draft()),
+        idE -> nodeState(nodestate.Draft())
       )
     }
   }

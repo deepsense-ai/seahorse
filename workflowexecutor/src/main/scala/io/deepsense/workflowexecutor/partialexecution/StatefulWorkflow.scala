@@ -105,7 +105,7 @@ class StatefulWorkflow(
   }
 }
 
-object StatefulWorkflow {
+object StatefulWorkflow extends Logging {
 
   def apply(
       executionContext: CommonExecutionContext,

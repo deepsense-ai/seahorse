@@ -18,7 +18,7 @@ package io.deepsense.models.workflows
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.graph.Node
-import io.deepsense.graph.nodestate.{Completed, NodeStatus}
+import io.deepsense.graph.nodestate.NodeStatus
 
 case class ExecutionReport(
     states: Map[Node.Id, NodeState],
@@ -50,10 +50,6 @@ object ExecutionReport {
   private def toNodeStates(
       nodes: Map[Node.Id, NodeStatus],
       resultEntities: EntitiesMap): Map[Node.Id, NodeState] = {
-    nodes.map {case (id, status) => status match {
-      case Completed(_, _, results) =>
-        id -> NodeState(status, Some(resultEntities.subMap(results.toSet)))
-      case _ => id -> NodeState(status, None)
-    }}
+    nodes.mapValues(status => NodeState(status, Some(resultEntities.subMap(status.results.toSet))))
   }
 }

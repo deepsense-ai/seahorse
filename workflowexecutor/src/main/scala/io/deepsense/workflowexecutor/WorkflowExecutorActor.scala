@@ -26,10 +26,10 @@ import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
 import io.deepsense.graph._
+import io.deepsense.models.json.graph.NodeStatusJsonProtocol
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.SaveState
-import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.SaveWorkflow
+import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{SaveState, SaveWorkflow}
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.partialexecution._
 
@@ -44,7 +44,8 @@ abstract class WorkflowExecutorActor(
     publisher: Option[ActorSelection],
     terminationListener: Option[ActorRef])
   extends Actor
-  with Logging {
+  with Logging
+  with NodeStatusJsonProtocol {
 
   import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 
@@ -83,7 +84,8 @@ abstract class WorkflowExecutorActor(
   }
 
   def initWhenStateIsAvailable(): Unit = {
-    sendWorkflowWithResults(statefulWorkflow.workflowWithResults)
+    val results: WorkflowWithResults = statefulWorkflow.workflowWithResults
+    sendWorkflowWithResults(results)
     sendInferredState(statefulWorkflow.inferState())
   }
 
