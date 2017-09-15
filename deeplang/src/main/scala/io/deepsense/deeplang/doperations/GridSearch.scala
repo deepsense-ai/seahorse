@@ -30,7 +30,7 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.wrappers.{EstimatorWrapper, EvaluatorWrapper}
 import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
-import io.deepsense.deeplang.params.{ParamPair, NumericParam}
+import io.deepsense.deeplang.params.{DynamicParam, ParamPair, NumericParam}
 import io.deepsense.deeplang.params.gridsearch.GridSearchParam
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.{DOperation3To1, ExecutionContext}
@@ -48,7 +48,7 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
     inputPort = 1)
   setDefault(estimatorParams, JsNull)
 
-  val evaluatorParams = new GridSearchParam(
+  val evaluatorParams = new DynamicParam(
     name = "Parameters of input Evaluator",
     description = "These parameters are rendered dynamically, depending on type of Evaluator",
     inputPort = 2)
