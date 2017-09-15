@@ -19,6 +19,10 @@ case $key in
   WORKING_DIR="$2"
   shift # past argument
   ;;
+  -a|--additional-python-path)
+  ADDITIONAL_PYTHON_PATH="$2"
+  shift # past argument
+  ;;
   -h|--mq-host)
   MQ_HOST="$2"
   shift # past argument
@@ -45,6 +49,7 @@ done
 
 # Verifying if all required parameters are set
 if [ -z "$WORKING_DIR" ]; then echo "Parameter --working-dir is required"; exit -1; fi
+if [ -z "$ADDITIONAL_PYTHON_PATH" ]; then echo "Parameter --additional-python-path is required"; exit -1; fi
 if [ -z "$MQ_HOST" ];     then echo "Parameter --mq-host is required"; exit -1; fi
 if [ -z "$MQ_PORT" ];     then echo "Parameter --mq-port is required"; exit -1; fi
 if [ -z "$WORKFLOW_ID" ]; then echo "Parameter --workflow-id is required"; exit -1; fi
@@ -103,12 +108,12 @@ wget https://bootstrap.pypa.io/get-pip.py
 echo "install pip"
 python2.7 get-pip.py -I --root $PWD
 
-export PIP_PATH="$PWD/usr/local/bin/pip"
+export PIP_PATH="$PWD/usr/bin/pip"
 echo "PIP_PATH=$PIP_PATH"
 
-PREFIX_PATH="usr/local"
+PREFIX_PATH="usr"
 
-export PYTHONPATH="$PWD/usr/local/lib/python2.7/dist-packages:$PWD/usr/local/lib/python2.7:$PWD/usr/local/lib/python2.7/site-packages"
+export PYTHONPATH="$PWD/usr/lib/python2.7/dist-packages:$PWD/usr/lib/python2.7:$PWD/usr/lib/python2.7/site-packages:$ADDITIONAL_PYTHON_PATH"
 echo "PYTHONPATH=$PYTHONPATH"
 
 $PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD ipykernel
@@ -117,7 +122,6 @@ $PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD pika
 
 # STARTING EXECUTING KERNEL MANAGER
 # echo "listing the CWD"
-#ls -laR
 
 cd $WORKING_DIR
 
