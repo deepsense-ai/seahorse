@@ -80,20 +80,10 @@ case class MQCommunicationFactory(
     MQPublisher(exchangeName, channelActor)
   }
 
-  private def setupPublisher(exchangeName: String)(channel: Channel, self: ActorRef): Unit = {
-    val queue = channel.queueDeclare(
-      publishQueueName(exchangeName),
-      false,
-      false,
-      true,
-      new util.HashMap[String, AnyRef]()).getQueue
+  private def setupPublisher(exchangeName: String)(channel: Channel, self: ActorRef): Unit =
     declareExchange(exchangeName, channel)
-    channel.queueBind(queue, exchangeName, MQCommunication.editorTopic)
-  }
 
   private def declareExchange(exchangeName: String, channel: Channel) = {
     channel.exchangeDeclare(exchangeName, exchangeType)
   }
-
-  private def publishQueueName(exchangeName: String): String = exchangeName + "_to_editor"
 }
