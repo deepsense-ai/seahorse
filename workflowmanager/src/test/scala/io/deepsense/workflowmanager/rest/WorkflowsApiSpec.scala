@@ -29,7 +29,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.storage.{InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowStorage}
-import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
+import io.deepsense.workflowmanager.{ApisModule, WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec
   extends StandardSpec
@@ -50,20 +50,21 @@ class WorkflowsApiSpec
   val inferContext: InferContext = new InferContext(dOperableCatalog, true)
   override val graphReader: GraphReader = new GraphReader(catalog)
   val workflowAName = "Very nice workflow&*workflow"
-  val (workflowA, knowledgeA) = newWorkflowAndKnowledge
+  val (workflowA, knowledgeA) = newWorkflowAndKnowledge()
   val workflowAId = Workflow.Id.randomId
   val workflowAWithResults = newWorkflowWithResults(workflowAId, workflowA)
-  val (workflowB, knowledgeB) = newWorkflowAndKnowledge
+  val (workflowB, knowledgeB) = newWorkflowAndKnowledge()
   val workflowBId = Workflow.Id.randomId
   val workflowBWithSavedResults = WorkflowWithSavedResults(
     ExecutionReportWithId.Id.randomId,
     newWorkflowWithResults(workflowBId, workflowB))
 
-  def newWorkflowAndKnowledge: (Workflow, GraphKnowledge) = {
+  def newWorkflowAndKnowledge(apiVersion: String = ApisModule.SUPPORTED_API_VERSION)
+      : (Workflow, GraphKnowledge) = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
     val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
-    val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = "0.1.1")
+    val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
     val thirdPartyData = ThirdPartyData(JsObject(
       "gui" -> JsObject(
         "name" -> JsString(workflowAName)
@@ -89,7 +90,8 @@ class WorkflowsApiSpec
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
     val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
-    val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = "0.1.2")
+    val metadata = WorkflowMetadata(
+      WorkflowType.Batch, apiVersion = ApisModule.SUPPORTED_API_VERSION)
     val thirdPartyData = ThirdPartyData("{}")
     val workflow = Workflow(metadata, graph, thirdPartyData)
     workflow
@@ -361,7 +363,7 @@ class WorkflowsApiSpec
     }
     "return created" when {
       "inputWorkflow was send" in {
-        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge
+        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge()
         Post(s"/$apiPrefix", createdWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
@@ -386,6 +388,14 @@ class WorkflowsApiSpec
         Post(s"/$apiPrefix", cyclicWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.BadRequest)
+        }
+        ()
+      }
+      "inputWorkflow contains wrong API version" in {
+        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge(apiVersion = "0.0.1")
+        Post(s"/$apiPrefix", createdWorkflow) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
         }
         ()
       }
@@ -415,9 +425,30 @@ class WorkflowsApiSpec
   }
 
   "POST /workflows/upload" should {
+
+    "return BadRequest" when {
+      "execution report contains wrong API version" in {
+        val (createdWorkflow, knowledge) =
+          newWorkflowAndKnowledge(apiVersion = "0.0.1")
+
+        val multipartData = MultipartFormData(Map(
+          "workflowFile" -> BodyPart(HttpEntity(
+            ContentType(MediaTypes.`application/json`),
+            workflowFormat.write(createdWorkflow).toString())
+          )))
+
+        Post(s"/$apiPrefix/upload", multipartData) ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
+        }
+        ()
+      }
+    }
+
     "return created" when {
       "workflow file is sent" in {
-        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge
+        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge()
 
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
@@ -448,6 +479,28 @@ class WorkflowsApiSpec
   }
 
   "POST /workflows/report/upload" should {
+
+    "return BadRequest" when {
+      "execution report contains wrong API version" in {
+        val workflowWithWrongAPIVersion =
+          workflowAWithResults.copy(
+            metadata = workflowAWithResults.metadata.copy(apiVersion = "0.0.1"))
+
+        val multipartData = MultipartFormData(Map(
+          "workflowFile" -> BodyPart(HttpEntity(
+            ContentType(MediaTypes.`application/json`),
+            workflowWithResultsFormat.write(workflowWithWrongAPIVersion).toString())
+          )))
+
+        Post(s"/$apiPrefix/report/upload", multipartData) ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
+        }
+        ()
+      }
+    }
+
     "return created" when {
       "execution report file is sent" in {
         val multipartData = MultipartFormData(Map(
@@ -474,8 +527,9 @@ class WorkflowsApiSpec
   }
 
   s"PUT /workflows/:id" should {
-    val (workflow, knowledge) = newWorkflowAndKnowledge
-    val updatedWorkflow = workflow.copy(metadata = workflow.metadata.copy(apiVersion = "x.y.z"))
+    val (workflow, knowledge) = newWorkflowAndKnowledge()
+    val updatedWorkflow = workflow.copy(
+      metadata = workflow.metadata.copy(apiVersion = ApisModule.SUPPORTED_API_VERSION))
 
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
@@ -510,6 +564,17 @@ class WorkflowsApiSpec
         Put(s"/$apiPrefix/$nonExistingId", updatedWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+    "return BadRequest" when {
+      "updated workflow contains wrong API version" in {
+        val wrongUpdatedWorkflow =
+          workflow.copy(metadata = workflow.metadata.copy(apiVersion = "0.0.1"))
+        Put(s"/$apiPrefix/$workflowAId", wrongUpdatedWorkflow) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
         }
         ()
       }

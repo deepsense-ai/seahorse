@@ -17,14 +17,13 @@ import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.ApisModule
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
-import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
-import io.deepsense.workflowmanager.model.ExecutionReportWithId
 import org.apache.commons.lang3.StringUtils
 import spray.http.HttpHeaders.`Content-Disposition`
 import spray.http.MediaTypes._
-import spray.http.{MultipartFormData, StatusCodes}
+import spray.http.{HttpRequestPart, MultipartFormData, StatusCodes}
 import spray.httpx.unmarshalling.Unmarshaller
 import spray.json._
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
@@ -45,6 +44,7 @@ abstract class WorkflowApi @Inject() (
   with WorkflowJsonProtocol
   with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
+  with WorkflowWithResultsJsonProtocol
   with MetadataInferenceResultJsonProtocol
   with WorkflowWithSavedResultsJsonProtocol
   with Cors {
@@ -57,19 +57,16 @@ abstract class WorkflowApi @Inject() (
 
   private val workflowFileMultipartId = "workflowFile"
 
-  private val WorkflowWithResultsUnmarshaller: Unmarshaller[WorkflowWithResults] =
-    Unmarshaller.delegate[MultipartFormData, WorkflowWithResults](`multipart/form-data`) {
+  private val MultipartJsValueUnmarshaller: Unmarshaller[JsValue] =
+    Unmarshaller.delegate[MultipartFormData, JsValue](`multipart/form-data`) {
       case multipartFormData =>
-        workflowWithResultsFormat.read(JsonParser(ParserInput(
-          selectFormPart(multipartFormData, workflowFileMultipartId))))
+        JsonParser(ParserInput(selectFormPart(multipartFormData, workflowFileMultipartId)))
     }
 
-  private val WorkflowUnmarshaller: Unmarshaller[Workflow] =
-    Unmarshaller.delegate[MultipartFormData, Workflow](`multipart/form-data`) {
-    case multipartFormData =>
-      workflowFormat.read(JsonParser(ParserInput(
-        selectFormPart(multipartFormData, workflowFileMultipartId))))
-  }
+  private val JsValueUnmarshaller: Unmarshaller[JsValue] =
+    Unmarshaller.delegate[String, JsValue](`application/json`) { jsonString =>
+      JsonParser(ParserInput(jsonString))
+    }
 
   def route: Route = {
     cors {
@@ -94,7 +91,10 @@ abstract class WorkflowApi @Inject() (
               } ~
               put {
                 withUserContext { userContext =>
-                  entity(as[Workflow]) { workflow =>
+                  implicit val unmarshaller = JsValueUnmarshaller
+                  entity(as[JsValue]) { workflowJson =>
+                    checkVersionSupport(workflowJson)
+                    val workflow = workflowJson.convertTo[Workflow]
                     complete {
                       workflowManagerProvider
                         .forContext(userContext)
@@ -147,8 +147,10 @@ abstract class WorkflowApi @Inject() (
             path("upload") {
               post {
                 withUserContext { userContext =>
-                  implicit val unmarshaller = WorkflowUnmarshaller
-                  entity(as[Workflow]) { workflow =>
+                  implicit val unmarshaller = MultipartJsValueUnmarshaller
+                  entity(as[JsValue]) { workflowJson =>
+                    checkVersionSupport(workflowJson)
+                    val workflow = workflowJson.convertTo[Workflow]
                     onComplete(
                       workflowManagerProvider
                         .forContext(userContext)
@@ -175,14 +177,17 @@ abstract class WorkflowApi @Inject() (
             path("report" / "upload") {
               post {
                 withUserContext { userContext =>
-                  implicit val unmarshaller = WorkflowWithResultsUnmarshaller
-                  entity(as[WorkflowWithResults]) { workflowWithResults =>
-                    onComplete(workflowManagerProvider
-                      .forContext(userContext)
-                      .saveWorkflowResults(workflowWithResults)) {
+                  implicit val unmarshaller = MultipartJsValueUnmarshaller
+                  entity(as[JsValue]) { workflowJson => {
+                      checkVersionSupport(workflowJson)
+                      val workflowWithResults = workflowJson.convertTo[WorkflowWithResults]
+                      onComplete(workflowManagerProvider
+                        .forContext(userContext)
+                        .saveWorkflowResults(workflowWithResults)) {
                         case Success(saved) => complete(StatusCodes.Created, saved)
                         case Failure(exception) => failWith(exception)
                       }
+                    }
                   }
                 }
               }
@@ -190,7 +195,10 @@ abstract class WorkflowApi @Inject() (
             pathEndOrSingleSlash {
               post {
                 withUserContext { userContext =>
-                  entity(as[Workflow]) { workflow =>
+                  implicit val unmarshaller = JsValueUnmarshaller
+                  entity(as[JsValue]) { workflowJson =>
+                    checkVersionSupport(workflowJson)
+                    val workflow = workflowJson.convertTo[Workflow]
                     onComplete(workflowManagerProvider
                       .forContext(userContext).create(workflow)) {
                       case Success(workflowWithKnowledge) => complete(
@@ -242,6 +250,8 @@ abstract class WorkflowApi @Inject() (
           complete(StatusCodes.NotFound, e.failureDescription)
         case e: CyclicGraphException =>
           complete(StatusCodes.BadRequest, e.failureDescription)
+        case e: WorkflowVersionNotSupportedException =>
+          complete(StatusCodes.BadRequest, e.failureDescription)
     } orElse super.exceptionHandler(log)
   }
 
@@ -262,6 +272,21 @@ abstract class WorkflowApi @Inject() (
     }
   }
 
+
+  private def checkVersionSupport(workflowJson: JsValue) : Unit = {
+    val workflowApiVersion = extractApiVersion(workflowJson)
+    if(workflowApiVersion != ApisModule.SUPPORTED_API_VERSION) {
+      throw new WorkflowVersionNotSupportedException(
+        workflowApiVersion,
+        ApisModule.SUPPORTED_API_VERSION)
+    }
+  }
+
+  private def extractApiVersion(workflowJson: JsValue): String = {
+    workflowJson.asJsObject.fields("metadata")
+        .asJsObject.fields("apiVersion")
+        .asInstanceOf[JsString].value
+  }
 }
 
 class SecureWorkflowApi @Inject() (
