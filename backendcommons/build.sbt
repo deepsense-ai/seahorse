@@ -54,12 +54,13 @@ buildInfoPackage := "io.deepsense.commons.buildinfo"
 
 buildInfoKeys ++= {
   val slices = 3
-  val versionSeparator = '.'
+  val splitRegex = """[^\d]"""
+  val versionSeparator = "."
   lazy val versionSplit: Seq[Int] = {
-    val split = version.value.replaceAll("[^\\d.]", "").split(versionSeparator).toSeq
+    val split = version.value.split(splitRegex)
       .filter(_.nonEmpty).map(_.toInt)
-    assert(split.size == slices, assertionMessage)
-    val apiVersion = split.take(slices).mkString(versionSeparator.toString)
+    assert(split.length >= slices, assertionMessage)
+    val apiVersion = split.take(slices).mkString(versionSeparator)
     assert(version.value.startsWith(apiVersion), assertionMessage)
     split
   }

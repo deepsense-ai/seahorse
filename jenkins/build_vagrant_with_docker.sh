@@ -7,6 +7,7 @@
 # Set working directory to project root file
 # `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
+ROOT_DIR=$(pwd)
 
 # Check if number of parameters is correct
 if [ $# != 1 ]; then
@@ -29,25 +30,19 @@ mv $ARTIFACT_NAME docker-compose.yml
 
 # Inside Vagrant we need Seahorse to listen on 0.0.0.0,
 # so that Vagrant's port forwarding works. So, let's replace the host which
-# proxy listens on (after a sanity check).
-if [ "`cat docker-compose.yml | grep 'HOST: "127.0.0.1"' | wc -l`" = 1 ]; then
-  sed -i -e 's#HOST: "127.0.0.1"#HOST: "0.0.0.0"#' docker-compose.yml
-else
-  echo "This should never happen."
-  exit 1
-fi
+# proxy listens on.
+$ROOT_DIR/jenkins/scripts/proxy_on_any_interface.py docker-compose.yml
 
 docker-compose pull
 
 echo "Save docker images to files"
-DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d" " -f 6 | tr " " "\n"`)
-for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
+DOCKER_IMAGES=$(grep image: docker-compose.yml | cut -d "/" -f 3 | rev | cut -d ":" -f 2 | rev)
+for DOCKER_IMAGE in $DOCKER_IMAGES
 do
-  # Strip docker repository and docker tag from image.
-  IMAGE_FILE_NAME=`echo "$DOCKER_IMAGE" | cut -d "/" -f 3 | rev | cut -d ":" -f 2 | rev`
-  echo "Save docker image to $IMAGE_FILE_NAME.tar"
-  rm -f $IMAGE_FILE_NAME.tar
-  docker save --output $IMAGE_FILE_NAME.tar $DOCKER_IMAGE
+  IMAGE_FILE_NAME="$DOCKER_IMAGE.tar"
+  echo "Save docker image to $IMAGE_FILE_NAME"
+  rm -f $IMAGE_FILE_NAME
+  docker save --output $IMAGE_FILE_NAME $DOCKER_IMAGE
 done
 
 # Create Vagrant box
