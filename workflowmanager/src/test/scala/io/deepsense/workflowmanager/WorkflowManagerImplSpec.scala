@@ -16,6 +16,7 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph._
 import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.model.WorkflowDescription
 import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
@@ -116,16 +117,20 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
         .thenReturn(Future.successful(Map[Node.Id, String]()))
       when(workflowStorage.create(any(), any()))
         .thenReturn(Future.successful(()))
+      val workflowDescription = WorkflowDescription("Brand new name", "Brand new desc")
 
-      val res = workflowManager.clone(storedWorkflowId)
+      val res = workflowManager.clone(storedWorkflowId, workflowDescription)
       whenReady(res) { workflow =>
         workflow shouldBe 'defined
         workflow.get.id should not be storedWorkflowId
         workflow.get.metadata shouldBe storedWorkflow.metadata
         workflow.get.graph shouldBe storedWorkflow.graph
 
-        val workflowName = workflow.get.thirdPartyData.fields("gui").asJsObject.fields("name")
-        workflowName shouldBe JsString("Copy of \"" + name + "\"")
+        val guiFields = workflow.get.thirdPartyData.fields("gui").asJsObject.fields
+        val workflowName = guiFields("name")
+        val workflowDesc = guiFields("description")
+        workflowName shouldBe JsString(workflowDescription.name)
+        workflowDesc shouldBe JsString(workflowDescription.description)
       }
     }
     "update StructAndStates in storages" in {

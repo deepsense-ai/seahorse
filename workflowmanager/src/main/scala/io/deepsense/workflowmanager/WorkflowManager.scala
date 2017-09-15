@@ -11,6 +11,7 @@ import org.joda.time.DateTime
 import io.deepsense.commons.models.Id
 import io.deepsense.graph.Node
 import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.model.WorkflowDescription
 
 /**
  * Workflow Manager's API
@@ -57,9 +58,10 @@ trait WorkflowManager {
   /**
     * Clones a workflow by Id.
     * @param id An identifier of the workflow to clone.
+    * @param workflowDescription A description for a cloned workflow.
     * @return Cloned workflow or None, if workflow with specified id does not exist.
     */
-  def clone(id: Id): Future[Option[WorkflowWithVariables]]
+  def clone(id: Id, workflowDescription: WorkflowDescription): Future[Option[WorkflowWithVariables]]
 
   /**
    * Lists stored workflows.
