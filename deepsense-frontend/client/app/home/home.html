@@ -1,8 +1,8 @@
 <div class="panel panel-default no-border home-screen">
   <div class="logged-user">
-    <span>
+    <span class="logged-user__username">
       <i class="fa fa-user logged-user__icon"></i>
-      {{::home.getCurrentUser().name}}
+      <span title="{{::home.getCurrentUser().name}}">{{::home.getCurrentUser().name}}</span>
     </span>
     <span>
       <a href="/logout">

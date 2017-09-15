@@ -161,12 +161,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 320px;
 
   &__icon {
     margin-right: 5px;
     font-size: 22px;
     color: @dark-blue;
+  }
+
+  &__username {
+    display: block;
+    margin-right: 15px;
+    max-width: 350px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
