@@ -85,7 +85,9 @@ object Dependencies {
     akkaActor
   ) ++ Seq(scalatest, mockitoCore, akkaTestkit).map(_ % Test)
 
-  val reportlib = Seq() ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  val reportlib = Seq(
+    sprayJson
+  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val commons = Seq(
     akkaActor,

@@ -2,3 +2,4 @@
 
 name := "deepsense-reportlib"
 
+libraryDependencies ++= Dependencies.reportlib
