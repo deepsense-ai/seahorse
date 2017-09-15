@@ -19,7 +19,22 @@ trait Trainable extends DOperable {
 }
 
 object Trainable {
+
   case class Parameters(
-    featureColumns: Option[MultipleColumnSelection] = None,
-    targetColumn: Option[SingleColumnSelection] = None)
+      featureColumns: Option[MultipleColumnSelection] = None,
+      targetColumn: Option[SingleColumnSelection] = None) {
+
+    def featureColumnNames(dataframe: DataFrame): Seq[String] =
+      dataframe.getColumnNames(featureColumns.get)
+
+    def targetColumnName(dataframe: DataFrame): String = dataframe.getColumnName(targetColumn.get)
+
+    /**
+     * Names of columns w.r.t. certain dataframe.
+     * @param dataframe DataFrame that we want to use.
+     * @return A tuple in form (sequence of feature column names, target column name)
+     */
+    def columnNames(dataframe: DataFrame): (Seq[String], String) =
+      (featureColumnNames(dataframe), targetColumnName(dataframe))
+  }
 }

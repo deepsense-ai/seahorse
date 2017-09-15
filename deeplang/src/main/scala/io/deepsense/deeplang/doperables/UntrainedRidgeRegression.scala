@@ -23,23 +23,22 @@ case class UntrainedRidgeRegression(
         parameters: Trainable.Parameters)(
         dataframe: DataFrame): Scorable = {
 
-      val featureColumns = dataframe.getColumnNames(parameters.featureColumns.get)
-      val labelColumn = dataframe.getColumnName(parameters.targetColumn.get)
+      val (featureColumns, targetColumn) = parameters.columnNames(dataframe)
 
-      val labeledPoints = dataframe.toSparkLabeledPointRDD(featureColumns, labelColumn)
+      val labeledPoints = dataframe.toSparkLabeledPointRDD(featureColumns, targetColumn)
       labeledPoints.cache()
 
       val scaler: StandardScalerModel = new StandardScaler(withStd = true, withMean = true)
-          .fit(labeledPoints.map(_.features))
+        .fit(labeledPoints.map(_.features))
       val scaledLabeledPoints = labeledPoints.map(lp => {
         LabeledPoint(lp.label, scaler.transform(lp.features))
       })
+      labeledPoints.unpersist()
       scaledLabeledPoints.cache()
 
       val trainedModel = model.get.run(scaledLabeledPoints)
       val result = TrainedRidgeRegression(
-        Some(trainedModel), Some(featureColumns), Some(labelColumn), Some(scaler))
-      labeledPoints.unpersist()
+        Some(trainedModel), Some(featureColumns), Some(targetColumn), Some(scaler))
       scaledLabeledPoints.unpersist()
       saveScorable(context, result)
       result
