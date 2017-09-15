@@ -51,7 +51,7 @@ class RColumnTransformer() extends CustomCodeColumnTransformer {
        |$userCode
        |
        |transform <- function(dataframe) {
-       |  new.column <- cast(transform.column(dataframe$$$inputColumn, '$inputColumn'),
+       |  new.column <- cast(transform.column(dataframe$$'$inputColumn', '$inputColumn'),
        |    '${targetType.simpleString}')
        |  return(withColumn(dataframe, '$newFieldName', new.column))
        |}
