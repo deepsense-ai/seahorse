@@ -124,23 +124,26 @@ case class IdleExecution(
       newStructure: DirectedGraph,
       substructure: DirectedGraph,
       nodes: Set[Node.Id]): NodeStates = {
+    if (newStructure.containsCycle) {
+      newStructure.nodes.map(n => n.id -> nodestate.Draft).toMap
+    } else {
+      val noMissingStates = newStructure.nodes.map {
+        case Node(id, _) => id -> states.getOrElse(id, nodestate.Draft)
+      }.toMap
 
-    val noMissingStates = newStructure.nodes.map {
-      case Node(id, _) => id -> states.getOrElse(id, nodestate.Draft)
-    }.toMap
+      val wholeGraph = StatefulGraph(newStructure, noMissingStates, None)
+      val newNodes = newStructure.nodes.diff(graph.directedGraph.nodes).map(_.id)
 
-    val wholeGraph = StatefulGraph(newStructure, noMissingStates, None)
-    val newNodes = newStructure.nodes.diff(graph.directedGraph.nodes).map(_.id)
+      val nodesToExecute = substructure.nodes.filter { case Node(id, _) =>
+        nodes.contains(id) || !wholeGraph.states(id).isCompleted
+      }.map(_.id)
 
-    val nodesToExecute = substructure.nodes.filter { case Node(id, _) =>
-      nodes.contains(id) || !wholeGraph.states(id).isCompleted
-    }.map(_.id)
+      val nodesNeedingDrafting = newNodes ++ nodesToExecute
 
-    val nodesNeedingDrafting = newNodes ++ nodesToExecute
-
-    nodesNeedingDrafting.foldLeft(wholeGraph){
-      case (g, id) => g.draft(id)
-    }.states
+      nodesNeedingDrafting.foldLeft(wholeGraph) {
+        case (g, id) => g.draft(id)
+      }.states
+    }
   }
 
   override def error: Option[FailureDescription] = graph.executionFailure

@@ -192,4 +192,17 @@ class DirectedGraphSpec
     bigGraph.subgraph(Set(idD, idB)) shouldBe
       DirectedGraph(Set(nodeA, nodeB, nodeC, nodeD), Set(edge1, edge2, edge3))
   }
+
+  test("Graph with a cycle allows to calculate a subgraph") {
+    val node1 = Node(Node.Id.randomId, op1To1)
+    val node2 = Node(Node.Id.randomId, op1To1)
+    val cyclicGraph = DirectedGraph(
+      Set(node1, node2),
+      Set(
+        Edge(node1, 0, node2, 0),
+        Edge(node2, 0, node1, 0))
+    )
+
+    cyclicGraph.subgraph(Set(node1.id)) shouldBe cyclicGraph
+  }
 }

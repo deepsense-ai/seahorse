@@ -55,7 +55,8 @@ case class DirectedGraph(
         previouslyCollectedNodes: Set[Node.Id],
         previouslyCollectedEdges: Set[Edge],
         toProcess: Set[Node.Id]): (Set[Node.Id], Set[Edge]) = {
-      val nodesPredecessors = predecessorsOf(toProcess)
+      // Do not revisit nodes (in case of a cycle).
+      val nodesPredecessors = predecessorsOf(toProcess) -- previouslyCollectedNodes
       val nextNodes = previouslyCollectedNodes ++ nodesPredecessors
       val nextEdges = previouslyCollectedEdges ++ edgesOf(toProcess)
 

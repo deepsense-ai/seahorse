@@ -16,14 +16,13 @@
 
 package io.deepsense.workflowexecutor.partialexecution
 
-import org.scalatest.mock.MockitoSugar
-import org.mockito.Mockito._
 import org.mockito.Matchers._
+import org.mockito.Mockito._
+import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.inference.InferContext
-
 import io.deepsense.graph._
 
 class ExecutionSpec
