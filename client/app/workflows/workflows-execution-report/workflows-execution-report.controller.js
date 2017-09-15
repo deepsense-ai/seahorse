@@ -32,9 +32,12 @@ function WorkflowsReportController(
 
     let workflow = WorkflowService.createWorkflow(report, Operations.getData());
     workflow.updateState(report.executionReport);
+    workflow.setPortTypesFromReport(report.executionReport.resultEntities);
 
     GraphPanelRendererService.setWorkflow(workflow);
     GraphPanelRendererService.setZoom(1.0);
+
+    WorkflowService.updateEdgesStates();
     GraphPanelRendererService.changeEdgesPaintStyles();
 
     Report.createReportEntities(report.executionReport.resultEntities);
