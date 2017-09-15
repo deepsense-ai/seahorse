@@ -20,11 +20,11 @@
           "started": null
         },
         "b6144d6a-7bc2-4cf5-99aa-8a979c739d94": {
-          "ended": null,
-          "results": null,
+          "results": ["bikes_join"],
           "progress": null,
-          "status": "DRAFT",
-          "started": null
+          "status": "COMPLETED",
+          "started": "2015-01-20T21:11:09Z",
+          "ended": "2015-01-20T21:12:09Z"
         },
         "6f389671-0c10-4352-9056-0b6b0874fa47": {
           "ended": null,
