@@ -11,7 +11,7 @@ RELEASE_PATH=workflowexecutor/seahorse/releases/${VERSION}
 aws s3 cp ${BOX_NAME} s3://${RELEASE_PATH}/${BOX_NAME} --acl public-read
 
 URL="https://s3.amazonaws.com/${RELEASE_PATH}/${BOX_NAME}"
-sed "s#seahorsevm.vm.box_url = \"\"#seahorsevm.vm.box_url = \"${URL}\"#" Vagrantfile.template > Vagrantfile
+sed "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" Vagrantfile.template > Vagrantfile
 
 aws s3 cp Vagrantfile s3://${RELEASE_PATH}/Vagrantfile --acl public-read
 

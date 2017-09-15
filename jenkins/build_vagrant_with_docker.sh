@@ -26,6 +26,16 @@ rm -f $ARTIFACT_NAME
 wget $COMPOSE_FILE
 mv $ARTIFACT_NAME docker-compose.yml
 
+# Inside Vagrant we need Seahorse to listen on 0.0.0.0,
+# so that Vagrant's port forwarding works. So, let's replace the host which
+# proxy listens on (after a sanity check).
+if [ "`cat docker-compose.yml | grep 'HOST: "127.0.0.1"' | wc -l`" = 1 ]; then
+  sed -i -e 's#HOST: "127.0.0.1"#HOST: "0.0.0.0"#' docker-compose.yml
+else
+  echo "This should never happen."
+  exit 1
+fi
+
 # Save docker images to files
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
 

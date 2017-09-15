@@ -6,8 +6,9 @@ Vagrant.configure(2) do |config|
     seahorsevm.vm.provision "shell", path: "install_docker.sh", privileged: true
     seahorsevm.vm.provision "shell", path: "get_seahorse_images.sh", privileged: true
   end
+
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "6144"
+    vb.memory = "4295"
     vb.cpus = 4
     vb.name = "seahorse-vm"
   end

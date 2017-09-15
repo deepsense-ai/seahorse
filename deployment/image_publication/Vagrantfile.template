@@ -1,19 +1,27 @@
 Vagrant.configure(2) do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
   config.vm.define "seahorse-vm" do |seahorsevm|
     seahorsevm.vm.box = "seahorse-vm"
-    seahorsevm.vm.box_url = ""
+    seahorsevm.vm.box_url = "SEAHORSE_BOX_URL_VARIABLE"
     seahorsevm.vm.hostname = "seahorse-vm"
-    seahorsevm.vm.boot_timeout = 600
+    seahorsevm.vm.boot_timeout = 1200
     seahorsevm.vm.provision "shell", inline: "cd /home/vagrant && for f in *.tar; do docker load --input $f; done"
     seahorsevm.vm.provision "shell", inline: "cd /home/vagrant && rm *.tar"
     seahorsevm.vm.provision "shell", inline: "cd /resources && docker-compose up -d 2>&1", run: "always"
   end
+
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "6144"
+    vb.memory = "4295"
     vb.cpus = 4
     vb.name = "seahorse-vm"
   end
-  config.vm.network "forwarded_port", guest: 33321, host: 33321
+
+  config.vm.network "forwarded_port", guest: 33321, host: 33321, host_ip: "127.0.0.1"
+
+  # Uncomment this line if you want this VM to connect directly to your network.
+  # Visit http://seahorse.deepsense.io for details.
+  # config.vm.network "public_network", use_dhcp_assigned_default_route: true
+
   config.vm.synced_folder "./data", "/resources/data", mount_options: ["dmode=775,fmode=664"], create: true
 end

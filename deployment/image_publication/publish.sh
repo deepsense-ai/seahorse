@@ -42,6 +42,7 @@ function publishVersion() {
 publishVersion "${BOX_NAME}" "${BOX_NAME}" "${SEAHORSE_BUILD_TAG}"
 
 URL="$ARTIFACTORY_URL/$REPOSITORY/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${BOX_NAME}"
-sed "s#seahorsevm.vm.box_url = \"\"#seahorsevm.vm.box_url = \"${URL}\"#" Vagrantfile.template > Vagrantfile
+sed "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" Vagrantfile.template > Vagrantfile
+
 
 publishVersion "Vagrantfile" "Vagrantfile-internal" "${SEAHORSE_BUILD_TAG}"
