@@ -127,7 +127,7 @@ trait SeahorseIntegrationTestDSL
         case Success(_) =>
         case Failure(nodeReport) =>
           fail(s"Some nodes failed for workflow id: ${workflow.id}." +
-            s"name: ${workflow.name}'. Node report: $nodeReport. Cluster failed: ${cluster.name}. " +
+            s"name: ${workflow.name}'. Node report: ${nodeReport.msg}. Cluster failed: ${cluster.name}. " +
             s"Details in log containing ${cluster.name} string.")
       }
     }
@@ -158,11 +158,17 @@ trait SeahorseIntegrationTestDSL
     }
   }
 
-  protected def assertAllNodesCompletedSuccessfully(workflow: WorkflowInfo): Validation[String, String] = {
+  case class NodesFailed(workflowId: Workflow.Id, workflowName: String, failedNodesCount: Int) {
+    val msg = s"Errors: $failedNodesCount nodes failed for workflow id: $workflowId. name: $workflowName"
+  }
+  case object AllNodesCompleted
+
+  private def assertAllNodesCompletedSuccessfully(
+      workflow: WorkflowInfo
+    ): Validation[NodesFailed, AllNodesCompleted.type] = {
     val numberOfNodesFut = calculateNumberOfNodes(workflow.id)
 
-    val nodesResult: Validation[String, String] = eventually {
-
+    val nodesResult = eventually {
       val nodesStatuses = smclient.queryNodeStatuses(workflow.id)
       Await.result(
         for {
@@ -185,13 +191,13 @@ trait SeahorseIntegrationTestDSL
   }
 
   protected def checkCompletedNodesNumber(
-      errorNodeStatuses: Int,
+      failedNodesCount: Int,
       completedNodes: Int,
       numberOfNodes: Int,
       workflowID: Workflow.Id,
-      workflowName: String): Validation[String, String] = {
-    if (errorNodeStatuses > 0) {
-      s"Errors: $errorNodeStatuses nodes failed for workflow id: $workflowID. name: $workflowName".failure
+      workflowName: String) = {
+    if (failedNodesCount > 0) {
+      NodesFailed(workflowID, workflowName, failedNodesCount).failure
     } else {
       logger.info(s"$completedNodes nodes completed." +
         s" Need all $numberOfNodes nodes completed for workflow id: $workflowID. name: $workflowName")
@@ -207,7 +213,7 @@ trait SeahorseIntegrationTestDSL
 
       completedNodes shouldEqual numberOfNodes
 
-      "All nodes completed".success
+      AllNodesCompleted.success
     }
   }
 
