@@ -67,8 +67,8 @@ object Dependencies {
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
     "seahorse.deepsense.io"  at
-      "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-release",
-    "seahorse.snapshot"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-snapshot"
+      "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-release",
+    "seahorse.snapshot"  at "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-snapshot"
   )
 
   val commons = Seq(
