@@ -28,6 +28,8 @@ import org.apache.spark.sql.{ColumnName, Row}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.ReportLevel
+import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.{ReportLevel, Report}
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.reportlib.model
@@ -108,15 +110,8 @@ trait DataFrameReportGenerator {
     if (executionContext.reportLevel == ReportLevel.LOW) {
       // Turn off generating any distributions when reportLevel == LOW
       (Map(), dataFrameSize)
-
     } else {
-      val columnsForDistributionGeneration = if (executionContext.reportLevel == ReportLevel.HIGH) {
-        sparkDataFrame.schema
-      } else {
-        // Omit generating distributions for 'Continuous' columns when reportLevel == MEDIUM
-        sparkDataFrame.schema.filterNot(s => Continuous == distributionType(s, categoricalMetadata))
-      }
-      val distributions = columnsForDistributionGeneration.zipWithIndex.map(p => {
+      val distributions = sparkDataFrame.schema.zipWithIndex.map(p => {
         val rdd: RDD[Double] =
           columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, categoricalMetadata, p._2)
         rdd.cache()
@@ -128,7 +123,8 @@ trait DataFrameReportGenerator {
               basicStats.map(_.min(p._2)),
               basicStats.map(_.max(p._2)),
               dataFrameSize,
-              categoricalMetadata)
+              categoricalMetadata,
+              executionContext.reportLevel)
           case Categorical => categoricalDistribution(dataFrameSize, p._1, rdd, categoricalMetadata)
         }
       })
@@ -164,7 +160,8 @@ trait DataFrameReportGenerator {
       min: Option[Double],
       max: Option[Double],
       dataFrameSize: Long,
-      categoricalMetadata: CategoricalMetadata): ContinuousDistribution = {
+      categoricalMetadata: CategoricalMetadata,
+      reportLevel: ReportLevel): ContinuousDistribution = {
     val (buckets, counts) =
       if (min.isEmpty || max.isEmpty) {
         (Seq(), Seq())
@@ -172,7 +169,7 @@ trait DataFrameReportGenerator {
         histogram(rdd, min.get, max.get, structField, categoricalMetadata)
       }
     val rddSize: Long = counts.fold(0L)(_ + _)
-    val quartiles = calculateQuartiles(rddSize, rdd, structField, categoricalMetadata)
+    val quartiles = calculateQuartiles(rddSize, rdd, structField, categoricalMetadata, reportLevel)
     val d2L = double2Label(categoricalMetadata)(structField)_
     val mean = if (min.isEmpty || max.isEmpty) None else Some(rdd.mean())
     val stats = model.Statistics(
@@ -232,8 +229,9 @@ trait DataFrameReportGenerator {
       rddSize: Long,
       rdd: RDD[Double],
       structField: StructField,
-      categoricalMetadata: CategoricalMetadata): Quartiles =
-    if (rddSize > 0) {
+      categoricalMetadata: CategoricalMetadata,
+      reportLevel: ReportLevel): Quartiles =
+    if (rddSize > 0 && reportLevel == ReportLevel.HIGH) {
       val sortedRdd = rdd.sortBy(identity).zipWithIndex().map {
         case (v, idx) => (idx, v)
       }
