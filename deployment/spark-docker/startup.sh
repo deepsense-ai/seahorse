@@ -10,6 +10,9 @@ service ssh restart
 
 $SPARK_HOME/sbin/start-all.sh
 
+# Docker ready checkers might hook to `SPARK_DOCKER_READY` string from log output
+echo 'SPARK_DOCKER_READY'
+
 if [ "$1" == "-d" ] ; then
   while [ 1 == 1 ] ; do
     sleep 1
