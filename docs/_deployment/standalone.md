@@ -50,7 +50,7 @@ installing a complex application along with its dependencies without cluttering 
   * Docker Toolbox and Docker on Mac are not supported.
 * <a target="_blank" href="https://docs.docker.com/compose/">Docker Compose</a> (tested on versions
 1.7.0 and 1.7.1)
-* <a target="_blank" href="https://www.google.com/chrome/">Google Chrome</a> (version >= 40)
+* <a target="_blank" href="https://www.google.com/chrome/">Google Chrome</a> (version >= 51)
 or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a> (version >= 48)
 
 **Running Seahorse**
@@ -99,7 +99,7 @@ image.
 * <a target="_blank" href="https://www.vagrantup.com/">Vagrant</a> (tested on version 1.8.1)
 * <a target="_blank" href="https://www.virtualbox.org/">VirtualBox</a> (tested on version 5.0.10,
 there is an issue with version 5.0.12)
-* <a target="_blank" href="https://www.google.com/chrome/">Google Chrome</a> (version >= 40)
+* <a target="_blank" href="https://www.google.com/chrome/">Google Chrome</a> (version >= 51)
 or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a> (version >= 48)
 
 **Running Seahorse**
