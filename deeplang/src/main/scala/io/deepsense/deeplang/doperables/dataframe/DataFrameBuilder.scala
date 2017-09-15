@@ -37,7 +37,9 @@ case class DataFrameBuilder(sqlContext: SQLContext) {
   def buildDataFrame(metadata: DataFrameMetadata, data: RDD[Row]): DataFrame = {
     buildDataFrame(schema = metadata.toSchema, data)
   }
+}
 
+object DataFrameBuilder {
   /**
    * @return DataFrame object that can be used _only_ for inference,
    *         i.e. it contains only metadata of this DataFrame.

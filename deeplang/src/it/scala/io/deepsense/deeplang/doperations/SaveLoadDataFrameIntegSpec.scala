@@ -8,8 +8,11 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, ExecutionContext}
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadata, DataFrame}
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
 /**
@@ -20,18 +23,48 @@ import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
  */
 class SaveLoadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
-  with BeforeAndAfter
-  with DOperationsFactory {
+  with BeforeAndAfter {
+
+  val schema: StructType = StructType(List(
+    StructField("column1", StringType),
+    StructField("column2", LongType),
+    StructField("column3", DoubleType),
+    StructField("column4", StringType))
+  )
+
+  before {
+    // Reset entity storage client state
+    prepareEntityStorageClient
+  }
 
   "Save and Load DataFrame operations" should {
     "correctly save and load dataFrame from HDFS" in {
       val context = executionContext
       val dataFrame: DataFrame = createDataFrame
-
       val dataFrameId = saveDataFrame(context, dataFrame, "test name", "test description")
 
       val retrievedDataFrame = loadDataFrame(context, dataFrameId)
       assertDataFramesEqual(dataFrame, retrievedDataFrame, checkRowOrder = false)
+    }
+
+    "correctly return metadata about saved dataFrame" in {
+      val context = executionContext
+      val dataFrame: DataFrame = createDataFrame
+      val dataFrameId = saveDataFrame(context, dataFrame, "test name", "test description")
+      val doperableCatalog = mock[DOperableCatalog]
+      val inferContext = InferContext(context, doperableCatalog, fullInference = true)
+      val loadDF = LoadDataFrame(dataFrameId)
+      val (knowledge, warnings) = loadDF.inferKnowledge(inferContext)(Vector.empty)
+
+      warnings.warnings should have size 0
+      knowledge should have size 1
+      knowledge.head.types should have size 1
+
+      val metadata = knowledge.head.types.head.inferredMetadata.get.asInstanceOf[DataFrameMetadata]
+      metadata.isExact shouldBe true
+      metadata.isColumnCountExact shouldBe true
+      metadata.columns should have size schema.length
+      metadata.toSchema shouldBe schema
     }
   }
 
@@ -41,12 +74,6 @@ class SaveLoadDataFrameIntegSpec
       Row("bbb", 2L, null, "text"),
       Row("ccc", null, 3.4, "when the music is over turn off the lights.")
     )
-    val schema: StructType = StructType(List(
-      StructField("column1", StringType),
-      StructField("column2", LongType),
-      StructField("column3", DoubleType),
-      StructField("column4", StringType))
-    )
     createDataFrame(rowsSeq, schema)
   }
 
@@ -55,8 +82,9 @@ class SaveLoadDataFrameIntegSpec
       dataFrame: DataFrame,
       name: String,
       description: String): String = {
-    val saveDataFrameOperation = createSaveDataFrameOperation(name, description)
+    val saveDataFrameOperation = SaveDataFrame(name, description)
     saveDataFrameOperation.execute(context)(Vector[DOperable](dataFrame))
+
     val entities =
       context.entityStorageClient.asInstanceOf[EntityStorageClientTestInMemoryImpl].getAllEntities
     assert(entities.length == 1, "For this test one entity should be created.")
@@ -64,7 +92,7 @@ class SaveLoadDataFrameIntegSpec
   }
 
   private def loadDataFrame(context: ExecutionContext, entityId: String): DataFrame = {
-    val loadDataFrameOperation = createLoadDataFrameOperation(entityId)
+    val loadDataFrameOperation = LoadDataFrame(entityId)
     val operationResult = loadDataFrameOperation.execute(context)(Vector.empty[DOperable])
     operationResult.head.asInstanceOf[DataFrame]
   }

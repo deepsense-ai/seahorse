@@ -22,10 +22,7 @@ class GraphWithTimestampDecomposeIntegSuite extends ExperimentExecutionSpec {
   override def requiredFiles: Map[String, String] =
     Map("/SimpleDataFrame" -> SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
 
-  import io.deepsense.deeplang.doperations.LoadDataFrame._
-  val loadOp = new LoadDataFrame
-  loadOp.parameters.getStringParameter(idParam).value =
-    Some(SimpleGraphExecutionIntegSuiteEntities.entityId.toString)
+  val loadOp = LoadDataFrame(SimpleGraphExecutionIntegSuiteEntities.entityId.toString)
 
   val timestampDecomposerOp = DecomposeDatetime(
     NameSingleColumnSelection("column4"),

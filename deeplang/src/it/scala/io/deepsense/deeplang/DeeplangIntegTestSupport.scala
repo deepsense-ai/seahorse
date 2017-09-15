@@ -49,15 +49,22 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     config.addResource("hdfs-site.xml")
     // TODO: Configuration string instead of hardcoded hdfsPath
     rawHdfsClient = new DFSClient(new URI(hdfsPath), config)
+    prepareExecutionContext
+  }
 
+  protected def prepareExecutionContext(): Unit = {
     executionContext = new ExecutionContext
     executionContext.sparkContext = sparkContext
     executionContext.sqlContext = sqlContext
     executionContext.dataFrameBuilder = DataFrameBuilder(sqlContext)
-    executionContext.entityStorageClient =
-      EntityStorageClientTestInMemoryImpl(entityStorageInitState)
     executionContext.tenantId = "testTenantId"
     executionContext.hdfsClient = new DSHdfsClient(rawHdfsClient)
+    prepareEntityStorageClient
+  }
+
+  protected def prepareEntityStorageClient(): Unit = {
+    executionContext.entityStorageClient =
+      EntityStorageClientTestInMemoryImpl(entityStorageInitState)
   }
 
   override def afterAll(): Unit = sparkContext.stop()

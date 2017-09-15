@@ -29,4 +29,15 @@ object InferContext {
     context.tenantId = baseContext.tenantId
     context
   }
+
+  def apply(
+      baseContext: CommonContext,
+      dOperableCatalog: DOperableCatalog,
+      fullInference: Boolean): InferContext = {
+    val context = new InferContext(dOperableCatalog, fullInference)
+    context.dataFrameBuilder = baseContext.dataFrameBuilder
+    context.entityStorageClient = baseContext.entityStorageClient
+    context.tenantId = baseContext.tenantId
+    context
+  }
 }

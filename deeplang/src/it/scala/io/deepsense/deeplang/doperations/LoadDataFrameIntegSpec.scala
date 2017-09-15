@@ -21,8 +21,7 @@ import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Enti
 class LoadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter
-  with LazyLogging
-  with DOperationsFactory {
+  with LazyLogging {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
 
@@ -39,7 +38,7 @@ class LoadDataFrameIntegSpec
       dataFrame.sparkDataFrame.write.parquet(testDir)
       val entityId = registerDataFrame(context)
 
-      val operation = createLoadDataFrameOperation(entityId.toString)
+      val operation = LoadDataFrame(entityId.toString)
 
       logger.info("Loading dataframe from entity id: {}", entityId)
       val operationResult = operation.execute(context)(Vector.empty[DOperable])
@@ -49,7 +48,7 @@ class LoadDataFrameIntegSpec
     }
   }
 
-  def registerDataFrame(context: ExecutionContext): Entity.Id = {
+  def registerDataFrame(context: ExecutionContext, serializedMetadata: String = "{}"): Entity.Id = {
     import scala.concurrent.duration._
     implicit val timeout = 5.seconds
     val future = context.entityStorageClient.createEntity(CreateEntityRequest(
@@ -57,7 +56,7 @@ class LoadDataFrameIntegSpec
       "testEntity name",
       "testEntity description",
       "DataFrame",
-      Some(DataObjectReference(testDir, "{}")),
+      Some(DataObjectReference(testDir, serializedMetadata)),
       DataObjectReport("testEntity Report"),
       saved = true))
     Await.result(future, timeout)

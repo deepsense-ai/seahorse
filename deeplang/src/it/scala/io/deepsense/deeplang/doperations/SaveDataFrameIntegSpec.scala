@@ -18,8 +18,7 @@ import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
 class SaveDataFrameIntegSpec
   extends DeeplangIntegTestSupport
-  with BeforeAndAfter
-  with DOperationsFactory {
+  with BeforeAndAfter {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
 
@@ -47,7 +46,7 @@ class SaveDataFrameIntegSpec
     val context = executionContext
     // NOTE: In this test suite, description should uniquely identify DataFrame
     val dataFrameDescription = rowsSeq.toString()
-    val operation: SaveDataFrame = createSaveDataFrameOperation("testName", dataFrameDescription)
+    val operation: SaveDataFrame = SaveDataFrame("testName", dataFrameDescription)
     val dataFrameToSave: DataFrame = createDataFrameToSave(rowsSeq)
 
     operation.execute(context)(Vector[DOperable](dataFrameToSave))
