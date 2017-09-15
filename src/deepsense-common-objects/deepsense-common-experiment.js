@@ -34,6 +34,10 @@ angular.module('deepsense.graph-model').
         return internal.nodes;
       };
 
+      that.getNodesIds = function getNodesIds() {
+        return _.map(internal.nodes, (node) => node.id);
+      };
+
       that.getNodeById = function getNodeById(nodeId) {
         return internal.nodes[nodeId];
       };
