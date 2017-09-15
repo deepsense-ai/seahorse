@@ -19,7 +19,7 @@ import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.model.json.workflow.DeepLangJsonProtocol
+import io.deepsense.models.json.workflow.DeepLangJsonProtocol
 
 /**
  * Provides REST for operations.

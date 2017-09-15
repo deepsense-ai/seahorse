@@ -18,13 +18,13 @@ class MockedTokenTranslator extends TokenTranslator {
       val tenantId = "olympus"
       val tenant: Tenant = Tenant(tenantId, tenantId, tenantId, Some(true))
       val godsRoles = Seq(
-        "experiments:get",
-        "experiments:update",
-        "experiments:create",
-        "experiments:list",
-        "experiments:delete",
-        "experiments:launch",
-        "experiments:abort",
+        "workflows:get",
+        "workflows:update",
+        "workflows:create",
+        "workflows:list",
+        "workflows:delete",
+        "workflows:launch",
+        "workflows:abort",
         "entities:get",
         "entities:create",
         "entities:update",

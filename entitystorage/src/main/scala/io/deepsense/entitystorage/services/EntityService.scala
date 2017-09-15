@@ -20,7 +20,7 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
    * Returns all saved entities of tenant.
    */
   def getAllSaved(tenantId: String): Future[List[EntityInfo]] = {
-    logger.debug("GetAllSaved for tenantId: {}", tenantId)
+    logger.debug(s"GetAllSaved for tenantId: $tenantId")
     entityDao.getAllSaved(tenantId)
   }
 
@@ -28,7 +28,7 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
    * Returns reference to a physical storage where data associated with the entity are stored.
    */
   def getEntityData(tenantId: String, entityId: Entity.Id): Future[Option[EntityWithData]] = {
-    logger.debug("GetEntityData for tenantId {} and entityId: {}", tenantId, entityId)
+    logger.debug(s"GetEntityData for tenantId $tenantId and entityId: $entityId")
     entityDao.getWithData(tenantId, entityId)
   }
 
@@ -36,7 +36,7 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
    * Returns report associated with the entity.
    */
   def getEntityReport(tenantId: String, entityId: Entity.Id): Future[Option[EntityWithReport]] = {
-    logger.debug("GetEntityReport for tenantId: {} and entityId: {}", tenantId, entityId)
+    logger.debug(s"GetEntityReport for tenantId: $tenantId and $entityId")
     entityDao.getWithReport(tenantId, entityId)
   }
 
@@ -45,8 +45,9 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
    */
   def createEntity(entity: CreateEntityRequest): Future[Entity.Id] = {
     val entityId = Entity.Id.randomId
-    logger.debug("CreateEntity - generated id: {}, inputEntity.name: {},  input.description: {}",
-      entityId, entity.name, entity.description)
+    logger.debug(
+      s"CreateEntity - generated id: $entityId, inputEntity.name: ${entity.name}}, " +
+        s"inputEntity.description: ${entity.description}")
     val now = DateTimeConverter.now
     entityDao.create(id = entityId, entity, created = now).map { _ => entityId }
   }
@@ -60,8 +61,9 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
       entityId: Entity.Id,
       entity: UpdateEntityRequest): Future[Option[EntityWithReport]] = {
 
-    logger.debug("UpdateEntity for tenantId: {}, userEntity.name: {}, userEntity.description {}",
-      tenantId, entity.name, entity.description)
+    logger.debug(
+      s"UpdateEntity for tenantId: $tenantId," +
+        s"userEntity.name: ${entity.name}, userEntity.description: ${entity.description}")
     val now = DateTimeConverter.now
     entityDao.update(tenantId, entityId, entity, updated = now).flatMap {
       _ => entityDao.getWithReport(tenantId, entityId)
@@ -72,7 +74,7 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
    * Removes entity pointed by id or does nothing if it does not exist.
    */
   def deleteEntity(tenantId: String, entityId: Entity.Id): Future[Unit] = {
-    logger.debug("DeleteEntity for tenantId: {} and entityId: {}", tenantId, entityId)
+    logger.debug(s"DeleteEntity for tenantId: $tenantId and entityId: $entityId")
     entityDao.delete(tenantId, entityId)
   }
 }

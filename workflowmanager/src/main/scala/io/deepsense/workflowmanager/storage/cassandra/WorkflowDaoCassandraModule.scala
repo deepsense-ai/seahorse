@@ -7,8 +7,6 @@ package io.deepsense.workflowmanager.storage.cassandra
 import com.google.inject.{PrivateModule, Scopes}
 
 import io.deepsense.commons.cassandra.CassandraFactoriesModule
-import io.deepsense.model.json.workflow.GraphReaderModule
-import io.deepsense.workflowmanager.deeplang.DeepLangModule
 import io.deepsense.workflowmanager.storage.WorkflowStorage
 
 class WorkflowDaoCassandraModule extends PrivateModule {

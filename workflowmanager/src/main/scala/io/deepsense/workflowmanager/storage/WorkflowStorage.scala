@@ -10,45 +10,30 @@ import io.deepsense.commons.models.Id
 import io.deepsense.models.workflows.Workflow
 
 /**
- * Abstraction layer to make implementation of Experiment Manager easier.
+ * Abstraction layer to make implementation of Workflow Manager easier.
  */
 trait WorkflowStorage {
 
   /**
-   * Returns an experiment with the specified id.
-   * @param id Id of the experiment.
-   * @return Experiment with the id or None.
+   * Returns an workflow with the specified id.
+   * @param id Id of the workflow.
+   * @return Workflow with the id or None.
    */
-  def get(tenantId: String, id: Id): Future[Option[Workflow]]
+  def get(id: Id): Future[Option[Workflow]]
 
   /**
-   * Saves an experiment.
-   * @param experiment Experiment to be saved.
-   * @return Saved experiment.
+   * Saves an workflow.
+   * @param workflow Workflow to be saved.
+   * @return Saved workflow.
    */
-  def save(experiment: Workflow): Future[Unit]
+  def save(id: Id, workflow: Workflow): Future[Unit]
 
   /**
-   * Removes an experiment with the specified id.
-   * @param id Id of the experiment to be deleted.
-   * @return Future.successful whether the experiment was found or not.
+   * Removes an workflow with the specified id.
+   * @param id Id of the workflow to be deleted.
+   * @return Future.successful whether the workflow was found or not.
    *         If there were hard failures (e.g. connection error) the returned
    *         future will fail.
    */
-  def delete(tenantId: String, id: Id): Future[Unit]
-
-  /**
-   * Returns a list of experiment.
-   * @param tenantId Owner of the experiments.
-   * @param limit Size of the list (page)
-   * @param page Page number.
-   * @param status Allows to filter experiments with the specified status.
-   *               If not specified then experiments will not be filtered out.
-   * @return A filtered list of experiments that is a certain page of a certain size.
-   */
-  def list(
-    tenantId: String,
-    limit: Option[Int],
-    page: Option[Int],
-    status: Option[Workflow.Status.Value] = None): Future[Seq[Workflow]]
+  def delete(id: Id): Future[Unit]
 }

@@ -15,17 +15,10 @@ object WorkflowTableCreator {
   private def createTableCommand(table: String): String = {
     s"create table if not exists $table (" +
       s"""
-         tenantId text,
          id uuid,
-         name text,
-         graph text,
-         description text,
-         state_status text,
-         state_description text,
-         created timestamp,
-         updated timestamp,
+         workflow text,
          deleted boolean,
-         primary key (tenantId, id)
+         primary key (id)
       );
       """
   }

@@ -4,23 +4,21 @@
 
 package io.deepsense.workflowmanager
 
-import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
 
-import com.google.inject.assistedinject.FactoryModuleBuilder
 import com.google.inject.AbstractModule
+import com.google.inject.assistedinject.FactoryModuleBuilder
 
-import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactoryImpl, EntityStorageClientFactory}
-import io.deepsense.workflowmanager.execution.ExecutionModule
-import io.deepsense.workflowmanager.storage.cassandra.WorkflowDaoCassandraModule
+import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
 import io.deepsense.models.entities.{CreateEntityRequest, Entity, EntityWithData}
+import io.deepsense.workflowmanager.storage.cassandra.WorkflowDaoCassandraModule
 
 /**
  * Configures services.
  */
 class ServicesModule extends AbstractModule {
   override def configure(): Unit = {
-    install(new ExecutionModule)
     install(new WorkflowDaoCassandraModule)
     install(new FactoryModuleBuilder()
       .implement(classOf[WorkflowManager], classOf[WorkflowManagerImpl])

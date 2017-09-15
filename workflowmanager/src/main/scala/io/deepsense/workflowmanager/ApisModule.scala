@@ -11,7 +11,7 @@ import com.google.inject.name.Names.named
 
 import io.deepsense.commons.auth.AuthModule
 import io.deepsense.commons.rest.{RestComponent, VersionApi}
-import io.deepsense.model.json.workflow.GraphReaderModule
+import io.deepsense.models.json.workflow.GraphReaderModule
 import io.deepsense.workflowmanager.deeplang.DeepLangModule
 import io.deepsense.workflowmanager.rest._
 
@@ -26,7 +26,7 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
   }
 
   override def configure(): Unit = {
-    bind(classOf[String]).annotatedWith(named("componentName")).toInstance("experimentmanager")
+    bind(classOf[String]).annotatedWith(named("componentName")).toInstance("workflowmanager")
 
     install(new AuthModule(withMockedSecurity))
     install(new GraphReaderModule)

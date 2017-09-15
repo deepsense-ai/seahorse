@@ -16,13 +16,13 @@ class WorkflowSessionModule extends AbstractModule {
 
   @Provides
   @Singleton
-  @Named("ExperimentsSession")
+  @Named("WorkflowsSession")
   def provideSession(
       @Named("cassandra.host") host: String,
       @Named("cassandra.port") port: Int,
       @Named("cassandra.credentials.user") user: String,
       @Named("cassandra.credentials.password") password: String,
-      @Named("cassandra.experiments.keyspace") keySpace: String,
+      @Named("cassandra.workflow.keyspace") keySpace: String,
       @Named("cassandra.reconnect.delay") reconnectDelay: Long,
       clusterFactory: ClusterFactory,
       sessionFactory: SessionFactory): Session = {

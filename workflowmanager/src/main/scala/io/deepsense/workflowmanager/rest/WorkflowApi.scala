@@ -15,34 +15,30 @@ import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
-import io.deepsense.model.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.model.json.workflow.{MetadataInferenceResultJsonProtocol, WorkflowJsonProtocol}
-import io.deepsense.models.actions.Action
-import io.deepsense.models.metadata.MetadataInference
-import io.deepsense.models.workflows.{InputWorkflow, Workflow}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.{MetadataInferenceResultJsonProtocol, WorkflowJsonProtocol, WorkflowWithKnowledgeJsonProtocol}
+import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowmanager.WorkflowManagerProvider
-import io.deepsense.workflowmanager.conversion.FileConverter
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
 
 /**
- * Exposes Experiment Manager through a REST API.
+ * Exposes Workflow Manager through a REST API.
  */
 class WorkflowApi @Inject() (
     val tokenTranslator: TokenTranslator,
-    experimentManagerProvider: WorkflowManagerProvider,
-    fileConverter: FileConverter,
-    @Named("experiments.api.prefix") apiPrefix: String,
+    workflowManagerProvider: WorkflowManagerProvider,
+    @Named("workflows.api.prefix") apiPrefix: String,
     override val graphReader: GraphReader,
     override val inferContext: InferContext)
     (implicit ec: ExecutionContext)
   extends RestApi
   with RestComponent
   with WorkflowJsonProtocol
+  with WorkflowWithKnowledgeJsonProtocol
   with MetadataInferenceResultJsonProtocol {
 
   assert(StringUtils.isNoneBlank(apiPrefix))
@@ -53,27 +49,28 @@ class WorkflowApi @Inject() (
       handleExceptions(exceptionHandler) {
         path("") {
           get {
-            complete("Experiment Manager")
+            complete("Workflow Manager")
           }
         } ~
         pathPrefix(pathPrefixMatcher) {
           path(JavaUUID) { idParameter =>
-            val experimentId = Id(idParameter)
+            val workflowId = Id(idParameter)
             get {
               withUserContext { userContext =>
-                complete(experimentManagerProvider
-                  .forContext(userContext)
-                  .get(experimentId)
-                  .map(_.map(Envelope(_))))
+                complete {
+                  workflowManagerProvider
+                    .forContext(userContext)
+                    .get(workflowId)
+                }
               }
             } ~
             put {
               withUserContext { userContext =>
-                entity(as[Envelope[InputWorkflow]]) { envelope =>
-                  complete {experimentManagerProvider
+                entity(as[Workflow]) { workflow =>
+                  complete {
+                    workflowManagerProvider
                       .forContext(userContext)
-                      .update(experimentId, envelope.content)
-                      .map(Envelope(_))
+                      .update(workflowId, workflow)
                   }
                 }
               }
@@ -81,9 +78,9 @@ class WorkflowApi @Inject() (
             delete {
               withUserContext { userContext =>
                 onComplete(
-                  experimentManagerProvider
+                  workflowManagerProvider
                     .forContext(userContext)
-                    .delete(experimentId)) {
+                    .delete(workflowId)) {
                   case Success(result) => result match {
                     case true => complete(StatusCodes.OK)
                     case false => complete(StatusCodes.NotFound)
@@ -93,74 +90,16 @@ class WorkflowApi @Inject() (
               }
             }
           } ~
-          path(JavaUUID / "action") { idParameter =>
-            val experimentId = Id(idParameter)
-            post {
-              withUserContext { userContext =>
-                entity(as[Action]) { action =>
-                  onComplete(experimentManagerProvider.forContext(userContext)
-                    .runAction(experimentId, action)) {
-                    case Success(experiment) => complete(
-                      StatusCodes.Accepted, Envelope(experiment))
-                    case Failure(exception) => failWith(exception)
-                  }
-                }
-              }
-            }
-          } ~
-          path(JavaUUID / "metadata") { idParameter =>
-            val experimentId = Id(idParameter)
-            get {
-              withUserContext { userContext =>
-                parameters('nodeId, 'portIndex.as[Int]) { (nodeId, portIndex) =>
-                  complete {
-                    experimentManagerProvider
-                      .forContext(userContext)
-                      .get(experimentId)
-                      .map(_.map { experiment =>
-                        MetadataInference.run(
-                          experiment, nodeId, portIndex, inferContext)
-                      })
-                  }
-                }
-              }
-            }
-          } ~
-          path("convert" / JavaUUID) { idParameter =>
-            val entityId = Id(idParameter)
-            post {
-              withUserContext { userContext =>
-                onComplete(fileConverter.convert(entityId, userContext,
-                  experimentManagerProvider.forContext(userContext))) {
-                  case Success(experiment) => complete(
-                    StatusCodes.Created, Envelope(experiment))
-                  case Failure(exception) => failWith(exception)
-                }
-              }
-            }
-          } ~
           pathEndOrSingleSlash {
             post {
               withUserContext { userContext =>
-                entity(as[Envelope[InputWorkflow]]) { envelope =>
-                  onComplete(experimentManagerProvider
-                    .forContext(userContext).create(envelope.content)) {
-                    case Success(experiment) => complete(
-                      StatusCodes.Created, Envelope(experiment))
+                entity(as[Workflow]) { workflow =>
+                  onComplete(workflowManagerProvider
+                    .forContext(userContext).create(workflow)) {
+                    case Success(workflowWithKnowledge) => complete(
+                      StatusCodes.Created, workflowWithKnowledge)
                     case Failure(exception) => failWith(exception)
                   }
-                }
-              }
-            } ~
-            get {
-              withUserContext { userContext =>
-                parameters('limit.?, 'page.?, 'status.?) { (limit, page, status) =>
-                  val limitInt = limit.map(_.toInt)
-                  val pageInt = page.map(_.toInt)
-                  val statusEnum = status.map(Workflow.Status.withName)
-                  complete(experimentManagerProvider
-                    .forContext(userContext)
-                    .workflows(limitInt, pageInt, statusEnum))
                 }
               }
             }

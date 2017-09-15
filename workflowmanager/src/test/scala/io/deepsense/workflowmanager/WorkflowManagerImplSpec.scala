@@ -1,0 +1,74 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
+package io.deepsense.workflowmanager
+
+import scala.concurrent.Future
+
+import org.mockito.Matchers._
+import org.mockito.Mockito._
+
+import io.deepsense.commons.auth.usercontext.{Role, UserContext}
+import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.graph.{Graph, GraphKnowledge}
+import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowWithKnowledge}
+import io.deepsense.workflowmanager.storage.WorkflowStorage
+
+class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
+  val tenantId = "tenantId"
+  val roleForAll = "aRole"
+  val userContext = mock[UserContext]
+  when(userContext.tenantId).thenReturn(tenantId)
+  when(userContext.roles).thenReturn(Set(Role(roleForAll)))
+  val userContextFuture: Future[UserContext] = Future.successful(userContext)
+
+  val authorizator = new UserContextAuthorizator(userContextFuture)
+  val authorizatorProvider: AuthorizatorProvider = mock[AuthorizatorProvider]
+  when(authorizatorProvider.forContext(any(classOf[Future[UserContext]]))).thenReturn(authorizator)
+
+  val inferContext: InferContext = mock[InferContext]
+  val graph = mock[Graph]
+  val knowledge = mock[GraphKnowledge]
+  when(graph.inferKnowledge(inferContext)).thenReturn(knowledge)
+  val metadata = mock[WorkflowMetadata]
+  val thirdPartyData = mock[ThirdPartyData]
+  val storedWorkflow = Workflow(metadata, graph, thirdPartyData)
+  val storedWorkflowId = Workflow.Id.randomId
+  val storedWorkflowWithKnowledge = WorkflowWithKnowledge(
+    storedWorkflowId, metadata, graph, thirdPartyData, knowledge)
+  val storage: WorkflowStorage = mock[WorkflowStorage]
+
+  val workflowManager = new WorkflowManagerImpl(
+    authorizatorProvider,
+    storage,
+    inferContext,
+    userContextFuture,
+    roleForAll,
+    roleForAll,
+    roleForAll,
+    roleForAll)
+
+  "WorkflowManager.get(...)" should {
+    "return None" when {
+      "the requested workflow does not exist" in {
+        when(storage.get(any()))
+          .thenReturn(Future.successful(None))
+
+        val eventualWorkflow = workflowManager.get(Workflow.Id.randomId)
+        whenReady(eventualWorkflow) { _ shouldBe None }
+      }
+    }
+    "return workflow from the storage" in {
+      when(storage.get(storedWorkflowId))
+        .thenReturn(Future.successful(Some(storedWorkflow)))
+
+      val eventualWorkflow = workflowManager.get(storedWorkflowId)
+      whenReady(eventualWorkflow) { _.get shouldEqual storedWorkflowWithKnowledge }
+    }
+    "delete workflow from the storage" is pending
+    "save workflow in storage" is pending
+  }
+}

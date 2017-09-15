@@ -8,52 +8,25 @@ import com.datastax.driver.core.Row
 import com.google.inject.Inject
 import spray.json._
 
-import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.exception.FailureDescription
-import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
-import io.deepsense.graph.Graph
-import io.deepsense.model.json.graph.GraphJsonProtocol
-import GraphJsonProtocol.GraphReader
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows.Workflow
 
-
-class WorkflowRowMapper @Inject() (graphReader: GraphReader)
-    extends FailureDescriptionJsonProtocol {
+case class WorkflowRowMapper @Inject() (
+    override val graphReader: GraphReader,
+  override val inferContext: InferContext)
+  extends WorkflowJsonProtocol {
 
   def fromRow(row: Row): Workflow = {
-    Workflow(
-      id = Workflow.Id(row.getUUID(WorkflowRowMapper.Id)),
-      tenantId = row.getString(WorkflowRowMapper.TenantId),
-      name = row.getString(WorkflowRowMapper.Name),
-      graph = row.getString(WorkflowRowMapper.Graph).parseJson.convertTo[Graph](graphReader),
-      created = DateTimeConverter.fromMillis(row.getDate(WorkflowRowMapper.Created).getTime),
-      updated = DateTimeConverter.fromMillis(row.getDate(WorkflowRowMapper.Updated).getTime),
-      description = row.getString(WorkflowRowMapper.Description),
-      state = getState(
-        row.getString(WorkflowRowMapper.StateStatus),
-        row.getString(WorkflowRowMapper.StateDescription))
-    )
+    row.getString(WorkflowRowMapper.Workflow).parseJson.convertTo[Workflow](workflowFormat)
   }
 
-  def getState(status: String, description: String): Workflow.State = {
-    val failureDescription = Option(description) match {
-      case Some(s) => Some(s.parseJson.convertTo[FailureDescription])
-      case _ => None
-    }
-    val statusEnum = Workflow.Status.withName(status)
-    Workflow.State(statusEnum, failureDescription)
-  }
+  def workflowToCell(workflow: Workflow): String = workflow.toJson.compactPrint
 }
 
 object WorkflowRowMapper {
   val Id = "id"
-  val TenantId = "tenantid"
-  val Name = "name"
-  val Description = "description"
-  val Graph = "graph"
-  val Created = "created"
-  val Updated = "updated"
-  val StateStatus = "state_status"
-  val StateDescription = "state_description"
+  val Workflow = "workflow"
   val Deleted = "deleted"
 }
