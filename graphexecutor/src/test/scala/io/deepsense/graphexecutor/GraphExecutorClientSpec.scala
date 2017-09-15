@@ -45,7 +45,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     "received Launch" should {
       "spawn GE" when {
         "GE was not spawned yet" in {
-          val spawner = succeedingSpawner
+          val spawner = succeedingSpawner()
           val gecActor = createTestGEC(spawner)
           val runningExperiments = TestProbe()
           launchAndWaitForSpawn(mockedExperiment, spawner, gecActor, runningExperiments)
@@ -71,11 +71,31 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
             watcher.expectTerminated(gecActor, 1.second)
           }
         }
+        "GE was spawned but is not ready yet" in {
+          val abortedExperiment = mock[Experiment]
+          when(mockedExperiment.markAborted).thenReturn(abortedExperiment)
+          val watcher = TestProbe()
+          val yarnClient = mock[YarnClient]
+          val spawner = succeedingSpawner(yarnClient)
+          val gecActor = createTestGEC(spawner)
+          watcher.watch(gecActor)
+          val runningExperiments = TestProbe()
+          launchAndWaitForSpawn(mockedExperiment, spawner, gecActor, runningExperiments)
+          runningExperiments.send(gecActor, Abort(mockedExperiment.id))
+          runningExperiments.expectMsg(Update(abortedExperiment))
+          val ge = TestProbe()
+          ge.send(gecActor, ExecutorReady(mockedExperiment.id))
+          ge.expectNoMsg()
+          eventually(Timeout(Span(8, Seconds))) {
+            verify(yarnClient, times(1)).close()
+            watcher.expectTerminated(gecActor, 1.second)
+          }
+        }
       }
       "abort GE and wait for the last update" when {
         "GE is running" in {
           val abortedExperiment = mockExperimentWithId(mockedExperiment.id)
-          val spawner = succeedingSpawner
+          val spawner = succeedingSpawner()
           val gecActor = createTestGEC(spawner)
           val runningExperiments = TestProbe()
           val ge = TestProbe()
@@ -90,7 +110,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     }
     "spawn of GE succeeded" should {
       "await ExecutorReady message and send Launch afterwards" in {
-        val spawner = succeedingSpawner
+        val spawner = succeedingSpawner()
         val gecActor = createTestGEC(spawner)
         val runningExperiments = TestProbe()
         launchAndWaitForSpawn(mockedExperiment, spawner, gecActor, runningExperiments)
@@ -110,7 +130,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     }
     "received Update from GE" should {
       "forward it to REA" in {
-        val spawner = succeedingSpawner
+        val spawner = succeedingSpawner()
         val gecActor = createTestGEC(spawner)
         val runningExperiments = TestProbe()
         val ge = TestProbe()
@@ -170,10 +190,10 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     spawner
   }
 
-  def succeedingSpawner: ClusterSpawner = {
+  def succeedingSpawner(yarnClient: YarnClient = mock[YarnClient]): ClusterSpawner = {
     val spawner = mock[ClusterSpawner]
     when(spawner.spawnOnCluster(any(), any(), any(), any()))
-      .thenReturn(Success(mock[YarnClient], mock[ApplicationId]))
+      .thenReturn(Success(yarnClient, mock[ApplicationId]))
     spawner
   }
 

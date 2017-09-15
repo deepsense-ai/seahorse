@@ -91,8 +91,8 @@ class GraphExecutorClientActor(
    */
   def spawnRequestedButAborted: Receive = {
     case ExecutorSpawned(appId, yc) =>
-      yc.close()
-      self ! PoisonPill
+      yarnClient = yc
+      endExecution()
   }
 
   /**
@@ -102,7 +102,10 @@ class GraphExecutorClientActor(
    * and then awaits Update()s.
    */
   def waitingForExecutorReady: Receive = {
-    case Abort(experiment) => forwardAbort()
+    case Abort(experimentId) =>
+      logger.debug("Aborted while waiting for ExecutorReady")
+      runningExperiments ! Update(requestedExperiment.markAborted)
+      context.become(executorNotReadyButAborted orElse handleUnknownRequests)
     case ExecutorReady(experimentId) =>
       logger.debug(s"Executor for $experimentId ready!")
       graphExecutor = sender()
@@ -111,9 +114,17 @@ class GraphExecutorClientActor(
   }
 
   /**
+   * Represents the state where an experiment was aborted before the executor was ready.
+   * When executor becomes ready, Yarn is immediately closed and the actor kills himself.
+   */
+  def executorNotReadyButAborted: Receive = {
+    case ExecutorReady(experimentId) => endExecution()
+  }
+
+  /**
    * Represents the state when the experiment is already running and GE sends Update messages.
    * Abort and Updated messages are forwarded to the appropriate recipients. On Update
-   * where the experiment is either completed or failed the actor stops the yarn client
+   * where the experiment is either completed or failed the actor closes the yarn client
    * and kills himself.
    */
   def watchingExperiment: Receive = {
@@ -124,8 +135,7 @@ class GraphExecutorClientActor(
       if (experiment.isCompleted || experiment.isFailed) {
         logger.info("Experiment [{}] / status: {} - cleaning up",
           experiment.id, experiment.state.status)
-        yarnClient.stop()
-        self ! PoisonPill
+        endExecution()
       }
   }
 
@@ -155,6 +165,15 @@ class GraphExecutorClientActor(
         runningExperiments ! Update(requestedExperiment.markFailed(experimentFailureDetails))
         me ! PoisonPill
     }
+  }
+
+  /**
+   * Closes yarnClient and kills itself.
+   */
+  def endExecution(): Unit = {
+    logger.debug("Ending execution")
+    yarnClient.close()
+    self ! PoisonPill
   }
 
   def forwardAbort(): Unit = {

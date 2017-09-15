@@ -55,8 +55,6 @@ class GraphExecutorActor(
   def launch(e: Experiment): Unit = {
     logger.info(">>> Launch(experimentId={})", e.id)
     experiment = e.markRunning
-    clientActor ! Success(experiment)
-    logger.info("<<< Success(experimentId={})", e.id)
     executionContext.tenantId = experiment.tenantId
     launchReadyNodes(experiment)
   }

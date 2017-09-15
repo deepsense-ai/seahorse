@@ -110,7 +110,6 @@ class GraphExecutorActorSpec
       gea.expectedDOperableCache = Map.empty
 
       geaRef ! Launch(experiment)
-      gec.expectMsg(Success(experiment.markRunning))
       gea.nodeExecutors(0).expectMsg(GraphNodeExecutorActor.Messages.Start())
       gea.nodeExecutors(1).expectMsg(GraphNodeExecutorActor.Messages.Start())
       gea.createdExecutorsCount shouldBe 2
