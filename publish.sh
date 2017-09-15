@@ -125,7 +125,7 @@ function publishVersion() {
 
 function create_jenkins_env_file {
   echo "FULL_VERSION="$FULL_VERSION > env.properties
-  echo "BRANCH_NAME="`echo $fv | cut -d'.' -f 1,2` >> env.properties
+  echo "BRANCH_NAME="`echo $FULL_VERSION | cut -d'.' -f 1,2` >> env.properties
 }
 
 function clean() {
