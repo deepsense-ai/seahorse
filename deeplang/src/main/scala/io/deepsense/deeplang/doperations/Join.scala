@@ -292,11 +292,6 @@ case class Join()
 
 object Join {
 
-  object Type {
-    val (inner, outer, leftOuter, rightOuter, leftSemi) =
-      ("inner", "outer", "left_outer", "right_outer", "leftsemi")
-  }
-
   case class ColumnPair() extends Params {
 
     val leftColumn = SingleColumnSelectorParam(
@@ -339,6 +334,6 @@ object JoinTypeChoice {
 
   case class Inner() extends Option("Inner") { override val toSpark = "inner"}
   case class Outer() extends Option("Outer") { override val toSpark = "outer"}
-  case class LeftOuter() extends Option("left outer") { override val toSpark = "left_outer"}
-  case class RightOuter() extends Option("right outer") { override val toSpark = "right_outer"}
+  case class LeftOuter() extends Option("Left outer") { override val toSpark = "left_outer"}
+  case class RightOuter() extends Option("Right outer") { override val toSpark = "right_outer"}
 }
