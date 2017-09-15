@@ -115,7 +115,7 @@ case class WorkflowExecutor(
       executionMode = ExecutionMode.Batch,
       notebooksClientFactory = None,
       emailSender = None,
-      dataSourceClientFactory = new DatasourceInMemoryClientFactory(datasources),
+      datasourceClientFactory = new DatasourceInMemoryClientFactory(datasources),
       customCodeExecutionProvider = customCodeExecutionProvider,
       sparkContext = sparkContext,
       sparkSQLSession = sparkSQLSession,

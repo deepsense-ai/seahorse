@@ -24,9 +24,8 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.rest.client.datasources.{DatasourceClient, DatasourceClientFactory}
-import io.deepsense.commons.utils.Logging
 import io.deepsense.commons.rest.client.{NotebookRestClient, NotebooksClientFactory}
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
@@ -39,12 +38,10 @@ case class CommonExecutionContext(
     executionMode: ExecutionMode,
     fsClient: FileSystemClient,
     tempPath: String,
-    tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: DataFrameStorage,
     notebooksClientFactory: Option[NotebooksClientFactory],
     emailSender: Option[EmailSender],
-    dataSourceClientFactory: DatasourceClientFactory,
     customCodeExecutionProvider: CustomCodeExecutionProvider) extends Logging {
 
   def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
@@ -55,12 +52,10 @@ case class CommonExecutionContext(
       executionMode,
       fsClient,
       tempPath,
-      tenantId,
       innerWorkflowExecutor,
       ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
       notebooksClientFactory.map(_.createNotebookForNode(workflowId, nodeId)),
       emailSender,
-      dataSourceClientFactory.createClient,
       ContextualCustomCodeExecutor(customCodeExecutionProvider, workflowId, nodeId))
 }
 
@@ -74,12 +69,10 @@ object CommonExecutionContext {
       context.executionMode,
       context.fsClient,
       context.tempPath,
-      context.tenantId,
       context.innerWorkflowExecutor,
       context.dataFrameStorage.dataFrameStorage,
       context.notebooksClient.map(_.toFactory),
       context.emailSender,
-      context.dataSourceClient.toFactory,
       context.customCodeExecutor.customCodeExecutionProvider)
 }
 
@@ -91,12 +84,10 @@ case class ExecutionContext(
     executionMode: ExecutionMode,
     fsClient: FileSystemClient,
     tempPath: String,
-    tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,
     notebooksClient: Option[NotebookRestClient],
     emailSender: Option[EmailSender],
-    dataSourceClient: DatasourceClient,
     customCodeExecutor: ContextualCustomCodeExecutor) extends Logging {
 
   def dataFrameBuilder: DataFrameBuilder = inferContext.dataFrameBuilder
@@ -124,7 +115,6 @@ case class ContextualDataFrameStorage(
 
   def removeNodeOutputDataFrames(): Unit =
     dataFrameStorage.removeNodeOutputDataFrames(workflowId, nodeId)
-
 
   def withInputDataFrame[T](portNumber: Int, dataFrame: SparkDataFrame)(block: => T) : T = {
     setInputDataFrame(portNumber, dataFrame)

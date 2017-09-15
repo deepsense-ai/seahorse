@@ -16,10 +16,9 @@
 
 package io.deepsense.deeplang
 
-import java.io.File
-
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 
+import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice
 import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
 
 trait TestFiles { self: BeforeAndAfter with BeforeAndAfterAll =>
@@ -34,6 +33,18 @@ trait TestFiles { self: BeforeAndAfter with BeforeAndAfterAll =>
 
   after {
     fileSystemClient.delete(testsDir)
+  }
+
+  def testFile(fileFormat: InputFileFormatChoice, fileScheme: FileScheme): String = {
+    val format = fileFormat.getClass.getSimpleName.toLowerCase()
+    val fileName = s"some_$format.$format"
+    val path = fileScheme match {
+      case FileScheme.HTTPS => "https://s3.amazonaws.com/workflowexecutor/test_data/"
+      case FileScheme.File => absoluteTestsDirPath.fullPath
+      case other => throw new IllegalStateException(s"$other not supported")
+    }
+    val fullPath = path + fileName
+    fullPath
   }
 
   def someCsvFile = FilePath(FileScheme.File, testsDir + "/some_csv.csv")

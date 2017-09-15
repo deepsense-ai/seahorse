@@ -20,22 +20,16 @@ import java.util.UUID
 
 import io.deepsense.api.datasourcemanager.model.Datasource
 import io.deepsense.commons.rest.client.datasources.DatasourceTypes.{DatasourceId, DatasourceList, DatasourceMap}
+import io.deepsense.commons.utils.CollectionExtensions
 
 class DatasourceInMemoryClient(datasourceList: DatasourceList) extends DatasourceClient {
-  val datasourceMap = toMap(datasourceList)
+  import CollectionExtensions._
 
-  def toMap(datasourceList: DatasourceList): DatasourceMap = {
-    datasourceList.foldLeft(Map.empty[DatasourceId, Datasource])( (dsMap, ds) =>
-      dsMap + (ds.getId() -> ds)
-    )
-   }
-
-  def toFactory: DatasourceClientFactory = {
-    new DatasourceInMemoryClientFactory(datasourceList)
-  }
   def getDatasource(uuid: UUID): Option[Datasource] = {
     datasourceMap.get(uuid.toString)
   }
+
+  private val datasourceMap = datasourceList.lookupBy(_.getId)
 }
 
 class DatasourceInMemoryClientFactory(datasourceMap: DatasourceList)

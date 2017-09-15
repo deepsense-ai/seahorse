@@ -25,11 +25,9 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.time.SpanSugar._
 
-import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.sparkutils.SparkSQLSession
 
 object StandaloneSparkClusterForTests {
@@ -110,27 +108,23 @@ object StandaloneSparkClusterForTests {
 
     UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
 
-    val dOperableCatalog = CatalogRecorder.catalogs.dOperableCatalog
+    val inferContext = MockedInferContext(
+      dataFrameBuilder = DataFrameBuilder(sparkSQLSession)
+    )
 
-    val inferContext = InferContext(
-      DataFrameBuilder(sparkSQLSession),
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
-
-    new MockedExecutionContext(
+    ExecutionContext(
       sparkContext,
       sparkSQLSession,
       inferContext,
       ExecutionMode.Batch,
       LocalFileSystemClient(),
-      "testTenantId",
+      "/tmp",
       mock[InnerWorkflowExecutor],
       mock[ContextualDataFrameStorage],
       None,
       None,
-      mock[DatasourceClient],
-      new MockedContextualCodeExecutor)
+      new MockedContextualCodeExecutor
+    )
   }
 
   private lazy val majorScalaVersion: String = util.Properties.versionNumberString.split('.').dropRight(1).mkString(".")

@@ -16,81 +16,71 @@
 
 package io.deepsense.deeplang
 
-import java.util.UUID
-
 import org.apache.spark.{SparkConf, SparkContext}
-import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar._
 
-import io.deepsense.api.datasourcemanager.model.Datasource
-import io.deepsense.commons.rest.client.datasources.{DatasourceClient, DatasourceClientFactory}
+import io.deepsense.commons.rest.client.datasources.{DatasourceClient, DatasourceInMemoryClientFactory}
+import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.sparkutils.SparkSQLSession
 
-class DatasourceMock extends DatasourceClientFactory with DatasourceClient{
-  override def createClient: DatasourceClient = new DatasourceMock
-  override def toFactory: DatasourceClientFactory = new DatasourceMock
-  override def getDatasource(uuid: UUID): Option[Datasource] = None
+trait LocalExecutionContext {
+  protected lazy implicit val executionContext: ExecutionContext = LocalExecutionContext.createExecutionContext()
+  protected lazy implicit val sparkContext = LocalExecutionContext.sparkContext
+  protected lazy val sparkSQLSession = LocalExecutionContext.sparkSQLSession
 }
 
-trait LocalExecutionContext { self: BeforeAndAfterAll =>
-  var commonExecutionContext: CommonExecutionContext = _
-  implicit var executionContext: ExecutionContext = _
+object LocalExecutionContext {
 
-  val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
-  val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
-  val sparkSQLSession: SparkSQLSession = DeeplangIntegTestSupport.sparkSQLSession
+  lazy val commonExecutionContext = new CommonExecutionContext(
+    sparkContext,
+    LocalExecutionContext.sparkSQLSession,
+    inferContext,
+    ExecutionMode.Batch,
+    LocalFileSystemClient(),
+    "/tmp",
+    mock[InnerWorkflowExecutor],
+    mock[DataFrameStorage],
+    None,
+    None,
+    mock[CustomCodeExecutionProvider])
 
-  val dOperableCatalog = CatalogRecorder.catalogs.dOperableCatalog
-
-  protected override def beforeAll(): Unit = {
-    commonExecutionContext = prepareCommonExecutionContext()
-    executionContext = prepareExecutionContext()
-  }
-
-  protected def prepareCommonExecutionContext(): CommonExecutionContext = {
-    val inferContext = InferContext(
-      DataFrameBuilder(sparkSQLSession),
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
-
-    new MockedCommonExecutionContext(
+  def createExecutionContext(datasourceClient: DatasourceClient = defaultDatasourceClient) =
+    ExecutionContext(
       sparkContext,
-      sparkSQLSession,
-      inferContext,
+      LocalExecutionContext.sparkSQLSession,
+      MockedInferContext(
+        dataFrameBuilder = DataFrameBuilder(LocalExecutionContext.sparkSQLSession),
+        datasourceClient = datasourceClient
+      ),
       ExecutionMode.Batch,
       LocalFileSystemClient(),
-      "testTenantId",
-      mock[InnerWorkflowExecutor],
-      mock[DataFrameStorage],
-      None,
-      None,
-      new DatasourceMock,
-      mock[CustomCodeExecutionProvider])
-  }
-
-  protected def prepareExecutionContext(): ExecutionContext = {
-    val inferContext = InferContext(
-      DataFrameBuilder(sparkSQLSession),
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
-
-    new MockedExecutionContext(
-      sparkContext,
-      sparkSQLSession,
-      inferContext,
-      ExecutionMode.Batch,
-      LocalFileSystemClient(),
-      "testTenantId",
+      "/tmp",
       mock[InnerWorkflowExecutor],
       mock[ContextualDataFrameStorage],
       None,
       None,
-      new DatasourceMock,
-      new MockedContextualCodeExecutor)
+      new MockedContextualCodeExecutor
+    )
+
+  private val defaultDatasourceClient: DatasourceClient =
+    new DatasourceInMemoryClientFactory(List.empty).createClient
+
+  private def inferContext = MockedInferContext(
+    dataFrameBuilder = DataFrameBuilder(LocalExecutionContext.sparkSQLSession)
+  )
+
+  // One per JVM
+  private lazy val sparkConf: SparkConf = new SparkConf()
+    .setMaster("local[4]")
+    .setAppName("TestApp")
+    .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    .registerKryoClasses(Array())
+  lazy val sparkContext: SparkContext = new SparkContext(sparkConf)
+  lazy val sparkSQLSession: SparkSQLSession = {
+    val sqlSession = new SparkSQLSession(sparkContext)
+    UserDefinedFunctions.registerFunctions(sqlSession.udfRegistration)
+    sqlSession
   }
 
 }

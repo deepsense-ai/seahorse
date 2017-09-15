@@ -256,7 +256,7 @@ case class SessionExecutor(
       executionMode = ExecutionMode.Interactive,
       notebooksClientFactory = Some(notebooksClientFactory),
       emailSender = Some(emailSender),
-      dataSourceClientFactory = new DatasourceRestClientFactory(datasourceServerAddress, workflowOwnerId),
+      datasourceClientFactory = new DatasourceRestClientFactory(datasourceServerAddress, workflowOwnerId),
       customCodeExecutionProvider = customCodeExecutionProvider,
       sparkContext = sparkContext,
       sparkSQLSession = sparkSQLSession,

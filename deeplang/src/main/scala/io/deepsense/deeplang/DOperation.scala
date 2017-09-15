@@ -53,7 +53,7 @@ abstract class DOperation extends Operation
 
   def outPortsLayout: Vector[DPortPosition] = defaultPortLayout(outPortTypes, GravitateRight)
 
-  def getDataSourcesId: Set[UUID] = Set[UUID]()
+  def getDatasourcesId: Set[UUID] = Set[UUID]()
 
   private def defaultPortLayout(portTypes: Vector[ru.TypeTag[_]], gravity: Gravity): Vector[DPortPosition] = {
     import DPortPosition._

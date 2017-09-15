@@ -21,7 +21,6 @@ import java.util.UUID
 import io.deepsense.api.datasourcemanager.model.Datasource
 
 trait DatasourceClient {
-  def toFactory: DatasourceClientFactory
   def getDatasource(uuid: UUID): Option[Datasource]
 }
 

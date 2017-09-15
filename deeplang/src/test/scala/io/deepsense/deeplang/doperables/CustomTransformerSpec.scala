@@ -24,10 +24,9 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import spray.json.JsObject
 
-import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.InnerWorkflowTestFactory._
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ConvertType
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.Param
@@ -53,13 +52,7 @@ class CustomTransformerSpec extends UnitSpec {
     }
 
     "infer knowledge" in {
-      val innerWorkflowParser = mock[InnerWorkflowParser]
-      val catalog = CatalogRecorder.catalogs.dOperableCatalog
-      val inferContext = InferContext(
-        mock[DataFrameBuilder],
-        "",
-        catalog,
-        innerWorkflowParser)
+      val inferContext = MockedInferContext()
 
       val transformer = new CustomTransformer(InnerWorkflow(simpleGraph(), JsObject()), Seq.empty)
 
@@ -145,13 +138,7 @@ class CustomTransformerSpec extends UnitSpec {
       }
 
       "inferring schema" in {
-        val innerWorkflowParser = mock[InnerWorkflowParser]
-        val catalog = CatalogRecorder.catalogs.dOperableCatalog
-        val inferContext = InferContext(
-          mock[DataFrameBuilder],
-          "",
-          catalog,
-          innerWorkflowParser)
+        val inferContext = MockedInferContext()
 
         val publicParam = TypeConverter().targetType.replicate("public name")
         val publicParamsWithValues = Seq(ParamWithValues(publicParam))
@@ -185,12 +172,10 @@ class CustomTransformerSpec extends UnitSpec {
       ExecutionMode.Batch,
       mock[FileSystemClient],
       "/tmp",
-      "",
       innerWorkflowExecutor,
       mock[ContextualDataFrameStorage],
       None,
       None,
-      mock[DatasourceClient],
       mock[ContextualCustomCodeExecutor]
     )
 }

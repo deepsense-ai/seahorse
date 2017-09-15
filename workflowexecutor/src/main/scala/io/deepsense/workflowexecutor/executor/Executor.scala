@@ -43,7 +43,7 @@ trait Executor extends Logging {
       executionMode: ExecutionMode,
       notebooksClientFactory: Option[NotebooksClientFactory],
       emailSender: Option[EmailSender],
-      dataSourceClientFactory: DatasourceClientFactory,
+      datasourceClientFactory: DatasourceClientFactory,
       customCodeExecutionProvider: CustomCodeExecutionProvider,
       sparkContext: SparkContext,
       sparkSQLSession: SparkSQLSession,
@@ -59,9 +59,10 @@ trait Executor extends Logging {
 
     val inferContext = InferContext(
       DataFrameBuilder(sparkSQLSession),
-      tenantId,
       operableCatalog,
-      innerWorkflowExecutor)
+      innerWorkflowExecutor,
+      datasourceClientFactory.createClient
+    )
 
     CommonExecutionContext(
       sparkContext,
@@ -70,12 +71,10 @@ trait Executor extends Logging {
       executionMode,
       FileSystemClientStub(), // temporarily mocked
       tempPath,
-      tenantId,
       innerWorkflowExecutor,
       dataFrameStorage,
       notebooksClientFactory,
       emailSender,
-      dataSourceClientFactory,
       customCodeExecutionProvider)
   }
 

@@ -23,13 +23,8 @@ import io.deepsense.api.datasourcemanager.ApiClient
 import io.deepsense.api.datasourcemanager.client.DefaultApi
 import io.deepsense.api.datasourcemanager.model.Datasource
 
-
 class DatasourceRestClient(datasourceServerAddress: URL, userId: String) extends DatasourceClient {
   val apiClient = new ApiClient()
-
-  def toFactory: DatasourceClientFactory = {
-    new DatasourceRestClientFactory(datasourceServerAddress, userId)
-  }
 
   def getDatasource(uuid: UUID): Option[Datasource] = {
     apiClient.setAdapterBuilder(
