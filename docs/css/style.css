@@ -376,10 +376,12 @@ p.footer-text span {
 .contact-block-button {
   display: table-cell;
   vertical-align: middle;
+  text-align: center;
   background-color: #418ecc;
   color: white;
   border: 2px solid #418ecc;
   height: 60px;
+  width: 250px;
 }
 
 .contact-block-container {
@@ -388,7 +390,6 @@ p.footer-text span {
 }
 
 .contact-block-button > a {
-  padding: 25px 25px;
   color: inherit;
   text-transform: uppercase;
   font-family: museo-sans, sans-serif;
