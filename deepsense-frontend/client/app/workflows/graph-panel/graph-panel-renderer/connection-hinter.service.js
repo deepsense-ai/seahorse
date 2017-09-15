@@ -46,9 +46,9 @@ class ConnectionHinterService extends GraphPanelRendererBase {
         endpoint.connections.length === 0 && // there cannot be any edge attached
         port.nodeId !== sourceNodeId) // attaching an edge to the same node is forbidden
       {
-        GraphPanelStyler.styleInputEndpointTypeMatch(endpoint, renderMode, hasReport);
+        GraphPanelStyler.styleInputEndpointTypeMatch(endpoint);
       } else {
-        GraphPanelStyler.styleInputEndpointTypeDismatch(endpoint, renderMode, hasReport);
+        GraphPanelStyler.styleInputEndpointTypeDismatch(endpoint);
       }
     };
 
@@ -64,7 +64,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
           highlightInputPort(endpoint, node);
         }
         if (endpoint.isSource) { // is an output port
-          GraphPanelStyler.styleOutputEndpointDefault(endpoint, renderMode, hasReport);
+          GraphPanelStyler.styleOutputEndpointDefault(endpoint, hasReport);
         }
       });
     });
@@ -89,7 +89,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
           GraphPanelStyler.styleInputEndpointDefault(endpoint, renderMode);
         }
         if (endpoint.isTarget) {
-          GraphPanelStyler.styleOutputEndpointDefault(endpoint, renderMode);
+          GraphPanelStyler.styleOutputEndpointDefault(endpoint);
         }
       });
     });

@@ -208,10 +208,14 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       let reportEntityId = nodeObj.getResult(i);
       let hasReport = Report.hasReportEntity(reportEntityId);
 
-      let outputStyle = _.assign({}, OUTPUT_STYLE, {
-        cssClass: GraphPanelStyler.getOutputEndpointDefaultCssClass(internal.renderMode, hasReport),
-        hoverClass: GraphPanelStyler.getOutputEndpointDefaultHoverCssClass(internal.renderMode, hasReport)
-      });
+      let outputStyle = angular.copy(OUTPUT_STYLE);
+
+      if (hasReport) {
+        outputStyle = _.assign(outputStyle, {
+          cssClass: GraphPanelStyler.getOutputEndpointCssClassForReport(),
+          hoverClass: GraphPanelStyler.getOutputEndpointHoverClassForReport()
+        });
+      }
 
       if (internal.renderMode === GraphPanelRendererBase.RUNNING_RENDER_MODE) {
         outputStyle.isSource = false;
@@ -225,7 +229,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       port.setParameter('portIndex', i);
       port.setParameter('nodeId', nodeObj.id);
 
-      GraphPanelStyler.styleOutputEndpointDefault(port, internal.renderMode, hasReport);
+      GraphPanelStyler.styleOutputEndpointDefault(port, hasReport);
 
       // FIXME Quickfix to make reports browseable in read-only mode.
       // There is a conflict between multiselection and output port click when isSource = false.
