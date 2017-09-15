@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.params.{ParamMap, Params}
@@ -27,7 +28,7 @@ import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionConte
  * Able to transform a DataFrame into another DataFrame.
  * Can have mutable parameters.
  */
-abstract class Transformer extends DOperable with Params {
+abstract class Transformer extends DOperable with Params with Logging {
 
   /**
    * Creates a transformed DataFrame based on input DataFrame.

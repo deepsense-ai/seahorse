@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -22,9 +22,8 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
-class SqlExpressionSpec extends DeeplangIntegTestSupport {
+class SqlExpressionIntegSpec extends DeeplangIntegTestSupport {
 
-  /** TODO no categoricals
   val dataFrameId = "ThisIsAnId"
   val validExpression = s"select * from $dataFrameId"
   val invalidExpresion = "foobar"
@@ -32,70 +31,44 @@ class SqlExpressionSpec extends DeeplangIntegTestSupport {
   val firstColumn = "firstColumn"
   val secondColumn = "secondColumn"
   val thirdColumn = "thirdColumn"
-  val categoricalColumn = "categoricalColumn"
 
   val schema = StructType(Seq(
     StructField(firstColumn, StringType),
     StructField(secondColumn, DoubleType),
-    StructField(thirdColumn, BooleanType),
-    StructField(categoricalColumn, StringType)
+    StructField(thirdColumn, BooleanType)
   ))
 
   val data = Seq(
-    Row("c",  5.0,  true,   "true"),
-    Row("a",  5.0,  null,   "true"),
-    Row("b",  null, false,  "false"),
-    Row(null, 2.1,  true,   "false")
+    Row("c",  5.0,  true),
+    Row("a",  5.0,  null),
+    Row("b",  null, false),
+    Row(null, 2.1,  true)
   )
-
-  val firstSelected = 1
-  val secondSelected = 3
 
   "SqlExpression" should {
     "allow to manipulate the input DataFrame using the specified name" in {
-      val expression = s"select $secondColumn, $categoricalColumn from $dataFrameId"
+      val expression = s"select $secondColumn from $dataFrameId"
       val result = executeSqlExpression(expression, dataFrameId, sampleDataFrame)
-
-      val firstSelected = 1
-      val secondSelected = 3
-
-      val columns = Seq(firstSelected, secondSelected)
-      val expectedDataFrame = subsetDataFrame(columns)
+      val selectedColumnsIndices = Seq(1) // 'secondColumn' index
+      val expectedDataFrame = subsetDataFrame(selectedColumnsIndices)
       assertDataFramesEqual(result, expectedDataFrame)
-
-      val inputMetadata = CategoricalMetadata(sampleDataFrame)
-      val outputMetadata = CategoricalMetadata(result)
-
-      outputMetadata.isCategorical(0) shouldBe false
-      outputMetadata.isCategorical(1) shouldBe true
-      outputMetadata.mappingByIndex(1) shouldBe inputMetadata.mappingByIndex(columns(1))
+      assertTableUnregistered()
     }
     "unregister the input DataFrame after execution" in {
       val dataFrame = sampleDataFrame
-
       executeSqlExpression(validExpression, dataFrameId, dataFrame)
-      assertTableUnregistered
+      assertTableUnregistered()
     }
     "unregister the input DataFrame if execution failed" in {
       val dataFrame = sampleDataFrame
       a [RuntimeException] should be thrownBy {
         executeSqlExpression(invalidExpresion, dataFrameId, dataFrame)
       }
-      assertTableUnregistered
-    }
-    "copy categorical metadata" in {
-      val dataFrame = sampleDataFrame
-
-      val result = executeSqlExpression(validExpression, dataFrameId, dataFrame)
-
-      val inputMetadata = CategoricalMetadata(dataFrame)
-      val outputMetadata = CategoricalMetadata(result)
-      outputMetadata.mappingByIndex shouldBe inputMetadata.mappingByIndex
-      outputMetadata.mappingByName shouldBe inputMetadata.mappingByName
+      assertTableUnregistered()
     }
   }
 
-  def assertTableUnregistered: Unit = {
+  def assertTableUnregistered(): Unit = {
     val exception = intercept[RuntimeException] {
       executionContext.sqlContext.table(dataFrameId)
     }
@@ -103,20 +76,16 @@ class SqlExpressionSpec extends DeeplangIntegTestSupport {
   }
 
   def executeSqlExpression(expression: String, dataFrameId: String, input: DataFrame): DataFrame =
-    executeOperation(
-      new SqlExpression()
-        .setExpression(expression)
-        .setDataFrameId(dataFrameId),
-      input)
+    new SqlExpression()
+      .setExpression(expression)
+      .setDataFrameId(dataFrameId)
+      ._transform(executionContext, input)
 
-  def sampleDataFrame: DataFrame = createDataFrame(data, schema, Seq(categoricalColumn))
+  def sampleDataFrame: DataFrame = createDataFrame(data, schema)
 
   def subsetDataFrame(columns: Seq[Int]): DataFrame = {
     val subSchema = StructType(columns.map(schema))
-    val subData = data.map { r =>
-      Row(columns.map(r.get): _*)
-    }
-    createDataFrame(subData, subSchema, Seq(categoricalColumn))
+    val subData = data.map { r => Row(columns.map(r.get): _*) }
+    createDataFrame(subData, subSchema)
   }
-   */
 }

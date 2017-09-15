@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-/** TODO as transformer
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperables
 
-import scala.reflect.runtime.{universe => ru}
-
-import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
-import io.deepsense.deeplang.params.{Param, StringParam, Params}
-import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
+import io.deepsense.deeplang.params.{Param, StringParam}
 
-case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] with Params {
-  @transient
-  override lazy val tTagTO_0 = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTI_0 = ru.typeTag[DataFrame]
-
+class SqlExpression extends Transformer {
   val dataFrameId = StringParam(
     name = "dataframe id",
     description = "An identifier that can be used in the SQL expression to refer to the input " +
@@ -46,24 +36,22 @@ case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] with Par
   def getExpression: String = $(expression)
   def setExpression(value: String): this.type = set(expression, value)
 
-  val params = declareParams(dataFrameId, expression)
+  override val params: Array[Param[_]] = declareParams(dataFrameId, expression)
 
-  override val name: String = "SQL Expression"
-  override val id: Id = "530e1420-7fbe-416b-b685-6c1e0f1137fc"
-
-  override protected def _execute(context: ExecutionContext)(t0: DataFrame): DataFrame = {
-    logger.debug(s"SqlExpression(expression = '${getExpression}'," +
-      s" dataFrameId = '${getDataFrameId}')")
-    t0.sparkDataFrame.registerTempTable(getDataFrameId)
+  override private[doperables] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+    logger.debug(s"SqlExpression(expression = '$getExpression'," +
+      s" dataFrameId = '$getDataFrameId')")
+    df.sparkDataFrame.registerTempTable(getDataFrameId)
     try {
       logger.debug(s"Table '$dataFrameId' registered. Executing the expression")
-      val sqlResult = context.sqlContext.sql(getExpression)
-      DataFrameBuilder(context.sqlContext)
+      val sqlResult = ctx.sqlContext.sql(getExpression)
+      DataFrameBuilder(ctx.sqlContext)
         .buildDataFrame(sqlResult)
     } finally {
       logger.debug("Unregistering the temporary table" + getDataFrameId)
-      context.sqlContext.dropTempTable(getDataFrameId)
+      ctx.sqlContext.dropTempTable(getDataFrameId)
     }
   }
+
+  override def report(executionContext: ExecutionContext): Report = Report()
 }
-*/
