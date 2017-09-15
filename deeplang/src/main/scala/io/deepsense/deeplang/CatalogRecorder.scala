@@ -23,11 +23,11 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LogisticRegression
 import io.deepsense.deeplang.doperables.spark.wrappers.evaluators._
 import io.deepsense.deeplang.doperables.spark.wrappers.models.LogisticRegressionModel
-import io.deepsense.deeplang.doperables.spark.wrappers.transformers.{DiscreteCosineTransformer, StringTokenizer, VectorAssembler}
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.{Binarizer, DiscreteCosineTransformer, StringTokenizer, VectorAssembler}
 import io.deepsense.deeplang.doperations._
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.CreateLogisticRegression
 import io.deepsense.deeplang.doperations.spark.wrappers.evaluators._
-import io.deepsense.deeplang.doperations.spark.wrappers.transformers.{AssembleVector, DCT, Tokenize}
+import io.deepsense.deeplang.doperations.spark.wrappers.transformers.{AssembleVector, Binarize, DCT, Tokenize}
 
 /**
  * Object used to register all desired DOperables and DOperations.
@@ -50,6 +50,7 @@ object CatalogRecorder {
     catalog.registerDOperable[LogisticRegressionModel]()
 
     // wrapped Spark transformers
+    catalog.registerDOperable[Binarizer]()
     catalog.registerDOperable[DiscreteCosineTransformer]()
     catalog.registerDOperable[StringTokenizer]()
     catalog.registerDOperable[VectorAssembler]()
@@ -118,6 +119,9 @@ object CatalogRecorder {
       DOperationCategories.ML)
 
     // operations generated from Spark transformers
+    catalog.registerDOperation[Binarize](
+      DOperationCategories.Transformation)
+
     catalog.registerDOperation[DCT](
       DOperationCategories.Transformation)
 
