@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 
 Splits [DataFrame](../classes/dataframe.html) into two separate `DataFrames`.
-Each row from the input `DataFrame` will always be in one of the result `DataFrames`, but never in both.
+Each row from the input `DataFrame` will always end up in one of the result `DataFrames`, but never in both.
 
 The `Split` operation does not preserve row order.
 

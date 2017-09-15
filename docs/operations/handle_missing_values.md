@@ -10,8 +10,8 @@ includeOperationsMenu: true
 Handle Missing Values finds rows containing empty values and handles them according to the
 chosen strategy.
 
-Returns also a [Transformer](../classes/transformer.html) that can be later applied
-to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
+Additionally, it returns a [Transformer](../classes/transformer.html) that can be later applied
+to another [DataFrame](../classes/dataframe.html) using a [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 

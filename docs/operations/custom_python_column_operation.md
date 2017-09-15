@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes Python function provided by the user on a column (columns) of DataFrame connected to its input port.
+Executes a Python function provided by the user on a column (columns) of DataFrame connected to its input port.
 Returns result of Python function execution as a DataFrame and CustomPythonColumnOperationTransformer.
 
 The function that will be executed has to:
@@ -17,6 +17,8 @@ The function that will be executed has to:
 * take exactly two arguments: value to be transformed and the name of column currently being transformed,
 
 * return transformed value that conforms with selected target type (parameter).
+
+The function is applied to the input DataFrame in parallel for better performance.
 
 #### Example Python code:
 {% highlight python %}
