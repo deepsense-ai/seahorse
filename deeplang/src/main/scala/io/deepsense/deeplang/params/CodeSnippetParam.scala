@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params
 
-import spray.json._
+import spray.json.DefaultJsonProtocol.StringJsonFormat
+import spray.json.JsValue
 
-/**
- * Represents language of code snippet
- * (it could be used for syntax validation and syntax highlighting in frontend).
- */
-@SerialVersionUID(1)
-case class CodeSnippetLanguage(language: CodeSnippetLanguage.CodeSnippetLanguage) {
+import io.deepsense.deeplang.params.ParameterType.ParameterType
 
-  final def toJson: JsObject = {
-    import spray.json.DefaultJsonProtocol._
-    JsObject("name" -> language.toString.toJson)
-  }
-}
+case class CodeSnippetParam(
+    name: String,
+    description: String,
+    language: CodeSnippetLanguage)
+  extends ParamWithJsFormat[String] {
 
-object CodeSnippetLanguage extends Enumeration {
-  type CodeSnippetLanguage = Value
-  val Python = Value("Python")
-  val SparkSql = Value("SparkSql")
+  override val parameterType: ParameterType = ParameterType.CodeSnippet
+
+  override protected def extraJsFields: Map[String, JsValue] = Map("language" -> language.toJson)
 }

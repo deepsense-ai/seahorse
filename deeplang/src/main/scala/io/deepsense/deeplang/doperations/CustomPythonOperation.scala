@@ -21,8 +21,7 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
-import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.params.StringParam
+import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, StringParam}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class CustomPythonOperation()
@@ -32,11 +31,11 @@ case class CustomPythonOperation()
   override val name: String = "Custom Python operation"
   override val description: String = "Creates a custom Python operation"
 
-  val codeParameter = StringParam(
+  val codeParameter = CodeSnippetParam(
     name = "code",
-    description = "Operation source code"
+    description = "Operation source code",
+    language = CodeSnippetLanguage(CodeSnippetLanguage.Python)
   )
-
   setDefault(codeParameter -> "def transform(dataframe):\n  return dataframe")
 
   override val params = declareParams(codeParameter)

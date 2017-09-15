@@ -16,16 +16,23 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import spray.json._
 
-import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
+/**
+ * Represents language of code snippet
+ * (it could be used for syntax validation and syntax highlighting in frontend).
+ */
+@SerialVersionUID(1)
+case class CodeSnippetLanguage(language: CodeSnippetLanguage.CodeSnippetLanguage) {
 
-case class NumericParam(
-    name: String,
-    description: String,
-    validator: Validator[Double] = RangeValidator.all)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
+  final def toJson: JsObject = {
+    import spray.json.DefaultJsonProtocol._
+    JsObject("name" -> language.toString.toJson)
+  }
+}
 
-  override val parameterType = ParameterType.Numeric
+object CodeSnippetLanguage extends Enumeration {
+  type CodeSnippetLanguage = Value
+  val Python = Value("Python")
+  val SparkSql = Value("SparkSql")
 }

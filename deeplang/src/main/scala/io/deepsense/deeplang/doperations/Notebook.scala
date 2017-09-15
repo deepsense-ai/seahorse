@@ -20,7 +20,6 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
 case class Notebook()
