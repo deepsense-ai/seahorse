@@ -16,8 +16,8 @@ description: Seahorse Overview
 Seahorse is a powerful visual framework allowing you to create
 <a target="_blank" href="https://spark.apache.org/">Apache Spark</a> applications
 in a fast, simple and interactive way. Creating Spark applications
-with Seahorse is as easy as dragging and dropping operation on the canvas.
-All while connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundled local Spark.
+with Seahorse is as easy as dragging and dropping operation on the canvas, all while
+connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundled local Spark.
 
 <div class="centered-container spacer" markdown="1">
   <img src="img/seahorse_editor.png"
@@ -29,7 +29,7 @@ All while connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundl
 
 * Create Apache Spark applications in a visual way using a web-based editor.
 * Connect to any cluster (YARN, Mesos, Spark Standalone) or use the bundled local Spark.
-* Use Seahorse Library to easily work with local files.
+* Use the Seahorse Library to easily work with local files.
 * Use Spark's machine learning algorithms.
 * Define custom operations with Python or R.
 * Explore data with a Jupyter notebook using Python or R from within Seahorse, sharing the same Spark context.

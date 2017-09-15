@@ -71,7 +71,7 @@ few minutes).
 
 * Bug reports and all other feedback can be sent using the
   <a target="_blank" href="http://feedback.seahorse.deepsense.io">Feedback</a>
-  option in Seahorse Editor in the upper-left corner.
+  option in the Seahorse Editor in the upper-left corner.
 
 ### Conflicting Ports
 
@@ -107,19 +107,19 @@ or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a
 1. <a target="_blank" href="https://deepsense.io/get-seahorse/">Download</a>
 the Vagrantfile that will allow you to spin up Seahorse’s virtual machine.
 2. Run `vagrant up` in the directory containing `Vagrantfile`. This may take a few minutes.
-3. When Seahorse Standalone is ready, go to locally hosted
+3. When Seahorse Standalone is ready, go to
 <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a>
 in your browser.
 
 ### Troubleshooting
-* If you cannot start Seahorse virtual machine, please check if virtualization is enabled in BIOS.
+* If you cannot start the Seahorse virtual machine, please check if virtualization is enabled in BIOS.
 * In case of unexpected errors during Seahorse usage, try rebooting Seahorse by running:
 
         vagrant reload
 
 * Bug reports and all other feedback can be sent using the
   <a target="_blank" href="http://feedback.seahorse.deepsense.io">Feedback</a>
-  option in Seahorse Editor in the upper-left corner.
+  option in the Seahorse Editor in the upper-left corner.
 
 
 ### Conflicting Ports
@@ -142,8 +142,8 @@ and results in:
 
 There are at least two ways to overcome the problem:
 
-* Change user name to one with ASCII characters only
-* Change Vagrant home directory to one with ASCII characters only:
+* Change the user name to one with ASCII characters only
+* Change the Vagrant home directory to one with ASCII characters only:
 
         setx VAGRANT_HOME c:\.vagrant.d
 

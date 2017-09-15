@@ -1,9 +1,9 @@
 ---
 layout: global
-displayTitle: Using External Cluster
+displayTitle: Using an External Cluster
 menuTab: reference
 title: External Cluster
-description: Using External Cluster
+description: Using an External Cluster
 ---
 
 ## Overview
@@ -57,6 +57,6 @@ For more details on Vagrant configuration, take a look at
 ## Troubleshooting
 
 In case of any problems with connecting to external cluster, it is helpful to read error logs
-produced by Spark application. Go to your Seahorse startup directory
+produced by the Spark application. Go to your Seahorse startup directory
 (where you keep either `docker-compose.yml` or `Vagrantfile`).
 The relevant logs can be found in `spark_applications_logs` directory.
