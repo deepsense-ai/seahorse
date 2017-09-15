@@ -172,8 +172,8 @@ class SchedulingManager(SchedulingManagerBase):
                Env(
                    JDBC_URL=self.services.Database.exposed_jdbc_url(db='schedulingmanager'),
                    SM_URL='http://{}'.format(self.services.SessionManager.exposed_address()),
-                   WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address()),
-               )
+                   WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address())) + \
+               self.services.Mail.exposed_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
 
 
 class SessionManager(Service):
@@ -193,8 +193,6 @@ class SessionManager(Service):
             SM_HOST='127.0.0.1',
             SM_PORT=self.port_mapping().get().exposed,
             JDBC_URL=self.services.Database.exposed_jdbc_url(db='sessionmanager'),
-            MAIL_SERVER_HOST=self.services.Mail.exposed_address().host,
-            MAIL_SERVER_PORT=self.services.Mail.exposed_address().port,
             NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.exposed_address().as_string()),
             SX_PARAM_SESSION_EXECUTOR_PATH='/opt/docker/we.jar',
             SX_PARAM_SESSION_EXECUTOR_DEPS_PATH='/opt/docker/we-deps.zip',
@@ -206,7 +204,8 @@ class SessionManager(Service):
             SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.exposed_address().as_string()) + \
                self.services.RabbitMQ.credentials().as_env() + \
                self.services.RabbitMQ.exposed_address().as_env('MQ_HOST', 'MQ_PORT') + \
-               self.services.WorkflowManager.credentials().as_env('SX_PARAM_WM_AUTH_USER', 'SX_PARAM_WM_AUTH_PASS')
+               self.services.WorkflowManager.credentials().as_env('SX_PARAM_WM_AUTH_USER', 'SX_PARAM_WM_AUTH_PASS') + \
+               self.services.Mail.exposed_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(9082, 60100))
@@ -412,8 +411,8 @@ class SchedulingManagerBridgeNetwork(SchedulingManagerBase):
                    HOST='0.0.0.0',
                    JDBC_URL=self.services.Database.internal_jdbc_url(db='schedulingmanager'),
                    SM_URL='http://{}'.format(self.services.SessionManager.internal_address()),
-                   WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address()),
-               )
+                   WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address())) + \
+               self.services.Mail.internal_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
 
 
 class SessionManagerBridgeNetwork(SessionManager):
@@ -434,11 +433,10 @@ class SessionManagerBridgeNetwork(SessionManager):
                    SM_HOST='0.0.0.0',
                    SM_PORT=self.port_mapping().get().internal,
                    JDBC_URL=self.services.Database.internal_jdbc_url(db='sessionmanager'),
-                   MAIL_SERVER_HOST=self.services.Mail.internal_address().host,
-                   MAIL_SERVER_PORT=self.services.Mail.internal_address().port,
                    NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.internal_address().as_string()),
                    SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.internal_address().as_string()) + \
-               self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
+               self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT') + \
+               self.services.Mail.internal_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
 
 
 def custom_frontend(frontend_address):
