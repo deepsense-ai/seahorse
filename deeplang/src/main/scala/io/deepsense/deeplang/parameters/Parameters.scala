@@ -6,6 +6,7 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 case class BooleanParameter(

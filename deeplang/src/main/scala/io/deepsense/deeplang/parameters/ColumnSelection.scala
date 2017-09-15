@@ -6,6 +6,7 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.deeplang.parameters.ColumnRole._
@@ -17,8 +18,7 @@ import io.deepsense.deeplang.parameters.ColumnType._
 @SerialVersionUID(1)
 sealed abstract class ColumnSelection(
     typeName: String)
-  extends Serializable
-  with DefaultJsonProtocol {
+  extends Serializable {
 
   final def toJson: JsValue = JsObject(
     ColumnSelection.typeField -> typeName.toJson,
@@ -27,7 +27,7 @@ sealed abstract class ColumnSelection(
   protected def valuesToJson: JsValue
 }
 
-object ColumnSelection extends Serializable {
+object ColumnSelection {
   val typeField = "type"
 
   val valuesField = "values"
@@ -66,7 +66,6 @@ object NameColumnSelection {
   val typeName = "columnList"
 
   def fromJson(jsValue: JsValue): NameColumnSelection = {
-    import DefaultJsonProtocol._
     NameColumnSelection(jsValue.convertTo[List[String]])
   }
 }
@@ -83,7 +82,6 @@ object IndexColumnSelection {
   val typeName = "indexList"
 
   def fromJson(jsValue: JsValue): IndexColumnSelection = {
-    import DefaultJsonProtocol._
     IndexColumnSelection(jsValue.convertTo[List[Int]])
   }
 }
@@ -101,7 +99,6 @@ object RoleColumnSelection {
   val typeName = "roleList"
 
   def fromJson(jsValue: JsValue): RoleColumnSelection = {
-    import DefaultJsonProtocol._
     RoleColumnSelection(jsValue.convertTo[List[String]].map(ColumnRole.withName))
   }
 }
@@ -120,7 +117,6 @@ object TypeColumnSelection {
   val typeName = "typeList"
 
   def fromJson(jsValue: JsValue): TypeColumnSelection = {
-    import DefaultJsonProtocol._
     TypeColumnSelection(jsValue.convertTo[List[String]].map(ColumnType.withName))
   }
 }

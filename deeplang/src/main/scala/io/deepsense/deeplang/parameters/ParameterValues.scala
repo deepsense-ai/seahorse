@@ -8,6 +8,7 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 /**
@@ -28,8 +29,7 @@ case class MultipleSelection(choices: Traversable[Selection])
 @SerialVersionUID(1)
 sealed abstract class SingleColumnSelection(
     typeName: String)
-  extends Serializable
-  with DefaultJsonProtocol {
+  extends Serializable {
 
   final def toJson: JsValue = {
     JsObject(
@@ -77,7 +77,6 @@ object IndexSingleColumnSelection {
   val typeName = "index"
 
   def fromJson(jsValue: JsValue): IndexSingleColumnSelection = {
-    import DefaultJsonProtocol._
     IndexSingleColumnSelection(jsValue.convertTo[Int])
   }
 }
@@ -96,7 +95,6 @@ object NameSingleColumnSelection {
   val typeName = "column"
 
   def fromJson(jsValue: JsValue): NameSingleColumnSelection = {
-    import DefaultJsonProtocol._
     NameSingleColumnSelection(jsValue.convertTo[String])
   }
 }

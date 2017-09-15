@@ -22,7 +22,16 @@ class ParametersSerializationSuite extends FunSuite with Matchers with MockitoSu
     result.getBoolean("x") shouldBe param.value
   }
 
-  test("Parameter and it's value should be serializable") {
+  test("Parameter and it's value should be serializable even after using json methods") {
+    // This test was added because serialization wasn't working
+    // only after using methods associated with json protocols.
+    val param = BooleanParameter("", None, required = false)
+    import spray.json.JsBoolean
+    param.fillValueWithJson(JsBoolean(true))
+    testParameterSerialization(param)
+  }
+
+  test("BooleanParameter and it's value should be serializable") {
     val param = BooleanParameter("", None, required = false)
     param.value = Some(true)
     testParameterSerialization(param)

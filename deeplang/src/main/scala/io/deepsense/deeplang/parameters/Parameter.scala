@@ -6,6 +6,7 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.deeplang.parameters.ParameterType.ParameterType
@@ -18,7 +19,7 @@ import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
  * schemas with their values and validate them.
  */
 @SerialVersionUID(1)
-abstract class Parameter extends Serializable with DefaultJsonProtocol {
+abstract class Parameter extends Serializable {
   type HeldValue <: Any
 
   val parameterType: ParameterType
