@@ -6,6 +6,7 @@
 # This script expects no external parameters.
 # Version is calculated from current git sha, current time and BASE_VERSION variable
 
+CUSTOM_TAG="$1"
 BASE_VERSION=`cat version.sbt | cut -d'=' -f 2 | xargs`
 SNAPSHOT_REPOSITORY="deepsense-backend-snapshot"
 RELEASE_REPOSITORY="deepsense-backend-release"
@@ -34,7 +35,7 @@ function calculate_full_version() {
   then
     DATE=`date -u +%Y-%m-%d_%H-%M-%S`
     GIT_SHA=`git rev-parse HEAD`
-    GIT_SHA_PREFIX=${GIT_SHA:0:7}    
+    GIT_SHA_PREFIX=${GIT_SHA:0:7}
     export FULL_VERSION="${BASE_VERSION}-${DATE}-${GIT_SHA_PREFIX}"
   else
     export FULL_VERSION=${BASE_VERSION}
@@ -61,15 +62,19 @@ function publish() {
    "${url}"
 }
 
-function publishLatest() {
+function publish_custom() {
   component=$1
-  artifactVersion="latest"
+  artifactVersion=$2
   artifactRemoteName="deepsense-${component}-${artifactVersion}.zip"
 
   publish $component $artifactVersion "${REPOSITORY_URL}/deepsense-${component}/deepsense-${component}-${artifactVersion}/${artifactRemoteName}"
 }
 
-function publishVersion() {
+function publish_latest() {
+  publish_custom $1 latest
+}
+
+function publish_version() {
   component=$1
   artifactVersion=$2
   artifactRemoteName="deepsense-${component}-${artifactVersion}.zip"
@@ -84,8 +89,8 @@ function publishVersion() {
 }
 
 function publish_component() {
-  publishVersion $1 "${FULL_VERSION}"
-  publishLatest $1
+  publish_version $1 "${FULL_VERSION}"
+  publish_latest $1
 }
 
 calculate_is_snapshot_version
@@ -94,5 +99,9 @@ calculate_full_version
 echo "FULL_VERSION="$FULL_VERSION > env.properties
 for component in workflowmanager
 do
-  publish_component ${component}
+  if [ "${CUSTOM_TAG}" == "" ] ; then
+    publish_component ${component}
+  else
+    publish_custom ${component} "${CUSTOM_TAG}"
+  fi
 done
