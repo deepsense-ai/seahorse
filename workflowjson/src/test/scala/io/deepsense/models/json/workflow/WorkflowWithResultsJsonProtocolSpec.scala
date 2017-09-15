@@ -73,11 +73,16 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     val startTimestamp = "2015-05-12T21:11:09.000Z"
     val finishTimestamp = "2015-05-12T21:12:50.000Z"
 
+    val workflowStartTimestamp = "2014-01-13T21:32:09.000Z"
+    val workflowFinishTimestamp = "2015-12-14T23:45:40.000Z"
+
     val entity1Id = Entity.Id.randomId
     val entity2Id = Entity.Id.randomId
 
     val executionReport = ExecutionReport(
       Status.Completed,
+      DateTime.parse(workflowStartTimestamp),
+      DateTime.parse(workflowFinishTimestamp),
       None,
       Map(
         node1.id -> State(
@@ -93,6 +98,8 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     )
     val executionReportJson = JsObject(
       "status" -> JsString("COMPLETED"),
+      "started" -> JsString(workflowStartTimestamp),
+      "ended" -> JsString(workflowFinishTimestamp),
       "error" -> JsNull,
       "nodes" -> JsObject(
         node1.id.toString -> JsObject(

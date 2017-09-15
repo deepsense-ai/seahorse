@@ -26,6 +26,7 @@ import akka.actor.ActorSystem
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
@@ -53,6 +54,8 @@ case class WorkflowExecutor(
     val actorSystem = ActorSystem(actorSystemName)
     val workflowExecutorActor = actorSystem.actorOf(WorkflowExecutorActor.props(executionContext))
 
+    val startedTime = DateTimeConverter.now
+
     val resultPromise: Promise[GraphFinished] = Promise()
     workflowExecutorActor ! Launch(workflow.graph, resultPromise)
 
@@ -67,6 +70,8 @@ case class WorkflowExecutor(
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
         Try(ExecutionReport(
           graph.state.status,
+          startedTime,
+          DateTimeConverter.now,
           graph.state.error,
           graph.nodeById.mapValues(_.state),
           entitiesMap

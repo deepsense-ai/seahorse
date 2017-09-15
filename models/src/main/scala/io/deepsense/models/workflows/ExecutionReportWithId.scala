@@ -16,17 +16,21 @@
 
 package io.deepsense.models.workflows
 
+import org.joda.time.DateTime
+
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models
 import io.deepsense.graph.Status.Status
 import io.deepsense.graph.{Node, State}
 
 case class ExecutionReportWithId(
-  id: ExecutionReportWithId.Id,
-  status: Status,
-  error: Option[FailureDescription],
-  nodes: Map[Node.Id, State],
-  resultEntities: EntitiesMap)
+    id: ExecutionReportWithId.Id,
+    status: Status,
+    started: DateTime,
+    ended: DateTime,
+    error: Option[FailureDescription],
+    nodes: Map[Node.Id, State],
+    resultEntities: EntitiesMap)
 
 object ExecutionReportWithId {
   type Id = models.Id
@@ -38,6 +42,8 @@ object ExecutionReportWithId {
     new ExecutionReportWithId(
       id,
       executionReport.status,
+      executionReport.started,
+      executionReport.ended,
       executionReport.error,
       executionReport.nodes,
       executionReport.resultEntities)

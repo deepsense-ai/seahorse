@@ -75,7 +75,7 @@ trait WorkflowWithResultsJsonProtocol extends WorkflowJsonProtocol {
     }
   }
 
-  implicit val executionReportFormat = jsonFormat4(ExecutionReport)
+  implicit val executionReportFormat = jsonFormat6(ExecutionReport)
 
   implicit val workflowWithResultsFormat =
     jsonFormat(WorkflowWithResults,

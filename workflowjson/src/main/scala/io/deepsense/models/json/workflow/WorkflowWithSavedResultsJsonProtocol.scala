@@ -20,7 +20,7 @@ import io.deepsense.models.workflows._
 
 trait WorkflowWithSavedResultsJsonProtocol extends WorkflowWithResultsJsonProtocol {
 
-  implicit val executionReportWithIdFormat = jsonFormat5(ExecutionReportWithId.apply)
+  implicit val executionReportWithIdFormat = jsonFormat7(ExecutionReportWithId.apply)
 
   implicit val workflowWithSavedResultsFormat =
     jsonFormat(WorkflowWithSavedResults.apply,
