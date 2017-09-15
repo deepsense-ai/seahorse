@@ -71,7 +71,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     roleForAll,
     roleForAll)
 
-  "WorkflowManager.get(...)" should {
+  "WorkflowManager" should {
     "return None" when {
       "the requested workflow does not exist" in {
         reset(workflowStorage)
@@ -168,6 +168,18 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       verify(workflowStateStorage)
         .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states)
       ()
+    }
+    "copy notebooks" in {
+      val workflowId = Workflow.Id.randomId
+      val sourceNodeId = Node.Id.randomId
+      val destinationNodeId = Node.Id.randomId
+      val notebookContent = "cool notebook"
+      when(notebookStorage.get(workflowId, sourceNodeId))
+        .thenReturn(Future.successful(Some(notebookContent)))
+
+      val res = workflowManager.copyNotebook(workflowId, sourceNodeId, destinationNodeId)
+      whenReady(res) { _ => () }
+      verify(notebookStorage).save(workflowId, destinationNodeId, notebookContent)
     }
   }
 }
