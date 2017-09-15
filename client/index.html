@@ -9,6 +9,12 @@
   <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 <body>
+  <header class="c-main-header"
+          ng-hide="navigationController.getTitle() === 'Home'"
+          ng-controller="NavigationController as navigationController">
+    <navigation-bar title="navigationController.getTitle()"></navigation-bar>
+  </header>
+  <deepsense-loading-spinner-lg ng-cloak ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
   <ui-view id="wrapper"
            class="animated fadeIn"
            ng-show="stateData.showView"

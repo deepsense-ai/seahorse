@@ -66,7 +66,7 @@ function MultiSelection(GraphNode, MouseEvent, ExperimentService,
 
         unselectNodes();
 
-        element.addClass('-cursor-crosshair');
+        element.addClass('has-cursor-crosshair');
 
         $selectionElement.css({
           'top': startPoint.y,
@@ -81,7 +81,7 @@ function MultiSelection(GraphNode, MouseEvent, ExperimentService,
       };
 
       var endPainting = function endPainting (event) {
-        element.removeClass('-cursor-crosshair');
+        element.removeClass('has-cursor-crosshair');
 
         $selectionElement.fadeOut(100, () => {
           $selectionElement.css({
