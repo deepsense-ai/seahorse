@@ -589,7 +589,7 @@ class WorkflowsApiSpec
       }
     }
   }
-  
+
   def validHeaders(): List[RawHeader] = {
     List(
       RawHeader("X-Seahorse-UserId", ownerId),
