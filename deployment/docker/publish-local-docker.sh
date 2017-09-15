@@ -44,28 +44,20 @@ cd $PROJECT_PATH
 # Settings
 TIMESTAMP=`date +"%d%m%Y-%H%M%S"`
 COMMIT_HASH=`git rev-parse HEAD`
-DOCKER_REGISTRY="docker-repo.deepsense.codilime.com"
-QUAY_REGISTRY="quay.io"
-CL_NAMESPACE="tap"
-QUAY_NAMESPACE="deepsense_io"
+DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com"
+NAMESPACE="deepsense_io"
 TAG_VERSION="$PROJECT_NAME:$GIT_BRANCH-$TIMESTAMP-$COMMIT_HASH"
 TAG_LATEST="$PROJECT_NAME:$GIT_BRANCH-latest"
 
 # Tag docker image
 echo ">>> Tagging docker image"
-docker tag $DOCKER_IMAGE $DOCKER_REGISTRY/$CL_NAMESPACE/$TAG_VERSION
-docker tag $DOCKER_IMAGE $DOCKER_REGISTRY/$CL_NAMESPACE/$TAG_LATEST
-docker tag $DOCKER_IMAGE $QUAY_REGISTRY/$QUAY_NAMESPACE/$TAG_VERSION
-docker tag $DOCKER_IMAGE $QUAY_REGISTRY/$QUAY_NAMESPACE/$TAG_LATEST
+docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$TAG_VERSION
+docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$TAG_LATEST
 
 # Push built docker image
-echo ">>> Pushing docker to repository $DOCKER_REGISTRY"
-docker push $DOCKER_REGISTRY/$CL_NAMESPACE/$TAG_VERSION
-docker push $DOCKER_REGISTRY/$CL_NAMESPACE/$TAG_LATEST
-
-echo ">>> Pushing docker to repository $QUAY_REGISTRY"
-docker push $QUAY_REGISTRY/$QUAY_NAMESPACE/$TAG_VERSION
-docker push $QUAY_REGISTRY/$QUAY_NAMESPACE/$TAG_LATEST
+echo ">>> Pushing docker to repository $DEEPSENSE_REGISTRY"
+docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$TAG_VERSION
+docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$TAG_LATEST
 
 # Clean local images
 echo ">>> Removing local images"
