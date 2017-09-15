@@ -1,0 +1,40 @@
+@import "../../../../../../css/variables.less";
+
+.status-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__icon {
+    text-align: center;
+    font-size: 14px;
+    line-height: 22px;
+    color: white;
+    width: 22px;
+    height: 22px;
+  }
+
+  &.completed {
+    background-color: @color-action;
+  }
+
+  &.running {
+    background-color: @color-active;
+  }
+
+  &.queued {
+    background-color: @color-warn;
+  }
+
+  &.aborted,
+  &.failed {
+    background-color: @color-error;
+  }
+
+  &.unknown {
+    background-color: @seahorse-orange;
+  }
+}

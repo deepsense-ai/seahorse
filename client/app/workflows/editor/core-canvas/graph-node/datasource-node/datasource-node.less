@@ -1,0 +1,28 @@
+@import "../../../../../../css/variables.less";
+
+.graph-node {
+  &.datasource {
+    width: 200px;
+    height: 55px;
+  }
+
+  .datasource-name {
+    line-height: 12px;
+  }
+
+  .datasource-name {
+    color: @seahorse-blue;
+    font-weight: 700;
+    text-align: center;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &--disabled {
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}

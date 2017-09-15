@@ -1,46 +1,26 @@
 <div
-  class="graph-node"
-  ng-class="[
-    {'selected-node': $ctrl.isSelected},
-    $ctrl.nodeType,
-    $ctrl.borderCssClass
-  ]"
-  ng-switch="$ctrl.getNodeType()"
-  title={{$ctrl.node.description}}
+  class="graph-node {{::$ctrl.nodeType}} {{::$ctrl.getBorderCssClass()}}"
+  title={{::$ctrl.node.description}}
 >
   <div class="graph-node__content">
-    <div class="custom-name">
+    <div class="operation-name">
       <span
-        ng-if="$ctrl.nodeType === 'action'"
+        ng-if="::$ctrl.nodeType === 'action'"
         class="action-icon sa {{::$ctrl.actionIcon}}"
       ></span>
-      <span>{{ $ctrl.node.name }}</span>
+      <span>{{ ::$ctrl.node.name }}</span>
     </div>
     <div
-      class="user-name"
       ng-if="$ctrl.node.uiName"
+      class="custom-name"
     >
       {{ $ctrl.node.uiName }}
     </div>
   </div>
 
-  <div
-    class="status"
-    ng-class="$ctrl.statusClasses.status"
+  <status-icon
     ng-if="$ctrl.isOwner()"
-  >
-    <div
-      class="status__icon fa"
-      ng-class="$ctrl.statusClasses.icon"
-      popover-placement="right"
-      popover-trigger="mouseenter"
-      popover-append-to-body="true"
-      uib-popover-html="$ctrl.tooltipMessage"
-    ></div>
-  </div>
-
-  <div ng-if="false">
-    possible output ports here
-  </div>
-
+    node="$ctrl.node"
+    class="graph-node__status-icon"
+  ></status-icon>
 </div>
