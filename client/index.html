@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" ng-app="ds.lab" ng-strict-di>
+<head>
+  <meta charset="utf-8">
+  <title ng-bind="pageTitle"></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {% for (var chunk in o.htmlWebpackPlugin.files.chunks) { %}
+  <script src="{%=o.htmlWebpackPlugin.files.chunks[chunk].entry %}"></script>
+  {% } %}
+</head>
+<body>
+<loading-mask
+  type="warning"
+  string="Reconnecting">
+</loading-mask>
+<agreement-modal></agreement-modal>
+<ui-view id="wrapper"
+         class="animated fadeIn"
+         ng-class="{
+             'c-home': home.$state.includes('home')
+           }"
+         ng-show="stateData.showView"
+         droppable
+         droppable-type="frame">
+</ui-view>
+<deepsense-loading-spinner-processing ng-if="!stateData.dataIsLoaded">
+  Loading
+</deepsense-loading-spinner-processing>
+<!-- git-hash: {%=o.htmlWebpackPlugin.options.gitHash.replace(/\"/g,"") %} -->
+
+</body>
+</html>

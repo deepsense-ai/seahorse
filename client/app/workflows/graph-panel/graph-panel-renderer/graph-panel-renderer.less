@@ -1,0 +1,19 @@
+.default-endpoint-output {
+  font-size: 14px;
+  color: white;
+  z-index: 1;
+  position: relative;
+  opacity: 0.75;
+}
+
+.position-endpoint-icon {
+  &:before {
+    .default-endpoint-output;
+    top: 12px;
+    left: 8px;
+  }
+}
+
+.jsplumb-endpoint {
+  z-index: 2;
+}
