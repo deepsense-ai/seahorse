@@ -1,9 +1,6 @@
 'use strict';
 
-// THIS FILE IS TEMPLATED IN BUILD PROCESS
-// CHANGES HERE WILL BE LOST IN BUILD IF NOT PROPAGATED TO BUILD PIPELINE.
-
-angular.module('ds.lab').constant('config', {
+const config = {
   // localhost - from docker compose
   'apiHost': window.location.protocol + '//' + window.location.hostname,
   'docsHost': 'https://seahorse.deepsense.io',
@@ -20,4 +17,6 @@ angular.module('ds.lab').constant('config', {
   'mqUser': 'yNNp7VJS',
   'mqPass': '1ElYfGNW',
   'libraryPrefix': 'library://'
-});
+};
+
+angular.module('ds.lab').constant('config', Object.assign({}, config, window.dockerConfig));

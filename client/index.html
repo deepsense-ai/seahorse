@@ -5,6 +5,8 @@
   <title ng-bind="pageTitle"></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <script src="docker-config.js"></script>
+
   {% for (var chunk in o.htmlWebpackPlugin.files.chunks) { %}
   <script src="{%=o.htmlWebpackPlugin.files.chunks[chunk].entry %}"></script>
   {% } %}

@@ -1,22 +1,10 @@
 'use strict';
 
-// ES6 string interpolation not used because dollar sign is used for
-// evaluating bash variables in run.sh
-
-angular.module('ds.lab').constant('config', {
-  'apiHost': window.location.protocol + '//' + window.location.hostname,
-  'docsHost': 'https://seahorse.deepsense.io',
-  'notebookHost': window.location.protocol + '//' + window.location.host + '/jupyter',
-  'apiPort': window.location.port,
-  'sessionApiPort': window.location.port,
+window.dockerConfig =  {
   'sessionPollingInterval': ${SESSION_POLLING_INTERVAL},
   'apiVersion': '${API_VERSION}',
   'editorVersion': '${API_VERSION}',
   'urlApiVersion': '${URL_API_VERSION:-v1}',
-  'resultsRefreshInterval': 10000,
-  'socketConnectionHost': window.location.protocol + '//' + window.location.host + '/',
-  'socketReconnectionInterval': 1000,
   'mqUser': '${MQ_USER:-guest}',
   'mqPass': '${MQ_PASS:-guest}',
-  'libraryPrefix': 'library://'
-});
+};

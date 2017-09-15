@@ -6,7 +6,7 @@ render_template() {
 }
 
 echo "Generating config from template"
-render_template /tmp/config.js.tmpl > /usr/share/nginx/html/config.js
+render_template /tmp/config.js.tmpl > /usr/share/nginx/html/docker-config.js
 
 echo "Starting..."
 exec "$@"
