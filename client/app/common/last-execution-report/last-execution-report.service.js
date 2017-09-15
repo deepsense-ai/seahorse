@@ -14,14 +14,20 @@ function LastExecutionReportService($timeout, $rootScope, config, WorkflowServic
   }
 
   function requestForLastExecutionReportTime() {
-    let workflow = WorkflowService.getWorkflow();
+    let workflowId = WorkflowService.getWorkflow().id;
 
-    WorkflowsApiClient.getResultsUploadTime(workflow.id).
+    WorkflowsApiClient.getResultsUploadTime(workflowId).
       then((data) => {
-        setLastExecutionReportTime(workflow, data.resultsUploadTime);
+        let workflow = WorkflowService.getWorkflow();
+        if (workflow.id === workflowId) {
+          setLastExecutionReportTime(workflow, data.resultsUploadTime);
+        }
       }).
       catch(() => {
-        workflow.lastExecutionReportTime = null;
+        let workflow = WorkflowService.getWorkflow();
+        if (workflow.id === workflowId) {
+          workflow.lastExecutionReportTime = null;
+        }
       }).
       then(() => {
         internal.timeoutPromise = $timeout(requestForLastExecutionReportTime, config.resultsRefreshInterval);
