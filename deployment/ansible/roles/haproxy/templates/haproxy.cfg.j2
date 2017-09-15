@@ -11,6 +11,7 @@ defaults
   log global
   option httplog
   option dontlognull
+  option httpchk GET /
   timeout connect 3s
   timeout client 30s
   timeout server 30s
@@ -68,6 +69,8 @@ backend documentation
   server ds_documentation {{ds_documentation_ip}}:{{ds_documentation_port}} check
 
 backend workflow_manager
+  option httpchk GET / HTTP/1.1\r\nHost:\ editor.seahorse.deepsense.io
+  http-check expect string Workflow\ Manager
   server ds_wm {{ds_wm_ip}}:{{ds_wm_port}} check
 
 listen stats
