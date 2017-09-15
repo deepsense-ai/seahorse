@@ -23,14 +23,14 @@ function GraphNode(options) {
 }
 
 GraphNode.prototype.STATUS = {
-  'INDRAFT':   'status_indraft',
+  'DRAFT':     'status_draft',
   'QUEUED':    'status_queued',
   'RUNNING':   'status_running',
   'COMPLETED': 'status_completed',
   'FAILED':    'status_failed',
   'ABORTED':   'status_aborted'
 };
-GraphNode.prototype.STATUS_DEFAULT = GraphNode.prototype.STATUS.INDRAFT;
+GraphNode.prototype.STATUS_DEFAULT = GraphNode.prototype.STATUS.DRAFT;
 
 GraphNode.prototype.fetchPorts = function fetchPorts(type, ports) {
   var array = [];

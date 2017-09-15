@@ -16,13 +16,13 @@ function Experiment() {
   internal.parameters = {};
 
   that.STATUS = {
-    'INDRAFT':   'status_indraft',
+    'DRAFT':     'status_draft',
     'RUNNING':   'status_running',
     'COMPLETED': 'status_completed',
     'FAILED':    'status_failed',
     'ABORTED':   'status_aborted'
   };
-  that.STATUS_DEFAULT = that.STATUS.INDRAFT;
+  that.STATUS_DEFAULT = that.STATUS.DRAFT;
 
 
   /**

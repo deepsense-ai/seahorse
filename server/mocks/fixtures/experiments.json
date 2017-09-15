@@ -24,7 +24,7 @@
       "name" : "New Experiment",
       "created" : "2015-01-21T20:06:33Z",
       "updated" : "2015-01-21T21:06:33Z",
-      "status" : "INDRAFT",
+      "status" : "DRAFT",
       "description" : "A new experiment"
     },
     {
@@ -32,7 +32,7 @@
       "name" : "Draft",
       "created" : "2015-01-22T20:06:33Z",
       "updated" : "2015-01-22T21:06:33Z",
-      "status" : "INDRAFT",
+      "status" : "DRAFT",
       "description" : "Testing"
     },
     {

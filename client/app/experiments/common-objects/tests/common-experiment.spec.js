@@ -89,13 +89,13 @@ describe('experiment', () => {
         }
       ],
       initState = {
-        'status': 'INDRAFT',
+        'status': 'DRAFT',
         'nodes': {
           '101': {
-            'status': 'INDRAFT'
+            'status': 'DRAFT'
           },
           '102': {
-            'status': 'INDRAFT'
+            'status': 'DRAFT'
           }
         }
       },
@@ -239,8 +239,8 @@ describe('experiment', () => {
 
     expect(experiment.isRunning()).toBe(false);
     checkNodeStatuses(experiment, {
-      '101': STATUS.INDRAFT,
-      '102': STATUS.INDRAFT,
+      '101': STATUS.DRAFT,
+      '102': STATUS.DRAFT,
     });
 
     experiment.updateState({
