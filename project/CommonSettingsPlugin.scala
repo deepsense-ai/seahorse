@@ -12,11 +12,11 @@ object CommonSettingsPlugin extends AutoPlugin {
   lazy val OurIT = config("it") extend Test
 
   override def globalSettings = Seq(
+    scalaVersion := "2.11.8"
   )
 
   override def projectSettings = Seq(
     organization := "io.deepsense",
-    scalaVersion := "2.11.8",
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions"
