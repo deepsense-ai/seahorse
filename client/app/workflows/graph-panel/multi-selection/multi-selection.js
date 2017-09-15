@@ -3,7 +3,9 @@
 let internal = {};
 class MultiSelection {
   constructor($document, $timeout, $rootScope, MouseEvent, WorkflowService, MultiSelectionService, debounce) {
-    internal = {$document, $timeout, $rootScope, MouseEvent, WorkflowService, MultiSelectionService, debounce};
+    internal = {
+      $document, $timeout, $rootScope, MouseEvent, WorkflowService, MultiSelectionService, debounce
+    };
     this.restrict = 'A';
   }
 
@@ -53,24 +55,24 @@ class MultiSelection {
       startPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
 
       workflowNodes = workflowNodes || _.map(internal.WorkflowService.getWorkflow().getNodes(),
-          node => {
-            return {
-              x: node.x,
-              y: node.y,
-              id: node.id
-            };
-          }
-        );
+        node => {
+          return {
+            x: node.x,
+            y: node.y,
+            id: node.id
+          };
+        }
+      );
 
       elementDimensions = elementDimensions || {
-          width: element[0].clientWidth,
-          height: element[0].clientHeight
-        };
+        width: element[0].clientWidth,
+        height: element[0].clientHeight
+      };
 
       nodeDimensions = nodeDimensions || {
-          width: $(element[0].querySelector('[id^="node-"]')).outerWidth(true),
-          height: $(element[0].querySelector('[id^="node-"]')).outerHeight(true)
-        };
+        width: $(element[0].querySelector('[id^="node-"]')).outerWidth(true),
+        height: $(element[0].querySelector('[id^="node-"]')).outerHeight(true)
+      };
 
       element.addClass('has-cursor-crosshair');
 
@@ -288,6 +290,6 @@ class MultiSelection {
 }
 MultiSelection.directiveFactory.$inject = ['$document', '$timeout', '$rootScope', 'MouseEvent', 'WorkflowService', 'MultiSelectionService', 'debounce'];
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.directive('multiSelection', MultiSelection.directiveFactory);
 };

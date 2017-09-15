@@ -100,6 +100,17 @@ class NotificationService extends LogHandlingService {
     this.showWithParams(messageObject);
   }
 
+  showError(data, error) {
+    this.error(data.title, error);
+
+    let toast = this.toastr.error(data.message, data.title, {
+      timeOut: 10000
+    });
+
+    this.handleSameMessages(data.message, toast);
+    this.replaceInfoMessagesWithSuccess(data.message, toast);
+  }
+
   showNotificationByEventName(eventName) {
     let toast = this.toastr[this.staticMessages[eventName].notificationType](
       this.staticMessages[eventName].message,
@@ -158,6 +169,16 @@ class NotificationService extends LogHandlingService {
     }
   }
 
+  // Statics
+  static getCommonErrorMessage(label, error) {
+    return NotificationService.commonMessages(
+      'error', {
+        errorType: label
+      },
+      error
+    );
+  }
+
   static commonMessages(key, templateData, dynamicPart = {}) {
     let data = {
       copy: {
@@ -167,6 +188,14 @@ class NotificationService extends LogHandlingService {
           <strong>${templateData.eventInThePastText}</strong>
         `,
         title: 'Copy/Paste event'
+      },
+      error: {
+        message: `
+          <%= errorType %> <b>error</b> <br />
+          ${dynamicPart.data} <br />
+          ${dynamicPart.statusText}
+        `,
+        title: 'Workflow event'
       }
     };
     data.paste = data.copy;

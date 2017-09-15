@@ -86,12 +86,9 @@ class WorkflowsEditorController {
       this.unbindListeners();
       this.isReportMode = true;
       this.isRunning = true;
-      this.ServerCommunication.send(null, {}, JSON.stringify({
-        messageType: 'run',
-        messageBody: {
-          workflowId: this.workflow.id
-        }
-      }));
+      let serialized = this.WorkflowService.getWorkflow().serialize();
+      let nodesToExecute = this.MultiSelectionService.getSelectedNodes();
+      this.ServerCommunication.launch(this.workflow.id, serialized, nodesToExecute);
     });
 
     this.$scope.$on('StatusBar.ABORT', () => {
@@ -100,12 +97,7 @@ class WorkflowsEditorController {
       this.initUnbindableListeners();
       this.isReportMode = false;
       this.isRunning = false;
-      this.ServerCommunication.send(null, {}, JSON.stringify({
-        messageType: 'abort',
-        messageBody: {
-          workflowId: this.workflow.id
-        }
-      }));
+      this.ServerCommunication.unSubscribeRabbit(this.workflow.id);
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
@@ -181,14 +173,6 @@ class WorkflowsEditorController {
       this.$scope.$on('StatusBar.EXPORT_CLICK', () => {
         this.ExportModalService.showModal();
       }),
-
-      this.$scope.$on('StatusBar.RUN', () => {
-        let serialized = this.WorkflowService.getWorkflow().serialize();
-        this.ServerCommunication.launch(this.workflow.id, serialized);
-      }),
-
-      this.$scope.$on('StatusBar.ABORT', () =>
-        this.ServerCommunication.unSubscribeRabbit(this.workflow.id)),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
         this.WorkflowService.getWorkflow().removeNodes(this.MultiSelectionService.getSelectedNodes());

@@ -12,6 +12,10 @@ class ServerCommunication {
     this.config = config;
     this.WorkflowService = WorkflowService;
 
+    this.data = {
+      subscription: false
+    };
+
     // idle => Nothing happens
     // ws_pending => WebSocket pending connection
     // ws_connected => WebSocket has been connected
@@ -37,6 +41,13 @@ class ServerCommunication {
   onWebSocketConnect() {
     this.status = 'ws_connected';
     this.connectToRabbit();
+
+    /*(function preventReconnection () {
+      setTimeout(() => {
+        this.send(this.config.queueRoutes.connect, {}, {});
+        preventReconnection();
+      }, 15000);
+    }.bind(this))();*/
   }
 
   onWebSocketConnectError(error) {
@@ -62,7 +73,7 @@ class ServerCommunication {
 
   subscribeToRabbit(workflowId) {
     this.status = 'rb_connected';
-    this.subscription = this.client.subscribe(
+    this.data.subscription = this.client.subscribe(
       _.template(this.config.queueRoutes.executionStatus)({
         workflowId
       }),
@@ -71,8 +82,7 @@ class ServerCommunication {
   }
 
   unSubscribeRabbit(workflowId) {
-    this.subscription();
-    this.status = 'rb_connected';
+    this.status = 'rb_pending';
     this.abort(workflowId);
   }
 
@@ -94,7 +104,7 @@ class ServerCommunication {
     this.subscribeToRabbit(workflowId);
   }
 
-  launch(workflowId, workflow) {
+  launch(workflowId, workflow, nodesToExecute) {
     this.send(
       _.template(this.config.queueRoutes['launch/abort'])({
         workflowId
@@ -102,10 +112,14 @@ class ServerCommunication {
       JSON.stringify({
         messageType: 'launch',
         messageBody: {
-          workflowId, workflow
+          workflowId, workflow: workflow.workflow, nodesToExecute
         }
       })
     );
+
+    if (this.status === 'rb_pending') {
+      this.subscribeToRabbit(workflowId);
+    }
   }
 
   abort(workflowId) {
@@ -140,6 +154,6 @@ class ServerCommunication {
   }
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('ServerCommunication', ServerCommunication);
 };
