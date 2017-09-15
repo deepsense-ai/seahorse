@@ -89,7 +89,8 @@ object IndexColumnSelection {
 case class IndexRangeColumnSelection(lowerBound: Option[Int], upperBound: Option[Int])
   extends ColumnSelection(IndexRangeColumnSelection.typeName) {
 
-  override protected def valuesToJson: JsValue = List(lowerBound, upperBound).toJson
+  override protected def valuesToJson: JsValue =
+    List(lowerBound, upperBound).flatten.toJson
 
   override def validate: Unit = {
     val lowerLessThanUpper = for {

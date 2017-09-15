@@ -634,6 +634,14 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     assert(columnSelectorParameter.value == expectedValue)
   }
 
+  test("Empty IndexRangeColumnSelection with missing should be represented as an empty array") {
+    IndexRangeColumnSelection(None, None).toJson shouldBe
+      JsObject(
+        "type" -> JsString("indexRange"),
+        "values" -> JsArray()
+      )
+  }
+
   test("IndexRangeColumnSelection can not be filled with a too long list") {
     val columnSelectorParameter = ColumnSelectorParameter("", required = false)
     a [DeserializationException] should be thrownBy {
