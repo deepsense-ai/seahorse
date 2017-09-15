@@ -1,6 +1,7 @@
 angular.module('ds.lab').constant('config', {
   'apiHost': 'https://editor.seahorse.deepsense.io',
   'docsHost': 'https://seahorse.deepsense.io',
+  'notebookHost': 'http://localhost:8888',
   'apiPort': '443',
   'apiVersion': '0.6.0',
   'editorVersion': '1.0.0',

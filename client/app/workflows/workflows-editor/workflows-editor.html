@@ -1,4 +1,5 @@
 <div class="c-workflow-container">
+
   <operation-catalogue
     catalog-collection="::workflow.catalog"
     custom-scroll-bar
@@ -18,6 +19,7 @@
     zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
   <deepsense-operation-attributes
+    workflow="workflow.WorkflowService.getWorkflow().id"
     node="workflow.getSelectedNode()"
     ng-if="workflow.getSelectedNode()"
     disabled-mode="workflow.isReportMode"
