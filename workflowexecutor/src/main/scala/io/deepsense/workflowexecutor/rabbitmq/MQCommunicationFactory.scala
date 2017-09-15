@@ -18,12 +18,16 @@ package io.deepsense.workflowexecutor.rabbitmq
 
 import java.util
 
-import akka.actor.{ActorRef, ActorSystem}
+import scala.concurrent.{Future, Promise}
+
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.rabbitmq.client.Channel
-import com.thenewmotion.akka.rabbitmq.{ChannelActor, CreateChannel, RichConnectionActor}
+import com.thenewmotion.akka.rabbitmq.ChannelActor.{Connected, Disconnected}
+import com.thenewmotion.akka.rabbitmq._
 
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.serialization.{MessageMQDeserializer, MessageMQSerializer}
+import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory.NotifyingChannelActor
 
 case class MQCommunicationFactory(
   system: ActorSystem,
@@ -33,10 +37,13 @@ case class MQCommunicationFactory(
 
   val exchangeType = "topic"
 
-  def registerSubscriber(topic: String, subscriber: ActorRef): Unit = {
+  def registerSubscriber(topic: String, subscriber: ActorRef): Future[Unit] = {
+    val channelConnected = Promise[Unit]()
     val subscriberName = MQCommunication.subscriberName(topic)
-    connection.createChannel(ChannelActor.props(setupSubscriber(topic, subscriber)),
-      Some(subscriberName))
+    val actorProps: Props =
+      NotifyingChannelActor.props(channelConnected, setupSubscriber(topic, subscriber))
+    connection.createChannel(actorProps, Some(subscriberName))
+    channelConnected.future
   }
 
   def createPublisher(topic: String, publisherActorName: String): ActorRef = {
@@ -65,5 +72,56 @@ case class MQCommunicationFactory(
     val channelActor: ActorRef =
       connection.createChannel(ChannelActor.props(), Some(publisherName))
     MQPublisher(MQCommunication.Exchange.seahorse, mqMessageSerializer, channelActor)
+  }
+}
+
+object MQCommunicationFactory {
+
+  /**
+   * NotifyingChannelActor extends ChannelActor behaviour by completing a promise after connecting
+   * to a channel.
+   * In the thenewmotion's library for RMQ, it's impossible to synchronously connect to a channel.
+   * NotifyingChannelActor resolves this issue by allowing to wait for the promise to complete.
+   *
+   * <br><br>
+   * More on the issue:<br>
+   * As the documentation says, to synchronously create a channel one have to call createChannel
+   * method.
+   * {{{
+   *   import com.thenewmotion.akka.rabbitmq.reachConnectionActor
+   *   val channelActor: ActorRef = connectionActor.createChannel(ChannelActor.props())
+   * }}}
+   *
+   * It's true that the method awaits channel creation. The code looks like the one below:
+   * {{{
+   *   val future = self ? CreateChannel(props, name)
+   *   Await.result(future, timeout.duration).asInstanceOf[ChannelCreated].channel
+   * }}}
+   *
+   * However, ConnectionActor's CreateChannel handler is asynchronous:
+   * {{{
+   *   val child = newChild(props, name)
+   *   log.debug("{} creating child {} with channel {}", header(Connected, msg), child, channel)
+   *   child ! channel
+   *   stay replying ChannelCreated(child)
+   * }}}
+   *
+   * Thus, it is possible that the handler responds ChannelCreated before the channel is Created.
+   */
+  class NotifyingChannelActor(
+      channelConnected: Promise[Unit],
+      setupChannel: (Channel, ActorRef) => Any)
+    extends ChannelActor(setupChannel) {
+    onTransition {
+      case Disconnected -> Connected => channelConnected.trySuccess(Unit)
+    }
+  }
+
+  object NotifyingChannelActor {
+    def props(
+        channelConnected: Promise[Unit],
+        setupChannel: (Channel, ActorRef) => Any = (_, _) => ()): Props = {
+      Props(classOf[NotifyingChannelActor], channelConnected, setupChannel)
+    }
   }
 }

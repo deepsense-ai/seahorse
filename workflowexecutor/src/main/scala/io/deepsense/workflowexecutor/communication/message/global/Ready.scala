@@ -25,9 +25,13 @@ import io.deepsense.workflowexecutor.communication.message.global.ReadyMessageTy
 
 case class Ready(workflowId: Option[Workflow.Id], content: ReadyContent)
 
+object Ready {
+  val seahorseIsReady = Ready(None, ReadyContent(ReadyMessageType.Info, "Seahorse is ready"))
+}
+
 trait ReadyJsonProtocol extends IdJsonProtocol with ReadyContentJsonProtocol {
 
-  implicit val readyFormat = jsonFormat2(Ready)
+  implicit val readyFormat = jsonFormat2(Ready.apply)
 }
 
 trait ReadyContentJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {

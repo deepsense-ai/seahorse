@@ -17,15 +17,19 @@
 package io.deepsense.workflowexecutor.executor
 
 import java.net.InetAddress
+import java.util.concurrent.TimeUnit
 
-import akka.actor.{ActorSystem, Props}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
+
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.rabbitmq.client.ConnectionFactory
-import com.thenewmotion.akka.rabbitmq.ConnectionActor
+import com.thenewmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageType, ReadyContent, Ready}
+import io.deepsense.workflowexecutor.communication.message.global.Ready
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.rabbitmq._
@@ -42,6 +46,8 @@ case class SessionExecutor(
   extends Executor {
 
   private val config = ConfigFactory.load
+  private val subscriptionTimeout =
+    Duration(config.getInt("subscription-timeout"), TimeUnit.SECONDS)
   val graphReader = new GraphReader(createDOperationsCatalog())
 
   /**
@@ -111,24 +117,34 @@ case class SessionExecutor(
         pythonExecutionCaretaker.gatewayListeningPort _,
         hostAddress.getHostAddress),
       MQCommunication.Actor.Subscriber.notebook)
-    communicationFactory.registerSubscriber(
+    val notebookSubscriberReady = communicationFactory.registerSubscriber(
       MQCommunication.Topic.notebookSubscriptionTopic,
       notebookSubscriberActor)
 
     val workflowsSubscriberActor = system.actorOf(
       WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory, jobId),
       MQCommunication.Actor.Subscriber.workflows)
-    communicationFactory.registerSubscriber(
+    val workflowsSubscriberReady = communicationFactory.registerSubscriber(
       MQCommunication.Topic.allWorkflowsSubscriptionTopic(jobId),
       workflowsSubscriberActor)
 
-    val ready: Ready = Ready(None, ReadyContent(ReadyMessageType.Info, "Seahorse is ready"))
-    seahorsePublisher ! ready
-    notebookPublisher ! ready
+    sendReadyWhenSubscribed(
+      Seq(notebookSubscriberReady, workflowsSubscriberReady),
+      Seq(notebookPublisher, seahorsePublisher))
 
     system.awaitTermination()
     cleanup(sparkContext, pythonExecutionCaretaker)
     logger.debug("SessionExecutor ends")
+  }
+
+  private def sendReadyWhenSubscribed(
+      subscribers: Seq[Future[Unit]],
+      publishers: Seq[ActorRef]): Unit = {
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val subscribed: Future[Seq[Unit]] = Future.sequence(subscribers)
+    logger.info("Waiting for subscribers...")
+    Await.result(subscribed, subscriptionTimeout)
+    publishers.foreach(_ ! Ready.seahorseIsReady)
   }
 
   private def cleanup(
