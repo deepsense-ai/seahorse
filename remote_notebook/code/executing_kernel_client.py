@@ -15,7 +15,7 @@ from utils import Logging
 class ExecutingKernelClientSettings:
     def __init__(self, gateway_address, r_backend_address,
                  rabbit_mq_address, rabbit_mq_credentials,
-                 session_id, workflow_id, node_id=None, port_number=None):
+                 session_id, workflow_id, node_id=None, port_number=None, dataframe_storage_type='input'):
 
         self._gateway_address = gateway_address
         self._r_backend_address = r_backend_address
@@ -25,10 +25,11 @@ class ExecutingKernelClientSettings:
         self._workflow_id = workflow_id
         self._node_id = node_id
         self._port_number = port_number
+        self._dataframe_storage_type = dataframe_storage_type
 
     @property
     def dataframe_source(self):
-        return self._workflow_id, self._node_id, self._port_number
+        return self._workflow_id, self._node_id, self._port_number, self._dataframe_storage_type
 
     @property
     def gateway_address(self):
@@ -76,7 +77,7 @@ class ExecutingKernelClient(Logging):
     def _init_kernel(self):
         connection_dict = self.get_connection_file_dict()
         kernel_name = connection_dict['kernel_name']
-        workflow_id, node_id, port_number = self.client_settings.dataframe_source
+        workflow_id, node_id, port_number, dataframe_storage_type = self.client_settings.dataframe_source
         gateway_host, gateway_port = self.client_settings.gateway_address
         r_backend_host, r_backend_port = self.client_settings.r_backend_address
 
@@ -84,6 +85,7 @@ class ExecutingKernelClient(Logging):
         self._execute_code('workflow_id = "{}"'.format(workflow_id))
         self._execute_code('node_id = {}'.format(
             '"{}"'.format(node_id) if node_id is not None else None))
+        self._execute_code('dataframe_storage_type = "{}"'.format(dataframe_storage_type))
         self._execute_code('port_number = {}'.format(port_number))
         self._execute_code('gateway_address = "{}"'.format(gateway_host))
         self._execute_code('gateway_port = {}'.format(gateway_port))

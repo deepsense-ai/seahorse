@@ -7,7 +7,7 @@ import os
 import sys
 
 import re
-
+import argparse
 import time
 from ipykernel.ipkernel import IPythonKernel
 from ipykernel.kernelapp import IPKernelApp
@@ -19,6 +19,10 @@ from heartbeat_handler import HeartbeatHandler
 from socket_forwarder import SocketForwarder, ToZmqSocketForwarder
 from notebook_server_client import NotebookServerClient
 from utils import setup_logging, Logging
+
+import hashlib
+
+
 
 RABBIT_MQ_ADDRESS = None
 RABBIT_MQ_CREDENTIALS = None
@@ -53,8 +57,9 @@ class ForwardingKernel(IPythonKernel, Logging):
         Logging.__init__(self)
 
         self.parent = parent
-
-        nb_client = NotebookServerClient("localhost", 8888, self._kernel_id)
+        self._init_argv()
+        nb_client = NotebookServerClient("localhost", 8888, self._kernel_id,
+                                         seahorse_notebook_path=self.argv.seahorse_notebook_path)
         self._session_id, self._node_id, self._port_number = nb_client.extract_dataframe_source()
 
         es, ms, rl = self._init_rabbit_clients(RABBIT_MQ_ADDRESS, RABBIT_MQ_CREDENTIALS)
@@ -74,6 +79,12 @@ class ForwardingKernel(IPythonKernel, Logging):
                                                    MISSED_HEARTBEAT_LIMIT,
                                                    self._session_id)
         self._heartbeat_handler.handle_heartbeat(lambda: nb_client.stop_kernel())
+
+    def _init_argv(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--seahorse_notebook_path", help="string with searhorse path", required=False)
+        (self.argv, sys.argv) = parser.parse_known_args()
+        # TODO fail if seahorse_notebook_path is not in right format
 
     def _init_rabbit_clients(self, rabbit_mq_address, rabbit_mq_credentials):
         rabbit_client = RabbitMQClient(address=rabbit_mq_address,
@@ -134,8 +145,11 @@ class ForwardingKernel(IPythonKernel, Logging):
             'kernel_id': self._kernel_id,
             'kernel_name': KERNEL_NAME,
             'signature_key': self._signature_key,
-            'node_id': self._node_id,
-            'port_number': self._port_number
+            'dataframe_source': {
+                'dataframe_storage_type':  'output' if self.argv.seahorse_notebook_path is None else 'input',
+                'node_id': self._node_id,
+                'port_number': self._port_number
+                },
         })
 
         self._rabbit_listener.subscribe(topic=self.EXECUTION_SUBSCRIPTION_TOPIC.format(kernel_id=self._kernel_id),
@@ -163,7 +177,12 @@ class ForwardingKernel(IPythonKernel, Logging):
     @staticmethod
     def get_kernel_id(connection_file):
         m = re.search('kernel-(?P<kernel_id>.*)\.json', connection_file)
-        return m.group('kernel_id')
+        if m is not None:
+            return m.group('kernel_id')
+        else:
+            m = hashlib.md5()
+            m.update(connection_file)
+            return str(m.hexdigest())
 
     @property
     def _signature_key(self):

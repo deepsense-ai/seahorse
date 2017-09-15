@@ -49,7 +49,10 @@ def dataframe():
         raise Exception("No edge is connected to this Notebook")
 
     try:
-        java_data_frame = gateway.entry_point.retrieveOutputDataFrame(workflow_id, node_id, port_number)
+        if dataframe_storage_type == 'output':
+            java_data_frame = gateway.entry_point.retrieveOutputDataFrame(workflow_id, node_id, port_number)
+        else:
+            java_data_frame = gateway.entry_point.retrieveInputDataFrame(workflow_id, node_id, port_number)
     except Py4JJavaError:
         raise Exception("Input operation is not yet executed")
 

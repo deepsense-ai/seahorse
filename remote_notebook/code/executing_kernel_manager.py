@@ -101,19 +101,21 @@ class ExecutingKernelManager(Logging):
             return
 
         if message['type'] == 'start_kernel':
-            node_id = message['node_id'] if 'node_id' in message else None
-            port_number = message['port_number'] if 'port_number' in message else None
+            dataframe_storage_type = message['dataframe_source']['dataframe_storage_type']
+            node_id = message['dataframe_source']['node_id'] if 'node_id' in message['dataframe_source'] else None
+            port_number = message['dataframe_source']['port_number'] if 'port_number' in message['dataframe_source'] else None
             kernel_name = message['kernel_name']
             self.start_kernel(kernel_id=message['kernel_id'],
                               signature_key=message['signature_key'],
                               node_id=node_id,
                               port_number=port_number,
-                              kernel_name=kernel_name)
+                              kernel_name=kernel_name,
+                              dataframe_storage_type=dataframe_storage_type)
 
         elif message['type'] == 'shutdown_kernel':
             self.shutdown_kernel(kernel_id=message['kernel_id'])
 
-    def start_kernel(self, kernel_id, signature_key, node_id, port_number, kernel_name):
+    def start_kernel(self, kernel_id, signature_key, node_id, port_number, kernel_name, dataframe_storage_type):
         self.logger.debug('kernel_id {}, signature key {}'.format(kernel_id, signature_key))
 
         if kernel_id in self._multi_kernel_manager.list_kernel_ids():
@@ -137,7 +139,7 @@ class ExecutingKernelManager(Logging):
         settings = ExecutingKernelClientSettings(self._gateway_address, self._r_backend_address,
                                                  self._rabbit_mq_address,
                                                  self._rabbit_mq_credentials, self._session_id,
-                                                 self._workflow_id, node_id, port_number)
+                                                 self._workflow_id, node_id, port_number, dataframe_storage_type)
         executing_kernel_client = ExecutingKernelClient(kernel_id, signature_key, settings)
         executing_kernel_client.start()
         self.executing_kernel_clients[kernel_id] = executing_kernel_client

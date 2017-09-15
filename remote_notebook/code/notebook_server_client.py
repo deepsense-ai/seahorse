@@ -1,24 +1,32 @@
 # Copyright (c) 2016, CodiLime Inc.
 
-import json
 import base64
+import json
 import urllib2
-from utils import Logging
 
+from utils import Logging
+from seahorse_notebook_path import SeahorseNotebookPath
 
 class NotebookServerClient(Logging):
-
-    def __init__(self, nb_host, nb_port, kernel_id):
+    def __init__(self, nb_host, nb_port, kernel_id, seahorse_notebook_path=None):
         super(NotebookServerClient, self).__init__()
         self._nb_host = nb_host
         self._nb_port = nb_port
         self._kernel_id = kernel_id
         self._notebook_server_location = "{}:{}".format(self._nb_host, self._nb_port)
         self._api_url = "http://{}/jupyter/api/sessions".format(self._notebook_server_location)
+        self.seahorse_notebook_path = seahorse_notebook_path
+
+    def _get_path(self):
+        if self.seahorse_notebook_path:
+            return self.seahorse_notebook_path
+        else:
+            session = self._get_my_session()
+            return str(session['notebook']['path'])
 
     def extract_dataframe_source(self):
-        session = self._get_my_session()
-        return self._extract_notebook_params_from_path(session['notebook']['path'])
+        notebook_path = SeahorseNotebookPath.deserialize(self._get_path())
+        return notebook_path.workflow_id, notebook_path.datasource_node_id, notebook_path.datasource_node_port
 
     def restart_kernel(self):
         # 'data' specified to make it a POST request
@@ -26,6 +34,8 @@ class NotebookServerClient(Logging):
                                                                           self._kernel_id), "")
 
     def stop_kernel(self):
+        if self.seahorse_notebook_path is not None:
+            return
         self.logger.debug("Getting session")
         session = self._get_my_session()
         self.logger.debug("Got session: {}".format(session))
@@ -48,16 +58,4 @@ class NotebookServerClient(Logging):
         response = urllib2.urlopen(self._api_url).read()
         return json.loads(response)
 
-    @staticmethod
-    def _extract_notebook_params_from_path(notebook_path):
-        workflow_id, _, params = notebook_path.split('/')
-        params = json.loads(base64.decodestring(params))
-
-        # If nothing is connected to the Notebook node, we don't expect a source
-        if len(params['dataframeSource']) == 0:
-            return workflow_id, None, None
-
-        dataframe_owner_node_id = params['dataframeSource']['nodeId']
-        output_port_number = params['dataframeSource']['port']
-        return workflow_id, dataframe_owner_node_id, output_port_number
 

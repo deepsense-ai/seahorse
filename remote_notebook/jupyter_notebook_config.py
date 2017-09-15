@@ -33,3 +33,19 @@ c.NotebookApp.contents_manager_class = WMContentsManager
 c.WMContentsManager.workflow_manager_url = workflow_manager_url
 c.WMContentsManager.workflow_manager_user = workflow_manager_user
 c.WMContentsManager.workflow_manager_pass = workflow_manager_pass
+
+
+c.NotebookApp.server_extensions = [
+  'headless_notebook_handler.headless_notebook_handler'
+]
+
+
+c.ClearOutputPreprocessor.enabled = True
+c.ExecutePreprocessor.enabled = True
+c.ExecutePreprocessor.timeout = -1
+#c.coalesce_streams.enabled = True
+c.SVG2PDFPreprocessor.enabled = True
+c.CSSHTMLHeaderPreprocessor.enabled = True
+c.LatexPreprocessor.enabled = True
+c.HighlightMagicsPreprocessor.enabled = True
+c.ExtractOutputPreprocessor.enabled = True

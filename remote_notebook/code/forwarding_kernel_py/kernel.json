@@ -9,7 +9,7 @@
     "{connection_file}"
   ],
   "env": {
-    "PYTHONPATH": "/usr/local/share/jupyter/kernels/pyspark",
+    "PYTHONPATH": "/usr/local/share/jupyter/kernels/pyspark:/usr/local/lib/python2.7/site-packages",
     "KERNEL_NAME": "PythonExecutingKernel"
   }
 }

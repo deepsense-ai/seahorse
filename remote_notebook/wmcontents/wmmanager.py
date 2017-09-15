@@ -1,14 +1,15 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+import base64
+from datetime import datetime
+
+from nbformat import reads, writes, from_dict
 from notebook.services.contents.manager import ContentsManager
 from tornado import web
-from nbformat import reads, writes, from_dict
 from traitlets import Unicode
-from datetime import datetime
+
+from seahorse_notebook_path import SeahorseNotebookPath
 from .wmcheckpoints import WMCheckpoints
-import re
-import base64
-import json
 
 try:
     from urllib.request import urlopen, Request
@@ -35,36 +36,6 @@ class WMContentsManager(ContentsManager):
             'version': '2.7.10'
         }
     }
-
-    class NotebookInfo(object):
-        class DeserializationFailed(Exception):
-            def __init__(self, path):
-                super(WMContentsManager.NotebookInfo.DeserializationFailed, self).__init__(
-                        "Deserialization of Path '{}' failed".format(path))
-
-        def __init__(self, workflow_id, node_id, language, params):
-            self.workflow_id = workflow_id
-            self.node_id = node_id
-            self.language = language
-            self.params = params
-
-        def serialize(self):
-            return '/'.join([self.workflow_id, self.node_id, self.params])
-
-        @classmethod
-        def deserialize(cls, str_path):
-            assert isinstance(str_path, str)
-
-            if str_path.startswith('/'):
-                str_path = str_path[1:]
-
-            try:
-                workflow_id, node_id, params = str_path.split('/')
-                deserialized_params = json.loads(base64.decodestring(params.encode()).decode('utf-8'))
-                return cls(workflow_id, node_id,
-                           language=deserialized_params['language'], params=params)
-            except ValueError:
-                raise cls.DeserializationFailed(str_path)
 
     workflow_manager_url = Unicode(
         default_value="http://localhost:9080",
@@ -154,8 +125,8 @@ class WMContentsManager(ContentsManager):
     def get(self, path, content=True, type=None, format=None):
         assert isinstance(path, str)
         try:
-            notebook_info = self.NotebookInfo.deserialize(path)
-        except self.NotebookInfo.DeserializationFailed as e:
+            notebook_info = SeahorseNotebookPath.deserialize(path)
+        except SeahorseNotebookPath.DeserializationFailed as e:
             raise web.HTTPError(400, e.message)
 
         try:
@@ -179,8 +150,8 @@ class WMContentsManager(ContentsManager):
     def save(self, model, path):
         assert isinstance(path, str)
         try:
-            notebook_info = self.NotebookInfo.deserialize(path)
-        except self.NotebookInfo.DeserializationFailed as e:
+            notebook_info = SeahorseNotebookPath.deserialize(path)
+        except SeahorseNotebookPath.DeserializationFailed as e:
             raise web.HTTPError(400, e.message)
 
         if model['type'] != "notebook":

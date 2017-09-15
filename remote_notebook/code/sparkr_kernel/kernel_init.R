@@ -31,8 +31,13 @@ dataframe <- function() {
     }
 
     sdf <- tryCatch({
-        SparkR:::callJMethod(entryPoint, "retrieveOutputDataFrame",
-                             toString(workflow_id), toString(node_id), as.integer(port_number))
+        if (dataframe_storage_type == "output") {
+            SparkR:::callJMethod(entryPoint, "retrieveOutputDataFrame",
+                                 toString(workflow_id), toString(node_id), as.integer(port_number))
+        } else {
+            SparkR:::callJMethod(entryPoint, "retrieveInputDataFrame",
+                                 toString(workflow_id), toString(node_id), as.integer(port_number))
+        }
     }, error = function(err) {
         stop("Input operation is not yet executed")
     })
