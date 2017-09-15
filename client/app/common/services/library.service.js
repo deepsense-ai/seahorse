@@ -228,11 +228,16 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
    * @returns {FileObject}
    */
   function getFileByURI(uri) {
-    let [fileName, items] = (
+    const parsedUri = /(library:\/\/)(.*)/.exec(uri);
+    if (!parsedUri) {
+      return false;
+    }
+
+    const [fileName, items] = (
         (parts) => (
           (prefix, path) => [path.pop(), library.get(`${prefix}${path.join('/')}`).items]
         )(parts[0], parts[1].split('/'))
-      )(/(library:\/\/)(.*)/.exec(uri).slice(1));
+      )(parsedUri.slice(1));
 
     return _.find(items, {name: fileName});
   }
