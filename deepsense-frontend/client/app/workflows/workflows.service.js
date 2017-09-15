@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
-  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus) {
+  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, ServerCommunication) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -58,6 +58,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         if(data.sessionId === workflow.id && workflow.sessionStatus !== 'running_and_ready') {
           console.log('WorkflowService', 'Received first heartbeat. Executor is running and ready');
           workflow.sessionStatus = SessionStatus.RUNNING_AND_READY;
+          ServerCommunication.sendSynchronize();
         }
       });
     }

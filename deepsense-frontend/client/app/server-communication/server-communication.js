@@ -5,7 +5,6 @@ const _messages = [
   'inferredState',
   'ready',
   'terminated',
-  'workflowWithResults',
   'heartbeat'
 ];
 
@@ -73,6 +72,13 @@ class ServerCommunication {
     this.$timeout(() => {
       this._connectToWebSocket();
     }, this.config.socketReconnectionInterval, false);
+  }
+
+  sendSynchronize() {
+    this.send(this.workflowTopicSendingUri(), {}, JSON.stringify({
+      messageType: 'synchronize',
+      messageBody: {}
+    }));
   }
 
   send(uri, headers = {}, message = {}) {
