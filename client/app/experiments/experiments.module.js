@@ -10,8 +10,8 @@ var angular = require('angular');
  */
 var experiments = angular.module('ds.experiments', []);
 
-require('./experiment-list.js').inject(experiments);
-require('./experiment.js').inject(experiments);
+require('./experiment-list.controller.js').inject(experiments);
+require('./experiment.controller.js').inject(experiments);
 require('./experiments.config.js').inject(experiments);
 
 module.exports = experiments;

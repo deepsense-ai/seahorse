@@ -9,12 +9,12 @@ function ExperimentsConfig($stateProvider) {
     .state('lab.experiments', {
       url: '/experiments',
       templateUrl: 'app/experiments/experiment-list.html',
-      controller: 'ExperimentList as experimentList'
+      controller: 'ExperimentListController as experimentList'
     })
     .state('lab.experiment', {
       url: '/experiment/:id',
       templateUrl: 'app/experiments/experiment.html',
-      controller: 'Experiment as experiment'
+      controller: 'ExperimentController as experiment'
     });
 }
 exports.function = ExperimentsConfig;

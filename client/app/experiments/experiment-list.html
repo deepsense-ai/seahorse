@@ -1,8 +1,18 @@
 <div>
-  <p>{{ experimentList.myExperiments }}</p>
-  <ul>
-    <li ng-repeat="item in experimentList.experiments">
-      <a ui-sref="lab.experiment({ id: item.id })">{{item.name}}</a>
-    </li>
-  </ul>
+  <table datatable="ng" class="table table-striped table-bordered table-hover dataTables-example">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Last update</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="item in experimentList.experiments">
+        <td><a ui-sref="lab.experiment({ id: item.id })">{{item.name}}</a></td>
+        <td>{{item.status}}</td>
+        <td>{{item.updated}}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
