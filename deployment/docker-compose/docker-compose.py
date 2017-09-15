@@ -31,8 +31,9 @@ def main():
     parser = argparse.ArgumentParser(description=description,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-c', '--configuration', default=select_os(),
-                        help='Configuration to use: linux, mac. Default selected based on OS.',
+    parser.add_argument('--operating-system', default=select_os(),
+                        help='Operating system that Seahorse will run on. Default selected based on OS.',
+                        choices=['linux', 'mac'],
                         action='store')
     parser.add_argument('-b', '--backend-tag', default=git_sha,
                         help='Git tag of the deepsense-backend repo to use',
@@ -109,7 +110,7 @@ def select_os():
     elif platform.system() == 'Linux':
         return 'linux'
     else:
-        assert False, 'Unknown system!'
+        assert False, 'Unknown system: {}'.format(platform.system())
 
 if __name__ == '__main__':
     main()
