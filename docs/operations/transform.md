@@ -10,6 +10,9 @@ includeOperationsMenu: true
 Transform is an operation used to transform a [DataFrame](../classes/dataframe.html)
 using a [Transformer](../classes/transformer.html).
 
+**Usage example**:
+![Transform example](../img/transformer_example.png){: .img-responsive}
+
 **Since**: Seahorse 1.0.0
 
 ## Input

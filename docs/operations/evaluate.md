@@ -10,6 +10,9 @@ includeOperationsMenu: true
 Evaluate is an operation used to calculate a metric value from given
 [DataFrame](../classes/dataframe.html).
 
+**Usage example**:
+![Evaluate example](../img/evaluator_example.png){: .img-responsive}
+
 **Since**: Seahorse 1.0.0
 
 ## Input

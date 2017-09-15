@@ -10,6 +10,9 @@ includeOperationsMenu: true
 Fit is an operation used to fit an [Estimator](../classes/estimator.html) on a
 [DataFrame](../classes/dataframe.html). It produces a [Transformer](../classes/transformer.html).
 
+**Usage example**:
+![Fit example](../img/estimator_example.png){: .img-responsive}
+
 **Since**: Seahorse 1.0.0
 
 ## Input
