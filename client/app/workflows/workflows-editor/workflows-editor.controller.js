@@ -136,15 +136,6 @@ function WorkflowsEditorController(workflow,
     WorkflowService.saveWorkflow();
   });
 
-  $scope.$on('StatusBar.HOME_CLICK', () => {
-    ConfirmationModalService.showModal({
-      message: 'The operation redirects to the home page. Make sure you saved the current state of the workflow.'
-    }).
-    then(() => {
-      $state.go('home');
-    });
-  });
-
   $scope.$on('StatusBar.CLEAR_CLICK', () => {
     ConfirmationModalService.showModal({
       message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'

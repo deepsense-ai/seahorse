@@ -8,10 +8,6 @@ function NavigationController($rootScope, PageService) {
     return PageService.getTitle();
   };
 
-  that.home = function home () {
-    $rootScope.$broadcast('StatusBar.HOME_CLICK');
-  };
-
   return this;
 }
 
