@@ -1,4 +1,5 @@
 'use strict';
+
 const ZOOM_STEP = 0.1;
 
 class EditorController {
@@ -54,10 +55,7 @@ class EditorController {
     this.$canvas.bind('drop', (event) => {
       const originalEvent = event.originalEvent;
       if (originalEvent.dataTransfer.getData('draggableExactType') === 'graphNode') {
-        this.newNodeData = {
-          x: originalEvent.offsetX,
-          y: originalEvent.offsetY
-        };
+        this.startWizard(originalEvent.offsetX, originalEvent.offsetY);
       }
     });
 
@@ -74,10 +72,7 @@ class EditorController {
     // Drag and Drop from toolbar handling
     this.$canvas.bind('contextmenu', (event) => {
       const originalEvent = event.originalEvent;
-      this.newNodeData = {
-        x: originalEvent.offsetX,
-        y: originalEvent.offsetY
-      };
+      this.startWizard(originalEvent.offsetX, originalEvent.offsetY);
       return false;
     });
   }
@@ -100,14 +95,11 @@ class EditorController {
 
   newNode($event) {
     const [x, y] = this.CanvasService.translatePosition(100, 100);
-    this.newNodeData = {
-      x: x,
-      y: y
-    }
+    this.startWizard(x, y);
   }
 
   onConnectionAbort(newNodeData) {
-    this.newNodeData = newNodeData;
+    this.startWizard(newNodeData.x, newNodeData.y, newNodeData.source, newNodeData.port);
   }
 
   onSelect(operationId) {
@@ -125,7 +117,7 @@ class EditorController {
       const newEdge = this.workflow.createEdge({
         from: {
           nodeId: this.newNodeData.source,
-          portIndex: 0
+          portIndex: this.newNodeData.port
         },
         to: {
           nodeId: node.id,
@@ -135,6 +127,19 @@ class EditorController {
       this.workflow.addEdge(newEdge);
     }
     this.newNodeData = null;
+  }
+
+  startWizard(x, y, sourceId = null, portId = null) {
+    if (this.isEditable) {
+      const newNodeData = {
+        x: x,
+        y: y,
+        port: portId,
+        source: sourceId
+      };
+      this.newNodeData = newNodeData;
+    }
+
   }
 }
 

@@ -18,14 +18,14 @@ const NEW_NODE_NODE = {
   input: [{
     id: 'input-0-new-node',
     portPosition: 'center',
-    index: 0
+    index: 0,
+    typeQualifier: ['dataframe']
   }],
   output: []
 };
 
 const NEW_NODE_EDGE = {
   id: 'new-node-edge',
-  startPortId: 0,
   endNodeId: NEW_NODE_NODE.id,
   endPortId: 0
 };
@@ -88,18 +88,18 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionDrag', (connection) => {
-      //TODO Add highlight
+      //console.warn(connection.endpoints[0]);
     });
 
-    jsPlumb.bind('connectionAborted', (information, originalEvent) => {
+    jsPlumb.bind('connectionAborted', (connection, originalEvent) => {
       this.onConnectionAbort({newNodeData: {
         x: (originalEvent.layerX - originalEvent.x) * -1,
         y: (originalEvent.layerY - originalEvent.y + 60) * -1,
-        source: information.sourceId.replace('node-', '')
+        source: connection.sourceId.replace('node-', ''),
+        port: connection.endpoints[0].getParameter('portIndex')
       }});
     });
   }
-
 
   setZoom(zoom) {
     jsPlumb.setZoom(zoom);
@@ -150,6 +150,7 @@ class AdapterService {
     if (this.newNodeData && this.newNodeData.source) {
       const edge = Object.assign({}, NEW_NODE_EDGE);
       edge.startNodeId = this.newNodeData.source;
+      edge.startPortId = this.newNodeData.port;
       edges[edge.id] = edge;
     }
     return edges;
