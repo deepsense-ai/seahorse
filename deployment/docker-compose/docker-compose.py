@@ -31,8 +31,8 @@ def main():
     parser = argparse.ArgumentParser(description=description,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-c', '--configuration', default='linux',
-                        help='Configuration to use: linux, mac',
+    parser.add_argument('-c', '--configuration', default=select_os(),
+                        help='Configuration to use: linux, mac. Default selected based on OS.',
                         action='store')
     parser.add_argument('-b', '--backend-tag', default=git_sha,
                         help='Git tag of the deepsense-backend repo to use',
@@ -88,6 +88,16 @@ def main():
             # process will finish gracefully after the child finishes.
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             subprocess.call(['docker-compose', '-f', temp.name] + extra_args)
+
+
+def select_os():
+    import platform
+    if platform.system() == 'Darwin':
+        return 'mac'
+    elif platform.system() == 'Linux':
+        return 'linux'
+    else:
+        assert False, 'Unknown system!'
 
 if __name__ == '__main__':
     main()
