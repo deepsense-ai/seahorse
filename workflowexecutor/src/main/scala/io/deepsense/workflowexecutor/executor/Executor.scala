@@ -77,7 +77,10 @@ trait Executor extends Logging {
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
 
-    new SparkContext(sparkConf)
+    val sparkContext = new SparkContext(sparkConf)
+    val hadoopConf = sparkContext.hadoopConfiguration
+    hadoopConf.set("fs.s3.impl", "org.apache.hadoop.fs.s3native.NativeS3FileSystem")
+    sparkContext
   }
 
   def createSqlContext(sparkContext: SparkContext): SQLContext = {

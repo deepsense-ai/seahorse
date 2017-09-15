@@ -20,6 +20,7 @@ object Version {
   val akka = "2.3.11"
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
+  val hadoop = "2.6.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
   val scala = "2.10.5"
@@ -34,6 +35,7 @@ object Version {
 
 object Library {
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
+  val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
 
@@ -42,6 +44,7 @@ object Library {
   val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
     Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
+  val hadoopAWS = hadoop("aws")
   val log4JExtras = "log4j" % "apache-log4j-extras" % "1.2.17"
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
@@ -94,6 +97,7 @@ object Dependencies {
   val deeplang = Seq(
     apacheCommons,
     amazonS3,
+    hadoopAWS,
     nscalaTime,
     scalaReflect,
     sparkSql,
