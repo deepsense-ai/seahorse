@@ -48,43 +48,43 @@ class AdapterService {
 
   bindEvents() {
     // Edge management
-    jsPlumb.bind('connection', (info, originalEvent) => {
+    jsPlumb.bind('connection', (jsPlumbEvent, originalEvent) => {
       if (!originalEvent) {
         return;
       }
 
       const data = {
         from: {
-          nodeId: info.sourceId.slice('node-'.length),
-          portIndex: info.sourceEndpoint.getParameter('portIndex')
+          nodeId: jsPlumbEvent.sourceId.slice('node-'.length),
+          portIndex: jsPlumbEvent.sourceEndpoint.getParameter('portIndex')
         },
         to: {
-          nodeId: info.targetId.slice('node-'.length),
-          portIndex: info.targetEndpoint.getParameter('portIndex')
+          nodeId: jsPlumbEvent.targetId.slice('node-'.length),
+          portIndex: jsPlumbEvent.targetEndpoint.getParameter('portIndex')
         }
       };
       const edge = this.workflow.createEdge(data);
       this.workflow.addEdge(edge);
       //TODO remove, as it shouldn't be here
       this.WorkflowService.updateEdgesStates();
-      info.connection.setParameter('edgeId', edge.id);
+      jsPlumbEvent.connection.setParameter('edgeId', edge.id);
       if (this.DeepsenseCycleAnalyser.cycleExists(this.workflow)) {
         this.workflow.removeEdge(edge);
-        jsPlumb.detach(info.connection);
+        jsPlumb.detach(jsPlumbEvent.connection);
       }
     });
 
-    jsPlumb.bind('connectionDetached', (info, originalEvent) => {
+    jsPlumb.bind('connectionDetached', (jsPlumbEvent, originalEvent) => {
       if (this.workflow) {
-        const edge = this.workflow.getEdgeById(info.connection.getParameter('edgeId'));
-        if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
+        const edge = this.workflow.getEdgeById(jsPlumbEvent.connection.getParameter('edgeId'));
+        if (edge && jsPlumbEvent.targetEndpoint.isTarget && jsPlumbEvent.sourceEndpoint.isSource && originalEvent) {
           this.workflow.removeEdge(edge);
         }
       }
     });
 
-    jsPlumb.bind('connectionMoved', (info) => {
-      const edge = this.workflow.getEdgeById(info.connection.getParameter('edgeId'));
+    jsPlumb.bind('connectionMoved', (jsPlumbEvent) => {
+      const edge = this.workflow.getEdgeById(jsPlumbEvent.connection.getParameter('edgeId'));
       if (edge) {
         this.workflow.removeEdge(edge);
       }
@@ -124,14 +124,14 @@ class AdapterService {
 
   renderPorts(nodes) {
     for (const nodeId of Object.keys(nodes)) {
-      const nodeElement = this.container.querySelector(`#node-${nodeId}`);
-      const nodeObject = nodes[nodeId];
-      this.renderOutputPorts(nodeElement, nodeObject.output, nodes[nodeId]);
-      this.renderInputPorts(nodeElement, nodeObject.input);
+      const element = this.container.querySelector(`#node-${nodeId}`);
+      const node = nodes[nodeId];
+      this.renderOutputPorts(element, node.output, nodes[nodeId]);
+      this.renderInputPorts(element, node.input);
     }
   }
 
-  renderOutputPorts (nodeElement, ports, nodeObj) {
+  renderOutputPorts (element, ports, node) {
     ports.forEach((port) => {
       const style = Object.create(OUTPUT_STYLE);
 
@@ -139,13 +139,13 @@ class AdapterService {
         style.isSource = false;
       }
 
-      const jsPlumbPort = jsPlumb.addEndpoint(nodeElement, style, {
+      const jsPlumbPort = jsPlumb.addEndpoint(element, style, {
         anchor: POSITION_MAP.OUTPUT[port.portPosition],
         uuid: port.id
       });
 
       jsPlumbPort.setParameter('portIndex', port.index);
-      jsPlumbPort.setParameter('nodeId', nodeObj.id);
+      jsPlumbPort.setParameter('nodeId', node.id);
     });
   };
 
@@ -166,18 +166,16 @@ class AdapterService {
     const outputPrefix = 'output';
     const inputPrefix = 'input';
 
-    for (const id in edges) {
-      if (edges.hasOwnProperty(id)) {
-        const edge = edges[id];
-        const connection = jsPlumb.connect({
-          uuids: [
-            `${outputPrefix}-${edge.startPortId}-${edge.startNodeId}`,
-            `${inputPrefix}-${edge.endPortId}-${edge.endNodeId}`
-          ],
-          detachable: this.isEditable
-        });
-        connection.setParameter('edgeId', edge.id);
-      }
+    for (const id of Object.keys(edges)) {
+      const edge = edges[id];
+      const connection = jsPlumb.connect({
+        uuids: [
+          `${outputPrefix}-${edge.startPortId}-${edge.startNodeId}`,
+          `${inputPrefix}-${edge.endPortId}-${edge.endNodeId}`
+        ],
+        detachable: this.isEditable
+      });
+      connection.setParameter('edgeId', edge.id);
     }
   }
 }
