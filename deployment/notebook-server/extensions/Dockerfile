@@ -44,10 +44,10 @@ USER root
 RUN apt-get update && apt-get install openjdk-7-jdk -y
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
-# Install Spark 1.5.1 for Hadoop 2.6
+# Install Spark 1.5.2 for Hadoop 2.6
 RUN apt-get install curl -y
-RUN curl -s http://d3kbcqa49mib13.cloudfront.net/spark-1.5.1-bin-hadoop2.6.tgz | tar -xz -C /opt
-RUN cd /opt && ln -s spark-1.5.1-bin-hadoop2.6 spark
+RUN curl -s http://d3kbcqa49mib13.cloudfront.net/spark-1.5.2-bin-hadoop2.6.tgz | tar -xz -C /opt
+RUN cd /opt && ln -s spark-1.5.2-bin-hadoop2.6 spark
 ENV SPARK_HOME /opt/spark
 
 # Install Python 2 kernel spec globally to avoid permission problems when NB_UID

@@ -1,5 +1,5 @@
 {
- "display_name": "pySpark (Spark 1.5.1)",
+ "display_name": "pySpark",
  "language": "python",
  "argv": [
   "/opt/conda/envs/python2/bin/python",
@@ -9,8 +9,8 @@
   "{connection_file}"
  ],
  "env": {
-  "SPARK_HOME": "/opt/spark-1.5.1-bin-hadoop2.6",
-  "PYTHONPATH": "/opt/spark-1.5.1-bin-hadoop2.6/python/:/opt/spark-1.5.1-bin-hadoop2.6/python/lib/py4j-0.8.2.1-src.zip:/usr/local/share/jupyter/kernels/pyspark/",
+  "SPARK_HOME": "/opt/spark",
+  "PYTHONPATH": "/opt/spark/python/:/opt/spark/python/lib/py4j-0.8.2.1-src.zip:/usr/local/share/jupyter/kernels/pyspark/",
   "KERNEL_INIT_FILE": "/usr/local/share/jupyter/kernels/pyspark/kernel_init.py",
   "PYSPARK_SUBMIT_ARGS": "--master local[*] pyspark-shell",
   "NOTEBOOK_SERVER_ADDRESS": "localhost",
