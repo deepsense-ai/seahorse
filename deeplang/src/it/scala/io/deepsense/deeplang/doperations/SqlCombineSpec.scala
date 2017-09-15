@@ -117,6 +117,11 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
       warnings.warnings should
         contain (SqlInferenceWarning(expression, "Invalid Spark SQL expression."))
     }
+    "not throw exception during inference when its parameters are not set" in {
+      val expression = s"""SELECT * from $leftName"""
+      val parameterlessCombine = new SqlCombine()
+      inferSqlCombineSchema(parameterlessCombine, expression, leftName, leftSchema, rightName, rightSchema)
+    }
   }
 
   private def executeSqlCombine(expresssion: String,
@@ -138,6 +143,10 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
       .setLeftTableName(leftName)
       .setRightTableName(rightName)
       .setSqlCombineExpression(expression)
+    inferSqlCombineSchema(combine, expression, leftName, leftSchema, rightName, rightSchema)
+  }
+  private def inferSqlCombineSchema(combine: SqlCombine, expression: String, leftName: String, leftSchema: StructType,
+      rightName: String, rightSchema: StructType) = {
     val (knowledge, warnings) = combine.inferKnowledge(mock[InferContext])(Vector(
       DKnowledge(DataFrame.forInference(leftSchema)),
       DKnowledge(DataFrame.forInference(rightSchema))

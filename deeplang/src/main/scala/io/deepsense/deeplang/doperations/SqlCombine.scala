@@ -51,6 +51,7 @@ final class SqlCombine
     name = "Right dataframe id",
     description = "The identifier that can be used in the Spark SQL expression to refer the " +
       "right-hand side DataFrame.")
+  setDefault(rightTableName, "")
 
   def getRightTableName: String = $(rightTableName)
   def setRightTableName(name: String): this.type = set(rightTableName, name)
@@ -59,6 +60,7 @@ final class SqlCombine
     name = "expression",
     description = "SQL expression to be executed on two DataFrames, yielding a DataFrame.",
     language = CodeSnippetLanguage(CodeSnippetLanguage.sql))
+  setDefault(sqlCombineExpression, "")
 
   def getSqlCombineExpression: String = $(sqlCombineExpression)
   def setSqlCombineExpression(expression: String): this.type = set(sqlCombineExpression, expression)
