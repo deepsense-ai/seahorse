@@ -130,14 +130,13 @@ Detailed information about command line parameters can be obtained by executing 
 
 | Argument                                                        | Meaning |
 |:----------------------------------------------------------------|:--------|
-| ``-w FILE``<BR/>``--workflow-filename FILE``                    | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
+| ``-w FILENAME``<BR/>``--workflow-filename FILENAME``            | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
-| ``-e NAME=VALUE``<BR/>``--extra-var NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |
-| ``-m HOST``<BR/>``--message-queue-host HOST``                   | Address of message queue host. |
+| ``-e:NAME=VALUE``<BR/>``--extra-var:NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |
 | ``-p PATH``<BR/>``--python-executor-path PATH``                 | Path to PyExecutor code (included in workflowexecutor.jar). |
 
-* **NOTE:** Parameter ``-w FILE`` (or its long name) needs to be specified.
-* **NOTE:** Both parameters ``-w FILE`` and ``-o DIR`` (or their long names) have to be specified.
+* **NOTE:** Parameter ``-w FILENAME`` (or its long name) needs to be specified.
+* **NOTE:** Both parameters ``-w FILENAME`` and ``-o DIR`` (or their long names) have to be specified.
 * **NOTE:** When using ``--extra-var`` option,
 if variable name or value contains special characters (e.g. space),
 it has to be surrounded by quotation marks (“”).
