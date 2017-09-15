@@ -137,7 +137,10 @@
             "names included": true,
             "convert to boolean": true,
             "categorical columns": {
-              "selections": [],
+              "selections": [{
+                "type": "columnList",
+                "values": ["col5"]
+              }],
               "excluding": false
             }
           }
