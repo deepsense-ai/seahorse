@@ -40,8 +40,11 @@ function FlowChartBoxController($scope, $element, $window) {
   };
 
   internal.contextMenuOpener = function contextMenuOpener (event, data) {
-    internal.contextMenuPosition.x = data.event.pageX;
-    internal.contextMenuPosition.y = data.event.pageY;
+    let portEl = data.reference.canvas;
+    let dimensions = portEl.getBoundingClientRect();
+
+    internal.contextMenuPosition.x = dimensions.left + dimensions.width * jsPlumb.getZoom();
+    internal.contextMenuPosition.y = dimensions.top + dimensions.height * jsPlumb.getZoom();
     internal.contextMenuState = 'visible';
     $scope.$digest();
   };
