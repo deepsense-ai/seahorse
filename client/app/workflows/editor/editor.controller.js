@@ -2,19 +2,15 @@
 const ZOOM_STEP = 0.1;
 
 class EditorController {
-  constructor(NewNodeService, CanvasService, MouseEvent,  $element) {
+  constructor(CanvasService, MouseEvent,  $element) {
     'ngInject';
-    this.NewNodeService = NewNodeService;
     this.CanvasService = CanvasService;
     this.MouseEvent = MouseEvent;
     this.$element = $element;
   }
 
   $postLink() {
-    const canvasContainer = this.$element[0].querySelector('.flowchart-box');
-
     this.bindEvents();
-    this.NewNodeService.initialize(canvasContainer);
   }
 
   $onDestroy() {
@@ -55,7 +51,10 @@ class EditorController {
     this.$canvas.bind('drop', (event) => {
       const originalEvent = event.originalEvent;
       if (originalEvent.dataTransfer.getData('draggableExactType') === 'graphNode') {
-        this.NewNodeService.startWizard(originalEvent.layerX, originalEvent.layerY);
+        this.newNodeData = {
+          x: originalEvent.layerX,
+          y: originalEvent.layerY
+        };
       }
     });
   }
@@ -77,7 +76,10 @@ class EditorController {
   }
 
   newNode() {
-    this.NewNodeService.startWizard(100, 100);
+    this.newNodeData = {
+      x: 100,
+      y: 100
+    };
   }
 }
 

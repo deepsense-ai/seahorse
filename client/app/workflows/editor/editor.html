@@ -1,4 +1,12 @@
 <div class="flowchart-box">
+  <new-node class="flowchar-box__new-node"
+            data="$ctrl.newNodeData.param"
+            ng-if="$ctrl.newNodeData"
+            ng-style="{
+              left: $ctrl.newNodeData.x + 'px',
+              top: $ctrl.newNodeData.y + 'px'
+            }"
+  ></new-node>
   <canvas-toolbar
     on-zoom-in="$ctrl.zoomIn()"
     on-zoom-out="$ctrl.zoomOut()"

@@ -1,14 +1,5 @@
 <div class="c-workflow-container">
   <section class="c-workflow-container__content" resizable-listener="height">
-    <side-bar></side-bar>
-
-    <operation-catalogue
-      ng-style="{'display' : workflow.SideBarData.operationCatalogue ? 'block' : 'none'}"
-      catalog-collection="::workflow.catalog"
-      is-running="!workflow.isEditable()"
-      >
-    </operation-catalogue>
-
     <editor
       is-editable="workflow.isEditable()"
       workflow="workflow.getWorkflow()"

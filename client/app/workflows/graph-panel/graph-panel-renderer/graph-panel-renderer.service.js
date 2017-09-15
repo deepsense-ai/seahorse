@@ -83,7 +83,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       jsPlumb.unbind('connectionDetached');
       jsPlumb.unbind('connectionMoved');
       jsPlumb.unbind('connectionDrag');
-      jsPlumb.setZoom(internal.currentZoomRatio, true);
+      //jsPlumb.setZoom(internal.currentZoomRatio, true);
     },
 
     getNodeById(id) {
