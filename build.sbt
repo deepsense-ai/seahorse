@@ -50,7 +50,7 @@ lazy val sparkUtils = sparkVersion match {
 lazy val rootProject = project.in(file("."))
   .settings(name := "seahorse")
   .settings(PublishSettings.disablePublishing)
-  .aggregate(api, sparkUtils, commons, deeplang, docgen, graph, workflowjson, reportlib, workflowexecutormqprotocol,
+  .aggregate(api, helperSparkUtils, sparkUtils, commons, deeplang, docgen, graph, workflowjson, reportlib, workflowexecutormqprotocol,
     workflowexecutor)
 
 lazy val api                    = project settings settingsForPublished
