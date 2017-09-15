@@ -24,6 +24,8 @@ import io.deepsense.deeplang.params.wrappers.spark.BooleanParamWrapper
 
 class DiscreteCosineTransformer extends SparkTransformerAsMultiColumnTransformer[DCT] {
 
+  override def convertInputNumericToVector: Boolean = true
+
   val inverse = new BooleanParamWrapper[DCT](
     name = "inverse",
     description = "Indicates whether to perform the inverse DCT (true) or forward DCT (false).",
