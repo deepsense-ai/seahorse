@@ -10,9 +10,6 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.7.0")
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.2")
 
-// Assembly plugin allows creation a fat JAR of project with all of its dependencies.
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.12.0")
-
 // Plugin provides build info to use in code
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
 
