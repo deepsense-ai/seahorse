@@ -18,7 +18,7 @@ CUSTOM_TAG="$1"
 BASE_VERSION=`cat package.json | jsonValue version 1 | xargs`
 SNAPSHOT_REPOSITORY="deepsense-frontend-snapshot"
 RELEASE_REPOSITORY="deepsense-frontend-release"
-NPM_REGISTRY_URL="http://10.10.1.124:4873"
+NPM_REGISTRY_URL="https://registry.npmjs.org"
 
 function calculate_is_snapshot_version() {
   if [[ "$BASE_VERSION" == *SNAPSHOT ]]
@@ -40,13 +40,14 @@ function calculate_repository_url() {
 
 function prepare_environment() {
   echo "** Preparing Environment **"
-  sudo npm install -g gulp
-  sudo npm install -g npmrc
   # this returns an error unless it's run for the first time on a machine
   # we know about it and want to continue anyway
   npmrc -c codilime || test 1
   npmrc codilime
   npm set registry $NPM_REGISTRY_URL
+
+  sudo npm install -g gulp
+  sudo npm install -g npmrc
 
   #install all components dependencies
   (cd ../deepsense-components && ./install_all.sh)
