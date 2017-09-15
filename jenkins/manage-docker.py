@@ -25,9 +25,10 @@ sbt_type = 'sbt'
 sbt_clean_more_cmd = "(find . -name target -type d -exec rm -rf {} \; || true) && sbt clean &&"
 
 
-def simple_docker(docker_image_name, docker_file_path, project_name):
-    command = "./jenkins/scripts/build-local-docker.sh {} {}".format(docker_file_path, project_name)
-    return simple_command_docker(docker_image_name, command)
+def simple_docker(docker_image_name, docker_file_path):
+    tag = "{}:{}".format(docker_image_name, git_sha())
+    command = "(cd {}; docker build -t {} .)".format(docker_file_path, tag)
+    return SimpleCommandConfig(docker_image_name, simple_command_type, command)
 
 
 def simple_command_docker(docker_image_name, command):
@@ -38,22 +39,26 @@ def sbt_docker(docker_image_name, project_name):
     return SbtDockerConfig(docker_image_name, sbt_type, "{}/docker:publishLocal".format(project_name))
 
 
+def git_sha():
+    sha_output_with_endline = subprocess.check_output("git rev-parse HEAD", shell=True, cwd=cwd)
+    return sha_output_with_endline.strip()
+
+
 image_confs = [
-    simple_docker("deepsense-proxy", "proxy", "deepsense-proxy"),
-    simple_docker("deepsense-rabbitmq", "deployment/rabbitmq", "deepsense-rabbitmq"),
-    simple_docker("deepsense-h2", "deployment/h2-docker", "deepsense-h2"),
-    simple_docker("deepsense-spark", "deployment/spark-docker", "deepsense-spark"),
+    simple_docker("deepsense-proxy", "proxy"),
+    simple_docker("deepsense-rabbitmq", "deployment/rabbitmq"),
+    simple_docker("deepsense-h2", "deployment/h2-docker"),
+    simple_docker("deepsense-spark", "deployment/spark-docker"),
     simple_command_docker("deepsense-mesos-spark", "./jenkins/build_spark_docker_mesos.sh"),
     sbt_docker("deepsense-schedulingmanager", "schedulingmanager"),
     sbt_docker('deepsense-sessionmanager', "sessionmanager"),
     sbt_docker("deepsense-workflowmanager", "workflowmanager"),
     sbt_docker("deepsense-datasourcemanager", "datasourcemanager"),
     sbt_docker("deepsense-libraryservice", "libraryservice"),
-    simple_docker("deepsense-notebooks", "remote_notebook", "deepsense-notebooks"),
-    simple_docker("deepsense-authorization", "deployment/authorization-docker", "deepsense-authorization"),
-    simple_docker("deepsense-mail", "deployment/exim", "deepsense-mail")
+    simple_docker("deepsense-notebooks", "remote_notebook"),
+    simple_docker("deepsense-authorization", "deployment/authorization-docker"),
+    simple_docker("deepsense-mail", "deployment/exim")
 ]
-
 image_conf_by_name = {conf.docker_image_name: conf for conf in image_confs}
 docker_repo = "docker-repo.deepsense.codilime.com/deepsense_io"
 
@@ -180,11 +185,6 @@ def check_if_git_repo_is_clean():
         print "# Aborting..."
         print "####################################"
         raise Exception("Cannot sync with unstaged files")
-
-
-def git_sha():
-    sha_output_with_endline = subprocess.check_output("git rev-parse HEAD", shell=True, cwd=cwd)
-    return sha_output_with_endline.strip()
 
 
 def check_images_provided_by_user(user_provided_images):
