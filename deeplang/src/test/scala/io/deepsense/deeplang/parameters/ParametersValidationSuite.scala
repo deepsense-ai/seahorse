@@ -118,7 +118,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of MultipleColumnSelection should validate inner selectors") {
     val selections = Vector.fill(3)({mock[ColumnSelection]})
-    val selectorParameter = ColumnSelectorParameter("description", true)
+    val selectorParameter = ColumnSelectorParameter("description", true, 0)
     val multipleColumnSelection = MultipleColumnSelection(selections)
     selectorParameter.value = Some(multipleColumnSelection)
     selectorParameter.validate

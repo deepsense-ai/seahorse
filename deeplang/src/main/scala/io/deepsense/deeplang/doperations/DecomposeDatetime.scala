@@ -28,7 +28,10 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
 
   override val parameters = ParametersSchema(
     timestampColumnParamKey ->
-      SingleColumnSelectorParameter("Timestamp column to decompose", required = true),
+      SingleColumnSelectorParameter(
+        "Timestamp column to decompose",
+        required = true,
+        portIndex = 0),
     timestampPartsParamKey ->
       MultipleChoiceParameter("Parts of the date time to select", None, required = true, timeUnits)
   )

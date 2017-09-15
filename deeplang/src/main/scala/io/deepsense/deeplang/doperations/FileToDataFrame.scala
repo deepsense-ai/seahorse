@@ -42,7 +42,8 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
       ))),
     categoricalColumnsParameter -> ColumnSelectorParameter(
       "Categorical columns in the input File",
-      required = false
+      required = false,
+      portIndex = 0
     )
   )
 

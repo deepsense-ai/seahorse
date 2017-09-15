@@ -483,19 +483,20 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Single column selector can provide its json representation") {
     val description = "example single selector parameter description"
     val required = false
-    val columnSelectorParameter = SingleColumnSelectorParameter(description, required)
+    val columnSelectorParameter = SingleColumnSelectorParameter(description, required, 2)
 
     val expectedFields = Map(
       "type" -> JsString("selector"),
       "description" -> JsString(description),
       "required" -> JsBoolean(required),
-      "isSingle" -> JsBoolean(true))
+      "isSingle" -> JsBoolean(true),
+      "portIndex" -> JsNumber(2))
 
     assert(columnSelectorParameter.jsDescription == expectedFields)
   }
 
   test("Single column selector by index can provide json representation of it's value") {
-    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false, portIndex = 0)
     val value = 4
     columnSelectorParameter.value = Some(IndexSingleColumnSelection(value))
 
@@ -504,7 +505,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Single column selector by name can provide json representation of it's value") {
-    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false, portIndex = 0)
     val value = "some_name"
     columnSelectorParameter.value = Some(NameSingleColumnSelection(value))
 
@@ -513,7 +514,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Single column selector can be filled with json selection by index") {
-    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false, portIndex = 0)
     val someValue = 4
     columnSelectorParameter.fillValueWithJson(JsObject(
       "type" -> JsString("index"),
@@ -522,7 +523,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Single column selector can be filled with json selection by name") {
-    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false, portIndex = 0)
     val someName = "someName"
     columnSelectorParameter.fillValueWithJson(JsObject(
       "type" -> JsString("column"),
@@ -531,7 +532,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Single column selector can be filled with JsNull") {
-    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = SingleColumnSelectorParameter("", required = false, portIndex = 0)
     columnSelectorParameter.fillValueWithJson(JsNull)
     assert(columnSelectorParameter.value == None)
   }
@@ -539,19 +540,20 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Multiple column selector can provide its json representation") {
     val description = "example selector parameter description"
     val required = false
-    val columnSelectorParameter = ColumnSelectorParameter(description, required)
+    val columnSelectorParameter = ColumnSelectorParameter(description, required, portIndex = 2)
 
     val expectedFields = Map(
       "type" -> JsString("selector"),
       "description" -> JsString(description),
       "required" -> JsBoolean(required),
-      "isSingle" -> JsBoolean(false))
+      "isSingle" -> JsBoolean(false),
+      "portIndex" -> JsNumber(2))
 
     assert(columnSelectorParameter.jsDescription == expectedFields)
   }
 
   test("Multiple column selector can provide json representation of it's value") {
-    val columnSelectorParameter = ColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
     columnSelectorParameter.value = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
@@ -580,7 +582,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Multiple column selector can be filled with json") {
-    val columnSelectorParameter = ColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
     columnSelectorParameter.fillValueWithJson(JsArray(
       JsObject(
         "type" -> JsString("columnList"),
@@ -609,13 +611,13 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Column selector can be filled with JsNull") {
-    val columnSelectorParameter = ColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
     columnSelectorParameter.fillValueWithJson(JsNull)
     assert(columnSelectorParameter.value == None)
   }
 
   test("IndexRangeColumnSelection can be filled with an empty or too short list") {
-    val columnSelectorParameter = ColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
     columnSelectorParameter.fillValueWithJson(JsArray(
       JsObject(
         "type" -> JsString("indexRange"),
@@ -643,7 +645,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("IndexRangeColumnSelection can not be filled with a too long list") {
-    val columnSelectorParameter = ColumnSelectorParameter("", required = false)
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
     a [DeserializationException] should be thrownBy {
       columnSelectorParameter.fillValueWithJson(JsArray(
         JsObject(

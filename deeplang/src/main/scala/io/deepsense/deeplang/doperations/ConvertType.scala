@@ -23,7 +23,8 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
   override val parameters: ParametersSchema = ParametersSchema(
     ConvertType.SelectedColumns -> ColumnSelectorParameter(
       "Columns to be converted",
-      required = true
+      required = true,
+      portIndex = 0
     ),
     ConvertType.TargetType -> ChoiceParameter(
       "Target type of the columns",

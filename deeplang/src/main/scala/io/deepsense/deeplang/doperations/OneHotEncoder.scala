@@ -18,7 +18,8 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
   val withRedundantKey = "with redundant"
 
   override val parameters: ParametersSchema = ParametersSchema(
-    selectedColumnsKey -> ColumnSelectorParameter("Columns to encode", required = true),
+    selectedColumnsKey -> ColumnSelectorParameter(
+      "Columns to encode", required = true, portIndex = 0),
     withRedundantKey -> BooleanParameter(
       "Preserve redundant column", default = Some(false), required = true
     )

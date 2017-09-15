@@ -249,8 +249,11 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
   /** Tells if this selectors selects single column or many. */
   protected val isSingle: Boolean
 
+  /** Input port index of the data source. */
+  protected val portIndex: Int
+
   override def jsDescription: Map[String, JsValue] =
-    super.jsDescription + ("isSingle" -> isSingle.toJson)
+    super.jsDescription + ("isSingle" -> isSingle.toJson, "portIndex" -> portIndex.toJson)
 }
 
 /**
@@ -259,6 +262,7 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
 case class SingleColumnSelectorParameter(
     description: String,
     required: Boolean,
+    portIndex: Int,
     var value: Option[SingleColumnSelection] = None)
   extends AbstractColumnSelectorParameter {
   type HeldValue = SingleColumnSelection
@@ -282,6 +286,7 @@ case class SingleColumnSelectorParameter(
 case class ColumnSelectorParameter(
     description: String,
     required: Boolean,
+    portIndex: Int,
     var value: Option[MultipleColumnSelection] = None)
   extends AbstractColumnSelectorParameter {
   type HeldValue = MultipleColumnSelection

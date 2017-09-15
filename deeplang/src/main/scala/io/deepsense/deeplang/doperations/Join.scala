@@ -24,9 +24,11 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
   override val id: Id = "06374446-3138-4cf7-9682-f884990f3a60"
 
   override val parameters: ParametersSchema = ParametersSchema(
+    // TODO (DJ) needs refactoring to two selectors, portIndex = 0 for now
     Join.joinColumnsParamKey -> ColumnSelectorParameter(
       "Columns to be LEFT JOINed upon",
-      required = true)
+      required = true,
+      portIndex = 0)
   )
 
   override protected def _execute(context: ExecutionContext)

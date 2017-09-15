@@ -125,7 +125,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting SingleColumnsSelector value from schema") {
-    val param = SingleColumnSelectorParameter("description", true)
+    val param = SingleColumnSelectorParameter("description", true, 0)
     val schema = ParametersSchema("x" -> param)
     val parameter = IndexSingleColumnSelection(1)
     param.value = Some(parameter)
@@ -133,7 +133,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting ColumnSelector value from schema") {
-    val param = ColumnSelectorParameter("description", true)
+    val param = ColumnSelectorParameter("description", true, 0)
     val schema = ParametersSchema("x" -> param)
     val values = IndexColumnSelection(Set(1, 3))
     val parameter = MultipleColumnSelection(Vector(values))
