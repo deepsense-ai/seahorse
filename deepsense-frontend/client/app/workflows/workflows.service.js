@@ -198,7 +198,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         WorkflowsApiClient.getWorkflow(workflowId),
         SessionManagerApi.downloadSessions()
       ]).then(([workflow, sessions]) => {
-        this._assignStatusToWorkflow(workflow, sessions);
+        this._assignStatusesToWorkflows([workflow], sessions);
         return workflow;
       });
     }
@@ -216,19 +216,16 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
 
     _assignStatusesToWorkflows(workflows, sessions) {
       _.forEach(workflows, (workflow) => {
-        this._assignStatusToWorkflow(workflow, sessions);
+        const sessionByWorkflowId = _.object(_.map(sessions, s => [s.workflowId, s]));
+        const session = sessionByWorkflowId[workflow.id];
+        if (session && session.status === 'error') {
+          // TODO Design and implement proper error handling.
+          console.warn('Session status is `error` for ', session);
+        }
+        workflow.sessionStatus = _.isUndefined(session) ? SessionStatus.NOT_RUNNING : SessionStatus.RUNNING;
       });
     }
 
-    _assignStatusToWorkflow(workflow, sessions) {
-      const sessionByWorkflowId = _.object(_.map(sessions, s => [s.workflowId, s]));
-      const session = sessionByWorkflowId[workflow.id];
-      if (session && session.status === 'error') {
-        // TODO Design and implement proper error handling.
-        console.warn('Session status is `error` for ', session);
-      }
-      workflow.sessionStatus = _.isUndefined(session) ? SessionStatus.NOT_RUNNING : SessionStatus.RUNNING;
-    }
   }
 
 

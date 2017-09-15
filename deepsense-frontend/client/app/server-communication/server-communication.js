@@ -19,20 +19,16 @@ class ServerCommunication {
     this.exchangeSubscriptions = {};
 
     this.seahorseTopicListeningUri = () => {
-      return `/exchange/seahorse/seahorse.${this._getSessionId()}.to`;
+      return `/exchange/seahorse/seahorse.${this.workflowId}.to`;
     };
 
     this.workflowTopicListeningUri = () => {
-      return `/exchange/seahorse/workflow.${this._getSessionId()}.${this.workflowId}.to`;
+      return `/exchange/seahorse/workflow.${this.workflowId}.${this.workflowId}.to`;
     };
 
     this.workflowTopicSendingUri = () => {
-      return `/exchange/seahorse/workflow.${this._getSessionId()}.${this.workflowId}.from`;
+      return `/exchange/seahorse/workflow.${this.workflowId}.${this.workflowId}.from`;
     };
-  }
-
-  _getSessionId() {
-    return this.workflowId;
   }
 
   static isMessageKnown(msgType) {

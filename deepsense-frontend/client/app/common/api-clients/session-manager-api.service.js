@@ -6,7 +6,7 @@ function SessionManagerApi($http, config) {
   const service = this;
 
   service.downloadSessions = downloadSessions;
-  service.downloadSessionById = downloadSessionById;
+  service.downloadSessionByWorkflowId = downloadSessionByWorkflowId;
   service.deleteSessionById = deleteSessionById;
   service.startSession = startSession;
 
@@ -21,15 +21,15 @@ function SessionManagerApi($http, config) {
     });
   }
 
-  function downloadSessionById(sessionId) {
-    return $http.get(`${URL}/${sessionId}`).then(function processResult(result) {
+  function downloadSessionByWorkflowId(workflowId) {
+    return $http.get(`${URL}/${workflowId}`).then(function processResult(result) {
       console.log('SessionManagerApi downloadSessionById result', result);
       return result.data;
     });
   }
 
-  function deleteSessionById(sessionId) {
-    return $http.delete(`${URL}/${sessionId}`).then(function processResult(result) {
+  function deleteSessionById(workflowId) {
+    return $http.delete(`${URL}/${workflowId}`).then(function processResult(result) {
       return result;
     });
   }
