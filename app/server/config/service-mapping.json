@@ -1,6 +1,7 @@
 [{
   "path": "/v1/workflows",
   "name": "workflow-manager",
+  "proxyTimeout": 5000,
   "auth": "basic"
 }, {
   "path": "/v1/presets",
@@ -25,6 +26,10 @@
 }, {
   "path": "/stomp",
   "name": "rabbitmq"
+}, {
+  "path": "/authorization",
+  "name": "sso",
+  "proxyTimeout": 1000
 }, {
   "path": "/",
   "name": "frontend"

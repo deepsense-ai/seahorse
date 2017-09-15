@@ -34,6 +34,16 @@ auth.init(app);
 
 app.use(userCookieHandler);
 
+app.all("/authorization/**",
+  reverseProxy.forward
+);
+
+app.use(express.static('app/server/html'));
+
+app.all("/wait.html");
+
+
+
 app.get('/',
   auth.login,
   reverseProxy.forward
