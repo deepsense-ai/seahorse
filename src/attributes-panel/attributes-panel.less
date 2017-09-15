@@ -1,12 +1,10 @@
+@import "../common/variables.less";
+
 .popover {
   z-index: 10000;
 }
 
 .operation-attributes-panel {
-  @main-space: 10px;
-  @heading-padding: 15px;
-  @height: 50px;
-
   position: absolute;
   width: 250px;
   height: 100%;
@@ -46,30 +44,6 @@
 
   &__details {
     padding: 0 @main-space / 2;
-  }
-
-  &__state {
-    float: none !important;
-    margin: @main-space / 2 0 @main-space / 2 !important;
-    display: block;
-    font-size: 10px;
-    height: auto;
-    line-height: 1;
-
-    [role="progressbar"] {
-      height: auto;
-      font-size: inherit;
-      line-height: inherit;
-      padding: 3px 8px;
-    }
-  }
-
-  &__time {
-    margin: @main-space / 2 0;
-    display: block;
-    padding: 2px 5px;
-    background: #e7eaec;
-    border-radius: .25em;
   }
 
   &__description {
@@ -249,14 +223,6 @@
     }
   }
 
-  .action-text {
-    width: 100%;
-
-    &__text-element {
-      margin-left: 10px;
-    }
-  }
-
   .o-exclusion {
     display: flex;
     border-top: 1px solid #a9a9a9;
@@ -277,17 +243,6 @@
         width: 100%;
       }
     }
-  }
-
-  .o-error {
-    &__message {
-      text-transform: none;
-    }
-  }
-
-  .o-error-btn {
-    margin: -10px 0 0 0;
-    border-radius: 0 0 5px 5px;
   }
 }
 

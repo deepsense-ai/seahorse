@@ -1,0 +1,38 @@
+@import "./variables";
+
+.o-state {
+  &__status {
+    float: none !important;
+    margin: @main-space / 2 0 @main-space / 2 !important;
+    display: block;
+    font-size: 10px;
+    height: auto;
+    line-height: 1;
+  }
+
+  &__time {
+    margin: @main-space / 2 0;
+    display: block;
+    padding: 2px 5px;
+    border-radius: .25em;
+  }
+}
+
+.o-action-text {
+  width: 100%;
+
+  &__text-element {
+    margin-left: 10px;
+  }
+}
+
+.o-error {
+  &__message {
+    text-transform: none;
+  }
+}
+
+.o-error-btn {
+  margin: -10px 0 0 0;
+  border-radius: 0 0 5px 5px;
+}

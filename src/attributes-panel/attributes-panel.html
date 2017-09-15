@@ -10,9 +10,9 @@
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
     </section>
-    <section class="operation-attributes-panel__details" ng-if="node.state">
+    <section class="operation-attributes-panel__details o-state" ng-if="node.state">
       <header>
-        <p class="operation-attributes-panel__state label"
+        <p class="o-state__status label"
            ng-class="{
             'label-success': node.state.status === 'status_completed',
             'label-danger': node.state.status === 'status_failed',
@@ -23,11 +23,11 @@
         </p>
         <button ng-show="node.state.status === 'status_failed'"
             ng-click="panel.showErrorMessage()"
-            class="btn btn-xs btn-success action-text fa fa-exclamation-triangle o-error-btn">
-          <span class="action-text__text-element">Click here to show errors</span>
+            class="btn btn-xs btn-success o-action-text fa fa-exclamation-triangle o-error-btn">
+          <span class="o-action-text__text-element">Click here to show errors</span>
         </button>
       </header>
-      <p class="operation-attributes-panel__time text-right"
+      <p class="o-state__time text-right gray-bg"
          ng-show="node.state.ended">
         <span class="block">Last executed</span>
         <i class="fa fa-clock-o"></i>
