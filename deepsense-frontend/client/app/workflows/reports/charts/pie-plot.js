@@ -1,7 +1,7 @@
 'use strict';
 
 function PiePlot() {
-  return {
+  const directive = {
     restrict: 'E',
     templateUrl: 'app/workflows/reports/charts/plot.html',
     replace: true,
@@ -9,43 +9,35 @@ function PiePlot() {
       'data': '='
     },
     link: function(scope, element) {
-      function displayChart(data) {
-        $(element)
-          .highcharts({
-            chart: {
-              type: 'pie'
-            },
-            title: null,
-            subtitle: null,
-            plotOptions: {
-              pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                  enabled: true,
-                  format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                  style: {
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                  }
-                }
-              }
-            },
-            tooltip: {
-              headerFormat: 'Value: <b>{point.key}</b><br />',
-              pointFormat: 'Occurrence count: <b>{point.y}</b>'
-            },
-            series: [{
-              colorByPoint: true,
-              data: _.zip(data.buckets, data.counts)
-            }]
-          });
-      }
-
-      scope.$applyAsync(() => {
-        scope.$watch('data', displayChart);
+      scope.$watch('data', function(data) {
+        displayChart(data, element);
       });
     }
   };
+  return directive;
+
+  function displayChart(data, element) {
+    const chart = nv.models.pieChart();
+
+    const chartValues = _.map(data.counts, function (val, idx) {
+      return {
+        x: `${data.buckets[idx]}: ${val}`,
+        y: val
+      };
+    });
+
+    chart
+        .duration(500)
+        .noData('There is no Data to display')
+        .labelThreshold(0)
+        .labelType('percent');
+
+    d3.select(element[0].querySelector('.svg-plot'))
+        .datum(chartValues)
+        .call(chart);
+
+    nv.utils.windowResize(chart.update);
+  }
 }
 
 exports.inject = function(module) {

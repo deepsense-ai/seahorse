@@ -66,8 +66,6 @@
           "./bower_components/mousetrap/mousetrap.js",
           "./bower_components/lodash/lodash.js",
           "./bower_components/jquery/dist/jquery.min.js",
-          "./bower_components/highcharts-release/highcharts.js",
-          "./bower_components/highcharts-release/highcharts-more.js",
           "./bower_components/angucomplete-alt/dist/angucomplete-alt.min.js",
           "./node_modules/ng-debounce/dist/ng-debounce.js",
           "./node_modules/ng-switchery/dist/ng-switchery.js",
@@ -88,7 +86,9 @@
           "./node_modules/moment/moment.js",
           "./node_modules/stompjs/lib/stomp.min.js",
           "./node_modules/sockjs-client/lib/bundle.js",
-          "./commons/array-utils.js"
+          "./commons/array-utils.js",
+          "./node_modules/d3/d3.min.js",
+          "./node_modules/nvd3/build/nv.d3.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -104,7 +104,8 @@
           "./node_modules/ng-switchery/dist/switchery.min.css",
           "../deepsense-components/deepsense-navigation-panel/dist/deepsense-navigation-panel.css",
           "./node_modules/icheck/skins/square/_all.css",
-          "./bower_components/angucomplete-alt/angucomplete-alt.css"
+          "./bower_components/angucomplete-alt/angucomplete-alt.css",
+          "./node_modules/nvd3/build/nv.d3.min.css"
         ]
       },
       "prod": {
@@ -122,8 +123,6 @@
           "./bower_components/mousetrap/mousetrap.min.js",
           "./bower_components/lodash/lodash.min.js",
           "./bower_components/jquery/dist/jquery.min.js",
-          "./bower_components/highcharts-release/highcharts.js",
-          "./bower_components/highcharts-release/highcharts-more.js",
           "./bower_components/angucomplete-alt/dist/angucomplete-alt.min.js",
           "./node_modules/ng-debounce/dist/ng-debounce.js",
           "./node_modules/ng-switchery/dist/ng-switchery.js",
@@ -144,7 +143,9 @@
           "./node_modules/moment/min/moment.min.js",
           "./node_modules/stompjs/lib/stomp.min.js",
           "./node_modules/sockjs-client/lib/bundle.js",
-          "./commons/array-utils.js"
+          "./commons/array-utils.js",
+          "./node_modules/d3/d3.min.js",
+          "./node_modules/nvd3/build/nv.d3.min.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -160,7 +161,8 @@
           "./node_modules/ng-switchery/dist/switchery.min.css",
           "../deepsense-components/deepsense-navigation-panel/dist/deepsense-navigation-panel.css",
           "./node_modules/icheck/skins/square/_all.css",
-          "./bower_components/angucomplete-alt/angucomplete-alt.css"
+          "./bower_components/angucomplete-alt/angucomplete-alt.css",
+          "./node_modules/nvd3/build/nv.d3.min.css"
         ]
       }
     },
