@@ -11,27 +11,49 @@
       "9bceb22b-10d4-4c9d-9967-bfc4f2ba5dc5": {
         "status": "COMPLETED", 
         "results": [
-          "2700b2d9-c46f-4cdf-a1ad-c9c721b8f470"
+          "436d519e-0d04-456b-82be-5703c07b1264"
         ], 
         "error": null
       }, 
       "06753647-d497-427c-b36e-671f7dcc02a3": {
         "status": "COMPLETED", 
         "results": [
-          "2340e626-8f38-400b-8d97-3fa992f16c8b"
+          "14f0c004-6625-47eb-b121-67e975ef0888"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "2340e626-8f38-400b-8d97-3fa992f16c8b": {
+      "14f0c004-6625-47eb-b121-67e975ef0888": {
         "report": {
-          "tables": [], 
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "inner workflow", 
+                  "{\"thirdPartyData\":\"{}\",\"workflow\":{\"connections\":[{\"from\":{\"nodeId\":\"2603a7b5-aaa9-40ad-9598-23f234ec5c32\",\"portIndex\":0},\"to\":{\"nodeId\":\"b22bd79e-337d-4223-b9ee-84c2526a1b75\",\"portIndex\":0}},{\"from\":{\"nodeId\":\"b22bd79e-337d-4223-b9ee-84c2526a1b75\",\"portIndex\":0},\"to\":{\"nodeId\":\"d7798d5e-b1c6-4027-873e-a6d653957418\",\"portIndex\":0}}],\"nodes\":[{\"id\":\"2603a7b5-aaa9-40ad-9598-23f234ec5c32\",\"operation\":{\"id\":\"f94b04d7-ec34-42f7-8100-93fe235c89f8\",\"name\":\"Source\"},\"parameters\":{}},{\"id\":\"d7798d5e-b1c6-4027-873e-a6d653957418\",\"operation\":{\"id\":\"e652238f-7415-4da6-95c6-ee33808561b2\",\"name\":\"Sink\"},\"parameters\":{}},{\"id\":\"b22bd79e-337d-4223-b9ee-84c2526a1b75\",\"operation\":{\"id\":\"012876d9-7a72-47f9-98e4-8ed26db14d6d\",\"name\":\"Execute Mathematical Transformation\"},\"parameters\":{\"formula\":\"2*x\",\"input column\":{\"type\":\"column\",\"value\":\"column1\"},\"input column alias\":\"x\",\"output column name\":\"output\"}}]}}", 
+                  "Inner workflow of the Transformer."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
           "distributions": {}, 
-          "reportType": "Empty"
+          "reportType": "Model"
         }
       }, 
-      "2700b2d9-c46f-4cdf-a1ad-c9c721b8f470": {
+      "436d519e-0d04-456b-82be-5703c07b1264": {
         "report": {
           "tables": [
             {

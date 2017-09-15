@@ -4,24 +4,24 @@
       "ee2deaf3-a7f0-09c3-b1fe-f1d3cba1c7b5": {
         "status": "COMPLETED", 
         "results": [
-          "2f309d0a-5a89-430e-aa9e-14b04819d60e", 
-          "539ed976-2ddd-4d46-a035-4d686a3a48b4"
+          "1ffceaab-6659-4d08-9078-1d11d88eb4b6", 
+          "5f85dc1d-8d06-460b-bc74-ce1af8aeae55"
         ], 
         "error": null
       }, 
       "2a726929-714b-4d28-365b-5254670ca5ce": {
         "status": "COMPLETED", 
         "results": [
-          "6a511714-a1cb-4641-9b9b-d14bd0192e29", 
-          "7082280c-4b47-4b71-b572-2206af75754d"
+          "2e312f5a-1080-41ec-94b2-9d40e7d2fc6a", 
+          "ffc372e3-e4c5-4dba-b405-f7d3809f80ef"
         ], 
         "error": null
       }, 
       "a31ce0cd-d2f5-e11e-28ed-a1c56be8fa31": {
         "status": "COMPLETED", 
         "results": [
-          "f4c5bfe8-c9dc-423d-975f-c9ed8244d55c", 
-          "3d37cb23-b9b7-4aa4-9325-86a49e4690d1"
+          "9516023d-e2cd-416e-b1b1-95529f8cdebf", 
+          "b016dfc5-8385-45c8-b6aa-02b2764d727e"
         ], 
         "error": null
       }, 
@@ -33,29 +33,246 @@
       "7afb7a78-9165-3917-f9e2-3ad06a1f2380": {
         "status": "COMPLETED", 
         "results": [
-          "bb7d4aff-f62a-464d-98e9-1d9a0f9d489a", 
-          "4950ccac-f3bc-43d2-83eb-02e37ef2410e"
+          "75f24d31-49de-4aea-8c5d-6fee4a581071", 
+          "819af4d1-876e-4799-ae14-8946524df9fd"
         ], 
         "error": null
       }, 
       "76ca6d08-2a1e-6ae3-0b20-a528ea3f0e81": {
         "status": "COMPLETED", 
         "results": [
-          "7f1d7054-5779-4b76-8b0a-6c192a3b3b77", 
-          "03891b73-d850-464d-9a01-67c183896724"
+          "dce99a25-04b4-465d-ba05-c40f5553967f", 
+          "f0ddc6b6-2ba6-4a68-bd91-92c6fe31476a"
         ], 
         "error": null
       }, 
       "446a6ad3-ab7c-b4ab-92a7-df76710c18a2": {
         "status": "COMPLETED", 
         "results": [
-          "56b1467b-beae-4c99-a7ff-a720e641e7ad"
+          "a8c8f509-fa28-462c-8086-ab11c60c3680"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "f4c5bfe8-c9dc-423d-975f-c9ed8244d55c": {
+      "ffc372e3-e4c5-4dba-b405-f7d3809f80ef": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "missing value indicator", 
+                  "No()", 
+                  "Generate missing value indicator column."
+                ], 
+                [
+                  "columns", 
+                  "MultipleColumnSelection(Vector(NameColumnSelection(Set(col1))),false)", 
+                  "Columns containing missing values to handle."
+                ], 
+                [
+                  "strategy", 
+                  "RemoveRow()", 
+                  "Strategy of handling missing values."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
+          "distributions": {}, 
+          "reportType": "Model"
+        }
+      }, 
+      "b016dfc5-8385-45c8-b6aa-02b2764d727e": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "missing value indicator", 
+                  "Yes()", 
+                  "Generate missing value indicator column."
+                ], 
+                [
+                  "columns", 
+                  "MultipleColumnSelection(Vector(NameColumnSelection(Set(col2))),false)", 
+                  "Columns containing missing values to handle."
+                ], 
+                [
+                  "strategy", 
+                  "RemoveColumn()", 
+                  "Strategy of handling missing values."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
+          "distributions": {}, 
+          "reportType": "Model"
+        }
+      }, 
+      "5f85dc1d-8d06-460b-bc74-ce1af8aeae55": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "missing value indicator", 
+                  "No()", 
+                  "Generate missing value indicator column."
+                ], 
+                [
+                  "columns", 
+                  "MultipleColumnSelection(Vector(NameColumnSelection(Set(col3))),false)", 
+                  "Columns containing missing values to handle."
+                ], 
+                [
+                  "strategy", 
+                  "ReplaceWithCustomValue()", 
+                  "Strategy of handling missing values."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
+          "distributions": {}, 
+          "reportType": "Model"
+        }
+      }, 
+      "dce99a25-04b4-465d-ba05-c40f5553967f": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "col1", 
+                "col3", 
+                "col5", 
+                "indicator_col2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "boolean", 
+                "string", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "false", 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "2", 
+                  "false", 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "4", 
+                  "false", 
+                  "", 
+                  "true"
+                ], 
+                [
+                  "5", 
+                  "true", 
+                  "green", 
+                  "false"
+                ], 
+                [
+                  "6", 
+                  "false", 
+                  "red", 
+                  "false"
+                ]
+              ], 
+              "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "5"
+                ]
+              ], 
+              "name": "DataFrame Size"
+            }
+          ], 
+          "distributions": {
+            "col5": {
+              "subtype": "discrete", 
+              "name": "col5", 
+              "missingValues": 0
+            }, 
+            "indicator_col2": {
+              "subtype": "discrete", 
+              "name": "indicator_col2", 
+              "missingValues": 0
+            }, 
+            "col3": {
+              "subtype": "discrete", 
+              "name": "col3", 
+              "missingValues": 0
+            }, 
+            "col1": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "missingValues": 0
+            }
+          }, 
+          "reportType": "DataFrameFull"
+        }
+      }, 
+      "9516023d-e2cd-416e-b1b1-95529f8cdebf": {
         "report": {
           "tables": [
             {
@@ -167,14 +384,119 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "7082280c-4b47-4b71-b572-2206af75754d": {
+      "1ffceaab-6659-4d08-9078-1d11d88eb4b6": {
         "report": {
-          "tables": [], 
-          "distributions": {}, 
-          "reportType": "Empty"
+          "tables": [
+            {
+              "columnNames": [
+                "col1", 
+                "col3", 
+                "col4", 
+                "col5", 
+                "indicator_col2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "string", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "false", 
+                  null, 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "2", 
+                  "false", 
+                  null, 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "4", 
+                  "false", 
+                  null, 
+                  "", 
+                  "true"
+                ], 
+                [
+                  "5", 
+                  "true", 
+                  null, 
+                  "green", 
+                  "false"
+                ], 
+                [
+                  "6", 
+                  "false", 
+                  null, 
+                  "red", 
+                  "false"
+                ]
+              ], 
+              "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "5"
+                ]
+              ], 
+              "name": "DataFrame Size"
+            }
+          ], 
+          "distributions": {
+            "col4": {
+              "subtype": "discrete", 
+              "name": "col4", 
+              "missingValues": 5
+            }, 
+            "col5": {
+              "subtype": "discrete", 
+              "name": "col5", 
+              "missingValues": 0
+            }, 
+            "indicator_col2": {
+              "subtype": "discrete", 
+              "name": "indicator_col2", 
+              "missingValues": 0
+            }, 
+            "col3": {
+              "subtype": "discrete", 
+              "name": "col3", 
+              "missingValues": 0
+            }, 
+            "col1": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "missingValues": 0
+            }
+          }, 
+          "reportType": "DataFrameFull"
         }
       }, 
-      "bb7d4aff-f62a-464d-98e9-1d9a0f9d489a": {
+      "75f24d31-49de-4aea-8c5d-6fee4a581071": {
         "report": {
           "tables": [
             {
@@ -286,7 +608,46 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "56b1467b-beae-4c99-a7ff-a720e641e7ad": {
+      "f0ddc6b6-2ba6-4a68-bd91-92c6fe31476a": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "missing value indicator", 
+                  "No()", 
+                  "Generate missing value indicator column."
+                ], 
+                [
+                  "columns", 
+                  "MultipleColumnSelection(Vector(NameColumnSelection(Set(col4))),false)", 
+                  "Columns containing missing values to handle."
+                ], 
+                [
+                  "strategy", 
+                  "ReplaceWithMode()", 
+                  "Strategy of handling missing values."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
+          "distributions": {}, 
+          "reportType": "Model"
+        }
+      }, 
+      "a8c8f509-fa28-462c-8086-ab11c60c3680": {
         "report": {
           "tables": [
             {
@@ -410,7 +771,7 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "6a511714-a1cb-4641-9b9b-d14bd0192e29": {
+      "2e312f5a-1080-41ec-94b2-9d40e7d2fc6a": {
         "report": {
           "tables": [
             {
@@ -527,244 +888,43 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "4950ccac-f3bc-43d2-83eb-02e37ef2410e": {
-        "report": {
-          "tables": [], 
-          "distributions": {}, 
-          "reportType": "Empty"
-        }
-      }, 
-      "3d37cb23-b9b7-4aa4-9325-86a49e4690d1": {
-        "report": {
-          "tables": [], 
-          "distributions": {}, 
-          "reportType": "Empty"
-        }
-      }, 
-      "7f1d7054-5779-4b76-8b0a-6c192a3b3b77": {
+      "819af4d1-876e-4799-ae14-8946524df9fd": {
         "report": {
           "tables": [
             {
               "columnNames": [
-                "col1", 
-                "col3", 
-                "col5", 
-                "indicator_col2"
+                "Parameter", 
+                "Value", 
+                "Description"
               ], 
               "columnTypes": [
-                "numeric", 
-                "boolean", 
                 "string", 
-                "boolean"
+                "string", 
+                "string"
               ], 
               "rowNames": null, 
               "values": [
                 [
-                  "1", 
-                  "false", 
-                  "blue", 
-                  "false"
+                  "missing value indicator", 
+                  "Yes()", 
+                  "Generate missing value indicator column."
                 ], 
                 [
-                  "2", 
-                  "false", 
-                  "blue", 
-                  "false"
+                  "columns", 
+                  "MultipleColumnSelection(Vector(NameColumnSelection(Set(col5))),false)", 
+                  "Columns containing missing values to handle."
                 ], 
                 [
-                  "4", 
-                  "false", 
-                  "", 
-                  "true"
-                ], 
-                [
-                  "5", 
-                  "true", 
-                  "green", 
-                  "false"
-                ], 
-                [
-                  "6", 
-                  "false", 
-                  "red", 
-                  "false"
+                  "strategy", 
+                  "ReplaceWithMode()", 
+                  "Strategy of handling missing values."
                 ]
               ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "5"
-                ]
-              ], 
-              "name": "DataFrame Size"
+              "name": "Parameters"
             }
           ], 
-          "distributions": {
-            "col5": {
-              "subtype": "discrete", 
-              "name": "col5", 
-              "missingValues": 0
-            }, 
-            "indicator_col2": {
-              "subtype": "discrete", 
-              "name": "indicator_col2", 
-              "missingValues": 0
-            }, 
-            "col3": {
-              "subtype": "discrete", 
-              "name": "col3", 
-              "missingValues": 0
-            }, 
-            "col1": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "6", 
-                "mean": "3.6", 
-                "min": "1"
-              }, 
-              "name": "col1", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
-        }
-      }, 
-      "539ed976-2ddd-4d46-a035-4d686a3a48b4": {
-        "report": {
-          "tables": [], 
           "distributions": {}, 
-          "reportType": "Empty"
-        }
-      }, 
-      "03891b73-d850-464d-9a01-67c183896724": {
-        "report": {
-          "tables": [], 
-          "distributions": {}, 
-          "reportType": "Empty"
-        }
-      }, 
-      "2f309d0a-5a89-430e-aa9e-14b04819d60e": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "col1", 
-                "col3", 
-                "col4", 
-                "col5", 
-                "indicator_col2"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "boolean", 
-                "boolean", 
-                "string", 
-                "boolean"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1", 
-                  "false", 
-                  null, 
-                  "blue", 
-                  "false"
-                ], 
-                [
-                  "2", 
-                  "false", 
-                  null, 
-                  "blue", 
-                  "false"
-                ], 
-                [
-                  "4", 
-                  "false", 
-                  null, 
-                  "", 
-                  "true"
-                ], 
-                [
-                  "5", 
-                  "true", 
-                  null, 
-                  "green", 
-                  "false"
-                ], 
-                [
-                  "6", 
-                  "false", 
-                  null, 
-                  "red", 
-                  "false"
-                ]
-              ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "5", 
-                  "5"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }
-          ], 
-          "distributions": {
-            "col4": {
-              "subtype": "discrete", 
-              "name": "col4", 
-              "missingValues": 5
-            }, 
-            "col5": {
-              "subtype": "discrete", 
-              "name": "col5", 
-              "missingValues": 0
-            }, 
-            "indicator_col2": {
-              "subtype": "discrete", 
-              "name": "indicator_col2", 
-              "missingValues": 0
-            }, 
-            "col3": {
-              "subtype": "discrete", 
-              "name": "col3", 
-              "missingValues": 0
-            }, 
-            "col1": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "6", 
-                "mean": "3.6", 
-                "min": "1"
-              }, 
-              "name": "col1", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
+          "reportType": "Model"
         }
       }
     }, 

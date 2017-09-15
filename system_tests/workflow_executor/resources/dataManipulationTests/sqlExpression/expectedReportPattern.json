@@ -4,15 +4,15 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "f9f195e5-5542-4261-b810-6d0feaaf78ff"
+          "dd694db6-6d25-4b46-904f-8b19dd2aa756"
         ], 
         "error": null
       }, 
       "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
         "status": "COMPLETED", 
         "results": [
-          "99e78feb-6484-4ca3-90ad-93fecc8549e2", 
-          "e7202b89-fbff-4870-9343-4833260baa6a"
+          "37a4bd16-db0b-400f-853a-577da7f3e1ef", 
+          "6d0599a3-9a81-495a-8b59-6835c6567f96"
         ], 
         "error": null
       }, 
@@ -23,7 +23,7 @@
       }
     }, 
     "resultEntities": {
-      "f9f195e5-5542-4261-b810-6d0feaaf78ff": {
+      "dd694db6-6d25-4b46-904f-8b19dd2aa756": {
         "report": {
           "tables": [
             {
@@ -223,7 +223,7 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "99e78feb-6484-4ca3-90ad-93fecc8549e2": {
+      "37a4bd16-db0b-400f-853a-577da7f3e1ef": {
         "report": {
           "tables": [
             {
@@ -291,11 +291,38 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "e7202b89-fbff-4870-9343-4833260baa6a": {
+      "6d0599a3-9a81-495a-8b59-6835c6567f96": {
         "report": {
-          "tables": [], 
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "expression", 
+                  "select city, avg(salary) as avg_salary from frame where work_time = 1 group by city", 
+                  "SQL Expression to be executed on the DataFrame."
+                ], 
+                [
+                  "dataframe id", 
+                  "frame", 
+                  "An identifier that can be used in the SQL expression to refer to the input DataFrame. The value has to be unique in the workflow."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
           "distributions": {}, 
-          "reportType": "Empty"
+          "reportType": "Model"
         }
       }
     }, 

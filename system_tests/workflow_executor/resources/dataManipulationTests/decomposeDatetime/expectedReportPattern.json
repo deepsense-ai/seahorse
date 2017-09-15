@@ -4,29 +4,169 @@
       "22aaa582-b365-e0ee-eb9e-afc5a57819eb": {
         "status": "COMPLETED", 
         "results": [
-          "7d74bafe-daf9-4b16-b318-7baa064ca544"
+          "afc39b3e-f615-4592-8d40-05bb4efc6c6f"
         ], 
         "error": null
       }, 
       "f84dd741-883d-736e-d2bf-e7d388a4ce3f": {
         "status": "COMPLETED", 
         "results": [
-          "5cd73796-bd54-44dc-af26-d4aac174d39c", 
-          "1c0ec99a-691c-41ae-9708-49c2764c17ec"
+          "f4689921-acf5-42ce-8d24-c3092badd0e1", 
+          "00524a16-713e-4e01-a5f9-5b45469e794b"
         ], 
         "error": null
       }, 
       "0bad8fe5-759c-589e-683f-1d733618d66a": {
         "status": "COMPLETED", 
         "results": [
-          "cd9d04b1-7bb7-47a1-a240-e6dc28408e2f", 
-          "29d8b3e3-0dab-4f7c-b97f-7ac2c20bc4a7"
+          "b6d7500a-9122-4303-b3c5-693884eb1208", 
+          "a51b3cb2-fd60-42ed-940d-432f5229e87a"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "cd9d04b1-7bb7-47a1-a240-e6dc28408e2f": {
+      "00524a16-713e-4e01-a5f9-5b45469e794b": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "prefix", 
+                  "", 
+                  "Common prefix for names of created columns."
+                ], 
+                [
+                  "parts", 
+                  "Set(Year(), Month(), Day())", 
+                  "Parts of the date/time to retain."
+                ], 
+                [
+                  "timestamp column", 
+                  "NameSingleColumnSelection(packed_day)", 
+                  "Timestamp column to decompose."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
+          "distributions": {}, 
+          "reportType": "Model"
+        }
+      }, 
+      "afc39b3e-f615-4592-8d40-05bb4efc6c6f": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "packed_day", 
+                "packed_timestamp"
+              ], 
+              "columnTypes": [
+                "timestamp", 
+                "timestamp"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2015-10-05T12:30:56.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-10-06T13:10:02.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-10-07T15:44:01.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-11-12T09:10:08.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-11-13T16:15:09.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-12-09T17:08:15.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-12-20T16:12:01.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-12-24T15:21:00.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-12-29T17:49:41.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-12-29T18:08:12.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ]
+              ], 
+              "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "10"
+                ]
+              ], 
+              "name": "DataFrame Size"
+            }
+          ], 
+          "distributions": {
+            "packed_timestamp": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "2015-10-05T12:00:00.000Z", 
+                "mean": "2015-10-05T09:36:00.000Z", 
+                "min": "2015-10-05T08:00:00.000Z"
+              }, 
+              "name": "packed_timestamp", 
+              "missingValues": 0
+            }, 
+            "packed_day": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "2015-12-29T18:08:12.000Z", 
+                "mean": "2015-11-21T17:32:56.500Z", 
+                "min": "2015-10-05T12:30:56.000Z"
+              }, 
+              "name": "packed_day", 
+              "missingValues": 0
+            }
+          }, 
+          "reportType": "DataFrameFull"
+        }
+      }, 
+      "b6d7500a-9122-4303-b3c5-693884eb1208": {
         "report": {
           "tables": [
             {
@@ -259,122 +399,7 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "7d74bafe-daf9-4b16-b318-7baa064ca544": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "packed_day", 
-                "packed_timestamp"
-              ], 
-              "columnTypes": [
-                "timestamp", 
-                "timestamp"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2015-10-05T12:30:56.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-10-06T13:10:02.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-10-07T15:44:01.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-11-12T09:10:08.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-11-13T16:15:09.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-12-09T17:08:15.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-12-20T16:12:01.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-12-24T15:21:00.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-12-29T17:49:41.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-12-29T18:08:12.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ]
-              ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "10"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }
-          ], 
-          "distributions": {
-            "packed_timestamp": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "2015-10-05T12:00:00.000Z", 
-                "mean": "2015-10-05T09:36:00.000Z", 
-                "min": "2015-10-05T08:00:00.000Z"
-              }, 
-              "name": "packed_timestamp", 
-              "missingValues": 0
-            }, 
-            "packed_day": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "2015-12-29T18:08:12.000Z", 
-                "mean": "2015-11-21T17:32:56.500Z", 
-                "min": "2015-10-05T12:30:56.000Z"
-              }, 
-              "name": "packed_day", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
-        }
-      }, 
-      "1c0ec99a-691c-41ae-9708-49c2764c17ec": {
-        "report": {
-          "tables": [], 
-          "distributions": {}, 
-          "reportType": "Empty"
-        }
-      }, 
-      "29d8b3e3-0dab-4f7c-b97f-7ac2c20bc4a7": {
-        "report": {
-          "tables": [], 
-          "distributions": {}, 
-          "reportType": "Empty"
-        }
-      }, 
-      "5cd73796-bd54-44dc-af26-d4aac174d39c": {
+      "f4689921-acf5-42ce-8d24-c3092badd0e1": {
         "report": {
           "tables": [
             {
@@ -539,6 +564,45 @@
             }
           }, 
           "reportType": "DataFrameFull"
+        }
+      }, 
+      "a51b3cb2-fd60-42ed-940d-432f5229e87a": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "Parameter", 
+                "Value", 
+                "Description"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "prefix", 
+                  "timestamp_", 
+                  "Common prefix for names of created columns."
+                ], 
+                [
+                  "parts", 
+                  "Set(Hour(), Minutes(), Seconds())", 
+                  "Parts of the date/time to retain."
+                ], 
+                [
+                  "timestamp column", 
+                  "NameSingleColumnSelection(packed_timestamp)", 
+                  "Timestamp column to decompose."
+                ]
+              ], 
+              "name": "Parameters"
+            }
+          ], 
+          "distributions": {}, 
+          "reportType": "Model"
         }
       }
     }, 
