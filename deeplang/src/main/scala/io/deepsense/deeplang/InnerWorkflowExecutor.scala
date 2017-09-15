@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang
 
+import spray.json.JsObject
+
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.custom.InnerWorkflow
 
@@ -24,10 +26,10 @@ trait InnerWorkflowParser {
   /**
    * Parses inner workflow.
    *
-   * @param workflow string containing workflow representation.
+   * @param workflow JSON containing workflow representation.
    * @return inner workflow as object.
    */
-  def parse(workflow: String): InnerWorkflow
+  def parse(workflow: JsObject): InnerWorkflow
 }
 
 trait InnerWorkflowExecutor extends InnerWorkflowParser {

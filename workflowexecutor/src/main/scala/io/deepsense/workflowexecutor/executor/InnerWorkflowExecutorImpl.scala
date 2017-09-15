@@ -36,8 +36,8 @@ class InnerWorkflowExecutorImpl(override val graphReader: GraphReader)
   extends InnerWorkflowExecutor
   with InnerWorkflowJsonProtocol {
 
-  override def parse(workflow: String): InnerWorkflow = {
-    workflow.parseJson.convertTo[InnerWorkflow]
+  override def parse(workflow: JsObject): InnerWorkflow = {
+    workflow.convertTo[InnerWorkflow]
   }
 
   override def execute(

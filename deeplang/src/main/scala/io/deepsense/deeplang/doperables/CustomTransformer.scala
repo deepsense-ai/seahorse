@@ -17,22 +17,24 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.types.StructType
+import spray.json._
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.{Param, StringParam}
-import io.deepsense.graph.{GraphKnowledge, NodeInferenceResult}
+import io.deepsense.deeplang.params.{JsonParam, Param}
+import io.deepsense.graph.{GraphKnowledge, Node, NodeInferenceResult}
 
 case class CustomTransformer() extends Transformer with DefaultCustomTransformerWorkflow {
 
-  val innerWorkflow = StringParam(
+  val innerWorkflow = JsonParam(
     name = "inner workflow",
     description = "Inner workflow of the Transformer")
   setDefault(innerWorkflow, defaultWorkflow)
 
-  def getInnerWorkflow: String = $(innerWorkflow)
-  def setInnerWorkflow(workflow: String): this.type = set(innerWorkflow, workflow)
+  def getInnerWorkflow: JsObject = $(innerWorkflow)
+  def setInnerWorkflow(workflow: JsObject): this.type = set(innerWorkflow, workflow)
 
   override val params: Array[Param[_]] = declareParams(innerWorkflow)
 
@@ -57,41 +59,38 @@ case class CustomTransformer() extends Transformer with DefaultCustomTransformer
 
 trait DefaultCustomTransformerWorkflow {
 
-  val defaultWorkflow =
-    """{
-      |  "workflow": {
-      |    "nodes": [
-      |      {
-      |        "id": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
-      |        "operation": {
-      |          "id": "f94b04d7-ec34-42f7-8100-93fe235c89f8",
-      |          "name": "Source"
-      |        },
-      |        "parameters": {}
-      |      }, {
-      |        "id": "d7798d5e-b1c6-4027-873e-a6d653957418",
-      |        "operation": {
-      |          "id": "e652238f-7415-4da6-95c6-ee33808561b2",
-      |          "name": "Sink"
-      |        },
-      |        "parameters": {}
-      |      }
-      |    ],
-      |    "connections": [
-      |      {
-      |        "from":{
-      |          "nodeId": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
-      |          "portIndex": 0
-      |        },
-      |        "to": {
-      |          "nodeId": "d7798d5e-b1c6-4027-873e-a6d653957418",
-      |          "portIndex":0
-      |        }
-      |      }
-      |    ]
-      |  },
-      |  "thirdPartyData": "{}",
-      |  "source": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
-      |  "sink": "d7798d5e-b1c6-4027-873e-a6d653957418"
-      |}""".stripMargin
+  private def node(operation: DOperation, nodeId: Node.Id): JsObject =
+    JsObject(
+      "id" -> JsString(nodeId.toString),
+      "operation" -> JsObject(
+        "id" -> JsString(operation.id.toString),
+        "name" -> JsString(operation.name)
+      ),
+      "parameters" -> JsObject()
+    )
+
+  private def connection(from: Node.Id, to: Node.Id): JsObject =
+    JsObject(
+      "from" -> JsObject(
+        "nodeId" -> JsString(from.toString),
+        "portIndex" -> JsNumber(0)
+      ),
+      "to" -> JsObject(
+        "nodeId" -> JsString(to.toString),
+        "portIndex" -> JsNumber(0)
+      )
+    )
+
+  private val sourceNodeId: Node.Id = "2603a7b5-aaa9-40ad-9598-23f234ec5c32"
+  private val sinkNodeId: Node.Id = "d7798d5e-b1c6-4027-873e-a6d653957418"
+
+  val defaultWorkflow = JsObject(
+    "workflow" -> JsObject(
+      "nodes" -> JsArray(node(Source(), sourceNodeId), node(Sink(), sinkNodeId)),
+      "connections" -> JsArray(connection(sourceNodeId, sinkNodeId)),
+      "thirdPartyData" -> JsString("{}"),
+      "source" -> JsString(sourceNodeId.toString),
+      "sink" -> JsString(sinkNodeId.toString)
+    )
+  )
 }

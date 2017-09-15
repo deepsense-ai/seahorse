@@ -16,19 +16,16 @@
 
 package io.deepsense.deeplang.params
 
-object ParameterType extends Enumeration {
-  type ParameterType = Value
-  val Boolean = Value("boolean")
-  val Numeric = Value("numeric")
-  val String = Value("string")
-  val Choice = Value("choice")
-  val MultipleChoice = Value("multipleChoice")
-  val Multiplier = Value("multiplier")
-  val ColumnSelector = Value("selector")
-  val SingleColumnCreator = Value("creator")
-  val MultipleColumnCreator = Value("multipleCreator")
-  val PrefixBasedColumnCreator = Value("prefixBasedCreator")
-  val CodeSnippet = Value("codeSnippet")
-  val Dynamic = Value("dynamic")
-  val Json = Value("json")
+import spray.json.{JsValue, JsObject}
+
+case class JsonParam(
+    name: String,
+    description: String)
+  extends Param[JsObject] {
+
+  override val parameterType = ParameterType.Json
+
+  override def valueToJson(value: JsObject): JsValue = value
+
+  override def valueFromJson(jsValue: JsValue): JsObject = jsValue.asJsObject
 }
