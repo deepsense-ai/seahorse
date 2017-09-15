@@ -8,14 +8,14 @@ import scala.collection.JavaConverters._
 
 import scala.util.Try
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.yarn.api.records.{ApplicationId, ContainerLaunchContext, Resource}
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.Records
-
+import io.deepsense.commons.config.ConfigurationMerger
 import io.deepsense.graphexecutor.Constants
 import io.deepsense.graphexecutor.util.Utils
 import io.deepsense.models.experiments.Experiment
@@ -44,6 +44,9 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
     conf.addResource(getClass.getResource("/conf/hadoop/core-site.xml"))
     conf.addResource(getClass.getResource("/conf/hadoop/yarn-site.xml"))
 
+    val config = ConfigFactory.load
+    ConfigurationMerger.merge(conf, config.getConfig("hadoop"))
+
     val yarnClient = YarnClient.createYarnClient()
     yarnClient.init(conf)
     yarnClient.start()
@@ -64,14 +67,12 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
     amContainer.setCommands(List(command).asJava)
 
     val geConf = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorConfigLocation))
-    val esConf = Utils.getConfiguredLocalResource(new Path(Constants.EntityStorageConfigLocation))
     val geJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorJarLocation))
     val log4jXml = Utils.getConfiguredLocalResource(new Path(Constants.Log4jXmlLocation))
     val geDepsJar = Utils
       .getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
     amContainer.setLocalResources(Map(
       Constants.GraphExecutorConfName -> geConf,
-      Constants.EntityStorageConfName -> esConf,
       Constants.Log4jXmlName -> log4jXml,
       "graphexecutor.jar" -> geJar,
       "graphexecutor-deps.jar" -> geDepsJar

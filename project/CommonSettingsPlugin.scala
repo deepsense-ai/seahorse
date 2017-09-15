@@ -4,7 +4,6 @@
 
 import sbt.Keys._
 import sbt._
-import sbtfilter.Plugin._
 
 object CommonSettingsPlugin extends AutoPlugin {
   override def trigger = allRequirements
@@ -34,7 +33,7 @@ object CommonSettingsPlugin extends AutoPlugin {
         // Show full stacktraces (F), Put results in target/test-reports
         Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
       ),
-      javaOptions ++= Seq("-Denv=integtest", s"-DlogFile=${name.value}"),
+      javaOptions := Seq(s"-DlogFile=${name.value}"),
       fork := true,
       unmanagedClasspath += baseDirectory.value / "conf"
     )
@@ -54,25 +53,10 @@ object CommonSettingsPlugin extends AutoPlugin {
         )
       ),
       fork := true,
-      javaOptions := Seq("-Denv=test", s"-DlogFile=${name.value}"),
+      javaOptions := Seq(s"-DlogFile=${name.value}"),
       unmanagedClasspath += baseDirectory.value / "conf"
     )
   }
 
   override def projectConfigurations = OurIT +: super.projectConfigurations
-
-  lazy val filtersDirectory =
-    if (System.getProperty("env") != null) System.getProperty("env") else "local"
-  lazy val entityStorageIp =
-    if (System.getProperty("es") != null) System.getProperty("es") else "172.28.128.1"
-  lazy val runningExperimentsIp =
-    if (System.getProperty("re") != null) System.getProperty("re") else "172.28.128.1"
-  import FilterKeys._
-  lazy val setUpFiltersPlugin = Seq(
-    filterDirectoryName := s"filters/$filtersDirectory",
-    includeFilter in (Compile, filters) ~= { f => f || ("*.props" | "*.conf") },
-    includeFilter in (Compile, filterResources) ~= { f => f || ("*.props" | "*.conf") },
-    extraProps += "entityStorage.hostname" -> entityStorageIp,
-    extraProps += "runningExperiments.hostname" -> runningExperimentsIp
-  )
 }

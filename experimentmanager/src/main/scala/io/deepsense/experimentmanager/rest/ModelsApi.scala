@@ -40,7 +40,7 @@ class ModelsApi @Inject()(
   require(StringUtils.isNotBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
-  val config = ConfigFactory.load("application.conf")
+  val config = ConfigFactory.load
   val entityStorageHostname = config.getString("entityStorage.hostname")
   val entityStoragePort = config.getInt("entityStorage.port")
   val hdfsHostname = config.getString("hdfs.hostname")

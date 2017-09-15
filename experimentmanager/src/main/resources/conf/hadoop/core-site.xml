@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+   Copyright (c) 2015, CodiLime Inc.
+  -->
+
+<configuration>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/hdfstmp</value>
+  </property>
+  <property>
+    <name>fs.hdfs.impl</name>
+    <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
+    <description>The FileSystem for hdfs: uris.</description>
+  </property>
+  <property>
+    <name>ipc.client.connect.timeout</name>
+    <value>2000</value>
+    <description>Indicates the number of milliseconds a client will wait for the socket
+      to establish a server connection. (default: 20000)</description>
+  </property>
+  <property>
+    <name>ipc.client.connect.max.retries.on.timeouts</name>
+    <value>45</value>
+    <description>Indicates the number of retries a client will make on socket timeout
+      to establish a server connection. (default: 45)</description>
+  </property>
+</configuration>

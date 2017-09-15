@@ -27,8 +27,7 @@ test in assembly := {}
 assemblyOption in assembly :=
   (assemblyOption in assembly).value.copy(includeScala = false, includeDependency = false)
 
+unmanagedClasspath in Runtime += (baseDirectory.value / "conf")
 
-Seq(filterSettings: _*)
-CommonSettingsPlugin.setUpFiltersPlugin
 
 enablePlugins(BuildInfoPlugin)

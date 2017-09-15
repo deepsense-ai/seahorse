@@ -4,8 +4,6 @@
 
 package io.deepsense.commons
 
-import scala.concurrent.duration._
-
 import org.scalatest.mock.MockitoSugar
 
 /**

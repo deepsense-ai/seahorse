@@ -25,36 +25,14 @@
   <property>
     <name>dfs.replication</name>
     <value>1</value>
-    <description>
-      Default block replication. The actual number of replications can be specified
-      when the file is created. The default is used if replication is not specified in create time.
-    </description>
   </property>
   <property>
     <name>dfs.permissions.enabled</name>
     <value>false</value>
-    <description>
-      If "true", enable permission checking in HDFS.
-      If "false", permission checking is turned off, but all other behavior is unchanged.
-      Switching from one parameter value to the other does not change the mode,
-      owner or group of files or directories.
-    </description>
   </property>
   <property>
     <name>dfs.permissions</name>
     <value>false</value>
-    <description>
-      If yes use the permissions system as described here. If no, permission checking is turned off,
-      but all other behavior is unchanged.
-      Switching from one parameter value to the other does not change the mode,
-      owner or group of files or directories.
-      Regardless of whether permissions are on or off,
-      chmod, chgrp and chown always check permissions.
-      These functions are only useful in the permissions context,
-      and so there is no backwards compatibility issue.
-      Furthermore, this allows administrators to reliably set owners and permissions in advance of
-      turning on regular permissions checking.
-    </description>
   </property>
   <property>
     <name>dfs.client.use.datanode.hostname</name>

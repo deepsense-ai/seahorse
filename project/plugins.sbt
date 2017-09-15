@@ -16,6 +16,4 @@ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.12.0")
 // Plugin provides build info to use in code
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
 
-addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.4")
-
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.0.0")

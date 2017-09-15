@@ -72,7 +72,7 @@ object Constants {
   /**
    *  Configuration file's name on cluster HDFS
    */
-  val GraphExecutorConfName = "graphexecutor.conf"
+  val GraphExecutorConfName = "application.conf"
 
   /**
    * Location of configuration file on cluster HDFS

@@ -24,5 +24,9 @@ project/plugins/project/
 .idea_modules/
 *.iml
 
-#Sphinx files
+# Sphinx files
 */_build/
+
+# Developers' private configuration files
+private_*.conf
+private_*/

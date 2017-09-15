@@ -8,7 +8,7 @@ import com.typesafe.config.ConfigFactory
 
 object HdfsForIntegTestsProperties {
 
-  private lazy val config = ConfigFactory.load("testEnvironment.conf")
+  private lazy val config = ConfigFactory.load
 
   lazy val MasterHostname = config.getString("master.hostname")
 

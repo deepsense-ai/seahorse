@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+   Copyright (c) 2015, CodiLime Inc.
+  -->
+
+<configuration>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>ds-dev-env-master</value>
+  </property>
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.log.server.url</name>
+    <value>http://ds-dev-env-master:19888/jobhistory/logs/</value>
+    <description>URL for job history server</description>
+  </property>
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>128</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>512</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>1024</value>
+  </property>
+</configuration>

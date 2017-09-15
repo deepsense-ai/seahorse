@@ -6,17 +6,20 @@ package io.deepsense.experimentmanager.execution
 
 import scala.language.postfixOps
 
-import akka.actor.{ActorRef, ActorRefFactory, ActorSystem, Props}
+import akka.actor.{ActorSystem, Props}
 import akka.testkit.{TestActorRef, TestProbe}
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.{Seconds, Span}
 
+import io.deepsense.commons.config.{ConfigurationMerger, ConfigFactoryExt}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.Node
+import io.deepsense.graphexecutor.HdfsIntegTestSupport
 import io.deepsense.graphexecutor.clusterspawner.DefaultClusterSpawner
-import io.deepsense.graphexecutor.{GraphExecutorClientActor, HdfsIntegTestSupport}
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages.Get
 
@@ -34,6 +37,13 @@ abstract class ExperimentExecutionSupport
   implicit var system: ActorSystem = _
   var runningExperimentsActorRef: TestActorRef[RunningExperimentsActor] = _
   var testProbe: TestProbe = _
+
+
+  override protected def enhanceConfiguration(config: Configuration): Unit = {
+    super.enhanceConfiguration(config)
+    val integrationTestConfig = ConfigFactory.load
+    ConfigurationMerger.merge(config, integrationTestConfig.getConfig("hadoop"))
+  }
 
   // Used by eventually block
   implicit override val patienceConfig = PatienceConfig(
@@ -69,8 +79,9 @@ abstract class ExperimentExecutionSupport
   override def beforeAll(): Unit = {
     super.beforeAll()
 
+    ConfigFactoryExt.enableEnvOverride()
+    ConfigFactory.invalidateCaches()
     val config = ConfigFactory.load
-
     val actorSystemName = "EMtoGESpec"
     val akkaConfig = config.getConfig("deepsense")
     val actorName = "RunningExperimentsActor-" + getClass.getSimpleName

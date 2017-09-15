@@ -42,7 +42,7 @@ object GraphExecutor extends LazyLogging {
     logger.debug("CLASSPATH = " + System.getenv("CLASSPATH"))
     logger.debug("SPARK_CLASSPATH = " + System.getenv("SPARK_CLASSPATH"))
     val injector = Guice.createInjector(
-      new ConfigModule("graphexecutor.conf"),
+      new ConfigModule,
       new GraphExecutorModule,
       new GraphExecutorTestModule
     )
@@ -68,7 +68,7 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   with LazyLogging {
 
   implicit val conf: YarnConfiguration = new YarnConfiguration()
-  val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
+  val geConfig: Config = ConfigFactory.load
 
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
 
@@ -108,8 +108,7 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     import executionContext._
     createHdfsDir(hdfsClient, GraphExecutor.sparkEventLogDir)
 
-    val graphExecutorYarnWorkerConfig =
-      ConfigFactory.load(Constants.GraphExecutorConfName).getConfig("graphexecutor-yarn-worker")
+    val graphExecutorYarnWorkerConfig = geConfig.getConfig("graphexecutor-yarn-worker")
     logger.debug("graphexecutor-yarn-worker config:")
     logger.debug(s"$graphExecutorYarnWorkerConfig")
     val actorSystem = ActorSystem("graphexecutor-on-yarn", graphExecutorYarnWorkerConfig)

@@ -44,11 +44,14 @@ trait HdfsIntegTestSupport
     }
   }
 
+  protected def enhanceConfiguration(config: Configuration): Unit = {}
+
   override def beforeAll(): Unit = {
     // TODO: Configuration resource access should follow proper configuration access convention
     config.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
     config.addResource(getClass().getResource("/conf/hadoop/yarn-site.xml"))
     config.addResource(getClass().getResource("/conf/hadoop/hdfs-site.xml"))
+    enhanceConfiguration(config)
     import HdfsForIntegTestsProperties._
     cli = Some(new DFSClient(new URI("hdfs://" + MasterHostname + ":" + HdfsNameNodePort), config))
     dsHdfsClient = Some(new DSHdfsClient(cli.get))
