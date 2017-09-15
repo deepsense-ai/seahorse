@@ -12,6 +12,10 @@
         ng-switch-when="CrossValidateRegressor"
         data="::report.getTables()">
       </report-cross-validate-regressor>
+      <report-evaluate-scoring
+        ng-switch-when="EvaluateRegression"
+        data="::report.getTables()">
+      </report-evaluate-scoring>
     </div>
     <loading-spinner ng-if="!report.getTables()"></loading-spinner>
   </div>
