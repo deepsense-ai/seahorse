@@ -42,15 +42,17 @@ function networkRm {
 ACTION=$1
 SPARK_VERSION=$2
 export SPARK_VERSION=${SPARK_VERSION}
-if [ "$SPARK_VERSION" == "2.0.0" ]; then
-  export HADOOP_VERSION="2.7.1"
+if [ "$SPARK_VERSION" == "2.1.0" ] || [ "$SPARK_VERSION" == "2.0.0" ] || [ "$SPARK_VERSION" == "2.0.2" ]; then
+  export HADOOP_VERSION="2.7"
+  export HADOOP_VERSION_FULL="2.7.1"
 else
-  export HADOOP_VERSION="2.6.0"
+  export HADOOP_VERSION="2.6"
+  export HADOOP_VERSION_FULL="2.6.0"
 fi
 
 case $ACTION in
   up)
-    spark-standalone-cluster/build-cluster-node-docker.sh $SPARK_VERSION
+    spark-standalone-cluster/build-cluster-node-docker.sh $SPARK_VERSION $HADOOP_VERSION
     networkRm $NETWORK_NAME
     networkCreate $NETWORK_NAME
     docker-compose -f spark-standalone-cluster.dc.yml up -d

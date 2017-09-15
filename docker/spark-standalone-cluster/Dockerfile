@@ -3,6 +3,7 @@
 FROM ubuntu:16.04
 
 ARG SPARK_VERSION
+ARG HADOOP_VERSION
 
 RUN apt-get -y update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes software-properties-common python-software-properties
@@ -30,7 +31,7 @@ RUN apt-get update && \
 WORKDIR /opt/
 
 COPY setup_scripts/ /opt/setup_scripts/
-RUN /opt/setup_scripts/download_spark_${SPARK_VERSION}.sh
+RUN /opt/setup_scripts/download_spark.sh ${SPARK_VERSION} ${HADOOP_VERSION}
 
 COPY conf/ /opt/conf/
 
