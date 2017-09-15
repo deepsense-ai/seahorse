@@ -26,13 +26,21 @@ case class PrefixBasedColumnCreatorParam(
     description: String)
   extends ParamWithJsFormat[String] {
 
+  override def validate(value: String): Vector[DeepLangException] = {
+    ColumnPrefixNameValidator.validate(name, value) ++ super.validate(value)
+  }
+
   val parameterType = ParameterType.PrefixBasedColumnCreator
 
   override def replicate(name: String): PrefixBasedColumnCreatorParam = copy(name = name)
 }
 
-trait NonEmptyPrefixValidator extends PrefixBasedColumnCreatorParam {
+trait EmptyPrefixValidator extends PrefixBasedColumnCreatorParam {
   override def validate(value: String): Vector[DeepLangException] = {
-    ColumnPrefixNameValidator.validate(name, value) ++ super.validate(value)
+    if (value.isEmpty) {
+      Vector()
+    } else {
+      super.validate(value)
+    }
   }
 }

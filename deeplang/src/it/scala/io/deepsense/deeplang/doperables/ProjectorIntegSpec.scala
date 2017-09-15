@@ -41,10 +41,7 @@ class ProjectorIntegSpec
   import DeeplangIntegTestSupport._
   import TransformerSerialization._
 
-  // val specialCharactersName = "a`a-z"
   val specialCharactersName = "a'a-z"
-  // TODO forbid backticks in column names because they cannot be escaped in spark 1.6:
-  // https://issues.apache.org/jira/browse/SPARK-13297
 
   val columns = Seq(
     StructField("c", IntegerType),
@@ -84,7 +81,7 @@ class ProjectorIntegSpec
       val filteredSchema = transformer._transformSchema(schema)
       filteredSchema shouldBe Some(expectedSchema)
     }
-   "throw an exception" when {
+    "throw an exception" when {
       "the columns selected by name does not exist" when {
         val transformer = new Projector().setProjectionColumns(Seq(
           ColumnProjection().setOriginalColumn(NameSingleColumnSelection("thisColumnDoesNotExist"))
@@ -115,19 +112,33 @@ class ProjectorIntegSpec
           }
         }
       }
-     "the output DataFrame has duplicated columns" when {
-       val transformer = new Projector().setProjectionColumns(Seq(
-         ColumnProjection().setOriginalColumn(NameSingleColumnSelection(specialCharactersName))
-           .setRenameColumn(new Yes().setColumnName("duplicatedName")),
-         ColumnProjection().setOriginalColumn(NameSingleColumnSelection("b"))
-           .setRenameColumn(new Yes().setColumnName("duplicatedName"))
-       ))
-       "transforming a DataFrame" in {
-         intercept[DuplicatedColumnsException] {
-           transformer._transform(executionContext, dataFrame)
-         }
-       }
-     }
+      "the output DataFrame has duplicated columns" when {
+        val transformer = new Projector().setProjectionColumns(Seq(
+          ColumnProjection().setOriginalColumn(NameSingleColumnSelection(specialCharactersName))
+            .setRenameColumn(new Yes().setColumnName("duplicatedName")),
+          ColumnProjection().setOriginalColumn(NameSingleColumnSelection("b"))
+            .setRenameColumn(new Yes().setColumnName("duplicatedName"))
+        ))
+        "transforming a DataFrame" in {
+          intercept[DuplicatedColumnsException] {
+            transformer._transform(executionContext, dataFrame)
+          }
+        }
+      }
+      "the transformer uses output column name with backticks" when {
+        val transformer = new Projector().setProjectionColumns(Seq(
+          ColumnProjection().setOriginalColumn(NameSingleColumnSelection(specialCharactersName))
+            .setRenameColumn(new Yes().setColumnName("columnName")),
+          ColumnProjection().setOriginalColumn(NameSingleColumnSelection("b"))
+            .setRenameColumn(new Yes().setColumnName("column`Name`With``Backticks`"))
+        ))
+        "transforming a DataFrame" in {
+          // TODO: Spark 1.6 does not have ParseException, which is thrown in Spark 2.0
+          intercept[Exception] {
+            transformer._transform(executionContext, dataFrame)
+          }
+        }
+      }
     }
   }
   it when {

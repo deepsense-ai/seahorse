@@ -390,7 +390,7 @@ object MissingValuesHandler {
       val indicatorPrefix = new PrefixBasedColumnCreatorParam(
         name = "indicator column prefix",
         description = "Prefix for columns indicating presence of missing values."
-      ) with NonEmptyPrefixValidator
+      )
       setDefault(indicatorPrefix, "")
 
       override def getIndicatorPrefix: Option[String] = Some($(indicatorPrefix))

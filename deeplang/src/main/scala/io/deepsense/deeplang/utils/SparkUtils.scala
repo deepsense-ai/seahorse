@@ -44,6 +44,9 @@ object SparkUtils {
     * @return properly escaped column name
     */
   def escapeColumnName(columnName: String): String = {
-    "`" + columnName.replace("`", "``") + "`"
+    // We had to forbid backticks in column names due to anomalies in Spark 1.6
+    // See: https://issues.apache.org/jira/browse/SPARK-13297
+    // "`" + columnName.replace("`", "``") + "`"
+    "`" + columnName + "`"
   }
 }

@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.StructType
@@ -56,17 +57,19 @@ case class Join()
   def getJoinType: JoinTypeChoice.Option = $(joinType)
   def setJoinType(value: JoinTypeChoice.Option): this.type = set(joinType, value)
 
-  val leftPrefix = PrefixBasedColumnCreatorParam(
+  val leftPrefix = new PrefixBasedColumnCreatorParam(
     name = "left prefix",
-    description = "Prefix for columns of left DataFrame.")
+    description = "Prefix for columns of left DataFrame."
+  ) with EmptyPrefixValidator
   setDefault(leftPrefix, "")
 
   def getLeftPrefix: String = $(leftPrefix)
   def setLeftPrefix(value: String): this.type = set(leftPrefix, value)
 
-  val rightPrefix = PrefixBasedColumnCreatorParam(
+  val rightPrefix = new PrefixBasedColumnCreatorParam(
     name = "right prefix",
-    description = "Prefix for columns of right DataFrame.")
+    description = "Prefix for columns of right DataFrame."
+  ) with EmptyPrefixValidator
   setDefault(rightPrefix, "")
 
   def getRightPrefix: String = $(rightPrefix)

@@ -25,7 +25,7 @@ import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
 import io.deepsense.deeplang.doperables.descriptions.DataFrameInferenceResult
 import io.deepsense.deeplang.doperables.report.Report
-import io.deepsense.deeplang.doperations.exceptions.{DuplicatedColumnsException, WrongColumnTypeException}
+import io.deepsense.deeplang.doperations.exceptions.{BacktickInColumnNameException, DuplicatedColumnsException, WrongColumnTypeException}
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
 /**
@@ -50,6 +50,15 @@ case class DataFrame private[dataframe] (
       }
       if (duplicatedColumnNames.nonEmpty) {
         throw DuplicatedColumnsException(duplicatedColumnNames.toList)
+      }
+
+      // We had to forbid backticks in column names due to anomalies in Spark 1.6
+      // See: https://issues.apache.org/jira/browse/SPARK-13297
+      val columnNamesWithBackticks = struct.fieldNames.groupBy(identity).collect {
+        case (col, list) if col.contains("`") => col
+      }
+      if (columnNamesWithBackticks.nonEmpty) {
+        throw BacktickInColumnNameException(columnNamesWithBackticks.toList)
       }
     }
   )

@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
+import io.deepsense.deeplang.doperations.exceptions.BacktickInColumnNameException
 import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, InputStorageTypeChoice}
 import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.ParquetNotSupported
 import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, UnknownFileSchemaForPath}
@@ -97,6 +98,14 @@ class ReadDataFrameWithDriverFilesIntegSpec
             Seq(StringType, StringType, StringType)
           )
         ))
+    }
+
+    "throw on csv with column names containing backticks" in {
+      a[BacktickInColumnNameException] should be thrownBy readDataFrame(
+        fileName = "with_column_names_containing_backticks.csv",
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
+        csvNamesIncluded = true,
+        csvConvertToBoolean = true)
     }
 
     "trim white spaces for not quoted column names and values in CSV" in {
