@@ -17,12 +17,12 @@ import io.deepsense.deeplang.parameters.{NameColumnSelection, MultipleColumnSele
 class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
 
   val rows: Seq[Row] = Seq(
-    Row("x_abc", "x", "abc"),
-    Row("y_abc", "y", "abc"),
-    Row("z_abc", "z", "abc"),
-    Row("x_ABC", "x", "ABC"),
-    Row("y_ABC", "y", "ABC"),
-    Row("z_ABC", "z", null)
+    Row("x_abc", "x,x", "abc"),
+    Row("y_abc", "y.y", "abc"),
+    Row("z_abc", "z:z", "abc"),
+    Row("x_ABC", "x,x", "ABC"),
+    Row("y_ABC", "y.y", "ABC"),
+    Row("z_ABC", "z:z", null)
   )
   val columns = Seq("first_column", "category1", "category2")
   val schema = StructType(List(
@@ -51,7 +51,7 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
           Set(columns(1), columns(2)), withRedundancy = false, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
           categorizedDataFrame,
-          Seq(columns(1) + "_x", columns(1) + "_y", columns(2) + "_ABC"),
+          Seq(columns(1) + "_x,x", columns(1) + "_y.y", columns(2) + "_ABC"),
           Seq(
             Seq(1.0, 0.0, 0.0),
             Seq(0.0, 1.0, 0.0),

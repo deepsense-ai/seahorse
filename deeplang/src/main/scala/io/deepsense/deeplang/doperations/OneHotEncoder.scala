@@ -40,7 +40,7 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
         val newColumnName = DataFrame.createColumnName(columnName, value, uniqueLevel)
 
         s"IF(`$columnName` IS NULL, CAST(NULL as Double), IF(`$columnName`=$id, 1.0, 0.0))" +
-          s"as $newColumnName"
+          s"as `$newColumnName`"
       }
     }
 
