@@ -10,11 +10,11 @@ class WorkflowsEditorController extends WorkflowReports {
 
   /* @ngInject */
   constructor(workflowWithResults, config, Report, MultiSelectionService,
-    $scope, $state, $stateParams, $q, $rootScope,
-    GraphNode, Edge,
-    PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-    DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-    NotificationService, ServerCommunication, CopyPasteService, SideBarService) {
+              $scope, $state, $stateParams, $q, $rootScope,
+              GraphNode, Edge, $timeout,
+              PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
+              DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+              NotificationService, ServerCommunication, CopyPasteService, SideBarService) {
 
     super($scope, $rootScope, Report, PageService, Operations, GraphPanelRendererService,
       WorkflowService);
@@ -25,13 +25,12 @@ class WorkflowsEditorController extends WorkflowReports {
     this.DeepsenseNodeParameters = DeepsenseNodeParameters;
     this.Edge = Edge;
     this.config = config;
-    // workflowWithResults is Array of resolved data from promises
-    this.workflow = workflowWithResults[0];
     this.MultiSelectionService = MultiSelectionService;
     this.$scope = $scope;
     this.$rootScope = $rootScope;
     this.$state = $state;
     this.$stateParams = $stateParams;
+    this.$timeout = $timeout;
     this.$q = $q;
     this.NotificationService = NotificationService;
     this.GraphPanelRendererService = GraphPanelRendererService;
@@ -68,26 +67,28 @@ class WorkflowsEditorController extends WorkflowReports {
         .map(WorkflowService.getWorkflow().getNodeById)
     };
 
-    this.init();
+    this.init(workflowWithResults[0]);
   }
 
   loadReports(data) {
     if (!_.isEmpty(data.resultEntities)) {
       super.init(data.resultEntities);
       super.initListeners(data.resultEntities);
-      this.GraphPanelRendererService.rerender();
+      this.$scope.$evalAsync(() => {
+        this.GraphPanelRendererService.rerender();
+      });
     }
   }
 
-  init() {
+  init(workflowWithResults) {
     this.PageService.setTitle('Workflow editor');
-    this.WorkflowService.createWorkflow(this.workflow, this.Operations.getData());
+    this.WorkflowService.createWorkflow(workflowWithResults, this.Operations.getData());
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
     this.CopyPasteService.add(this.multipleCopyParams);
-    this.updateAndRerenderEdges(this.workflow);
+    this.WorkflowService.getWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
-    this.loadReports(this.workflow);
+    this.loadReports(workflowWithResults.executionReport);
   }
 
   initListeners() {
@@ -247,10 +248,8 @@ class WorkflowsEditorController extends WorkflowReports {
   }
 
   updateAndRerenderEdges(data) {
-    if (data && data.knowledge) {
-      this.WorkflowService.updateTypeKnowledge(data.knowledge);
-      this.rerenderEdges();
-    }
+    this.WorkflowService.updateTypeKnowledge(data.knowledge);
+    this.rerenderEdges();
   }
 
   getWorkflow() {
@@ -270,6 +269,6 @@ class WorkflowsEditorController extends WorkflowReports {
   }
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.controller('WorkflowsEditorController', WorkflowsEditorController);
 };

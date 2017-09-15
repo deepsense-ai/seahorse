@@ -126,8 +126,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.renderPorts = function renderPorts() {
-    let nodes = WorkflowService.getWorkflow()
-      .getNodes();
+    let nodes = WorkflowService.getWorkflow().getNodes();
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         let node = internal.getNodeById(nodeId);
