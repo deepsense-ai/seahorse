@@ -29,7 +29,7 @@ var _ues = {
 })();
 
 (function cache() {
-  var FEEDBACK_WINDOW_TIMEOUT = 1000;
+  var FEEDBACK_WINDOW_TIMEOUT = 240000;
   var timeout;
   var closeTimeout;
   var hasCookie = function () {
