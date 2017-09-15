@@ -4,7 +4,7 @@
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager.app
+package io.deepsense.experimentmanager
 
 import java.util.UUID
 
@@ -17,14 +17,13 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalactic.Equality
 
-import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
+import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.models.Id
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.experimentmanager.storage.ExperimentStorage
-import io.deepsense.experimentmanager.{ExperimentManagerImpl, StandardSpec, UnitTestSupport}
 
 class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
