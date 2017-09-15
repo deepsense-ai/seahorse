@@ -37,7 +37,10 @@ class Graph {
     val predecessors: Array[Option[GraphNode]] = Array.fill(operation.inArity) { None }
     val successors: Array[Set[GraphNode]] = Array.fill(operation.outArity) { Set() }
 
-    def addPredecessor(index: Int, node: GraphNode): Unit = predecessors(index) = Some(node)
+    def addPredecessor(index: Int, node: GraphNode): Unit = {
+      require(predecessors(index) == None)
+      predecessors(index) = Some(node)
+    }
 
     def addSuccessor(index: Int, node: GraphNode): Unit = successors(index) += node
 

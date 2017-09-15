@@ -10,7 +10,7 @@ import java.util.UUID
 
 import org.scalatest.FunSuite
 
-import io.deepsense.deeplang.{DOperable, DOperation0To1, DOperation1To0, DOperation1To1}
+import io.deepsense.deeplang._
 import io.deepsense.graphlibrary.Node.State.Status
 
 object DClassesForDOperations {
@@ -36,6 +36,10 @@ object DOperationTestClasses {
 
   class DOperation1To1Test extends DOperation1To1[A1, A] {
     override protected def _execute(t1: A1): A = ???
+  }
+
+  class DOperation2To1Test extends DOperation2To1[A1, A2, A] {
+    override protected def _execute(t1: A1, t2: A2): A = ???
   }
 }
 
@@ -115,7 +119,7 @@ class GraphSuite extends FunSuite {
 
     val graph = new Graph
     val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
-    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
     val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
     val node4 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
     graph.addEdge(node1.id, node2.id, 0, 0)
@@ -123,7 +127,7 @@ class GraphSuite extends FunSuite {
     graph.addEdge(node3.id, node4.id, 0, 0)
     assert(graph.containsCycle == false)
 
-    graph.addEdge(node4.id, node2.id, 0, 0)
+    graph.addEdge(node4.id, node2.id, 0, 1)
     assert(graph.containsCycle == true)
   }
 
@@ -154,14 +158,20 @@ class GraphSuite extends FunSuite {
     val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
     val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
     val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
-    val node4 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
     val node5 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
     val node6 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
-    val node7 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
-
-    val edges = List((node1, node2), (node1, node3), (node2, node4), (node3, node4),
-      (node4, node5), (node4, node6), (node5, node7), (node6, node7))
-    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, 0, 0))
+    val node7 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val edges = List(
+      (node1, node2, 0, 0),
+      (node1, node3, 0, 0),
+      (node2, node4, 0, 0),
+      (node3, node4, 0, 1),
+      (node4, node5, 0, 0),
+      (node4, node6, 0, 0),
+      (node5, node7, 0, 0),
+      (node6, node7, 0, 1))
+    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
 
     val sortedOption = graph.topologicallySorted
     assert(sortedOption.isDefined)
