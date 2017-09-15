@@ -2,16 +2,14 @@
 var module = angular.module('test', ['deepsense.attributes-panel']);
 module.constant('config', {});
 module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, $element, Model) {
-  var nodes = Model.getNodes();
+  let nodes = Model.getNodes();
+  let workflowId = Model.getWorkflowId();
 
   _.assign($scope, {
     currentNode: nodes[2].id,
     testData: nodes,
-    getNode: function() {
-      return _.find(nodes, function(node) {
-        return node.id === $scope.currentNode;
-      });
-    }
+    getNode: () => _.find(nodes, node => node.id === $scope.currentNode),
+    getWorkflowId: () => workflowId
   });
 
   $scope.togglePre = function togglePre (preID) {

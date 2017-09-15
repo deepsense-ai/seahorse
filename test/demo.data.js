@@ -21,7 +21,37 @@ angular.module('test').
             "current": 3,
             "total": 23
           }
-        }
+        },
+        input: [
+          {
+            portIndex: 0,
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.deepsense.type3']
+          },
+          {
+            portIndex: 1,
+            typeQualifier: ['io.deepsense.type4', 'io.seahorse.type5']
+          }
+        ],
+        originalOutput: [
+          {
+            portIndex: 0,
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.deepsense.type3']
+          },
+          {
+            portIndex: 1,
+            typeQualifier: ['io.deepsense.type4']
+          }
+        ],
+        output: [
+          {
+            portIndex: 0,
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.deepsense.type3']
+          },
+          {
+            portIndex: 1,
+            typeQualifier: ['io.deepsense.type4', 'io.seahorse.type5']
+          }
+        ]
       },
       {
         description: 'Simple filters takes dataset based on...',
@@ -674,9 +704,10 @@ angular.module('test').
       nodes[i].parameters = DeepsenseNodeParameters.factory.createParametersList(parameterValues[i], parameterSchemas[i]);
     }
 
+    let workflow_id = "mock_workflow_id";
+
     return {
-      getNodes: function () {
-        return nodes;
-      }
+      getNodes: () => nodes,
+      getWorkflowId: () => workflow_id
     };
   }]);
