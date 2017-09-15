@@ -30,17 +30,20 @@ abstract class AbstractChoiceParamSpec[T, U <: Param[T]] extends AbstractParamSp
 
   className should {
     "throw an exception when choices don't have no-arg constructor" in {
-      an [NoArgumentConstructorRequiredException] should be thrownBy
+      a[NoArgumentConstructorRequiredException] should be thrownBy
         createChoiceParam[BaseChoice]("name", "description")
     }
     "throw an exception when unsupported choice is given" in {
-      an [DeserializationException] should be thrownBy
+      a[DeserializationException] should be thrownBy
         createChoiceParam[ChoiceABC]("name", "description").valueFromJson(
           JsObject(
             "unsupportedClass" -> JsObject()
           )
         )
     }
+    "throw an exception when not all choices are declared" in {
+      an[IllegalArgumentException] should be thrownBy
+        createChoiceParam[ChoiceWithoutDeclaration]("name", "description")
+    }
   }
-
 }

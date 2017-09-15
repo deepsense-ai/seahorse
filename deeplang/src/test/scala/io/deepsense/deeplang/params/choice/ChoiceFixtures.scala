@@ -59,6 +59,15 @@ case class ChoiceWithoutNoArgConstructor(x: String) extends BaseChoice {
   override val params = declareParams()
 }
 
+sealed trait ChoiceWithoutDeclaration extends Choice {
+  override val choiceOrder: List[Class[_ <: ChoiceWithoutDeclaration]] = List()
+}
+
+case class ChoiceWithoutDeclarationInstance() extends ChoiceWithoutDeclaration {
+  override val name: String = "choiceWithoutDeclarationInstance"
+  override val params = declareParams()
+}
+
 object ChoiceFixtures {
 
   val values = "values" -> JsArray(

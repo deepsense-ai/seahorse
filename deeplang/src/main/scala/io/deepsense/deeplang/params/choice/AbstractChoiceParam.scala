@@ -53,9 +53,14 @@ abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) ext
       instances.forall(instance => instance.choiceOrder.contains(instance.getClass))
     require(allSubclassesDeclared,
       "Not all choices were declared in choiceOrder map. " +
-      s"Declared: {${instances.map(_.getClass.getSimpleName).mkString(", ")}}, " +
-      s"All choices: {${instances.map(_.getClass.getSimpleName).mkString(", ")}}")
+      s"Declared: {${instances.head.choiceOrder.map(smartClassName(_)).mkString(", ")}}, " +
+      s"All choices: {${instances.map(i => smartClassName(i.getClass)).mkString(", ")}}")
     instances.toList.sortBy(choice => choice.choiceOrder.indexOf(choice.getClass))
+  }
+
+  private def smartClassName[T](clazz: Class[T]) = {
+    val simpleName = clazz.getSimpleName
+    if (simpleName == null) clazz.getName else simpleName
   }
 
   protected lazy val choiceInstancesByName: Map[String, T] = choiceInstances.map {
