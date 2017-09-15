@@ -154,12 +154,16 @@ class RunningExperimentsActorSpec
       }
     }
 
-    // TODO DS - 769 After aborting failed experiment, status shouldn 't change.
-    "abort experiment" when {
-      "received Abort on failed experiment" ignore {
+    "not abort experiment" when {
+      "received Abort on not running experiment" in {
         withExperiment(failedExperiment) {
           (actorRef, probe, actor, gec) => {
             probe.send(actorRef, Launch(failedExperiment))
+            eventually {
+              probe.send(actorRef, GetStatus(failedExperiment.id))
+              val msg = probe.expectMsgClass(classOf[Status])
+              msg.experiment.get.isFailed shouldBe true
+            }
             probe.send(actorRef, Abort(failedExperiment.id))
             eventually {
               probe.send(actorRef, GetStatus(failedExperiment.id))

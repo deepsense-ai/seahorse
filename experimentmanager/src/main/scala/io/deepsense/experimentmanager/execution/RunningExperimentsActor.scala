@@ -99,13 +99,16 @@ class RunningExperimentsActor @Inject() (
     log.info(s"RunningExperimentsActor starts aborting experiment: $id")
     experiments.get(id) match {
       case None => sender() ! Status(None)
-      case Some((experiment, client)) =>
+      case Some((experiment, client)) if experiment.isRunning =>
         val aborted = experiment.markAborted
         experiments.put(aborted.id, (aborted, client))
         Future(client.terminateExecution()).onFailure {
           case reason => log.error(reason, s"Could not terminate execution of experiment $id")
         }
         sender() ! Status(Some(aborted))
+      case Some((experiment, client)) =>
+        log.info(s"Could not terminate not running experiment $id")
+        sender() ! Status(Some(experiment))
     }
     log.info(s"RunningExperimentsActor finishes aborting experiment: $id")
   }
