@@ -32,7 +32,7 @@ frontend seahorse
 
 frontend workflow_manager
   log global
-  bind 0.0.0.0:{{ds_wm_public_port}} ssl crt /usr/local/etc/haproxy/deepsense.io.pem
+  bind 0.0.0.0:{{ds_wm_public_port}} ssl crt /usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem crt /usr/local/etc/haproxy/deepsense.io.pem
 
   default_backend workflow_manager
 
