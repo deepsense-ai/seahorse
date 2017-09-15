@@ -32,7 +32,7 @@ If you want to install Seahorse on
 you should use [Seahorse as a Vagrant Image](#seahorse-as-a-vagrant-image).
 
 You can also build Seahorse from source code. Follow instructions at
-<a target="_blank" target="https://github.com/deepsense-ai/seahorse/">
+<a target="_blank" href="https://github.com/deepsense-ai/seahorse/">
 Seahorse github repo
 </a>.
 

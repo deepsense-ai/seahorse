@@ -26,6 +26,9 @@ You can now run it using `docker-compose up`. Seahorse will start at [http://loc
 
 ## Development
 
+Note that in order to contribute to Seahorse you have to sign the
+[Contributor License Agreement](https://seahorse.deepsense.ai/licenses/cla).
+
 ### Running tests
 
 Initialize the submodules before running the tests:
