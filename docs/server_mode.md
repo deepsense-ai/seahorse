@@ -23,9 +23,9 @@ services:
   ...
   proxy:
   ...
-    environment: &proxy_environment_value
+    environment:
       ...
-      HOST: "127.0.0.1"
+      HOST: 127.0.0.1
  ...
 {% endhighlight %}
 </div>
@@ -37,9 +37,9 @@ services:
   ...
   proxy:
   ...
-    environment: &proxy_environment_value
+    environment:
       ...
-      HOST: "0.0.0.0"
+      HOST: 0.0.0.0
  ...
 {% endhighlight %}
 </div>
@@ -53,11 +53,11 @@ docker-compose up -d
 
 This will start containers with Seahorse in the background.
 
-Seahorse provides multi user support, useful in server mode. Multi user allows creating workflows protected from modifications by other users. You can either use default authorization service or connect to your authorization service (LDAP, Google, etc.).
+Seahorse provides multi-user capability, useful in server mode. Multi-user allows creating workflows protected from modifications by other users. Seahorse Standalone limits the number of users to one. Seahorse Enterprise allows more than one user.
 
-Default authorization service offers registration page to create new account by sending an activation email. You have to log on to an account before using Seahorse.
+Authorization service offers registration page to create a new account confirmed by sending an activation email. You have to log on to an account before using Seahorse.
 
-To enable the internal authorization service, the `docker-compose.yml` file should be modified as described below.
+To enable the authorization service, the `docker-compose.yml` file should be modified as described below.
 
 <div class="flex-adaptable-row-container">
 <div class="flex-adaptable-column-container">
@@ -65,11 +65,16 @@ To enable the internal authorization service, the `docker-compose.yml` file shou
 {% highlight YAML %}
 services:
   ...
+  authorization:
+    ...
+    environment:
+      ENABLE_AUTHORIZATION: 'false'
+  ...
   proxy:
   ...
-    environment: &proxy_environment_value
+    environment:
       ...
-      ENABLE_AUTHORIZATION: "false"
+      ENABLE_AUTHORIZATION: 'false'
  ...
 {% endhighlight %}
 </div>
@@ -79,18 +84,22 @@ services:
 {% highlight YAML %}
 services:
   ...
+  authorization:
+    ...
+    environment:
+      ENABLE_AUTHORIZATION: 'true'
+  ...
   proxy:
   ...
-    environment: &proxy_environment_value
+    environment:
       ...
-      ENABLE_AUTHORIZATION: "true"
+      ENABLE_AUTHORIZATION: 'true'
  ...
 {% endhighlight %}
 </div>
 </div>
 
-
-To learn more about using Seahorse in production and such features as security, additional authorization methods and custom deployment requirements,
+To learn more about using Seahorse in production and such features as security, additional authorization methods (LDAP, Google, etc.), more users per instance and custom deployment requirements,
 please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
 
 {% include contact_box.html %}
