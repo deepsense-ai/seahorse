@@ -335,6 +335,20 @@ angular.module('test').
               "schema": null
             }
           ]
+        },
+        {
+          "name": "creator-sample-parameter",
+          "type": "creator",
+          "description": "This is a single column creator parameter.",
+          "default": "predictions",
+          "required": true
+        },
+        {
+          "name": "prefix-based-creator-sample-parameter",
+          "type": "prefixBasedCreator",
+          "description": "This is a prefix-based creator parameter.",
+          "default": "prefix_",
+          "required": true
         }
       ],
       [],
@@ -402,7 +416,8 @@ angular.module('test').
           "choice3": {
             "name31": "let codilime <- 42 * 3 - 42 * 2;"
           }
-        }
+        },
+        "creator-sample-parameter": "sample text"
       },
       {},
       {},
