@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Workflow File Format
+displayTitle: Workflow Files
 docTab: workflowfile
-title: Workflow File Format
+title: Workflow Files
 includeTechnicalOverviewMenu: true
 description: Deepsense documentation homepage
 ---
@@ -14,13 +14,13 @@ description: Deepsense documentation homepage
 
 ## Overview
 
-The main purpose of the workflow file is to store information about
+The main purpose of workflow files is to store information about
 [workflow](deeplang_overview.html#workflows) design and results
-of its execution. Workflow file uses JSON format.
+of its execution. Workflow files use JSON format.
 
 ## Workflow File Format
 
-Workflow file contains up to 5 sections: [metadata](#metadata), [workflow](#workflow),
+A workflow file contains up to 5 sections: [metadata](#metadata), [workflow](#workflow),
 [variables](#variables), [executionReport](#execution-report),
 [thirdPartyData](#third-party-data) and an optional identifier.
 

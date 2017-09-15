@@ -41,12 +41,12 @@
           <ul class="nav navbar-nav">
             <li class="{% if page.menuTab == 'index' %}active{% endif %}"><a href="{{base}}/index.html">Quick Start</a></li>
             <li class="{% if page.includeTechnicalOverviewMenu %}active{% endif %} dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Technical Overview<span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Components<span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li class="{% if page.docTab == 'bundled_image_overview' %}active{% endif %}"><a href="{{base}}/bundled_image_overview.html">Seahorse Bundled Image</a></li>
                 <li class="{% if page.docTab == 'batch_workflow_executor_overview' %}active{% endif %}"><a href="{{base}}/batch_workflow_executor_overview.html">Seahorse Batch Workflow Executor</a></li>
                 <li role="separator" class="divider"></li>
-                <li class="{% if page.docTab == 'workflowfile' %}active{% endif %}"><a href="{{base}}/workflowfile.html">Workflow File Format</a></li>
+                <li class="{% if page.docTab == 'workflowfile' %}active{% endif %}"><a href="{{base}}/workflowfile.html">Workflow Files</a></li>
               </ul>
             </li>
             <li class="{% if page.includeDeeplangMenu or page.includeOperationsMenu or page.includeClassesMenu %}active{% endif %} dropdown">
@@ -95,7 +95,11 @@
   </div>
 
   <footer class="col-sm-12">
-    <p class="text-center footer-text">Seahorse by <a href="http://deepsense.io/" target="_blank"><span>deep</span>sense<span>.io</span></a> | 2016</p>
+    <p class="text-center footer-text">Seahorse by <a href="http://deepsense.io/" target="_blank"><span>deep</span>sense<span>.io</span></a> | 2016 |
+          <a target="_blank" href="https://twitter.com/deepsense_io/"><img src="/img/twitter.png" height="35px" </a>
+          <a target="_blank" href="https://github.com/deepsense-io/seahorse-workflow-executor"><img src="/img/octocat.png" height="25px"></a>
+          <a target="_blank" href="http://feedback.seahorse.deepsense.io/"><img src="/img/userecho.png" height="25px"></a>
+    </p>
   </footer>
 </body>
 

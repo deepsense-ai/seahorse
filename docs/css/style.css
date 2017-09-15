@@ -28,6 +28,12 @@ h4 {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+h5 {
+  font-size: 15px;
+  font-weight: 600;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
 a {
   color: #00b1eb;
   font-weight: 600;
