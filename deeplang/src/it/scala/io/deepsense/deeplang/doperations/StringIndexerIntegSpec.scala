@@ -25,6 +25,7 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMu
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.doperables.spark.wrappers.models.{MultiColumnStringIndexerModel, SingleColumnStringIndexerModel}
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.StringIndexer
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.{DKnowledge, DOperable, DeeplangIntegTestSupport, UnitSpec}
@@ -190,35 +191,17 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
       }
       "parameters are not set" when {
         "in single column mode" should {
-          "infer SingleColumnStringIndexerModel without parameters" in pendingUntilFixed {
+          "throw DeepLangException" in {
             val indexer = singleColumnStringIndexer(None, None)
-            val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector)
-            validate(knowledge) {
-              case (dataFrameKnowledge, transformerKnowledge) =>
-                validateSingleColumnParams(transformerKnowledge, None, None)
-                validateSchemasEqual(dataFrameKnowledge, None)
-                validateTransformerInference(
-                  unknownSchemaKnowledge,
-                  transformerKnowledge,
-                  None)
-            }
+            a [DeepLangException] shouldBe thrownBy(
+              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector))
           }
         }
         "in multi column mode" should {
-          "infer StringIndexerModel with parameters" in {
+          "throw DeepLangException" in {
             val indexer = multiColumnStringIndexer(None, None)
-            val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector)
-            validate(knowledge) {
-              case (dataFrameKnowledge, transformerKnowledge) =>
-                validateMultiColumnParams(transformerKnowledge, None, None)
-                validateSchemasEqual(dataFrameKnowledge, None)
-                validateTransformerInference(
-                  unknownSchemaKnowledge,
-                  transformerKnowledge,
-                  None)
-            }
+            a [DeepLangException] shouldBe thrownBy(
+              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector))
           }
         }
       }

@@ -37,8 +37,7 @@ abstract class EstimatorAsOperation[E <: Estimator[T], T <: Transformer]
   override protected def _execute(
       context: ExecutionContext)(
       t0: DataFrame): (DataFrame, T) = {
-    estimator.set(extractParamMap())
-    val transformer = estimator.fit(context)(())(t0)
+    val transformer = estimatorWithParams().fit(context)(())(t0)
     val transformedDataFrame = transformer.transform(context)(())(t0)
     (transformedDataFrame, transformer)
   }
@@ -48,12 +47,17 @@ abstract class EstimatorAsOperation[E <: Estimator[T], T <: Transformer]
       k0: DKnowledge[DataFrame])
     : ((DKnowledge[DataFrame], DKnowledge[T]), InferenceWarnings) = {
 
-    estimator.set(extractParamMap())
-    val (transformerKnowledge, fitWarnings) = estimator.fit.infer(context)(())(k0)
+    val (transformerKnowledge, fitWarnings) = estimatorWithParams().fit.infer(context)(())(k0)
     val (dataFrameKnowledge, transformWarnings) =
       transformerKnowledge.single.transform.infer(context)(())(k0)
     val warnings = fitWarnings ++ transformWarnings
     ((dataFrameKnowledge, transformerKnowledge), warnings)
+  }
+
+  private def estimatorWithParams() = {
+    val estimatorWithParams = estimator.set(extractParamMap())
+    validateDynamicParams(estimatorWithParams)
+    estimatorWithParams
   }
 
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
