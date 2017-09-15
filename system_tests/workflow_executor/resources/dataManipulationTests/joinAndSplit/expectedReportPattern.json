@@ -4,7 +4,7 @@
       "c21973ce-4bea-ba68-9d92-d4045d11dda2": {
         "status": "COMPLETED", 
         "results": [
-          "e720f66a-ea04-46c3-a1b8-cf70822c86c0"
+          "6d45be7d-f710-477d-ac31-6c9572c26f96"
         ], 
         "error": null
       }, 
@@ -21,28 +21,28 @@
       "31f196ac-d3a5-3859-c678-27105f7a6d2b": {
         "status": "COMPLETED", 
         "results": [
-          "301b0a6d-64f5-48d9-9183-30358fccbdce"
+          "f1c4e0de-a2a8-4a6e-b1ed-2c5f34992290"
         ], 
         "error": null
       }, 
       "94d963d6-92e7-64b9-05e8-15661774d1bb": {
         "status": "COMPLETED", 
         "results": [
-          "6c33595c-2acb-4bba-b4ed-9333fa7c7fbd", 
-          "1dfe4004-de44-4cba-b884-2e3ed065b409"
+          "cc09fe5e-876e-4a83-b85b-37b8315272e6", 
+          "440a6447-1491-4c00-9139-67fe6e8d5177"
         ], 
         "error": null
       }, 
       "01ccc706-2912-c87d-5f02-9604a7db2b5f": {
         "status": "COMPLETED", 
         "results": [
-          "38d18c37-8dfb-46b4-88f2-12337e69a350"
+          "fc8bd56a-bc18-47ab-815d-bd5c9915cc99"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "e720f66a-ea04-46c3-a1b8-cf70822c86c0": {
+      "6d45be7d-f710-477d-ac31-6c9572c26f96": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -133,6 +133,18 @@
             }
           }, 
           "distributions": {
+            "surname": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "surname", 
+              "missingValues": 0
+            }, 
+            "name": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "name", 
+              "missingValues": 0
+            }, 
             "marriage_status": {
               "subtype": "continuous", 
               "blockType": "distribution", 
@@ -144,10 +156,29 @@
               "name": "marriage_status", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "name": "name", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "name": "surname", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "marriage_status", 
+                "nullable": true
+              }
+            ]
           }
         }
-      }, 
-      "1dfe4004-de44-4cba-b884-2e3ed065b409": {
+      },
+      "440a6447-1491-4c00-9139-67fe6e8d5177": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -164,7 +195,7 @@
               "values": [
                 [
                   "4", 
-                  "6"
+                  "3"
                 ]
               ], 
               "blockType": "table"
@@ -186,15 +217,9 @@
               "rowNames": null, 
               "values": [
                 [
-                  "Alan", 
-                  "Smith", 
+                  "Rita", 
+                  "Innkeeper", 
                   "0", 
-                  "9820"
-                ], 
-                [
-                  "Jennifer", 
-                  "Tyler", 
-                  "2", 
                   null
                 ], 
                 [
@@ -204,22 +229,10 @@
                   "6690"
                 ], 
                 [
-                  "Vito", 
-                  "Corleone", 
-                  "1", 
-                  null
-                ], 
-                [
-                  "Rita", 
-                  "Innkeeper", 
+                  "Alan", 
+                  "Smith", 
                   "0", 
-                  null
-                ], 
-                [
-                  "Larry", 
-                  "Wall", 
-                  "1", 
-                  "12880"
+                  "9820"
                 ]
               ], 
               "blockType": "table"
@@ -230,28 +243,64 @@
               "subtype": "continuous", 
               "blockType": "distribution", 
               "statistics": {
-                "max": "12880", 
-                "mean": "9796.666667", 
+                "max": "9820", 
+                "mean": "NaN", 
                 "min": "6690"
               }, 
               "name": "salary", 
-              "missingValues": 3
+              "missingValues": 1
+            }, 
+            "surname": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "surname", 
+              "missingValues": 0
+            }, 
+            "name": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "name", 
+              "missingValues": 0
             }, 
             "marriage_status": {
               "subtype": "continuous", 
               "blockType": "distribution", 
               "statistics": {
-                "max": "2", 
-                "mean": "0.833333", 
+                "max": "1", 
+                "mean": "0.333333", 
                 "min": "0"
               }, 
               "name": "marriage_status", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "name": "name", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "name": "surname", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "marriage_status", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "salary", 
+                "nullable": true
+              }
+            ]
           }
         }
       }, 
-      "6c33595c-2acb-4bba-b4ed-9333fa7c7fbd": {
+      "cc09fe5e-876e-4a83-b85b-37b8315272e6": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -268,7 +317,7 @@
               "values": [
                 [
                   "4", 
-                  "4"
+                  "7"
                 ]
               ], 
               "blockType": "table"
@@ -302,15 +351,33 @@
                   "850"
                 ], 
                 [
-                  "Alan", 
-                  "Turing", 
-                  "3", 
+                  "Larry", 
+                  "Wall", 
+                  "1", 
+                  "12880"
+                ], 
+                [
+                  "Jennifer", 
+                  "Tyler", 
+                  "2", 
                   null
                 ], 
                 [
                   "Ralph", 
                   "Max", 
                   "0", 
+                  null
+                ], 
+                [
+                  "Vito", 
+                  "Corleone", 
+                  "1", 
+                  null
+                ], 
+                [
+                  "Alan", 
+                  "Turing", 
+                  "3", 
                   null
                 ]
               ], 
@@ -323,27 +390,63 @@
               "blockType": "distribution", 
               "statistics": {
                 "max": "15410", 
-                "mean": "8130", 
+                "mean": "NaN", 
                 "min": "850"
               }, 
               "name": "salary", 
-              "missingValues": 2
+              "missingValues": 4
+            }, 
+            "surname": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "surname", 
+              "missingValues": 0
+            }, 
+            "name": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "name", 
+              "missingValues": 0
             }, 
             "marriage_status": {
               "subtype": "continuous", 
               "blockType": "distribution", 
               "statistics": {
                 "max": "3", 
-                "mean": "1", 
+                "mean": "1.142857", 
                 "min": "0"
               }, 
               "name": "marriage_status", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "name": "name", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "name": "surname", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "marriage_status", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "salary", 
+                "nullable": true
+              }
+            ]
           }
         }
       }, 
-      "38d18c37-8dfb-46b4-88f2-12337e69a350": {
+      "fc8bd56a-bc18-47ab-815d-bd5c9915cc99": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -382,10 +485,10 @@
               "rowNames": null, 
               "values": [
                 [
-                  "Alan", 
-                  "Smith", 
+                  "Rita", 
+                  "Innkeeper", 
                   "0", 
-                  "9820"
+                  null
                 ], 
                 [
                   "Bob", 
@@ -400,6 +503,12 @@
                   "850"
                 ], 
                 [
+                  "Larry", 
+                  "Wall", 
+                  "1", 
+                  "12880"
+                ], 
+                [
                   "Jennifer", 
                   "Tyler", 
                   "2", 
@@ -410,12 +519,6 @@
                   "Falconet", 
                   "1", 
                   "6690"
-                ], 
-                [
-                  "Alan", 
-                  "Turing", 
-                  "3", 
-                  null
                 ], 
                 [
                   "Ralph", 
@@ -430,16 +533,16 @@
                   null
                 ], 
                 [
-                  "Rita", 
-                  "Innkeeper", 
+                  "Alan", 
+                  "Smith", 
                   "0", 
-                  null
+                  "9820"
                 ], 
                 [
-                  "Larry", 
-                  "Wall", 
-                  "1", 
-                  "12880"
+                  "Alan", 
+                  "Turing", 
+                  "3", 
+                  null
                 ]
               ], 
               "blockType": "table"
@@ -451,11 +554,23 @@
               "blockType": "distribution", 
               "statistics": {
                 "max": "15410", 
-                "mean": "9130", 
+                "mean": "NaN", 
                 "min": "850"
               }, 
               "name": "salary", 
               "missingValues": 5
+            }, 
+            "surname": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "surname", 
+              "missingValues": 0
+            }, 
+            "name": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "name", 
+              "missingValues": 0
             }, 
             "marriage_status": {
               "subtype": "continuous", 
@@ -468,10 +583,34 @@
               "name": "marriage_status", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "name": "name", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "name": "surname", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "marriage_status", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "salary", 
+                "nullable": true
+              }
+            ]
           }
         }
       }, 
-      "301b0a6d-64f5-48d9-9183-30358fccbdce": {
+      "f1c4e0de-a2a8-4a6e-b1ed-2c5f34992290": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -547,7 +686,38 @@
               }, 
               "name": "salary", 
               "missingValues": 0
+            }, 
+            "surname": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "surname", 
+              "missingValues": 0
+            }, 
+            "name": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "name", 
+              "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "name": "name", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "name": "surname", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "salary", 
+                "nullable": true
+              }
+            ]
           }
         }
       }
