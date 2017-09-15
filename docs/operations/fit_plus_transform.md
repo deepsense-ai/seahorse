@@ -13,6 +13,9 @@ It is used to fit an [Estimator](../classes/estimator.html) on a
 [DataFrame](../classes/dataframe.html). It produces a [Transformer](../classes/transformer.html)
 and a transformed `DataFrame`.
 
+**Usage example**:
+![Fit+Transform example](../img/fit_plus_transform_example.png){: .img-responsive .spacer .centered-image}
+
 **Since**: Seahorse 1.0.0
 
 ## Input
