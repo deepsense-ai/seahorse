@@ -1,0 +1,131 @@
+@import "../../../../../css/variables.less";
+
+.graph-node {
+  z-index: 24;
+  cursor: pointer;
+  background-color: #fff;
+  border: 2px solid @seahorse-blue;
+  border-radius: 5px;
+  color: #333;
+  transition: background-color 200ms;
+
+  &--active > div {
+    background-color: lighten(@color-active, 30%);
+  }
+
+  &.border-estimator {
+    border: 2px solid @seahorse-light-sea-green;
+  }
+
+  &.border-transformer {
+    border: 2px solid @seahorse-madison;
+  }
+
+  &.border-evaluator {
+    border: 2px solid @seahorse-allports;
+  }
+
+  &.border-default {
+    border: 2px solid @seahorse-blue;
+  }
+
+  &.standard {
+    width: 200px;
+    height: 55px;
+  }
+
+  &.action {
+    width: 55px;
+    height: 55px;
+  }
+
+  &.source-or-sink {
+    width: 65px;
+    height: 65px;
+  }
+
+  &__content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 10px;
+    height: 100%;
+    text-align: left;
+    user-select: none;
+
+    .centered {
+      text-align: center;
+    }
+
+    .custom-name {
+      font-weight: 600;
+      width: 100%;
+
+      .action-letter {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+
+    .user-name {
+      color: @seahorse-blue;
+      font-weight: 900;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .status {
+    position: absolute;
+    right: -11px;
+    top: 30%;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__icon {
+      display: flex;
+      justify-content: center;
+      font-size: 14px;
+      color: white;
+      height: 14px;
+      width: 14px;
+    }
+
+    &.completed {
+      background-color: @color-action;
+    }
+
+    &.running {
+      background-color: @color-active;
+    }
+
+    &.queued {
+      background-color: @color-warn;
+    }
+
+    &.aborted,
+    &.failed {
+      background-color: @color-error;
+    }
+  }
+}
+
+.selected-node,
+.selected-node:hover {
+  background-color: @highlighted-graph-node-color;
+  border-color: @color-active;
+  color: white;
+  transition: background-color 400ms;
+}
+
+.popover {
+  word-wrap: break-word;
+  max-width: 500px !important;
+}

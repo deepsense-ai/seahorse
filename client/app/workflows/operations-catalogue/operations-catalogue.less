@@ -1,0 +1,25 @@
+@import "../../../css/variables";
+
+.operations-catalogue {
+  color: @seahorse-blue;
+  transition: max-width 0.5s, min-width 0.5s;
+  position: relative;
+  left: 0;
+  max-width: 240px;
+  min-width: 0;
+  z-index: 3;
+
+  &--filtered {
+    position: absolute;
+    background-color: @color-light-grey;
+    border: 1px solid @color-grey;
+    width: auto;
+    left: 50%;
+    top: 40px;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    max-width: 2000px;
+    min-width: 280px;
+    z-index: 0;
+  }
+}

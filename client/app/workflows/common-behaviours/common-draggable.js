@@ -45,9 +45,6 @@ function Draggable($rootScope, $log, DragAndDrop) {
           event.dataTransfer.setData('draggableType', attrs.draggableType);
           event.dataTransfer.setData('draggableExactType', attrs.draggableExactType);
 
-          /* prevent bubbling */
-          event.stopImmediatePropagation();
-
           DragAndDrop.drag(event, element);
         }
       }

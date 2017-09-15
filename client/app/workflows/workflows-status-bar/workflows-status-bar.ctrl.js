@@ -1,7 +1,9 @@
 'use strict';
 
+import {sessionStatus} from 'APP/enums/session-status.js';
+
 /* @ngInject */
-function WorkflowStatusBarController($scope, UserService, ClusterModalService, LibraryModalService, SessionStatus,
+function WorkflowStatusBarController($scope, UserService, ClusterModalService, LibraryModalService,
                                      SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService, PredefinedUser) {
 
   const vm = this;
@@ -73,7 +75,7 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, L
   }
 
   function isViewerMode() {
-    return vm.workflow.sessionStatus === SessionStatus.NOT_RUNNING;
+    return vm.workflow.sessionStatus === sessionStatus.NOT_RUNNING;
   }
 
   function openLibrary() {

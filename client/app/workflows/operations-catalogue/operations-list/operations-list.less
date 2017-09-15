@@ -1,0 +1,59 @@
+@import "../../../../css/variables";
+@import "../../../mixins";
+
+@inner-border-color: #c0c0c0;
+@outer-border-color: #b3b3b3;
+
+.operations-list {
+  position: relative;
+  width: 200px;
+  border: 2px solid @outer-border-color;
+  background-color: @color-light-grey;
+
+  &__wrapper {
+    max-height: 240px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  &__item {
+    font-size: 14px;
+    font-weight: 600;
+    height: 40px;
+    width: 200px;
+    transition: background-color .3s ease;
+
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      background-color: @color-white;
+      cursor: pointer;
+    }
+
+    &.category {
+      border-bottom: 1px solid @inner-border-color;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &__name {
+    pointer-events: none;
+    padding: 0 10px;
+    flex: 1;
+    .text-elipsis();
+  }
+
+  &__icon {
+    pointer-events: none;
+    font-size: 22px;
+    width: 30px;
+  }
+
+  &__next-level {
+    position: absolute;
+  }
+}

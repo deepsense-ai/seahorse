@@ -4,8 +4,10 @@ import startEditingHTML from './additional-html/starting-popover.html';
 import startExecutorHTML from './additional-html/running-executor-popover.html';
 import executorErrorHTML from './additional-html/executor-error.html';
 
+import {sessionStatus} from 'APP/enums/session-status.js';
+
 /* ngInject */
-function WorkflowStatusBarService($rootScope, WorkflowService, SessionStatus, UserService) {
+function WorkflowStatusBarService($rootScope, WorkflowService, UserService) {
 
   const service = this;
 
@@ -108,13 +110,13 @@ function WorkflowStatusBarService($rootScope, WorkflowService, SessionStatus, Us
         switch (workflow.workflowStatus) {
           case 'editor':
             switch (workflow.sessionStatus) {
-              case SessionStatus.NOT_RUNNING:
+              case sessionStatus.NOT_RUNNING:
                 return 'editorExecutorNotRunning';
-              case SessionStatus.CREATING:
+              case sessionStatus.CREATING:
                 return 'editorExecutorCreating';
-              case SessionStatus.RUNNING:
+              case sessionStatus.RUNNING:
                 return 'editorExecutorRunning';
-              case SessionStatus.ERROR:
+              case sessionStatus.ERROR:
                 return 'editorExecutorError';
               default:
                 throw `Unsupported session status: ${workflow.sessionStatus}`;

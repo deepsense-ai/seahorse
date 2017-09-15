@@ -1,5 +1,7 @@
 'use strict';
 
+import jsPlumb from 'jsplumb';
+
 let internal = {};
 class MultiSelection {
   constructor($document, $timeout, $rootScope, MouseEvent, MultiSelectionService, debounce) {
@@ -47,7 +49,7 @@ class MultiSelection {
       };
 
       that._getWorkflowFromInheritedScope = () => {
-        return scope.flowChartBoxCtrl.workflow;
+        return scope.$ctrl.workflow;
       };
 
       that.startPainting = (event) => {
@@ -62,7 +64,7 @@ class MultiSelection {
           return;
         }
 
-        startPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
+        startPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0].parentElement);
 
         workflowNodes = workflowNodes || _.map(that._getWorkflowFromInheritedScope().getNodes(),
           node => {
@@ -82,7 +84,6 @@ class MultiSelection {
         };
 
         element.addClass('has-cursor-crosshair');
-
         $selectionElement.css({
           'top': startPoint.y,
           'left': startPoint.x
@@ -158,7 +159,7 @@ class MultiSelection {
       }, true);
 
       that.paint = (event) => {
-        let currentPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
+        let currentPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0].parentElement);
         var diff = {
           x: currentPoint.x - startPoint.x,
           y: currentPoint.y - startPoint.y
@@ -188,7 +189,7 @@ class MultiSelection {
       that.addToSelection = (nodeIDs) => {
         let DOMNodes = _.map(nodeIDs, (nodeId) => {
           let DOMNode = that.findDOMNodeById(nodeId);
-          DOMNode.classList.add('flowchart-node--active');
+          DOMNode.classList.add('graph-node--active');
           jsPlumb.addToDragSelection(DOMNode);
           return DOMNode;
         });
@@ -199,7 +200,7 @@ class MultiSelection {
       that.removeFromSelection = (nodeIDs) => {
         let DOMNodes = _.map(nodeIDs, (nodeId) => {
           let DOMNode = that.findDOMNodeById(nodeId);
-          DOMNode.classList.remove('flowchart-node--active');
+          DOMNode.classList.remove('graph-node--active');
           jsPlumb.removeFromDragSelection(DOMNode);
           return DOMNode;
         });
@@ -209,7 +210,7 @@ class MultiSelection {
 
       that.clearAllFromSelection = () => {
         _.each(inSelection, (DOMNode) => {
-          DOMNode.classList.remove('flowchart-node--active');
+          DOMNode.classList.remove('graph-node--active');
         });
         internal.MultiSelectionService.clearSelection();
         jsPlumb.clearDragSelection();

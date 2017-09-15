@@ -3,7 +3,8 @@
 let angular = require('angular');
 
 let workflows = angular.module('ds.workflows', [
-  require('./reports/reports.module.js').name
+  require('./reports/reports.module.js').name,
+  require('./editor/editor.module.js')
 ]);
 
 require('./workflows.config.js').inject(workflows);
@@ -26,9 +27,6 @@ require('./workflows-status-bar/menu-item/menu-item.controller.js').inject(workf
 require('./workflows-status-bar/additional-html/running-executor-popover.ctrl.js').inject(workflows);
 require('./workflows-status-bar/additional-html/starting-popover.ctrl.js').inject(workflows);
 require('./workflows-status-bar/additional-html/executor-error.ctrl.js').inject(workflows);
-require('./workflows-editor/side-bar/side-bar.directive.js').inject(workflows);
-require('./workflows-editor/side-bar/side-bar.controller.js').inject(workflows);
-require('./workflows-editor/side-bar/side-bar.service.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.directive.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.controller.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.service.js').inject(workflows);

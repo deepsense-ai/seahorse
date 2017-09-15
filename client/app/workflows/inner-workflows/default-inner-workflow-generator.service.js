@@ -40,7 +40,6 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
         'thirdPartyData': {
           'gui': {
             'name': 'Inner workflow of custom transformer',
-            'predefColors': ['#00B1EB', '#1ab394', '#2f4050', '#f8ac59', '#ed5565', '#DD6D3F'],
             'nodes': {
               [sourceId]: {
                 'uiName': '',

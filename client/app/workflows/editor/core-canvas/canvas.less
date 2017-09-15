@@ -1,0 +1,114 @@
+@import "../../../../css/variables.less";
+
+@seahorse-shining-data: #53d1fb;
+@seahorse-shining-transformer: #0968b5;
+@seahorse-shining-evaluator: #57aaae;
+@seahorse-shining-estimator: #28e8ef;
+
+.canvas {
+  path {
+    cursor: default;
+  }
+
+  &.disabled {
+    filter: grayscale(100%);
+  }
+
+  &.sliding-window {
+    height: 100%;
+    transform-origin: left top 0;
+  }
+
+  .new-node-container {
+    width: inherit;
+    height: inherit;
+  }
+
+  .flowchart-paint-area {
+    position: absolute;
+    width: 10000px;
+    height: 10000px;
+    z-index: 1;
+  }
+
+  .graph-node-component {
+    position: absolute;
+    z-index: 100;
+  }
+
+  .jtk-endpoint {
+    cursor: pointer;
+    z-index: 2;
+  }
+
+
+  .matching-port-default svg circle {
+    animation: svg-fill-animation-default 1s linear infinite;
+  }
+
+  .matching-port-transformer svg rect {
+    animation: svg-fill-animation-transformer 1s linear infinite;
+  }
+
+  .matching-port-evaluator svg rect {
+    animation: svg-fill-animation-evaluator 1s linear infinite;
+  }
+
+  .matching-port-estimator svg rect {
+    animation: svg-fill-animation-estimator 1s linear infinite;
+  }
+
+  .dataframe-output-port {
+    z-index: 100;
+  }
+
+  .has-report {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    &:before {
+      font-size: 14px;
+      position: relative;
+      color: @color-white;
+      z-index: 1;
+    }
+  }
+
+  .dataframe-output-port.has-report {
+   padding-bottom: 5px;
+  }
+
+  .port-active:not(.transformer) svg circle,
+  .port-active:not(.transformer) svg rect {
+    stroke: @seahorse-madison;
+  }
+
+  .port-active.transformer svg rect {
+    stroke: @seahorse-blue;
+  }
+
+  @keyframes svg-fill-animation-default {
+    50% {
+      fill: @seahorse-shining-data
+    }
+  }
+
+  @keyframes svg-fill-animation-transformer {
+    50% {
+      fill: @seahorse-shining-transformer
+    }
+  }
+
+  @keyframes svg-fill-animation-evaluator {
+    50% {
+      fill: @seahorse-shining-evaluator
+    }
+  }
+
+  @keyframes svg-fill-animation-estimator {
+    50% {
+      fill: @seahorse-shining-estimator
+    }
+  }
+}

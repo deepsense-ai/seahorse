@@ -1,0 +1,18 @@
+@shadow-color: #181c17;
+@border-color: #E0E0E0;
+
+port-status-tooltip {
+  position: absolute;
+}
+
+.port-status-tooltip {
+  z-index: 100;
+  background: #fff;
+  border: 1px solid @border-color;
+  box-shadow: 2px 2px 5px 0 @shadow-color;
+  border-radius: 4px;
+
+  &__body {
+    padding: 5px;
+  }
+}

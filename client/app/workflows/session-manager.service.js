@@ -1,15 +1,17 @@
 'use strict';
 
+import {sessionStatus} from 'APP/enums/session-status.js';
+
 const CHECKING_SESSION_MANAGER_STATE_TIMEOUT = 10000;
 /* @ngInject */
-function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
+function SessionManager($interval, config, SessionManagerApi) {
 
   const service = {
     sessions: [],
     statusForWorkflowId: (workflowId) => {
       const session = _.find(service.sessions, (s) => s.workflowId === workflowId);
       if(_.isUndefined(session)) {
-        return SessionStatus.NOT_RUNNING;
+        return sessionStatus.NOT_RUNNING;
       } else {
         return session.status;
       }

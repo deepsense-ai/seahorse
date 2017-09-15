@@ -34,11 +34,11 @@ function MouseEvent() {
 
     return {
       x: Math.round((event.clientX - scroll.x - element.getBoundingClientRect()
-        .left) / scale),
+          .left) / scale),
       // y: Math.round((event.clientY - scroll.y - element.getBoundingClientRect().top) / scale)
       y: Math.round((event.clientY + scroll.y - $(element)
-        .offset()
-        .top) / scale)
+          .offset()
+          .top) / scale)
     };
   };
 
