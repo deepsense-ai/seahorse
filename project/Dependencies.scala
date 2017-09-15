@@ -18,6 +18,7 @@ import sbt._
 object Version {
   val apacheCommons = "3.3.2"
   val avro = "1.7.7"
+  val guava = "20.0"
   val guice = "3.0"
   val h2 = "1.4.191"
   val json4s = "3.3.0"
@@ -64,11 +65,10 @@ object Library {
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val apacheCommonsExec = "org.apache.commons" % "commons-exec" % "1.3"
   val cronUtils = "com.cronutils" % "cron-utils" % "5.0.4"
+  val guava = "com.google.guava"  % "guava" % Version.guava
   val guice = "com.google.inject" % "guice" % Version.guice
   val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % Version.guice
   val jcloudsKeystone = jclouds("keystone")
-  val jcloudsCompute = "org.apache.jclouds" % "jclouds-compute" % Version.jclouds
-  val jcloudsNova = jclouds("nova")
   val jettyWebapp = "org.eclipse.jetty" % "jetty-webapp" % "9.3.8.v20160314"
   val metricsScala = "nl.grons" %% "metrics-scala" % Version.metricsScala excludeAkkaActor
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
@@ -150,11 +150,10 @@ object Dependencies {
     akkaActor,
     apacheCommons,
     findBugs,
+    guava,
     guice,
     guiceMultibindings,
-    jcloudsCompute,
     jcloudsKeystone,
-    jcloudsNova,
     metricsScala,
     nscalaTime,
     slick,

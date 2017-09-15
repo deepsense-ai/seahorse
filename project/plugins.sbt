@@ -25,6 +25,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.8.4")
 
 addSbtPlugin("io.deepsense" %% "scalatra-swagger-codegen" % "1.6")
 
-addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.4.0")
+addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.4.1")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.5.1")
+
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.8.2")

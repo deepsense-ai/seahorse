@@ -64,7 +64,7 @@ object Library {
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
-  val reflections = "org.reflections" % "reflections" % "0.9.11" excludeGuava
+  val reflections = "org.reflections" % "reflections" % "0.9.11"
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.7.1"
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
@@ -138,11 +138,12 @@ object Dependencies {
   }
 
   object GoogleServicesApi {
+
     val components = Seq(
-      "com.google.api-client" % "google-api-client" % Version.googleApi excludeJackson,
-      "com.google.api-client" % "google-api-client-gson" % "1.22.0" excludeJackson,
-      "com.google.apis" % "google-api-services-drive" % s"v3-rev51-${Version.googleApi}" excludeJackson
-    )
+      "com.google.api-client" % "google-api-client" % Version.googleApi,
+      "com.google.api-client" % "google-api-client-gson" % Version.googleApi,
+      "com.google.apis" % "google-api-services-drive" % s"v3-rev51-${Version.googleApi}"
+    ).map(_.excludeJackson.exclude("com.google.guava", "guava-jdk5"))
   }
 
   def sparkutils(sparkVersion: String) = new Spark(sparkVersion).onlyInTests ++ Seq(akkaActor)
