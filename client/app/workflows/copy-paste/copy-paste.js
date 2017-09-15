@@ -58,10 +58,13 @@ class CopyPasteService {
   paste(event) {
     this.deps.$rootScope.$broadcast('CopyPaste.PASTE', event);
 
-    if (currentCopiedEntity) {
-      this.pasteViaFilter(event).then(
-        this.triggerEntityPasteEvent.bind(this, currentCopiedEntity)
-      );
+    let isWorkflowEditorFocused = $(".flowchart-box").is(":focus");
+    if(isWorkflowEditorFocused) {
+      if (currentCopiedEntity) {
+        this.pasteViaFilter(event).then(
+          this.triggerEntityPasteEvent.bind(this, currentCopiedEntity)
+        );
+      }
     }
   }
 

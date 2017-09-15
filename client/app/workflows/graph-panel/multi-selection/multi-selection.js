@@ -49,7 +49,7 @@ class MultiSelection {
       internal.$document.on('mouseup', that.endPainting);
 
       if (disabled || event.button !== 0) {
-        return false;
+        return;
       }
 
       startPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
@@ -82,7 +82,6 @@ class MultiSelection {
       });
 
       $selectionElement.stop().fadeIn(200);
-      event.preventDefault();
     };
 
     that.endPainting = () => {
