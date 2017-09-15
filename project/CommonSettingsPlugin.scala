@@ -13,6 +13,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions"
-    )
+    ),
+    resolvers ++= Dependencies.resolvers
   )
 }

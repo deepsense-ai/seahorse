@@ -8,13 +8,6 @@ name := "deepsense-deeplang"
 
 libraryDependencies ++= Dependencies.deeplang
 
-scalacOptions := Seq(
-  "-unchecked", "-deprecation", "-encoding", "utf8", "-feature", "-language:existentials",
-  "-language:implicitConversions"
-)
-
-//TODO: Extract common logic for tests separation
-
 inConfig(Test) {
   Seq(
     testOptions := Seq(
@@ -23,11 +16,7 @@ inConfig(Test) {
       Tests.Argument(TestFrameworks.ScalaTest, "-o", "-u", "target/test-reports")
     ),
     fork := true,
-    unmanagedClasspath += baseDirectory.value / "conf",
-    scalacOptions := Seq(
-      "-unchecked", "-deprecation", "-encoding", "utf8",
-      "-feature", "-language:existentials"
-    )
+    unmanagedClasspath += baseDirectory.value / "conf"
   )
 }
 

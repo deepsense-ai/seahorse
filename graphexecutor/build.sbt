@@ -35,11 +35,7 @@ inConfig(Test) {
     ),
     fork := true,
     javaOptions := Seq("-Denv=test"),
-    unmanagedClasspath += baseDirectory.value / "conf",
-    scalacOptions := Seq(
-      "-unchecked", "-deprecation", "-encoding", "utf8",
-      "-feature", "-language:existentials"
-    )
+    unmanagedClasspath += baseDirectory.value / "conf"
   )
 }
 
