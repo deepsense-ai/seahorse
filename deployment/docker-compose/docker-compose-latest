@@ -10,7 +10,7 @@ if [ "$#" -lt "1" ]; then
     exit 1
 fi
 
-DOCKER_TAG="master-latest"
+DOCKER_TAG="dev_sdk-latest"
 
 echo "Starting docker-compose script with DOCKER_TAG=$DOCKER_TAG"
 ./docker-compose $DOCKER_TAG "$@"

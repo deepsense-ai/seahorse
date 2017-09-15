@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
+# Copyright (c) 2016, CodiLime Inc.
 
 set -ex
+
+# `dirname $0` gives folder containing script
+cd `dirname $0`"/../"
 
 SPARK_STANDALONE_DOCKER_COMPOSE="testing/spark-standalone-cluster/standalone-cluster.dc.yml"
 
@@ -18,7 +22,14 @@ cleanup # in case something was already running
 (cd deployment/docker-compose ; ./docker-compose $SEAHORSE_BUILD_TAG pull)
 # destroy dockercompose_default, so we can recreate it with proper id
 (cd deployment/docker-compose ; ./docker-compose $SEAHORSE_BUILD_TAG down)
-(cd deployment/docker-compose ; ./docker-compose $SEAHORSE_BUILD_TAG up -d)
+(
+ cd e2etestssdk
+ sbt clean assembly
+ cd ../deployment/docker-compose
+ mkdir -p jars
+ cp -r ../../e2etestssdk/target/scala-2.11/*.jar jars
+ ./docker-compose $SEAHORSE_BUILD_TAG up -d
+)
 
 ## Start Spark Standalone cluster dockers
 

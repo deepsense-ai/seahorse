@@ -104,6 +104,8 @@ services:
     environment:
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
+    volumes:
+      - "./jars:/resources/jars"
     links:
       - database
   rabbitmq:
