@@ -9,6 +9,7 @@ Contents:
    :maxdepth: 2
 
    doperations
+   services
 
 
 Indices and tables
