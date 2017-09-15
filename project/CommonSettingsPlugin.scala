@@ -95,7 +95,7 @@ object CommonSettingsPlugin extends AutoPlugin {
         // Show full stacktraces (F), Put results in test-reports
         Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", s"target/test-reports-${Versions.spark}")
       ),
-      javaOptions := Seq(s"-DlogFile=${name.value}", "-Xmx2G", "-Xms2G", "-XX:MaxPermSize=2G"),
+      javaOptions := Seq(s"-DlogFile=${name.value}", "-Xmx2G", "-Xms2G"),
       fork := true,
       unmanagedClasspath += baseDirectory.value / "conf"
     )
