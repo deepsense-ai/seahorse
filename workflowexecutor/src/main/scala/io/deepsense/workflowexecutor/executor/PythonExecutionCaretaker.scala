@@ -28,7 +28,7 @@ import org.apache.spark.sql.SQLContext
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CustomOperationExecutor, DataFrameStorage, PythonCodeExecutor}
-import io.deepsense.workflowexecutor.Unzip
+import io.deepsense.workflowexecutor.{ExecutionParams, Unzip}
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
@@ -46,14 +46,16 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 class PythonExecutionCaretaker(
   pythonExecutorPath: String,
   pythonPathGenerator: PythonPathGenerator,
+  pythonBinaryOverride: Option[String],
   val sparkContext: SparkContext,
   val sqlContext: SQLContext,
   val dataFrameStorage: DataFrameStorage,
   val hostAddress: InetAddress) extends Logging {
 
-  val config = ConfigFactory.load.getConfig("pythoncaretaker")
-  val pythonExecutable = config.getString("python-binary")
-
+  val pythonBinary = {
+    def pythonBinaryDefault = ConfigFactory.load.getString("pythoncaretaker.python-binary-default")
+    pythonBinaryOverride.getOrElse(pythonBinaryDefault)
+  }
 
   def waitForPythonExecutor(): Unit = {
     pythonGateway.codeExecutor
@@ -108,7 +110,7 @@ class PythonExecutionCaretaker(
       gatewayPort: Int,
       pythonExecutorPath: String): Process = {
     logger.info(s"Initializing PyExecutor from: $pythonExecutorPath")
-    val command = s"$pythonExecutable $pythonExecutorPath " +
+    val command = s"$pythonBinary $pythonExecutorPath " +
       s"--gateway-address ${hostAddress.getHostAddress}:$gatewayPort"
     logger.info(s"Starting a new PyExecutor process: $command")
 

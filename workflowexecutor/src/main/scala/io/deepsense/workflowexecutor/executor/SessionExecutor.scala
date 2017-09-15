@@ -55,7 +55,8 @@ case class SessionExecutor(
     wmUsername: String,
     wmPassword: String,
     depsZip: String,
-    workflowOwnerId: String)
+    workflowOwnerId: String,
+    pythonBinaryPath: Option[String])
   extends Executor {
 
   private val workflowIdObject = Workflow.Id.fromString(workflowId)
@@ -91,6 +92,7 @@ case class SessionExecutor(
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       s"$tempPath/pyexecutor/pyexecutor.py",
       pythonPathGenerator,
+      pythonBinaryPath,
       sparkContext,
       sqlContext,
       dataFrameStorage,

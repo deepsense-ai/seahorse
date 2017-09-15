@@ -73,6 +73,7 @@ case class WorkflowExecutor(
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       pythonExecutorPath,
       pythonPathGenerator,
+      pythonBinaryOverride = None,
       sparkContext,
       sqlContext,
       dataFrameStorage,
