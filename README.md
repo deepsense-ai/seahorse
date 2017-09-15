@@ -12,11 +12,16 @@ Read more about Seahorse on the documentation page: [seahorse.deepsense.ai](http
 Prerequisites:
 * docker 1.30
 * docker-compose 1.9
+* JDK 8
 * sbt 0.13
 * python 2.7
-  * pygments library
+  * PyYAML
 * npm 4.6 (with npmrc)
 * jekyll 3.2
+  * pygments.rb
+  * jekyll-sass-converter
+  * jekyll-watch
+* PhantomJS
 
 Run
 ```console
