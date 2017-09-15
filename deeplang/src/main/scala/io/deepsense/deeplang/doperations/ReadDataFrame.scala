@@ -202,13 +202,37 @@ object ReadDataFrame {
   }
 
   object FileSource extends Enumeration {
+    type FileSource = Value
     val LOCAL = Value("local")
   }
 
   object LineSeparator extends Enumeration {
+    type LineSeparator = Value
     val WINDOWS = Value("Windows line separator")
     val UNIX = Value("Unix line separator")
     val CUSTOM = Value("Custom line separator")
+  }
+
+  def apply(
+    filePath: String,
+    lineSeparator: (LineSeparator.LineSeparator, Option[String]),
+    source: FileSource.FileSource,
+    csvColumnSeparator: String,
+    csvNamesIncluded: Boolean,
+    csvCategoricalColumns: Option[MultipleColumnSelection] = None): ReadDataFrame = {
+    val operation = new ReadDataFrame()
+
+    operation.pathParameter.value = Some(filePath)
+    operation.formatParameter.value = Some("CSV")
+    operation.lineSeparatorParameter.value = Some(lineSeparator._1.toString)
+    if (lineSeparator._2.isDefined) {
+      operation.customLineSeparatorParameter.value = lineSeparator._2
+    }
+    operation.sourceParameter.value = Some(source.toString)
+    operation.csvColumnSeparatorParameter.value = Some(csvColumnSeparator)
+    operation.csvNamesIncludedParameter.value = Some(csvNamesIncluded)
+    operation.csvCategoricalColumnsParameter.value = csvCategoricalColumns
+    operation
   }
 
   case class TypeInference(canBeBoolean: Boolean, canBeNumeric: Boolean, canBeTimestamp: Boolean) {

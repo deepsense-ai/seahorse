@@ -23,6 +23,8 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.ReadDataFrame.FileSource
+import io.deepsense.deeplang.doperations.ReadDataFrame.LineSeparator.LineSeparator
 import io.deepsense.deeplang.doperations.exceptions.InvalidFileException
 import io.deepsense.deeplang.parameters.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
@@ -53,7 +55,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read simple csv file with strings" in {
       val dataFrame = readDataFrame(
         fileName = "sample.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = false)
 
@@ -65,7 +67,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read csv with lines separated by Windows CR+LF" in {
       val dataFrame = readDataFrame(
         fileName = "win_sample.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.WINDOWS.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.WINDOWS),
         csvColumnSeparator = ",",
         csvNamesIncluded = false)
 
@@ -77,7 +79,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read csv with lines separated by custom separator X" in {
       val dataFrame = readDataFrame(
         fileName = "X_separated.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.CUSTOM.toString, Some("X")),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.CUSTOM, Some("X")),
         csvColumnSeparator = ",",
         csvNamesIncluded = false)
 
@@ -94,7 +96,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "not read the csv properly if incorrect line separator is chosen" in {
       val dataFrame = readDataFrame(
         fileName = "sample.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.WINDOWS.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.WINDOWS),
         csvColumnSeparator = ",",
         csvNamesIncluded = false)
 
@@ -108,7 +110,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read csv with column names" in {
       val dataFrame = readDataFrame(
         fileName = "with_column_names.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = true)
 
@@ -126,7 +128,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "throw on empty csv file" in {
       an[InvalidFileException] should be thrownBy readDataFrame(
         fileName = "empty.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = false)
     }
@@ -134,7 +136,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "infer column types" in {
       val dataFrame = readDataFrame(
         fileName = "with_inferable_columns.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = false
       )
@@ -156,7 +158,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read categorical columns provided by index" in {
       val dataFrame = readDataFrame(
         fileName = "with_categorical_columns.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = true,
         csvCategoricalColumns = Some(MultipleColumnSelection(
@@ -179,7 +181,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read categorical columns provided by name" in {
       val dataFrame = readDataFrame(
         fileName = "with_categorical_columns.csv",
-        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX.toString),
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
         csvColumnSeparator = ",",
         csvNamesIncluded = true,
         csvCategoricalColumns = Some(MultipleColumnSelection(
@@ -202,21 +204,17 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
 
   def readDataFrame(
       fileName: String,
-      lineSeparator: (String, Option[String]),
+      lineSeparator: (LineSeparator, Option[String]),
       csvColumnSeparator: String,
       csvNamesIncluded: Boolean,
       csvCategoricalColumns: Option[MultipleColumnSelection] = None) : DataFrame = {
-    val operation = new ReadDataFrame()
-
-    operation.pathParameter.value = Some(testsDir + "/" + fileName)
-    operation.formatParameter.value = Some("CSV")
-    operation.lineSeparatorParameter.value = Some(lineSeparator._1)
-    if (lineSeparator._2.isDefined) {
-      operation.customLineSeparatorParameter.value = lineSeparator._2
-    }
-    operation.csvColumnSeparatorParameter.value = Some(csvColumnSeparator)
-    operation.csvNamesIncludedParameter.value = Some(csvNamesIncluded)
-    operation.csvCategoricalColumnsParameter.value = csvCategoricalColumns
+    val operation = ReadDataFrame(
+      testsDir + "/" + fileName,
+      lineSeparator,
+      FileSource.LOCAL,
+      csvColumnSeparator,
+      csvNamesIncluded,
+      csvCategoricalColumns)
 
     operation
       .execute(executionContext)(Vector.empty[DOperable])
@@ -233,8 +231,10 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       categoricalColumns: Seq[String]) : DataFrame =
     createDataFrame(rows, schema, categoricalColumns)
 
-  def lineSep(label: String, customValue: Option[String] = None): (String, Option[String]) =
-    (label, customValue)
+  def lineSep(
+    lineSeparator: LineSeparator,
+    customValue: Option[String] = None): (LineSeparator, Option[String]) =
+    (lineSeparator, customValue)
 
   def generatedColumnNames(n: Int): Seq[String] = for (i <- 0 until n) yield s"column_$i"
 
