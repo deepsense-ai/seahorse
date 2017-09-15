@@ -60,6 +60,7 @@
           "./node_modules/ace-webapp/src-min-noconflict/ace.js",
           "./node_modules/ace-webapp/src-min-noconflict/mode-python.js",
           "./node_modules/ace-webapp/src-min-noconflict/mode-sql.js",
+          "./node_modules/ace-webapp/src-min-noconflict/mode-r.js",
           "./node_modules/angular-ui-ace/src/ui-ace.js",
           "./node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
           "./node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
