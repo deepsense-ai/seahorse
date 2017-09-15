@@ -21,7 +21,7 @@ import java.util.UUID
 
 import io.deepsense.api.datasourcemanager.ApiClient
 import io.deepsense.api.datasourcemanager.client.DefaultApi
-import io.deepsense.api.datasourcemanager.model.{Datasource, DatasourceParams}
+import io.deepsense.api.datasourcemanager.model.Datasource
 import io.deepsense.commons.utils.Logging
 
 class DatasourceRestClient(
@@ -43,21 +43,6 @@ class DatasourceRestClient(
       Some(response.body)
     } else {
       None
-    }
-  }
-
-  def addDatasource(userName: String, datasourceParams: DatasourceParams): Unit = {
-    val newUUID = UUID.randomUUID().toString
-    val response = client.putDatasource(userId, userName, newUUID, datasourceParams).execute()
-    logger.info(s"Adding datasource, userId = $userId, userName = $userName," +
-      s"uuid = $newUUID, params = $datasourceParams")
-    if (response.isSuccessful) {
-      logger.info(s"Successfully added datasource; body = ${response.body()}")
-    } else {
-      throw new Exception(
-        s"There was a problem with adding datasource," +
-          s"code: ${response.code()}, body: ${response.body()}, error body: ${response.errorBody()}."
-      )
     }
   }
 }
