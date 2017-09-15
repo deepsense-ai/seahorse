@@ -19,9 +19,11 @@ package io.deepsense.sparkutils
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.Future
 import scala.reflect.ClassTag
 import scala.reflect.api.Symbols
 import scala.reflect.runtime.universe.TypeTag
+import scala.util.Try
 
 import akka.actor.ActorSystem
 import org.apache.spark.ml.classification.{DecisionTreeClassificationModel, GBTClassificationModel, MultilayerPerceptronClassificationModel, RandomForestClassificationModel}
@@ -147,4 +149,8 @@ object TypeUtils {
 object AkkaUtils {
   def terminate(as: ActorSystem): Unit = as.terminate()
   def awaitTermination(as: ActorSystem) = Await.result(as.whenTerminated, Duration.Inf)
+}
+
+object ScalaUtils {
+  def futureFromTry[T](t: Try[T]): Future[T] = Future.fromTry(t)
 }
