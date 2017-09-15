@@ -30,7 +30,7 @@ ARTIFACTORY_CREDENTIALS=$HOME/.artifactory_credentials
 ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 
 SEAHORSE_WORKFLOWEXECUTOR_REPOSITORY="seahorse-workflowexecutor"
-SEAHORSE_DISTRIBUTION_REPOSITORY="seahorse-distribu tion"
+SEAHORSE_DISTRIBUTION_REPOSITORY="seahorse-distribution"
 
 echo "Publish docker images to quay.io and generate docker-compose.yml"
 ./jenkins/release_docker_images_to_quay.sh ${ARTIFACTORY_URL} ${SEAHORSE_DISTRIBUTION_REPOSITORY} ${SEAHORSE_BUILD_TAG}
