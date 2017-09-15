@@ -24,11 +24,11 @@ import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedLogisticRegression(
-    model: Option[LogisticRegressionWithLBFGS])
+    createModel: () => LogisticRegressionWithLBFGS)
   extends LogisticRegression
   with Trainable {
 
-  def this() = this(None)
+  def this() = this(() => null)
 
   override def toInferrable: DOperable = new UntrainedLogisticRegression()
 
@@ -42,7 +42,7 @@ case class UntrainedLogisticRegression(
       val labelColumn = dataFrame.getColumnName(parameters.targetColumn.get)
       val labeledPoints = dataFrame.toSparkLabeledPointRDD(featureColumns, labelColumn)
       labeledPoints.cache()
-      val trainedModel: LogisticRegressionModel = model.get.run(labeledPoints)
+      val trainedModel: LogisticRegressionModel = createModel().run(labeledPoints)
       val result = TrainedLogisticRegression(
         Some(trainedModel),
         Some(featureColumns),

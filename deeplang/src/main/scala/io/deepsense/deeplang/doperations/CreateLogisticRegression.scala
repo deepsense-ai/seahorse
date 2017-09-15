@@ -50,16 +50,25 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
   override protected def _execute(context: ExecutionContext)(): UntrainedLogisticRegression = {
     val iterationsParam = parameters.getDouble(IterationsNumberKey).get
     val toleranceParam = parameters.getDouble(Tolerance).get
-    val model = new LogisticRegressionWithLBFGS
-    model
-      .setIntercept(true)
-      .setNumClasses(2)
-      .setValidateData(false)
-      .optimizer
-      .setRegParam(0.0)
-      .setNumIterations(iterationsParam.toInt)
-      .setConvergenceTol(toleranceParam)
-    UntrainedLogisticRegression(Some(model))
+
+    def createModelInstance(): LogisticRegressionWithLBFGS = {
+      val model = new LogisticRegressionWithLBFGS
+      model
+        .setIntercept(true)
+        .setNumClasses(2)
+        .setValidateData(false)
+        .optimizer
+        .setRegParam(0.0)
+        .setNumIterations(iterationsParam.toInt)
+        .setConvergenceTol(toleranceParam)
+
+      model
+    }
+
+    // We're passing a factory method here, instead of constructed object,
+    // because the resulting UntrainedLogisticRegression could be used multiple times
+    // in a workflow and its underlying Spark model is mutable
+    UntrainedLogisticRegression(createModelInstance)
   }
 }
 

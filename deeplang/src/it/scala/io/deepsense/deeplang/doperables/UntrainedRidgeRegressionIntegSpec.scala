@@ -29,7 +29,7 @@ class UntrainedRidgeRegressionIntegSpec
   override def modelType: Class[RidgeRegressionModel] = classOf[RidgeRegressionModel]
 
   override def constructUntrainedModel: Trainable =
-    UntrainedRidgeRegression(Some(mockUntrainedModel.asInstanceOf[RidgeRegressionWithSGD]))
+    UntrainedRidgeRegression(() => mockUntrainedModel.asInstanceOf[RidgeRegressionWithSGD])
 
   override val mockUntrainedModel: GeneralizedLinearAlgorithm[RidgeRegressionModel] =
     mock[RidgeRegressionWithSGD]

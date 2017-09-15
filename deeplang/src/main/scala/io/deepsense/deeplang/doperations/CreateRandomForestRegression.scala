@@ -23,7 +23,7 @@ import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.{UntrainedRandomForestModel, UntrainedRandomForestRegression}
+import io.deepsense.deeplang.doperables.{RandomForestParameters, UntrainedRandomForestRegression}
 import io.deepsense.deeplang.parameters._
 
 case class CreateRandomForestRegression() extends DOperation0To1[UntrainedRandomForestRegression] {
@@ -74,10 +74,10 @@ case class CreateRandomForestRegression() extends DOperation0To1[UntrainedRandom
     val maxDepth = maxDepthParameter.value.get
     val maxBins = maxBinsParameter.value.get
 
-    val model = UntrainedRandomForestModel(numTrees.toInt, featureSubsetStrategy, impurity,
-      maxDepth.toInt, maxBins.toInt)
+    val modelParameters = RandomForestParameters(
+      numTrees.toInt, featureSubsetStrategy, impurity, maxDepth.toInt, maxBins.toInt)
 
-    UntrainedRandomForestRegression(model)
+    UntrainedRandomForestRegression(modelParameters)
   }
 
   @transient

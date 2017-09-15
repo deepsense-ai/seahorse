@@ -24,7 +24,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedRandomForestRegression(
-    model: UntrainedRandomForestModel)
+    modelParameters: RandomForestParameters)
   extends RandomForest
   with Trainable
   with CategoricalFeaturesExtractor {
@@ -36,20 +36,21 @@ case class UntrainedRandomForestRegression(
   override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
     override def apply(context: ExecutionContext)(
         parameters: Trainable.Parameters)(
-        dataframe: DataFrame): Scorable = {
+        dataFrame: DataFrame): Scorable = {
 
-      val (featureColumns, targetColumn) = parameters.columnNames(dataframe)
+      val (featureColumns, targetColumn) = parameters.columnNames(dataFrame)
 
-      val labeledPoints = dataframe.toSparkLabeledPointRDD(featureColumns, targetColumn)
+      val labeledPoints = dataFrame.toSparkLabeledPointRDD(featureColumns, targetColumn)
       labeledPoints.cache()
 
-      val trainedModel = SparkRandomForest.trainRegressor(labeledPoints,
-        extractCategoricalFeatures(dataframe),
-        model.numTrees,
-        model.featureSubsetStrategy,
-        model.impurity,
-        model.maxDepth,
-        model.maxBins)
+      val trainedModel = SparkRandomForest.trainRegressor(
+        labeledPoints,
+        extractCategoricalFeatures(dataFrame),
+        modelParameters.numTrees,
+        modelParameters.featureSubsetStrategy,
+        modelParameters.impurity,
+        modelParameters.maxDepth,
+        modelParameters.maxBins)
 
       val result = TrainedRandomForestRegression(
         trainedModel, Some(featureColumns), Some(targetColumn))

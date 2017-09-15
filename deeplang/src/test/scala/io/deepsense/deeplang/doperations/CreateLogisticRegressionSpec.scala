@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
+
 import io.deepsense.deeplang.doperables.UntrainedLogisticRegression
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
@@ -26,7 +28,7 @@ class CreateLogisticRegressionSpec extends UnitSpec {
       val context = mock[ExecutionContext]
       val resultVector = createLogisticRegression.execute(context)(Vector.empty)
       val result = resultVector.head.asInstanceOf[UntrainedLogisticRegression]
-      result.model shouldBe defined
+      result.createModel() shouldBe an [LogisticRegressionWithLBFGS]
     }
   }
 }

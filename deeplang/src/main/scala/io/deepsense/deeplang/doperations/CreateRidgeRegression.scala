@@ -57,7 +57,24 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
       .setStepSize(1.0)
       .setRegParam(regParam)
       .setNumIterations(numberOfIterations.toInt)
-    UntrainedRidgeRegression(Some(model))
+
+    def createModelInstance(): RidgeRegressionWithSGD = {
+      val model = new RidgeRegressionWithSGD
+      model
+        .setIntercept(true)
+        .setValidateData(false)
+        .optimizer
+        .setStepSize(1.0)
+        .setRegParam(regParam)
+        .setNumIterations(numberOfIterations.toInt)
+
+      model
+    }
+
+    // We're passing a factory method here, instead of constructed object,
+    // because the resulting UntrainedRidgeRegression could be used multiple times
+    // in a workflow and its underlying Spark model is mutable
+    UntrainedRidgeRegression(createModelInstance)
   }
 }
 

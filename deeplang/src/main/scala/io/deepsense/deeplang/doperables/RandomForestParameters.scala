@@ -16,5 +16,5 @@
 
 package io.deepsense.deeplang.doperables
 
-case class UntrainedRandomForestModel(
+case class RandomForestParameters(
    numTrees: Int, featureSubsetStrategy: String, impurity: String, maxDepth: Int, maxBins: Int)

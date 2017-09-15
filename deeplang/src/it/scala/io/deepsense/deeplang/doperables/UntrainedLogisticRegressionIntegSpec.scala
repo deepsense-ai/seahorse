@@ -30,7 +30,8 @@ class UntrainedLogisticRegressionIntegSpec
   override def modelType: Class[LogisticRegressionModel] = classOf[LogisticRegressionModel]
 
   override def constructUntrainedModel: Trainable =
-    UntrainedLogisticRegression(Some(mockUntrainedModel.asInstanceOf[LogisticRegressionWithLBFGS]))
+    UntrainedLogisticRegression(
+      () => mockUntrainedModel.asInstanceOf[LogisticRegressionWithLBFGS])
 
   override val mockUntrainedModel: GeneralizedLinearAlgorithm[LogisticRegressionModel] =
     mock[LogisticRegressionWithLBFGS]

@@ -25,10 +25,10 @@ import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedRidgeRegression(
-    model: Option[RidgeRegressionWithSGD])
+    createModel: () => RidgeRegressionWithSGD)
   extends RidgeRegression with Trainable {
 
-  def this() = this(None)
+  def this() = this(() => null)
 
   override def toInferrable: DOperable = new UntrainedRidgeRegression()
 
@@ -51,7 +51,7 @@ case class UntrainedRidgeRegression(
       labeledPoints.unpersist()
       scaledLabeledPoints.cache()
 
-      val trainedModel = model.get.run(scaledLabeledPoints)
+      val trainedModel = createModel().run(scaledLabeledPoints)
       val result = TrainedRidgeRegression(
         Some(trainedModel), Some(featureColumns), Some(targetColumn), Some(scaler))
       scaledLabeledPoints.unpersist()

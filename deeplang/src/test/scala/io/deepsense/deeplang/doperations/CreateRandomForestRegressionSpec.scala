@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.doperables.{UntrainedRandomForestModel, UntrainedRandomForestRegression}
+import io.deepsense.deeplang.doperables.{RandomForestParameters, UntrainedRandomForestRegression}
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
 class CreateRandomForestRegressionSpec extends UnitSpec {
@@ -26,7 +26,7 @@ class CreateRandomForestRegressionSpec extends UnitSpec {
       val context = mock[ExecutionContext]
       val resultVector = createRandomForestRegression.execute(context)(Vector.empty)
       val result = resultVector.head.asInstanceOf[UntrainedRandomForestRegression]
-      result.model shouldBe a [UntrainedRandomForestModel]
+      result.modelParameters shouldBe a [RandomForestParameters]
     }
   }
 }

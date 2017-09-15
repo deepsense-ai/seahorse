@@ -30,10 +30,10 @@ class UntrainedRandomForestRegressionIntegSpec
     with BeforeAndAfter{
 
   def constructUntrainedModel: Trainable =
-    UntrainedRandomForestRegression(mockUntrainedModel.asInstanceOf[UntrainedRandomForestModel])
+    UntrainedRandomForestRegression(mockUntrainedModel.asInstanceOf[RandomForestParameters])
 
-  val mockUntrainedModel: UntrainedRandomForestModel =
-    UntrainedRandomForestModel(1, "auto", "variance", 4, 100)
+  val mockUntrainedModel: RandomForestParameters =
+    RandomForestParameters(1, "auto", "variance", 4, 100)
 
   val featuresValues: Seq[Spread[Double]] = Seq(
     Spread(0.0, 0.0), -0.755 +- 0.01,
