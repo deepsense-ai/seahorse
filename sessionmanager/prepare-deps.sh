@@ -6,6 +6,8 @@ if [ "$#" != "1" ] ; then
 fi
 
 PROJECT=`readlink -f $1` # absolute path
+echo "Project dir: $PROJECT"
+pwd
 SM_DIR=$PROJECT/sessionmanager
 
 TMPDIR=$SM_DIR/target/_we_deps_tmp
