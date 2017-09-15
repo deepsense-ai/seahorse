@@ -33,11 +33,30 @@ function ReportTableBody() {
   };
 }
 
-function ReportTableBodyeController($scope, $element, TopWalkerService) {
+function ReportTableBodyeController($scope, $rootScope, $element, TopWalkerService) {
   let that = this;
   let internals = {};
 
   internals.CELL_HIGHLIGHT_CLASS = 'info';
+  _.assign(internals, {
+    CELL_HIGHLIGHT_CLASS: 'info',
+    clearSelection: function() {
+      let tableEl = $element[0];
+      let allCellsToRemove = tableEl.querySelectorAll(`.${internals.CELL_HIGHLIGHT_CLASS}`);
+
+      _.forEach(allCellsToRemove, (cell) => {
+        cell.classList.remove(internals.CELL_HIGHLIGHT_CLASS);
+      });
+    },
+    selectColumn: function (index) {
+      let tableEl = $element[0];
+      let allCellsToSelect = tableEl.querySelectorAll(`td:nth-child(${index + 1}), th:nth-child(${index + 1})`);
+
+      _.forEach(allCellsToSelect, (cell) => {
+        cell.classList.add(internals.CELL_HIGHLIGHT_CLASS);
+      });
+    }
+  });
 
   _.assign(that, {
     extendSidePanel: function extendSidePanel () {
@@ -48,16 +67,15 @@ function ReportTableBodyeController($scope, $element, TopWalkerService) {
         let index = highlightedCell.cellIndex + 1;
         let colName = tableEl.querySelector(`th:nth-child(${ index }) span.col-name`).innerHTML;
 
-        $scope.$emit(REPORT_EVENTS.CHOSEN_COLUMN, {
+        $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
           colName: colName
         });
+
+        $scope.$on(REPORT_EVENTS.DESELECT_COLUMN, internals.clearSelection);
       }
     },
     selectColumn: function selectColumn (event) {
       let cell;
-      let cellsIndexToSelect;
-      let allCellsToSelect;
-      let allCellsToRemove;
       let tableEl = $element[0];
 
       // get exactly the cell, not a <span> or <a> or something else
@@ -66,27 +84,12 @@ function ReportTableBodyeController($scope, $element, TopWalkerService) {
         return tagName === 'td' || tagName === 'th';
       }, tableEl);
 
-      // if we clicked somewhere above the td, th
       if (!cell) {
         return false;
+      } else {
+        internals.clearSelection();
+        internals.selectColumn(cell.cellIndex);
       }
-
-      cellsIndexToSelect = cell.cellIndex;
-
-      allCellsToSelect =
-        tableEl.querySelectorAll(`td:nth-child(${cellsIndexToSelect + 1}), th:nth-child(${cellsIndexToSelect + 1})`);
-      allCellsToRemove =
-        tableEl.querySelectorAll(`.${internals.CELL_HIGHLIGHT_CLASS}`);
-
-      // remove added classes from all old cells
-      _.forEach(allCellsToRemove, function (cell) {
-        cell.classList.remove(internals.CELL_HIGHLIGHT_CLASS);
-      });
-
-      // add classes to each cell
-      _.forEach(allCellsToSelect, function (cell) {
-        cell.classList.add(internals.CELL_HIGHLIGHT_CLASS);
-      });
     }
   });
 }

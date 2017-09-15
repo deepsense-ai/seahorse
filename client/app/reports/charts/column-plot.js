@@ -20,12 +20,8 @@ function ColumnPlot() {
           chart: {
             type: 'column'
           },
-          title: {
-            text: data.name
-          },
-          subtitle: {
-            text: data.description
-          },
+          title: null,
+          subtitle: null,
           xAxis: {
             categories: data.buckets,
             labels: {

@@ -42,7 +42,8 @@
   },
   "distributions": {
     "Music": {
-      "name": "Music_Distribution",
+      "name": "Music",
+      "missingValues": 0,
       "subtype": "categorical",
       "description": "distribution of categorical values",
       "blockType": "distribution",
@@ -50,7 +51,8 @@
       "counts": [4, 3, 2, 1, 4, 3, 2, 1, 1]
     },
     "Age": {
-      "name": "Age_Distribution",
+      "name": "Age",
+      "missingValues": 0,
       "subtype": "continuous",
       "statistics": {
         "firstQuartile": 20,

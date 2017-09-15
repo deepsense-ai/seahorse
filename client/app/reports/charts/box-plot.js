@@ -20,12 +20,8 @@ function BoxPlot() {
           chart: {
             type: 'boxplot'
           },
-          title: {
-            text: data.name
-          },
-          subtitle: {
-            text: data.description
-          },
+          title: null,
+          subtitle: null,
           legend: {
             enabled: false
           },

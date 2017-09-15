@@ -20,12 +20,8 @@ function PiePlot() {
           chart: {
             type: 'pie'
           },
-          title: {
-            text: data.name
-          },
-          subtitle: {
-            text: data.description
-          },
+          title: null,
+          subtitle: null,
           plotOptions: {
             pie: {
               allowPointSelect: true,

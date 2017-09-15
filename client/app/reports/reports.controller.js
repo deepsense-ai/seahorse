@@ -4,14 +4,12 @@
 'use strict';
 
 var EVENTS = {
-  'EXTEND_SIDE_PANEL': 'extend-side-panel',
-  'SHRINK_SIDE_PANEL': 'shrink-side-panel',
-  'CHOSEN_COLUMN': 'chosen-column',
-  'HIDE_DETAILS': 'hide-details'
+  'SELECT_COLUMN': 'select-column',
+  'DESELECT_COLUMN': 'deselect-column'
 };
 
 /* @ngInject */
-function Report(PageService, $scope, $stateParams, EntitiesAPIClient) {
+function Report(PageService, $scope, $stateParams, $modal, EntitiesAPIClient) {
   let that = this;
   let internal = {};
   let entityId = $stateParams.id;
@@ -63,15 +61,32 @@ function Report(PageService, $scope, $stateParams, EntitiesAPIClient) {
     }
   };
 
-  $scope.$on(EVENTS.CHOSEN_COLUMN, function (event, data) {
+  $scope.$on(EVENTS.SELECT_COLUMN, function (event, data) {
     let distObject = that.getDistributionObject(data.colName);
-    let eventToBroadcast = _.isUndefined(distObject) ? EVENTS.SHRINK_SIDE_PANEL : EVENTS.EXTEND_SIDE_PANEL;
 
-    $scope.$broadcast(eventToBroadcast, data);
-  });
+    if (!_.isUndefined(distObject)) {
+      $modal.open({
+        size: 'lg',
+        templateUrl: 'app/reports/report-chart-panel.html',
+        controller: function ($scope, $modalInstance) {
+          _.assign(this, {
+            close: () => {
+              $modalInstance.close();
+            },
+            distObject: distObject,
+            columnNames: _.keys(internal.distributions),
+            selectedColumn: distObject.name
+          });
 
-  $scope.$on(EVENTS.HIDE_DETAILS, () => {
-    $scope.$broadcast(EVENTS.SHRINK_SIDE_PANEL);
+          $scope.$watch('graphModal.selectedColumn', (newValue, oldValue) => {
+            if (newValue !== oldValue) {
+              this.distObject = that.getDistributionObject(newValue);
+            }
+          });
+        },
+        controllerAs: 'graphModal'
+      });
+    }
   });
 
   return that;
