@@ -67,3 +67,8 @@ case class RegexValidator(regex: Regex) extends Validator[String] {
     }
   }
 }
+
+/**
+ * Validator which accepts all strings.
+ */
+class AcceptAllRegexValidator() extends RegexValidator(".*".r)
