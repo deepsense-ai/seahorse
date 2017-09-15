@@ -45,8 +45,12 @@ case class UntrainedGradientBoostedTreesRegression(
 
       val (featureColumns, targetColumn) = parameters.columnNames(dataFrame)
 
-      val labeledPoints = dataFrame.toSparkLabeledPointRDDWithCategoricals(
-        featureColumns, targetColumn)
+      val labeledPoints = dataFrame.selectAsSparkLabeledPointRDD(
+        targetColumn,
+        featureColumns,
+        labelPredicate = ColumnTypesPredicates.isNumeric,
+        featurePredicate = ColumnTypesPredicates.isNumericOrCategorical)
+
       labeledPoints.cache()
 
       val treeStrategy = new Strategy(

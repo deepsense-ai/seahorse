@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
+import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.Report
@@ -28,50 +28,55 @@ import io.deepsense.reportlib.model.{ReportContent, Table}
 class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
 
   val nameColumnName = "name"
-  val targetColumnName = "target"
+  val targetDoubleColumnName = "targetDouble"
+  val targetBooleanColumnName = "targetBoolean"
+  val target2CategoricalColumnName = "target2Categorical"
   val predictionColumnName = "classificationPrediction"
   val schemaSeq = Seq(
     StructField(nameColumnName, StringType),
-    StructField(targetColumnName, DoubleType),
-    StructField(predictionColumnName, DoubleType))
+    StructField(predictionColumnName, DoubleType),
+    StructField(targetDoubleColumnName, DoubleType),
+    StructField(targetBooleanColumnName, BooleanType),
+    StructField(target2CategoricalColumnName, StringType)
+  )
   val schema = StructType(schemaSeq)
   val correctRows = Seq(
-    Row("a", 1.0, 0.99),
-    Row("b", 1.0, 0.99),
-    Row("c", 1.0, 0.99),
-    Row("d", 0.0, 0.01),
-    Row("e", 1.0, 0.99),
-    Row("f", 1.0, 0.99),
-    Row("g", 0.0, 0.01),
-    Row("h", 0.0, 0.01),
-    Row("i", 0.0, 0.01),
-    Row("j", 1.0, 0.99),
-    Row("k", 1.0, 0.99),
-    Row("l", 1.0, 0.99),
-    Row("m", 0.0, 0.01),
-    Row("n", 0.0, 0.01),
-    Row("o", 0.0, 0.01),
-    Row("p", 0.0, 0.01),
-    Row("r", 0.0, 0.01),
-    Row("s", 0.0, 0.01),
-    Row("t", 0.0, 0.01),
-    Row("u", 0.0, 0.01),
-    Row("w", 1.0, 0.99),
-    Row("x", 1.0, 0.99),
-    Row("y", 1.0, 0.99),
-    Row("z", 1.0, 0.99))
+    Row("a", 0.99, 1.0, true, "Y"),
+    Row("b", 0.99, 1.0, true, "Y"),
+    Row("c", 0.99, 1.0, true, "Y"),
+    Row("d", 0.01, 0.0, false, "N"),
+    Row("e", 0.99, 1.0, true, "Y"),
+    Row("f", 0.99, 1.0, true, "Y"),
+    Row("g", 0.01, 0.0, false, "N"),
+    Row("h", 0.01, 0.0, false, "N"),
+    Row("i", 0.01, 0.0, false, "N"),
+    Row("j", 0.99, 1.0, true, "Y"),
+    Row("k", 0.99, 1.0, true, "Y"),
+    Row("l", 0.99, 1.0, true, "Y"),
+    Row("m", 0.01, 0.0, false, "N"),
+    Row("n", 0.01, 0.0, false, "N"),
+    Row("o", 0.01, 0.0, false, "N"),
+    Row("p", 0.01, 0.0, false, "N"),
+    Row("r", 0.01, 0.0, false, "N"),
+    Row("s", 0.01, 0.0, false, "N"),
+    Row("t", 0.01, 0.0, false, "N"),
+    Row("u", 0.01, 0.0, false, "N"),
+    Row("w", 0.99, 1.0, true, "Y"),
+    Row("x", 0.99, 1.0, true, "Y"),
+    Row("y", 0.99, 1.0, true, "Y"),
+    Row("z", 0.99, 1.0, true, "Y"))
 
   "EvaluateClassification" should {
     def testDataFrame: DataFrame = createDataFrame(correctRows, schema)
     "throw exception" when {
-      "selected target column is not Double" in {
+      "selected target column is String" in {
         a[WrongColumnTypeException] should be thrownBy {
           executeEvaluation(testDataFrame, nameColumnName, predictionColumnName)
         }
       }
-      "classification prediction column is not Double" in {
+      "classification prediction column is String" in {
         a[WrongColumnTypeException] should be thrownBy {
-          executeEvaluation(testDataFrame, targetColumnName, nameColumnName)
+          executeEvaluation(testDataFrame, targetDoubleColumnName, nameColumnName)
         }
       }
       "target column does not exist" in {
@@ -81,13 +86,30 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
       }
       "classification prediction column does not exist" in {
         a[ColumnDoesNotExistException] should be thrownBy {
-          executeEvaluation(testDataFrame, targetColumnName, "blah")
+          executeEvaluation(testDataFrame, targetDoubleColumnName, "blah")
+        }
+      }
+      "target column is a categorical with more than 2 values" in {
+        a[WrongColumnTypeException] should be thrownBy {
+          val dataFrame: DataFrame =
+            createDataFrame(correctRows, schema, Seq(nameColumnName))
+          executeEvaluation(dataFrame, nameColumnName, predictionColumnName)
         }
       }
     }
-    "return report for all correct classification predictions" in {
-      val report = executeEvaluation(testDataFrame, targetColumnName, predictionColumnName)
-      assertEvaluateClassificationReport(report, expectedReport)
+    "return report for target column of type Double" in {
+      val report = executeEvaluation(testDataFrame, targetDoubleColumnName, predictionColumnName)
+      report shouldBe expectedReport
+    }
+    "return report for for Boolean target column" in {
+      val report = executeEvaluation(testDataFrame, targetBooleanColumnName, predictionColumnName)
+      report shouldBe expectedReport
+    }
+    "return report for 2-categorical target column" in {
+      val dataFrame: DataFrame =
+        createDataFrame(correctRows, schema, Seq(target2CategoricalColumnName))
+      val report = executeEvaluation(dataFrame, target2CategoricalColumnName, predictionColumnName)
+      report shouldBe expectedReport
     }
   }
 
@@ -149,12 +171,6 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
     Report(ReportContent(
       "Evaluate Classification Report",
       List(summaryTable, accuracyTable, fMeasureByThresholdTable, rocTable)))
-  }
-
-  private def assertEvaluateClassificationReport(
-      report: Report,
-      expectedReport: Report): Registration = {
-    report shouldBe expectedReport
   }
 
   private def executeEvaluation(

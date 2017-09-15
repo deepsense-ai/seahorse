@@ -51,7 +51,7 @@ case class TrainedRidgeRegression(
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = scaler.transform(v)
 
   override def vectors(dataFrame: DataFrame): RDD[Vector] =
-    dataFrame.toSparkVectorRDD(featureColumns)
+    dataFrame.selectSparkVectorRDD(featureColumns, ColumnTypesPredicates.isNumeric)
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 

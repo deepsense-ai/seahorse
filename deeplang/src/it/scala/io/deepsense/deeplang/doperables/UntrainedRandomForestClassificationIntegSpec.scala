@@ -46,45 +46,75 @@ class UntrainedRandomForestClassificationIntegSpec
 
   def validateResult(result: Scorable): Registration = {
     val castedResult = result.asInstanceOf[TrainedRandomForestClassification]
-    castedResult.featureColumns shouldBe Seq("column1", "column0", "column4")
+    castedResult.featureColumns shouldBe Seq("column1", "column4", "column0")
     castedResult.targetColumn shouldBe "column3"
   }
 
   "UntrainedRandomForestClassification" should {
 
     val inputRows: Seq[Row] = Seq(
-      Row(-2.0, "x", 0.0, 1000.0, 0),
-      Row(-2.0, "y", 0.0, 2000.0, 1),
-      Row(-2.0, "z", 1.0, 6000.0, 2))
+      Row(-2.0, "x", 0.0, 0, true, 1000.0),
+      Row(-2.0, "y", 0.0, 1, true, 2000.0),
+      Row(-2.0, "z", 1.0, 2, false, 6000.0))
 
     val inputSchema: StructType = StructType(Seq(
       StructField("column1", DoubleType),
       StructField("column2", StringType),
       StructField("column3", DoubleType),
-      StructField("column0", DoubleType),
       StructField("column4", IntegerType,
         metadata = MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("A", "B", "C")))
-      )
+      ),
+      StructField("column5", BooleanType),
+      StructField("column0", DoubleType)
     ))
 
     lazy val inputDataFrame = createDataFrame(inputRows, inputSchema)
 
-    "create model trained on given dataframe" in {
-      val mockContext: ExecutionContext = mock[ExecutionContext]
+    "train a model" when {
+      "target is a column of doubles" in {
+        val mockContext: ExecutionContext = mock[ExecutionContext]
 
-      val classification = constructUntrainedModel
-      val parameters = Trainable.Parameters(
-        featureColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("column0", "column1", "column4"))))),
-        targetColumn = Some(NameSingleColumnSelection("column3")))
+        val classification = constructUntrainedModel
+        val parameters = Trainable.Parameters(
+          featureColumns = Some(MultipleColumnSelection(
+            Vector(NameColumnSelection(Set("column0", "column1", "column4"))))),
+          targetColumn = Some(NameSingleColumnSelection("column3")))
 
-      val result = classification.train(mockContext)(parameters)(inputDataFrame)
-      validateResult(result)
+        val result = classification.train(mockContext)(parameters)(inputDataFrame)
+        validateResult(result)
+      }
+
+      "target column is a 2-level categorical" in {
+        val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column3"))
+
+        val regression = constructUntrainedModel
+        val parameters = Trainable.Parameters(
+          featureColumns = Some(MultipleColumnSelection(
+            Vector(NameColumnSelection(Set("column1", "column0"))))),
+          targetColumn = Some(NameSingleColumnSelection("column3")))
+
+        val trained = regression.train(executionContext)(parameters)(dataFrame)
+          .asInstanceOf[TrainedRandomForestClassification]
+        trained.targetColumn shouldBe "column3"
+      }
+
+      "target column is a boolean" in {
+        val dataFrame = createDataFrame(inputRows, inputSchema)
+
+        val regression = constructUntrainedModel
+        val parameters = Trainable.Parameters(
+          featureColumns = Some(MultipleColumnSelection(
+            Vector(NameColumnSelection(Set("column1", "column0"))))),
+          targetColumn = Some(NameSingleColumnSelection("column5")))
+        val trained = regression.train(executionContext)(parameters)(dataFrame)
+          .asInstanceOf[TrainedRandomForestClassification]
+        trained.targetColumn shouldBe "column5"
+      }
     }
 
     "throw an exception" when {
       "non-existing column was selected as target" in {
-        intercept[ColumnDoesNotExistException] {
+        a[ColumnDoesNotExistException] shouldBe thrownBy {
           val classification = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -92,10 +122,9 @@ class UntrainedRandomForestClassificationIntegSpec
             targetColumn = Some(NameSingleColumnSelection("not exists")))
           classification.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
       }
       "non-existing columns were selected as features" in {
-        intercept[ColumnsDoNotExistException] {
+        a[ColumnsDoNotExistException] shouldBe thrownBy {
           val classification = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -103,10 +132,9 @@ class UntrainedRandomForestClassificationIntegSpec
             targetColumn = Some(NameSingleColumnSelection("column3")))
           classification.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
       }
       "some selected features were neither numeric nor categorical" in {
-        intercept[WrongColumnTypeException] {
+        a[WrongColumnTypeException] shouldBe thrownBy {
           val classification = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -114,10 +142,9 @@ class UntrainedRandomForestClassificationIntegSpec
             targetColumn = Some(NameSingleColumnSelection("column3")))
           classification.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
       }
       "selected target was not numerical" in {
-        intercept[WrongColumnTypeException] {
+        a[WrongColumnTypeException] shouldBe thrownBy {
           val classification = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -125,8 +152,20 @@ class UntrainedRandomForestClassificationIntegSpec
             targetColumn = Some(NameSingleColumnSelection("column2")))
           classification.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
+      }
+      "target column is 3-level categorical" in {
+        val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column2"))
+
+        a[WrongColumnTypeException] shouldBe thrownBy {
+          val regression = constructUntrainedModel
+          val parameters = Trainable.Parameters(
+            featureColumns = Some(MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column1", "column0"))))),
+            targetColumn = Some(NameSingleColumnSelection("column2")))
+          regression.train(executionContext)(parameters)(dataFrame)
+        }
       }
     }
+
   }
 }

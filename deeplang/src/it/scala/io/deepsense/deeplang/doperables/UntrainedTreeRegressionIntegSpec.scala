@@ -61,7 +61,7 @@ abstract class UntrainedTreeRegressionIntegSpec
 
     lazy val inputDataFrame = createDataFrame(inputRows, inputSchema)
 
-    "create model trained on given dataframe" in {
+    "create model trained on given DataFrame" in {
       val mockContext: ExecutionContext = mock[ExecutionContext]
 
       val regression = constructUntrainedModel
@@ -76,7 +76,7 @@ abstract class UntrainedTreeRegressionIntegSpec
 
     "throw an exception" when {
       "non-existing column was selected as target" in {
-        intercept[ColumnDoesNotExistException] {
+        a[ColumnDoesNotExistException] shouldBe thrownBy {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -84,10 +84,9 @@ abstract class UntrainedTreeRegressionIntegSpec
             targetColumn = Some(NameSingleColumnSelection("not exists")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
       }
-      "non-existing columns was selected as features" in {
-        intercept[ColumnsDoNotExistException] {
+      "non-existing columns were selected as features" in {
+        a[ColumnsDoNotExistException] shouldBe thrownBy {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -95,10 +94,9 @@ abstract class UntrainedTreeRegressionIntegSpec
             targetColumn = Some(NameSingleColumnSelection("column3")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
       }
       "some selected features were neither numeric nor categorical" in {
-        intercept[WrongColumnTypeException] {
+        a[WrongColumnTypeException] shouldBe thrownBy {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -106,10 +104,9 @@ abstract class UntrainedTreeRegressionIntegSpec
             targetColumn = Some(NameSingleColumnSelection("column3")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
       }
       "selected target was not numeric" in {
-        intercept[WrongColumnTypeException] {
+        a[WrongColumnTypeException] shouldBe thrownBy {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
@@ -117,7 +114,6 @@ abstract class UntrainedTreeRegressionIntegSpec
             targetColumn = Some(NameSingleColumnSelection("column2")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
-        ()
       }
     }
   }

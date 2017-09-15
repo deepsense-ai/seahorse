@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.{ClassificationReporter, Evaluator, Report}
+import io.deepsense.deeplang.doperables.{ClassificationReporter, ColumnTypesPredicates, Evaluator, Report}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 
 case class EvaluateClassification() extends Evaluator {
@@ -30,6 +30,9 @@ case class EvaluateClassification() extends Evaluator {
 
   override protected def report(predictionsAndLabels: RDD[(Double, Double)]): Report =
     ClassificationReporter.report(predictionsAndLabels)
+
+  override protected def validateTarget: ColumnTypesPredicates.Predicate =
+    ColumnTypesPredicates.isNumericOrBinaryValued
 }
 
 object EvaluateClassification {

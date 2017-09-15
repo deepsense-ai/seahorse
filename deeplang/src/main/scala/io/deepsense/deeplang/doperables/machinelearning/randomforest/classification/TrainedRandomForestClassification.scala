@@ -21,7 +21,7 @@ import org.apache.spark.mllib.tree.model.RandomForestModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{DOperableSaver, Report, Scorable, VectorScoring}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
@@ -43,7 +43,7 @@ case class TrainedRandomForestClassification(
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
 
   override def vectors(dataFrame: DataFrame): RDD[Vector] =
-    dataFrame.toSparkVectorRDDWithCategoricals(featureColumns)
+    dataFrame.selectSparkVectorRDD(featureColumns, ColumnTypesPredicates.isNumericOrCategorical)
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = model.predict(vectors)
 

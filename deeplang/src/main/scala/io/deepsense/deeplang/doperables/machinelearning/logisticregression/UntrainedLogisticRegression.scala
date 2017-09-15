@@ -20,7 +20,7 @@ import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticR
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Report, Scorable, Trainable}
+import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, Trainable}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -41,7 +41,13 @@ case class UntrainedLogisticRegression(
 
       val featureColumns = dataFrame.getColumnNames(parameters.featureColumns.get)
       val labelColumn = dataFrame.getColumnName(parameters.targetColumn.get)
-      val labeledPoints = dataFrame.toSparkLabeledPointRDD(featureColumns, labelColumn)
+
+      val labeledPoints = dataFrame.selectAsSparkLabeledPointRDD(
+        labelColumn,
+        featureColumns,
+        labelPredicate = ColumnTypesPredicates.isNumericOrBinaryValued,
+        featurePredicate = ColumnTypesPredicates.isNumeric)
+
       labeledPoints.cache()
       val trainedModel: LogisticRegressionModel = createModel().run(labeledPoints)
       val result = TrainedLogisticRegression(

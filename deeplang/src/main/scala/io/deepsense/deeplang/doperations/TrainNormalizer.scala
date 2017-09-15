@@ -20,7 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.mllib.feature.{StandardScaler, StandardScalerModel}
 
-import io.deepsense.deeplang.doperables.Normalizer
+import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Normalizer}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To2, ExecutionContext}
@@ -55,7 +55,7 @@ case class TrainNormalizer() extends DOperation1To2[DataFrame, DataFrame, Normal
   }
 
   def createTrainedScaler(dataFrame: DataFrame, columnsNames: Seq[String]): StandardScalerModel = {
-    val vectors = dataFrame.toSparkVectorRDD(columnsNames)
+    val vectors = dataFrame.selectSparkVectorRDD(columnsNames, ColumnTypesPredicates.isNumeric)
     vectors.cache()
     val scaler: StandardScalerModel =
       new StandardScaler(withStd = true, withMean = true).fit(vectors)

@@ -47,7 +47,7 @@ case class TrainedLogisticRegression(
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
 
   override def vectors(dataFrame: DataFrame): RDD[Vector] =
-    dataFrame.toSparkVectorRDD(featureColumns)
+    dataFrame.selectSparkVectorRDD(featureColumns, ColumnTypesPredicates.isNumeric)
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 

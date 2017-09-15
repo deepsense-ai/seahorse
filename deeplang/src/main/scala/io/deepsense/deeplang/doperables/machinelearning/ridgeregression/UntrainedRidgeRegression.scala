@@ -21,7 +21,7 @@ import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Report, Scorable, Trainable}
+import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, Trainable}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -41,7 +41,12 @@ case class UntrainedRidgeRegression(
 
       val (featureColumns, targetColumn) = parameters.columnNames(dataframe)
 
-      val labeledPoints = dataframe.toSparkLabeledPointRDD(featureColumns, targetColumn)
+      val labeledPoints = dataframe.selectAsSparkLabeledPointRDD(
+        targetColumn,
+        featureColumns,
+        labelPredicate = ColumnTypesPredicates.isNumeric,
+        featurePredicate = ColumnTypesPredicates.isNumeric)
+
       labeledPoints.cache()
 
       val scaler: StandardScalerModel = new StandardScaler(withStd = true, withMean = true)

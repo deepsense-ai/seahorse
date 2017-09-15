@@ -19,10 +19,15 @@ package io.deepsense.deeplang.doperations.exceptions
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 
 
-case class WrongColumnTypeException(
-    columnName: String,
-    actualType: ColumnType,
-    expectedTypes: ColumnType*)
-  extends DOperationExecutionException(
-    s"Column '$columnName' has type $actualType instead of expected ${expectedTypes.mkString}",
-    None)
+case class WrongColumnTypeException(override val message: String)
+  extends DOperationExecutionException(message, None)
+
+object WrongColumnTypeException {
+  def apply(
+      columnName: String,
+      actualType: ColumnType,
+      expectedTypes: ColumnType*): WrongColumnTypeException =
+    WrongColumnTypeException(
+      s"Column '$columnName' has type '$actualType' instead of " +
+        s"expected ${expectedTypes.map(t => s"'${t.toString}'").mkString(", ")}")
+}

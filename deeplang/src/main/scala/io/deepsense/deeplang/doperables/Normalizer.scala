@@ -36,7 +36,7 @@ case class Normalizer(columns: Seq[String], scaler: StandardScalerModel) extends
     override def apply(context: ExecutionContext)(p: Unit)(dataFrame: DataFrame): DataFrame = {
       val localColumns = columns
       val localScaler = scaler
-      val vectors = dataFrame.toSparkVectorRDD(localColumns)
+      val vectors = dataFrame.selectSparkVectorRDD(localColumns, ColumnTypesPredicates.isNumeric)
       val transformed: RDD[Vector] = localScaler.transform(vectors)
       val resultRdd = transformed.zip(dataFrame.sparkDataFrame.rdd).map {
         case (vector, row) => {

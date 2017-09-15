@@ -16,11 +16,13 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, LogisticRegressionModel}
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.regression.GeneralizedLinearAlgorithm
 import org.scalactic.EqualityPolicy.Spread
 
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{UntrainedLogisticRegression, TrainedLogisticRegression}
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{TrainedLogisticRegression, UntrainedLogisticRegression}
+import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
+import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
 class UntrainedLogisticRegressionIntegSpec
   extends UntrainedRegressionIntegSpec[LogisticRegressionModel] {
@@ -31,11 +33,12 @@ class UntrainedLogisticRegressionIntegSpec
 
   override def modelType: Class[LogisticRegressionModel] = classOf[LogisticRegressionModel]
 
-  override def constructUntrainedModel: Trainable =
+  override def constructUntrainedModel(
+      untrainedModelMock: GeneralizedLinearAlgorithm[LogisticRegressionModel]): Trainable =
     UntrainedLogisticRegression(
-      () => mockUntrainedModel.asInstanceOf[LogisticRegressionWithLBFGS])
+      () => untrainedModelMock.asInstanceOf[LogisticRegressionWithLBFGS])
 
-  override val mockUntrainedModel: GeneralizedLinearAlgorithm[LogisticRegressionModel] =
+  override def mockUntrainedModel(): GeneralizedLinearAlgorithm[LogisticRegressionModel] =
     mock[LogisticRegressionWithLBFGS]
 
   override val featuresValues: Seq[Spread[Double]] = Seq(
@@ -48,10 +51,56 @@ class UntrainedLogisticRegressionIntegSpec
 
   override def validateResult(
       mockTrainedModel: LogisticRegressionModel,
-      result: Scorable): Registration = {
-    val castedResult = result.asInstanceOf[TrainedLogisticRegression]
-    castedResult.model shouldBe mockTrainedModel
-    castedResult.featureColumns shouldBe Seq("column1", "column0")
-    castedResult.targetColumn shouldBe "column3"
+      result: Scorable,
+      targetColumnName: String): Registration = {
+    val castResult = result.asInstanceOf[TrainedLogisticRegression]
+    castResult.model shouldBe mockTrainedModel
+    castResult.featureColumns shouldBe Seq("column1", "column0")
+    castResult.targetColumn shouldBe targetColumnName
+  }
+
+  regressionName should {
+
+    "train a model with 2-level categorical as target" in
+      withMockedModel(Seq(0.0, 1.0, 0.0)) {
+        (untrainedModel, trainedModel, context) =>
+          val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column5"))
+
+          val parameters = Trainable.Parameters(
+            featureColumns = Some(MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column1", "column0"))))),
+            targetColumn = Some(NameSingleColumnSelection("column5")))
+
+          val result = untrainedModel.train(context)(parameters)(dataFrame)
+          validateResult(trainedModel, result, "column5")
+      }
+
+    "train a model with boolean as target" in
+      withMockedModel(Seq(1.0, 1.0, 0.0)) {
+        (untrainedModel, trainedModel, context) =>
+          val dataFrame = createDataFrame(inputRows, inputSchema)
+
+          val parameters = Trainable.Parameters(
+            featureColumns = Some(MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column1", "column0"))))),
+            targetColumn = Some(NameSingleColumnSelection("column4")))
+
+          val result = untrainedModel.train(context)(parameters)(dataFrame)
+          validateResult(trainedModel, result, "column4")
+      }
+
+    "throw when target column is 3-level categorical" in {
+      val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column2"))
+
+      a[WrongColumnTypeException] shouldBe thrownBy {
+        val regression = constructUntrainedModel(mockUntrainedModel())
+        val parameters = Trainable.Parameters(
+          featureColumns = Some(MultipleColumnSelection(
+            Vector(NameColumnSelection(Set("column1", "column0"))))),
+          targetColumn = Some(NameSingleColumnSelection("column2")))
+        regression.train(executionContext)(parameters)(dataFrame)
+      }
+    }
+
   }
 }

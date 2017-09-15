@@ -23,11 +23,10 @@ import org.apache.spark.sql
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 
-import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
+import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report}
+import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
 /**
@@ -66,68 +65,75 @@ case class DataFrame private[dataframe] (
   }
 
   /**
-   * Converts DataFrame to RDD of spark's vectors using selected columns.
-   * Throws [[ColumnsDoNotExistException]] if non-existing column names are selected.
-   * Throws [[WrongColumnTypeException]] if not numeric columns names are selected.
-   * @param columns List of columns' names to use as vector fields.
+   * Returns an RDD of Double
+   * after checking the conformance of selected column type with provided predicate.
+   *
+   * throws [[WrongColumnTypeException]]
+   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
    */
-  def toSparkVectorRDD(columns: Seq[String]): RDD[SparkVector] = {
-    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
-    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(columns.head, columns.tail: _*)
-    DataFrame.assertExpectedColumnType(
-      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
-    sparkDataFrameWithSelectedColumns.map(row =>
-      Vectors.dense(row.toSeq.asInstanceOf[Seq[Double]].toArray))
+  def selectDoubleRDD(column: String, predicate: ColumnTypesPredicates.Predicate): RDD[Double] = {
+    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, Seq(column))
+
+    val selected = sparkDataFrame.select(column)
+    predicate(selected.schema.fields.head).get
+
+    selected.map(rowToDoubles(_).head)
   }
 
   /**
-   * Converts DataFrame to RDD of spark's vectors using selected columns.
-   * Throws [[ColumnsDoNotExistException]] if non-existing column names are selected.
-   * Throws [[WrongColumnTypeException]] if not numeric or categorical columns names are selected.
-   * @param columns List of columns' names to use as vector fields.
+   * Returns an RDD of SparkVector
+   * after checking the conformance of selected column types with provided predicate.
+   *
+   * throws [[WrongColumnTypeException]]
+   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
    */
-  def toSparkVectorRDDWithCategoricals(columns: Seq[String]): RDD[SparkVector] = {
+  def selectSparkVectorRDD(
+      columns: Seq[String], predicate: ColumnTypesPredicates.Predicate): RDD[SparkVector] = {
     DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
-    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(columns.head, columns.tail: _*)
-    DataFrame.assertExpectedColumnType(
-      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric, ColumnType.categorical)
-    sparkDataFrameWithSelectedColumns.map(row => Vectors.dense(rowToDoubles(row).toArray))
+
+    val selected = sparkDataFrame.select(columns.head, columns.tail: _*)
+    selected.schema.fields.foreach(predicate(_).get)
+
+    selected.map { row => Vectors.dense(rowToDoubles(row).toArray) }
   }
 
   /**
-   * Converts DataFrame to RDD of spark's LabeledPoints using selected columns.
-   * Throws [[WrongColumnTypeException]] if not numeric columns names are selected.
-   * @param columns List of columns' names to use as features.
-   * @param labelColumn Column name to use as label.
+   * Returns an RDD of LabeledPoint(label, features: _*)
+   * after checking the conformance of selected column types with provided predicates.
+   *
+   * throws [[WrongColumnTypeException]]
+   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
    */
-  def toSparkLabeledPointRDD(
-      columns: Seq[String], labelColumn: String): RDD[LabeledPoint] = {
-    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
-    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(labelColumn, columns: _*)
-    DataFrame.assertExpectedColumnType(
-      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
-    sparkDataFrameWithSelectedColumns.map(row => {
-      val doubles = row.toSeq.asInstanceOf[Seq[Double]]
-      LabeledPoint(doubles.head, Vectors.dense(doubles.tail.toArray))
-    })
+  def selectAsSparkLabeledPointRDD(
+      labelColumn: String,
+      featureColumns: Seq[String],
+      labelPredicate: ColumnTypesPredicates.Predicate,
+      featurePredicate: ColumnTypesPredicates.Predicate): RDD[LabeledPoint] = {
+
+    val selectedLabel = selectDoubleRDD(labelColumn, labelPredicate)
+    val selectedFeatures = selectSparkVectorRDD(featureColumns, featurePredicate)
+
+    selectedLabel zip selectedFeatures map {
+      case (label, features) => LabeledPoint(label, features)
+    }
   }
 
   /**
-   * Converts DataFrame to RDD of spark's LabeledPoints using selected columns.
-   * Throws [[WrongColumnTypeException]] if not numeric or categorical columns names are selected.
-   * @param columns List of columns' names to use as features.
-   * @param labelColumn Column name to use as label.
+   * Returns an RDD of (prediction, label) pairs
+   * after checking the conformance of selected column types with provided predicates.
+   *
+   * throws [[WrongColumnTypeException]]
+   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
    */
-  def toSparkLabeledPointRDDWithCategoricals(
-      columns: Seq[String], labelColumn: String): RDD[LabeledPoint] = {
-    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
-    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(labelColumn, columns: _*)
-    DataFrame.assertExpectedColumnType(
-      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric, ColumnType.categorical)
-    sparkDataFrameWithSelectedColumns.map(row => {
-      val doubles = rowToDoubles(row)
-      LabeledPoint(doubles.head, Vectors.dense(doubles.tail.toArray))
-    })
+  def selectPredictionsAndLabelsRDD(
+      labelColumn: String,
+      predictionColumn: String,
+      labelPredicate: ColumnTypesPredicates.Predicate,
+      predictionPredicate: ColumnTypesPredicates.Predicate): RDD[(Double, Double)] = {
+
+    val selectedPrediction = selectDoubleRDD(predictionColumn, predictionPredicate)
+    val selectedLabel = selectDoubleRDD(labelColumn, labelPredicate)
+    selectedPrediction zip selectedLabel
   }
 
   override def report(executionContext: ExecutionContext): Report = {
@@ -137,6 +143,7 @@ case class DataFrame private[dataframe] (
   private def rowToDoubles(row: Row): Seq[Double] = {
     row.toSeq.map {
       case null => 0.0
+      case b: Boolean => if (b) 1.0 else 0.0
       case d: Double => d
       case i: Int => i.toDouble
       case _ => ???

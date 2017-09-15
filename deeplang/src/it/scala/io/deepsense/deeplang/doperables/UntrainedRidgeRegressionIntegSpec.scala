@@ -30,24 +30,29 @@ class UntrainedRidgeRegressionIntegSpec
 
   override def modelType: Class[RidgeRegressionModel] = classOf[RidgeRegressionModel]
 
-  override def constructUntrainedModel: Trainable =
-    UntrainedRidgeRegression(() => mockUntrainedModel.asInstanceOf[RidgeRegressionWithSGD])
+  override def constructUntrainedModel(
+      untrainedModelMock: GeneralizedLinearAlgorithm[RidgeRegressionModel]): Trainable =
+    UntrainedRidgeRegression(() => untrainedModelMock.asInstanceOf[RidgeRegressionWithSGD])
 
-  override val mockUntrainedModel: GeneralizedLinearAlgorithm[RidgeRegressionModel] =
+  override def mockUntrainedModel(): GeneralizedLinearAlgorithm[RidgeRegressionModel] =
     mock[RidgeRegressionWithSGD]
 
   override val featuresValues: Seq[Spread[Double]] = Seq(
-    Spread(0.0, 0.0), -0.755 +- 0.01,
-    Spread(0.0, 0.0), -0.377 +- 0.01,
-    Spread(0.0, 0.0), 1.133 +- 0.01
+    Spread(0.0, 0.0),
+    -0.755 +- 0.01,
+    Spread(0.0, 0.0),
+    -0.377 +- 0.01,
+    Spread(0.0, 0.0),
+    1.133 +- 0.01
   )
 
   override def validateResult(
-    mockTrainedModel: RidgeRegressionModel,
-    result: Scorable): Registration = {
+      mockTrainedModel: RidgeRegressionModel,
+      result: Scorable,
+      targetColumnName: String): Registration = {
     val castedResult = result.asInstanceOf[TrainedRidgeRegression]
     castedResult.model shouldBe mockTrainedModel
     castedResult.featureColumns shouldBe Seq("column1", "column0")
-    castedResult.targetColumn shouldBe "column3"
+    castedResult.targetColumn shouldBe targetColumnName
   }
 }

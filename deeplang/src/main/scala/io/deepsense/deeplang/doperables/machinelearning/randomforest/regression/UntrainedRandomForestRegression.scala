@@ -21,7 +21,7 @@ import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
-import io.deepsense.deeplang.doperables.{CategoricalFeaturesExtractor, Report, Scorable, Trainable}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -42,8 +42,12 @@ case class UntrainedRandomForestRegression(
 
       val (featureColumns, targetColumn) = parameters.columnNames(dataFrame)
 
-      val labeledPoints = dataFrame.toSparkLabeledPointRDDWithCategoricals(
-        featureColumns, targetColumn)
+      val labeledPoints = dataFrame.selectAsSparkLabeledPointRDD(
+        targetColumn,
+        featureColumns,
+        labelPredicate = ColumnTypesPredicates.isNumeric,
+        featurePredicate = ColumnTypesPredicates.isNumericOrCategorical)
+
       labeledPoints.cache()
 
       val trainedModel = SparkRandomForest.trainRegressor(
