@@ -26,6 +26,8 @@ Variables and functions available in the notebooks' global scope:
 
 To visualize data user can use <a target="_blank" href="{{ site.PANDAS_LIBRARY_ADDRESS }}">pandas</a> library.
 
+**Remark**: To work with big data, user should sample the DataFrame before using pandas.
+
 **Since**: Seahorse 1.0.0
 
 ####Examples

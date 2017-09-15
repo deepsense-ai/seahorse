@@ -67,9 +67,9 @@ Available output generation modes are:
 For `one column` input mode with `append new column` output mode, a name for the newly created column
 has to be specified.
 
-For `multiple columns` input mode with `append new columns` output mode, a prefix for the newly created
-columns has to be specified. Every new column will have a corresponding input column's name with a
-given prefix prepended.
+For `multiple columns` input mode with `append new columns` output mode, `column name prefix` for
+the newly created columns has to be specified. Every new column will have a corresponding input
+column's name with given prefix prepended.
 
 #### Example of Use
 
