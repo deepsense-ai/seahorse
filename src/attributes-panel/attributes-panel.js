@@ -1,8 +1,8 @@
 'use strict';
 
 /*@ngInject*/
-function OperationAttributes($rootScope, AttributesPanelService ,config) {
-  function setCorrectHeight (container) {
+function OperationAttributes($rootScope, AttributesPanelService, config) {
+  function setCorrectHeight(container) {
     let heightOfOthers = _.reduce(jQuery(
       '> .ibox-title--main, > .c-attributes-tabs',
       container
@@ -18,18 +18,19 @@ function OperationAttributes($rootScope, AttributesPanelService ,config) {
     restrict: 'E',
     scope: {
       node: '=',
+      workflow: '=',
       disabledMode: '=',
       predefColors: '='
     },
     templateUrl: 'attributes-panel/attributes-panel.html',
-    replace: true,
+    replace: false,
     link: (scope, element) => {
       scope.selected = 'parameters';
-      scope.$watch('node', function() {
+      scope.$watch('node', function () {
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 
-      scope.$watch('disabledMode', function() {
+      scope.$watch('disabledMode', function () {
         if (scope.disabledMode) {
           AttributesPanelService.setDisabledMode();
           AttributesPanelService.disableElements(element[0]);
@@ -37,14 +38,24 @@ function OperationAttributes($rootScope, AttributesPanelService ,config) {
           AttributesPanelService.enableElements(element[0]);
           AttributesPanelService.setEnabledMode();
         }
-
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
     },
 
-    controller: function ($scope, $element, $timeout, $uibModal) {
+    controller: function ($scope, $sce, $element, $timeout, $uibModal) {
+
+      this.getNotebookUrl = () => $sce.trustAsResourceUrl(config.notebookHost + '/notebooks/' + $scope.workflow + "/" + $scope.node.id);
       this.getDocsHost = () => config.docsHost;
-      this.showErrorMessage = function showErrorMessage () {
+      this.showNotebook = () => {
+        $scope.modal = $uibModal.open({
+          scope: $scope,
+          template: `<iframe style="height: calc(100% - 60px); width:100%" frameborder="0" ng-src="{{::controller.getNotebookUrl()}}"></iframe>
+                     <button type="button" class="btn btn-default pull-right" ng-click="modal.close()">Close</button>`,
+          windowClass: 'o-modal--notebook'
+        });
+      };
+
+      this.showErrorMessage = function showErrorMessage() {
         $scope.modal = $uibModal.open({
           scope: $scope,
           template: `
@@ -69,7 +80,7 @@ function OperationAttributes($rootScope, AttributesPanelService ,config) {
         });
       };
 
-      this.customNameSaved = function() {
+      this.customNameSaved = function () {
         $rootScope.$applyAsync(() => {
           $rootScope.$broadcast('AttributesPanel.UPDATED');
         });
@@ -79,5 +90,4 @@ function OperationAttributes($rootScope, AttributesPanelService ,config) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('deepsenseOperationAttributes', OperationAttributes);
+angular.module('deepsense.attributes-panel').directive('deepsenseOperationAttributes', OperationAttributes);

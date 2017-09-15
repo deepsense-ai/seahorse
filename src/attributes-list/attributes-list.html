@@ -13,23 +13,14 @@
     <div class="ibox-content">
       <div class="attributes-value-view" ng-switch="::parameter.schema.type">
         <attribute-boolean-type ng-switch-when="boolean"></attribute-boolean-type>
-
         <attribute-single-choice-type ng-switch-when="choice"></attribute-single-choice-type>
-
         <attribute-multiple-choice-type ng-switch-when="multipleChoice"></attribute-multiple-choice-type>
-
         <attribute-numeric-type ng-switch-when="numeric"></attribute-numeric-type>
-
         <attribute-snippet-type ng-switch-when="snippet"></attribute-snippet-type>
-
         <attribute-string-type ng-switch-when="string"></attribute-string-type>
-
         <attribute-creator-type ng-switch-when="creator"></attribute-creator-type>
-
         <attribute-prefix-based-creator-type ng-switch-when="prefixBasedCreator"></attribute-prefix-based-creator-type>
-
         <attribute-selector-type ng-switch-when="selector"></attribute-selector-type>
-
         <attribute-multiplier-type ng-switch-when="multiplier"></attribute-multiplier-type>
       </div>
     </div>

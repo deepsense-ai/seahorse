@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 /*@ngInject*/
@@ -13,7 +7,7 @@ function AttributeSingleChoiceType($compile) {
     templateUrl: 'attribute-types/attribute-single-choice/attribute-single-choice-type.html',
     scope: true,
     replace: true,
-    link: function (scope, element, attrs) {
+    link: function (scope, element) {
       let internal = {};
 
       internal.initChoice = function initChoice () {
@@ -34,7 +28,6 @@ function AttributeSingleChoiceType($compile) {
         </attributes-list>`;
         let $parametersListsContainer = angular.element(element[0].querySelector('.nested-attributes-view'));
         let $parametersListsEls = $compile(template)(scope);
-
         $parametersListsContainer.append($parametersListsEls);
       };
 
@@ -42,7 +35,7 @@ function AttributeSingleChoiceType($compile) {
       internal.renderParametersList();
 
       scope.$watch('choice', function (newValue, oldValue) {
-        if (newValue !== oldValue) {
+        if (newValue != oldValue) {
           scope.parameter.choices[oldValue] = false;
           scope.parameter.choices[newValue] = true;
         }

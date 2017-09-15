@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 03.09.15.
- */
-
 class AttributesPanelService {
   /*@ngInject*/
   constructor () {
