@@ -47,7 +47,7 @@ class CustomTransformerSpec extends UnitSpec {
 
       val context = mockExecutionContext(innerWorkflowExecutor)
 
-      val transformer = new CustomTransformer(workflow, Array.empty)
+      val transformer = new CustomTransformer(workflow, Seq.empty)
 
       transformer._transform(context, mock[DataFrame]) shouldBe outputDataFrame
     }
@@ -62,7 +62,7 @@ class CustomTransformerSpec extends UnitSpec {
         catalog,
         innerWorkflowParser)
 
-      val transformer = new CustomTransformer(InnerWorkflow(simpleGraph(), JsObject()), Array.empty)
+      val transformer = new CustomTransformer(InnerWorkflow(simpleGraph(), JsObject()), Seq.empty)
 
       val schema = StructType(Seq(
         StructField("column1", DoubleType),
@@ -79,20 +79,43 @@ class CustomTransformerSpec extends UnitSpec {
 
     "replicate" in {
       val publicParam = TypeConverter().targetType.replicate("public name")
-      val params: Array[Param[_]] = Array(publicParam)
+      val publicParamsWithValues = Seq(ParamWithValues(publicParam))
+      val params: Array[Param[_]] = publicParamsWithValues.map(_.param).toArray
+
       val workflow = InnerWorkflow(simpleGraph(), JsObject(),
         List(PublicParam(innerNodeId, "target type", "public name")))
-      val transformer = new CustomTransformer(workflow, params)
+      val transformer = new CustomTransformer(workflow, publicParamsWithValues)
 
       val replicated = transformer.replicate()
       replicated.innerWorkflow shouldBe workflow
       replicated.params shouldBe params
     }
 
+    "replicate with set values" in {
+      val publicParam = TypeConverter().targetType.replicate("public name")
+      val defaultValue = TargetTypeChoices.IntegerTargetTypeChoice
+      val setValue = TargetTypeChoices.StringTargetTypeChoice
+      val publicParamsWithValues =
+        Seq(ParamWithValues(publicParam, Some(defaultValue), Some(setValue)))
+      val params: Array[Param[_]] = publicParamsWithValues.map(_.param).toArray
+
+      val workflow = InnerWorkflow(simpleGraph(), JsObject(),
+        List(PublicParam(innerNodeId, "target type", "public name")))
+      val transformer = new CustomTransformer(workflow, publicParamsWithValues)
+
+      val replicated = transformer.replicate()
+      replicated.innerWorkflow shouldBe workflow
+      replicated.params shouldBe params
+      replicated.getDefault(publicParam) shouldBe Some(defaultValue)
+      replicated.get(publicParam) shouldBe Some(setValue)
+    }
+
     "set public params" when {
       "executing inner workflow" in {
         val innerParam = TypeConverter().targetType
         val publicParam = TypeConverter().targetType.replicate("public name")
+        val publicParamsWithValues = Seq(ParamWithValues(publicParam))
+
         val customTargetType = TargetTypeChoices.LongTargetTypeChoice()
 
         val workflow = InnerWorkflow(simpleGraph(), JsObject(),
@@ -116,7 +139,7 @@ class CustomTransformerSpec extends UnitSpec {
 
         val context = mockExecutionContext(innerWorkflowExecutor)
 
-        val transformer = new CustomTransformer(workflow, Array(publicParam))
+        val transformer = new CustomTransformer(workflow, publicParamsWithValues)
         transformer.set(publicParam -> customTargetType)
 
         transformer._transform(context, mock[DataFrame]) shouldBe outputDataFrame
@@ -133,9 +156,10 @@ class CustomTransformerSpec extends UnitSpec {
           innerWorkflowParser)
 
         val publicParam = TypeConverter().targetType.replicate("public name")
+        val publicParamsWithValues = Seq(ParamWithValues(publicParam))
 
         val transformer = new CustomTransformer(InnerWorkflow(simpleGraph(), JsObject(),
-          List(PublicParam(innerNodeId, "target type", "public name"))), Array(publicParam))
+          List(PublicParam(innerNodeId, "target type", "public name"))), publicParamsWithValues)
 
         transformer.set(publicParam -> TargetTypeChoices.LongTargetTypeChoice())
 

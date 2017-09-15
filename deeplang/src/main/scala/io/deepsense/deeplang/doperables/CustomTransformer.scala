@@ -25,16 +25,25 @@ import io.deepsense.deeplang.doperables.serialization.{JsonObjectPersistence, Pa
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.custom.{InnerWorkflow, PublicParam}
-import io.deepsense.deeplang.params.{Param, ParamMap}
+import io.deepsense.deeplang.params.{Param, ParamMap, ParamPair}
 import io.deepsense.deeplang.utils.CustomTransformerFactory
 import io.deepsense.graph._
 
 case class CustomTransformer(
     innerWorkflow: InnerWorkflow,
-    override val params: Array[Param[_]])
+    publicParamsWithValues: Seq[ParamWithValues[_]])
   extends Transformer {
 
-  def this() = this(InnerWorkflow.empty, Array.empty)
+  def this() = this(InnerWorkflow.empty, Seq.empty)
+
+  override val params: Array[Param[_]] = publicParamsWithValues.map(_.param).toArray
+
+  publicParamsWithValues.foreach {
+    case ParamWithValues(param, defaultValue, setValue) =>
+      val paramAny = param.asInstanceOf[Param[Any]]
+      defaultValue.foreach(defaultValue => defaultParamMap.put(ParamPair(paramAny, defaultValue)))
+      setValue.foreach(setValue => paramMap.put(ParamPair(paramAny, setValue)))
+  }
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     ctx.innerWorkflowExecutor.execute(CommonExecutionContext(ctx), workflowWithParams(), df)
@@ -61,7 +70,7 @@ case class CustomTransformer(
   }
 
   override def replicate(extra: ParamMap = ParamMap.empty): this.type = {
-    val that = new CustomTransformer(innerWorkflow, params).asInstanceOf[this.type]
+    val that = new CustomTransformer(innerWorkflow, publicParamsWithValues).asInstanceOf[this.type]
     copyValues(that, extra)
   }
 
@@ -105,3 +114,8 @@ object CustomTransformer {
     PathsUtils.combinePaths(path, innerWorkflow)
   }
 }
+
+case class ParamWithValues[T](
+  param: Param[_],
+  defaultValue: Option[T] = None,
+  setValue: Option[T] = None)

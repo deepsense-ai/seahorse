@@ -30,7 +30,7 @@ import io.deepsense.deeplang.params.{Param, WorkflowParam}
 import io.deepsense.deeplang.utils.CustomTransformerFactory
 import io.deepsense.graph.{GraphKnowledge, Node}
 
-case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
+case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransformer] {
 
   import DefaultCustomTransformerWorkflow._
 
