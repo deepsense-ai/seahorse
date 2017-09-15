@@ -27,7 +27,7 @@ object CommonSettingsPlugin extends AutoPlugin {
   override def globalSettings = Seq(
     // Set custom URL using -Dartifactory.url
     // sbt -Dartifactory.url=http://192.168.59.104/artifactory/
-    artifactoryUrl := sys.props.getOrElse("artifactory.url", "http://10.10.1.77:8081/artifactory/")
+    artifactoryUrl := sys.props.getOrElse("artifactory.url", "http://artifactory.deepsense.codilime.com:8081/artifactory/")
   )
 
   override def projectSettings = Seq(
