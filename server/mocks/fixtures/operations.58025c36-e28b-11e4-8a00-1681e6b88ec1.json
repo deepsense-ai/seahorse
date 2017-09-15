@@ -1,0 +1,42 @@
+{
+  "operation": {
+    "name": "Save DataFrame",
+    "description": "Saves a DataFrame to HDFS",
+    "ports": {
+      "input": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"],
+        "required": true
+      }],
+      "output": []
+    },
+    "version": "0.1.0",
+    "id": "58025c36-e28b-11e4-8a00-1681e6b88ec1",
+    "category": "5a39e324-15f4-464c-83a5-2d7fba2858aa",
+    "deterministic": false,
+    "parameters": {
+      "name": {
+        "type": "string",
+        "description": "user friendly name",
+        "required": true,
+        "validator": {
+          "type": "regex",
+          "configuration": {
+            "regex": ".*"
+          }
+        }
+      },
+      "description": {
+        "type": "string",
+        "description": "description for DataFrame",
+        "required": true,
+        "validator": {
+          "type": "regex",
+          "configuration": {
+            "regex": ".*"
+          }
+        }
+      }
+    }
+  }
+}

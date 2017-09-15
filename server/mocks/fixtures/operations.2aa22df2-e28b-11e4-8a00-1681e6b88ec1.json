@@ -1,0 +1,30 @@
+{
+  "operation": {
+    "name": "Load DataFrame",
+    "description": "Loads a DataFrame from HDFS",
+    "ports": {
+      "input": [],
+      "output": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+      }]
+    },
+    "version": "0.1.0",
+    "id": "2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
+    "category": "5a39e324-15f4-464c-83a5-2d7fba2858aa",
+    "deterministic": false,
+    "parameters": {
+      "id": {
+        "type": "string",
+        "description": "unique id of the Dataframe",
+        "required": true,
+        "validator": {
+          "type": "regex",
+          "configuration": {
+            "regex": ".*"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "operation": {
+    "name": "Decompose Datetime",
+    "description": "Extracts Numeric fields (year, month, etc.) from a Timestamp",
+    "ports": {
+      "input": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"],
+        "required": true
+      }],
+      "output": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+      }]
+    },
+    "version": "0.1.0",
+    "id": "42f2eb12-e28b-11e4-8a00-1681e6b88ec1",
+    "category": "6c730c11-9708-4a84-9dbd-3845903f32ac",
+    "deterministic": false,
+    "parameters": {
+      "timestampColumn": {
+        "type": "selector",
+        "description": "Timestamp column to decompose",
+        "required": true,
+        "isSingle": true
+      },
+      "parts": {
+        "type": "multipleChoice",
+        "description": "Parts of the date time to select",
+        "required": true,
+        "values": {
+          "seconds": null,
+          "year": null,
+          "hour": null,
+          "minutes": null,
+          "day": null,
+          "month": null
+        }
+      }
+    }
+  }
+}

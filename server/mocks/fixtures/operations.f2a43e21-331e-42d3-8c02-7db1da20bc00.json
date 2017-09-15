@@ -1,7 +1,7 @@
 {
   "operation": {
-    "name": "Evaluate Classification",
-    "description": "Evaluates a classification model",
+    "name": "Evaluate Regression",
+    "description": "Evaluates a regression model",
     "ports": {
       "input": [{
         "portIndex": 0,
@@ -14,8 +14,8 @@
       }]
     },
     "version": "0.1.0",
-    "id": "1163bb76-ba65-4471-9632-dfb761d20dfb",
-    "category": "ff13cbbd-f4ec-4df3-b0c3-f6fd4b019edf",
+    "id": "f2a43e21-331e-42d3-8c02-7db1da20bc00",
+    "category": "c80397a8-7840-4bdb-83b3-dc12f1f5bc3c",
     "deterministic": false,
     "parameters": {
       "targetColumn": {
