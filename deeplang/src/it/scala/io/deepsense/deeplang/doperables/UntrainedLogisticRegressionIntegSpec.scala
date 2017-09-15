@@ -20,7 +20,7 @@ import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticR
 import org.apache.spark.mllib.regression.GeneralizedLinearAlgorithm
 import org.scalactic.EqualityPolicy.Spread
 
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{TrainedLogisticRegression, UntrainedLogisticRegression}
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{LogisticRegressionParameters, TrainedLogisticRegression, UntrainedLogisticRegression}
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
@@ -36,6 +36,7 @@ class UntrainedLogisticRegressionIntegSpec
   override def constructUntrainedModel(
       untrainedModelMock: GeneralizedLinearAlgorithm[LogisticRegressionModel]): Trainable =
     UntrainedLogisticRegression(
+      mock[LogisticRegressionParameters],
       () => untrainedModelMock.asInstanceOf[LogisticRegressionWithLBFGS])
 
   override def mockUntrainedModel(): GeneralizedLinearAlgorithm[LogisticRegressionModel] =

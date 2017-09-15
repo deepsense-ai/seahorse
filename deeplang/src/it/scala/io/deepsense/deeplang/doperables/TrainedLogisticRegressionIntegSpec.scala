@@ -23,7 +23,7 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 import org.mockito.Mockito.{times, verify, when}
 
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.TrainedLogisticRegression
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{LogisticRegressionParameters, TrainedLogisticRegression}
 
 class TrainedLogisticRegressionIntegSpec
   extends TrainedRegressionIntegSpec[LogisticRegressionModel] {
@@ -34,20 +34,22 @@ class TrainedLogisticRegressionIntegSpec
 
   override val regressionConstructor: (GeneralizedLinearModel, Seq[String], String) => Scorable =
     (model, features, target) => {
+      val modelParameters = mock[LogisticRegressionParameters]
       val castedModel = model.asInstanceOf[LogisticRegressionModel]
       when(castedModel.clearThreshold()).thenReturn(castedModel)
-      TrainedLogisticRegression(castedModel, features, target)
+      TrainedLogisticRegression(modelParameters, castedModel, features, target)
     }
 
   override val modelType: Class[LogisticRegressionModel] = classOf[LogisticRegressionModel]
 
   regressionName should {
     "clear Threshold on model" in {
+      val modelParameters = mock[LogisticRegressionParameters]
       val model = mock[LogisticRegressionModel]
       when(model.clearThreshold()).thenReturn(model)
 
       val logisticRegression =
-        TrainedLogisticRegression(model, Seq("f1", "f2"), "t")
+        TrainedLogisticRegression(modelParameters, model, Seq("f1", "f2"), "t")
       val df = createDataFrame(
         Seq(Row(1.0, 2.0, 3.0)),
         StructType(Seq(

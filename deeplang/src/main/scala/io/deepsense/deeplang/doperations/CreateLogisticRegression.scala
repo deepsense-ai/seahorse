@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.UntrainedLogisticRegression
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{LogisticRegressionParameters, UntrainedLogisticRegression}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 
@@ -67,10 +67,11 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
       model
     }
 
+    val modelParameters = LogisticRegressionParameters(regParam, iterationsParam, toleranceParam)
     // We're passing a factory method here, instead of constructed object,
     // because the resulting UntrainedLogisticRegression could be used multiple times
     // in a workflow and its underlying Spark model is mutable
-    UntrainedLogisticRegression(createModelInstance)
+    UntrainedLogisticRegression(modelParameters, createModelInstance)
   }
 }
 

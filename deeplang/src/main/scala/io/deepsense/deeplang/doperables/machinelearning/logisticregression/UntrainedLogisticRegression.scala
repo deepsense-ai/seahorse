@@ -18,18 +18,21 @@ package io.deepsense.deeplang.doperables.machinelearning.logisticregression
 
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, Trainable}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedLogisticRegression(
+    modelParameters: LogisticRegressionParameters,
     createModel: () => LogisticRegressionWithLBFGS)
   extends LogisticRegression
   with Trainable {
 
-  def this() = this(() => null)
+  def this() = this(null, () => null)
 
   override def toInferrable: DOperable = new UntrainedLogisticRegression()
 
@@ -51,6 +54,7 @@ case class UntrainedLogisticRegression(
       labeledPoints.cache()
       val trainedModel: LogisticRegressionModel = createModel().run(labeledPoints)
       val result = TrainedLogisticRegression(
+        modelParameters,
         trainedModel,
         featureColumns,
         labelColumn)
@@ -66,8 +70,19 @@ case class UntrainedLogisticRegression(
     }
   }
 
-  override def report(executionContext: ExecutionContext): Report =
-    Report(ReportContent("Report for UntrainedLogisticRegression"))
+  override def report(executionContext: ExecutionContext): Report = {
+    DOperableReporter("Untrained Logistic Regression")
+      .withParameters(
+        description = "",
+        ("Regularization", ColumnType.numeric,
+          DoubleUtils.double2String(modelParameters.regularization)),
+        ("Iterations number", ColumnType.numeric,
+          DoubleUtils.double2String(modelParameters.iterationsNumber)),
+        ("Tolerance", ColumnType.numeric,
+          DoubleUtils.double2String(modelParameters.tolerance))
+      )
+      .report()
+  }
 
   override def save(context: ExecutionContext)(path: String): Unit =
     throw new UnsupportedOperationException

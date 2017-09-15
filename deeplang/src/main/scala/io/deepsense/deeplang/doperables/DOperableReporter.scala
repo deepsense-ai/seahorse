@@ -16,8 +16,11 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.mllib.linalg.Vector
+
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
@@ -33,6 +36,35 @@ case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
       parameters.map(_._2).toList,
       None,
       List(parameters.map(_._3).map(Some(_)).toList))
+
+    DOperableReporter(title, tables :+ parametersTable)
+  }
+
+  def withCoefficients(
+      description: String,
+      weights: Vector,
+      intercept: Double): DOperableReporter = {
+
+    val rows = if (weights.size == 0) {
+      List(List(Some(""), Some(DoubleUtils.double2String(intercept))))
+    } else {
+      val firstRow = List(
+        Some(DoubleUtils.double2String(weights.toArray.head)),
+        Some(DoubleUtils.double2String(intercept))
+      )
+      val otherRows = weights.toArray.tail
+        .map(weight => List(Some(DoubleUtils.double2String(weight)), Some("")))
+        .toList
+      firstRow +: otherRows
+    }
+
+    val parametersTable = Table(
+      "Coefficients",
+      description,
+      Some(List("Weights", "Intercept")),
+      List(ColumnType.numeric, ColumnType.numeric),
+      None,
+      rows)
 
     DOperableReporter(title, tables :+ parametersTable)
   }
