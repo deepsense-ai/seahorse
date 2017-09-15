@@ -58,7 +58,7 @@ case class TrainedGradientBoostedTreesRegression(
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
 
-  override def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrCategorical
+  override def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrNonTrivialCategorical
 
   override def predict(features: RDD[linalg.Vector]): RDD[Double] = model.predict(features)
 

@@ -74,6 +74,9 @@ case class UntrainedRandomForestRegression(
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
 
-  override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrCategorical
-  override protected def labelPredicate: Predicate = ColumnTypesPredicates.isNumeric
+  override protected def featurePredicate: Predicate =
+    ColumnTypesPredicates.isNumericOrNonTrivialCategorical
+
+  override protected def labelPredicate: Predicate =
+    ColumnTypesPredicates.isNumeric
 }

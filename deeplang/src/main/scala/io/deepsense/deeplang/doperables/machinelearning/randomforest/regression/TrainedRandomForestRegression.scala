@@ -42,7 +42,8 @@ case class TrainedRandomForestRegression(
 
   override def url: Option[String] = None
 
-  override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrCategorical
+  override protected def featurePredicate: Predicate =
+    ColumnTypesPredicates.isNumericOrNonTrivialCategorical
 
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
 

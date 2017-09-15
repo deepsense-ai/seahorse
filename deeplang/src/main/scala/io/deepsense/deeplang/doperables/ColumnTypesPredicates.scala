@@ -36,10 +36,15 @@ object ColumnTypesPredicates {
         Failure(WrongColumnTypeException(field.name, columnType, ColumnType.numeric))
     }
 
-  def isNumericOrCategorical: Predicate = (field) =>
+  def isNumericOrNonTrivialCategorical: Predicate = (field) =>
     SparkConversions.sparkColumnTypeToColumnType(field.dataType) match {
       case ColumnType.numeric => Success()
-      case ColumnType.categorical => Success()
+      case ColumnType.categorical =>
+        MappingMetadataConverter.mappingFromMetadata(field.metadata).get.values.size match {
+          case 0 | 1 => Failure(WrongColumnTypeException(
+            s"Column '${field.name}' is '${ColumnType.categorical}' with less than 2 levels."))
+          case _ => Success()
+        }
       case _ =>
         val columnType = SparkConversions.sparkColumnTypeToColumnType(field.dataType)
         Failure(WrongColumnTypeException(field.name, columnType,
