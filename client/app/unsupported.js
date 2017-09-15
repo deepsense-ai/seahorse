@@ -5,7 +5,7 @@ function UnsupportedConfig($stateProvider, $urlRouterProvider) {
     url: '/',
     template: `
       <div class='alert alert-danger' role='alert' style='font-size: 18px;'>
-       We're sorry, Seahorse doesn't support Firefox yet.<br/>We're working on it, please use Chrome in the meantime.
+       We're sorry, Seahorse doesn't support your browser yet.<br/>We're working on it, please use Google Chrome in the meantime.
       </div>
     `
   });
