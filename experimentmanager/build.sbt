@@ -14,4 +14,4 @@ unmanagedClasspath in Compile += (baseDirectory.value / "conf")
 
 Revolver.settings
 
-test in IntegrationTest <<= (test in IntegrationTest) dependsOn (assembly in ProjectRef(file("."), "graphexecutor"))
+test in IntegrationTest <<= (test in IntegrationTest) dependsOn (assembly in LocalProject("graphexecutor"))
