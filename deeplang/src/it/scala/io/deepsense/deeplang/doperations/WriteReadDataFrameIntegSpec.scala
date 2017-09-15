@@ -26,7 +26,7 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparator
+import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
 
@@ -71,36 +71,51 @@ class WriteReadDataFrameIntegSpec
 
   "WriteDataFrame and ReadDataFrame" should {
     "write and read CSV file" in {
-      val wdf = WriteDataFrame(
-        (ColumnSeparator.TAB, None),
-        writeHeader = true,
-        absoluteWriteReadDataFrameTestPath + "/csv")
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/csv")
+              .setFileFormat(
+                OutputFileFormatChoice.Csv()
+                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
+                  .setCsvNamesIncluded(true)))
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame(
-        absoluteWriteReadDataFrameTestPath + "/csv",
-        (ColumnSeparator.TAB, None),
-        csvNamesIncluded = true,
-        csvShouldConvertToBoolean = true,
-        categoricalColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("categorical")))
-        ))
+      val categoricalColumns = MultipleColumnSelection(
+        Vector(NameColumnSelection(Set("categorical")))
       )
+
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(
+            InputStorageTypeChoice.File()
+              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/csv")
+              .setFileFormat(InputFileFormatChoice.Csv()
+                .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
+                .setCsvNamesIncluded(true)
+                .setShouldConvertToBoolean(true)
+                .setCategoricalColumns(categoricalColumns)))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
     }
 
     "write and read PARQUET file" in {
-      val wdf = WriteDataFrame(
-        StorageType.FILE,
-        FileFormat.PARQUET,
-        absoluteWriteReadDataFrameTestPath + "/parquet")
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/parquet")
+              .setFileFormat(OutputFileFormatChoice.Parquet()))
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame(
-        FileFormat.PARQUET,
-        absoluteWriteReadDataFrameTestPath + "/parquet")
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(
+            InputStorageTypeChoice.File()
+              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/parquet")
+              .setFileFormat(InputFileFormatChoice.Parquet()))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
@@ -128,19 +143,23 @@ class WriteReadDataFrameIntegSpec
       }
       val convertedDataFrame = createDataFrame(convertedRows, convertedSchema)
 
-      val wdf = WriteDataFrame(
-        StorageType.FILE,
-        FileFormat.JSON,
-        absoluteWriteReadDataFrameTestPath + "/json")
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(OutputStorageTypeChoice.File()
+            .setOutputFile(absoluteWriteReadDataFrameTestPath + "/json")
+            .setFileFormat(OutputFileFormatChoice.Json()))
+
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame(
-        FileFormat.JSON,
-        absoluteWriteReadDataFrameTestPath + "/json",
-        categoricalColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("categorical")))
-        ))
+      val categoricals = MultipleColumnSelection(
+        Vector(NameColumnSelection(Set("categorical")))
       )
+
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(InputStorageTypeChoice.File()
+            .setSourceFile(absoluteWriteReadDataFrameTestPath + "/json")
+            .setFileFormat(InputFileFormatChoice.Json().setCategoricalColumns(categoricals)))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, convertedDataFrame, checkRowOrder = false)
@@ -156,18 +175,22 @@ class WriteReadDataFrameIntegSpec
 
       createTable()
 
-      val wdf = WriteDataFrame()
-      wdf.storageTypeParameter.value = StorageType.CASSANDRA.toString
-      wdf.cassandraTableParameter.value = cassandraTableName
-      wdf.cassandraKeyspaceParameter.value = cassandraKeySpaceName
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.Cassandra()
+              .setCassandraTable(cassandraTableName)
+              .setCassandraKeyspace(cassandraKeySpaceName))
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame()
-      rdf.storageTypeParameter.value = StorageType.CASSANDRA.toString
-      rdf.cassandraTableParameter.value = cassandraTableName
-      rdf.cassandraKeyspaceParameter.value = cassandraKeySpaceName
-      rdf.categoricalColumnsParameter.value =
-        MultipleColumnSelection(Vector(NameColumnSelection(Set("categorical"))))
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(
+            InputStorageTypeChoice.Cassandra()
+              .setCassandraTable(cassandraTableName)
+              .setCassandraKeyspace(cassandraKeySpaceName)
+              .setCategoricalColumns(
+                MultipleColumnSelection(Vector(NameColumnSelection(Set("categorical"))))))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)

@@ -232,23 +232,28 @@ case class MissingValuesHandler()
 
 object MissingValuesHandler {
 
-  sealed trait Strategy extends Choice
+  sealed trait Strategy extends Choice {
+    import Strategy._
+
+    override val choiceOrder: List[Class[_ <: Choice]] = List(
+      classOf[RemoveRow],
+      classOf[RemoveColumn],
+      classOf[ReplaceWithCustomValue],
+      classOf[ReplaceWithMode])
+  }
 
   object Strategy {
     case class RemoveRow() extends Strategy {
       override val name: String = "remove row"
-      override val index: Int = 0
     }
 
     case class RemoveColumn() extends Strategy {
       override val name: String = "remove column"
-      override val index: Int = 1
     }
 
     case class ReplaceWithCustomValue() extends Strategy {
 
       override val name: String = "replace with custom value"
-      override val index: Int = 2
 
       val customValue = StringParam(
         name = "value",
@@ -261,7 +266,6 @@ object MissingValuesHandler {
     case class ReplaceWithMode() extends Strategy {
 
       override val name: String = "replace with mode"
-      override val index: Int = 3
 
       val emptyColumnStrategy = ChoiceParam[EmptyColumnsStrategy](
         name = "empty column strategy",
@@ -274,28 +278,37 @@ object MissingValuesHandler {
     }
   }
 
-  sealed trait EmptyColumnsStrategy extends Choice
+  sealed trait EmptyColumnsStrategy extends Choice {
+    import EmptyColumnsStrategy._
+
+    override val choiceOrder: List[Class[_ <: EmptyColumnsStrategy]] = List(
+      classOf[RemoveEmptyColumns],
+      classOf[RetainEmptyColumns])
+  }
 
   object EmptyColumnsStrategy {
     case class RemoveEmptyColumns() extends EmptyColumnsStrategy {
       override val name: String = "remove"
-      override val index: Int = 0
     }
     case class RetainEmptyColumns() extends EmptyColumnsStrategy {
       override val name: String = "retain"
-      override val index: Int = 1
     }
   }
 
   sealed trait MissingValueIndicatorChoice extends Choice {
+    import MissingValueIndicatorChoice._
+
     def getIndicatorPrefix: Option[String]
+    override val choiceOrder: List[Class[_ <: MissingValueIndicatorChoice]] =
+      List(
+        classOf[Yes],
+        classOf[No])
   }
 
   object MissingValueIndicatorChoice {
     case class Yes() extends MissingValueIndicatorChoice {
 
       override val name: String = "Yes"
-      override val index: Int = 0
 
       val indicatorPrefix = PrefixBasedColumnCreatorParam(
         name = "indicator column prefix",
@@ -308,7 +321,6 @@ object MissingValuesHandler {
     }
     case class No() extends MissingValueIndicatorChoice {
       override val name: String = "No"
-      override val index: Int = 1
 
       override def getIndicatorPrefix: Option[String] = None
     }

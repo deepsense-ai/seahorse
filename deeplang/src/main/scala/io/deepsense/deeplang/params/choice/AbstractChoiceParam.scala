@@ -49,7 +49,7 @@ abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) ext
       yield TypeUtils.constructorForType(symbol.typeSignature).getOrElse {
         throw NoArgumentConstructorRequiredException(symbol.asClass.name.decoded)
       }.newInstance().asInstanceOf[T]
-    instances.toList.sortBy(_.index)
+    instances.toList.sortBy(choice => choice.choiceOrder.indexOf(choice.getClass))
   }
 
   protected lazy val choiceInstancesByName: Map[String, T] = choiceInstances.map {

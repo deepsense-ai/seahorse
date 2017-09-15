@@ -16,66 +16,87 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import java.util.NoSuchElementException
-
-import scala.collection.immutable.ListMap
-
 import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.{BooleanParam, Params, StringParam}
 
 trait CsvParameters {
+  this: Params =>
 
   import CsvParameters._
 
-  val csvCustomColumnSeparatorParameter = StringParameter(
-    "Custom column separator",
-    default = Some(","),
-    validator = new SingleCharRegexValidator)
+  val csvColumnSeparator = ChoiceParam[ColumnSeparatorChoice](
+    name = "separator",
+    description = "Column separator")
+  setDefault(csvColumnSeparator, ColumnSeparatorChoice.Comma())
 
-  val csvColumnSeparatorParameter = ChoiceParameter(
-    "Column separator",
-    default = Some(ColumnSeparator.COMMA.toString),
-    options = ListMap(
-      ColumnSeparator.COMMA.toString -> ParametersSchema(),
-      ColumnSeparator.SEMICOLON.toString -> ParametersSchema(),
-      ColumnSeparator.COLON.toString -> ParametersSchema(),
-      ColumnSeparator.SPACE.toString -> ParametersSchema(),
-      ColumnSeparator.TAB.toString -> ParametersSchema(),
-      ColumnSeparator.CUSTOM.toString -> ParametersSchema(
-        ColumnSeparator.CUSTOM.toString -> csvCustomColumnSeparatorParameter)))
+  def getCsvColumnSeparator: ColumnSeparatorChoice = $(csvColumnSeparator)
+  def setCsvColumnSeparator(value: ColumnSeparatorChoice): this.type =
+    set(csvColumnSeparator, value)
 
-  val csvNamesIncludedParameter = BooleanParameter(
-    description = "Does the first row include column names?",
-    default = Some(true)
-  )
+  val csvNamesIncluded = BooleanParam(
+    name = "names included",
+    description = "Does the first row include column names?")
+  setDefault(csvNamesIncluded, true)
+
+  def getCsvNamesIncluded: Boolean = $(csvNamesIncluded)
+  def setCsvNamesIncluded(value: Boolean): this.type = set(csvNamesIncluded, value)
 
   def determineColumnSeparator(): Char = {
-    val fieldSeparator = try {
-      ColumnSeparator.withName(csvColumnSeparatorParameter.value)
-    } catch {
-      // Comma by default
-      case e: NoSuchElementException => ColumnSeparator.COMMA
-    }
-
-    fieldSeparator match {
-      case ColumnSeparator.COMMA => ','
-      case ColumnSeparator.SEMICOLON => ';'
-      case ColumnSeparator.COLON => ':'
-      case ColumnSeparator.SPACE => ' '
-      case ColumnSeparator.TAB => '\t'
-      case ColumnSeparator.CUSTOM => csvCustomColumnSeparatorParameter.value(0)
+    getCsvColumnSeparator match {
+      case ColumnSeparatorChoice.Comma() => ','
+      case ColumnSeparatorChoice.Semicolon() => ';'
+      case ColumnSeparatorChoice.Tab() => '\t'
+      case ColumnSeparatorChoice.Colon() => ':'
+      case ColumnSeparatorChoice.Space() => ' '
+      case (customChoice: ColumnSeparatorChoice.Custom) =>
+        customChoice.getCustomColumnSeparator(0)
     }
   }
 }
 
 object CsvParameters {
 
-  object ColumnSeparator extends Enumeration {
-    type ColumnSeparator = Value
-    val COMMA = Value("Comma")
-    val SEMICOLON = Value("Semicolon")
-    val COLON = Value("Colon")
-    val SPACE = Value("Space")
-    val TAB = Value("Tab")
-    val CUSTOM = Value("Custom column separator")
+  sealed trait ColumnSeparatorChoice extends Choice {
+    import ColumnSeparatorChoice._
+
+    override val choiceOrder: List[Class[_ <: ColumnSeparatorChoice]] = List(
+      classOf[Comma],
+      classOf[Semicolon],
+      classOf[Colon],
+      classOf[Space],
+      classOf[Tab],
+      classOf[Custom])
+  }
+
+  object ColumnSeparatorChoice {
+
+    case class Comma() extends ColumnSeparatorChoice {
+      override val name = ","
+    }
+    case class Semicolon() extends ColumnSeparatorChoice {
+      override val name = ";"
+    }
+    case class Colon() extends ColumnSeparatorChoice {
+      override val name = ":"
+    }
+    case class Space() extends ColumnSeparatorChoice {
+      override val name = "Space"
+    }
+    case class Tab() extends ColumnSeparatorChoice {
+      override val name = "Tab"
+    }
+    case class Custom() extends ColumnSeparatorChoice {
+      override val name = "Custom"
+
+      val customColumnSeparator = StringParam(
+        name = "custom separator",
+        description = "Custom column separator",
+        validator = new SingleCharRegexValidator)
+      setDefault(customColumnSeparator, ",")
+
+      def getCustomColumnSeparator: String = $(customColumnSeparator)
+      def setCustomColumnSeparator(value: String): this.type = set(customColumnSeparator, value)
+    }
   }
 }

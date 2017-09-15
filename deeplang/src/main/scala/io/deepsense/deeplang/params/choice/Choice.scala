@@ -23,7 +23,8 @@ import io.deepsense.deeplang.params.Params
 
 abstract class Choice extends Params {
   val name: String
-  val index: Int = 0
+
+  val choiceOrder: List[Class[_ <: Choice]]
 
   def toJson: JsValue = JsObject("name" -> name.toJson, "schema" -> paramsToJson)
 }

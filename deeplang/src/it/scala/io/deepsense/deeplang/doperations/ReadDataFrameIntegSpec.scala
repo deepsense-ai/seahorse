@@ -23,8 +23,7 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparator
-import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparator._
+import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, InputStorageTypeChoice}
 import io.deepsense.deeplang.parameters.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
@@ -66,7 +65,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read simple csv file with strings" in {
       val dataFrame = readDataFrame(
         fileName = "sample.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = false,
         csvConvertToBoolean = true)
 
@@ -78,7 +77,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read simple csv file containing empty strings" in {
       val dataFrame = readDataFrame(
         fileName = "sample_with_empty_strings.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = false,
         csvConvertToBoolean = true)
 
@@ -90,7 +89,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read csv with lines separated by Windows CR+LF" in {
       val dataFrame = readDataFrame(
         fileName = "win_sample.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = false,
         csvConvertToBoolean = true)
 
@@ -102,7 +101,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read csv with column names" in {
       val dataFrame = readDataFrame(
         fileName = "with_column_names.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = true,
         csvConvertToBoolean = true)
 
@@ -120,7 +119,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "trim white spaces for not quoted column names and values in CSV" in {
       val dataFrame = readDataFrame(
         fileName = "with_white_spaces.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = true,
         csvConvertToBoolean = true)
 
@@ -139,7 +138,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "throw on empty csv file" in {
       a[RuntimeException] should be thrownBy readDataFrame(
         fileName = "empty.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = false,
         csvConvertToBoolean = true)
     }
@@ -147,7 +146,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "infer column types with conversion to Boolean" in {
       val dataFrame = readDataFrame(
         fileName = "with_inferable_columns.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = false,
         csvConvertToBoolean = true
       )
@@ -171,7 +170,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "infer column types without conversion to Boolean" in {
       val dataFrame = readDataFrame(
         fileName = "with_inferable_columns.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = false,
         csvConvertToBoolean = false
       )
@@ -198,7 +197,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       // - while generating reports.
       val dataFrame = readDataFrame(
         fileName = "with_inferable_columns.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = false,
         csvConvertToBoolean = true
       )
@@ -208,7 +207,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read categorical columns provided by index" in {
       val dataFrame = readDataFrame(
         fileName = "with_categorical_columns.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = true,
         csvConvertToBoolean = true,
         csvCategoricalColumns = Some(MultipleColumnSelection(
@@ -231,7 +230,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "read categorical columns provided by name" in {
       val dataFrame = readDataFrame(
         fileName = "with_categorical_columns.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = true,
         csvConvertToBoolean = true,
         csvCategoricalColumns = Some(MultipleColumnSelection(
@@ -254,7 +253,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     "handle categorical column with empty values" in {
       val dataFrame = readDataFrame(
         fileName = "with_nullable_categorical_columns.csv",
-        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
         csvNamesIncluded = true,
         csvConvertToBoolean = true,
         csvCategoricalColumns = Some(MultipleColumnSelection(
@@ -277,17 +276,22 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
 
   def readDataFrame(
       fileName: String,
-      csvColumnSeparator: (ColumnSeparator, Option[String]),
+      csvColumnSeparator: CsvParameters.ColumnSeparatorChoice,
       csvNamesIncluded: Boolean,
       csvConvertToBoolean: Boolean,
       csvCategoricalColumns: Option[MultipleColumnSelection] = None) : DataFrame = {
-    val operation = ReadDataFrame(
-      absoluteTestsDirPath + "/" + fileName,
-      csvColumnSeparator,
-      csvNamesIncluded,
-      csvConvertToBoolean,
-      csvCategoricalColumns)
-
+    val operation =
+      new ReadDataFrame()
+        .setStorageType(
+          InputStorageTypeChoice.File()
+            .setSourceFile(absoluteTestsDirPath + "/" + fileName)
+            .setFileFormat(
+              InputFileFormatChoice.Csv()
+                .setCsvColumnSeparator(csvColumnSeparator)
+                .setCsvNamesIncluded(csvNamesIncluded)
+                .setShouldConvertToBoolean(csvConvertToBoolean)
+                .setCategoricalColumns(
+                  csvCategoricalColumns.getOrElse(MultipleColumnSelection.emptySelection))))
     operation
       .execute(executionContext)(Vector.empty[DOperable])
       .head
@@ -302,11 +306,6 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       schema: StructType,
       categoricalColumns: Seq[String]) : DataFrame =
     createDataFrame(rows, schema, categoricalColumns)
-
-  def columnSep(
-      columnSeparator: ColumnSeparator,
-      customValue: Option[String] = None): (ColumnSeparator, Option[String]) =
-    (columnSeparator, customValue)
 
   def generatedColumnNames(n: Int): Seq[String] = for (i <- 0 until n) yield s"unnamed_$i"
 

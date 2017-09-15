@@ -19,8 +19,7 @@ package io.deepsense.models.json.workflow.examples
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperations._
-import io.deepsense.deeplang.doperations.inout.CsvParameters
-import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparator
+import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.graph.{Edge, Node}
 
 object LocationAttractiveness extends WorkflowCreator {
@@ -28,12 +27,16 @@ object LocationAttractiveness extends WorkflowCreator {
   val testFilePath: String = "file:///home/ubuntu/workflows/input/LocationAttractiveness.csv"
   val resultFilePath: String = "file:///home/ubuntu/workflows/results/LocationAttractiveness.csv"
 
-  val readDataFrame: ReadDataFrame = ReadDataFrame(
-    testFilePath,
-    (ColumnSeparator.COMMA, None),
-    csvNamesIncluded = true,
-    csvShouldConvertToBoolean = true,
-    categoricalColumns = None)
+  val readDataFrame: ReadDataFrame =
+      new ReadDataFrame()
+        .setStorageType(
+          InputStorageTypeChoice.File()
+            .setSourceFile(testFilePath)
+            .setFileFormat(
+              InputFileFormatChoice.Csv()
+                .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
+                .setCsvNamesIncluded(true)
+                .setShouldConvertToBoolean(true)))
 
   // min(dist to SF, dist to LA)
   val distanceOperation: CreateMathematicalTransformation = {
@@ -89,10 +92,14 @@ object LocationAttractiveness extends WorkflowCreator {
     "dist_SF_LA")
 
   val selectImportantFeatures = new FilterColumns().setSelectedColumns(importantColumns)
-  val writeDataFrame: WriteDataFrame = WriteDataFrame(
-    (ColumnSeparator.COMMA, None),
-    true,
-    resultFilePath)
+  val writeDataFrame: WriteDataFrame =
+    new WriteDataFrame()
+      .setStorageType(OutputStorageTypeChoice.File()
+        .setOutputFile(resultFilePath)
+        .setFileFormat(
+          OutputFileFormatChoice.Csv()
+            .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
+            .setCsvNamesIncluded(true)))
 
   val convertBooleanToDouble: DOperation = {
     val booleanColumns = Set(

@@ -16,23 +16,17 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter}
-import io.deepsense.deeplang.params.{Params, StringParam}
+import io.deepsense.deeplang.params.{Params, BooleanParam}
 
-trait CassandraParameters {
+trait HasShouldConvertToBooleanParam {
   this: Params =>
 
-  val cassandraKeyspace = StringParam(
-    name = "keyspace",
-    description = "Keyspace")
+  val shouldConvertToBoolean = BooleanParam(
+    name = "convert to boolean",
+    description = "Should columns containing only 0 and 1 be converted to Boolean?")
+  setDefault(shouldConvertToBoolean, false)
 
-  def getCassandraKeyspace: String = $(cassandraKeyspace)
-  def setCassandraKeyspace(value: String): this.type = set(cassandraKeyspace, value)
-
-  val cassandraTable = StringParam(
-    name = "table",
-    description = "Table")
-
-  def getCassandraTable: String = $(cassandraTable)
-  def setCassandraTable(value: String): this.type = set(cassandraTable, value)
+  def getShouldConvertToBoolean: Boolean = $(shouldConvertToBoolean)
+  def setShouldConvertToBoolean(value: Boolean): this.type =
+    set(shouldConvertToBoolean, value)
 }

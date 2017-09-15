@@ -16,23 +16,19 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter}
-import io.deepsense.deeplang.params.{Params, StringParam}
+import io.deepsense.deeplang.parameters.MultipleColumnSelection
+import io.deepsense.deeplang.params.{ColumnSelectorParam, Params}
 
-trait CassandraParameters {
+trait HasCategoricalColumnsParam {
   this: Params =>
 
-  val cassandraKeyspace = StringParam(
-    name = "keyspace",
-    description = "Keyspace")
+  val categoricalColumns = ColumnSelectorParam(
+    name = "categorical columns",
+    description = "Categorical columns in the input file",
+    portIndex = 0)
+  setDefault(categoricalColumns, MultipleColumnSelection.emptySelection)
 
-  def getCassandraKeyspace: String = $(cassandraKeyspace)
-  def setCassandraKeyspace(value: String): this.type = set(cassandraKeyspace, value)
-
-  val cassandraTable = StringParam(
-    name = "table",
-    description = "Table")
-
-  def getCassandraTable: String = $(cassandraTable)
-  def setCassandraTable(value: String): this.type = set(cassandraTable, value)
+  def getCategoricalColumns: MultipleColumnSelection = $(categoricalColumns)
+  def setCategoricalColumns(value: MultipleColumnSelection): this.type =
+    set(categoricalColumns, value)
 }
