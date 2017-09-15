@@ -2,13 +2,14 @@
 
 /* @ngInject */
 function NavigationController($rootScope, PageService) {
-  var that = this;
-
-  that.getTitle = function getTitle() {
-    return PageService.getTitle();
-  };
-
-  return this;
+  _.assign(this, {
+    getTitle() {
+      return PageService.getTitle();
+    },
+    home() {
+      $rootScope.$broadcast('StatusBar.HOME_CLICK');
+    }
+  });
 }
 
 exports.inject = function (module) {

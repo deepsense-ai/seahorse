@@ -66,12 +66,8 @@ function WorkflowsReportController(
   });
 
   $scope.$on('StatusBar.HOME_CLICK', () => {
-    ConfirmationModalService.showModal({
-      message: 'The operation redirects to the home page.'
-    }).
-      then(() => {
-        $state.go('home');
-      });
+    let url = $state.href('home');
+    window.open(url, '_blank');
   });
 
   $scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
