@@ -16,10 +16,11 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.evaluators
 
+import io.deepsense.deeplang.doperables.AbstractEvaluatorSmokeTest
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class MulticlassClassificationEvaluatorSmokeTest extends AbstractEvaluatorWrapperSmokeTest {
+class MulticlassClassificationEvaluatorSmokeTest extends AbstractEvaluatorSmokeTest {
 
   override def className: String = "MulticlassClassificationEvaluator"
 

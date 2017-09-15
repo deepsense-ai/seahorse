@@ -117,6 +117,7 @@ object CatalogRecorder {
     catalog.registerDOperable[StringTokenizer]()
     catalog.registerDOperable[VectorAssembler]()
     catalog.registerDOperable[HashingTFTransformer]()
+    catalog.registerDOperable[PythonEvaluator]()
 
     // wrapped Spark evaluators
     catalog.registerDOperable[BinaryClassificationEvaluator]()
@@ -314,6 +315,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[PCA](
       DOperationCategories.ML.DimensionalityReduction)
+
+    catalog.registerDOperation[CreatePythonEvaluator](
+      DOperationCategories.ML.ModelEvaluation)
 
     // operations generated from Spark evaluators
     catalog.registerDOperation[CreateBinaryClassificationEvaluator](

@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.spark.wrappers.evaluators
+package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 
-import io.deepsense.deeplang.doperables.Evaluator
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
-abstract class AbstractEvaluatorWrapperSmokeTest extends DeeplangIntegTestSupport {
+abstract class AbstractEvaluatorSmokeTest extends DeeplangIntegTestSupport {
 
   def className: String
 
@@ -49,8 +48,11 @@ abstract class AbstractEvaluatorWrapperSmokeTest extends DeeplangIntegTestSuppor
     DataFrame.fromSparkDataFrame(sparkDF)
   }
 
+  def setUpStubs(): Unit = ()
+
   className should {
     "successfully run _evaluate()" in {
+      setUpStubs()
       evaluator.set(evaluatorParams: _*)._evaluate(executionContext, inputDataFrame)
     }
     "successfully run _infer()" in {

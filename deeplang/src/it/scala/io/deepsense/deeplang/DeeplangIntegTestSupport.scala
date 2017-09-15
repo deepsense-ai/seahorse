@@ -23,7 +23,9 @@ import scala.reflect.runtime.universe.TypeTag
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.{SparkConf, SparkContext, sql}
+import org.mockito.Matchers._
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mock.MockitoSugar._
 
@@ -33,6 +35,7 @@ import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
+
 
 /**
  * Adds features to facilitate integration testing using Spark
@@ -215,9 +218,9 @@ private class MockedExecutionContext(
 
 private class MockedCodeExecutor extends PythonCodeExecutor {
 
-  override def isValid(code: String): Boolean = ???
+  override def isValid(code: String): Boolean = true
 
-  override def run(workflowId: String, nodeId: String, code: String): Unit = ???
+  override def run(workflowId: String, nodeId: String, code: String): Unit = ()
 }
 
 private class MockedContextualCodeExecutor
@@ -226,5 +229,5 @@ private class MockedContextualCodeExecutor
 
 private class MockedCustomOperationExecutor
   extends CustomOperationExecutor {
-  override def execute(workflowId: Id, nodeId: Id): Future[Result] = ???
+  override def execute(workflowId: Id, nodeId: Id): Future[Result] = Future.successful(Right(()))
 }

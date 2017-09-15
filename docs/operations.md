@@ -94,6 +94,7 @@ List of all currently supported operations:
   * Dimensionality Reduction
     * [PCA](operations/pca.html)
   * Model Evaluation
+    * [Python Evaluator](operations/python_evaluator.html)
     * [Binary Classification Evaluator](operations/binary_classification_evaluator.html)
     * [Multiclass Classification Evaluator](operations/multiclass_classification_evaluator.html)
     * [Regression Evaluator](operations/regression_evaluator.html)
