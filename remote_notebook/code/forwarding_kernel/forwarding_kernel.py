@@ -45,15 +45,16 @@ class ForwardingKernel(IPythonKernel):
     # noinspection PyMissingConstructor
     def __init__(self, parent):
         self.parent = parent
+
+        nb_client = NotebookServerClient("localhost", 8888, self._kernel_id)
+        self._session_id, _, _ = nb_client.extract_dataframe_source()
+
         es, ms, rl = self._init_rabbit_clients(RABBIT_MQ_ADDRESS)
         self._rabbit_execution_sender_client = es
         self._rabbit_management_sender_client = ms
         self._rabbit_listener = rl
 
         self._socket_forwarders = self._init_socket_forwarders()
-
-        nb_client = NotebookServerClient("localhost", 8888, self._kernel_id)
-        self._session_id, _, _ = nb_client.extract_dataframe_source()
 
     def _init_rabbit_clients(self, rabbit_mq_address):
         rabbit_client = RabbitMQClient(address=rabbit_mq_address, exchange=self.EXCHANGE)
