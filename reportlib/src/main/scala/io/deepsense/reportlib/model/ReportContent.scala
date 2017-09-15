@@ -23,16 +23,9 @@ import io.deepsense.reportlib.model.ReportType.ReportType
 case class ReportContent(
     name: String,
     reportType: ReportType,
-    tables: Map[String, Table] = Map(),
+    tables: Seq[Table] = Seq.empty,
     distributions: Map[String, Distribution] = Map(),
-    schema: Option[StructType] = None)
+    schema: Option[StructType] = None) {
 
-object ReportContent {
-
-  def apply(name: String, reportType: ReportType, tables: List[Table]): ReportContent =
-    ReportContent(
-      name,
-      reportType,
-      tables.map(t => t.name -> t).toMap,
-      Map())
+  def tableByName(name: String): Option[Table] = tables.find(_.name == name)
 }

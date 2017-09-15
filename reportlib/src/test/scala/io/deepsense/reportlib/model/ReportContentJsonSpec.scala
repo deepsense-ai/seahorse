@@ -33,7 +33,7 @@ class ReportContentJsonSpec
     val emptyReportJson: JsObject = JsObject(
       "name" -> JsString(reportName),
       "reportType" -> JsString(reportType.toString),
-      "tables" -> JsObject(),
+      "tables" -> JsArray(),
       "distributions" -> JsObject(),
       "schema" -> JsNull
     )
@@ -41,7 +41,7 @@ class ReportContentJsonSpec
     val reportJson: JsObject = JsObject(
       "name" -> JsString(reportName),
       "reportType" -> JsString(reportType.toString),
-      "tables" -> JsObject(report.tables.mapValues(_.toJson)),
+      "tables" -> JsArray(report.tables.map(_.toJson): _*),
       "distributions" -> JsObject(report.distributions.mapValues(_.toJson)),
       "schema" -> JsObject(
         "fields" -> JsArray(
@@ -63,7 +63,7 @@ class ReportContentJsonSpec
 
     "serialize" when {
       "empty" in {
-        val report = ReportContent(reportName, reportType, Map(), Map())
+        val report = ReportContent(reportName, reportType)
         report.toJson shouldBe emptyReportJson
       }
       "filled report" in {
@@ -74,7 +74,7 @@ class ReportContentJsonSpec
     "deserialize" when {
       "empty report" in {
         emptyReportJson.convertTo[ReportContent] shouldBe ReportContent(
-          reportName, reportType, Map(), Map())
+          reportName, reportType)
       }
       "full report" when {
         reportJson.convertTo[ReportContent] shouldBe report

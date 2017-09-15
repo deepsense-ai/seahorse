@@ -26,7 +26,7 @@ trait ReportContentTestFactory {
   def testReport: ReportContent = ReportContent(
     reportName,
     reportType,
-    Map(TableTestFactory.tableName -> TableTestFactory.testEmptyTable),
+    Seq(TableTestFactory.testEmptyTable),
     Map(ReportContentTestFactory.categoricalDistName ->
       DistributionTestFactory.testCategoricalDistribution(
         ReportContentTestFactory.categoricalDistName),

@@ -28,6 +28,7 @@ import org.joda.time.DateTime
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
 import io.deepsense.reportlib.model._
 
@@ -65,8 +66,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
         val report = dataFrame.report(executionContext)
 
-        val tables: Map[String, Table] = report.content.tables
-        val dataSampleTable = tables.get(DataFrameReportGenerator.DataSampleTableName).get
+        val dataSampleTable = report.content.tableByName(
+          DataFrameReportGenerator.DataSampleTableName).get
         dataSampleTable.columnNames shouldBe Some(List(nameColumnName, birthDateColumnName))
         dataSampleTable.rowNames shouldBe None
         dataSampleTable.values shouldBe
@@ -81,8 +82,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
         val report = dataFrame.report(executionContext)
 
-        val tables: Map[String, Table] = report.content.tables
-        val dataSampleTable = tables.get(DataFrameReportGenerator.DataSampleTableName).get
+        val dataSampleTable = report.content.tableByName(
+          DataFrameReportGenerator.DataSampleTableName).get
         dataSampleTable.columnNames shouldBe Some(List(timestampColumnName))
         dataSampleTable.rowNames shouldBe None
         dataSampleTable.values shouldBe List(List(Some(DateTimeConverter.toString(now))))
@@ -92,8 +93,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       val dataFrame = testDataFrame(executionContext.dataFrameBuilder, sparkContext)
 
       val report = dataFrame.report(executionContext)
-      val tables: Map[String, Table] = report.content.tables
-      val dataSampleTable = tables.get(DataFrameReportGenerator.DataSampleTableName).get
+      val dataSampleTable = report.content.tableByName(
+        DataFrameReportGenerator.DataSampleTableName).get
 
       dataSampleTable.columnTypes shouldBe List(
         ColumnType.string,
@@ -112,9 +113,9 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           List(Some(field.name), Some(field.dataType.simpleString))
         }
 
-        val dataTable = report.content.tables(DataFrameReportGenerator.DataSchemaTableName)
+        val dataTable = report.content.tableByName(DataFrameReportGenerator.DataSchemaTableName).get
         dataTable.values shouldEqual expectedValues
-        report.content.tables.get(DataFrameReportGenerator.DataSampleTableName) shouldBe None
+        report.content.tableByName(DataFrameReportGenerator.DataSampleTableName) shouldBe None
         for(field <- dataFrame.schema.get.fields) {
           report.content.distributions(field.name) shouldBe a [NoDistribution]
         }
@@ -134,13 +135,13 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
         val report = emptyDataFrame.report(executionContext)
 
-        val tables = report.content.tables
-        val dataSampleTable = tables.get(DataFrameReportGenerator.DataSampleTableName).get
+        val dataSampleTable = report.content.tableByName(
+          DataFrameReportGenerator.DataSampleTableName).get
         dataSampleTable.columnNames shouldBe
           Some(List("string", "numeric", "categorical", "timestamp", "boolean"))
         dataSampleTable.rowNames shouldBe None
         dataSampleTable.values shouldBe List.empty
-        testDataFrameSizeTable(tables, 5, 0)
+        testDataFrameSizeTable(report, 5, 0)
       }
       "DataFrame consists of null values only" in {
         val schema = StructType(Seq(
@@ -158,8 +159,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
         val report = emptyDataFrame.report(executionContext)
 
-        val tables = report.content.tables
-        val dataSampleTable = tables.get(DataFrameReportGenerator.DataSampleTableName).get
+        val dataSampleTable = report.content.tableByName(
+          DataFrameReportGenerator.DataSampleTableName).get
         dataSampleTable.columnNames shouldBe
           Some(List("string", "numeric", "categorical", "timestamp", "boolean"))
         dataSampleTable.rowNames shouldBe None
@@ -167,7 +168,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           List(None, None, None, None, None),
           List(None, None, None, None, None),
           List(None, None, None, None, None))
-        testDataFrameSizeTable(tables, 5, 3)
+        testDataFrameSizeTable(report, 5, 3)
       }
     }
     "shorten long string values in sample data and in distribution tables" in {
@@ -194,7 +195,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
       val shortened = longValuePrefix + "..."
 
-      val sampleTable = report.content.tables(DataFrameReportGenerator.DataSampleTableName)
+      val sampleTable = report.content.tableByName(DataFrameReportGenerator.DataSampleTableName).get
       tableContains(0, sampleTable, first)
       tableContains(0, sampleTable, shortened)
       sampleTable.values.size shouldBe 3
@@ -235,14 +236,13 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
     val report = dataFrame.report(executionContext)
 
-    val tables: Map[String, Table] = report.content.tables
     testDataSampleTable(
       cellValue,
       columnNameBase,
       dataFrameColumnsNumber,
       dataFrameRowsNumber,
-      tables)
-    testDataFrameSizeTable(tables, dataFrameColumnsNumber, dataFrameRowsNumber)
+      report)
+    testDataFrameSizeTable(report, dataFrameColumnsNumber, dataFrameRowsNumber)
   }
 
   private def testDataSampleTable(
@@ -250,8 +250,9 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       columnNameBase: String,
       dataFrameColumnsNumber: Int,
       dataFrameRowsNumber: Int,
-      tables: Map[String, Table]): Registration = {
-    val dataSampleTable = tables.get(DataFrameReportGenerator.DataSampleTableName).get
+      report: Report): Registration = {
+    val dataSampleTable = report.content.tableByName(
+      DataFrameReportGenerator.DataSampleTableName).get
     val expectedRowsNumber: Int =
       Math.min(DataFrameReportGenerator.MaxRowsNumberInReport, dataFrameRowsNumber)
     dataSampleTable.columnNames shouldBe
@@ -262,10 +263,11 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
   }
 
   private def testDataFrameSizeTable(
-      tables: Map[String, Table],
+      report: Report,
       numberOfColumns: Int,
       numberOfRows: Long): Registration = {
-    val dataFrameSizeTable = tables.get(DataFrameReportGenerator.DataFrameSizeTableName).get
+    val dataFrameSizeTable = report.content.tableByName(
+      DataFrameReportGenerator.DataFrameSizeTableName).get
     dataFrameSizeTable.columnNames shouldBe Some(List("Number of columns", "Number of rows"))
     dataFrameSizeTable.rowNames shouldBe None
     dataFrameSizeTable.values shouldBe

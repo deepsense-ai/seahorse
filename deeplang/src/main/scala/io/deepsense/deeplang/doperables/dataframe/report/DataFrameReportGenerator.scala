@@ -31,8 +31,6 @@ import io.deepsense.reportlib.model._
 
 object DataFrameReportGenerator {
 
-  import CollectionExtensions._
-
   val ReportContentName: String = "DataFrame Report"
 
   val DataSampleTableName = "Data Sample"
@@ -56,17 +54,14 @@ object DataFrameReportGenerator {
     val multivarStats = calculateMultiColStats(sparkDataFrame)
     val distributions =
       DistributionCalculator.distributionByColumn(sparkDataFrame, multivarStats)
-    val tableByName = {
-      val tables = Seq(
-        sampleTable(sparkDataFrame),
-        sizeTable(sparkDataFrame.schema, multivarStats.count)
-      )
-      tables.lookupBy(_.name)
-    }
+    val tables = Seq(
+      sampleTable(sparkDataFrame),
+      sizeTable(sparkDataFrame.schema, multivarStats.count)
+    )
     Report(ReportContent(
       ReportContentName,
       ReportType.DataFrameFull,
-      tableByName,
+      tables,
       distributions,
       Some(sparkDataFrame.schema)))
   }
@@ -79,13 +74,12 @@ object DataFrameReportGenerator {
 
   private def simplifiedReport(sparkDataFrame: DataFrame): Report = {
     val tables = Seq(
-      schemaTable(sparkDataFrame.schema),
-      sizeTable(sparkDataFrame.schema, sparkDataFrame.count()))
-    val tablesMap = tables.lookupBy(_.name)
+      sizeTable(sparkDataFrame.schema, sparkDataFrame.count()),
+      schemaTable(sparkDataFrame.schema))
     Report(ReportContent(
       ReportContentName,
       ReportType.DataFrameSimplified,
-      tablesMap,
+      tables,
       noDistributionsForSimplifiedReport(sparkDataFrame.schema),
       Some(sparkDataFrame.schema)))
   }
