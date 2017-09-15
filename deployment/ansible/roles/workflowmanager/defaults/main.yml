@@ -30,4 +30,6 @@ cassandra_user: cassandra
 cassandra_pass: cassandra
 workflows_cassandra_table: workflows
 workflowresults_cassandra_table: workflowresults
+notebooks_cassandra_table: notebooks
+workflowstate_cassandra_table: workflow_state
 wm_cassandra_keyspace: workflowmanager
