@@ -1,12 +1,22 @@
 <div class="canvas-toolbar">
-  <div ng-click="$ctrl.editor.newNode()"
+  <div ng-click="$ctrl.newNode()"
        class="canvas-toolbar__item"
        draggable-type="exact"
        draggable-exact-type="graphNode"
        draggable="true"
-  >NEW NODE</div>
-  <div ng-click="$ctrl.editor.zoomIn()" class="canvas-toolbar__item">+</div>
-  <div ng-click="$ctrl.editor.zoomOut()" class="canvas-toolbar__item">-</div>
-  <div ng-click="$ctrl.editor.fit()" class="canvas-toolbar__item">FIT</div>
-  <div ng-click="$ctrl.editor.fullScreen()" class="canvas-toolbar__item">FULL</div>
+  >
+    <img alt="Create new node" src="img/toolbar-node.svg" class="canvas-toolbar__image">
+  </div>
+  <div ng-click="$ctrl.zoomIn()" class="canvas-toolbar__item">
+    <img alt="Zoom in" src="img/toolbar-zoom-max.svg" class="canvas-toolbar__image">
+  </div>
+  <div ng-click="$ctrl.zoomOut()" class="canvas-toolbar__item">
+    <img alt="Zoom out" src="img/toolbar-zoom-min.svg" class="canvas-toolbar__image">
+  </div>
+  <div ng-click="$ctrl.fit()" class="canvas-toolbar__item">
+    <img alt="Fit on canvas" src="img/toolbar-fit.svg" class="canvas-toolbar__image">
+  </div>
+  <div ng-click="$ctrl.fullScreen()" class="canvas-toolbar__item">
+    <img alt="Fullscreen" src="img/toolbar-fullscreen.svg" class="canvas-toolbar__image">
+  </div>
 </div>

@@ -5,17 +5,21 @@
   position: absolute;
   z-index: 2;
 
+  &__image {
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    display: block;
+  }
+
   &__item {
     border: 1px solid #000;
     width: 50px;
     height: 50px;
     cursor: pointer;
-
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    user-select: none;
   }
+
 }
 
 

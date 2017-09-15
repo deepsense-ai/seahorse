@@ -1,5 +1,10 @@
 <div class="flowchart-box">
   <canvas-toolbar
+    on-zoom-in="$ctrl.zoomIn()"
+    on-zoom-out="$ctrl.zoomOut()"
+    on-fit="$ctrl.fit()"
+    on-fullscreen="$ctrl.fullScreen()"
+    on-new-node="$ctrl.newNode()"
   ></canvas-toolbar>
   <core-canvas
     is-editable="$ctrl.isEditable"

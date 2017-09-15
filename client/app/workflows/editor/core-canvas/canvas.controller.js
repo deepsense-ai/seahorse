@@ -21,8 +21,13 @@ class CanvasController {
   }
 
   $onChanges(changes) {
-    if (changes.isEditable) this.CanvasService.setEditable(changes.isEditable.currentValue);
-    if (changes.workflow) this.CanvasService.setWorkflow(changes.workflow.currentValue);
+    if (changes.isEditable) {
+      this.CanvasService.setEditable(changes.isEditable.currentValue);
+    }
+
+    if (changes.workflow) {
+      this.CanvasService.setWorkflow(changes.workflow.currentValue);
+    }
 
     //this must be done in the next digest cycle because of ng-repeat are not available
     this.$timeout(() => {
