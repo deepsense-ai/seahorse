@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,5 +18,6 @@ package io.deepsense.deeplang.doperations.exceptions
 
 import io.deepsense.deeplang.exceptions.DeepLangException
 
-case class InvalidFileException(filename: String, reason: String)
-  extends DeepLangException(s"File $filename is invalid: $reason")
+case object EmptyDataframeException extends DeepLangException(
+  message = "DataFrame cannot be empty."
+)
