@@ -44,6 +44,7 @@ app.all('/**',
 );
 
 app.use(timeoutHandler);
+app.use(internalErrorHandler);
 
 function httpsRedirectHandler(req, res, next) {
   if (req.headers['x-forwarded-proto'] !== 'https' && !req.headers.host.startsWith("localhost:")) {
@@ -64,14 +65,19 @@ function userCookieHandler(req, res, next) {
   next();
 }
 
-function timeoutHandler(err, req, res, next){
+function timeoutHandler(req, res, next) {
   if (req.timedout) {
-    console.error("Server timeout", err);
     res.status(503);
     res.send("Server timeout");
     return;
   }
   next();
+}
+
+function internalErrorHandler(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500);
+  res.send("Internal server error");
 }
 
 module.exports = app;
