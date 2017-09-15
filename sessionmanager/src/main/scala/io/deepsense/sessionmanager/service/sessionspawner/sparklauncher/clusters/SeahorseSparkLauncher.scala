@@ -27,7 +27,7 @@ object SeahorseSparkLauncher {
       basicArgs <- SparkArgumentParser.parse(clusterConfig.params)
     } yield {
       val args = basicArgs.updateConfOptions(
-        "spark.driver.extraJavaOptions", "-Dfile.encoding=UTF8", delimiter = " ")
+        "spark.driver.extraJavaOptions", "-Dfile.encoding=UTF8 -XX:+UseG1GC", delimiter = " ")
       val sparkLauncher = clusterConfig.clusterType match {
         case ClusterType.local =>
           LocalSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
