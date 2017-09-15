@@ -8,6 +8,7 @@ angular.module('deepsense.graph-model').
       this.description = options.description;
       this.name = options.name;
       this.uiName = options.uiName || '';
+      this.color = options.color || '#00B1EB';
       this.operationId = options.operationId;
       this.version = options.version;
       this.icon = options.icon;

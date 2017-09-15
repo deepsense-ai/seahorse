@@ -20,6 +20,9 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     that.id = null;
     that.name = 'empty';
     that.description = 'empty';
+    that.predefColors = [
+      '#00B1EB', '#1ab394', '#2f4050', '#f8ac59', '#ed5565', '#DD6D3F'
+    ];
     that.STATUS_DEFAULT = that.STATUS.DRAFT;
     that.lastExecutionReportTime = null;
 
@@ -62,6 +65,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
         'id': options.id,
         'name': operation.name,
         'uiName': options.uiName,
+        'color': options.color,
         'operationId': operation.id,
         'version': operation.version,
         'icon': operation.icon,
@@ -82,8 +86,11 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
           return 0;
         }
       };
-      let getNodeUiName = (id) => {
+      let getUiName = (id) => {
         return thirdPartyData.gui.nodes[id].uiName;
+      };
+      let getColor = (id) => {
+        return thirdPartyData.gui.nodes[id].color;
       };
 
       for (let i = 0; i < nodes.length; i++) {
@@ -92,7 +99,8 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
         let operation = operations[data.operation.id];
         let node = that.createNode({
           'id': id,
-          'uiName': getNodeUiName(id),
+          'uiName': getUiName(id),
+          'color': getColor(id),
           'operation': operation,
           'parameters': data.parameters,
           'x': getCoordinate(id, 'x'),
@@ -218,6 +226,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
           'gui': {
             'name': that.name,
             'description': that.description,
+            'predefColors': that.predefColors,
             'nodes': {}
           }
         }
@@ -228,6 +237,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
           data.workflow.nodes.push(internal.nodes[id].serialize());
           data.thirdPartyData.gui.nodes[id] = {
             uiName: internal.nodes[id].uiName,
+            color: internal.nodes[id].color,
             coordinates: {
               x: internal.nodes[id].x,
               y: internal.nodes[id].y
