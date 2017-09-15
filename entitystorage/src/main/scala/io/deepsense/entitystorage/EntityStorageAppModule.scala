@@ -21,7 +21,7 @@ import io.deepsense.entitystorage.storage.cassandra.EntityDaoCassandraModule
  * The main module for Entity Storage. Installs all needed modules to run
  * the application.
  */
-class EntityStorageAppModule extends AbstractModule {
+class EntityStorageAppModule(withMockedSecurity: Boolean) extends AbstractModule {
   override def configure(): Unit = {
     installCore()
     installServices()
@@ -43,6 +43,6 @@ class EntityStorageAppModule extends AbstractModule {
 
   private def installServer(): Unit = {
     install(new RestModule)
-    install(new ApisModule)
+    install(new ApisModule(withMockedSecurity))
   }
 }

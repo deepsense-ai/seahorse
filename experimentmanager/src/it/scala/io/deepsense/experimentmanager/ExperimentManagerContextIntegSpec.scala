@@ -14,7 +14,7 @@ import io.deepsense.experimentmanager.rest.OperationsApi
 
 class ExperimentManagerContextIntegSpec extends FlatSpec {
 
-  val injector = Guice.createInjector(new ExperimentManagerAppModule)
+  val injector = Guice.createInjector(new ExperimentManagerAppModule(withMockedSecurity = false))
 
   "Guice context" should "have all needed services created" in {
     checkIfSingleton(classOf[DOperableCatalog])

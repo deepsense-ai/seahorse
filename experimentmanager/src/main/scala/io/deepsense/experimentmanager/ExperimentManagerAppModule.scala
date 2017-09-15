@@ -17,7 +17,7 @@ import io.deepsense.commons.rest.RestModule
  * The main module for Experiment Manager. Installs all needed modules to run
  * the application.
  */
-class ExperimentManagerAppModule extends AbstractModule {
+class ExperimentManagerAppModule(withMockedSecurity: Boolean) extends AbstractModule {
   override def configure(): Unit = {
     installCore()
     installServices()
@@ -37,6 +37,6 @@ class ExperimentManagerAppModule extends AbstractModule {
 
   private def installServer(): Unit = {
     install(new RestModule)
-    install(new ApisModule)
+    install(new ApisModule(withMockedSecurity))
   }
 }

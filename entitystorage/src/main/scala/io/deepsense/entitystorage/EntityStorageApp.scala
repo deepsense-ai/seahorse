@@ -15,7 +15,8 @@ import io.deepsense.commons.rest.RestServer
  * This is the entry point of the Entity Storage application.
  */
 object EntityStorageApp extends App {
-  val injector = Guice.createInjector(new EntityStorageAppModule)
+  val insecure: Boolean = args.headOption.map("insecure".equalsIgnoreCase(_)).getOrElse(false)
+  val injector = Guice.createInjector(new EntityStorageAppModule(insecure))
   injector.getInstance(classOf[RestServer]).start()
   injector.getInstance(classOf[ActorSystem]).awaitTermination()
   System.exit(1)

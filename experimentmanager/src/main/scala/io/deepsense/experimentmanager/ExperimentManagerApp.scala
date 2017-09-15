@@ -17,7 +17,8 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
  * This is the entry point of the Experiment Manager application.
  */
 object ExperimentManagerApp extends App {
-  val injector = Guice.createInjector(new ExperimentManagerAppModule)
+  val insecure: Boolean = args.headOption.map("insecure".equalsIgnoreCase(_)).getOrElse(false)
+  val injector = Guice.createInjector(new ExperimentManagerAppModule(insecure))
 
   CatalogRecorder.registerDOperables(injector.getInstance(classOf[DOperableCatalog]))
   CatalogRecorder.registerDOperations(injector.getInstance(classOf[DOperationsCatalog]))

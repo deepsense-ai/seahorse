@@ -19,7 +19,7 @@ import io.deepsense.experimentmanager.rest._
 /**
  * Configures all existing APIs.
  */
-class ApisModule extends AbstractModule {
+class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
   private lazy val apiBinder = Multibinder.newSetBinder(binder(), classOf[RestComponent])
 
   protected[this] def bindApi: LinkedBindingBuilder[RestComponent] = {
@@ -27,7 +27,7 @@ class ApisModule extends AbstractModule {
   }
 
   override def configure(): Unit = {
-    install(new AuthModule)
+    install(new AuthModule(withMockedSecurity))
     install(new GraphReaderModule)
     install(new DeepLangModule)
     bindApi.to(classOf[ExperimentsApi])

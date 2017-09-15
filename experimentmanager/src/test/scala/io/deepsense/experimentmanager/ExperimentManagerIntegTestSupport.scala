@@ -14,5 +14,5 @@ trait ExperimentManagerIntegTestSupport extends IntegTestSupport {
   suite: StandardSpec =>
 
   override protected def appGuiceModule: Module =
-    new ExperimentManagerAppModule
+    new ExperimentManagerAppModule(withMockedSecurity = false)
 }

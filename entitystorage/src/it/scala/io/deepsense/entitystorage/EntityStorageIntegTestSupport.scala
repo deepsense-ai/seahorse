@@ -14,5 +14,5 @@ trait EntityStorageIntegTestSupport extends IntegTestSupport {
   suite: StandardSpec =>
 
   override protected def appGuiceModule: Module =
-    new EntityStorageAppModule
+    new EntityStorageAppModule(withMockedSecurity = false)
 }
