@@ -31,7 +31,7 @@ object SingleColumnParams {
 
     case class YesInPlaceChoice() extends SingleColumnInPlaceChoice {
       override val name: String = "replace input column"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class NoInPlaceChoice() extends SingleColumnInPlaceChoice {
@@ -40,7 +40,7 @@ object SingleColumnParams {
         description = "Column to save results."
       )
       override val name: String = "append new column"
-      override val params: Array[Param[_]] = declareParams(outputColumnCreatorParam)
+      override val params: Array[Param[_]] = Array(outputColumnCreatorParam)
 
       def setOutputColumn(columnName: String): this.type = set(outputColumnCreatorParam, columnName)
       def getOutputColumn: String = $(outputColumnCreatorParam)

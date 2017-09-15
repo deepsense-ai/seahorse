@@ -39,7 +39,7 @@ class IsotonicRegression
     sparkParamGetter = _.isotonic)
   setDefault(isotonic, true)
 
-  override val params = declareParams(
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(
     isotonic,
     optionalWeightColumn,
     featureIndex,

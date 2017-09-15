@@ -30,7 +30,7 @@ class LinearRegression
     LinearRegressionModel]
   with LinearRegressionParams {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     elasticNetParam,
     fitIntercept,
     maxIterations,

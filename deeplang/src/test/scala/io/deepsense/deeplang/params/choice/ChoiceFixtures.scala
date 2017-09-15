@@ -34,19 +34,19 @@ case class OptionA() extends ChoiceABC {
     name = "bool",
     description = "description")
 
-  override val params = declareParams(bool)
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(bool)
 
   def setBool(b: Boolean): this.type = set(bool, b)
 }
 
 case class OptionB() extends ChoiceABC {
   override val name = "B"
-  override val params = declareParams()
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 }
 
 case class OptionC() extends ChoiceABC {
   override val name = "C"
-  override val params = declareParams()
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 }
 
 sealed trait BaseChoice extends Choice {
@@ -56,7 +56,7 @@ sealed trait BaseChoice extends Choice {
 
 case class ChoiceWithoutNoArgConstructor(x: String) extends BaseChoice {
   override val name: String = "choiceWithoutNoArgConstructor"
-  override val params = declareParams()
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 }
 
 sealed trait ChoiceWithoutDeclaration extends Choice {
@@ -65,7 +65,7 @@ sealed trait ChoiceWithoutDeclaration extends Choice {
 
 case class ChoiceWithoutDeclarationInstance() extends ChoiceWithoutDeclaration {
   override val name: String = "choiceWithoutDeclarationInstance"
-  override val params = declareParams()
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 }
 
 object ChoiceFixtures {

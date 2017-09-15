@@ -47,7 +47,8 @@ abstract class MultiColumnTransformer
   val singleOrMultiChoiceParam = IOColumnsParam()
   setDefault(singleOrMultiChoiceParam, SingleColumnChoice())
 
-  override lazy val params = declareParams(getSpecificParams :+ singleOrMultiChoiceParam: _*)
+  override lazy val params: Array[io.deepsense.deeplang.params.Param[_]] =
+    Array(getSpecificParams :+ singleOrMultiChoiceParam: _*)
 
   def setSingleOrMultiChoice(value: SingleOrMultiColumnChoice): this.type =
     set(singleOrMultiChoiceParam, value)

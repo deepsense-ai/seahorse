@@ -32,7 +32,7 @@ case class Source() extends DOperation0To1[DataFrame] {
 
   override val since: Version = Version(1, 0, 0)
 
-  override val params: Array[Param[_]] = declareParams()
+  override val params: Array[Param[_]] = Array()
 
   override protected def _execute(context: ExecutionContext)(): DataFrame =
     throw new IllegalStateException("should not be executed")

@@ -65,7 +65,7 @@ class LDA extends SparkEstimatorWrapper[SparkLDAModel, SparkLDA, LDAModel]
     sparkParamGetter = _.topicDistributionCol)
   setDefault(topicDistributionColumn, "topicDistribution")
 
-  val params = declareParams(
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(
     checkpointInterval,
     k,
     maxIterations,
@@ -121,7 +121,7 @@ object LDA {
       classOf[OnlineLDAOptimizer],
       classOf[ExpectationMaximizationLDAOptimizer])
 
-    override val params = declareParams(docConcentration, topicConcentration)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(docConcentration, topicConcentration)
   }
 
   case class OnlineLDAOptimizer() extends LDAOptimizer {

@@ -41,7 +41,7 @@ class LogisticRegression
 
   override lazy val maxIterationsDefault = 100.0
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     elasticNetParam,
     fitIntercept,
     maxIterations,

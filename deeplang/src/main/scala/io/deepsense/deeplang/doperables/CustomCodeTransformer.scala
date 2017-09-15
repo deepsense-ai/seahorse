@@ -31,7 +31,7 @@ abstract class CustomCodeTransformer extends Transformer {
   def getCodeParameter: String = $(codeParameter)
   def setCodeParameter(value: String): this.type = set(codeParameter, value)
 
-  override val params = declareParams(codeParameter)
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(codeParameter)
 
   def isValid(context: ExecutionContext, code: String): Boolean
 

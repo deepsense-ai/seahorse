@@ -76,7 +76,7 @@ case class Join()
   def getJoinColumns: Seq[ColumnPair] = $(joinColumns)
   def setJoinColumns(value: Seq[ColumnPair]): this.type = set(joinColumns, value)
 
-  val params = declareParams(joinType, leftPrefix, rightPrefix, joinColumns)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(joinType, leftPrefix, rightPrefix, joinColumns)
 
   override protected def _execute(context: ExecutionContext)
       (ldf: DataFrame, rdf: DataFrame): DataFrame = {
@@ -284,7 +284,7 @@ object Join {
     def getRightColumn: SingleColumnSelection = $(rightColumn)
     def setRightColumn(value: SingleColumnSelection): this.type = set(rightColumn, value)
 
-    val params = declareParams(leftColumn, rightColumn)
+    val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(leftColumn, rightColumn)
   }
 
 }
@@ -295,7 +295,7 @@ object JoinTypeChoice {
   sealed abstract class Option(override val name: String) extends Choice {
 
     val toSpark: String
-    override val params: Array[Param[_]] = declareParams()
+    override val params: Array[Param[_]] = Array()
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[Inner],

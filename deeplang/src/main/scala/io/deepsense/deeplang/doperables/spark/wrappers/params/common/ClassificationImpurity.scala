@@ -22,7 +22,7 @@ import io.deepsense.deeplang.params.choice.Choice
 
 sealed abstract class ClassificationImpurity(override val name: String) extends Choice {
 
-  override val params: Array[Param[_]] = declareParams()
+  override val params: Array[Param[_]] = Array()
 
   override val choiceOrder: List[Class[_ <: Choice]] = List(
     classOf[Entropy],

@@ -37,7 +37,7 @@ import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.DataFram
 import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage.DataFrameFromGoogleSheetReader
 import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}
 
@@ -53,7 +53,7 @@ case class ReadDataFrame()
 
   override val since: Version = Version(0, 4, 0)
 
-  val params = declareParams(storageType)
+  val params: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new InputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {

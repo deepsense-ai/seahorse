@@ -155,35 +155,6 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
 
   def params: Array[Param[_]]
 
-  /**
-   * Allows to declare parameters order conveniently and makes sure
-   * that all parameters are declared.
-   * Additionally check uniqueness of names.
-   */
-  protected def declareParams(params: Param[_]*): Array[Param[_]] = {
-    val declaredParamSet = params.toSet
-    val reflectionParamSet = getParamsByReflection.toSet
-    require(declaredParamSet == reflectionParamSet,
-      s"[${getClass.getName}] Declared params set must be equal to reflection param set." +
-        s" Differences: ${declaredParamSet xor reflectionParamSet}")
-    require(params.map(_.name).hasUniqueValues, "Names of parameters are not unique")
-    params.toArray
-  }
-
-  private def getParamsByReflection: Iterable[Param[_]] = {
-
-    val thisMirror = ru.runtimeMirror(getClass.getClassLoader).reflect(this)
-
-    thisMirror.symbol.toType.members.filter { m =>
-      m.isMethod &&
-        m.isPublic &&
-        m.asMethod.paramLists.forall(_.isEmpty) &&
-        m.asMethod.returnType <:< ru.typeOf[Param[_]]
-    }.map { m =>
-      thisMirror.reflectMethod(m.asMethod).apply().asInstanceOf[Param[_]]
-    }
-  }
-
   private lazy val paramsByName: Map[String, Param[_]] =
     params.map { case param => param.name -> param }.toMap
 

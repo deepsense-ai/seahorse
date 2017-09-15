@@ -37,7 +37,7 @@ import io.deepsense.deeplang.doperations.readwritedataframe._
 import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.{CsvSchemaInferencerAfterReading, CsvSchemaStringifierBeforeCsvWriting}
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice
@@ -62,7 +62,7 @@ class WriteDataFrame()
   def getStorageType(): OutputStorageTypeChoice = $(storageType)
   def setStorageType(value: OutputStorageTypeChoice): this.type = set(storageType, value)
 
-  val params = declareParams(storageType)
+  val params: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new OutputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {

@@ -23,7 +23,7 @@ import io.deepsense.deeplang.params.choice.Choice
 sealed abstract class TargetTypeChoice(val columnType: DataType) extends Choice {
   override val choiceOrder: List[Class[_ <: Choice]] = TargetTypeChoices.choiceOrder
 
-  override val params = declareParams()
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   val name = columnType.simpleString
 }
 

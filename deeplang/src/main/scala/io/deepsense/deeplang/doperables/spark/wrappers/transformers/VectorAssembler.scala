@@ -36,7 +36,7 @@ class VectorAssembler extends SparkTransformerWrapper[SparkVectorAssembler] {
     description = "The name of created output column.",
     sparkParamGetter = _.outputCol)
 
-  override val params: Array[Param[_]] = declareParams(inputColumns, outputColumn)
+  override val params: Array[Param[_]] = Array(inputColumns, outputColumn)
 
   def setInputColumns(selection: Set[String]): this.type = {
     set(inputColumns, MultipleColumnSelection(Vector(NameColumnSelection(selection))))

@@ -52,7 +52,7 @@ object OutputStorageTypeChoice {
     def getFileFormat(): OutputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: OutputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override val params = declareParams(outputFile, fileFormat)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(outputFile, fileFormat)
   }
 
   class Jdbc()
@@ -61,7 +61,7 @@ object OutputStorageTypeChoice {
 
     override val name: String = StorageType.JDBC.toString
     override val params: Array[Param[_]] =
-      declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
+      Array(jdbcUrl, jdbcDriverClassName, jdbcTableName)
   }
 
   class GoogleSheet()
@@ -69,7 +69,7 @@ object OutputStorageTypeChoice {
     with HasShouldConvertToBooleanParam  {
 
     override val name = "Google Sheet"
-    override lazy val params = declareParams(
+    override lazy val params: Array[Param[_]] = Array(
       googleSheetId, serviceAccountCredentials, namesIncluded, shouldConvertToBoolean
     )
 

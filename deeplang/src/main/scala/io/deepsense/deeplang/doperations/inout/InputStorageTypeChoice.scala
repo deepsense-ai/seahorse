@@ -52,14 +52,14 @@ object InputStorageTypeChoice {
     def getFileFormat(): InputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: InputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override def params = declareParams(sourceFile, fileFormat)
+    override def params = Array(sourceFile, fileFormat)
   }
 
   class Jdbc extends InputStorageTypeChoice with JdbcParameters {
 
     override val name: String = StorageType.JDBC.toString
-    override def params: Array[Param[_]] =
-      declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
+    override def params = Array(jdbcUrl, jdbcDriverClassName, jdbcTableName)
+
   }
 
   class GoogleSheet
@@ -69,7 +69,7 @@ object InputStorageTypeChoice {
     with HasShouldConvertToBooleanParam {
 
     override val name: String = "Google Sheet"
-    override lazy val params = declareParams(
+    override lazy val params: Array[Param[_]] = Array(
       googleSheetId, serviceAccountCredentials, namesIncluded, shouldConvertToBoolean
     )
 

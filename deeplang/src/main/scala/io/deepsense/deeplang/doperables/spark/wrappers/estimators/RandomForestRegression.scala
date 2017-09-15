@@ -45,7 +45,7 @@ class RandomForestRegression
   with HasRegressionImpurityParam
   with Logging {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     maxDepth,
     maxBins,
     minInstancesPerNode,

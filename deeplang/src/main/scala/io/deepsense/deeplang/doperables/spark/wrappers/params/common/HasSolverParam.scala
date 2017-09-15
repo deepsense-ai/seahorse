@@ -47,7 +47,7 @@ object SolverChoice {
 
   sealed abstract class SolverOption(override val name: String) extends Choice {
 
-    override val params: Array[Param[_]] = declareParams()
+    override val params: Array[Param[_]] = Array()
 
     override val choiceOrder: List[Class[_ <: SolverOption]] = List(
       classOf[Auto],

@@ -35,7 +35,7 @@ class Projector extends Transformer {
   def getProjectionColumns: Seq[ColumnProjection] = $(projectionColumns)
   def setProjectionColumns(value: Seq[ColumnProjection]): this.type = set(projectionColumns, value)
 
-  override val params = declareParams(projectionColumns)
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(projectionColumns)
 
   override def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val exprSeq = getProjectionColumns.map { cp =>
@@ -93,7 +93,7 @@ object Projector {
     def getRenameColumn: RenameColumnChoice = $(renameColumn)
     def setRenameColumn(value: RenameColumnChoice): this.type = set(renameColumn, value)
 
-    val params = declareParams(originalColumn, renameColumn)
+    val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(originalColumn, renameColumn)
   }
 
 
@@ -121,14 +121,14 @@ object Projector {
       override def getColumnName: Option[String] = Some($(columnName))
       def setColumnName(value: String): this.type = set(columnName, value)
 
-      override val params: Array[Param[_]] = declareParams(columnName)
+      override val params: Array[Param[_]] = Array(columnName)
     }
     case class No() extends RenameColumnChoice {
       override val name: String = "No"
 
       override def getColumnName: Option[String] = None
 
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
   }
 
