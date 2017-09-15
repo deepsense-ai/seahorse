@@ -7,6 +7,7 @@ object Version {
   val hadoop      = "2.6.0"
   val jclouds     = "1.9.0"
   val jsr305      = "3.0.0"
+  val logback     = "1.1.3"
   val mockito     = "1.10.19"
   val nsscalaTime = "1.8.0"
   val scala       = "2.11.6"
@@ -22,6 +23,7 @@ object Library {
   val avro    = (name: String) => "org.apache.avro"         % s"avro$name"        % Version.avro
   val hadoop  = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"     % Version.hadoop
   val jclouds = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"  % Version.jclouds
+  val logback = (name: String) => "ch.qos.logback"          % s"logback-$name"    % Version.logback
   val spark   = (name: String) => "org.apache.spark"       %% s"spark-$name"      % Version.spark
   val spray   = (name: String) => "io.spray"               %% s"spray-$name"      % Version.spray
 
@@ -42,8 +44,11 @@ object Library {
   val jcloudsKeystone    = jclouds("keystone")
   val jcloudsCompute     = "org.apache.jclouds"           % "jclouds-compute"     % Version.jclouds
   val jcloudsNova        = jclouds("nova")
+  val logbackClassic     = logback("classic")
+  val logbackCore        = logback("core")
   val mockitoCore        = "org.mockito"                  % "mockito-core"        % Version.mockito
   val nscalaTime         = "com.github.nscala-time"      %% "nscala-time"         % Version.nsscalaTime
+  val scalaLogging       = "com.typesafe.scala-logging"  %% "scala-logging"       % "3.1.0"
   val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
   val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
   val sparkSql           = spark("sql")
@@ -73,6 +78,9 @@ object Dependencies {
     jcloudsKeystone,
     jcloudsCompute,
     jcloudsNova,
+    scalaLogging,
+    logbackClassic,
+    logbackCore,
     sprayCan,
     sprayJson,
     sprayRouting,

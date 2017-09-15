@@ -8,6 +8,7 @@ package io.deepsense.deeplang.doperations
 
 import java.sql.Timestamp
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -17,7 +18,7 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
-class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
+class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter with LazyLogging {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
   val testDir = "/tests/ReadDataFrameTest"
@@ -34,6 +35,7 @@ class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
     val operation = new ReadDataFrame
     val pathParameter = operation.parameters.getStringParameter("path")
     pathParameter.value = Some(testDir)
+    logger.info("Reading dataframe from hdfs: {}", pathParameter)
     val operationResult = operation.execute(context)(Vector.empty[DOperable])
     val operationDataFrame = operationResult(0).asInstanceOf[DataFrame]
 
