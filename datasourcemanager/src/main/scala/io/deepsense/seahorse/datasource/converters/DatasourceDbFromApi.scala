@@ -13,6 +13,7 @@ import scalaz.syntax.validation._
 
 import io.deepsense.commons.service.api.CommonApiExceptions.ApiException
 import io.deepsense.seahorse.datasource.db.schema.DatasourcesSchema.DatasourceDB
+import io.deepsense.seahorse.datasource.model.CsvSeparatorType.CsvSeparatorType
 import io.deepsense.seahorse.datasource.model.FileFormat.FileFormat
 import io.deepsense.seahorse.datasource.model._
 
@@ -95,16 +96,6 @@ object DatasourceDbFromApi {
     )
   }
 
-  private def checkCustomSeparatorIsValid(csvFileFormatParams: CsvFileFormatParams) = {
-    val csvCustomSeparatorShouldBeAChar = ApiException(
-      message = s"CSV custom separator should be single character", errorCode = 400)
-
-    csvFileFormatParams.customSeparator.find(sep => sep.length > 1) match {
-      case Some(_) => csvCustomSeparatorShouldBeAChar.failure
-      case None => csvFileFormatParams.success
-    }
-  }
-
   private def withCommonFileParams[T <: {
     def fileFormat : FileFormat
     def csvFileFormatParams : Option[CsvFileFormatParams]
@@ -112,16 +103,36 @@ object DatasourceDbFromApi {
     if (apiFileParams.fileFormat == FileFormat.csv) {
       for {
         csvFileFormatParams <- validateDefined("csvFileFormatParams", apiFileParams.csvFileFormatParams)
-        csvFileFormatParams <- checkCustomSeparatorIsValid(csvFileFormatParams)
+        csvFileCustomSeparator <- validateCustomSeparator(csvFileFormatParams)
       } yield datasource.copy(
         fileCsvIncludeHeader = Some(csvFileFormatParams.includeHeader),
         fileCsvConvert01ToBoolean = Some(csvFileFormatParams.convert01ToBoolean),
         fileCsvSeparatorType = Some(csvFileFormatParams.separatorType),
-        fileCsvCustomSeparator = csvFileFormatParams.customSeparator
+        fileCsvCustomSeparator = csvFileCustomSeparator
       )
     } else {
       datasource.success
     }
   }.map(_.copy(fileFormat = Some(apiFileParams.fileFormat)))
+
+  private def validateCustomSeparator(csvFileFormatParams: CsvFileFormatParams) =
+    if (csvFileFormatParams.separatorType == CsvSeparatorType.custom) {
+      for {
+        customSeparatorString <- validateDefined("customSeparator", csvFileFormatParams.customSeparator)
+        customSeparatorChar <- validateIsChar(customSeparatorString)
+      } yield Some(customSeparatorChar)
+    } else {
+      None.success
+    }
+
+  private def validateIsChar(string: String) = {
+    if (string.length == 1) {
+      string.success
+    } else {
+      ApiException(
+        message = s"CSV custom separator should be single character", errorCode = 400
+      ).failure
+    }
+  }
 
 }
