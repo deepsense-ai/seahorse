@@ -1,0 +1,8 @@
+<div>
+  <library-connector file-uri="parameter.value"></library-connector>
+  <input type="text" class="form-control"
+         ng-class="{ 'invalid-param-value': !parameter.validate() }"
+         ng-model="parameter.value"
+         placeholder="{{ parameter.defaultValue }}"
+  />
+</div>

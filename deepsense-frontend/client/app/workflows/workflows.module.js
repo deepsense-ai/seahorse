@@ -38,5 +38,9 @@ require('./cluster-settings-modals/choose-cluster-modal.ctrl.js').inject(workflo
 require('./cluster-settings-modals/cluster-modal.srv.js').inject(workflows);
 require('./cluster-settings-modals/preset-modal/preset-modal.ctrl.js').inject(workflows);
 require('./cluster-settings-modals/preset-modal/preset-modal-labels.js').inject(workflows);
+require('./dataframe-library-modal/dataframe-library-modal.ctrl.js').inject(workflows);
+require('./dataframe-library-modal/dataframe-library-modal.srv.js').inject(workflows);
+require('./dataframe-library-modal/file-upload-change.drv.js').inject(workflows);
+require('./dataframe-library-modal/dropzone-file-upload.drv.js').inject(workflows);
 
 module.exports = workflows;

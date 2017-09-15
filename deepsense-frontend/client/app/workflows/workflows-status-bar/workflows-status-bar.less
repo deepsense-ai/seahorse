@@ -30,6 +30,17 @@
     }
   }
 
+  .uploading-bar {
+    width: 75px;
+    position: absolute;
+    left: 8px;
+    top: 31px;
+
+    &__progress {
+      height: 7px;
+    }
+  }
+
   &__upper-section {
     display: flex;
     justify-content: space-between;
@@ -60,6 +71,7 @@
     }
 
     .cluster-settings {
+      line-height: 40px;
       margin-left: 25px;
       display: flex;
       color: @seahorse-blue;

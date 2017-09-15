@@ -18,6 +18,11 @@ function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, C
   vm.ok = ok;
   vm.close = close;
 
+  $scope.$watch(getPresetList, (presets) => {
+    vm.presets = presets;
+  }, true);
+
+
   function openClusterSettingsModal(type, preset) {
     ClusterModalService.openCurrentClusterModal(type, preset, vm.isSnapshot);
   }
@@ -55,10 +60,6 @@ function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, C
   function ok() {
     $uibModalInstance.close();
   }
-
-  $scope.$watch(getPresetList, (presets) => {
-    vm.presets = presets;
-  }, true);
 
 }
 

@@ -1,0 +1,176 @@
+@import "../../../css/variables";
+
+@border-grey: #CFCFCF;
+@dragzone-border: #868686;
+@light-grey: #F2F2F2;
+@grey: #C6C6C6;
+@dark-grey: #999999;
+
+.dataframe-library-modal {
+  &__header {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+
+    input.search-field:focus {
+      border: 1px solid @border-grey;
+    }
+
+    .btn-grey {
+      border: 1px solid @grey;
+      background-color: @light-grey;
+    }
+
+    .drop-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: @light-grey;
+      color: @dragzone-border;
+      font-size: 16px;
+      height: 50px;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      border: 2px dashed @dragzone-border;
+      letter-spacing: 0.3px;
+
+      &:hover {
+        border: 2px dashed @light-grey;
+        cursor: pointer;
+      }
+
+      &.drag-over {
+        background-color: @color-white;
+        color: @dragzone-border;
+      }
+    }
+
+    .dataframe-form {
+      padding: 15px;
+    }
+
+    .dataframe-info {
+      color: #BF2828;
+      font-size: 15px;
+      text-align: center;
+      margin: 20px;
+    }
+
+    .dataframe-upload-progress {
+      padding: 15px;
+
+      .title {
+        font-size: 16px;
+      }
+
+      .uploading-section {
+        display: flex;
+        align-items: center;
+        height: 35px;
+
+        .information {
+          width: 100px;
+          color: @dark-grey;
+        }
+
+        .progress {
+          margin-bottom: 0;
+          flex: 1;
+        }
+      }
+    }
+
+    .dataframe-list {
+      width: 100%;
+      min-height: 40px;
+      max-height: 45vh;
+      margin: 10px 0;
+      border-top: 1px solid @grey;
+      border-bottom: 1px solid @grey;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .list-wrapper {
+      position: relative;
+      max-height: 450px;
+      width: 97%;
+      margin: 0 auto;
+      overflow: auto;
+    }
+
+    .uploaded-list-wrapper {
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+
+    .dataframe {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 40px;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid @grey;
+      }
+
+      .dataframe-name {
+        margin-left: 5px;
+        font-size: 15px;
+        font-weight: bold;
+      }
+
+      .dataframe-uploaded {
+        font-weight: bold;
+        padding-left: 5px;
+        color: black;
+        font-size: 13px;
+      }
+
+      .selectable-dataframe {
+        color: @seahorse-light-blue;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        padding-right: 10px;
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+      }
+
+      .seahorse-font {
+        font-family: seahorse-symbol;
+      }
+
+      span.seahorse-font {
+        font-size: 24px;
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+  }
+
+}

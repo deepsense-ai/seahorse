@@ -2,13 +2,17 @@
 
 /* @ngInject */
 function WorkflowStatusBarController($scope, UserService, ClusterModalService, ClusterService,
-                                     SessionStatus, SessionManager, WorkflowService, WorkflowStatusBarService) {
+                                     DataframeLibraryModalService, SessionStatus, SessionManager,
+                                     WorkflowService, WorkflowStatusBarService, LibraryService) {
 
   const vm = this;
 
   vm.workflow = WorkflowService.getCurrentWorkflow();
   vm.workflowId = vm.workflow.id;
   vm.currentPreset = getCurrentPreset();
+  vm.uploadingFiles = [];
+
+  vm.progressValue = 100;
 
   vm.getCurrentPreset = getCurrentPreset;
   vm.formatPresetType = formatPresetType;
@@ -18,6 +22,17 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, C
   vm.getCurrentUser = getCurrentUser;
   vm.isOwner = isOwner;
   vm.isViewerMode = isViewerMode;
+  vm.openLibrary = openLibrary;
+
+  $scope.$watch(getCurrentPreset, (newValue, oldValue) => {
+    if (newValue && newValue !== oldValue) {
+      vm.currentPreset = newValue;
+    }
+  });
+
+  $scope.$watch(LibraryService.getUploadingFiles, (newValue) => {
+    vm.isUploadInProgress = newValue.filter((value) => value.status === 'uploading').length > 0;
+  }, true);
 
   function getCurrentPreset() {
     return WorkflowService.isExecutorForCurrentWorkflowRunning() ?
@@ -55,11 +70,9 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, C
     return vm.workflow.sessionStatus === SessionStatus.NOT_RUNNING;
   }
 
-  $scope.$watch(getCurrentPreset, (newValue, oldValue) => {
-    if (newValue && newValue !== oldValue) {
-      vm.currentPreset = newValue;
-    }
-  });
+  function openLibrary() {
+    DataframeLibraryModalService.openLibraryModal();
+  }
 
 }
 

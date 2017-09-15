@@ -13,6 +13,8 @@ let MultiplierParameterConstructor = require('./common-multiplier-parameter.js')
 let CreatorParameterConstructor = require('./common-creator-parameter.js');
 let PrefixBasedCreatorParameterConstructor = require('./common-prefix-based-creator-parameter.js');
 let DynamicParameterConstructor = require('./common-dynamic-parameter.js');
+let LoadFromLibraryParameterConstructor = require('./common-load-from-library-parameter.js');
+let SaveToLibraryParameterConstructor = require('./common-save-to-library-parameter.js');
 
 let GridSearchParameterConstructor = require('./common-gridsearch-parameter.js');
 let MultipleNumericParameterConstructor = require('./common-multiple-numeric.js');
@@ -34,7 +36,9 @@ let parameterConstructors = {
   'prefixBasedCreator': PrefixBasedCreatorParameterConstructor,
   'dynamic': DynamicParameterConstructor,
   'gridSearch': GridSearchParameterConstructor,
-  'multipleNumeric': MultipleNumericParameterConstructor
+  'multipleNumeric': MultipleNumericParameterConstructor,
+  'loadFromLibrary': LoadFromLibraryParameterConstructor,
+  'saveToLibrary': SaveToLibraryParameterConstructor
 };
 
 let ParameterFactory = {

@@ -47,6 +47,22 @@
       <selection-items></selection-items>
     </div>
     <div class="c-workflows-status-bar__container">
+
+      <div class="button-wrapper">
+        <a class="status-bar-item" ng-click="controller.openLibrary()">
+          <div class="c-workflows-status-bar__text">
+            <div class="c-workflows-status-bar__text-label">Library</div>
+          </div>
+          <div class="uploading-bar" ng-if="controller.isUploadInProgress">
+            <uib-progressbar
+              class="progress-striped active uploading-bar__progress"
+              animate="true"
+              value="controller.progressValue"
+              type="info">
+            </uib-progressbar>
+          </div>
+        </a>
+      </div>
       <documentation-link></documentation-link>
     </div>
   </div>
