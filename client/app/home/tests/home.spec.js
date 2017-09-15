@@ -7,14 +7,14 @@ describe('Home test', function () {
   beforeEach(() => {
     let testModule = angular.module('test', ['ui.router']);
 
-    angular.mock.module('test');
-    angular.mock.module('ui.router');
-    angular.mock.module('ds.home');
+    require('./../home.js').inject(testModule);
+    require('./../home.config.js').inject(testModule);
 
-    require('../../app.run.js').inject(testModule);
-    require('../../app.config.js').inject(testModule);
-    require('../home.module.js');
-    require('../../common/page.service.js').inject(testModule);
+    require('./../../app.run.js').inject(testModule);
+    require('./../../app.config.js').inject(testModule);
+    require('./../../common/services/page.service.js').inject(testModule);
+
+    angular.mock.module('test');
   });
 
   describe('home controller', function () {

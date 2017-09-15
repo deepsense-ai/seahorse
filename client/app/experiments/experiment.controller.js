@@ -7,7 +7,7 @@
 function ExperimentController(
   experiment,
   $http, $modal, $timeout, $scope,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator, MouseEvent
+  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentApiClient, UUIDGenerator, MouseEvent
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -66,7 +66,7 @@ function ExperimentController(
   internal.saveExperiment = function saveExperiment() {
     let serializedExperiment = ExperimentService.getExperiment().serialize();
 
-    return ExperimentAPIClient.
+    return ExperimentApiClient.
       saveData({
         'experiment': serializedExperiment
       }).
@@ -85,7 +85,7 @@ function ExperimentController(
    */
   internal.loadExperimentState = function loadExperimentState() {
     if (ExperimentService.experimentIsSet()) {
-      ExperimentAPIClient.
+      ExperimentApiClient.
         getData(ExperimentService.getExperiment().getId()).
         then((data) => {
           if (ExperimentService.experimentIsSet()) {
@@ -216,7 +216,7 @@ function ExperimentController(
   });
 
   $scope.$on('Experiment.RUN', () => {
-    ExperimentAPIClient.runExperiment(ExperimentService.getExperiment().getId()).then((data) => {
+    ExperimentApiClient.runExperiment(ExperimentService.getExperiment().getId()).then((data) => {
       internal.handleExperimentStateChange(data);
     }, (error) => {
       console.log('experiment launch error', error);
@@ -224,7 +224,7 @@ function ExperimentController(
   });
 
   $scope.$on('Experiment.ABORT', () => {
-    ExperimentAPIClient.abortExperiment(ExperimentService.getExperiment().getId()).then((data) => {
+    ExperimentApiClient.abortExperiment(ExperimentService.getExperiment().getId()).then((data) => {
       internal.handleExperimentStateChange(data);
     }, (error) => {
       console.log('experiment abort error', error);

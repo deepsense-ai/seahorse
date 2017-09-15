@@ -5,36 +5,36 @@
  */
 'use strict';
 
-var gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    runSequence = require('run-sequence'),
-    nodemon = require('gulp-nodemon'),
-    browserSync = require('browser-sync'),
-    browserify = require('browserify'),
-    browserifyShim = require('browserify-shim'),
-    browserifyAnnotate = require('browserify-ngannotate'),
-    buffer = require('vinyl-buffer'),
-    babelifygul = require('babelify'),
-    uglify = require('gulp-uglify'),
-    source = require('vinyl-source-stream'),
-    clean = require('gulp-clean'),
-    concat = require('gulp-concat'),
-    size = require('gulp-size'),
-    less = require('gulp-less'),
-    minifyCSS = require('gulp-minify-css'),
-    jshint = require('gulp-jshint'),
-    exit = require('gulp-exit'),
-    shell = require('gulp-shell');
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var runSequence = require('run-sequence');
+var nodemon = require('gulp-nodemon');
+var browserSync = require('browser-sync');
+var browserify = require('browserify');
+var browserifyShim = require('browserify-shim');
+var browserifyAnnotate = require('browserify-ngannotate');
+var buffer = require('vinyl-buffer');
+var babelifygul = require('babelify');
+var uglify = require('gulp-uglify');
+var source = require('vinyl-source-stream');
+var clean = require('gulp-clean');
+var concat = require('gulp-concat');
+var size = require('gulp-size');
+var less = require('gulp-less');
+var minifyCSS = require('gulp-minify-css');
+var jshint = require('gulp-jshint');
+var exit = require('gulp-exit');
+var shell = require('gulp-shell');
 
 require('jshint-stylish');
 
-var config = require('./package.json'),
-    client = config.files.client,
-    server = config.files.server,
-    build = config.files.build,
-    libs = config.files.libs,
-    devMode = !!gutil.env.dev,
-    CIMode = !!gutil.env.ci;
+var config = require('./config.json');
+var client = config.files.client;
+var server = config.files.server;
+var build = config.files.build;
+var libs = config.files.libs;
+var devMode = !!gutil.env.dev;
+var CIMode = !!gutil.env.ci;
 
 client.path = __dirname + '/' + client.path;
 

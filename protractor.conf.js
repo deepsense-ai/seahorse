@@ -5,7 +5,7 @@
  */
 'use strict';
 
-var config = require('./package.json');
+var config = require('./config.json');
 
 
 exports.config = {

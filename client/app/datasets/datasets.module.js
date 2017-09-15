@@ -1,13 +1,11 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
 var angular = require('angular');
 
-/**
- * Datasets module.
- */
 var datasets = angular.module('ds.datasets', []);
 
 require('./dataset-list.js').inject(datasets);

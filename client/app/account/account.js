@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
 /* @ngInject */
@@ -11,6 +12,7 @@ function Account($rootScope, PageService) {
 
   this.label = 'Account info / settings page';
 }
+
 exports.function = Account;
 
 exports.inject = function (module) {

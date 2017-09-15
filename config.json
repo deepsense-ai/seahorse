@@ -1,0 +1,93 @@
+{
+  "env": {
+    "frontend": {
+      "host": "http://localhost",
+      "port": 8000
+    },
+    "proxy": {
+      "host": "http://localhost",
+      "port": 8001
+    }
+  },
+  "files": {
+    "build": {
+      "path": "./build/",
+      "js": "js/",
+      "css": "css/",
+      "fonts": "fonts/",
+      "images": "img/",
+      "bundle": {
+        "app": "app.js",
+        "js": "libs.js",
+        "css": "libs.css"
+      }
+    },
+    "client": {
+      "path": "./client/",
+      "app": "app/app.js",
+      "js": "app/**/*.js",
+      "less": "css/**/*.less",
+      "lessSources": "**/*.less",
+      "html": "**/*.html",
+      "fonts": "fonts/*",
+      "images": "img/*"
+    },
+    "server": {
+      "path": "./server/",
+      "app": "app.js",
+      "js": "**/*.js"
+    },
+    "libs": {
+      "dev": {
+        "js": [
+          "./node_modules/angular/angular.js",
+          "./node_modules/angular-ui-router/release/angular-ui-router.js",
+          "./node_modules/angular-bootstrap/dist/ui-bootstrap.js",
+          "./node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.js",
+          "./node_modules/deepsense-context-menu/dist/context-menu.js",
+          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js",
+          "./bower_components/mousetrap/mousetrap.js",
+          "./bower_components/lodash/lodash.js",
+          "./bower_components/jquery/dist/jquery.min.js",
+          "./bower_components/highcharts-release/highcharts.js",
+          "./bower_components/highcharts-release/highcharts-more.js",
+          "./bower_components/ng-debounce/angular-debounce.js",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.js"
+        ],
+        "css": [
+          "./node_modules/bootstrap/dist/css/bootstrap.css",
+          "./client/css/*.css",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css",
+          "./node_modules/deepsense-context-menu/dist/context-menu.css"
+        ]
+      },
+      "prod": {
+        "js": [
+          "./node_modules/angular/angular.min.js",
+          "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
+          "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
+          "./node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.min.js",
+          "./node_modules/deepsense-context-menu/dist/context-menu.js",
+          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4-min.js",
+          "./bower_components/mousetrap/mousetrap.min.js",
+          "./bower_components/lodash/lodash.min.js",
+          "./bower_components/jquery/dist/jquery.min.js",
+          "./bower_components/highcharts-release/highcharts.js",
+          "./bower_components/highcharts-release/highcharts-more.js",
+          "./bower_components/ng-debounce/angular-debounce.js",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.js"
+        ],
+        "css": [
+          "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "./client/css/*.css",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css",
+          "./node_modules/deepsense-context-menu/dist/context-menu.css"
+        ]
+      }
+    },
+    "tests": {
+      "client": "./client/app/**/*.spec.js",
+      "e2e": "./e2e-tests/**/*.spec.js"
+    }
+  }
+}

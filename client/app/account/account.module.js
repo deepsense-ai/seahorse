@@ -5,9 +5,6 @@
 
 var angular = require('angular');
 
-/**
- * Account module.
- */
 var account = angular.module('ds.account', []);
 
 require('./account.js').inject(account);

@@ -8,10 +8,12 @@ var angular = require('angular');
 
 var common = angular.module('ds.common', []);
 
-require('./navigation-bar/navigation-bar.js').inject(common);
-require('./navigation-bar/navigation-bar.controller.js').inject(common);
+require('./navigation-bar/navigation-bar.module.js').inject(common);
+
+require('./api-clients/api-clients.module.js').inject(common);
+
+require('./services/services.module.js').inject(common);
+
 require('./sticky-window/sticky-window.js').inject(common);
-require('./page.service.js').inject(common);
-require('./mouse-event.service.js').inject(common);
 
 module.exports = common;

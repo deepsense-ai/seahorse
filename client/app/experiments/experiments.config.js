@@ -12,10 +12,10 @@ function ExperimentsConfig($stateProvider) {
       controller: 'ExperimentListController as experimentList',
       resolve: {
         /* @ngInject */
-        experiments: ($q, $rootScope, ExperimentAPIClient) => {
+        experiments: ($q, $rootScope, ExperimentApiClient) => {
           let deferred = $q.defer();
 
-          ExperimentAPIClient.getList().
+          ExperimentApiClient.getList().
             then((data) => {
               $rootScope.stateData.dataIsLoaded = true;
               deferred.resolve(data);

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
 /* @ngInject */
@@ -12,10 +13,10 @@ function ReportsConfig($stateProvider) {
       controllerAs: 'report',
       resolve: {
         /* @ngInject */
-        report: ($q, $stateParams, $rootScope, EntitiesAPIClient) => {
+        report: ($q, $stateParams, $rootScope, EntitiesApiClient) => {
           let deferred = $q.defer();
 
-          EntitiesAPIClient.getReport($stateParams.id).
+          EntitiesApiClient.getReport($stateParams.id).
             then((data) => {
               $rootScope.stateData.dataIsLoaded = true;
               deferred.resolve(JSON.parse(data.entity.report));
@@ -30,6 +31,7 @@ function ReportsConfig($stateProvider) {
       }
   });
 }
+
 exports.function = ReportsConfig;
 
 exports.inject = function (module) {

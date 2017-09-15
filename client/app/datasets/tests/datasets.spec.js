@@ -7,14 +7,14 @@ describe('Datasets test', function() {
   beforeEach(function() {
     let testModule = angular.module('test', ['ui.router']);
 
-    angular.mock.module('test');
-    angular.mock.module('ui.router');
-    angular.mock.module('ds.datasets');
+    require('./../dataset-list.js').inject(testModule);
+    require('./../datasets.config.js').inject(testModule);
 
-    require('../../app.run.js').inject(testModule);
-    require('../../app.config.js').inject(testModule);
-    require('../datasets.module.js');
-    require('../../common/page.service.js').inject(testModule);
+    require('./../../app.run.js').inject(testModule);
+    require('./../../app.config.js').inject(testModule);
+    require('./../../common/services/page.service.js').inject(testModule);
+
+    angular.mock.module('test');
   });
 
   describe('dataset controller', function() {

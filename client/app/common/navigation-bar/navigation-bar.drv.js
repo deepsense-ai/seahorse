@@ -1,0 +1,20 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
+'use strict';
+
+/* @ngInject */
+function NavigationBar() {
+  return {
+    scope: {
+      title: '='
+    },
+    templateUrl: 'app/common/navigation-bar/navigation-bar.tmpl.html'
+  };
+}
+exports.function = NavigationBar;
+
+exports.inject = function (module) {
+  module.directive('navigationBar', NavigationBar);
+};

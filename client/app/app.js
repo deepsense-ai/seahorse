@@ -16,7 +16,6 @@ var lab = angular.module('ds.lab', [
   'debounce',
   'deepsense.spinner',
   'deepsense-context-menu',
-  require('./providers/providers.module.js').name,
   require('./home/home.module.js').name,
   require('./account/account.module.js').name,
   require('./experiments/experiments.module.js').name,

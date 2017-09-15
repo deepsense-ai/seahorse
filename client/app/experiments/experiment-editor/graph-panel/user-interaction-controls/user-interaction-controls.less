@@ -1,0 +1,44 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ */
+
+.interaction-controls {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+
+  .interaction-element {
+    font-size: 24px;
+
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    &.zoom {
+      input {
+        margin-right: 10px;
+      }
+
+      a {
+        &:first-child {
+          margin-right: 15px;
+        }
+
+        &.text-warning:focus {
+          color: #f8ac59;
+        }
+      }
+    }
+  }
+}
+
+@import "./zoom/zoom.less";
+@import "./move/move.less";

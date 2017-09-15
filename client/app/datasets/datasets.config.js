@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
 /* @ngInject */
@@ -11,6 +12,7 @@ function DatasetsConfig($stateProvider) {
       controller: 'DatasetList as datasetList'
   });
 }
+
 exports.function = DatasetsConfig;
 
 exports.inject = function (module) {

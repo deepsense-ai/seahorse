@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
 /* @ngInject */
@@ -11,6 +12,7 @@ function HomeConfig($stateProvider) {
       controller: 'Home as home'
   });
 }
+
 exports.function = HomeConfig;
 
 exports.inject = function (module) {

@@ -7,14 +7,14 @@ describe('Account test', function() {
   beforeEach(function() {
     let testModule = angular.module('test', ['ui.router']);
 
-    angular.mock.module('test');
-    angular.mock.module('ui.router');
-    angular.mock.module('ds.account');
+    require('./../account.js').inject(testModule);
+    require('./../account.config.js').inject(testModule);
 
-    require('../../app.run.js').inject(testModule);
-    require('../../app.config.js').inject(testModule);
-    require('../account.module.js');
-    require('../../common/page.service.js').inject(testModule);
+    require('./../../app.run.js').inject(testModule);
+    require('./../../app.config.js').inject(testModule);
+    require('./../../common/services/page.service.js').inject(testModule);
+
+    angular.mock.module('test');
   });
 
   describe('account controller', function() {

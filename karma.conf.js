@@ -7,42 +7,42 @@
 
 
 module.exports = function(config) {
-  var settings = require('./package.json'),
-      params = {
-        basePath: './',
+  var settings = require('./config.json');
+  var params = {
+      basePath: './',
 
-        files: [
-          './node_modules/angular/angular.js',
-          './node_modules/angular-ui-router/release/angular-ui-router.js',
-          './node_modules/angular-mocks/angular-mocks.js',
-          './bower_components/lodash/lodash.min.js',
-          settings.files.tests.client
-        ],
+      files: [
+        './node_modules/angular/angular.js',
+        './node_modules/angular-ui-router/release/angular-ui-router.js',
+        './node_modules/angular-mocks/angular-mocks.js',
+        './bower_components/lodash/lodash.min.js',
+        settings.files.tests.client
+      ],
 
-        autoWatch: true,
+      autoWatch: true,
 
-        frameworks: ['browserify', 'jasmine'],
+      frameworks: ['browserify', 'jasmine'],
 
-        browsers: ['PhantomJS'],
+      browsers: ['PhantomJS'],
 
-        plugins: [
-          'karma-chrome-launcher',
-          'karma-jasmine',
-          'karma-browserify',
-          'karma-phantomjs-launcher'
-        ],
+      plugins: [
+        'karma-chrome-launcher',
+        'karma-jasmine',
+        'karma-browserify',
+        'karma-phantomjs-launcher'
+      ],
 
-       preprocessors: {},
+     preprocessors: {},
 
-        browserify: {
-          transform: ['browserify-shim', 'babelify']
-        },
+      browserify: {
+        transform: ['browserify-shim', 'babelify']
+      },
 
-        junitReporter : {
-          outputFile: 'test_out/unit.xml',
-          suite: 'unit'
-        }
-      };
+      junitReporter : {
+        outputFile: 'test_out/unit.xml',
+        suite: 'unit'
+      }
+    };
 
   params.preprocessors[settings.files.tests.client] = ['browserify'];
   config.set(params);

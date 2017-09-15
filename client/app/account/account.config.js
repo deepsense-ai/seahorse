@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
 /* @ngInject */
@@ -11,6 +12,7 @@ function AccountConfig($stateProvider) {
       controller: 'Account as account'
   });
 }
+
 exports.function = AccountConfig;
 
 exports.inject = function (module) {

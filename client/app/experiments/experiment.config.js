@@ -12,12 +12,12 @@ function ExperimentConfig($stateProvider) {
       controller: 'ExperimentController as experiment',
       resolve: {
         /* @ngInject */
-        experiment: ($q, $rootScope, $stateParams, Operations, OperationsHierarchyService, ExperimentAPIClient) => {
+        experiment: ($q, $rootScope, $stateParams, Operations, OperationsHierarchyService, ExperimentApiClient) => {
           let deferred = $q.defer();
 
           Operations.load().
             then(OperationsHierarchyService.load).
-            then(() => ExperimentAPIClient.getData($stateParams.id)).
+            then(() => ExperimentApiClient.getData($stateParams.id)).
             then((data) => {
               $rootScope.stateData.dataIsLoaded = true;
               deferred.resolve(data);
