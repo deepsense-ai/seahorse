@@ -112,7 +112,7 @@ case class RangeValidator(
       (isIntRange, mappedStep) match {
         case (true, Some("1")) => s"`$paramName` is an integer."
         case (_, Some(s)) => s"`$paramName` = ${beginSum}k*$s, where k is an integer."
-        case (_, None) => s"`$paramName` is a floatng point number."
+        case (_, None) => s"`$paramName` is a floating point number."
       }
     }
     " Range constraints: " + rangeDescription + stepDescription
