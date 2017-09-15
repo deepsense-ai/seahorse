@@ -8,6 +8,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations._
 
 /**
@@ -17,6 +18,7 @@ import io.deepsense.deeplang.doperations._
 object CatalogRecorder {
 
   def registerDOperables(catalog: DOperableCatalog) = {
+    catalog.registerDOperable[File]()
     catalog.registerDOperable[DataFrame]()
     catalog.registerDOperable[UntrainedRidgeRegression]()
     catalog.registerDOperable[TrainedRidgeRegression]()
@@ -24,10 +26,15 @@ object CatalogRecorder {
   }
 
   def registerDOperations(catalog: DOperationsCatalog) = {
+
     catalog.registerDOperation[FileToDataFrame](
       DOperationCategories.IO,
       "Converts a file to a DataFrame"
     )
+
+    catalog.registerDOperation[ReadFile](
+      DOperationCategories.IO,
+      "Reads file from HDFS")
 
     catalog.registerDOperation[ReadDataFrame](
       DOperationCategories.IO,

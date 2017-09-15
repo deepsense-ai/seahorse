@@ -54,4 +54,8 @@ Output
 Params
 ------
 1. ``path: String`` - path to a CSV file on HDFS
-2. ``lineSeparator: String`` - delimiter of lines, defaults to unix newline (LF)
+2. ``lineSeparator: Choice`` - delimiter of liness
+      - ``windows line separator`` - line separator used on Windows (CR+LF)
+      - ``linux line separator`` - line separator used on Unix based systems (LF)
+      - ``custom line separator`` - custom line separator
+         - ``customLineSeparator: String`` - custom line separator
