@@ -34,8 +34,6 @@ private [clusters] object LocalSparkLauncher {
       .addFile(config.weDepsPath)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)
       .setConf("spark.driver.extraClassPath", config.weJarPath)
-      .setConf("spark.driver.extraJavaOptions",
-        "-XX:MaxPermSize=1024m -XX:PermSize=256m -Dfile.encoding=UTF8")
 
   private def env(config: SparkLauncherConfig,
                   clusterConfig: ClusterDetails) = CommonEnv(config, clusterConfig) ++ Map(

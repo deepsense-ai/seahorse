@@ -35,6 +35,7 @@ object SeahorseSparkLauncher {
         .setConfOpt("spark.executor.memory", clusterConfig.executorMemory)
         .setConfOpt("spark.executor.cores", clusterConfig.executorCores.map(_.toString))
         .setConfOpt("spark.executor.instances", clusterConfig.numExecutors.map(_.toString))
+        .setConf("spark.driver.extraJavaOptions", "-Dfile.encoding=UTF8")
   }
 
   private def handleUnexpectedExceptions[T, E <: SparkLauncherError](code: => Validation[E, T]) =
