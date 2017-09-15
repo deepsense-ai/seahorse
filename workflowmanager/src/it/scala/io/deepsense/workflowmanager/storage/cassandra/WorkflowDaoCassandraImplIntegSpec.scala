@@ -7,6 +7,7 @@ package io.deepsense.workflowmanager.storage.cassandra
 import scala.concurrent.{Await, Future}
 
 import com.datastax.driver.core.querybuilder.QueryBuilder
+import org.joda.time.DateTime
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
@@ -15,6 +16,7 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferContext
@@ -32,7 +34,7 @@ class WorkflowDaoCassandraImplIntegSpec
   with Matchers
   with BeforeAndAfter
   with CassandraTestSupport
-  with GraphJsonTestSupport {
+  with GraphJsonTestSupport with Logging {
 
   var workflowsDao: WorkflowDaoCassandraImpl = _
   val catalog = mock[DOperationsCatalog]
@@ -122,6 +124,42 @@ class WorkflowDaoCassandraImplIntegSpec
             executionResults(workflow1Id, workflow1, resultId2))) { _ =>
             whenReady(workflowsDao.getLatestExecutionResults(workflow1Id)) { result =>
               result.get.right.get.executionReport.id shouldBe resultId2
+            }
+          }
+        }
+      }
+    }
+
+    "get last execution time" when {
+      "the entire row is not there" in {
+        whenReady(workflowsDao.getLastExecutionTime(Workflow.Id.randomId)) { result =>
+          result shouldBe None
+        }
+      }
+
+      "the row is there without the last execution time" in withStoredWorkflows(storedWorkflows) {
+        whenReady(workflowsDao.getLastExecutionTime(workflow1Id)) { result =>
+          result shouldBe None
+        }
+      }
+
+      // Note, that this tests updating the last execution time
+      // when saveExecutionResults is called
+      "the last execution time is there" in withStoredWorkflows(storedWorkflows) {
+        val resultId = ExecutionReportWithId.Id.randomId
+        val startTime = DateTimeConverter.now
+
+        whenReady(workflowsDao.saveExecutionResults(
+          executionResults(workflow1Id, workflow1, resultId))) { _ =>
+
+          whenReady(workflowsDao.getLastExecutionTime(workflow1Id)) { dateTimeOpt =>
+            val endTime = DateTimeConverter.now
+            dateTimeOpt match {
+              case None => fail("Couldn't retrieve last execution time")
+              case Some(dateTime: DateTime) =>
+                logger.info(s"TIMES: $startTime, $dateTime")
+                (dateTime.isAfter(startTime) || dateTime.isEqual(startTime)) shouldBe true
+                (dateTime.isBefore(endTime) || dateTime.isEqual(endTime)) shouldBe true
             }
           }
         }

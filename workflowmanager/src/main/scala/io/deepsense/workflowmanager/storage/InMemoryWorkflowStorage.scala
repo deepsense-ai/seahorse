@@ -8,6 +8,9 @@ import scala.collection.concurrent.TrieMap
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+import org.joda.time.DateTime
+
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models
 import io.deepsense.models.workflows.Workflow._
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
@@ -19,11 +22,15 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
   private val workflows: TrieMap[models.Id, Entry] = TrieMap()
 
   override def save(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
-    var oldValue = workflows.get(id)
-    var newValue = Entry(workflow, oldValue.flatMap(_.results))
-    while (!workflows.replace(id, oldValue.orNull, newValue)) {
-      oldValue = workflows.get(id)
-      newValue = Entry(workflow, oldValue.flatMap(_.results))
+    def withNewWorkflow(old: Option[Entry]): Entry =
+      Entry(workflow, old.flatMap(_.results), old.flatMap(_.lastExecutionTime))
+
+    var oldEntry = workflows.get(id)
+    var newEntry = withNewWorkflow(oldEntry)
+
+    while (!workflows.replace(id, oldEntry.orNull, newEntry)) {
+      oldEntry = workflows.get(id)
+      newEntry = withNewWorkflow(oldEntry)
     }
     Future.successful(())
   }
@@ -43,14 +50,24 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
 
   override def saveExecutionResults(
       executionResults: WorkflowWithSavedResults): Future[Unit] = {
-    var oldValue = workflows.get(executionResults.id)
-    var newValue = Entry(oldValue.map(_.workflow).orNull, Some(executionResults))
-    while (!workflows.replace(executionResults.id, oldValue.orNull, newValue)) {
-      oldValue = workflows.get(executionResults.id)
-      newValue = Entry(oldValue.map(_.workflow).orNull, Some(executionResults))
+    def withNewResults(old: Option[Entry]): Entry =
+      Entry(old.map(_.workflow).orNull, Some(executionResults), Some(DateTimeConverter.now))
+
+    var oldEntry = workflows.get(executionResults.id)
+    var newEntry = withNewResults(oldEntry)
+
+    while (!workflows.replace(executionResults.id, oldEntry.orNull, newEntry)) {
+      oldEntry = workflows.get(executionResults.id)
+      newEntry = withNewResults(oldEntry)
     }
     Future.successful(())
   }
 
-  private case class Entry(workflow: Workflow, results: Option[WorkflowWithSavedResults])
+  override def getLastExecutionTime(workflowId: Id): Future[Option[DateTime]] =
+    Future.successful(workflows.get(workflowId).flatMap(_.lastExecutionTime))
+
+  private case class Entry(
+      workflow: Workflow,
+      results: Option[WorkflowWithSavedResults],
+      lastExecutionTime: Option[DateTime])
 }

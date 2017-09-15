@@ -4,14 +4,13 @@
 
 package io.deepsense.workflowmanager.storage.cassandra
 
-import scala.util.{Failure, Success, Try}
-
 import com.datastax.driver.core.Row
 import com.google.inject.Inject
-import com.google.inject.name.Named
+import org.joda.time.DateTime
 import spray.json._
 
-import io.deepsense.commons.utils.{Version, Logging}
+import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{WorkflowVersionUtil, WorkflowWithSavedResultsJsonProtocol}
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
@@ -34,9 +33,16 @@ case class WorkflowRowMapper @Inject() (
     }
   }
 
+  def toLastExecutionTime(row: Row): Option[DateTime] =
+    Option(row.getString(WorkflowRowMapper.LastExecutionTime))
+      .map(DateTimeConverter.parseDateTime)
+
   def workflowToCell(workflow: Workflow): String = workflow.toJson.compactPrint
 
   def resultsToCell(results: WorkflowWithSavedResults): String = results.toJson.compactPrint
+
+  def lastExecutionTimeToCell(lastExecutionTime: DateTime): String =
+    DateTimeConverter.toString(lastExecutionTime)
 
   override def currentVersion: Version = CurrentBuild.version
 }
@@ -45,5 +51,6 @@ object WorkflowRowMapper {
   val Id = "id"
   val Workflow = "workflow"
   val Results = "results"
+  val LastExecutionTime = "last_execution_time"
   val Deleted = "deleted"
 }

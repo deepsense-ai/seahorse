@@ -4,14 +4,18 @@
 
 package io.deepsense.workflowmanager.storage.cassandra
 
+import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 
 import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.QueryBuilder._
+import com.datastax.driver.core.querybuilder.Update.Assignments
 import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import org.joda.time.DateTime
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 import io.deepsense.workflowmanager.storage.WorkflowStorage
@@ -43,7 +47,13 @@ class WorkflowDaoCassandraImpl @Inject() (
   }
 
   override def saveExecutionResults(results: WorkflowWithSavedResults): Future[Unit] = {
-    Future(session.execute(saveResultsQuery(results)))
+    Future(session.execute(saveResultsQuery(results, DateTimeConverter.now)))
+  }
+
+  override def getLastExecutionTime(workflowId: Id): Future[Option[DateTime]] = {
+    Future(
+      session.execute(getLastExecutionTimeQuery(workflowId)))
+      .map(rs => Option(rs.one()).flatMap(workflowRowMapper.toLastExecutionTime))
   }
 
   private def getWorkflowQuery(id: Workflow.Id): Select = {
@@ -54,6 +64,9 @@ class WorkflowDaoCassandraImpl @Inject() (
     getQuery(id, Seq(WorkflowRowMapper.Id, WorkflowRowMapper.Results))
   }
 
+  private def getLastExecutionTimeQuery(id: Workflow.Id): Select =
+    getQuery(id, Seq(WorkflowRowMapper.LastExecutionTime))
+
   private def getQuery(id: Workflow.Id, columns: Seq[String]): Select = {
     QueryBuilder.select(columns: _*).from(table)
       .where(QueryBuilder.eq(WorkflowRowMapper.Id, id.value))
@@ -62,16 +75,26 @@ class WorkflowDaoCassandraImpl @Inject() (
   }
 
   private def saveWorkflowQuery(id: Workflow.Id, workflow: Workflow): Update.Where = {
-    updateQuery(id, (WorkflowRowMapper.Workflow, workflowRowMapper.workflowToCell(workflow)))
+    updateQuery(id, Seq(
+      (WorkflowRowMapper.Workflow, workflowRowMapper.workflowToCell(workflow))))
   }
 
-  private def saveResultsQuery(results: WorkflowWithSavedResults): Update.Where = {
-    updateQuery(results.id, (WorkflowRowMapper.Results, workflowRowMapper.resultsToCell(results)))
+  private def saveResultsQuery(
+    results: WorkflowWithSavedResults,
+    lastExecutionTime: DateTime): Update.Where = {
+    updateQuery(results.id, Seq(
+      (WorkflowRowMapper.Results, workflowRowMapper.resultsToCell(results)),
+      (WorkflowRowMapper.LastExecutionTime,
+        workflowRowMapper.lastExecutionTimeToCell(lastExecutionTime))))
   }
 
-  private def updateQuery(id: Id, valueToSet: (String, String)): Update.Where = {
-    QueryBuilder.update(table)
-      .`with`(set(valueToSet._1, valueToSet._2))
+  private def updateQuery(id: Id, valuesToSet: Seq[(String, String)]): Update.Where = {
+    val queryWithAssignments =
+      valuesToSet.foldLeft(QueryBuilder.update(table).`with`()) {
+        case (assignments, (field, value)) => assignments.and(set(field, value))
+      }
+
+    queryWithAssignments
       .and(set(WorkflowRowMapper.Deleted, false))
       .where(QueryBuilder.eq(WorkflowRowMapper.Id, id.value))
   }

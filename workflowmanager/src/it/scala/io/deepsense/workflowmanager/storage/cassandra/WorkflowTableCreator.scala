@@ -18,6 +18,7 @@ object WorkflowTableCreator {
          id uuid,
          workflow text,
          results text,
+         last_execution_time text,
          deleted boolean,
          primary key (id)
       );

@@ -7,6 +7,7 @@ package io.deepsense.workflowmanager.rest
 import scala.collection.concurrent.TrieMap
 import scala.concurrent._
 
+import org.joda.time
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
@@ -908,6 +909,9 @@ class WorkflowsApiSpec
 
     override def saveExecutionResults(results: WorkflowWithSavedResults): Future[Unit] =
       storage.saveExecutionResults(results)
+
+    override def getLastExecutionTime(workflowId: Id): Future[Option[time.DateTime]] =
+      storage.getLastExecutionTime(workflowId)
 
     override def save(id: Id, workflow: Workflow): Future[Unit] = storage.save(id, workflow)
 

@@ -5,6 +5,7 @@
 package io.deepsense.workflowmanager.storage.cassandra
 
 import com.datastax.driver.core.Row
+import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import spray.json._
@@ -99,6 +100,33 @@ class WorkflowRowMapperSpec
     }
   }
 
+  "WorkflowRowMapper.toLastExecutionTime" should {
+    "return last execution time" when {
+      "it's there" in
+        withLastExecutionTime(DateTimeConverter.now) {
+          (dateTime, row) =>
+            workflowRowMapper()
+              .toLastExecutionTime(row) shouldBe Some(dateTime)
+        }
+    }
+    "return None" when {
+      "last execution time is not present" in {
+        val rowWorkflow = mock[Row]
+        workflowRowMapper()
+          .toLastExecutionTime(rowWorkflow) shouldBe None
+      }
+    }
+    "throw IllegalArgumentException" when {
+      "the last execution time is malformed" in {
+        val rowWorkflow = mock[Row]
+        when(rowWorkflow.getString(WorkflowRowMapper.LastExecutionTime)).thenReturn("invalid date")
+
+        an[IllegalArgumentException] should be thrownBy
+          workflowRowMapper().toLastExecutionTime(rowWorkflow)
+      }
+    }
+  }
+
   def withWorkflow(version: Version)(testCode: (Workflow, String, Row) => Any): Unit = {
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, version.humanReadable),
@@ -114,6 +142,13 @@ class WorkflowRowMapperSpec
     val rowWorkflow = mock[Row]
     when(rowWorkflow.getString(WorkflowRowMapper.Workflow)).thenReturn(stringWorkflow)
     testCode(stringWorkflow, rowWorkflow)
+  }
+
+  def withLastExecutionTime(dateTime: DateTime)(testCode: (DateTime, Row) => Any): Unit = {
+    val rowWorkflow = mock[Row]
+    when(rowWorkflow.getString(WorkflowRowMapper.LastExecutionTime)).thenReturn(
+      DateTimeConverter.toString(dateTime))
+    testCode(dateTime, rowWorkflow)
   }
 
   def workflowRowMapper(): WorkflowRowMapper = {
