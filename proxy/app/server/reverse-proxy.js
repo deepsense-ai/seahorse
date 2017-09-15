@@ -12,6 +12,10 @@ var request = require('request'),
     httpException = require('./utils/http-exception'),
     gatewayErrors = require('./gateway-errors');
 
+var basicAuthCredentials = new Buffer(
+      config.get('WM_AUTH_USER') + ':' + config.get('WM_AUTH_PASS')
+    ).toString('base64')
+
 var httpProxy = require('http-proxy');
 var proxy = httpProxy.createProxyServer({ ws : true });
 proxy.on('error', function(err, req) {
@@ -55,8 +59,14 @@ function getTargetHost(req, res) {
 }
 
 function forwardRequest(req, res) {
-  if(req.user && req.user.accessToken) {
-    req.headers['Authorization'] = 'bearer ' + req.user.accessToken;
+  var service = getServiceName(req.url)
+  if (service.auth === 'basic') {
+    req.headers['Authorization'] = 'basic ' + basicAuthCredentials;
+  }
+  if (service.auth === 'token') {
+    if(req.user && req.user.accessToken) {
+      req.headers['Authorization'] = 'bearer ' + req.user.accessToken;
+    }
   }
 
   if(req.user && req.user.user_id) {
