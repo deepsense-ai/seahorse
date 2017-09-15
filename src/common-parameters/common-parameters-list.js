@@ -11,9 +11,10 @@ function ParametersList(options) {
 }
 
 ParametersList.prototype.serialize = function () {
-  return _.map(this.parameters, (parameter) => {
-    return parameter.serialize();
-  });
+  return _.reduce(this.parameters, (acc, parameter) => {
+    acc[parameter.name] = parameter.serialize();
+    return acc;
+  }, {});
 };
 
 ParametersList.prototype.validate = function() {

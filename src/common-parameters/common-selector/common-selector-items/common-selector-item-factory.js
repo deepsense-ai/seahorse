@@ -16,7 +16,7 @@ let selectorItemConstructors = {
   'column': SingleColumnSelectorItem,
   'columnList': ColumnListSelectorItem,
   'index': SingleIndexSelectorItem,
-  'indexList': IndexListSelectorItem,
+  'indexRange': IndexListSelectorItem,
   'typeList': TypeListSelectorItem
 };
 
