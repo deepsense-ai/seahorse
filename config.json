@@ -1,0 +1,11 @@
+{
+  "dist": "./dist/",
+  "src": "./src/",
+  "temp": "./.tmp/",
+  "test": "./test/",
+  "names": {
+    "js": "deepsense-graph-model.js",
+    "css": "deepsense-graph-model.css",
+    "mainModule": "deepsense.graph-model"
+  }
+}
