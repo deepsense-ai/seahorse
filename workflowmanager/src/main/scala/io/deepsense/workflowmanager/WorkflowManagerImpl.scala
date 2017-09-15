@@ -193,8 +193,9 @@ class WorkflowManagerImpl @Inject()(
       val additionalDataJson = workflow.additionalData
       val enrichedAdditionalDataJson = JsObject(
         additionalDataJson.fields.updated("notebooks",
-          JsObject(notebooks.map {
-            case (nodeId, notebook) => (nodeId.toString, notebook.parseJson)
+          JsObject(notebooks.collect {
+            case (nodeId, notebook) if workflow.graph.nodes.find(_.id == nodeId).isDefined =>
+              (nodeId.toString, notebook.parseJson)
           })))
       Some(Workflow(
         workflow.metadata,

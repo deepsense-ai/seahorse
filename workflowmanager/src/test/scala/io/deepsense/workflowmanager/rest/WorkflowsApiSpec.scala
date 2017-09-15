@@ -54,11 +54,11 @@ class WorkflowsApiSpec
   val dOperableCatalog = new DOperableCatalog
   override val graphReader: GraphReader = new GraphReader(catalog)
 
+  val nodeAId = Node.Id.randomId
   val workflowAId = Workflow.Id.randomId
   val workflowAName = "Very nice workflow&*workflow"
   val workflowA: Workflow = newWorkflow()
   val workflowAWithResults = newWorkflowWithResults(workflowAId, workflowA)
-  val nodeAId = Node.Id.randomId
 
   val workflowB = newWorkflow()
   val workflowBId = Workflow.Id.randomId
@@ -101,7 +101,7 @@ class WorkflowsApiSpec
   def newWorkflow(
       apiVersion: String = BuildInfo.version,
       name: String = workflowAName): Workflow = {
-    val node1 = Node(Node.Id.randomId, MockOperation())
+    val node1 = Node(nodeAId, MockOperation())
     val node2 = Node(Node.Id.randomId, MockOperation())
     val graph = DeeplangGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
