@@ -44,11 +44,11 @@ class NotebookDataPollActor(val notebookRestClient: NotebookRestClient,
   def handleGetData(workflowId: Id, nodeId: Id, sender: ActorRef, retryCount: Int): Unit = {
     notebookRestClient.fetchNotebookData().onComplete {
       case Success(data) => sender ! data
-      case Failure(_ : FileNotFoundException) if retryCount <= retryCountLimit =>
+      case Failure(_ : FileNotFoundException) if retryCount < retryCountLimit =>
         context.system.scheduler.scheduleOnce(pollInterval,
           self,
           NotebookDataPollActor.GetDataRetry(workflowId, nodeId, sender, retryCount + 1))
-      case Failure(f) if retryCount > retryCountLimit =>
+      case Failure(f) if retryCount >= retryCountLimit =>
         sender ! Status.Failure(
           RetryLimitReachedExcepion(s"Retry limit of $retryCountLimit reached, last error was $f", f))
       case Failure(f) => sender ! Status.Failure(f)

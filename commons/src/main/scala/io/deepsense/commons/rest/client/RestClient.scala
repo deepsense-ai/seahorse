@@ -20,15 +20,18 @@ import java.net.URL
 import java.util.UUID
 
 import scala.concurrent.{ExecutionContext, Future}
+
 import akka.io.IO
 import akka.pattern.ask
-import spray.client.pipelining._
 import spray.can.Http
 import spray.can.Http.HostConnectorInfo
+import spray.client.pipelining._
 import spray.http.{HttpCredentials, HttpRequest, HttpResponse}
 import spray.httpx.unmarshalling.FromResponseUnmarshaller
 
 trait RestClient extends RestClientImplicits {
+  import RestClient._
+
   def apiUrl: URL
   def userId: Option[UUID]
   def userName: Option[String]
@@ -43,6 +46,9 @@ trait RestClient extends RestClientImplicits {
     for {
       HostConnectorInfo(hostConnector, _) <- hostConnectorFut()
     } yield {
+      credentials.map(addCredentials).getOrElse[RequestTransformer](identity) ~>
+        userId.map(id => addHeader(UserIdHeader, id.toString)).getOrElse[RequestTransformer](identity) ~>
+        userName.map(addHeader(UserNameHeader, _)).getOrElse[RequestTransformer](identity) ~>
         sendReceive(hostConnector)
     }
   }
@@ -58,18 +64,20 @@ trait RestClient extends RestClientImplicits {
   def fetchResponse[U : FromResponseUnmarshaller](
       req: HttpRequest
   ): Future[U] = {
-    unmarshalPipeline().flatMap(pip => {
-      pip(req)
-    })
+    unmarshalPipeline().flatMap(_(req))
   }
 
   def fetchHttpResponse(req: HttpRequest) : Future[HttpResponse] = {
-    sendReceivePipeline().flatMap{ pip =>
-      pip(req)
-    }
+    sendReceivePipeline().flatMap(_(req))
   }
 
   def endpointPath(endpoint: String): String = {
     new URL(apiUrl, endpoint).getFile
   }
+}
+
+
+object RestClient {
+  val UserIdHeader = "X-Seahorse-UserId"
+  val UserNameHeader = "X-Seahorse-UserName"
 }
