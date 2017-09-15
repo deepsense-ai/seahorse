@@ -7,6 +7,7 @@ import java.util.UUID
 
 import org.scalatest.{BeforeAndAfter, Matchers}
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation
 import io.deepsense.graph._
 import io.deepsense.models.experiments.Experiment
@@ -19,6 +20,9 @@ abstract class GraphExecutionIntegSuite
   extends HdfsIntegTestSupport
   with Matchers
   with BeforeAndAfter {
+
+  val created = DateTimeConverter.now
+  val updated = created.plusHours(1)
 
   experimentName should {
     "run on external YARN cluster" in {
@@ -60,7 +64,9 @@ abstract class GraphExecutionIntegSuite
     Experiment.Id.randomId,
     tenantId,
     experimentName,
-    Graph(nodes.toSet, edges.toSet))
+    Graph(nodes.toSet, edges.toSet),
+    created,
+    updated)
 
   protected def node(operation: DOperation): Node = Node(UUID.randomUUID(), operation)
 

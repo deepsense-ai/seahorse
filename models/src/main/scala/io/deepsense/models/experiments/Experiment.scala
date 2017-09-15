@@ -6,6 +6,8 @@
 
 package io.deepsense.models.experiments
 
+import org.joda.time.DateTime
+
 import io.deepsense.commons.auth.Ownable
 import io.deepsense.commons.models
 import io.deepsense.graph.Graph
@@ -21,6 +23,8 @@ case class Experiment(
     tenantId: String,
     name: String,
     graph: Graph,
+    created: DateTime,
+    updated: DateTime,
     description: String = "",
     state: State = State.draft)
   extends BaseExperiment(name, description, graph)
@@ -34,9 +38,15 @@ case class Experiment(
    * @param inputExperiment The input experiment to update with.
    * @return Updated version of an experiment.
    */
-  def updatedWith(inputExperiment: InputExperiment): Experiment = {
+  def updatedWith(inputExperiment: InputExperiment, updateDateTime: DateTime): Experiment = {
     Experiment(
-      id, tenantId, inputExperiment.name, inputExperiment.graph, inputExperiment.description)
+      id,
+      tenantId,
+      inputExperiment.name,
+      inputExperiment.graph,
+      created,
+      updateDateTime,
+      inputExperiment.description)
   }
 
   /**

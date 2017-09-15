@@ -20,6 +20,7 @@ import spray.routing.Route
 
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.commons.auth.usercontext.{Role, TokenTranslator, UserContext}
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
@@ -42,6 +43,8 @@ class ExperimentsApiSpec
   with ApiSpecSupport
   with ExperimentJsonProtocol {
 
+  val created = DateTimeConverter.now
+  val updated = created.plusHours(1)
   val catalog = mock[DOperationsCatalog]
   val dOperableCatalog = mock[DOperableCatalog]
   override val inferContext: InferContext = mock[InferContext]
@@ -81,19 +84,25 @@ class ExperimentsApiSpec
     experimentAId,
     tenantAId,
     "Experiment of Tenant A",
-    Graph())
+    Graph(),
+    created,
+    updated)
 
   def experimentOfTenantA2 = Experiment(
     experimentA2Id,
     tenantAId,
     "Second experiment of Tenant A",
-    Graph())
+    Graph(),
+    created,
+    updated)
 
   def experimentOfTenantB = Experiment(
     experimentBId,
     tenantBId,
     "Experiment of Tenant B",
-    Graph())
+    Graph(),
+    created,
+    updated)
 
   val apiPrefix: String = "v1/experiments"
 
@@ -497,6 +506,8 @@ class ExperimentsApiSpec
               oe.tenantId,
               experiment.name,
               experiment.graph,
+              created,
+              updated,
               experiment.description)
             case Some(oe) if oe.tenantId != uc.tenantId =>
               throw new ResourceAccessDeniedException(uc, oe)
@@ -570,6 +581,8 @@ class ExperimentsApiSpec
             uc.tenantId,
             inputExperiment.name,
             inputExperiment.graph,
+            created,
+            updated,
             inputExperiment.description)
           Future.successful(experiment)
         }

@@ -62,13 +62,17 @@ class ExperimentsApiIntegSpec
       Experiment.Id.randomId,
       tenantAId,
       "Experiment of Tenant A",
-      Graph())
+      Graph(),
+      created,
+      updated)
 
     experimentB = Experiment(
       Experiment.Id.randomId,
       tenantBId,
       "Experiment of Tenant B",
-      Graph())
+      Graph(),
+      created,
+      updated)
 
     experimentStorage = getInstance[ExperimentStorage]
     import scala.concurrent.duration._

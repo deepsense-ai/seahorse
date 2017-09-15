@@ -8,10 +8,11 @@ package io.deepsense.experimentmanager.rest.json
 
 import java.util.UUID
 
+import org.joda.time.DateTime
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.json.{ExceptionsJsonProtocol, IdJsonProtocol}
+import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.commons.json.envelope.EnvelopeJsonFormat
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
@@ -29,7 +30,8 @@ trait ExperimentJsonProtocol
   with GraphKnowledgeJsonProtocol
   with ActionsJsonProtocol
   with IdJsonProtocol
-  with ExceptionsJsonProtocol {
+  with ExceptionsJsonProtocol
+  with DateTimeJsonProtocol {
 
   val graphReader: GraphReader
   val inferContext: InferContext
@@ -50,6 +52,8 @@ trait ExperimentJsonProtocol
     val Status = "status"
     val Error = "error"
     val Nodes = "nodes"
+    val Created = "created"
+    val Updated = "updated"
     val TypeKnowledge = "typeKnowledge"
 
     override def read(json: JsValue): Experiment = json match {
@@ -59,7 +63,9 @@ trait ExperimentJsonProtocol
         val name = fields(Name).convertTo[String]
         val description = fields(Description).convertTo[String]
         val graph = fields(Graph).convertTo[Graph]
-        Experiment(id, tenantId, name, graph, description)
+        val created = fields(Created).convertTo[DateTime]
+        val updated = fields(Updated).convertTo[DateTime]
+        Experiment(id, tenantId, name, graph, created, updated, description)
       case x => throw new DeserializationException("Could not read experiment. " +
         s"Expected JsObject but got $x")
     }
@@ -72,6 +78,8 @@ trait ExperimentJsonProtocol
         Name -> experiment.name.toJson,
         Description -> experiment.description.toJson,
         Graph -> experiment.graph.toJson(graphFormat),
+        Created -> experiment.created.toJson,
+        Updated -> experiment.updated.toJson,
         State -> JsObject(
           Status -> JsString(experiment.state.status.toString),
           Error -> experiment.state.error.map(JsString(_)).getOrElse(JsNull),

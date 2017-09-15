@@ -13,6 +13,7 @@ import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.{Millis, Seconds, Span}
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperations.LoadDataFrame
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor.{GetStatus, Launch, Launched, Status}
 import io.deepsense.graph.{Graph, Node}
@@ -26,6 +27,8 @@ class EMtoGESpec
   with Eventually
   with IntegrationPatience {
 
+  val created = DateTimeConverter.now
+  val updated = created.plusHours(1)
   implicit var system: ActorSystem = _
   var actorRef: TestActorRef[RunningExperimentsActor] = _
   var testProbe: TestProbe = _
@@ -91,6 +94,8 @@ class EMtoGESpec
       SimpleGraphExecutionIntegSuiteEntities.entityTenantId,
       "name",
       graph,
+      created,
+      updated,
       "experiment description")
   }
 
@@ -102,6 +107,8 @@ class EMtoGESpec
       "aTenantId",
       "name",
       graph,
+      created,
+      updated,
       "experiment description")
   }
 

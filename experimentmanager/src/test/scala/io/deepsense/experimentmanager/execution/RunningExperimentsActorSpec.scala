@@ -14,6 +14,7 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
 import org.scalatest.{BeforeAndAfter, WordSpecLike}
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
@@ -30,11 +31,15 @@ class RunningExperimentsActorSpec
   with ScaledTimeSpans {
 
   val tenantIdA = "A"
+  val created = DateTimeConverter.now
+  val updated = created.plusHours(2)
   val experiment = Experiment(
     UUID.randomUUID(),
     tenantIdA,
     "Experiment",
-    Graph())
+    Graph(),
+    created,
+    updated)
   val updatedGraph = Graph()
   val launched = experiment.markRunning
   val mockClientFactory = mock[GraphExecutorClientFactory]
@@ -151,7 +156,9 @@ class RunningExperimentsActorSpec
         UUID.randomUUID(),
         "A",
         "Experiment",
-        Graph(Set(mockNode)))
+        Graph(Set(mockNode)),
+        created,
+        updated)
       val expectedExperiment = experimentWithNode.withGraph(updatedGraph)
       withLaunchedExperiments(Set(experimentWithNode)) {
         eventually (timeout(6.seconds), interval(1.second)) {

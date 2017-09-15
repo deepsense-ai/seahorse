@@ -10,10 +10,12 @@ import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
 
+import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import spray.json._
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.parameters.ParametersSchema
@@ -21,7 +23,7 @@ import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, InferContext}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.Experiment
-import io.deepsense.models.experiments.Experiment.{State, Status}
+import io.deepsense.models.experiments.Experiment.State
 
 class ExperimentJsonProtocolSpec
   extends StandardSpec
@@ -62,11 +64,15 @@ class ExperimentJsonProtocolSpec
   val tenantId = "tenantId"
   val name = "testName"
   val description = "testDescription"
+  val created = new DateTime(2015, 6, 5, 11, 25, DateTimeConverter.zone)
+  val updated = new DateTime(2015, 6, 5, 12, 54, DateTimeConverter.zone)
   val experiment = Experiment(
     id,
     tenantId,
     name,
     graph,
+    created,
+    updated,
     description,
     State.failed("This is a description of an error"))
 
@@ -78,9 +84,8 @@ class ExperimentJsonProtocolSpec
       experimentJson.fields("description").convertTo[String] shouldBe description
       experimentJson.fields("graph") shouldBe graphJson
 
-      // TODO Creation/update date fields
-      // DateTime.parse(experimentJson.fields("created").convertTo[String]) shouldBe created
-      // DateTime.parse(experimentJson.fields("updated").convertTo[String]) shouldBe name
+      DateTime.parse(experimentJson.fields("created").convertTo[String]) shouldBe created
+      DateTime.parse(experimentJson.fields("updated").convertTo[String]) shouldBe updated
 
       val state = experimentJson.fields("state").asJsObject
       val status = state.fields("status").asInstanceOf[JsString].value

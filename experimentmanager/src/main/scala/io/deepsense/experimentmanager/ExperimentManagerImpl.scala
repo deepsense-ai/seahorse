@@ -16,6 +16,7 @@ import com.google.inject.name.Named
 
 import io.deepsense.commons.auth.usercontext.UserContext
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
@@ -63,6 +64,7 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def update(experimentId: Id, experiment: InputExperiment): Future[Experiment] = {
+    val now = DateTimeConverter.now
     authorizator.withRole(roleUpdate) { userContext =>
       val oldExperimentOption = storage.get(experimentId)
       oldExperimentOption.flatMap {
@@ -75,7 +77,7 @@ class ExperimentManagerImpl @Inject()(
               runningExperimentsActor ! Delete(experimentId)
               val updatedExperiment = oldExperiment
                 .assureOwnedBy(userContext)
-                .updatedWith(experiment)
+                .updatedWith(experiment, now)
               storage.save(updatedExperiment)
           }
         case None => throw new ExperimentNotFoundException(experimentId)
@@ -84,8 +86,9 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def create(inputExperiment: InputExperiment): Future[Experiment] = {
+    val now = DateTimeConverter.now
     authorizator.withRole(roleCreate) { userContext =>
-      storage.save(inputExperiment.toExperimentOf(userContext))
+      storage.save(inputExperiment.toExperimentOf(userContext, now))
     }
   }
 
