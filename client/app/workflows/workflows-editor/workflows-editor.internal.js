@@ -20,6 +20,8 @@ let internal = {};
     let deferred = this.$q.defer();
 
     if (node.hasParameters()) {
+      node.refreshParameters(this.DeepsenseNodeParameters);
+      this.$scope.$apply();
       deferred.resolve(node, 'sync');
     } else {
       this.Operations.getWithParams(node.operationId)
@@ -33,7 +35,6 @@ let internal = {};
           deferred.reject(error);
         });
     }
-
     return deferred.promise;
   };
 

@@ -263,6 +263,13 @@ class WorkflowsEditorController extends WorkflowReports {
 
   updateAndRerenderEdges(data) {
     this.WorkflowService.updateTypeKnowledge(data.knowledge);
+    if (this.selectedNode) {
+      internal.getNodeParameters.call(this, this.selectedNode).then((node, mode) => {
+        if (mode === 'sync') {
+          this.$scope.$digest();
+        }
+      });
+    }
     this.rerenderEdges();
   }
 
