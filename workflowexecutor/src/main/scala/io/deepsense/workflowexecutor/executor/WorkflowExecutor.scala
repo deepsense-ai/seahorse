@@ -48,7 +48,8 @@ import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 case class WorkflowExecutor(
     workflow: WorkflowWithVariables,
     pythonExecutorPath: String,
-    pythonPathGenerator: PythonPathGenerator)
+    pythonPathGenerator: PythonPathGenerator,
+    tempPath: String)
   extends Executor {
 
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
@@ -84,7 +85,8 @@ case class WorkflowExecutor(
       dataFrameStorage,
       pythonExecutionCaretaker,
       sparkContext,
-      sqlContext)
+      sqlContext,
+      tempPath)
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionReport] = Promise()
@@ -144,7 +146,7 @@ object WorkflowExecutor extends Logging {
     val workflow = loadWorkflow(params)
 
     val executionReport = workflow.map(w => {
-      executeWorkflow(w, params.pyExecutorPath.get, pythonPathGenerator)
+      executeWorkflow(w, params.pyExecutorPath.get, pythonPathGenerator, params.tempPath.get)
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -228,12 +230,13 @@ object WorkflowExecutor extends Logging {
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
       pythonExecutorPath: String,
-      pythonPathGenerator: PythonPathGenerator): Try[ExecutionReport] = {
+      pythonPathGenerator: PythonPathGenerator,
+      tempPath: String): Try[ExecutionReport] = {
 
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, pythonExecutorPath, pythonPathGenerator).execute()
+    WorkflowExecutor(workflow, pythonExecutorPath, pythonPathGenerator, tempPath).execute()
   }
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {

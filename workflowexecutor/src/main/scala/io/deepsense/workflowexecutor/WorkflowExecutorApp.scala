@@ -105,6 +105,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
 
+    opt[String]('t', "temp-dir") optional() valueName "PATH" action {
+      (x, c) => c.copy(tempPath = Some(x))
+    } text "Temporary directory path"
+
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("")
@@ -124,7 +128,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.depsZip.isEmpty, "--deps-zip is required in interactive mode"),
         (config.wmUsername.isEmpty, "--wm-username is required in interactive mode"),
         (config.wmPassword.isEmpty, "--wm-password is required in interactive mode"),
-        (config.userId.isEmpty, "--user-id is required in interactive mode")
+        (config.userId.isEmpty, "--user-id is required in interactive mode"),
+        (config.tempPath.isEmpty, "--temp-dir is required in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
@@ -171,7 +176,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         params.wmUsername.get,
         params.wmPassword.get,
         params.depsZip.get,
-        params.userId.get
+        params.userId.get,
+        params.tempPath.get
       ).execute()
     } else {
       // Running in non-interactive mode
@@ -179,7 +185,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         .map(new PythonPathGenerator(_))
         .getOrElse(throw new RuntimeException("Could not find PySpark!"))
 
-      WorkflowExecutor.runInNoninteractiveMode(params, pythonPathGenerator)
+      val tempPath = params.tempPath.getOrElse("/tmp/seahorse/download")
+
+      WorkflowExecutor.runInNoninteractiveMode(
+        params.copy(tempPath = Some(tempPath)), pythonPathGenerator)
     }
   }
 

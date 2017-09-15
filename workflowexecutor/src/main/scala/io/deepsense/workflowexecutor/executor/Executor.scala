@@ -39,6 +39,7 @@ trait Executor extends Logging {
       pythonExecutionCaretaker: PythonExecutionCaretaker,
       sparkContext: SparkContext,
       sqlContext: SQLContext,
+      tempPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
     val catalog = dOperableCatalog.getOrElse(createDOperableCatalog())
@@ -59,6 +60,7 @@ trait Executor extends Logging {
       sqlContext,
       inferContext,
       FileSystemClientStub(), // temporarily mocked
+      tempPath,
       tenantId,
       innerWorkflowExecutor,
       dataFrameStorage,

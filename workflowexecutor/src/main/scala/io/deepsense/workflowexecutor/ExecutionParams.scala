@@ -29,4 +29,5 @@ case class ExecutionParams(
   wmUsername: Option[String] = None,
   wmPassword: Option[String] = None,
   depsZip: Option[String] = None,
-  userId: Option[String] = None)
+  userId: Option[String] = None,
+  tempPath: Option[String] = None)

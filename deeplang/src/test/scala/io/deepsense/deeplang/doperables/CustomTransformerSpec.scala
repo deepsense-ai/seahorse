@@ -185,6 +185,7 @@ class CustomTransformerSpec extends UnitSpec {
       mock[SQLContext],
       mock[InferContext],
       mock[FileSystemClient],
+      "/tmp",
       "",
       innerWorkflowExecutor,
       mock[ContextualDataFrameStorage],

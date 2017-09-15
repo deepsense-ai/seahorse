@@ -55,7 +55,8 @@ case class SessionExecutor(
     wmUsername: String,
     wmPassword: String,
     depsZip: String,
-    workflowOwnerId: String)
+    workflowOwnerId: String,
+    tempPath: String)
   extends Executor {
 
   private val workflowIdObject = Workflow.Id.fromString(workflowId)
@@ -199,6 +200,7 @@ case class SessionExecutor(
       pythonExecutionCaretaker,
       sparkContext,
       sqlContext,
+      tempPath,
       dOperableCatalog = Some(dOperableCatalog))
 
     val readyBroadcaster = communicationFactory.createBroadcaster(

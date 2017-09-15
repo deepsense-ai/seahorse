@@ -23,9 +23,7 @@ import scala.reflect.runtime.universe.TypeTag
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
-import org.apache.spark.{SparkConf, SparkContext, sql}
-import org.mockito.Matchers._
-import org.mockito.Mockito.when
+import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mock.MockitoSugar._
 
@@ -181,6 +179,7 @@ private class MockedCommonExecutionContext(
     sqlContext,
     inferContext,
     fsClient,
+    "/tmp",
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,
@@ -211,6 +210,7 @@ private class MockedExecutionContext(
     sqlContext,
     inferContext,
     fsClient,
+    "/tmp",
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,

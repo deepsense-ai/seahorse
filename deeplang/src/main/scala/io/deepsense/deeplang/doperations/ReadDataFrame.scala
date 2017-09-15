@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import java.io._
-import java.nio.file.Files
+import java.nio.file.{Files, Paths}
 import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
@@ -122,7 +122,7 @@ case class ReadDataFrame()
 
     val path = fileChoice.getSourceFile
     if (isUrlSource(path)) {
-      downloadFile(path, context.sparkContext)
+      downloadFile(path, context.tempPath, context.sparkContext)
     } else {
       FileSystemClient.replaceLeadingTildeWithHomeDirectory(path)
     }
@@ -134,17 +134,19 @@ case class ReadDataFrame()
     isHttp || isFtp
   }
 
-  private def downloadFile(url: String, sparkContext: SparkContext): String = {
-    if (sparkContext.isLocal) {
-      downloadFileToLocal(url, sparkContext)
+  private def downloadFile(
+      url: String, tempPath: String, sparkContext: SparkContext): String = {
+    if (tempPath.startsWith("hdfs://")) {
+      downloadFileToHdfs(url, tempPath, sparkContext)
     } else {
-      downloadFileToHdfs(url, sparkContext)
+      downloadFileToLocal(url, tempPath, sparkContext)
     }
   }
 
-  private def downloadFileToHdfs(url: String, sparkContext: SparkContext): String = {
+  private def downloadFileToHdfs(
+      url: String, tempPath: String, sparkContext: SparkContext): String = {
     val content = scala.io.Source.fromURL(url).getLines()
-    val hdfsPath = s"hdfs:///tmp/seahorse/download/${UUID.randomUUID()}"
+    val hdfsPath = s"$tempPath/${UUID.randomUUID()}"
 
     val configuration = new Configuration()
     val hdfs = FileSystem.get(configuration)
@@ -164,8 +166,10 @@ case class ReadDataFrame()
     hdfsPath
   }
 
-  private def downloadFileToLocal(url: String, sparkContext: SparkContext): String = {
-    val outFilePath = Files.createTempFile("download", ".csv")
+  private def downloadFileToLocal(
+      url: String, tempPath: String, sparkContext: SparkContext): String = {
+    val outFilePath = Files.createTempFile(
+      Files.createDirectories(Paths.get(tempPath)), "download", ".csv")
     // content is a stream. Do not invoke stuff like .toList() on it.
     val content = scala.io.Source.fromURL(url).getLines()
     val writer: BufferedWriter =
