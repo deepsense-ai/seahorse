@@ -29,8 +29,7 @@ unmanagedClasspath in Runtime += (baseDirectory.value / "conf")
 
 mainClass in Compile := Some("io.deepsense.graphexecutor.GraphExecutor")
 
-enablePlugins(BuildInfoPlugin, JavaAppPackaging, GitVersioning, UniversalDeployPlugin)
-enablePlugins(DeepsenseUniversalSettingsPlugin)
+enablePlugins(BuildInfoPlugin, JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 
 mappings in Universal := {
   val universalMappings = (mappings in Universal).value

@@ -6,5 +6,4 @@ libraryDependencies ++= Dependencies.deploymodelservice
 
 Revolver.settings
 
-enablePlugins(JavaAppPackaging, GitVersioning, UniversalDeployPlugin)
-enablePlugins(DeepsenseUniversalSettingsPlugin)
+enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
