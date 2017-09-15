@@ -1,6 +1,11 @@
 'use strict';
 
+// Assets
 import tpl from './attribute-datasource.html';
+
+// App
+import {datasourceModalMode} from 'COMMON/datasources/datasource-modal-mode.js';
+
 
 /* @ngInject */
 function AttributeDatasource(DatasourcesPanelService, datasourcesService, DatasourcesModalsService, AttributesPanelService) {
@@ -48,9 +53,21 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
         scope.parameter.value = null;
       };
 
-      scope.openDatasource = function (mode) {
-        DatasourcesModalsService.openModal(scope.datasource.params.datasourceType, scope.datasource, mode);
+      scope.editDatasource = function editDatasource() {
+        openDatasource(datasourceModalMode.EDIT);
       };
+
+      scope.viewDatasource = function viewDatasource() {
+        openDatasource(datasourceModalMode.VIEW);
+      };
+
+      function openDatasource(mode) {
+        DatasourcesModalsService.openModal(
+          scope.datasource.params.datasourceType,
+          mode,
+          scope.datasource
+        );
+      }
 
       scope.isDataSourceEmpty = function() {
         return _.isEmpty(scope.datasource);

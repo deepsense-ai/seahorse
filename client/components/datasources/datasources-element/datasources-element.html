@@ -1,58 +1,51 @@
 <div class="datasources-element">
   <div
     class="datasources-element__name-wrapper"
-    ng-class="{'datasources-element__name-wrapper--disabled': !$ctrl.isSelectable($ctrl.element)}"
-    ng-click="$ctrl.selectDatasource($ctrl.element)"
+    ng-class="{'datasources-element__name-wrapper--disabled': !$ctrl.isSelectable()}"
+    ng-click="$ctrl.selectDatasource()"
   >
     <div
-      class="datasources-element__type sa"
-      ng-class="$ctrl.typeIcon[$ctrl.element.params.datasourceType]"
-    >
-    </div>
+      class="datasources-element__type sa {{::$ctrl.datasourceIcon}}"
+    ></div>
     <div
       class="datasources-element__name"
-      title="{{$ctrl.element.params.name}}"
+      title="{{$ctrl.datasource.params.name}}"
     >
-      {{$ctrl.element.params.name}}
+      {{$ctrl.datasource.params.name}}
     </div>
   </div>
+
   <div class="datasources-element__icon-wrapper">
     <div
-      ng-if="!$ctrl.isOwner()"
-      ng-click="$ctrl.openDatasource($ctrl.element, 'read')"
-      class="datasources-element__edit sa sa-view"
-      title="See"
-    >
-    </div>
+      ng-click="$ctrl.openDatasource()"
+      class="datasources-element__edit sa {{::$ctrl.openActionIcon}}"
+      title="{{::$ctrl.openActionTitle}}"
+    ></div>
+
     <div
-      ng-if="$ctrl.isOwner()"
-      ng-click="$ctrl.openDatasource($ctrl.element, 'edit')"
-      class="datasources-element__edit sa sa-edit"
-      title="Edit"
-    >
-    </div>
-    <div
-      ng-click="$ctrl.deleteDatasource($ctrl.element)"
+      ng-click="$ctrl.deleteDatasource()"
       ng-class="{'datasources-element__icon-wrapper--disabled': !$ctrl.isOwner()}"
       class="datasources-element__delete sa sa-delete"
       title="Delete"
-    >
-    </div>
+    ></div>
   </div>
+
   <div class="datasources-element__created">
-    {{$ctrl.element.creationDateTime | date:"dd/MM/yyyy - HH:mm"}}
+    {{$ctrl.datasource.creationDateTime | date:"dd/MM/yyyy - HH:mm"}}
   </div>
+
   <div
     class="datasources-element__owner"
     ng-class="{'datasources-element__owner--current' : $ctrl.isOwner}"
+    title="{{ $ctrl.ownerName }}"
   >
-    {{($ctrl.isOwner()) ? 'You' : $ctrl.element.ownerName}}
+    {{::$ctrl.ownerName }}
     <span
       ng-if="$ctrl.isOwner()"
       class="datasources-element__owner-icon sa sa-user">
     </span>
   </div>
   <div class="datasources-element__access">
-    {{$ctrl.visibilityLabel[$ctrl.element.params.visibility]}}
+    {{$ctrl.visibilityLabel[$ctrl.datasource.params.visibility]}}
   </div>
 </div>

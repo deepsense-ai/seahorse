@@ -68,7 +68,7 @@
   <div class="datasources-list__list-wrapper">
     <datasources-element
       ng-repeat="datasource in $ctrl.datasources | orderBy:$ctrl.filterType:$ctrl.filterOrder"
-      element="datasource"
+      datasource="datasource"
       context="$ctrl.context"
       on-select="$ctrl.onSelect({datasource: datasource})"
     ></datasources-element>

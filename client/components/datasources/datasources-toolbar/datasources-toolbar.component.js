@@ -1,9 +1,5 @@
 'use strict';
 
-import DatasourcesToolbarTemplate from './datasources-toolbar.html';
-
-import {datasourceContext} from 'APP/enums/datasources-context.js';
-
 // Assets
 import './datasources-toolbar.less';
 import './modals/datasources-modals.less';
@@ -12,14 +8,26 @@ import './modals/external-file-modal/external-file-modal.less';
 import './modals/database-modal/database-modal.less';
 import './modals/hdfs-modal/hdfs-modal.less';
 import './modals/library-modal/library-modal.less';
+import templateUrl from './datasources-toolbar.html';
+
+// App
+import {datasourceModalMode} from 'COMMON/datasources/datasource-modal-mode.js';
+import {datasourceContext} from 'APP/enums/datasources-context.js';
+
 
 const DatasourcesToolbarComponent = {
+  templateUrl,
+
   bindings: {
     context: '<'
   },
-  templateUrl: DatasourcesToolbarTemplate,
+
   controller: class DatasourcesToolbarController {
-    constructor($scope, DatasourcesModalsService, LibraryService) {
+    constructor(
+      $scope,
+      DatasourcesModalsService,
+      LibraryService
+    ) {
       'ngInject';
 
       this.DatasourcesModalsService = DatasourcesModalsService;
@@ -30,8 +38,9 @@ const DatasourcesToolbarComponent = {
       }, true);
     }
 
-    openModal(type) {
-      this.DatasourcesModalsService.openModal(type);
+
+    addDatasource(datasourceType) {
+      this.DatasourcesModalsService.openModal(datasourceType, datasourceModalMode.ADD);
     }
   }
 

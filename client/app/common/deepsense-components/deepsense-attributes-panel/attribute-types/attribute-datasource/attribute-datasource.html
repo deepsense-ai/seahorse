@@ -47,13 +47,13 @@
     ></div>
     <div
       ng-if="isOwner()"
-      ng-click="openDatasource('edit')"
+      ng-click="editDatasource()"
       class="datasource-wrapper__icon sa sa-edit"
       title="Edit datasource"
     ></div>
     <div
       ng-if="!isOwner()"
-      ng-click="openDatasource('read')"
+      ng-click="viewDatasource()"
       class="datasource-wrapper__icon sa sa-view"
       title="View datasource"
     ></div>

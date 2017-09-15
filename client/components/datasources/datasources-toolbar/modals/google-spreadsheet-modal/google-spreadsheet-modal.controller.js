@@ -1,12 +1,22 @@
 'use strict';
 
+// App
 import DatasourceModal from '../datasource-modal.class.js';
+
 
 const GOOGLE_SPREADSHEET_REGEX = /[a-zA-Z0-9-_]+/;
 const FULL_SPREADSHEET_URI_REGEX = /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/;
 
+
 class GoogleSpreadsheetModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
+  constructor(
+    $scope,
+    $log,
+    $uibModalInstance,
+    datasourcesService,
+    editedDatasource,
+    previewMode
+  ) {
     'ngInject';
 
     super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);

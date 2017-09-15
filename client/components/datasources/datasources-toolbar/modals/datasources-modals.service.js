@@ -1,46 +1,57 @@
 'use strict';
 
+// Assets
 import databaseTpl from './database-modal/database-modal.html';
 import externalFileTpl from './external-file-modal/external-file-modal.html';
 import googleSpreadsheetTpl from './google-spreadsheet-modal/google-spreadsheet-modal.html';
 import hdfsTpl from './hdfs-modal/hdfs-modal.html';
 import libraryTpl from './library-modal/library-modal.html';
 
-const modalsTypesMap = {
-  'jdbc': {
+// App
+import {datasourceModalMode} from 'COMMON/datasources/datasource-modal-mode.js';
+
+
+const MODAL_CONFIGS = {
+  jdbc: {
     tpl: databaseTpl,
     ctrl: 'DatabaseModalController'
   },
-  'externalFile': {
+  externalFile: {
     tpl: externalFileTpl,
     ctrl: 'ExternalFileModalController'
   },
-  'googleSpreadsheet': {
+  googleSpreadsheet: {
     tpl: googleSpreadsheetTpl,
     ctrl: 'GoogleSpreadsheetModalController'
   },
-  'hdfs': {
+  hdfs: {
     tpl: hdfsTpl,
     ctrl: 'HdfsModalController'
   },
-  'libraryFile': {
+  libraryFile: {
     tpl: libraryTpl,
     ctrl: 'LibraryModalController'
   }
 };
 
+
 class DatasourcesModalsService {
   constructor($uibModal, $document, $log) {
     'ngInject';
 
-    _.assign(this, {$uibModal, $document});
+    this.$uibModal = $uibModal;
+    this.$document = $document;
     this.$log = $log;
   }
 
-  openModal(type, datasource, mode) {
-    this.$log.warn('DatasourcesModalsService.openModal()', mode, type, datasource);
 
-    const modal = modalsTypesMap[type];
+  openModal(datasourceType, mode, datasource) {
+    this.$log.warn('DatasourcesModalsService.openModal()');
+    this.$log.warn('datasourceType', datasourceType);
+    this.$log.warn('mode', mode);
+    this.$log.warn('datasource', JSON.stringify(datasource, null, 2));
+
+    const modal = MODAL_CONFIGS[datasourceType];
     const $datasourcesToolbar = angular.element(document.querySelector('.datasources-panel'));
 
     return this.$uibModal.open({
@@ -55,11 +66,10 @@ class DatasourcesModalsService {
       keyboard: true,
       resolve: {
         editedDatasource: () => angular.copy(datasource),
-        previewMode: () => mode === 'read'
+        previewMode: () => mode === datasourceModalMode.VIEW
       }
     });
   }
-
 }
 
 export default DatasourcesModalsService;

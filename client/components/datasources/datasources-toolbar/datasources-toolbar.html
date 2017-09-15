@@ -2,8 +2,9 @@
   <div class="title">
     New data source from
   </div>
+
   <button
-    ng-click="$ctrl.openModal('libraryFile')"
+    ng-click="$ctrl.addDatasource('libraryFile')"
     class="btn btn-modal"
   >
     <span class="btn-modal__icon sa sa-library"></span>
@@ -15,8 +16,9 @@
       class="gradient"
     ></span>
   </button>
+
   <button
-    ng-click="$ctrl.openModal('jdbc')"
+    ng-click="$ctrl.addDatasource('jdbc')"
     class="btn btn-modal"
   >
     <span class="btn-modal__icon sa sa-database"></span>
@@ -24,9 +26,10 @@
       Database
     </span>
   </button>
+
   <button
     ng-disabled="$ctrl.context === $ctrl.datasourceContext.WRITE_DATASOURCE"
-    ng-click="$ctrl.openModal('externalFile')"
+    ng-click="$ctrl.addDatasource('externalFile')"
     class="btn btn-modal"
   >
     <span class="btn-modal__icon sa sa-external-file"></span>
@@ -34,8 +37,9 @@
       External file
     </span>
   </button>
+
   <button
-    ng-click="$ctrl.openModal('hdfs')"
+    ng-click="$ctrl.addDatasource('hdfs')"
     class="btn btn-modal"
   >
     <span class="btn-modal__icon sa sa-hdfs"></span>
@@ -43,8 +47,9 @@
       HDFS
     </span>
   </button>
+
   <button
-    ng-click="$ctrl.openModal('googleSpreadsheet')"
+    ng-click="$ctrl.addDatasource('googleSpreadsheet')"
     class="btn btn-modal"
   >
     <span class="btn-modal__icon sa sa-google-spreadsheet"></span>

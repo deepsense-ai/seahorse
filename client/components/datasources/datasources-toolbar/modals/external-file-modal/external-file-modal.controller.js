@@ -3,7 +3,9 @@
 // App
 import DatasourceModal from '../datasource-modal.class.js';
 
+
 const URL_REGEX = /(http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
+
 
 class ExternalFileModalController extends DatasourceModal {
   constructor(

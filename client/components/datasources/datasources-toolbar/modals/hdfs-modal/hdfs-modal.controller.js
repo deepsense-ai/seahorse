@@ -7,6 +7,7 @@ import DatasourceModal from '../datasource-modal.class.js';
 const HDFS_REGEX = /(hdfs):\/\/([\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
 const HDFS_PREFIX = 'hdfs://';
 
+
 class HdfsModalController extends DatasourceModal {
   constructor(
     $scope,
