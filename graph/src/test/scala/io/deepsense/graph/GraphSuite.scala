@@ -244,7 +244,8 @@ class GraphSuite extends FunSuite with Matchers {
     graph.predecessors(node4.id) should
       contain theSameElementsAs Vector(Some(Endpoint(node2.id, 0)), Some(Endpoint(node3.id, 0)))
 
-    graph.successors(node1.id) should contain theSameElementsAs Vector(Set(Endpoint(node2.id, 0), Endpoint(node3.id, 0)))
+    graph.successors(node1.id) should contain theSameElementsAs
+      Vector(Set(Endpoint(node2.id, 0), Endpoint(node3.id, 0)))
     graph.successors(node2.id) should contain theSameElementsAs Vector(Set(Endpoint(node4.id, 0)))
     graph.successors(node3.id) should contain theSameElementsAs Vector(Set(Endpoint(node4.id, 1)))
     graph.successors(node4.id) should contain theSameElementsAs Vector(Set.empty)

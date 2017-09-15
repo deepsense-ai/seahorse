@@ -369,8 +369,11 @@ class ExperimentsApiSpec
       "experiment does not exist" in {
         val randomId = Id(UUID.randomUUID())
         val abortAction = AbortActionWrapper(AbortAction(Some(List(UUID.randomUUID()))))
-        Post(s"/$apiPrefix/$randomId/action", abortAction) ~> addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.NotFound)
+        Post(s"/$apiPrefix/$randomId/action", abortAction) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~>
+          testRoute ~>
+          check {
+            status shouldBe StatusCodes.NotFound
         }
       }
       "experiment belongs to other tenant" in {

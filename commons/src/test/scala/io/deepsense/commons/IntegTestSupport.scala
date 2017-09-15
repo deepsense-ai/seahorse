@@ -50,7 +50,9 @@ trait IntegTestSupport extends IntegrationPatience {
      * [[io.deepsense.commons.rest.RestServiceActor]]
      */
     @Provides
-    def provideApiRouter(apiSet: java.util.Set[RestComponent], arf: ActorRefFactory): RestService = {
+    def provideApiRouter(
+      apiSet: java.util.Set[RestComponent],
+      arf: ActorRefFactory): RestService = {
       new RestService {
         implicit def actorRefFactory: ActorRefFactory = arf
 
