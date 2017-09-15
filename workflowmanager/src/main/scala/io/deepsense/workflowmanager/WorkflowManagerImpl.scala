@@ -71,25 +71,25 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("Update experiment id: {}, experiment: {}", experimentId, experiment)
     if (experiment.graph.containsCycle) {
       Future.failed(new CyclicGraphException())
-    }
-
-    val now = DateTimeConverter.now
-    authorizator.withRole(roleUpdate) { userContext =>
-      val oldExperimentOption = storage.get(userContext.tenantId, experimentId)
-      oldExperimentOption.flatMap {
-        case Some(oldExperiment) =>
-          runningExperiment(experimentId).flatMap {
-            case Some(runningExperiment)
-              if runningExperiment.state.status == Workflow.Status.Running =>
+    } else {
+      val now = DateTimeConverter.now
+      authorizator.withRole(roleUpdate) { userContext =>
+        val oldExperimentOption = storage.get(userContext.tenantId, experimentId)
+        oldExperimentOption.flatMap {
+          case Some(oldExperiment) =>
+            runningExperiment(experimentId).flatMap {
+              case Some(runningExperiment)
+                if runningExperiment.state.status == Workflow.Status.Running =>
                 throw new WorkflowRunningException(experimentId)
-            case _ =>
-              runningExperimentsActor ! Delete(experimentId)
-              val updatedExperiment = oldExperiment
-                .assureOwnedBy(userContext)
-                .updatedWith(experiment, now)
-              storage.save(updatedExperiment).map(_ => updatedExperiment)
-          }
-        case None => throw new WorkflowNotFoundException(experimentId)
+              case _ =>
+                runningExperimentsActor ! Delete(experimentId)
+                val updatedExperiment = oldExperiment
+                  .assureOwnedBy(userContext)
+                  .updatedWith(experiment, now)
+                storage.save(updatedExperiment).map(_ => updatedExperiment)
+            }
+          case None => throw new WorkflowNotFoundException(experimentId)
+        }
       }
     }
   }
@@ -98,13 +98,13 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("Create experiment inputExperiment: {}", inputExperiment)
     if (inputExperiment.graph.containsCycle) {
       Future.failed(new CyclicGraphException())
-    }
-
-    val now = DateTimeConverter.now
-    authorizator.withRole(roleCreate) {
-      userContext => {
-        val experiment = inputExperiment.toWorkflowOf(userContext, now)
-        storage.save(experiment).map(_ => experiment)
+    } else {
+      val now = DateTimeConverter.now
+      authorizator.withRole(roleCreate) {
+        userContext => {
+          val experiment = inputExperiment.toWorkflowOf(userContext, now)
+          storage.save(experiment).map(_ => experiment)
+        }
       }
     }
   }

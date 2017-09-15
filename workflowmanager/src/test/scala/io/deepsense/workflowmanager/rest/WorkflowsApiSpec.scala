@@ -25,7 +25,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperations.{FileToDataFrame, MathematicalOperation}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.graph.{Edge, Graph, Node}
+import io.deepsense.graph.{CyclicGraphException, Edge, Graph, Node}
 import io.deepsense.model.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.model.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.actions.{Action, AbortAction, LaunchAction}
@@ -291,11 +291,11 @@ class WorkflowsApiSpec
         }
       }
     }
-    "return InternalServerError" when {
+    "return BadRequest" when {
       "inputExperiment contains cyclic graph" in {
         Post(s"/$apiPrefix", Envelope(cyclicWorkflow)) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be (StatusCodes.InternalServerError)
+          status should be (StatusCodes.BadRequest)
         }
       }
     }
@@ -593,20 +593,24 @@ class WorkflowsApiSpec
         if (!uc.roles.contains(Role(wantedRole))) {
           throw new NoRoleException(uc, wantedRole)
         } else {
-          val oldExperiment = storedExperiments.find(_.id == experimentId)
-          Future(oldExperiment match {
-            case Some(oe) if oe.tenantId == uc.tenantId => Workflow(
-              oe.id,
-              oe.tenantId,
-              experiment.name,
-              experiment.graph,
-              created,
-              updated,
-              experiment.description)
-            case Some(oe) if oe.tenantId != uc.tenantId =>
-              throw new ResourceAccessDeniedException(uc, oe)
-            case None => throw new WorkflowNotFoundException(experimentId)
-          })
+          if (experiment.graph.containsCycle) {
+            Future.failed(new CyclicGraphException())
+          } else {
+            val oldExperiment = storedExperiments.find(_.id == experimentId)
+            Future(oldExperiment match {
+              case Some(oe) if oe.tenantId == uc.tenantId => Workflow(
+                oe.id,
+                oe.tenantId,
+                experiment.name,
+                experiment.graph,
+                created,
+                updated,
+                experiment.description)
+              case Some(oe) if oe.tenantId != uc.tenantId =>
+                throw new ResourceAccessDeniedException(uc, oe)
+              case None => throw new WorkflowNotFoundException(experimentId)
+            })
+          }
         }
       })
     }
@@ -670,15 +674,19 @@ class WorkflowsApiSpec
         if (!uc.roles.contains(Role(wantedRole))) {
           throw new NoRoleException(uc, wantedRole)
         } else {
-          val experiment = Workflow(
-            Workflow.Id.randomId,
-            uc.tenantId,
-            inputExperiment.name,
-            inputExperiment.graph,
-            created,
-            updated,
-            inputExperiment.description)
-          Future.successful(experiment)
+          if (inputExperiment.graph.containsCycle) {
+            Future.failed(new CyclicGraphException())
+          } else {
+            val experiment = Workflow(
+              Workflow.Id.randomId,
+              uc.tenantId,
+              inputExperiment.name,
+              inputExperiment.graph,
+              created,
+              updated,
+              inputExperiment.description)
+            Future.successful(experiment)
+          }
         }
       })
     }
