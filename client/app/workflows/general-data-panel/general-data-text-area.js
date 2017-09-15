@@ -14,12 +14,8 @@ function AutoTextArea(WorkflowService) {
       scope.$applyAsync(() => {
         autosize.update(textarea);
       });
-
-      scope.saveWorkflow = () => {
-        WorkflowService.saveWorkflow();
-      };
     },
-    template: '<textarea class="o-panel__description form-control" placeholder="Enter description" ng-model="value" ng-blur="saveWorkflow()" rows="1"></textarea>'
+    template: '<textarea class="o-panel__description form-control" placeholder="Enter description" ng-model="value" rows="1"></textarea>'
   };
 }
 

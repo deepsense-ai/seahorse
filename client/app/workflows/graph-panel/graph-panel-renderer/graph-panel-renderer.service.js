@@ -300,8 +300,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
           jsPlumb.detach(info.connection);
         }, 0, false);
-      } else {
-        WorkflowService.saveWorkflow();
       }
     });
 
@@ -312,7 +310,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
           $rootScope.$broadcast(Edge.REMOVE, {
             edge: edge
           });
-          WorkflowService.saveWorkflow();
         }
       }
     });
@@ -323,7 +320,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         $rootScope.$broadcast(Edge.REMOVE, {
           edge: edge
         });
-        WorkflowService.saveWorkflow();
       }
     });
 

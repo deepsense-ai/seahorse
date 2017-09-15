@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations) {
+function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope) {
 
   let internal = {};
 
@@ -31,6 +31,10 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       internal.workflowById[workflow.id] = workflow;
 
       // TODO Traverse over workflow and add all inner workflows to map.
+
+      $rootScope.$watch(() => internal.mainWorkflow.serialize(), () => {
+        this._saveWorkflow()
+      }, true);
 
       return workflow;
     }
@@ -97,7 +101,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       return internal.workflowsData;
     }
 
-    saveWorkflow() {
+    _saveWorkflow() {
       return WorkflowsApiClient.updateWorkflow(internal.mainWorkflow.serialize());
     }
 

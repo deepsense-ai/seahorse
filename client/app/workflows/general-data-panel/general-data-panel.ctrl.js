@@ -2,9 +2,6 @@
 
 /* @ngInject */
 function GeneralDataPanelController($uibModal, $scope, $timeout, WorkflowService) {
-  this.saveWorkflow = () => {
-    WorkflowService.saveWorkflow();
-  };
 
   this.showErrorMessage = () => {
     $uibModal.open({
@@ -21,9 +18,6 @@ function GeneralDataPanelController($uibModal, $scope, $timeout, WorkflowService
 
   this.getVerboseStatus = () => this.state.status.toUpperCase().split('_')[1];
 
-  this.delaySave = function delaySave() {
-    $timeout(this.saveWorkflow, 0, false);
-  };
 }
 
 exports.inject = function(module) {

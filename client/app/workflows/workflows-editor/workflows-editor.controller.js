@@ -185,10 +185,6 @@ class WorkflowsEditorController {
 
   initUnbindableListeners() {
     this.eventListeners = [
-      this.$scope.$on(this.GraphNode.MOVE, () => {
-        this.WorkflowService.saveWorkflow();
-      }),
-
       this.$scope.$on(this.Edge.CREATE, (data, args) => {
         this.workflow.addEdge(args.edge);
       }),
@@ -212,12 +208,6 @@ class WorkflowsEditorController {
           x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
           y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
         });
-
-        this.GraphNodesService.getNodeParameters(node).then(() => this.WorkflowService.saveWorkflow());
-      }),
-
-      this.$scope.$on('AttributesPanel.UPDATED', () => {
-        this.WorkflowService.saveWorkflow();
       }),
 
       this.$scope.$on('StatusBar.HOME_CLICK', () => {
@@ -232,7 +222,6 @@ class WorkflowsEditorController {
         then(() => {
           this.WorkflowService.clearGraph();
           this.GraphPanelRendererService.rerender(this.workflow);
-          this.WorkflowService.saveWorkflow();
         });
       }),
 
@@ -246,7 +235,6 @@ class WorkflowsEditorController {
         this.MultiSelectionService.clearSelection();
         this.unselectNode();
         this.$scope.$apply();
-        this.WorkflowService.saveWorkflow();
       }),
 
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
