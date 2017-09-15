@@ -235,7 +235,19 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
 
         logger.info(s"${completedNodeMessages.length} nodes completed." +
           s" Need all $numberOfNodes nodes completed. Workflow $workflowId")
-        completedNodeMessages.length should be >= numberOfNodes
+
+        if(completedNodeMessages.length > numberOfNodes) {
+          logger.error(
+            s"""FATAL. INVESTIGATE
+              |
+              |List of completed node messages is longer than number of nodes!
+              |
+              |All messages:
+              |${ctx.websocketMessages}
+            """.stripMargin)
+        }
+
+        completedNodeMessages.length shouldEqual numberOfNodes
 
         "All nodes completed".success
       }
