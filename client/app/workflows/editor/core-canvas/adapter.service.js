@@ -44,6 +44,7 @@ class AdapterService {
 
   initialize(container) {
     this.container = container;
+    this.reset();
   }
 
   bindEvents() {
@@ -144,13 +145,13 @@ class AdapterService {
   }
 
   reset() {
-    jsPlumb.setContainer(this.container);
     jsPlumb.deleteEveryEndpoint();
     jsPlumb.unbind('connection');
     jsPlumb.unbind('connectionDetached');
     jsPlumb.unbind('connectionMoved');
     jsPlumb.unbind('connectionDrag');
     jsPlumb.unbind('connectionAborted');
+    jsPlumb.setContainer(this.container);
     this.bindEvents();
   }
 
