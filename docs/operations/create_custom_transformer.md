@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-A `Create Custom Transformer` is an operation used to create a user-defined [Transformer](transformer.html) .
+A `Create Custom Transformer` is an operation used to create a user-defined [Transformer](../classes/transformer.html) .
 
 A Custom transformer can be created by building an internal workflow from
 [operations](../operations.html). The internal workflow must have two following nodes:
