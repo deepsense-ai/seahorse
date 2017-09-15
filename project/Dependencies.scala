@@ -12,6 +12,7 @@ object Version {
   val nsscalaTime = "1.8.0"
   val scala = "2.11.6"
   val scalatest = "3.0.0-SNAP4"
+  val scoverage = "1.0.4"
   val slick = "3.1.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
@@ -41,6 +42,7 @@ object Library {
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val scalaReflect = "org.scala-lang" % "scala-reflect" % Version.scala
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
+  val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
   val seahorseCommons = seahorse("commons")
   val seahorseDeeplang = seahorse("deeplang")
   val seahorseModels = seahorse("models")
@@ -100,5 +102,5 @@ object Dependencies {
     sprayClient,
     sprayJson,
     sprayRouting
-  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % s"$Test,it")
+  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit).map(_ % s"$Test,it")
 }
