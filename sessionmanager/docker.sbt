@@ -9,11 +9,7 @@ weJar := (assembly in workflowExecutorProject).value
 
 lazy val pythonAndRDeps = taskKey[File]("Generates we_deps.zip file with python and R dependencies")
 pythonAndRDeps := {
-  val weDepsConstsVersion = Version.spark match {
-    case "1.6.1" => "1.6.1"
-    case "2.0.0" | "2.0.1" | "2.0.2" => "2.0.x"
-  }
-  Seq("sessionmanager/prepare-deps.sh", weDepsConstsVersion).!!
+  Seq("sessionmanager/prepare-deps.sh", Version.spark).!!
   target.value / "we-deps.zip"
 }
 pythonAndRDeps := (pythonAndRDeps dependsOn weJar.toTask).value
