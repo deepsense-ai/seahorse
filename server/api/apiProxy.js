@@ -62,6 +62,14 @@ module.exports = function apiProxy(config) {
   });
 
 
+  // TODO: remove after full login implementation
+  proxy.on('proxyReq', (proxyRequest, request, response, options) => {
+    if (config.token) {
+      proxyRequest.setHeader('X-Auth-Token', config.token);
+    }
+  });
+
+
   var urlPathParts,
       resource;
 

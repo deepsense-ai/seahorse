@@ -11,7 +11,7 @@
  */
 module.exports = {
   'url': 'http://localhost:8000/apimock',
-  'version': 'V1',
+  'version': 'v1',
   'resources': {
     'login': {
     },

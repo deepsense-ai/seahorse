@@ -43,16 +43,24 @@ gulp.task('clean', function() {
 });
 
 gulp.task('nodemon', function (callback) {
-  var called = false;
-  return nodemon({
+  var called = false,
+      config = {
         execMap: {
           'js': 'node --harmony'
-      },
-      script: server.path + server.app,
-      verbose: true,
-      watch: [server.path]
-    })
-    .on('start', function () {
+        },
+        script: server.path + server.app,
+        verbose: true,
+        watch: [server.path]
+      };
+
+
+  // TODO: remove after full login implementation
+  if (gutil.env.host && gutil.env.token) {
+    config.args = ['--host', gutil.env.host, '--token', gutil.env.token];
+  }
+
+
+  return nodemon(config).on('start', function () {
       if (!called) {
         callback();
       }
