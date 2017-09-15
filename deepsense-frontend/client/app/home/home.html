@@ -42,19 +42,19 @@
           <i ng-class="home.getClass('description')"></i>
         </span>
         </td>
-        <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('updated')">
+        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('updated')">
           <b>Updated</b>
         <span>
           <i ng-class="home.getClass('updated')"></i>
         </span>
         </td>
-        <td class="col-md-3 color-gray sortable" ng-click="home.sortBy('created')">
+        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('created')">
           <b>Created</b>
         <span>
           <i ng-class="home.getClass('created')"></i>
         </span>
         </td>
-        <td class="col-md-3 color-gray">
+        <td class="col-md-2 color-gray">
           <b>Actions</b>
         </td>
       </tr>
@@ -92,12 +92,18 @@
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td class="vertical-align">
+        <td class="vertical-align action-icons">
+          <a popover-trigger="mouseenter"
+             popover-placement="left"
+             uib-popover="Clone workflow"
+             ng-click="home.cloneWorkflow(workflow.id)">
+            <span class="fa fa-files-o"></span>
+          </a>
           <a popover-trigger="mouseenter"
              popover-placement="left"
              uib-popover="Delete workflow"
              ng-click="home.deleteWorkflow(workflow)">
-            <span class="glyphicon glyphicon-remove"></span>
+            <span class="fa fa-times"></span>
           </a>
         </td>
       </tr>

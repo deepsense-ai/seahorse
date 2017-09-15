@@ -13,7 +13,6 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
   class WorkflowServiceClass {
 
     constructor() {
-      this._isLoading = true;
       this._workflowsStack = [];
       this._innerWorkflowByNodeId = {};
       // We want to save workflow after all intermediate changes are resolved. Intermediate state might be invalid.
@@ -33,6 +32,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
     }
 
     downloadWorkflows() {
+      this._isLoading = true;
       var deferred = $q.defer();
       WorkflowsApiClient.getAllWorkflows().then((data) => {
         this._workflowsData = data;

@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function ExportModalController(config, version, $uibModalInstance, $stateParams, WorkflowsApiClient, WorkflowService) {
+function ExportModalController(config, version, $uibModalInstance, $stateParams, WorkflowsApiClient) {
   _.assign(this, {
     errorMessage: '',
     warningMessage: '',

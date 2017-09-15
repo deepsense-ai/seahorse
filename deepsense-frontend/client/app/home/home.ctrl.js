@@ -1,7 +1,9 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, config) {
+function Home($rootScope, $uibModal, $state, WorkflowService, NotificationService,
+              WorkflowsApiClient, PageService, ConfirmationModalService, config) {
+
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
@@ -13,6 +15,11 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
       descending: true
     };
 
+    this.downloadWorkflows();
+  };
+
+  this.downloadWorkflows = () => {
+    this.canShowWorkflows = false;
     WorkflowService.downloadWorkflows().then(() => {
       this.workflows = WorkflowService.getAllWorkflows();
       if (this.workflows && this.workflows.length === 0) {
@@ -65,6 +72,19 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
 
   this.goToWorkflowEditor = (workflowId) => {
     $state.go('workflows.editor', {id: workflowId});
+  };
+
+  this.cloneWorkflow = (workflowId) => {
+    WorkflowsApiClient.cloneWorkflow(workflowId).then((response) => {
+      this.downloadWorkflows();
+    }, () => {
+      NotificationService.showWithParams({
+        message: 'There was an error during copying this workflow.',
+        title: 'Workflow copy',
+        settings: {timeOut: 10000},
+        notificationType: 'error'
+      });
+    });
   };
 
   this.deleteWorkflow = function(workflow) {

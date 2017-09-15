@@ -5,10 +5,9 @@
       <workflow-editor-status-bar
               workflow-type = "controller.getCurrentWorkflow().workflowType"
               workflow-status = "controller.getCurrentWorkflow().workflowStatus"
-              ng-if="stateData.dataIsLoaded">
+      >
       </workflow-editor-status-bar>
     </div>
   </header>
-  <deepsense-loading-spinner-lg ng-cloak ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
   <div ui-view class="c-dynamic-part"></div>
 </section>
