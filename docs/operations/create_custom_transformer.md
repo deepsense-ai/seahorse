@@ -9,7 +9,7 @@ includeOperationsMenu: true
 
 A `Create Custom Transformer` is an operation used to create a user-defined [Transformer](../classes/transformer.html).
 
-The main purpose of creating a custom Transformer is to transform multiple [DataFrames](../classes/dataframe.html)
+The main purpose of creating a custom `Transformer` is to transform multiple [DataFrames](../classes/dataframe.html)
 using the same logic.
 
 A Custom transformer can be created by building an internal workflow from

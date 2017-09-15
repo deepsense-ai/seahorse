@@ -18,7 +18,7 @@ The function that will be executed has to:
 
 * return transformed value that conforms with selected target type (parameter).
 
-The function is applied to the input DataFrame in parallel for better performance.
+The function is applied to the input `DataFrame` in parallel for better performance.
 
 #### Example Python code:
 {% highlight python %}
