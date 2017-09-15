@@ -30,7 +30,7 @@ you should use [Dockerized Seahorse](#dockerized-seahorse-standalone).
 If you want to install Seahorse on
 <img src="../img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X or
 <img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows
-you should use [Seahorse as Vagrant Image](#seahorse-standalone-as-a-vagrant-image).
+you should use [Seahorse as a Vagrant Image](#seahorse-standalone-as-a-vagrant-image).
 
 ## Dockerized Seahorse Standalone
 
@@ -178,16 +178,4 @@ on [Data Scienctist Workbench](dswb.html) or [Trusted Analytics Platform](tap.ht
 To learn more about scaling up and using Seahorse in production,
 see the [Enterprise](enterprise.html) page.
 
-<div class="contact-block">
-	<div class="contact-info">
-		<p>Learn more about Seahorse enterprise-scale deployments
-		- includes customized set-up, integration and 24/7 support.</p>
-	</div>
-	<div class="contact-block-container">
-		<div class="contact-block-button">
-			<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
-			Contact us for details!
-			</a>
-		</div>
-	</div>
-</div>
+{% include contact_box.html %}

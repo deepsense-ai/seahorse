@@ -357,6 +357,31 @@ p.footer-text span {
   margin: 20px;
 }
 
+.flex-adaptable-row-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.flex-adaptable-column-container {
+  width: 100%;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+@media (max-width: 600px) {
+  .flex-adaptable-row-container {
+    flex-direction: column;
+  }
+
+  .flex-adaptable-column-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
+
 .contact-block {
   padding: 40px 30px;
   margin: 45px 0;

@@ -94,17 +94,4 @@ Above limitations refer only to Seahorse on Trusted Analytics Platform.
 To learn more about scaling up and using Seahorse in production,
 see the [Enterprise](enterprise.html) page.
 
-
-<div class="contact-block">
-	<div class="contact-info">
-		<p>Learn more about Seahorse enterprise-scale deployments
-		- includes customized set-up, integration and 24/7 support.</p>
-	</div>
-	<div class="contact-block-container">
-		<div class="contact-block-button">
-			<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
-			Contact us for details!
-			</a>
-		</div>
-	</div>
-</div>
+{% include contact_box.html %}
