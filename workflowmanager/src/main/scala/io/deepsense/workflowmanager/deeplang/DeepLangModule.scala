@@ -26,7 +26,7 @@ class DeepLangModule extends AbstractModule {
   @Singleton
   @Provides
   def provideInferContext(dOperableCatalog: DOperableCatalog): InferContext = {
-    new InferContext(dOperableCatalog)
+    InferContext.forTypeInference(dOperableCatalog)
   }
 
   @Singleton

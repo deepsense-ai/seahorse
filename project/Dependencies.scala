@@ -20,7 +20,7 @@ object Version {
   val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
-  val seahorse      = "0.5.0"
+  val seahorse      = "0.6.0-SNAPSHOT"
 }
 
 object Library {

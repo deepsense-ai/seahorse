@@ -54,7 +54,7 @@ class WorkflowsApiSpec
   )
 
   val dOperableCatalog = new DOperableCatalog
-  val inferContext: InferContext = new InferContext(dOperableCatalog, true)
+  val inferContext: InferContext = InferContext.forTypeInference(dOperableCatalog)
   override val graphReader: GraphReader = new GraphReader(catalog)
   val workflowAName = "Very nice workflow&*workflow"
   val (workflowA, knowledgeA) = newWorkflowAndKnowledge()
