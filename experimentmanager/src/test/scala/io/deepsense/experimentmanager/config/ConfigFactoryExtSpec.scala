@@ -19,6 +19,7 @@ class ConfigFactoryExtSpec extends FunSpec with Matchers {
     // System property should override value in config file
     System.setProperty("overridden.by.system.prop", "system")
 
+    ConfigFactory.invalidateCaches()
     val config = ConfigFactory.load
 
     it ("Value in test.conf should override value in application.conf") {
