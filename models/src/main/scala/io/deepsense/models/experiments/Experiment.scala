@@ -68,6 +68,8 @@ case class Experiment(
   def markRunning: Experiment = copy(graph = graph.enqueueNodes, state = State.running)
   def markCompleted: Experiment = copy(state = State.completed)
   def markFailed(message: String): Experiment = copy(state = State.failed(message))
+
+  def isRunning: Boolean = state.status == Experiment.Status.Running
 }
 
 object Experiment {

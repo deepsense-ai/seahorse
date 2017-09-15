@@ -141,22 +141,22 @@ class RunningExperimentsActor @Inject() (
   }
 
   private def refreshStatuses(): Unit =
-    experiments.values.foreach { case (experiment, client) =>
-      val shouldUpdate = updateTasks.get(experiment.id).map(_.isCompleted).getOrElse(true)
-      if (shouldUpdate) {
-        val state = Future { getExecutionState(experiment, client) }
-        state.onFailure { case reason =>
-          log.error(
-            reason,
-            "getExecutionState of experiment ${experiment.id} failed! (Is it already started?)")
-        }
-        val stateWithTimeout = Future firstCompletedOf Seq(state,
-          after(refreshTimeout, context.system.scheduler)(Future.failed {
-            new TimeoutException(s"getExecutionState of ${experiment.id} has timed out!")
-          }))
-        updateTasks.put(experiment.id, stateWithTimeout)
-        stateWithTimeout.map(experiment => ExperimentStatusUpdated(experiment)).pipeTo(self)
+    experiments.values.filter {
+      case (experiment, client) => experiment.isRunning &&
+        updateTasks.get(experiment.id).map(_.isCompleted).getOrElse(true)
+    }.foreach { case (experiment, client) =>
+      val state = Future { getExecutionState(experiment, client) }
+      state.onFailure { case reason =>
+        log.error(
+          reason,
+          "getExecutionState of experiment ${experiment.id} failed! (Is it already started?)")
       }
+      val stateWithTimeout = Future firstCompletedOf Seq(state,
+        after(refreshTimeout, context.system.scheduler)(Future.failed {
+          new TimeoutException(s"getExecutionState of ${experiment.id} has timed out!")
+        }))
+      updateTasks.put(experiment.id, stateWithTimeout)
+      stateWithTimeout.map(experiment => ExperimentStatusUpdated(experiment)).pipeTo(self)
     }
 
   private object InternalMessages {
