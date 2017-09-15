@@ -65,7 +65,7 @@ class DOperationDescriptorJsonProtocolSpec
 
     val operationDescriptor = DOperationDescriptor(
       DOperation.Id.randomId,
-      "operation name", "0.1.0",
+      "operation name",
       "operation description",
       category,
       parameters,
@@ -77,7 +77,6 @@ class DOperationDescriptorJsonProtocolSpec
     val expectedJson = JsObject(
       "id" -> JsString(operationDescriptor.id.toString),
       "name" -> JsString(operationDescriptor.name),
-      "version" -> JsString(operationDescriptor.version),
       "category" -> JsString(category.id.toString),
       "description" -> JsString(operationDescriptor.description),
       "deterministic" -> JsBoolean(false),

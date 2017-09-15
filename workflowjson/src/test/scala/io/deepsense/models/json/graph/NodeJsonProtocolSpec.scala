@@ -31,13 +31,11 @@ class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
   "Node with Operation transformed to Json" should {
     val expectedOperationId = DOperation.Id.randomId
     val expectedOperationName = "expectedName"
-    val expectedOperationVersion = "0.1.0"
     val dOperation = mock[DOperation]
     val parametersSchema = mock[ParametersSchema]
 
     when(dOperation.id).thenReturn(expectedOperationId)
     when(dOperation.name).thenReturn(expectedOperationName)
-    when(dOperation.version).thenReturn(expectedOperationVersion)
     when(dOperation.parameters).thenReturn(parametersSchema)
 
     val node = mock[Node]
@@ -54,7 +52,6 @@ class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
       val operationField = nodeJson.fields("operation").asJsObject
       operationField.fields("id").convertTo[DOperation.Id] shouldBe expectedOperationId
       operationField.fields("name").convertTo[String] shouldBe expectedOperationName
-      operationField.fields("version").convertTo[String] shouldBe expectedOperationVersion
     }
 
     "have 'parameters' field created by internal .toJson method" in {

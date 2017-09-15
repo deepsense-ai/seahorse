@@ -81,12 +81,11 @@ object DOperationsCatalog {
       val operationInstance = DOperationsCatalog.createDOperation(constructor)
       val id = operationInstance.id
       val name = operationInstance.name
-      val version = operationInstance.version
       val parameters = operationInstance.parameters
       val inPortTypes = operationInstance.inPortTypes.map(_.tpe)
       val outPortTypes = operationInstance.outPortTypes.map(_.tpe)
       val operationDescriptor = DOperationDescriptor(
-          id, name, version, description, category, parameters, inPortTypes, outPortTypes)
+          id, name, description, category, parameters, inPortTypes, outPortTypes)
 
       operations += id -> operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)

@@ -29,9 +29,9 @@ class GraphReaderSpec extends GraphJsonTestSupport {
   val catalog = mock[DOperationsCatalog]
   implicit val graphReader = new GraphReader(catalog)
 
-  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "DataSet1", "1.1.0")
-  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "DoSomething", "1.2.0")
-  val operation3 = mockOperation(1, 0, DOperation.Id.randomId, "SaveDataSet", "1.3.0")
+  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "DataSet1")
+  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "DoSomething")
+  val operation3 = mockOperation(1, 0, DOperation.Id.randomId, "SaveDataSet")
 
   when(catalog.createDOperation(operation1.id)).thenReturn(operation1)
   when(catalog.createDOperation(operation2.id)).thenReturn(operation2)
@@ -50,8 +50,7 @@ class GraphReaderSpec extends GraphJsonTestSupport {
       "id" -> node1Id.toString.toJson,
       "operation" -> JsObject(
         "id" -> operation1.id.toString.toJson,
-        "name" -> operation1.name.toString.toJson,
-        "version" -> operation1.version.toString.toJson
+        "name" -> operation1.name.toString.toJson
       ),
       "parameters" -> parameters1
     ),
@@ -59,8 +58,7 @@ class GraphReaderSpec extends GraphJsonTestSupport {
       "id" -> node2Id.toString.toJson,
       "operation" -> JsObject(
         "id" -> operation2.id.toString.toJson,
-        "name" -> operation2.name.toString.toJson,
-        "version" -> operation2.version.toString.toJson
+        "name" -> operation2.name.toString.toJson
       ),
       "parameters" -> parameters2
     ),
@@ -68,8 +66,7 @@ class GraphReaderSpec extends GraphJsonTestSupport {
       "id" -> node3Id.toString.toJson,
       "operation" -> JsObject(
         "id" -> operation3.id.toString.toJson,
-        "name" -> operation3.name.toString.toJson,
-        "version" -> operation3.version.toString.toJson
+        "name" -> operation3.name.toString.toJson
       ),
       "parameters" -> parameters3
     )

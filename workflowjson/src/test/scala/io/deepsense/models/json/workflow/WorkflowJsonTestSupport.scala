@@ -80,7 +80,6 @@ trait WorkflowJsonTestSupport
     val dOperation = mock[DOperation]
     when(dOperation.id).thenReturn(id)
     when(dOperation.name).thenReturn(name)
-    when(dOperation.version).thenReturn(version)
     when(dOperation.inArity).thenReturn(inArity)
     when(dOperation.outArity).thenReturn(outArity)
     when(dOperation.inPortTypes).thenReturn(

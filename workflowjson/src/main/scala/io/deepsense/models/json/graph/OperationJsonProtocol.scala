@@ -25,7 +25,6 @@ import spray.json._
 object OperationJsonProtocol extends IdJsonProtocol {
 
   val Operation = "operation"
-  val Version = "version"
   val Name = "name"
   val Id = "id"
   val Parameters = "parameters"
@@ -39,8 +38,7 @@ object OperationJsonProtocol extends IdJsonProtocol {
       JsObject(
         Operation -> JsObject(
           Id -> operation.id.toJson,
-          Name -> operation.name.toJson,
-          Version -> operation.version.toJson),
+          Name -> operation.name.toJson),
         Parameters -> operation.parameters.valueToJson)
     }
   }

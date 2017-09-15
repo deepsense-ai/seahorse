@@ -25,10 +25,10 @@ class GraphWriterSpec extends GraphJsonTestSupport {
 
   import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
 
-  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", "version1")
-  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", "version2")
-  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3", "version3")
-  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4", "version4")
+  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1")
+  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2")
+  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3")
+  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4")
 
   val node1 = Node(Node.Id.randomId, operation1)
   val node2 = Node(Node.Id.randomId, operation2)

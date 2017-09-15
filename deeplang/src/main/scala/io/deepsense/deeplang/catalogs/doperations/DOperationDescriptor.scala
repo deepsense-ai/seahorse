@@ -27,7 +27,6 @@ import io.deepsense.deeplang.{DOperation, TypeUtils}
 case class DOperationDescriptor(
     id: DOperation.Id,
     name: String,
-    version: String,
     description: String,
     category: DOperationCategory,
     parameters: ParametersSchema,
