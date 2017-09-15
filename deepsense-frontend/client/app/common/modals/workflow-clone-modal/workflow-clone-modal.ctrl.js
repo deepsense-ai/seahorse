@@ -3,7 +3,6 @@
 /* @ngInject */
 function WorkflowCloneModalCtrl($uibModalInstance, originalWorkflow) {
 
-  this.originalWorkflow = originalWorkflow;
   this.workflowCopy = angular.copy(originalWorkflow);
   this.workflowCopy.name = 'Copy of: "' + this.workflowCopy.name + '"';
 

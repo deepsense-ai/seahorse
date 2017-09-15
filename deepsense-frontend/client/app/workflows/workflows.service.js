@@ -24,14 +24,8 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
         }
       }, 200);
 
-      $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
-        let workflow = this._innerWorkflowByNodeId[data.nodeId];
-        this._workflowsStack.push(workflow);
-      });
-
-      $rootScope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
-        this._workflowsStack.pop();
-      });
+      // All rootScope listeners must go to initRootWorkflow method.
+      // Otherwise those would get lost upon cloning workflow.
     }
 
     initRootWorkflow(workflowData) {
@@ -67,6 +61,15 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
           const workflow = this.getRootWorkflow();
           SessionManagerApi.deleteSessionById(workflow.id);
         });
+      });
+
+      $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
+        let workflow = this._innerWorkflowByNodeId[data.nodeId];
+        this._workflowsStack.push(workflow);
+      });
+
+      $rootScope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
+        this._workflowsStack.pop();
       });
 
       this._watchForNewCustomTransformers(workflow, workflow);
