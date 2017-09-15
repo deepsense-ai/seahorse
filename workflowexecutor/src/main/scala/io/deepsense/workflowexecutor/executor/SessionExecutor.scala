@@ -109,7 +109,7 @@ case class SessionExecutor(
       MQCommunication.Topic.allWorkflowsSubscriptionTopic,
       workflowsSubscriberActor)
 
-    val ready: Ready = Ready(None, ReadyContent(ReadyMessageType.Info, "SessionExecutor ready."))
+    val ready: Ready = Ready(None, ReadyContent(ReadyMessageType.Info, "Seahorse is ready"))
     seahorsePublisher ! ready
     notebookPublisher ! ready
 
