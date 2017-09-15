@@ -58,6 +58,13 @@ function forwardRequest(req, res) {
   if(req.user && req.user.accessToken) {
     req.headers['Authorization'] = 'bearer ' + req.user.accessToken;
   }
+
+  if(req.user && req.user.user_id) {
+    req.headers['X-Seahorse-UserId'] = req.user.user_id;
+  } else {
+    req.removeHeader('X-Seahorse-UserId');
+  }
+
   req.headers['x-forwarded-host'] = req.headers['host'];
   req.clearTimeout();
 
