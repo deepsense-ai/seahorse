@@ -37,7 +37,8 @@ trait DOperationDescriptorJsonProtocol
     override def write(obj: DOperationDescriptor): JsValue = {
       JsObject(
         "id" -> obj.id.toJson,
-        "name" -> obj.name.toJson)
+        "name" -> obj.name.toJson,
+        "description" -> obj.description.toJson)
     }
 
     override def read(json: JsValue): DOperationDescriptor = {

@@ -37,6 +37,7 @@ class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with
     val operationDescriptor = mock[DOperationDescriptor]
     when(operationDescriptor.id) thenReturn DOperation.Id.randomId
     when(operationDescriptor.name) thenReturn "mock operation descriptor name"
+    when(operationDescriptor.description) thenReturn "mock operator descriptor description"
 
     val node = DOperationCategoryNode(
       None,
@@ -54,7 +55,8 @@ class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with
       "items" -> JsArray(
         JsObject(
           "id" -> JsString(operationDescriptor.id.toString),
-          "name" -> JsString(operationDescriptor.name)
+          "name" -> JsString(operationDescriptor.name),
+          "description" -> JsString(operationDescriptor.description)
         )
       )
     )
