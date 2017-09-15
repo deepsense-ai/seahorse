@@ -22,15 +22,15 @@ case class WorkflowInfo(
   id: Workflow.Id,
   name: String,
   description: String,
+  hidden: Boolean,
   created: DateTime,
   updated: DateTime,
   ownerId: String,
   ownerName: String)
 
 object WorkflowInfo {
-  def empty(): WorkflowInfo =
-    WorkflowInfo(Workflow.Id.randomId, "", "", DateTime.now, DateTime.now, "", "")
+  def empty(): WorkflowInfo = forId(Workflow.Id.randomId)
 
   def forId(id: Workflow.Id): WorkflowInfo =
-    WorkflowInfo(id, "", "", DateTime.now, DateTime.now, "", "")
+    WorkflowInfo(id, "", "", hidden = false, DateTime.now, DateTime.now, "", "")
 }

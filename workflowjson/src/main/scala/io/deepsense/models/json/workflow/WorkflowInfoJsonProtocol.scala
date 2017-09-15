@@ -26,5 +26,5 @@ trait WorkflowInfoJsonProtocol
   with IdJsonProtocol
   with DateTimeJsonProtocol {
 
-  implicit val workflowInfoFormat = jsonFormat7(WorkflowInfo.apply)
+  implicit val workflowInfoFormat = jsonFormat8(WorkflowInfo.apply)
 }
