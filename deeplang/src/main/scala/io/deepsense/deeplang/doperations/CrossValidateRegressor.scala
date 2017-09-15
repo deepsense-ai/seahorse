@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import java.util.UUID
+
 import scala.collection.immutable.ListMap
 import scala.collection.mutable
 
@@ -137,8 +139,8 @@ case class CrossValidateRegressor()
         // Train model on trainingDataFrame
         val trained: Scorable = trainable.train(context)(parametersForTrainable)(trainingDataFrame)
 
-        // Score model on trainingDataFrame
-        val scored = trained.score(context)(None)(testDataFrame)
+        // Score model on trainingDataFrame (with random column name for predictions)
+        val scored = trained.score(context)(UUID.randomUUID().toString)(testDataFrame)
 
         // Prepare prediction and observations RDDs to facilitate computation of metrics
         val predictions = scored.sparkDataFrame.rdd.map(r => r.getDouble(r.size - 1))

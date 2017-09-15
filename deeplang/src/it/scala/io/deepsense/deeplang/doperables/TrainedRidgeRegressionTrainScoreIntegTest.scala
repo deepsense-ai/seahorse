@@ -86,7 +86,7 @@ class TrainedRidgeRegressionTrainScoreIntegTest
   }
 
   def scoreDataFrame(trained: TrainedRidgeRegression, dataFrame: DataFrame): DataFrame = {
-    ScoreRegressor().execute(executionContext)(Vector(trained, dataFrame))
+    ScoreRegressor("prediction").execute(executionContext)(Vector(trained, dataFrame))
       .head
       .asInstanceOf[DataFrame]
   }

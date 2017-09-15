@@ -61,6 +61,24 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     assert(parametersSchema.getColumnSelectorParameter("x") eq param)
   }
 
+  test("Getting SingleColumnCreator from schema") {
+    val param = mock[SingleColumnCreatorParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getSingleColumnCreatorParameter("x") eq param)
+  }
+
+  test("Getting MultipleColumnCreator from schema") {
+    val param = mock[MultipleColumnCreatorParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getMultipleColumnCreatorParameter("x") eq param)
+  }
+
+  test("Getting PrefixBasedColumnCreator from schema") {
+    val param = mock[PrefixBasedColumnCreatorParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getPrefixBasedColumnCreatorParameter("x") eq param)
+  }
+
   test("Getting wrong type of parameter should throw an exception") {
     val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
     val param = mock[StringParameter]
@@ -139,6 +157,30 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val parameter = MultipleColumnSelection(Vector(values))
     param.value = Some(parameter)
     assert(schema.getColumnSelection("x").get == parameter)
+  }
+
+  test("Getting SingleColumnCreator value from schema") {
+    val param = SingleColumnCreatorParameter("description", None, true)
+    val schema = ParametersSchema("x" -> param)
+    val value = "abc"
+    param.value = Some(value)
+    assert(schema.getNewColumnName("x") == param.value)
+  }
+
+  test("Getting MultipleColumnCreator value from schema") {
+    val param = MultipleColumnCreatorParameter("description", None, true)
+    val schema = ParametersSchema("x" -> param)
+    val value = Vector("a", "b", "c")
+    param.value = Some(value)
+    assert(schema.getNewColumnNames("x") == param.value)
+  }
+
+  test("Getting PrefixBasedColumnCreator value from schema") {
+    val param = PrefixBasedColumnCreatorParameter("description", None, true)
+    val schema = ParametersSchema("x" -> param)
+    val value = "abc"
+    param.value = Some(value)
+    assert(schema.getNewColumnsPrefix("x") == param.value)
   }
 
   test("Getting wrong type of parameter value should throw an exception") {

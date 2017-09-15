@@ -19,7 +19,7 @@ trait RegressionScoring {
       dataFrame: DataFrame,
       featureColumns: Seq[String],
       targetColumn: String,
-      labelColumnSuffix: String,
+      predictionColumnName: String,
       featuresTransformer: RDD[Vector] => RDD[Vector],
       model: GeneralizedLinearModel): DataFrame = {
 
@@ -28,9 +28,8 @@ trait RegressionScoring {
     transformedVectors.cache()
     val predictionsRDD: RDD[Double] = model.predict(transformedVectors)
 
-    val uniqueLabelColumnName = dataFrame.uniqueColumnName(targetColumn, labelColumnSuffix)
     val outputSchema = StructType(dataFrame.sparkDataFrame.schema.fields :+
-      StructField(uniqueLabelColumnName, DoubleType))
+      StructField(predictionColumnName, DoubleType))
 
     val outputRDD = dataFrame.sparkDataFrame.rdd.zip(predictionsRDD).map({
       case (row, prediction) => Row.fromSeq(row.toSeq :+ prediction)})

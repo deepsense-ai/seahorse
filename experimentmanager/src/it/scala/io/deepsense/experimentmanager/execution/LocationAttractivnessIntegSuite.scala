@@ -85,7 +85,8 @@ class LocationAttractivnessIntegSuite extends ExperimentExecutionSpec {
   val targetColumnName = "rating"
   val predictionColumnName = "rating_prediction"
   val trainRegressor = TrainRegressor(SelectImportantFeatures.ColumnsNames.toSet, targetColumnName)
-  val scoreRegressor = ScoreRegressor()
+  val scoreRegressor = ScoreRegressor(predictionColumnName)
+
   val evaluateRegressor = EvaluateRegression(
     targetColumnName = targetColumnName,
     predictionColumnName = predictionColumnName)

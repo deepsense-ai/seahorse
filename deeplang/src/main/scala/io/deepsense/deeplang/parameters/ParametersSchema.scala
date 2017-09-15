@@ -98,6 +98,18 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
     get[ColumnSelectorParameter](name)
   }
 
+  def getSingleColumnCreatorParameter(name: String): SingleColumnCreatorParameter = {
+    get[SingleColumnCreatorParameter](name)
+  }
+
+  def getMultipleColumnCreatorParameter(name: String): MultipleColumnCreatorParameter = {
+    get[MultipleColumnCreatorParameter](name)
+  }
+
+  def getPrefixBasedColumnCreatorParameter(name: String): PrefixBasedColumnCreatorParameter = {
+    get[PrefixBasedColumnCreatorParameter](name)
+  }
+
   def getBoolean(name: String): Option[Boolean] = getBooleanParameter(name).value
 
   def getString(name: String): Option[String] = getStringParameter(name).value
@@ -120,6 +132,18 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
 
   def getColumnSelection(name: String): Option[MultipleColumnSelection] = {
     getColumnSelectorParameter(name).value
+  }
+
+  def getNewColumnName(name: String): Option[String] = {
+    getSingleColumnCreatorParameter(name).value
+  }
+
+  def getNewColumnNames(name: String): Option[Vector[String]] = {
+    getMultipleColumnCreatorParameter(name).value
+  }
+
+  def getNewColumnsPrefix(name: String): Option[String] = {
+    getPrefixBasedColumnCreatorParameter(name).value
   }
 
   def ++(other: ParametersSchema): ParametersSchema = {

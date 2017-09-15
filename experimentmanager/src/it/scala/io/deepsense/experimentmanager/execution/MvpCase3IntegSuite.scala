@@ -89,37 +89,29 @@ class MvpCase3IntegSuite extends ExperimentExecutionSpec {
     Edge(Endpoint(scoreRId, 0), Endpoint(evaluateRId, 0))
   )
 
-  // TODO: Use apply
   private def joinOperation: Join = {
-    val operation = new Join
-    val valueParam = operation.parameters.getColumnSelectorParameter(Join.joinColumnsParamKey)
-    valueParam.value = Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("datetime")))))
-    operation
+    Join(
+      Join.joinColumnsParameter(Seq(("datetime", "datetime"))),
+      prefixLeft = None,
+      prefixRight = None)
   }
 
-  // TODO: Use apply
   private def timestampDecomposer: DecomposeDatetime = {
-    val operation = new DecomposeDatetime
-    val columnParam = operation.parameters.getSingleColumnSelectorParameter(
-      DecomposeDatetime.timestampColumnParamKey)
-    columnParam.value = Some(NameSingleColumnSelection("datetime"))
-    val timeUnitsParam = operation.parameters.getMultipleChoiceParameter(
-      DecomposeDatetime.timestampPartsParamKey)
-    timeUnitsParam.value = Some(Seq("year", "month", "day", "hour"))
-    operation
+    DecomposeDatetime(
+      NameSingleColumnSelection("datetime"),
+      Seq("year", "month", "day", "hour"),
+      prefix = None)
   }
 
-  // TODO: Use apply
   private def oneHotEncoder: OneHotEncoder = {
-    val operation = OneHotEncoder()
-    operation.parameters.getColumnSelectorParameter(operation.selectedColumnsKey).value =
-      Some(MultipleColumnSelection(Vector(NameColumnSelection(Set(
+    OneHotEncoder(
+      MultipleColumnSelection(Vector(NameColumnSelection(Set(
         "datetime_year",
         "datetime_month",
         "datetime_day",
-        "datetime_hour")))))
-    operation.parameters.getBooleanParameter(operation.withRedundantKey).value = Some(true)
-    operation
+        "datetime_hour")))),
+      true,
+      None)
   }
 
   // TODO: Use apply

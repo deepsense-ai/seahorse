@@ -31,14 +31,16 @@ case class TrainedRidgeRegression(
 
   override def url: Option[String] = physicalPath
 
-  override val score = new DMethod1To1[Unit, DataFrame, DataFrame] {
+  override val score = new DMethod1To1[String, DataFrame, DataFrame] {
 
-    override def apply(context: ExecutionContext)(p: Unit)(dataframe: DataFrame): DataFrame =
+    override def apply(context: ExecutionContext)
+        (predictionColumnName: String)
+        (dataframe: DataFrame): DataFrame =
       scoreRegression(context)(
         dataframe,
         featureColumns.get,
         targetColumn.get,
-        TrainedRidgeRegression.labelColumnSuffix,
+        predictionColumnName,
         scaler.get.transform,
         model.get)
   }
@@ -62,8 +64,6 @@ case class TrainedRidgeRegression(
 }
 
 object TrainedRidgeRegression {
-  val labelColumnSuffix = "prediction"
-
   def loadFromHdfs(context: ExecutionContext)(path: String): TrainedRidgeRegression = {
     val params: TrainedRidgeRegressionDescriptor =
       context.hdfsClient.readFileAsObject[TrainedRidgeRegressionDescriptor](path)

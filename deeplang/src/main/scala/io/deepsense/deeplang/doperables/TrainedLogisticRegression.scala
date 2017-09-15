@@ -28,15 +28,17 @@ case class TrainedLogisticRegression(
 
   override def url: Option[String] = physicalPath
 
-  override val score = new DMethod1To1[Unit, DataFrame, DataFrame] {
+  override val score = new DMethod1To1[String, DataFrame, DataFrame] {
 
-    override def apply(context: ExecutionContext)(p: Unit)(dataFrame: DataFrame): DataFrame = {
+    override def apply(context: ExecutionContext)
+        (predictionColumnName: String)
+        (dataFrame: DataFrame): DataFrame = {
       model.get.clearThreshold()
       scoreRegression(context)(
         dataFrame,
         featureColumns.get,
         targetColumn.get,
-        TrainedLogisticRegression.labelColumnSuffix,
+        predictionColumnName,
         identity,
         model.get)
     }
@@ -59,8 +61,6 @@ case class TrainedLogisticRegression(
 }
 
 object TrainedLogisticRegression {
-  val labelColumnSuffix = "prediction"
-
   def loadFromHdfs(context: ExecutionContext)(path: String): TrainedLogisticRegression = {
     val params: TrainedLogisticRegressionDescriptor =
       context.hdfsClient.readFileAsObject[TrainedLogisticRegressionDescriptor](path)

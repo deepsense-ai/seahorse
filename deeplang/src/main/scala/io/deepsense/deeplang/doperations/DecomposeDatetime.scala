@@ -10,8 +10,8 @@ import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.DoubleType
 
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.doperations.DecomposeDatetime.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame}
+import io.deepsense.deeplang.doperations.DecomposeDatetime.{timeUnits, timestampParts}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
 
@@ -26,14 +26,19 @@ import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
  */
 case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
 
+  val timestampColumnParam = SingleColumnSelectorParameter(
+    "Timestamp column to decompose", required = true, portIndex = 0)
+
+  val timestampPartsParam = MultipleChoiceParameter(
+    "Parts of the date time to select", None, required = true, timeUnits)
+
+  val timestampPrefixParam = PrefixBasedColumnCreatorParameter(
+    "Common prefix for created column names", None, required = false)
+
   override val parameters = ParametersSchema(
-    timestampColumnParamKey ->
-      SingleColumnSelectorParameter(
-        "Timestamp column to decompose",
-        required = true,
-        portIndex = 0),
-    timestampPartsParamKey ->
-      MultipleChoiceParameter("Parts of the date time to select", None, required = true, timeUnits)
+    "timestamp column" -> timestampColumnParam,
+    "parts" -> timestampPartsParam,
+    "prefix" -> timestampPrefixParam
   )
 
   override val id: DOperation.Id = "42f2eb12-e28b-11e4-8a00-1681e6b88ec1"
@@ -42,22 +47,18 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val decomposedColumnName: String =
-      dataFrame.getColumnName(parameters.getSingleColumnSelection(timestampColumnParamKey).get)
+      dataFrame.getColumnName(timestampColumnParam.value.get)
 
     DataFrame.assertExpectedColumnType(
       dataFrame.sparkDataFrame.schema.fields.filter(_.name == decomposedColumnName).head,
       expectedType = ColumnType.timestamp)
 
-    val firstFreeNamesLevel = dataFrame.getFirstFreeNamesLevel(
-      decomposedColumnName, timestampParts.map(_.name).toSet)
-
-    val selectedParts = parameters.getMultipleChoice(timestampPartsParamKey).get.map(_.label).toSet
+    val selectedParts = timestampPartsParam.selections.get.map(_.label).toSet
 
     val newColumns = for {
       part <- timestampParts
       if selectedParts.contains(part.name)
-    } yield timestampUnitColumn(
-        dataFrame.sparkDataFrame, decomposedColumnName, part, firstFreeNamesLevel)
+    } yield timestampUnitColumn(dataFrame.sparkDataFrame, decomposedColumnName, part)
 
     dataFrame.withColumns(context, newColumns)
   }
@@ -65,11 +66,10 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
   private[this] def timestampUnitColumn(
       sparkDataFrame: sql.DataFrame,
       columnName: String,
-      timestampPart: DecomposeDatetime.TimestampPart,
-      level: Int): Column = {
+      timestampPart: DecomposeDatetime.TimestampPart): Column = {
 
-    val newColumnName = DataFrameColumnsGetter.createColumnName(
-      columnName, timestampPart.name, level)
+    val newColumnName = timestampPrefixParam.value.getOrElse("") + timestampPart.name
+
     (sparkDataFrame(columnName).substr(timestampPart.start, timestampPart.length)
       as newColumnName cast DoubleType)
   }
@@ -78,9 +78,6 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
 object DecomposeDatetime {
 
   private case class TimestampPart(name: String, start: Int, length: Int)
-
-  val timestampColumnParamKey = "timestamp column"
-  val timestampPartsParamKey = "parts"
 
   private val timestampParts = List(
     new TimestampPart("year", 0, 4),
@@ -96,5 +93,15 @@ object DecomposeDatetime {
    */
   private val timeUnits: ListMap[String, ParametersSchema] =
     ListMap(timestampParts.map(_.name -> ParametersSchema()): _*)
+
+  def apply(columnSelection: SingleColumnSelection,
+            selectedParts: Seq[String],
+            prefix: Option[String]): DecomposeDatetime = {
+    val operation = new DecomposeDatetime
+    operation.timestampColumnParam.value = Some(columnSelection)
+    operation.timestampPartsParam.value = Some(selectedParts)
+    operation.timestampPrefixParam.value = prefix
+    operation
+  }
 
 }

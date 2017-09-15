@@ -11,3 +11,11 @@ case class ScoreClassifier() extends Scorer[Classifier with Scorable] {
   override val id: DOperation.Id = "6f9a4e9e-fe1a-11e4-a322-1697f925ec7b"
   override val name = "Score Classifier"
 }
+
+object ScoreClassifier {
+  def apply(targetColumnName: String): ScoreClassifier = {
+    val regressor = new ScoreClassifier
+    regressor.predictionColumnParam.value = Some(targetColumnName)
+    regressor
+  }
+}

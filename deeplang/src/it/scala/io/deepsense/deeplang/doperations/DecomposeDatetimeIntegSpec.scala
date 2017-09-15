@@ -23,7 +23,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
   private[this] val t1 = new DateTime(2015, 3, 30, 15, 25)
 
   "TimestampDecomposer" should {
-    "decompose timestamp column" in {
+    "decompose timestamp column without prefix" in {
       val schema = createSchema
       val t2 = t1.plusDays(1)
       val data = createData(
@@ -32,70 +32,35 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       val expectedData: Seq[Row] = Seq(
         createDecomposedTimestampRow(schema, 0, t1), createDecomposedTimestampRow(schema, 1, t2)
       )
-      shouldDecomposeTimestamp(schema, data, expectedData, expectedColumnsLevel = 0)
+      shouldDecomposeTimestamp(schema, data, expectedData, prefix = None)
+    }
+
+    "decompose timestamp column with prefix" in {
+      val schema = createSchema
+      val prefix = Some(timestampColumnName + "_")
+      val t2 = t1.plusDays(1)
+      val data = createData(
+        List(Some(new Timestamp(t1.getMillis)), Some(new Timestamp(t2.getMillis)))
+      )
+      val expectedData: Seq[Row] = Seq(
+        createDecomposedTimestampRow(schema, 0, t1), createDecomposedTimestampRow(schema, 1, t2)
+      )
+      shouldDecomposeTimestamp(schema, data, expectedData, prefix)
     }
   }
 
   it should {
     "decompose null timestamp column" in {
       val schema = createSchema
-      val data = createData(List(Some(new Timestamp(t1.getMillis)), None))
+      val prefix = None
+      val data = createData(List(Some(new Timestamp(t1.getMillis)), prefix))
       val expectedData: Seq[Row] = Seq(
         createDecomposedTimestampRow(schema, 0, t1),
         new GenericRowWithSchema(Array(1, null, null, null, null, null, null, null),
-          resultSchema(schema, timestampColumnName, 0))
+          resultSchema(schema, prefix))
       )
 
-      shouldDecomposeTimestamp(schema, data, expectedData, expectedColumnsLevel = 0)
-    }
-  }
-
-  it should {
-    "append _1 to generated column names" when {
-      "necessary to avoid names collision" in {
-        val schema = StructType(List(
-          StructField(timestampColumnName, TimestampType),
-          StructField(timestampColumnName + "_seconds", DoubleType)
-        ))
-        val data = sparkContext.parallelize(List(
-          Row(new Timestamp(t1.getMillis), 123)
-        ))
-        val modifiedSchema = resultSchema(schema, timestampColumnName, 1)
-        val expectedData: Seq[Row] = Seq(
-          new GenericRowWithSchema(
-            Array(new Timestamp(t1.getMillis), 123, t1.getYear, t1.getMonthOfYear, t1.getDayOfMonth,
-              t1.getHourOfDay, t1.getMinuteOfHour, t1.getSecondOfMinute), modifiedSchema)
-        )
-
-        shouldDecomposeTimestamp(schema, data, expectedData, expectedColumnsLevel = 1)
-      }
-    }
-  }
-
-  it should {
-    "append _3 to generated column names" when {
-      "necessary to avoid names collision" in {
-        val schema = StructType(List(
-          StructField(timestampColumnName, TimestampType),
-          StructField(timestampColumnName + "_minutes_2", DoubleType),
-          StructField(timestampColumnName + "_hour", DoubleType),
-          StructField(timestampColumnName + "_day_1", DoubleType),
-          StructField(timestampColumnName + "_day_4", DoubleType)
-        ))
-        val data = sparkContext.parallelize(List(
-          Row(new Timestamp(t1.getMillis), 5, 6, 7, 8)
-        ))
-        val modifiedSchema = resultSchema(schema, timestampColumnName, 1)
-        val expectedData: Seq[Row] = Seq(
-          new GenericRowWithSchema(
-            Array(new Timestamp(t1.getMillis), 5, 6, 7, 8,
-              t1.getYear, t1.getMonthOfYear, t1.getDayOfMonth,
-              t1.getHourOfDay, t1.getMinuteOfHour, t1.getSecondOfMinute),
-            modifiedSchema)
-        )
-
-        shouldDecomposeTimestamp(schema, data, expectedData, expectedColumnsLevel = 3)
-      }
+      shouldDecomposeTimestamp(schema, data, expectedData, prefix = None)
     }
   }
 
@@ -103,8 +68,8 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
     "throw an exception" when {
       "column selected by name does not exist" in {
         intercept[ColumnDoesNotExistException] {
-          val operation = timestampDecomposer(
-            NameSingleColumnSelection("nonExistsingColumnName"), Seq("year"))
+          val operation = DecomposeDatetime(
+            NameSingleColumnSelection("nonExistsingColumnName"), Seq("year"), prefix = None)
           val dataFrame = createDataFrame(
             Seq.empty, StructType(List(StructField("id", LongType))))
           executeOperation(executionContext, operation)(dataFrame)
@@ -112,8 +77,8 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       }
       "column selected by index does not exist" in {
         intercept[ColumnDoesNotExistException] {
-          val operation = timestampDecomposer(
-            IndexSingleColumnSelection(1), Seq("year"))
+          val operation = DecomposeDatetime(
+            IndexSingleColumnSelection(1), Seq("year"), prefix = None)
           val dataFrame = createDataFrame(
             Seq.empty, StructType(List(StructField("id", LongType))))
           executeOperation(executionContext, operation)(dataFrame)
@@ -121,8 +86,8 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       }
       "selected column is not timestamp" in {
         intercept[WrongColumnTypeException] {
-          val operation = timestampDecomposer(
-            IndexSingleColumnSelection(0), Seq("year"))
+          val operation = DecomposeDatetime(
+            IndexSingleColumnSelection(0), Seq("year"), prefix = None)
           val dataFrame = createDataFrame(
             Seq.empty, StructType(List(StructField("id", LongType))))
           executeOperation(executionContext, operation)(dataFrame)
@@ -133,15 +98,15 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
   private def shouldDecomposeTimestamp(
       schema: StructType, data: RDD[Row],
       expectedData: Seq[Row],
-      expectedColumnsLevel: Int): Unit = {
+      prefix: Option[String]): Unit = {
     val context = executionContext
-    val operation: DecomposeDatetime = operationWithParamsSet
+    val operation: DecomposeDatetime = operationWithParamsSet(prefix)
     val dataFrame = context.dataFrameBuilder.buildDataFrame(schema, data)
 
     val resultDataFrame: DataFrame = executeOperation(context, operation)(dataFrame)
 
     val expectedSchema: StructType =
-      resultSchema(schema, timestampColumnName, expectedColumnsLevel)
+      resultSchema(schema, prefix)
     assert(expectedSchema == resultDataFrame.sparkDataFrame.schema)
     assert(expectedData.size == resultDataFrame.sparkDataFrame.count())
     val zipped = expectedData zip resultDataFrame.sparkDataFrame.rdd.collect()
@@ -161,16 +126,17 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
   }
 
   private def resultSchema(
-    originalSchema: StructType, timestampColumn: String, level: Int): StructType = {
-    val levelSuffix = if (level > 0) "_" + level else ""
+    originalSchema: StructType, prefixParamValue: Option[String]): StructType = {
+
+    val prefix = prefixParamValue.getOrElse("")
 
     StructType(originalSchema.fields ++ Array(
-      StructField(timestampColumn + "_year" + levelSuffix, DoubleType),
-      StructField(timestampColumn + "_month" + levelSuffix, DoubleType),
-      StructField(timestampColumn + "_day" + levelSuffix, DoubleType),
-      StructField(timestampColumn + "_hour" + levelSuffix, DoubleType),
-      StructField(timestampColumn + "_minutes" + levelSuffix, DoubleType),
-      StructField(timestampColumn + "_seconds" + levelSuffix, DoubleType)
+      StructField(prefix + "year", DoubleType),
+      StructField(prefix + "month", DoubleType),
+      StructField(prefix + "day", DoubleType),
+      StructField(prefix + "hour", DoubleType),
+      StructField(prefix + "minutes", DoubleType),
+      StructField(prefix + "seconds", DoubleType)
     ))
   }
 
@@ -185,22 +151,10 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
     ))
   }
 
-  private def timestampDecomposer(
-      columnSelection: SingleColumnSelection,
-      selectedParts: Seq[String]): DecomposeDatetime = {
-    val operation = new DecomposeDatetime
-    val columnParam = operation.parameters.getSingleColumnSelectorParameter(
-      DecomposeDatetime.timestampColumnParamKey)
-    columnParam.value = Some(columnSelection)
-    val timeUnitsParam = operation.parameters.getMultipleChoiceParameter(
-      DecomposeDatetime.timestampPartsParamKey)
-    timeUnitsParam.value = Some(selectedParts)
-    operation
-  }
-
-  private def operationWithParamsSet: DecomposeDatetime = {
-    timestampDecomposer(
+  private def operationWithParamsSet(prefixParam: Option[String]): DecomposeDatetime = {
+    DecomposeDatetime(
       NameSingleColumnSelection(timestampColumnName),
-      Seq("year", "month", "day", "hour", "minutes", "seconds"))
+      Seq("year", "month", "day", "hour", "minutes", "seconds"),
+      prefixParam)
   }
 }
