@@ -23,7 +23,6 @@ class CodeExecutor(object):
         self.entry_point = entry_point
         self.spark_context = spark_context
         self.spark_session = spark_session
-        self.sql_context = SQLContext(spark_context, spark_session)
 
         self.threads = []
 
@@ -77,16 +76,20 @@ class CodeExecutor(object):
         # This should've been checked before running
         assert self.isValid(custom_operation_code)
 
-        input_data_frame = DataFrame(
+        new_spark_session = self.spark_session.newSession()
+        new_sql_context = SQLContext(self.spark_context, new_spark_session)
+
+        raw_input_data_frame = DataFrame(
             jdf=self.entry_point.retrieveInputDataFrame(workflow_id,
                                                         node_id,
                                                         CodeExecutor.INPUT_PORT_NUMBER),
-            sql_ctx=self.sql_context)
+            sql_ctx=new_sql_context)
+        input_data_frame = new_spark_session.createDataFrame(raw_input_data_frame.rdd)
 
         context = {
             'sc': self.spark_context,
-            'spark': self.spark_session,
-            'sqlContext': self.sql_context
+            'spark': new_spark_session,
+            'sqlContext': new_sql_context
         }
 
         exec custom_operation_code in context

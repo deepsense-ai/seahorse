@@ -44,6 +44,8 @@ class CustomCodeEntryPoint(
 
   def getSparkSession: SparkSession = sparkSession
 
+  def getNewSparkSession: SparkSession = sparkSession.newSession()
+
   def getSparkConf: SparkConf = sparkContext.getConf
 
   private val codeExecutor: AtomicReference[Promise[CustomCodeExecutor]] =

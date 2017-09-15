@@ -23,13 +23,16 @@ assign(".scStartTime", as.integer(Sys.time()), envir = SparkR:::.sparkREnv)
 
 entryPoint <- SparkR:::getJobj(entryPointId)
 
-assign(".sparkRjsc", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
+assign(".sparkRjsc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = SparkR:::.sparkREnv)
 assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
-assign(".sparkRsession", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
+assign(".sparkRsession", SparkR:::callJMethod(entryPoint, "getNewSparkSession"), envir = SparkR:::.sparkREnv)
 assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 
+
+spark <- sparkR.session()
+
 sdf <- SparkR:::callJMethod(entryPoint, "retrieveInputDataFrame", workflowId, nodeId, as.integer(0))
-df <- SparkR:::dataFrame(sdf, isCached = FALSE)
+df <- createDataFrame(SparkR:::toRDD(SparkR:::dataFrame(sdf, isCached = FALSE)))
 
 tryCatch({
   eval(parse(text = code))
