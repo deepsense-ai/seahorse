@@ -7,3 +7,6 @@
 name := "deepsense-deeplang"
 
 libraryDependencies ++= Dependencies.deeplang
+
+Seq(filterSettings: _*)
+CommonSettingsPlugin.setUpFiltersPlugin

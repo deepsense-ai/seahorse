@@ -6,6 +6,7 @@ package io.deepsense.graphexecutor.deployment
 import java.net.URI
 
 import buildinfo.BuildInfo
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.permission.{FsAction, FsPermission}
 import org.apache.hadoop.hdfs.DFSClient
@@ -26,12 +27,10 @@ object DeployOnHdfs {
     println("DeepSense.io deployment on HDFS starts")
 
     val config = new Configuration()
-    config.addResource("conf/hadoop/core-site.xml")
-    config.addResource("conf/hadoop/yarn-site.xml")
-    config.addResource("conf/hadoop/hdfs-site.xml")
-    val dfsClient = new DFSClient(
-      new URI("hdfs://" + Constants.MasterHostname + ":" + Constants.HdfsNameNodePort),
-      config)
+    config.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
+    config.addResource(getClass().getResource("/conf/hadoop/yarn-site.xml"))
+    config.addResource(getClass().getResource("/conf/hadoop/hdfs-site.xml"))
+    val dfsClient = new DFSClient(new URI(getHdfsAddressFromConfig()), config)
     val dsHdfsClient = new DSHdfsClient(dfsClient)
     deployOnHdfs(dsHdfsClient)
 
@@ -76,7 +75,14 @@ object DeployOnHdfs {
     // NOTE: We assume here that uber-jar has been assembled immediately before this task
     dsHdfsClient.copyLocalFile(geUberJarPath, Constants.GraphExecutorLibraryLocation)
     dsHdfsClient.copyLocalFile(
-      "../graphexecutor/src/main/resources/graphexecutor.conf",
+      getClass().getResource("/graphexecutor.conf").getPath,
       Constants.GraphExecutorConfigLocation)
+  }
+
+  private def getHdfsAddressFromConfig(): String = {
+    val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
+    val hdfsHostname = geConfig.getString("hdfs.hostname")
+    val hdfsPort = geConfig.getString("hdfs.port")
+    s"hdfs://$hdfsHostname:$hdfsPort"
   }
 }

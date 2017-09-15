@@ -73,14 +73,4 @@ object Constants {
    * Location of configuration file on cluster HDFS
    */
   val GraphExecutorConfigLocation = DeepSenseIoDeploymentDirectory + "/etc/" + GraphExecutorConfName
-
-  /**
-   * Hostname of cluster master node
-   */
-  val MasterHostname = "ds-dev-env-master"
-
-  /**
-   * HDFS NameNode port
-   */
-  val HdfsNameNodePort = 8020
 }

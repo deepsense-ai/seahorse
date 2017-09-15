@@ -46,7 +46,7 @@ import com.typesafe.config.{Config, ConfigFactory, ConfigValue}
  * Taken from: https://github.com/ehalpern/sandbox (MIT licence)
  * @author Eric Halpern (eric.halpern@gmail.com)
  */
-class ConfigModule extends AbstractModule {
+class ConfigModule(confName: String = "application.conf") extends AbstractModule {
   def configure(): Unit = {
     val config = loadConfig()
     bind(classOf[Config]).toInstance(config)
@@ -54,10 +54,7 @@ class ConfigModule extends AbstractModule {
   }
 
   protected[this] def loadConfig(): Config = {
-    ConfigFactoryExt.enableEnvOverride()
-    ConfigFactory.invalidateCaches()
-    val config = ConfigFactory.load
-    config
+    ConfigFactory.load(confName)
   }
 
   /**

@@ -5,10 +5,8 @@
  */
 package io.deepsense.graphexecutor
 
-import java.io.{BufferedInputStream, BufferedOutputStream, File, FileInputStream}
 import java.net.URI
 
-import buildinfo.BuildInfo
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.permission.{FsAction, FsPermission}
 import org.apache.hadoop.hdfs.DFSClient
@@ -36,12 +34,11 @@ trait HdfsIntegTestSupport
 
   override def beforeAll(): Unit = {
     // TODO: Configuration resource access should follow proper configuration access convention
-    config.addResource("conf/hadoop/core-site.xml")
-    config.addResource("conf/hadoop/yarn-site.xml")
-    config.addResource("conf/hadoop/hdfs-site.xml")
-    cli = Some(new DFSClient(
-      new URI("hdfs://" + Constants.MasterHostname + ":" + Constants.HdfsNameNodePort),
-      config))
+    config.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
+    config.addResource(getClass().getResource("/conf/hadoop/yarn-site.xml"))
+    config.addResource(getClass().getResource("/conf/hadoop/hdfs-site.xml"))
+    import HdfsForIntegTestsProperties._
+    cli = Some(new DFSClient( new URI("hdfs://" + MasterHostname + ":" + HdfsNameNodePort), config))
     dsHdfsClient = Some(new DSHdfsClient(cli.get))
 
     cli.get
@@ -52,9 +49,10 @@ trait HdfsIntegTestSupport
   override def afterAll(): Unit = {
     info("If some tests failed, please:")
     info("1) Make sure that You have Development Environment running on Your machine")
-    info("2) Make sure that You have entry '172.28.128.100 " + Constants.MasterHostname +
-      "' in /etc/hosts")
-    info("3) Make sure that You can establish connection with " + Constants.MasterHostname)
+    info("2) Make sure that You have entry '172.28.128.100 " +
+      HdfsForIntegTestsProperties.MasterHostname + "' in /etc/hosts")
+    info("3) Make sure that You can establish connection with " +
+      HdfsForIntegTestsProperties.MasterHostname)
     info("4) Make sure that You are using Java 'openjdk-7-jdk'")
     cli.map(_.close())
   }

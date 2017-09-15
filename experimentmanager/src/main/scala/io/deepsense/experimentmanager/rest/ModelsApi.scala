@@ -42,7 +42,7 @@ class ModelsApi @Inject()(
       new DFSClient(new URI("hdfs://ds-dev-env-master:8020"), new Configuration()))
     val esFactory = EntityStorageClientFactoryImpl()
     ctx.entityStorageClient =
-      Try(esFactory.create("root-actor-system", "127.0.0.1", 2552, "EntitiesApiActor", 10))
+      Try(esFactory.create("root-actor-system", "172.28.128.1", 2552, "EntitiesApiActor", 10))
         .getOrElse(null)
     ctx
   }

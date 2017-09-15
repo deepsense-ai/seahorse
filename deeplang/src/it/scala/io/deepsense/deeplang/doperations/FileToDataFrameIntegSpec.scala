@@ -11,7 +11,6 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
-import io.deepsense.deeplang.doperations.FileToDataFrame.CSV
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
 

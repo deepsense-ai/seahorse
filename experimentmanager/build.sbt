@@ -15,3 +15,6 @@ unmanagedClasspath in Compile += (baseDirectory.value / "conf")
 Revolver.settings
 
 test in IntegrationTest <<= (test in IntegrationTest) dependsOn (assembly in LocalProject("graphexecutor"))
+
+Seq(filterSettings: _*)
+CommonSettingsPlugin.setUpFiltersPlugin

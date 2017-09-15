@@ -10,7 +10,7 @@
 <configuration>
   <property>
     <name>yarn.resourcemanager.hostname</name>
-    <value>ds-dev-env-master</value>
+    <value>${yarn.resourcemanager.hostname}</value>
   </property>
 
   <property>
@@ -19,7 +19,7 @@
   </property>
   <property>
     <name>yarn.log.server.url</name>
-    <value>http://ds-dev-env-master:19888/jobhistory/logs/</value>
+    <value>${yarn.log.server.url}</value>
     <description>URL for job history server</description>
   </property>
 

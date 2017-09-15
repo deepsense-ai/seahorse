@@ -1,8 +1,9 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  */
+import sbt.Keys._
 import sbt._
-import Keys._
+import sbtfilter.Plugin._
 
 object CommonSettingsPlugin extends AutoPlugin {
   override def trigger = allRequirements
@@ -57,4 +58,16 @@ object CommonSettingsPlugin extends AutoPlugin {
   }
 
   override def projectConfigurations = OurIT +: super.projectConfigurations
+
+  lazy val filtersDirectory =
+    if (System.getProperty("env") != null) System.getProperty("env") else "local"
+  lazy val entityStorageIp =
+    if (System.getProperty("es") != null) System.getProperty("es") else "172.28.128.1"
+  import FilterKeys._
+  lazy val setUpFiltersPlugin = Seq(
+    filterDirectoryName := s"filters/$filtersDirectory",
+    includeFilter in (Compile, filters) ~= { f => f || ("*.props" | "*.conf") },
+    includeFilter in (Compile, filterResources) ~= { f => f || ("*.props" | "*.conf") },
+    extraProps += "entityStorage.hostname" -> entityStorageIp
+  )
 }

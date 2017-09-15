@@ -13,7 +13,7 @@ import scala.collection.mutable
 
 import com.google.inject.name.Names
 import com.google.inject.{Guice, Key}
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.ipc.NettyServer
 import org.apache.avro.ipc.specific.SpecificResponder
@@ -46,7 +46,7 @@ object GraphExecutor extends LazyLogging {
     // Go to /opt/hadoop/logs/userlogs/application_*/container_*/stderr to see progress
     logger.debug("Starting with args: {}", args.mkString("[", ", ", "]"))
     val injector = Guice.createInjector(
-      new ConfigModule,
+      new ConfigModule("graphexecutor.conf"),
       new GraphExecutorModule,
       new GraphExecutorTestModule
     )
@@ -72,10 +72,11 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   with LazyLogging {
 
   implicit val conf: YarnConfiguration = new YarnConfiguration()
+  val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
 
   val dOperableCache = mutable.Map[UUID, DOperable]()
 
-  val entityStorageClient = createEntityStorageClient(entityStorageClientFactory)
+  val entityStorageClient = createEntityStorageClient(entityStorageClientFactory, geConfig)
 
   /** graphGuard is used to prevent concurrent graph field modifications/inconsistent reads */
   val graphGuard = new Object()
@@ -144,9 +145,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       executionContext.entityStorageClient = entityStorageClient
       executionContext.hdfsClient =
         new DSHdfsClient(
-          new DFSClient(
-            new URI(s"hdfs://${Constants.MasterHostname}:${Constants.HdfsNameNodePort}"),
-          new Configuration()))
+          new DFSClient(new URI(getHdfsAddressFromConfig(geConfig)), new Configuration()))
       graphGuard.synchronized {
         executionContext.tenantId = experiment.get.tenantId
       }
@@ -209,6 +208,12 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     }
 
     cleanup(resourceManagerClient, rpcServer, entityStorageClientFactory)
+  }
+
+  private def getHdfsAddressFromConfig(geConfig: Config): String = {
+    val hdfsHostname = geConfig.getString("hdfs.hostname")
+    val hdfsPort = geConfig.getString("hdfs.port")
+    s"hdfs://$hdfsHostname:$hdfsPort"
   }
 
   /**
@@ -304,13 +309,13 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   override def onContainersAllocated(containers: List[Container]): Unit = {}
 
   private def createEntityStorageClient(
-      entityStorageClientFactory: EntityStorageClientFactory) : EntityStorageClient = {
-    val config = ConfigFactory.load(Constants.GraphExecutorConfName)
-    val actorSystemName = config.getString("entityStorage.actorSystemName")
-    val hostName = config.getString("entityStorage.hostname")
-    val port = config.getInt("entityStorage.port")
-    val actorName = config.getString("entityStorage.actorName")
-    val timeoutSeconds = config.getInt("entityStorage.timeoutSeconds")
+      entityStorageClientFactory: EntityStorageClientFactory,
+      geConfig: Config) : EntityStorageClient = {
+    val actorSystemName = geConfig.getString("entityStorage.actorSystemName")
+    val hostName = geConfig.getString("entityStorage.hostname")
+    val port = geConfig.getInt("entityStorage.port")
+    val actorName = geConfig.getString("entityStorage.actorName")
+    val timeoutSeconds = geConfig.getInt("entityStorage.timeoutSeconds")
     logger.debug(
       s"EntityStorageClient($actorSystemName, $hostName, $port, $actorName, $timeoutSeconds)")
     entityStorageClientFactory.create(actorSystemName, hostName, port, actorName, timeoutSeconds)

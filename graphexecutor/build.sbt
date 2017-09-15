@@ -27,4 +27,7 @@ test in assembly := {}
 // Always perform assembly task before it:test
 test in IntegrationTest <<= (test in IntegrationTest) dependsOn assembly
 
+Seq(filterSettings: _*)
+CommonSettingsPlugin.setUpFiltersPlugin
+
 enablePlugins(BuildInfoPlugin)

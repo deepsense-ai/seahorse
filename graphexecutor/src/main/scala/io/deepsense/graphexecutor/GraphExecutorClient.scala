@@ -7,11 +7,11 @@ package io.deepsense.graphexecutor
 
 import java.io._
 import java.nio.ByteBuffer
-import java.util.Collections
 
 import scala.collection.JavaConverters._
 import scala.util.Try
 
+import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.AvroRuntimeException
 import org.apache.avro.ipc.NettyTransceiver
@@ -22,6 +22,7 @@ import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.Records
+
 import io.deepsense.graph.Graph
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.Utils
@@ -167,10 +168,10 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     implicit val conf = new YarnConfiguration()
     // TODO: Configuration resource access should follow proper configuration access convention
     // or should be changed to simple configuration string access following proper convention
-    conf.addResource("conf/hadoop/core-site.xml")
+    conf.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
     // TODO: Configuration resource access should follow proper configuration access convention
     // or should be changed to simple configuration string access following proper convention
-    conf.addResource("conf/hadoop/yarn-site.xml")
+    conf.addResource(getClass().getResource("/conf/hadoop/yarn-site.xml"))
 
     yarnClient = Some(YarnClient.createYarnClient())
     yarnClient.get.init(conf)
@@ -182,15 +183,13 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     amContainer.setCommands(List(
       // TODO: Move spark-master string to configuration file
       "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
-        " --master spark://" + Constants.MasterHostname + ":7077  --executor-memory 512m " +
+        " --master spark://" + getHdfsHostnameFromConfig() + ":7077  --executor-memory 512m " +
         s" ./graphexecutor.jar $esFactoryName " + Utils.logRedirection
     ).asJava)
 
     val appMasterJar = Utils.getConfiguredLocalResource(new Path(geUberJarLocation))
-    val applicationConf = Utils.getConfiguredLocalResource(new Path(applicationConfLocation))
     amContainer.setLocalResources(Map(
-      "graphexecutor.jar" -> appMasterJar,
-      "application.conf" -> applicationConf
+      "graphexecutor.jar" -> appMasterJar
     ).asJava)
 
     // Setup env to get all yarn and hadoop classes in classpath
@@ -224,6 +223,11 @@ class GraphExecutorClient extends Closeable with LazyLogging {
         logger.error("Exception thrown at submitting application", e)
         throw e
     }
+  }
+
+  private def getHdfsHostnameFromConfig(): String = {
+    val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
+    geConfig.getString("hdfs.hostname")
   }
 
   /**
