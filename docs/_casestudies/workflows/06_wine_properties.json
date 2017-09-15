@@ -164,7 +164,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv",
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/winequality-red.csv",
             "format": {
               "CSV": {
                 "separator": {

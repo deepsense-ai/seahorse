@@ -6,8 +6,7 @@ description: Wine Properties
 ---
 ## Basic Information
 
-**Dataset**: <a target="_blank" href="http://archive.ics.uci.edu/ml/datasets/Wine+Quality">Wine Quality Data Set</a>,
-<a target="_blank" href="http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv">winequality-red.csv</a>.
+**Dataset**: <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/winequality-red.csv">winequality-red.csv</a>.
 
 **Dataset size**: 1,599 rows; 12 columns (11 numerical columns, 1 integer column).
 
