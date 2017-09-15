@@ -120,6 +120,10 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
       CategoricalMetadata(dataFrame).isCategorical(column2) shouldBe false
       CategoricalMetadata(dataFrame).isCategorical(column3) shouldBe false
     }
+
+    "always create nullable columns" in {
+      runTest(s"1.0", s"$column3", Seq(1.0, 1.0, 1.0, 1.0, 1.0))
+    }
   }
 
   def runTest(formula: String, columnName: String, expectedValues: Seq[Any]) : Unit = {
@@ -152,9 +156,13 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
   def validateSchema(schema: StructType) = {
     schema.fieldNames shouldBe Array(column0, column1, column2, column3)
     schema.fields(0).dataType shouldBe StringType
+    schema.fields(0) shouldBe 'nullable
     schema.fields(1).dataType shouldBe DoubleType
+    schema.fields(1) shouldBe 'nullable
     schema.fields(2).dataType shouldBe DoubleType
+    schema.fields(3) shouldBe 'nullable
     schema.fields(3).dataType shouldBe DoubleType
+    schema.fields(3) shouldBe 'nullable
   }
 
   /**

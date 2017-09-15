@@ -22,6 +22,7 @@ import io.deepsense.deeplang.doperations.exceptions.{DuplicatedColumnsException,
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
+import org.apache.spark.sql.types.StructType
 
 case class MathematicalTransformation(
     formula: String, columnName: String) extends Transformation {
@@ -32,21 +33,25 @@ case class MathematicalTransformation(
 
   override val transform = new DMethod1To1[Unit, DataFrame, DataFrame] {
     override def apply(context: ExecutionContext)(p: Unit)(dataFrame: DataFrame): DataFrame = {
-      val transformedSparkDataFrame = try {
-        dataFrame.sparkDataFrame.selectExpr("*", s"${formula} AS `${columnName}`")
-      } catch {
+      val (transformedSparkDataFrame, schema) = try {
+        val transformedSparkDataFrame =
+          dataFrame.sparkDataFrame.selectExpr("*", s"$formula AS `$columnName`")
+        val schema = StructType(transformedSparkDataFrame.schema.map { _.copy(nullable = true) })
+        (transformedSparkDataFrame, schema)
+      }
+      catch {
         case e: Exception =>
           throw new MathematicalTransformationExecutionException(
             formula, columnName, Some(e))
       }
 
       val columns = transformedSparkDataFrame.columns
-      if (columns.distinct.size != columns.size) {
+      if (columns.distinct.length != columns.length) {
         throw new MathematicalTransformationExecutionException(
           formula, columnName, Some(DuplicatedColumnsException(List(columnName))))
       }
 
-      context.dataFrameBuilder.buildDataFrame(transformedSparkDataFrame)
+      context.dataFrameBuilder.buildDataFrame(schema, transformedSparkDataFrame.rdd, Seq())
     }
 
     override def inferFull(
