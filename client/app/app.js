@@ -2,9 +2,10 @@
 
 var angular = require('angular');
 var browser = require('detect-browser');
+var unsupported = require('./unsupported.js');
 
 if (browser.name === 'chrome') {
-  var lab = angular.module('ds.lab', [
+  let lab = angular.module('ds.lab', [
     'ui.router',
     'ui.bootstrap',
     'ngSanitize',
@@ -28,11 +29,12 @@ if (browser.name === 'chrome') {
     require('./errors/errors.module.js')
     .name
   ]);
+
   lab.constant('additionalControls', false);
-  require('./app.config.js')
-    .inject(lab);
-  require('./app.run.js')
-    .inject(lab);
+
+  require('./app.config.js').inject(lab);
+  require('./app.run.js').inject(lab);
 } else {
-  alert('Error: Unsupported browser.\nDetected browser: ' + _.capitalize(browser.name) + '\n' + 'Please use Chrome.');
+  let lab = angular.module('ds.lab', ['ui.router']);
+  unsupported.inject(lab);
 }
