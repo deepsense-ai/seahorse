@@ -6,8 +6,7 @@ package io.deepsense.sessionmanager.service.actors
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
-
-import akka.actor.{Props, ActorRef, ActorSystem}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
@@ -17,14 +16,15 @@ import org.mockito.{Matchers => matchers}
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
-
 import io.deepsense.commons.models.Id
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore.{Event, InvalidWorkflowId, SessionExists}
-import io.deepsense.sessionmanager.service._
-import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{GetRequest, CreateRequest, KillRequest, ListRequest}
+import io.deepsense.sessionmanager.service.{_}
+import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{CreateRequest, GetRequest, KillRequest, ListRequest}
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
 import io.deepsense.sessionmanager.service.sessionspawner.SessionSpawner
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 
 class SessionServiceActorSpec(_system: ActorSystem)
   extends TestKit(_system)
@@ -45,6 +45,9 @@ class SessionServiceActorSpec(_system: ActorSystem)
   }
 
   implicit val timeout: Timeout = 5.seconds
+
+  val cluster = ClusterDetails("yarn", "localhost", Some(1), Some(1), Some(1), Some(1), Some(""))
+
 
   // TODO: Currently sessionId == workflowId
   val existingSessionId, existingWorkflowId = Id.randomId
@@ -90,15 +93,20 @@ class SessionServiceActorSpec(_system: ActorSystem)
             val status = mock[Status.Value]
             when(statusInferencer.statusFromEvent(matchers.eq(event), any()))
               .thenReturn(status)
-
             val session = sendGetRequest(p, existingSessionId)
+
             eventually {
               verify(statusInferencer, times(1))
                 .statusFromEvent(same(event), anyObject())
             }
-            whenReady(session) { _ shouldBe Some(Session(existingSessionId, status)) }
+            whenReady(session) { s =>
+              s should matchPattern {
+                case Some(Session(existingSessionId, status, _)) =>
+              }
+            }
         }
       }
+
       "the session does not exist" should {
         val eventStore = mock[EventStore]
         when(eventStore.getLastEvent(notExistingSessionId)).thenReturn(Future.successful(None))
@@ -112,41 +120,42 @@ class SessionServiceActorSpec(_system: ActorSystem)
     "received a CreateRequest" when {
       "the session exists" should {
         val eventStore = mock[EventStore]
-        when(eventStore.started(existingSessionId))
+        when(eventStore.started(existingSessionId, cluster))
           .thenReturn(Future.successful(Left(SessionExists())))
         "return it's Id" in
           fixture(eventStore) { p =>
-            whenReady(sendCreateRequest(p, existingSessionId, Id.randomId.toString)) {
+            whenReady(sendCreateRequest(p, existingSessionId, Id.randomId.toString, cluster)) {
               _ shouldBe existingSessionId
             }
           }
       }
       "the session does not exist" should {
+
         def eventStore: EventStore = {
           val m = mock[EventStore]
-          when(m.started(notExistingSessionId)).thenReturn(Future.successful(Right(())))
+          when(m.started(notExistingSessionId, cluster)).thenReturn(Future.successful(Right(())))
           m
         }
 
         def sessionSpawner: SessionSpawner = {
           val m = mock[SessionSpawner]
-          when(m.createSession(matchers.eq(notExistingSessionId), any()))
+          when(m.createSession(matchers.eq(notExistingSessionId), any(), any()))
             .thenReturn(Future.successful(()))
           m
         }
 
         "use session spawner to create a session" in fixture(eventStore, sessionSpawner) { p =>
           val userId = Id.randomId.toString
-          sendCreateRequest(p, notExistingSessionId, userId)
+          sendCreateRequest(p, notExistingSessionId, userId, cluster)
           eventually {
-            verify(p.sessionSpawner, times(1)).createSession(notExistingSessionId, userId)
+            verify(p.sessionSpawner, times(1)).createSession(notExistingSessionId, userId, cluster)
           }
         }
 
         "put 'Created' event to EventStore" in fixture(eventStore, sessionSpawner) { p =>
-          sendCreateRequest(p, notExistingSessionId, Id.randomId.toString)
+          sendCreateRequest(p, notExistingSessionId, Id.randomId.toString, cluster)
           eventually {
-            verify(p.eventStore, times(1)).started(notExistingSessionId)
+            verify(p.eventStore, times(1)).started(notExistingSessionId, cluster)
           }
         }
       }
@@ -176,6 +185,7 @@ class SessionServiceActorSpec(_system: ActorSystem)
         Id.randomId -> mock[Event]
       )
       val eventStore = mock[EventStore]
+
       when(eventStore.getLastEvents).thenReturn(Future.successful(events))
       val statusInferencer = mock[StatusInferencer]
       when(statusInferencer.statusFromEvent(any(), any()))
@@ -206,10 +216,17 @@ class SessionServiceActorSpec(_system: ActorSystem)
       .mapTo[Option[Session]]
   }
 
-  private def sendCreateRequest(p: TestParams, workflowId: Id, userId: String): Future[Id] =
-    (p.sessionServiceActor ? CreateRequest(workflowId, userId)).mapTo[Id]
 
-  private def fixture[T](eventStore: EventStore)(test: (TestParams) => T): T =
+  private def sendCreateRequest(
+      p: TestParams,
+      workflowId: Id,
+      userId: String,
+      cluster: ClusterDetails): Future[Id] =
+    (p.sessionServiceActor ? CreateRequest(workflowId, userId, cluster)).mapTo[Id]
+
+
+  private def fixture[T](eventStore: EventStore)
+    (test: (TestParams) => T): T =
     fixture(eventStore, mock[StatusInferencer], mock[SessionSpawner])(test)
 
   private def fixture[T](

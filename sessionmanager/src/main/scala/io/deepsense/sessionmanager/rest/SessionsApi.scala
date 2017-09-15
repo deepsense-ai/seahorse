@@ -65,7 +65,10 @@ class SessionsApi @Inject()(
               pathEndOrSingleSlash {
                 post {
                   entity(as[CreateSession]) { request =>
-                    val session = sessionService.createSession(request.workflowId, userId)
+                    val session = sessionService.createSession(
+                      request.workflowId,
+                      userId,
+                      request.cluster)
                     val enveloped = session.map(Envelope(_))
                     complete(enveloped)
                   }

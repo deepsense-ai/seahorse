@@ -8,9 +8,11 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.sessionmanager.rest.ClusterDetailsJsonProtocol._
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.{Session, Status}
+
 
 trait SessionsJsonProtocol
   extends DefaultJsonProtocol
@@ -31,9 +33,9 @@ trait SessionsJsonProtocol
     override def write(obj: Status.Value): JsValue = JsString(obj.toString)
   }
 
-  implicit val sessionFormat = jsonFormat2(Session.apply)
+  implicit val sessionFormat = jsonFormat3(Session.apply)
 
-  implicit val createSessionFormat = jsonFormat1(CreateSession)
+  implicit val createSessionFormat = jsonFormat2(CreateSession)
 
   implicit val listSessionsResponseFormat = new RootJsonFormat[ListSessionsResponse] {
     override def write(obj: ListSessionsResponse): JsValue = {

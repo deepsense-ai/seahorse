@@ -6,10 +6,9 @@ package io.deepsense.sessionmanager.service.eventstore
 
 import scala.collection.mutable
 import scala.concurrent.Future
-
 import org.joda.time.{DateTime, DateTimeZone}
-
 import io.deepsense.commons.models.Id
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore
 import io.deepsense.sessionmanager.service.EventStore.{HeartbeatReceived, InvalidWorkflowId, Started, _}
 
@@ -32,16 +31,19 @@ class InMemoryEventStore extends EventStore {
       val previousEvent = events.get(workflowId)
       previousEvent match {
         case Some(event) =>
-          events.put(workflowId, HeartbeatReceived(workflowId, utcNow))
+          events.put(workflowId, HeartbeatReceived(workflowId, utcNow, event.cluster))
           Right(Unit)
         case None =>
           Left(InvalidWorkflowId())
       }
     }
 
-  override def started(workflowId: Id): Future[Either[SessionExists, Unit]] = Future.successful {
+  override def started(
+      workflowId: Id,
+      clusterDetails: ClusterDetails)
+      : Future[Either[SessionExists, Unit]] = Future.successful {
     def createSession: Started = {
-      val startedEvent = Started(workflowId, utcNow)
+      val startedEvent = Started(workflowId, utcNow, clusterDetails)
       events.put(workflowId, startedEvent)
       startedEvent
     }

@@ -6,9 +6,9 @@ package io.deepsense.sessionmanager.service.eventstore
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
-
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore
 import io.deepsense.sessionmanager.service.EventStore._
 
@@ -67,8 +67,9 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
       "there was a Started event" should {
         def fixture: Fixture[Either[SessionExists, Unit]] = {
           val store = eventStore()
+          val cluster = createClusterDetails()
           val (_, lastStarted) = lastEvents(store)
-          recordStartedAndGetLastEvent(store, lastStarted, startedId) _
+          recordStartedAndGetLastEvent(store, lastStarted, startedId, cluster) _
         }
 
         "not record the event" in {
@@ -82,8 +83,9 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
       "there was a Heartbeat event" should {
         def fixture: Fixture[Either[SessionExists, Unit]] = {
           val store = eventStore()
+          val cluster = createClusterDetails()
           val (lastHeartbeat, _) = lastEvents(store)
-          recordStartedAndGetLastEvent(store, lastHeartbeat, heartbeatId) _
+          recordStartedAndGetLastEvent(store, lastHeartbeat, heartbeatId, cluster) _
         }
         "record the event" in {
           testHeartbeatRecorded(fixture)
@@ -95,11 +97,13 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
 
       "there was no event" should {
         val someId = Id.randomId
+        val cluster = createClusterDetails()
         def fixture: Fixture[Either[SessionExists, Unit]] =
           recordStartedAndGetLastEvent(
             eventStoreNoEvents(),
             Future.successful(None),
-            someId) _
+            someId,
+            cluster) _
         "record the event" in {
           fixture {
             case (_, _, updatedEvent) =>
@@ -140,9 +144,10 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
   protected def eventStoreNoEvents(): EventStore
   private def eventStore(): EventStore = {
     val store = eventStoreNoEvents()
+    val cluster = createClusterDetails()
     val eventuallySavedEvents = for {
-      _ <- store.started(startedId)
-      _ <- store.started(heartbeatId)
+      _ <- store.started(startedId, cluster)
+      _ <- store.started(heartbeatId, cluster)
       _ <- store.heartbeat(heartbeatId)
     } yield store
 
@@ -165,10 +170,11 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
   private def recordStartedAndGetLastEvent(
     store: EventStore,
     previousEvent: Future[Option[Event]],
-    workflowId: Id)(
+    workflowId: Id,
+    clusterDetails: ClusterDetails)(
     tests: (Option[Event], Either[SessionExists, Unit], Option[Event]) => Any): Unit = {
     whenReady(previousEvent) { previousEvent =>
-      whenReady(store.started(workflowId)) { startedResult =>
+      whenReady(store.started(workflowId, clusterDetails)) { startedResult =>
         whenReady(store.getLastEvent(workflowId)) {
           updatedEvent =>
             tests(previousEvent, startedResult, updatedEvent)
@@ -193,6 +199,10 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
         }
       }
     }
+  }
+
+  private def createClusterDetails(): ClusterDetails = {
+    ClusterDetails("yarn", "localhost", Some(1), Some(1), Some(1), Some(1), Some(""))
   }
 
   private type Fixture[T] =

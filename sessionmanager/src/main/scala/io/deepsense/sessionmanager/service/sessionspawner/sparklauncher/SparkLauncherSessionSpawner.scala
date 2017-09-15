@@ -5,13 +5,12 @@
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher
 
 import scala.concurrent.{Future, Promise}
-
 import akka.actor.ActorSystem
 import com.google.inject.Inject
-import org.apache.spark.launcher.{SparkAppHandle, SparkLauncher}
-
+import org.apache.spark.launcher.{SparkAppHandle, SparkLauncher, SparkSubmitOptionParser}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.{SessionSpawner, SessionSpawnerException}
 
 class SparkLauncherSessionSpawner @Inject()(
@@ -21,15 +20,20 @@ class SparkLauncherSessionSpawner @Inject()(
 
   import scala.collection.JavaConversions._
 
-  override def createSession(workflowId: Id, userId: String): Future[Unit] = {
-    logger.info(s"Creating session for workflow $workflowId")
+  override def createSession(workflowId: Id, userId: String,
+    clusterDetails: ClusterDetails): Future[Unit] = {
+
+    logger.info(s"Creating session for workflow: $workflowId")
+    logger.info(s"Cluster Details: $clusterDetails")
 
     val listener = new AppHandleListener()
 
-    new SparkLauncher()
+    val master = if (clusterDetails.clusterType == "yarn") "yarn" else clusterDetails.uri
+
+    val launcher = new SparkLauncher(env(clusterDetails.clusterType, clusterDetails.uri))
       .setVerbose(true)
       .setMainClass(config.className)
-      .setMaster("spark://sessionmanager:7077")
+      .setMaster(master)
       .setDeployMode("cluster")
       .setAppResource(config.weJarPath)
       .setAppName("SessionExecutor")
@@ -41,10 +45,37 @@ class SparkLauncherSessionSpawner @Inject()(
       .setConf("spark.driver.extraJavaOptions",
         "-XX:MaxPermSize=1024m -XX:PermSize=256m -Dfile.encoding=UTF8")
       .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonBinary)
-      .startApplication(listener)
+
+    clusterDetails.executorMemory.foreach { executorMemory =>
+      launcher.addAppArgs("--executor-memory", executorMemory.toString)
+    }
+    clusterDetails.numExecutors.foreach { numExecutors =>
+      launcher.addAppArgs("--num-executors", numExecutors.toString)
+    }
+    clusterDetails.executorCores.foreach { executorCores =>
+      launcher.addAppArgs("--executor-cores", executorCores.toString)
+    }
+    clusterDetails.totalExecutorCores.foreach { totalExecutorCores =>
+      launcher.addAppArgs("--total-executor-cores", totalExecutorCores.toString)
+    }
+
+    launcher.startApplication(listener)
 
     listener.executorStartedFuture
   }
+
+  private def env(clusterType: String, uri: String): Map[String, String] = {
+    if (clusterType == "yarn") {
+      Map(
+      "HADOOP_CONF_DIR" -> uri,
+      "SPARK_YARN_MODE" -> "true",
+      "HADOOP_USER_NAME" -> "hdfs"
+      )
+    } else {
+      Map()
+    }
+  }
+
 
   private def args(workflowId: Id, userId: String) = Seq(
     "--interactive-mode",
@@ -87,5 +118,4 @@ class SparkLauncherSessionSpawner @Inject()(
       }
     }
   }
-
 }

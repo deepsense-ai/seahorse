@@ -5,10 +5,9 @@
 package io.deepsense.sessionmanager.service
 
 import scala.concurrent.Future
-
 import org.joda.time.DateTime
-
 import io.deepsense.commons.models.Id
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore._
 
 trait EventStore {
@@ -41,7 +40,7 @@ trait EventStore {
     * @return If there is an event recorded for the workflow (meaning that a session
     *         for the workflow exists), then it returns Left(SessionExists()).
     */
-  def started(workflowId: Id): Future[Either[SessionExists, Unit]]
+  def started(workflowId: Id, clusterDetails: ClusterDetails): Future[Either[SessionExists, Unit]]
 
   /**
     * Removes events for the specified workflow from the store.
@@ -58,8 +57,11 @@ object EventStore {
   sealed trait Event {
     def workflowId: Id
     def happenedAt: DateTime
+    def cluster: ClusterDetails
   }
 
-  case class Started(workflowId: Id, happenedAt: DateTime) extends Event
-  case class HeartbeatReceived(workflowId: Id, happenedAt: DateTime) extends Event
+  case class Started(workflowId: Id, happenedAt: DateTime, cluster: ClusterDetails)
+      extends Event
+  case class HeartbeatReceived(workflowId: Id, happenedAt: DateTime, cluster: ClusterDetails)
+      extends Event
 }

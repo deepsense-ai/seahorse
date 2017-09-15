@@ -20,6 +20,7 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service._
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 
 class SessionsApiSpec
   extends StandardSpec
@@ -29,6 +30,7 @@ class SessionsApiSpec
     with IdJsonProtocol
     with SessionsJsonProtocol {
   val apiPrefix: String = "sessions"
+  val cluster = ClusterDetails("yarn", "localhost", Some(1), Some(1), Some(1), Some(1), Some(""))
 
   def testRoute(
       service: SessionService,
@@ -53,9 +55,9 @@ class SessionsApiSpec
       val status2 = Status.Error
       val status3 = Status.Running
       val sessions = List(
-        Session(workflowId1, status1),
-        Session(workflowId2, status2),
-        Session(workflowId3, status3)
+        Session(workflowId1, status1, cluster),
+        Session(workflowId2, status2, cluster),
+        Session(workflowId3, status3, cluster)
       )
 
       val service = mock[SessionService]
@@ -93,7 +95,7 @@ class SessionsApiSpec
         val workflowId: Id = Id.randomId
 
         val sessionStatus: Status.Value = Status.Error
-        val s = Session(workflowId, sessionStatus)
+        val s = Session(workflowId, sessionStatus, cluster)
         val service = mock[SessionService]
         when(service.getSession(workflowId)).thenReturn(Future.successful(Some(s)))
 
@@ -135,10 +137,12 @@ class SessionsApiSpec
       val workflowId: Id = Id.randomId
       val s = workflowId
       val service = mock[SessionService]
-      when(service.createSession(workflowId, userId)).thenReturn(Future.successful(s))
 
-      Post(s"/$apiPrefix", CreateSession(workflowId))
+      when(service.createSession(workflowId, userId, cluster)).thenReturn(Future.successful(s))
+
+      Post(s"/$apiPrefix", CreateSession(workflowId, cluster))
         .withUserId(userId) ~> testRoute(service) ~> check {
+
 
         status shouldBe StatusCodes.OK
         val returnedSessionId = responseAs[Envelope[Id]].content
@@ -147,7 +151,7 @@ class SessionsApiSpec
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Post(s"/$apiPrefix", CreateSession(Id.randomId))
+        Post(s"/$apiPrefix", CreateSession(Id.randomId, cluster))
           .withUserId(userId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
@@ -156,7 +160,7 @@ class SessionsApiSpec
     }
     "return 400 Bad Request" when {
       "X-Seahorse-UserId is not present" in {
-        Post(s"/$apiPrefix", CreateSession(Id.randomId)) ~>
+        Post(s"/$apiPrefix", CreateSession(Id.randomId, cluster)) ~>
           testRoute(mock[SessionService]) ~> check {
           status shouldBe StatusCodes.BadRequest
         }

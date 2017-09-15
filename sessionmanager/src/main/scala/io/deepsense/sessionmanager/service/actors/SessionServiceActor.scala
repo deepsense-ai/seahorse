@@ -5,14 +5,13 @@
 package io.deepsense.sessionmanager.service.actors
 
 import scala.concurrent.Future
-
 import akka.actor.Actor
 import akka.pattern.pipe
 import com.google.inject.Inject
 import org.joda.time.DateTime
-
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore.Event
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor._
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
@@ -43,8 +42,8 @@ class SessionServiceActor @Inject()(
         handleKill(id) pipeTo sender()
       case ListRequest() =>
         handleList() pipeTo sender()
-      case CreateRequest(id, userId) =>
-        handleCreate(id, userId) pipeTo sender()
+      case CreateRequest(id, userId, cluster) =>
+        handleCreate(id, userId, cluster) pipeTo sender()
     }
   }
 
@@ -69,7 +68,7 @@ class SessionServiceActor @Inject()(
   private def eventToSession(workflowId: Id, event: Event): Session = {
     val status = statusInferencer.statusFromEvent(event, DateTime.now)
     logger.info(s"Session '$workflowId' is '$status'")
-    Session(workflowId, status)
+    Session(workflowId, status, event.cluster)
   }
 
   private def handleList(): Future[Seq[Session]] = {
@@ -78,14 +77,14 @@ class SessionServiceActor @Inject()(
     }.toSeq)
   }
 
-  private def handleCreate(id: Id, userId: String): Future[Id] = {
-    eventStore.started(id).flatMap {
+  private def handleCreate(id: Id, userId: String, cluster: ClusterDetails): Future[Id] = {
+    eventStore.started(id, cluster).flatMap {
       case Left(_) =>
         logger.info(s"Session '$id' already exists!")
         Future.successful(id)
       case Right(_) =>
         logger.info(s"Session '$id' does not exist. Creating!")
-        sessionSpawner.createSession(id, userId).map(_ => id)
+        sessionSpawner.createSession(id, userId, cluster).map(_ => id)
     }
   }
 
@@ -100,5 +99,5 @@ object SessionServiceActor {
   case class GetRequest(id: Id) extends Request
   case class KillRequest(id: Id) extends Request
   case class ListRequest() extends Request
-  case class CreateRequest(workflowId: Id, userId: String) extends Request
+  case class CreateRequest(workflowId: Id, userId: String, cluster: ClusterDetails) extends Request
 }
