@@ -15,7 +15,7 @@ Detailed description of operations can be found [here](deeplang_overview.html#op
 List of all currently supported operations:
 
 * Input/Output
-  * [Notebook](operations/notebook.html)
+  * [Python Notebook](operations/python_notebook.html)
   * [Read DataFrame](operations/read_dataframe.html)
   * [Read Transformer](operations/read_transformer.html)
   * [Write DataFrame](operations/write_dataframe.html)

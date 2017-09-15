@@ -300,16 +300,16 @@ better than in the previous example.
 </div>
 
 
-### Example 3 - Analyze the Data Using a Notebook
+### Example 3 - Analyze the Data Using a Python Notebook
 
-The goal of this exercise is to show how to use an embedded [Notebook](operations/notebook.html)
+The goal of this exercise is to show how to use an embedded [Python Notebook](operations/python_notebook.html)
 to interactively analyze data.
 
 #### Create a New Workflow
 
 <p style="text-align:center; float:right" >
     <img class="img-responsive" style="padding: 1em;" src="./img/examples_workflow3.png" />
-    <em>Analyze the Data Using a Notebook</em>
+    <em>Analyze the Data Using a Python Notebook</em>
 </p>
 
 
@@ -346,13 +346,13 @@ def transform(dataframe):
 
 This snippet of code uses a user-defined SQL function that utilizes Python’s json library in order to parse our `Certificates` column.
 
-* Use a [Notebook](operations/notebook.html) to interactively analyze data:
-  * Drag a `Notebook` operation from the **Operation Catalogue** onto your canvas.
-  * Connect operations as presented in the <em>Analyze the Data Using a Notebook</em> picture.
+* Use a [Python Notebook](operations/python_notebook.html) to interactively analyze data:
+  * Drag a `Python Notebook` operation from the **Operation Catalogue** onto your canvas.
+  * Connect operations as presented in the <em>Analyze the Data Using a Python Notebook</em> picture.
 
-#### Execute and Edit the Notebook
+#### Execute and Edit the Python Notebook
 
-* Select the created `Notebook` node.
+* Select the created `Python Notebook` node.
 * Press **RUN** button from the top menu.
 * Click **Open notebook** in the right panel. A notebook window will be shown, where you can write
   Python code snippets, execute them and see the execution results.
@@ -360,7 +360,7 @@ This snippet of code uses a user-defined SQL function that utilizes Python’s j
 ##### Use the Spark Context
 {:.no_toc}
 
-The Spark Context is available in the `Notebook` as a global variable `sc`.
+The Spark Context is available in the `Python Notebook` as a global variable `sc`.
 
 <table>
 <tr>
@@ -438,7 +438,7 @@ sqlContext.sql("SELECT FCE FROM notebook_df").toPandas().sample(5)
 ##### Perform Operations on the Input DataFrame
 {:.no_toc}
 
-You can access the `DataFrame` passed to the `Notebook` node on the first input port by calling the
+You can access the `DataFrame` passed to the `Python Notebook` node on the first input port by calling the
 `dataframe()` function.
 
 <table>
