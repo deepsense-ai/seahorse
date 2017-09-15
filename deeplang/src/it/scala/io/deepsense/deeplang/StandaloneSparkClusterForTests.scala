@@ -20,11 +20,11 @@ import java.net.{Inet4Address, NetworkInterface}
 import java.util.UUID
 
 import scala.sys.process.Process
-
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.time.SpanSugar._
 
+import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
@@ -91,7 +91,7 @@ object StandaloneSparkClusterForTests {
       .setMaster(s"spark://$sparkMasterAddress")
       .setAppName("TestApp")
       .setJars(Seq(
-        s"./deeplang/target/scala-$majorScalaVersion/deepsense-seahorse-deeplang-assembly-1.4.0-RC1-SNAPSHOT.jar"
+        s"./deeplang/target/scala-$majorScalaVersion/deepsense-seahorse-deeplang-assembly-${BuildInfo.version}.jar"
       ))
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
