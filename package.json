@@ -18,9 +18,7 @@
     "dev": "gulp start --dev",
     "prebuild": "npm install",
     "build": "gulp build",
-    "tests:server": "node --harmony node_modules/jasmine-node/bin/jasmine-node server/ --captureExceptions --color",
-    "tests:client": "karma start",
-    "tests:e2e": "protractor"
+    "test": "karma start"
   },
   "dependencies": {
     "angular": "^1.4.2",
@@ -34,11 +32,12 @@
     "deepsense-catalogue-panel": "0.0.5",
     "deepsense-context-menu": "0.0.1",
     "deepsense-cycle-analyser": "0.0.1",
-    "deepsense-graph-model": "0.0.5",
+    "deepsense-graph-model": "0.0.6",
     "deepsense-loading-spinner": "^1.0.2",
     "deepsense-navigation-panel": "0.0.7",
     "deepsense-node-parameters": "0.0.9",
     "express": "^4.12.4",
+    "font-awesome": "^4.4.0",
     "ng-debounce": "^1.0.1",
     "ng-switchery": "^1.0.1"
   },

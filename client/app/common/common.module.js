@@ -18,4 +18,6 @@ require('./sticky-window/sticky-window.js').inject(common);
 
 require('./status-bar/status-bar.js').inject(common);
 
+require('./services/uuid-generator.js').inject(common);
+
 module.exports = common;

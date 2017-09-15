@@ -1,0 +1,63 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ */
+
+@import "./graph-panel/graph-panel.less";
+@import "../../common/status-bar/status-bar.less";
+@import "./freeze/freeze.less";
+
+.experiment-container {
+  display: flex;
+  height: 100%;
+  clear: both;
+
+  ::selection {
+    background: none;
+  }
+}
+
+.operations-tree {
+  border-right: 3px solid transparent;
+  padding: 0 3px;
+  height: 100%;
+  width: auto;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.mCS-deepsense {
+  &.mCSB_scrollTools {
+    width: 5px;
+  }
+
+  &.mCSB_inside {
+    > .mCSB_container {
+      margin-right: 10px;
+    }
+
+    .mCSB_dragger .mCSB_dragger_bar {
+      background-color: rgba(0,0,0,0.25);
+    }
+
+    .mCSB_draggerRail {
+      background-color: white;
+    }
+  }
+}
+
+.operation-attributes-panel {
+  top: 75px;
+  right: 2px;
+  height: calc(~'100% - 75px');
+
+  ::selection {
+    background: #89CEFA;
+  }
+}
+
+.c-main-header {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
