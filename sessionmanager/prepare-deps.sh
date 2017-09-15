@@ -1,29 +1,24 @@
 #!/bin/bash
 
-if [ "$#" != "1" ] ; then
-  echo "Usage: $0 <deepsense_backend_root>"
-  exit 1
-fi
+echo 'This script assumes its run from root of deepsense backend project'
 
-PROJECT=`readlink -f $1` # absolute path
-SM_DIR="$PROJECT/sessionmanager"
+SM_DIR=sessionmanager
 
-TMPDIR="$SM_DIR/target/_we_deps_tmp"
+TMPDIR=$SM_DIR/target/_we_deps_tmp
 
-rm -Rf $TMPDIR
-mkdir $TMPDIR
+rm -Rf "$TMPDIR"
+mkdir "$TMPDIR"
 
-WE_DEPS_CONTENT="$TMPDIR/we_deps_target"
+WE_DEPS_CONTENT=$TMPDIR/we_deps_target
 mkdir $WE_DEPS_CONTENT
 
 echo "Copying pyexecutor from workflowexecutor jar"
 
-WE_JAR="$SM_DIR/target/downloads/we.jar"
-(cd $WE_DEPS_CONTENT; jar xf $WE_JAR pyexecutor)
+(cd $WE_DEPS_CONTENT; jar xf ../../downloads/we.jar pyexecutor)
 
 echo "Copying executing kernel"
-(cd $PROJECT/remote_notebook; ./pack_executing_kernel.sh)
-unzip $PROJECT/remote_notebook/notebook_executing_kernel.zip -d $WE_DEPS_CONTENT
+(cd remote_notebook; ./pack_executing_kernel.sh)
+unzip remote_notebook/notebook_executing_kernel.zip -d $WE_DEPS_CONTENT
 
 # Pyspark and Py4j from we-deps-consts
 echo "Copying files from we-deps-consts files"

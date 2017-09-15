@@ -40,7 +40,7 @@ mappings in Universal += downloadWeJar.value -> "we.jar"
 val preparePythonDeps = taskKey[File]("Generates we_deps.zip file with python dependencies")
 
 preparePythonDeps := {
-  "sessionmanager/prepare-deps.sh ." !
+  "sessionmanager/prepare-deps.sh" !
 
   target.value / "we-deps.zip"
 }
