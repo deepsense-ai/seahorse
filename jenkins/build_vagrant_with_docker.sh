@@ -32,7 +32,7 @@ DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
 docker-compose pull
 
 echo "Save docker images to files"
-DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d":" -f 2 | cut -d"/" -f 3 | tr " " "\n"`)
+DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d":" -f 2 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
 for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
   echo "Save docker image to $DOCKER_IMAGE.tar"
