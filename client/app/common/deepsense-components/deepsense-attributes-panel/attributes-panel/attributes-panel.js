@@ -63,8 +63,22 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
       };
 
       this.getNotebookUrl = () => {
+        const languageMap = {
+          [specialOperations.NOTEBOOKS.PYTHON]: 'python',
+          [specialOperations.NOTEBOOKS.R]: 'r'
+        };
+
+        const notebookParams = {
+          dataframeSource: getDataFrameSource(),
+          language: languageMap[$scope.node.operationId]
+        };
+
+        const encodedParams = btoa(JSON.stringify(notebookParams));
+
         const onlineUrlPart = $scope.disabledMode ? 'OfflineNotebook' : 'notebooks';
-        const url = `${config.notebookHost}/${onlineUrlPart}/${$scope.workflowId}/${$scope.node.id}`;
+        const paramsUrlPart = $scope.disabledMode ? '' : encodedParams;
+
+        const url = `${config.notebookHost}/${onlineUrlPart}/${$scope.workflowId}/${$scope.node.id}/${paramsUrlPart}`;
 
         return $sce.trustAsResourceUrl(url);
       };
