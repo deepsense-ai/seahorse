@@ -19,7 +19,7 @@ case class RangeValidator(
     end: Double,
     beginIncluded: Boolean = true,
     endIncluded: Boolean = true,
-    step: Option[Double] = None) extends Validator[NumericParameter] {
+    step: Option[Double] = None) extends Validator[Double] {
   require(begin <= end)
   step.foreach(s => require(s > 0))
   step.foreach(s => require(takeSteps(countStepsTo(end, s), s) == end,
@@ -27,13 +27,13 @@ case class RangeValidator(
 
   val validatorType = ValidatorType.Range
 
-  override def validate(parameter: NumericParameter): Unit = {
+  override def validate(parameter: Double): Unit = {
     val beginComparison: (Double, Double) => Boolean = if (beginIncluded) (_ >= _) else (_ > _)
     val endComparison: (Double, Double) => Boolean = if (endIncluded) (_ <= _) else (_ < _)
-    if (!(beginComparison(parameter.value, begin) && endComparison(parameter.value, end))) {
-      throw new OutOfRangeException(parameter.value, begin, end)
+    if (!(beginComparison(parameter, begin) && endComparison(parameter, end))) {
+      throw new OutOfRangeException(parameter, begin, end)
     } else {
-      validateStep(parameter.value)
+      validateStep(parameter)
     }
   }
 
@@ -59,11 +59,11 @@ case class RangeValidator(
 /**
  * Validates if StringParameter value matches the given regex.
  */
-case class RegexValidator(regex: Regex) extends Validator[StringParameter] {
+case class RegexValidator(regex: Regex) extends Validator[String] {
   val validatorType = ValidatorType.Regex
-  override def validate(parameter: StringParameter): Unit = {
-    if (!(parameter.value matches regex.toString)) {
-      throw MatchException(parameter.value, regex)
+  override def validate(parameter: String): Unit = {
+    if (!(parameter matches regex.toString)) {
+      throw MatchException(parameter, regex)
     }
   }
 }

@@ -12,20 +12,14 @@ import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
 
 class ParametersSuite extends FunSuite with Matchers {
 
-  def fillBooleanHolderInSchema(
-      key: String,
-      schema: ParametersSchema,
-      value: BooleanParameter): Unit = {
+  def fillBooleanHolderInSchema(key: String, schema: ParametersSchema, value: Boolean): Unit = {
     schema(key) match {
       case booleanHolder: BooleanParameterHolder => booleanHolder.value = Some(value)
       case _ => throw new IllegalStateException()
     }
   }
 
-  def fillNumericHolderInSchema(
-      key: String,
-      schema: ParametersSchema,
-      value: NumericParameter): Unit = {
+  def fillNumericHolderInSchema(key: String, schema: ParametersSchema, value: Double): Unit = {
     schema(key) match {
       case numericHolder: NumericParameterHolder => numericHolder.value = Some(value)
       case _ => throw new IllegalStateException()
@@ -33,24 +27,24 @@ class ParametersSuite extends FunSuite with Matchers {
   }
 
   test("Getting Boolean Parameter") {
-    val holder = BooleanParameterHolder("example", true, true)
-    holder.value = Some(BooleanParameter(true))
+    val holder = BooleanParameterHolder("example", Some(true), true)
+    holder.value = Some(true)
     val parametersSchema = ParametersSchema("x" -> holder)
-    assert(parametersSchema.getBooleanParameter("x").get.value == true)
+    assert(parametersSchema.getBoolean("x").get == true)
   }
 
   test("Getting Numeric Parameter") {
-    val holder = NumericParameterHolder("example", 3.1, true, RangeValidator(3, 4))
-    holder.value = Some(NumericParameter(3.2))
+    val holder = NumericParameterHolder("example", Some(3.1), true, RangeValidator(3, 4))
+    holder.value = Some(3.2)
     val parametersSchema = ParametersSchema("x" -> holder)
-    assert(parametersSchema.getNumericParameter("x").get.value == 3.2)
+    assert(parametersSchema.getDouble("x").get == 3.2)
   }
 
   test("Getting String Parameter") {
-    val holder = StringParameterHolder("example", "default", true, RegexValidator("a".r))
-    holder.value = Some(StringParameter("abc"))
+    val holder = StringParameterHolder("example", Some("default"), true, RegexValidator("a".r))
+    holder.value = Some("abc")
     val parametersSchema = ParametersSchema("x" -> holder)
-    assert(parametersSchema.getStringParameter("x").get.value == "abc")
+    assert(parametersSchema.getString("x").get == "abc")
   }
 
   test("Getting Choice Parameters") {
@@ -62,15 +56,15 @@ class ParametersSuite extends FunSuite with Matchers {
 
     val choice = ChoiceParameterHolder("description", None, true, possibleChoices)
     choice.fill("onlyChoice", schema => {
-      fillNumericHolderInSchema("x", schema, NumericParameter(3.5))
-      fillBooleanHolderInSchema("y", schema, BooleanParameter(true))
+      fillNumericHolderInSchema("x", schema, 3.5)
+      fillBooleanHolderInSchema("y", schema, true)
     })
 
     val parametersSchema = ParametersSchema("choice" -> choice)
-    parametersSchema.getChoiceParameter("choice").get match {
+    parametersSchema.getChoice("choice").get match {
       case ChoiceParameter("onlyChoice", chosen) =>
-        assert(chosen.getNumericParameter("x").get.value == 3.5)
-        assert(chosen.getBooleanParameter("y").get.value == true)
+        assert(chosen.getDouble("x").get == 3.5)
+        assert(chosen.getBoolean("y").get == true)
     }
   }
 
@@ -83,17 +77,17 @@ class ParametersSuite extends FunSuite with Matchers {
 
     val multipleChoice = MultipleChoiceParameterHolder("description", None, true, possibleChoices)
     multipleChoice.fill(Map("onlyChoice" -> (schema => {
-      fillNumericHolderInSchema("x", schema, NumericParameter(3.5))
-      fillBooleanHolderInSchema("y", schema, BooleanParameter(true))
+      fillNumericHolderInSchema("x", schema, 3.5)
+      fillBooleanHolderInSchema("y", schema, true)
     })))
 
     val parametersSchema = ParametersSchema("multipleChoice" -> multipleChoice)
-    parametersSchema.getMultipleChoiceParameter("multipleChoice").get match {
+    parametersSchema.getMultipleChoice("multipleChoice").get match {
       case MultipleChoiceParameter(chosen) =>
         val expected = Traversable(ChoiceParameter("onlyChoice", choiceSchema))
         assert(chosen == expected)
-        assert(choiceSchema.getNumericParameter("x").get.value == 3.5)
-        assert(choiceSchema.getBooleanParameter("y").get.value == true)
+        assert(choiceSchema.getDouble("x").get == 3.5)
+        assert(choiceSchema.getBoolean("y").get == true)
     }
   }
 
@@ -102,18 +96,18 @@ class ParametersSuite extends FunSuite with Matchers {
     val schema = ParametersSchema("x" -> holder)
     val multiplicator = MultiplicatorParameterHolder("description", None, true, schema)
 
-    val booleanParameter1 = BooleanParameter(false)
-    val booleanParameter2 = BooleanParameter(true)
+    val booleanParameter1 = false
+    val booleanParameter2 = true
 
     multiplicator.fill(List(
       schema => fillBooleanHolderInSchema("x", schema, booleanParameter1),
       schema => fillBooleanHolderInSchema("x", schema, booleanParameter2)))
 
     val parametersSchema = ParametersSchema("key" -> multiplicator)
-    parametersSchema.getMultiplicatorParameter("key").get match {
+    parametersSchema.getMultiplicator("key").get match {
       case MultiplicatorParameter(schema1 :: schema2 :: Nil) =>
-        assert(schema1.getBooleanParameter("x").get == booleanParameter1)
-        assert(schema2.getBooleanParameter("x").get == booleanParameter2)
+        assert(schema1.getBoolean("x").get == booleanParameter1)
+        assert(schema2.getBoolean("x").get == booleanParameter2)
     }
   }
 
@@ -131,17 +125,17 @@ class ParametersSuite extends FunSuite with Matchers {
     val values = IndexColumnSelection(List(1, 3))
     val parameter = MultipleColumnSelection(List(values))
     holder.value = Some(parameter)
-    assert(schema.getMultipleColumnSelection("x").get == parameter)
+    assert(schema.getColumnSelection("x").get == parameter)
   }
 
   test("Getting wrong type of parameter should throw an exception") {
-    val parameter = Some(StringParameter("abc"))
-    val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
+    val parameter = Some("abc")
+    val expectedTargetTypeName = "scala.Double"
     val exception = intercept[TypeConversionException] {
       val holder = StringParameterHolder("description", None, true, RegexValidator("a".r))
       holder.value = parameter
       val parametersSchema = ParametersSchema("x" -> holder)
-      parametersSchema.getNumericParameter("x")
+      parametersSchema.getDouble("x")
     }
     assert(exception == TypeConversionException(parameter.get, expectedTargetTypeName))
   }

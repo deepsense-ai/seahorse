@@ -8,71 +8,42 @@ package io.deepsense.deeplang.parameters
 
 case class BooleanParameterHolder(
     description: String,
-    default: Option[BooleanParameter],
+    default: Option[Boolean],
     required: Boolean)
   extends ParameterHolder {
-  type HeldParameter = BooleanParameter
+  type HeldParameter = Boolean
   val parameterType = ParameterType.Boolean
-  var value: Option[BooleanParameter] = None
+  var value: Option[Boolean] = None
 
   private[parameters] def replicate: ParameterHolder = copy()
-}
-
-object BooleanParameterHolder {
-  def apply(
-      description: String,
-      default: Boolean,
-      required: Boolean): BooleanParameterHolder = {
-    BooleanParameterHolder(description, Some(BooleanParameter(default)), required)
-  }
 }
 
 case class NumericParameterHolder(
     description: String,
-    default: Option[NumericParameter],
+    default: Option[Double],
     required: Boolean,
-    validator: Validator[NumericParameter])
+    validator: Validator[Double])
   extends ParameterHolder
   with HasValidator {
-  type HeldParameter = NumericParameter
+  type HeldParameter = Double
   val parameterType = ParameterType.Numeric
-  var value: Option[NumericParameter] = None
+  var value: Option[Double] = None
 
   private[parameters] def replicate: ParameterHolder = copy()
-}
-
-object NumericParameterHolder {
-  def apply(
-      description: String,
-      default: Double,
-      required: Boolean,
-      validator: Validator[NumericParameter]): NumericParameterHolder = {
-    NumericParameterHolder(description, Some(NumericParameter(default)), required, validator)
-  }
 }
 
 case class StringParameterHolder(
     description: String,
-    default: Option[StringParameter],
+    default: Option[String],
     required: Boolean,
-    validator: Validator[StringParameter])
+    validator: Validator[String])
   extends ParameterHolder
   with HasValidator {
-  type HeldParameter = StringParameter
+  type HeldParameter = String
   val parameterType = ParameterType.String
-  var value: Option[StringParameter] = None
+  var value: Option[String] = None
 
   private[parameters] def replicate: ParameterHolder = copy()
-}
-
-object StringParameterHolder {
-  def apply(
-      description: String,
-      default: String,
-      required: Boolean,
-      validator: Validator[StringParameter]): StringParameterHolder = {
-    StringParameterHolder(description, Some(StringParameter(default)), required, validator)
-  }
 }
 
 /**
@@ -138,7 +109,7 @@ case class MultipleChoiceParameterHolder(
   def value: Option[MultipleChoiceParameter] = _value
 
   override def validateDefined(definedValue: MultipleChoiceParameter): Unit = {
-    validateChoices(definedValue.values)
+    validateChoices(definedValue.choices)
   }
 
   /**
@@ -173,7 +144,7 @@ case class MultiplicatorParameterHolder(
 
   /** Validates each filled schema. */
   override def validateDefined(definedValue: MultiplicatorParameter): Unit = {
-    definedValue.value.foreach(_.validate)
+    definedValue.schemas.foreach(_.validate)
   }
 
   /**

@@ -33,10 +33,10 @@ class ParametersValidationSuite extends FunSuite {
 
   test("Validation of valid parameters is possible") {
     val holder1 = NumericParameterHolder("example1", None, true, RangeValidator(3, 4))
-    val holder2 = StringParameterHolder("example2", "default", true, RegexValidator("abc".r))
+    val holder2 = StringParameterHolder("example2", Some("default"), true, RegexValidator("abc".r))
 
-    holder1.value = Some(NumericParameter(3.5))
-    holder2.value = Some(StringParameter("abc"))
+    holder1.value = Some(3.5)
+    holder2.value = Some("abc")
 
     val parametersSchema = ParametersSchema("x" -> holder1, "y" -> holder2)
     parametersSchema.validate
@@ -45,7 +45,7 @@ class ParametersValidationSuite extends FunSuite {
   test("Validation of invalid parameter using range validator should throw an exception") {
     val exception = intercept[OutOfRangeException] {
       val holder = NumericParameterHolder("description", None, true, RangeValidator(3, 4))
-      holder.value = Some(NumericParameter(4.1))
+      holder.value = Some(4.1)
 
       val parametersSchema = ParametersSchema("x" -> holder)
       parametersSchema.validate
@@ -57,7 +57,7 @@ class ParametersValidationSuite extends FunSuite {
     val exception = intercept[OutOfRangeWithStepException] {
       val validator = RangeValidator(3, 5.4, step = Some(1.2))
       val holder = NumericParameterHolder("description", None, true, validator)
-      holder.value = Some(NumericParameter(4.1))
+      holder.value = Some(4.1)
 
       val parametersSchema = ParametersSchema("x" -> holder)
       parametersSchema.validate
@@ -97,7 +97,7 @@ class ParametersValidationSuite extends FunSuite {
     val exception = intercept[MatchException] {
       val validator = RegexValidator(regex)
       val holder = StringParameterHolder("description", None, true, validator)
-      holder.value = Some(StringParameter("abc"))
+      holder.value = Some("abc")
 
       val parametersSchema = ParametersSchema("x" -> holder)
       parametersSchema.validate

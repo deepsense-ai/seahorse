@@ -16,7 +16,7 @@ import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
  * schemas with their values and validate them.
  */
 abstract class ParameterHolder {
-  type HeldParameter <: Parameter
+  type HeldParameter <: Any
   val parameterType: ParameterType
   val description: String
   /** Default value of the parameter. Can be None if not provided. */

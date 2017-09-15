@@ -37,19 +37,19 @@ class ParametersSchema protected (schemaMap: Map[String, ParameterHolder] = Map.
     new ParametersSchema(replicatedSchemaMap)
   }
 
-  def getBooleanParameter(name: String): Option[BooleanParameter] = get[BooleanParameter](name)
+  def getBoolean(name: String): Option[Boolean] = get[Boolean](name)
 
-  def getStringParameter(name: String): Option[StringParameter] = get[StringParameter](name)
+  def getString(name: String): Option[String] = get[String](name)
 
-  def getNumericParameter(name: String): Option[NumericParameter] = get[NumericParameter](name)
+  def getDouble(name: String): Option[Double] = get[Double](name)
 
-  def getChoiceParameter(name: String): Option[ChoiceParameter] = get[ChoiceParameter](name)
+  def getChoice(name: String): Option[ChoiceParameter] = get[ChoiceParameter](name)
 
-  def getMultipleChoiceParameter(name: String): Option[MultipleChoiceParameter] = {
+  def getMultipleChoice(name: String): Option[MultipleChoiceParameter] = {
     get[MultipleChoiceParameter](name)
   }
 
-  def getMultiplicatorParameter(name: String): Option[MultiplicatorParameter] = {
+  def getMultiplicator(name: String): Option[MultiplicatorParameter] = {
     get[MultiplicatorParameter](name)
   }
 
@@ -57,7 +57,7 @@ class ParametersSchema protected (schemaMap: Map[String, ParameterHolder] = Map.
     get[SingleColumnSelection](name)
   }
 
-  def getMultipleColumnSelection(name: String): Option[MultipleColumnSelection] = {
+  def getColumnSelection(name: String): Option[MultipleColumnSelection] = {
     get[MultipleColumnSelection](name)
   }
 }
