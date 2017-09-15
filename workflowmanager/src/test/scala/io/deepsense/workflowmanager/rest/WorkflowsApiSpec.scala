@@ -6,8 +6,8 @@ package io.deepsense.workflowmanager.rest
 
 import scala.collection.concurrent.TrieMap
 import scala.concurrent._
+import scala.reflect.runtime.universe.TypeTag
 
-import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
@@ -22,12 +22,14 @@ import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.DOperationCategories
+import io.deepsense.deeplang
+import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.{DOperation, DOperable, DOperation1To1, DOperationCategories}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.doperations.FileToDataFrame
+import io.deepsense.deeplang.doperations.{ReadDataFrame, FilterColumns}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
@@ -45,11 +47,10 @@ class WorkflowsApiSpec
   with WorkflowWithVariablesJsonProtocol
   with WorkflowWithResultsJsonProtocol {
 
+  import WorkflowsApiSpec.MockOperation
+
   val catalog = DOperationsCatalog()
-  catalog.registerDOperation[FileToDataFrame](
-    DOperationCategories.IO,
-    "Converts a file to a DataFrame"
-  )
+  catalog.registerDOperation[MockOperation](DOperationCategories.Transformation)
 
   val dOperableCatalog = new DOperableCatalog
   val inferContext: InferContext = InferContext.forTypeInference(dOperableCatalog)
@@ -102,8 +103,8 @@ class WorkflowsApiSpec
   def newWorkflow(
       apiVersion: String = BuildInfo.version,
       name: String = workflowAName): Workflow = {
-    val node1 = Node(Node.Id.randomId, FileToDataFrame())
-    val node2 = Node(Node.Id.randomId, FileToDataFrame())
+    val node1 = Node(Node.Id.randomId, MockOperation())
+    val node2 = Node(Node.Id.randomId, MockOperation())
     val graph = DirectedGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
     val thirdPartyData = ThirdPartyData(JsObject(
@@ -129,8 +130,8 @@ class WorkflowsApiSpec
   }
 
   def cyclicWorkflow: Workflow = {
-    val node1 = Node(Node.Id.randomId, FileToDataFrame())
-    val node2 = Node(Node.Id.randomId, FileToDataFrame())
+    val node1 = Node(Node.Id.randomId, new FilterColumns)
+    val node2 = Node(Node.Id.randomId, new FilterColumns)
     val graph = DirectedGraph(
       Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
     val metadata = WorkflowMetadata(
@@ -670,17 +671,6 @@ class WorkflowsApiSpec
         thirdPartyDataJson.fields.updated("notebooks", notebooks)).toString)
   }
 
-  private def jsonWithNotebook(
-      workflowJson: JsValue,
-      nodeId: Node.Id,
-      notebook: String) = {
-    val thirdPartyData = workflowJson.asJsObject.fields("thirdPartyData")
-    val notebooks = JsObject(nodeId.toString -> notebook.parseJson)
-    val thirdPartyDataWithNotebook = JsObject(
-      thirdPartyData.asJsObject.fields.updated("notebooks", notebooks))
-    JsObject(workflowJson.asJsObject.fields.updated("thirdPartyData", thirdPartyDataWithNotebook))
-  }
-
   class TestNotebookStorage extends NotebookStorage {
 
     val notebooks: TrieMap[(Workflow.Id, Node.Id), String] = TrieMap()
@@ -695,8 +685,25 @@ class WorkflowsApiSpec
 
     override def getAll(workflowId: Workflow.Id): Future[Map[Node.Id, String]] = {
       Future.successful(notebooks.collect {
-        case ((w, nodeId), notebook) if workflowId == w => (nodeId -> notebook)
+        case ((w, nodeId), notebook) if workflowId == w => nodeId -> notebook
       }.toMap)
     }
+  }
+}
+
+object WorkflowsApiSpec {
+  case class MockOperation() extends DOperation1To1[DOperable, DOperable] {
+    override val id: Id = "7814b1ae-a24d-11e5-bf7f-feff819cdc9f"
+    override val name: String = "mock operation"
+    override val description: String = "mock operation desc"
+    override val params = Array[Param[_]]()
+
+    @transient
+    override lazy val tTagTI_0: TypeTag[DOperable] = typeTag[DOperable]
+
+    @transient
+    override lazy val tTagTO_0: TypeTag[DOperable] = typeTag[DOperable]
+
+    override protected def _execute(ctx: deeplang.ExecutionContext)(t0: DOperable): DOperable = ???
   }
 }

@@ -10,7 +10,6 @@ import org.scalatest.{Matchers, WordSpec}
 import spray.json.{DefaultJsonProtocol, JsObject}
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Endpoint
 
 trait GraphJsonTestSupport
@@ -33,14 +32,13 @@ trait GraphJsonTestSupport
       inArity: Int,
       outArity: Int,
       id: DOperation.Id,
-      name: String,
-      parameters: ParametersSchema = mock[ParametersSchema]): DOperation = {
+      name: String): DOperation = {
     val dOperation = mock[DOperation]
     when(dOperation.inArity).thenReturn(inArity)
     when(dOperation.outArity).thenReturn(outArity)
     when(dOperation.id).thenReturn(id)
     when(dOperation.name).thenReturn(name)
-    when(dOperation.parameters).thenReturn(parameters)
+    when(dOperation.paramValuesToJson).thenReturn(JsObject())
     dOperation
   }
 }

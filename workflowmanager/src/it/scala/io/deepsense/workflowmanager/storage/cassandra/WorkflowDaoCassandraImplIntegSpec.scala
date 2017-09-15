@@ -7,7 +7,6 @@ package io.deepsense.workflowmanager.storage.cassandra
 import scala.concurrent.{Await, Future}
 
 import com.datastax.driver.core.querybuilder.QueryBuilder
-import org.joda.time.DateTime
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
@@ -15,17 +14,14 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.rest.CurrentBuild
-
 
 class WorkflowDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -34,7 +30,8 @@ class WorkflowDaoCassandraImplIntegSpec
   with Matchers
   with BeforeAndAfter
   with CassandraTestSupport
-  with GraphJsonTestSupport with Logging {
+  with GraphJsonTestSupport
+  with Logging {
 
   var workflowsDao: WorkflowDaoCassandraImpl = _
   val catalog = mock[DOperationsCatalog]
@@ -42,12 +39,10 @@ class WorkflowDaoCassandraImplIntegSpec
   val inferContext: InferContext = mock[InferContext]
   val rowMapper = new WorkflowRowMapper(graphReader)
 
-  val paramSchema = ParametersSchema("param1" -> new BooleanParameter("desc", None, None))
-
-  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", paramSchema)
-  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", paramSchema)
-  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3", paramSchema)
-  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4", paramSchema)
+  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1")
+  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2")
+  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3")
+  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4")
 
   when(catalog.createDOperation(operation1.id)).thenReturn(operation1)
   when(catalog.createDOperation(operation2.id)).thenReturn(operation2)
