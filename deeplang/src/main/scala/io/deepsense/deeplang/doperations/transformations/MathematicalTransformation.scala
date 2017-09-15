@@ -7,6 +7,7 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.{Report, Transformation}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{MathematicalOperationExecutionException, DOperationExecutionException}
+import io.deepsense.reportlib.model.ReportContent
 
 class MathematicalTransformation(formula: String) extends Transformation {
 
@@ -18,7 +19,8 @@ class MathematicalTransformation(formula: String) extends Transformation {
     }
   }
 
-  override def report: Report = ???
+  override def report: Report = Report(ReportContent("Report for MathematicalTransformation.\n" +
+    s"Formula: $formula"))
 
   override def save(executionContext: ExecutionContext)(path: String): Unit = ???
 }
