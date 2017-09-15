@@ -4,7 +4,6 @@
 import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 import WorkflowReports from './workflows-editor.reports.js';
 /* beautify preserve:end */
-import internal from './workflows-editor.internal.js';
 
 import NodeCopyPasteVisitor from './node-copy-paste-visitor.js';
 
@@ -17,7 +16,7 @@ class WorkflowsEditorController extends WorkflowReports {
   constructor(workflowWithResults, config, Report, MultiSelectionService,
     $scope, $state, $q, $rootScope, $log,
     GraphNode, Edge,
-    PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
+    PageService, Operations, GraphPanelRendererService, WorkflowService, MouseEvent,
     ConfirmationModalService, ExportModalService, GraphNodesService,
     NotificationService, ServerCommunication, CopyPasteService, SideBarService, WorkflowStatusBarService) {
 
@@ -40,7 +39,6 @@ class WorkflowsEditorController extends WorkflowReports {
     this.ConfirmationModalService = ConfirmationModalService;
     this.ExportModalService = ExportModalService;
     this.MouseEvent = MouseEvent;
-    this.UUIDGenerator = UUIDGenerator;
     this.GraphNode = GraphNode;
     this.selectedNode = null;
     this.Operations = Operations;
@@ -173,7 +171,7 @@ class WorkflowsEditorController extends WorkflowReports {
         let positionY = offsetY || 0;
         let elementOffsetX = 100;
         let elementOffsetY = 30;
-        let node = internal.createNodeAndAdd.call(this, {
+        let node = this.GraphNodesService.createNodeAndAdd(this.workflow, {
           operation: operation,
           // TODO check if we reached right and bottom end of flowchart box,
           x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
@@ -282,6 +280,7 @@ class WorkflowsEditorController extends WorkflowReports {
   unselectNode() {
     this.selectedNode = null;
   }
+
 }
 
 exports.inject = function(module) {

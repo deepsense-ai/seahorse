@@ -35,6 +35,13 @@ class GraphNodesService {
     return deferred.promise;
   }
 
+  createNodeAndAdd(workflow, params) {
+    params.id = this.UUIDGenerator.generateUUID();
+    let node = workflow.createNode(params);
+    workflow.addNode(node);
+    return node;
+  };
+
   cloneNodes(workflow, nodes) {
     let cloningNodeIds = nodes.map(node => node.id);
 
