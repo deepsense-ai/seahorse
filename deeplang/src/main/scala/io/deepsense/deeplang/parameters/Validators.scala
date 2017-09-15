@@ -21,6 +21,7 @@ import scala.util.matching.Regex
 import spray.json.JsObject
 
 import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
 import io.deepsense.deeplang.parameters.exceptions.{MatchException, OutOfRangeException, OutOfRangeWithStepException}
 
 /**
@@ -82,6 +83,8 @@ case class RangeValidator(
 
 object RangeValidator {
   val Epsilon = 1e-10
+
+  def all: RangeValidator = RangeValidator(begin = Double.MinValue, end = Double.MaxValue)
 }
 
 /**

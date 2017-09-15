@@ -19,17 +19,12 @@ package io.deepsense.deeplang
 import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.FunSuite
-import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.deeplang.doperations.OldOperation
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Validator}
-import scala.reflect.runtime.{universe => ru}
-
-import io.deepsense.entitystorage.EntityStorageClient
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.parameters.RangeValidator
+import io.deepsense.deeplang.params.NumericParam
 
 
 object DClassesForDOperations {
@@ -40,11 +35,11 @@ object DClassesForDOperations {
 
 object DOperationForPortTypes {
   import DClassesForDOperations._
-  class SimpleOperation extends DOperation1To1[A1, A2] with OldOperation {
+  class SimpleOperation extends DOperation1To1[A1, A2] {
     override protected def _execute(context: ExecutionContext)(t0: A1): A2 = ???
     override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
-    override val parameters: ParametersSchema = ParametersSchema()
+    val params = declareParams()
     override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
     override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
   }
@@ -55,28 +50,28 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
   test("It is possible to implement simple operations") {
     import DClassesForDOperations._
 
-    case class IntParam(i: Int) extends ParametersSchema
-
-    class PickOne extends DOperation2To1[A1, A2, A] with OldOperation {
+    class PickOne extends DOperation2To1[A1, A2, A] {
       override val id: DOperation.Id = DOperation.Id.randomId
 
+      val param = NumericParam("param", "description", RangeValidator.all)
+      def setParam(int: Int): this.type = set(param -> int)
+
+      val params = declareParams(param)
+
       override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = {
-        val param = parameters.getDouble("param")
-        if (param % 2 == 1) t1 else t2
+        if ($(param) % 2 == 1) t1 else t2
       }
       override val name: String = "Some name"
-      override val parameters: ParametersSchema = ParametersSchema(
-        "param" -> NumericParameter(
-          "description", None, validator = mock[Validator[Double]]))
+
       override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
       override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
       override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
     }
 
-    val firstPicker: DOperation with OldOperation = new PickOne
-    firstPicker.parameters.getNumericParameter("param").value = 1
-    val secondPicker: DOperation with OldOperation = new PickOne
-    secondPicker.parameters.getNumericParameter("param").value = 2
+    val firstPicker = new PickOne
+    firstPicker.setParam(1)
+    val secondPicker = new PickOne
+    secondPicker.setParam(2)
 
     val input = Vector(A1(), A2())
     assert(firstPicker.execute(mock[ExecutionContext])(input) == Vector(A1()))
@@ -98,7 +93,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
 
     val mockedWarnings = mock[InferenceWarnings]
 
-    class GeneratorOfA extends DOperation0To1[A] with OldOperation {
+    class GeneratorOfA extends DOperation0To1[A] {
       override val id: DOperation.Id = DOperation.Id.randomId
 
       override protected def _execute(context: ExecutionContext)(): A = ???
@@ -108,7 +103,9 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       }
 
       override val name: String = ""
-      override val parameters: ParametersSchema = ParametersSchema()
+
+      val params = declareParams()
+
       override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
     }
 

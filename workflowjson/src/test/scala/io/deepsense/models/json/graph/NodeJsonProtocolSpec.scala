@@ -21,26 +21,19 @@ import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.doperations.OldOperation
-import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Node
 
 class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
 
   import io.deepsense.models.json.graph.NodeJsonProtocol._
 
-  // Mockito can't handle mock[DOperation with OldOperation]
-  abstract class OldOperationMock extends DOperation with OldOperation
-
   "Node with Operation transformed to Json" should {
     val expectedOperationId = DOperation.Id.randomId
     val expectedOperationName = "expectedName"
-    val dOperation = mock[OldOperationMock]
-    val parametersSchema = mock[ParametersSchema]
+    val dOperation = mock[DOperation]
 
     when(dOperation.id).thenReturn(expectedOperationId)
     when(dOperation.name).thenReturn(expectedOperationName)
-    when(dOperation.parameters).thenReturn(parametersSchema)
 
     val node = mock[Node]
     val expectedNodeId = Node.Id.randomId

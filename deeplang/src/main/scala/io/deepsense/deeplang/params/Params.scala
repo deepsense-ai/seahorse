@@ -27,7 +27,7 @@ import io.deepsense.deeplang.exceptions.DeepLangException
  * Parameters are discovered by reflection.
  * This trait also provides method for managing values and default values of parameters.
  */
-trait Params extends Serializable with ParameterJsonContainer {
+trait Params extends Serializable {
 
   def paramsToJson: JsValue = JsArray(params.map {
     case param =>

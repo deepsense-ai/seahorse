@@ -20,9 +20,7 @@ import scala.reflect.runtime.universe.Type
 
 import spray.json.JsValue
 
-import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.params.ParameterJsonContainer
-import io.deepsense.deeplang.{DOperation, TypeUtils}
+import io.deepsense.deeplang.DOperation
 
 /**
  * Represents a registered DOperation and stores its name and i/o port types.

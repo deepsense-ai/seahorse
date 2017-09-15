@@ -28,7 +28,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{WrongColumnTypeException, ColumnDoesNotExistException}
 import io.deepsense.deeplang.parameters.{IndexSingleColumnSelection, NameSingleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DOperable, DOperation, DeeplangIntegTestSupport, ExecutionContext}
-
+/*
 class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
 
   private[this] val timestampColumnName = "timestampColumn"
@@ -170,3 +170,4 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       prefixParam)
   }
 }
+*/

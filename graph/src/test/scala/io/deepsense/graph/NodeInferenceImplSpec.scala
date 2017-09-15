@@ -92,7 +92,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
     }
   }
   "inferKnowledge" should {
-    "should return correct knowledge" in {
+    "return correct knowledge" in {
       val node = nodeA1A2ToFirst
       setParametersValid(node)
       val inputInferenceForNode = NodeInferenceResult(Vector(knowledgeA1, knowledgeA2))
@@ -105,7 +105,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         warnings = InferenceWarnings(DOperationA1A2ToFirst.warning)
       )
     }
-    "should not infer types and return default knowledge with validation errors when " +
+    "not infer types and return default knowledge with validation errors when " +
       "parameters are not valid and fullInference = true" in {
       val node = nodeA1A2ToFirst
       setParametersInvalid(node)
@@ -119,7 +119,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         errors = Vector(DOperationA1A2ToFirst.parameterInvalidError)
       )
     }
-    "should return correct types information together with parameters validation errors " +
+    "return correct types information together with parameters validation errors " +
       "when fullInference = false" in {
       val node = nodeA1A2ToFirst
       setParametersInvalid(node)
@@ -132,7 +132,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         errors = Vector(DOperationA1A2ToFirst.parameterInvalidError)
       )
     }
-    "should return default knowledge when node inference throws an error" in {
+    "return default knowledge when node inference throws an error" in {
       val node = nodeA1A2ToFirst
       setInferenceErrorThrowing(node)
       setParametersValid(node)
@@ -146,7 +146,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         errors = Vector(DOperationA1A2ToFirst.inferenceError)
       )
     }
-    "should return parameter validation errors inference errors when fullInference = false" in {
+    "return parameter validation errors inference errors when fullInference = false" in {
       val node = nodeA1A2ToFirst
       setInferenceErrorThrowing(node)
       setParametersInvalid(node)
@@ -173,14 +173,14 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
     val nodePredecessorsEndpoints = IndexedSeq(
       Some(Endpoint(predecessorId, predecessorPortIndex))
     )
-    val graphKnowlege = GraphKnowledge(Map(
+    val graphKnowledge = GraphKnowledge(Map(
       predecessorId -> NodeInferenceResult(
         predecessorKnowledge
       )))
     val inferenceResult = nodeInference.inputInferenceForNode(
       node,
       typeInferenceCtx,
-      graphKnowlege,
+      graphKnowledge,
       nodePredecessorsEndpoints)
     inferenceResult
   }

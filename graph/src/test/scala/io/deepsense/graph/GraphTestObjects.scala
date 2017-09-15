@@ -22,8 +22,6 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.DOperableMock
-import io.deepsense.deeplang.doperations.OldOperation
-import io.deepsense.deeplang.parameters.ParametersSchema
 
 object RandomNodeFactory {
   def randomNode(operation: DOperation): Node = Node(Node.Id.randomId, operation)
@@ -38,13 +36,13 @@ object DClassesForDOperations extends MockitoSugar {
 object DOperationTestClasses {
   import io.deepsense.graph.DClassesForDOperations._
 
-  trait DOperationBaseFields extends DOperation with OldOperation {
+  trait DOperationBaseFields extends DOperation {
     // NOTE: id will be different for each instance
     override val id: DOperation.Id = DOperation.Id.randomId
 
     override val name: String = ""
 
-    override val parameters: ParametersSchema = ParametersSchema()
+    val params = declareParams()
   }
 
   case class DOperationCreateA1() extends DOperation0To1[A1] with DOperationBaseFields {
