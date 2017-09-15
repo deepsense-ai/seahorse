@@ -1,12 +1,13 @@
 <div class="recent-files-indicator">
 
-  <div class="btn-counter btn btn-grey"
-       ng-click="$ctrl.toggleOpenRecentFiles()"
-       ng-class="{'indicator-disabled': $ctrl.allFiles.length === 0}"
-       title="Recent uploads">
-    <div class="gradient" ng-if="$ctrl.uploadingFiles.length > 0"></div>
-    <span class="sa sa-file files-counter-icon"></span>
-    <span class="files-number">{{$ctrl.allFiles.length}}</span>
+  <div title="Recent uploads">
+    <div class="btn-counter btn btn-grey"
+         ng-click="$ctrl.toggleOpenRecentFiles()"
+         ng-class="{'indicator-disabled': $ctrl.allFiles.length === 0}">
+      <div class="gradient" ng-if="$ctrl.uploadingFiles.length > 0"></div>
+      <span class="sa sa-file files-counter-icon"></span>
+      <span class="files-number">{{$ctrl.allFiles.length}}</span>
+    </div>
   </div>
 
   <div class="files-popover" ng-if="$ctrl.recentFilesListOpen">

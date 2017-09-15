@@ -1,6 +1,10 @@
 'use strict';
 
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
+const TITLE_MAP = {
+  'read-file': 'Select data frame',
+  'write-to-file': 'Write data frame'
+};
 
 /* @ngInject */
 function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModalService, mode, DeleteModalService) {
@@ -12,6 +16,7 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
   vm.uploadedFiles = [];
   vm.mode = mode;
   vm.selectedItem = '';
+  vm.title = TITLE_MAP[mode] || 'Library';
 
   vm.deleteFile = deleteFile;
   vm.onSelect = onSelect;
