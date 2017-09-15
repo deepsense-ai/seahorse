@@ -126,4 +126,46 @@ class GraphSuite extends FunSuite {
     graph.addEdge(node4.id, node2.id, 0, 0)
     assert(graph.containsCycle == true)
   }
+
+  test("Simple Graph can be sorted topologically") {
+    import DOperationTestClasses._
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    graph.addEdge(node1.id, node2.id, 0, 0)
+    graph.addEdge(node2.id, node3.id, 0, 0)
+    graph.addEdge(node3.id, node4.id, 0, 0)
+
+    val sorted = graph.topologicallySorted
+    assert(sorted == Some(List(node1, node2, node3, node4)))
+  }
+
+  test("Complicated Graph can be sorted topologically") {
+    import DOperationTestClasses._
+
+    def checkIfInOrder(node1: Node, node2: Node, order: List[Node]): Unit = {
+      assert(order.indexOf(node1) < order.indexOf(node2))
+    }
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node5 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node6 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node7 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+
+    val edges = List((node1, node2), (node1, node3), (node2, node4), (node3, node4),
+      (node4, node5), (node4, node6), (node5, node7), (node6, node7))
+    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, 0, 0))
+
+    val sortedOption = graph.topologicallySorted
+    assert(sortedOption.isDefined)
+    val sorted = sortedOption.get
+    edges.foreach(n => checkIfInOrder(n._1, n._2, sorted))
+  }
 }

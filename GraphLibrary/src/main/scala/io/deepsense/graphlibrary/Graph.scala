@@ -31,7 +31,7 @@ private[graphlibrary] object Color extends Enumeration {
  * State of each node can be changed during the execution.
  */
 class Graph {
-  private case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
+  private[graphlibrary] case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
     var color: Color.Color = Color.WHITE
     var state: State = State.inDraft
     val predecessors: Array[Option[GraphNode]] = Array.fill(operation.inArity) { None }
@@ -106,25 +106,34 @@ class Graph {
     node.state = node.state.withProgress(Progress(current, total))
   }
 
-  def containsCycle: Boolean = {
-    val cycleFound = nodes.values.exists(laysOnCycle)
-    restoreColors
-    cycleFound
+  def containsCycle: Boolean = !topologicallySorted.isDefined
+
+  /**
+   * Returns a list of topologically sorted nodes.
+   * Returns None if any node reachable from the start node lays on cycle.
+   */
+  private[graphlibrary] def topologicallySorted: Option[List[GraphNode]] = {
+    var sorted: Option[List[GraphNode]] = Some(List.empty)
+    nodes.values.foreach(n => sorted = topologicalSort(n, sorted))
+    restoreColors()
+    sorted
   }
 
   /**
-   * Checks if any node reachable from the start node lays on cycle.
+   * Sorts nodes topologically.
    */
-  private def laysOnCycle(node: GraphNode): Boolean = {
+  private def topologicalSort(
+      node: GraphNode,
+      sortedSoFar: Option[List[GraphNode]]): Option[List[GraphNode]] = {
     node.color match {
-      case Color.BLACK => false
-      case Color.GREY => true
+      case Color.BLACK => sortedSoFar
+      case Color.GREY => None
       case Color.WHITE => {
         node.markGrey()
-        val cycleFound = node.predecessors.exists(
-          p => if (p.isDefined) laysOnCycle(p.get) else false)
+        var l = sortedSoFar
+        node.successors.foreach(_.foreach(s => l = topologicalSort(s, l)))
         node.markBlack()
-        cycleFound
+        l.map(node::_)
       }
     }
   }
