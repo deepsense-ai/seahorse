@@ -21,7 +21,7 @@ import org.joda.time.DateTime
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
-import Entity.Id
+import io.deepsense.commons.models.Entity.Id
 
 sealed abstract class NodeStatus(
     val name: String,
@@ -76,7 +76,10 @@ final case class Draft(override val results: Seq[Entity.Id] = Seq.empty)
   override def start: Running = throw stateCannot("start")
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
   override def abort: Aborted = Aborted(results)
-  override def fail(error: FailureDescription): Failed = throw stateCannot("fail")
+  override def fail(error: FailureDescription): Failed = {
+    val now = DateTimeConverter.now
+    Failed(now, now, error)
+  }
   override def enqueue: Queued = Queued(results)
 }
 

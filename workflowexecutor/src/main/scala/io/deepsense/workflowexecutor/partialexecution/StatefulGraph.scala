@@ -21,14 +21,14 @@ import scala.util.{Failure, Success, Try}
 import io.deepsense.commons.exception.{DeepSenseException, DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{DOperation, DOperable}
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.{DOperable, DOperation}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.GraphKnowledge._
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate._
-import io.deepsense.models.workflows.{ExecutionReport, EntitiesMap, NodeState, NodeStateWithResults}
+import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport, NodeState, NodeStateWithResults}
 import io.deepsense.reportlib.model.ReportContent
 
 case class StatefulGraph(
@@ -228,13 +228,9 @@ case class StatefulGraph(
         DeepSenseFailure.Id.randomId,
         FailureCode.IncorrectWorkflow,
         "Incorrect workflow",
-        Some("Provided workflow cannot be launched, because it contains errors"),
-        details = knowledge.errors.map {
-          case (id, errors) => (id.toString, errors.map(_.toString).mkString("\n"))
-        }
+        Some("Provided workflow cannot be launched, because it contains errors")
       )
-      val updatedStates = states.mapValues(_.abort)
-      copy(states = updatedStates, executionFailure = Some(description))
+      copy(states = updateStates(knowledge), executionFailure = Some(description))
     } else {
       val updatedStates = states.map { case (nodeId, nodeState) =>
         (nodeId, nodeState.withKnowledge(knowledge.getResult(nodeId)))

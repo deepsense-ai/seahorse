@@ -16,12 +16,16 @@
 
 package io.deepsense.workflowexecutor.partialexecution
 
+import org.mockito.Mockito
+import org.mockito.Mockito._
+import org.mockito.Matchers._
 import org.scalatest.{GivenWhenThen, Inspectors}
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.{DOperation, DOperable}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
@@ -33,6 +37,7 @@ import io.deepsense.graph._
 import io.deepsense.models.workflows.{EntitiesMap, NodeState, NodeStateWithResults}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
+import io.deepsense.workflowexecutor.partialexecution.StatefulGraphSpec.TestException
 
 class StatefulGraphSpec
   extends StandardSpec
@@ -268,6 +273,35 @@ class StatefulGraphSpec
         idE -> nodeState(nodestate.Draft())
       )
     }
+    "mark nodes failed" when {
+      "inferrenced knowledge contains errors" in {
+        val statusCompleted = nodeCompleted
+        val graph = StatefulGraph(DeeplangGraph(nodeSet, edgeSet),
+          Map(
+            idA -> nodeState(statusCompleted),
+            idB -> nodeState(nodeFailed),
+            idC -> nodeState(statusCompleted),
+            idD -> nodeState(nodestate.Draft()),
+            idE -> nodeState(nodestate.Aborted())
+          ),
+          None
+        )
+        val graphKnowledge = mock[GraphKnowledge]
+        when(graphKnowledge.errors).thenReturn(
+          Map(idD -> Vector(TestException()))
+        )
+
+        val graphSpy = Mockito.spy(graph)
+        doReturn(graphKnowledge).when(graphSpy).inferKnowledge(any(), any())
+        val updatedGraph = graphSpy.inferAndApplyKnowledge(mock[InferContext])
+
+        updatedGraph.states(idA) shouldBe 'Completed
+        updatedGraph.states(idB) shouldBe 'Failed
+        updatedGraph.states(idC) shouldBe 'Completed
+        updatedGraph.states(idD) shouldBe 'Failed
+        updatedGraph.states(idE) shouldBe 'Aborted
+      }
+    }
   }
 
   def completedGraph: StatefulGraph = {
@@ -312,4 +346,12 @@ class StatefulGraphSpec
   private def nodeState(status: NodeStatus): NodeStateWithResults = {
     NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map(), None)
   }
+}
+
+object StatefulGraphSpec {
+
+  case class TestException() extends DeepLangException(
+    "This is a test exception thrown on purpose."
+  )
+
 }
