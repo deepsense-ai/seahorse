@@ -20,8 +20,6 @@ import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.ml
-import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTClassificationModel}
-import org.apache.spark.ml.{Estimator => SparkEstimator}
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame

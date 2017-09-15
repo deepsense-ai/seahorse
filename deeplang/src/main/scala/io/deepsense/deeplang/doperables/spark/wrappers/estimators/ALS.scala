@@ -34,7 +34,7 @@ class ALS
   with HasMaxIterationsParam
   with HasSeedParam
   with HasRegularizationParam
-  with HasCheckpointInterval {
+  with HasCheckpointIntervalParam {
 
   val alpha = new DoubleParamWrapper[SparkALS](
     name = "alpha",

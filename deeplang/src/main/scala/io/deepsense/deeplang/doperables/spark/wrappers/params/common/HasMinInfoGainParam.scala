@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.spark.wrappers.params
+package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
 import scala.language.reflectiveCalls
 
 import org.apache.spark.ml
+import org.apache.spark.ml.regression.RandomForestRegressor
 
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.{DoubleParamWrapper, IntParamWrapper}
 
-trait GBTParams extends Params
-  with PredictorParams
-  with HasLabelColumnParam
-  with HasMaxIterationsParam
-  with HasSeedParam
-  with HasStepSizeParam
-  with HasMaxBinsParam
-  with HasMaxDepthParam
-  with HasMinInfoGainParam
-  with HasMinInstancePerNodeParam
-  with HasSubsamplingRateParam
+trait HasMinInfoGainParam extends Params {
+
+  val minInfoGain =
+    new DoubleParamWrapper[ml.param.Params { val minInfoGain: ml.param.DoubleParam }](
+      name = "min information gain",
+      description = "The minimum information gain for a split to be considered at a tree node.",
+      sparkParamGetter = _.minInfoGain,
+      RangeValidator(0.0, Double.MaxValue))
+  setDefault(minInfoGain, 0.0)
+
+}

@@ -91,6 +91,8 @@ object CatalogRecorder {
     catalog.registerDOperable[IDFModel]()
     catalog.registerDOperable[GBTClassifier]()
     catalog.registerDOperable[GBTClassificationModel]()
+    catalog.registerDOperable[RandomForestClassifier]()
+    catalog.registerDOperable[RandomForestClassificationModel]()
     catalog.registerDOperable[MultilayerPerceptronClassifier]()
     catalog.registerDOperable[MultilayerPerceptronClassifierModel]()
     catalog.registerDOperable[QuantileDiscretizerEstimator]()
@@ -265,6 +267,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateGBTClassifier](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateRandomForestClassifier](
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateLogisticRegression](

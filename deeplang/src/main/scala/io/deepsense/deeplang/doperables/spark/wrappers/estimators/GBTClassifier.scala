@@ -23,12 +23,13 @@ import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTCla
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.TypeUtils
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
-import io.deepsense.deeplang.doperables.spark.wrappers.models.{VanillaGBTClassificationModel, GBTClassificationModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{GBTClassificationModel, VanillaGBTClassificationModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasClassificationImpurityParam, ClassificationImpurity}
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingEstimatorWrapper
+import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
-import io.deepsense.deeplang.params.{Param, ParamMap}
 
 class GBTClassifier private (val vanillaGBTClassifier: VanillaGBTClassifier)
   extends StringIndexingEstimatorWrapper[
@@ -44,6 +45,7 @@ class VanillaGBTClassifier()
   extends SparkEstimatorWrapper[
     SparkGBTClassificationModel, SparkGBTClassifier, VanillaGBTClassificationModel]
     with GBTParams
+    with HasClassificationImpurityParam
     with Logging {
 
   import GBTClassifier._
@@ -51,12 +53,6 @@ class VanillaGBTClassifier()
   override lazy val maxIterationsDefault = 20.0
 
   val estimator = TypeUtils.instanceOfType(typeTag[SparkGBTClassifier])
-
-  val impurity = new ChoiceParamWrapper[SparkGBTClassifier, Impurity](
-    name = "impurity",
-    description = "The criterion used for information gain calculation.",
-    sparkParamGetter = _.impurity)
-  setDefault(impurity, Gini())
 
   val lossType = new ChoiceParamWrapper[SparkGBTClassifier, LossType](
     name = "loss function",
@@ -81,18 +77,6 @@ class VanillaGBTClassifier()
 }
 
 object GBTClassifier {
-
-  sealed abstract class Impurity(override val name: String) extends Choice {
-
-    override val params: Array[Param[_]] = declareParams()
-
-    override val choiceOrder: List[Class[_ <: Choice]] = List(
-      classOf[Entropy],
-      classOf[Gini]
-    )
-  }
-  case class Entropy() extends Impurity("entropy")
-  case class Gini() extends Impurity("gini")
 
   sealed abstract class LossType(override val name: String) extends Choice {
 

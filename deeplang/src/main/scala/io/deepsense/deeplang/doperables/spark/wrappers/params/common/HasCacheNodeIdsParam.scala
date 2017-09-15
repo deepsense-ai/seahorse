@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.spark.wrappers.params
+package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
 import scala.language.reflectiveCalls
 
 import org.apache.spark.ml
+import org.apache.spark.ml.regression.RandomForestRegressor
 
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.wrappers.spark.{DoubleParamWrapper, IntParamWrapper}
+import io.deepsense.deeplang.params.wrappers.spark.{BooleanParamWrapper, IntParamWrapper}
 
-trait GBTParams extends Params
-  with PredictorParams
-  with HasLabelColumnParam
-  with HasMaxIterationsParam
-  with HasSeedParam
-  with HasStepSizeParam
-  with HasMaxBinsParam
-  with HasMaxDepthParam
-  with HasMinInfoGainParam
-  with HasMinInstancePerNodeParam
-  with HasSubsamplingRateParam
+trait HasCacheNodeIdsParam extends Params {
+
+  val cacheNodeIds =
+    new BooleanParamWrapper[ml.param.Params {val cacheNodeIds: ml.param.BooleanParam}](
+      name = "cache node ids",
+      description = "The caching nodes IDs. Can speed up training of deeper trees.",
+      sparkParamGetter = _.cacheNodeIds)
+  setDefault(cacheNodeIds, false)
+
+}

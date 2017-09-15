@@ -23,7 +23,7 @@ import spray.json._
 import io.deepsense.commons.utils.CollectionExtensions._
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.descriptions.{HasInferenceResult, ParamsInferenceResult}
-import io.deepsense.deeplang.exceptions.{DeepLangMultiException, DeepLangException}
+import io.deepsense.deeplang.exceptions.{DeepLangException, DeepLangMultiException}
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 import io.deepsense.deeplang.params.multivalue.MultipleValuesParam
 import io.deepsense.deeplang.params.wrappers.spark._
@@ -162,8 +162,8 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
     val declaredParamSet = params.toSet
     val reflectionParamSet = getParamsByReflection.toSet
     require(declaredParamSet == reflectionParamSet,
-      s"[${getClass.getName}] Not all parameters {${reflectionParamSet.mkString(", ")}}" +
-        s" were declared in {${declaredParamSet.mkString(", ")}}")
+      s"[${getClass.getName}] Declared params set must be equal to reflection param set." +
+        s" Differences: ${declaredParamSet xor reflectionParamSet}")
     require(params.map(_.name).hasUniqueValues, "Names of parameters are not unique")
     params.toArray
   }
