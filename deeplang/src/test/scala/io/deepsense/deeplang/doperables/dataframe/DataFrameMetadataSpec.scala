@@ -16,15 +16,14 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
+import org.apache.spark.sql.types._
+
 import io.deepsense.deeplang.UnitSpec
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper._
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
 import io.deepsense.deeplang.inference.exceptions.NameNotUniqueException
-import io.deepsense.deeplang.inference.{SingleColumnMayNotExistWarning, MultipleColumnsMayNotExistWarning}
+import io.deepsense.deeplang.inference.{MultipleColumnsMayNotExistWarning, SingleColumnMayNotExistWarning}
 import io.deepsense.deeplang.parameters._
-import org.apache.spark.sql.types._
-import spray.json._
 
 class DataFrameMetadataSpec extends UnitSpec {
 
@@ -201,6 +200,15 @@ class DataFrameMetadataSpec extends UnitSpec {
         warnings.warnings shouldBe empty
       }
 
+      "return proper columns and no warnings for excluding selector" in {
+        val typeSelection = TypeColumnSelection(Set(numericColumn.columnType.get))
+        val selection = MultipleColumnSelection(Vector(typeSelection), true)
+        val (columns, warnings) = metadata.select(selection)
+        columns should have size 3
+        columns shouldNot contain(numericColumn)
+        warnings.warnings shouldBe empty
+      }
+
       "throw exception when incorrect selection applied" in {
         val nameSelection = NameColumnSelection(Set(columnWithUnknownType.name))
         val selection = MultipleColumnSelection(Vector(nameSelection))
@@ -223,6 +231,19 @@ class DataFrameMetadataSpec extends UnitSpec {
         val (columns, warnings) = metadata.select(selection)
         columns should have size 3
         columns shouldBe Seq(numericColumn, categoricalColumn1, categoricalColumn2)
+        warnings.warnings shouldBe empty
+      }
+
+      "return proper columns and no warnings when multiple excluding selectors are correct" in {
+        // 1 column selected
+        val typeSelection = TypeColumnSelection(Set(numericColumn.columnType.get))
+        // 3 columns selected but numericColumn duplicated with typeSelection
+        val nameSelection = NameColumnSelection(
+          Set(categoricalColumn1.name, categoricalColumn2.name, numericColumn.name))
+
+        val selection = MultipleColumnSelection(Vector(typeSelection, nameSelection), true)
+        val (columns, warnings) = metadata.select(selection)
+        columns should contain noneOf (numericColumn, categoricalColumn1, categoricalColumn2)
         warnings.warnings shouldBe empty
       }
 

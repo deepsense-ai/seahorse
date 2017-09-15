@@ -68,8 +68,8 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
         file,
         "CSV",
         Some(MultipleColumnSelection(Vector(
-          NameColumnSelection(Set(categoricalName, categoricalDoubleName)))
-        ))
+          NameColumnSelection(Set(categoricalName, categoricalDoubleName))))
+        )
       )
 
       assertDataFramesEqual(dataFrame, expectedDataFrame)
@@ -94,8 +94,8 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
           file,
           "CSV",
           Some(MultipleColumnSelection(Vector(
-            NameColumnSelection(Set("non-existing column name")))
-          ))
+            NameColumnSelection(Set("non-existing column name"))))
+          )
         )
       }
     }

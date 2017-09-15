@@ -237,13 +237,14 @@ object ConvertType {
   def apply(
       targetType: ColumnType.ColumnType,
       names: Set[String] = Set.empty,
-      indices: Set[Int] = Set.empty): ConvertType = {
+      indices: Set[Int] = Set.empty,
+      excluding: Boolean = false): ConvertType = {
     val ct = new ConvertType
     val params = ct.parameters
     params.getColumnSelectorParameter(SelectedColumns).value =
       Some(MultipleColumnSelection(Vector(
         NameColumnSelection(names),
-        IndexColumnSelection(indices))))
+        IndexColumnSelection(indices)), excluding))
 
     params.getChoiceParameter(TargetType).value = Some(targetType.toString)
     ct

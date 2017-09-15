@@ -166,7 +166,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val param = ColumnSelectorParameter("description", true, 0)
     val schema = ParametersSchema("x" -> param)
     val values = IndexColumnSelection(Set(1, 3))
-    val parameter = MultipleColumnSelection(Vector(values))
+    val parameter = MultipleColumnSelection(Vector(values), false)
     param.value = Some(parameter)
     assert(schema.getColumnSelection("x").get == parameter)
   }

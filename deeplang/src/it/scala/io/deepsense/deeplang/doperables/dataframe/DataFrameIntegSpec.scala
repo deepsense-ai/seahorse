@@ -43,19 +43,19 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
           NameColumnSelection(Set("a")),
           IndexColumnSelection(Set(1, 3)),
           TypeColumnSelection(Set(ColumnType.string, ColumnType.timestamp))
-        ))
+        ), false)
         dataFrame.getColumnNames(selection) shouldBe Seq("b", "a", "x")
       }
 
       "columns are selected in different order" in {
         val selection = MultipleColumnSelection(Vector(
           NameColumnSelection(Set("a", "b", "c"))
-        ))
+        ), false)
         dataFrame.getColumnNames(selection) shouldBe Seq("c", "b", "a")
       }
 
       def selectSingleType(columnType: ColumnType.ColumnType): Seq[String] = {
-        val selection = MultipleColumnSelection(Vector(TypeColumnSelection(Set(columnType))))
+        val selection = MultipleColumnSelection(Vector(TypeColumnSelection(Set(columnType))), false)
         dataFrame.getColumnNames(selection)
       }
 
@@ -78,22 +78,33 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
       "categorical type is selected" in {
         selectSingleType(ColumnType.categorical) shouldBe Seq("m")
       }
+
+      "excluding selector is used" in {
+        val selection = MultipleColumnSelection(Vector(
+          NameColumnSelection(Set("a")),
+          IndexColumnSelection(Set(1, 3)),
+          TypeColumnSelection(Set(ColumnType.string, ColumnType.timestamp))
+        ), true)
+        dataFrame.getColumnNames(selection) shouldBe Seq("c", "z", "m")
+      }
     }
 
     "throw an exception" when {
       "non-existing column name was selected" in {
         intercept[ColumnsDoNotExistException] {
           val selection = MultipleColumnSelection(Vector(
-            NameColumnSelection(Set("no such column"))))
+            NameColumnSelection(Set("no such column"))), false)
           dataFrame.getColumnNames(selection)
         }
+        ()
       }
       "index out of bounds was selected" in {
         intercept[ColumnsDoNotExistException] {
           val selection = MultipleColumnSelection(Vector(
-            IndexColumnSelection(Set(10))))
+            IndexColumnSelection(Set(10))), false)
           dataFrame.getColumnNames(selection)
         }
+        ()
       }
     }
   }

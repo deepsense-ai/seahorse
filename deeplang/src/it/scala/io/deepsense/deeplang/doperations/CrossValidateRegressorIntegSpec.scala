@@ -26,7 +26,6 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
-import io.deepsense.reportlib.model.ReportJsonProtocol._
 
 class CrossValidateRegressorIntegSpec
   extends DeeplangIntegTestSupport
@@ -88,7 +87,7 @@ class CrossValidateRegressorIntegSpec
   regressor.parameters.getSingleColumnSelectorParameter("target column").value =
     Some(NameSingleColumnSelection("column3"))
   regressor.parameters.getColumnSelectorParameter("feature columns").value =
-    Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("column2")))))
+    Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("column2"))), false))
 
 
   "CrossValidateRegressor with parameters set" should {
@@ -113,6 +112,7 @@ class CrossValidateRegressorIntegSpec
       intercept[IllegalArgumentException] {
         testCrossValidateRegressor(regressor, dataFrame)
       }
+      ()
     }
   }
 
@@ -134,9 +134,7 @@ class CrossValidateRegressorIntegSpec
 
     val report = result.last.asInstanceOf[Report]
     val content = report.content
-
-    import spray.json._
-    logger.debug("Cross-validation report=" + content.toJson.prettyPrint)
+    //logger.debug("Cross-validation report=" + content.toJson.prettyPrint)
 
     if (effectiveNumberOfFolds > 0) {
       val table = content.tables.get(CrossValidateRegressor.reportTableName).get

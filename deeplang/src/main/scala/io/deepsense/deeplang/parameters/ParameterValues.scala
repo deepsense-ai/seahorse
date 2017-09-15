@@ -116,15 +116,28 @@ object NameSingleColumnSelection {
  * each of which can select columns in different way (by indexes, by names etc.).
  * Subset selected by this class can be considered as sum of subsets selected by 'selections'.
  * @param selections list of selections
+ * @param excluding whether list of selections is excluding
  */
-case class MultipleColumnSelection(selections: Vector[ColumnSelection]) {
+case class MultipleColumnSelection(selections: Vector[ColumnSelection],
+    excluding: Boolean = false) {
   def validate: Unit = selections.foreach(_.validate)
 }
 
 object MultipleColumnSelection {
+
+  val selectionsField = "selections"
+
+  val excludingField = "excluding"
+
   def fromJson(jsValue: JsValue): MultipleColumnSelection = jsValue match {
-    case JsArray(x) => MultipleColumnSelection(x.map(ColumnSelection.fromJson))
+    case JsObject(map) =>
+      (map(selectionsField), map(excludingField)) match {
+        case (JsArray(x), JsBoolean(excluding)) =>
+          MultipleColumnSelection(x.map(ColumnSelection.fromJson), excluding)
+        case _ => throw new DeserializationException(s"Cannot create multiple column selection " +
+          s"from $jsValue.")
+      }
     case _ => throw new DeserializationException(s"Cannot create multiple column selection " +
-      s"from $jsValue - array expected.")
+      s"from $jsValue.")
   }
 }

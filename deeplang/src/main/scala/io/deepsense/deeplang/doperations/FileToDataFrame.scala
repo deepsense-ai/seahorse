@@ -277,7 +277,7 @@ object FileToDataFrame {
       .value = Some(MultipleColumnSelection(Vector(
         NameColumnSelection(categoricalNames),
         IndexColumnSelection(categoricalIds)
-    )))
+    ), false))
     fileToDataFrame
   }
 }

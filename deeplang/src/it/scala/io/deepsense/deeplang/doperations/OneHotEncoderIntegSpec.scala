@@ -18,13 +18,12 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
-import org.scalatest.Ignore
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
-import io.deepsense.deeplang.parameters.{NameColumnSelection, MultipleColumnSelection}
+import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection}
 
 class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
 
@@ -118,7 +117,7 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
       dataFrame: DataFrame): DataFrame = {
 
     val operation = OneHotEncoder(
-      MultipleColumnSelection(Vector(NameColumnSelection(selectedColumns))),
+      MultipleColumnSelection(Vector(NameColumnSelection(selectedColumns)), false),
       withRedundancy,
       Some(prefix))
     operation.execute(executionContext)(Vector(dataFrame)).head.asInstanceOf[DataFrame]

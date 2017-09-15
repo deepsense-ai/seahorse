@@ -149,7 +149,12 @@ object DataFrameColumnsGetter {
       selection <- multipleColumnSelection.selections
       if DataFrameColumnsGetter.isFieldSelected(columnName, index, columnType, selection)
     } yield columnName
-    selectedColumns.distinct
+
+    if (multipleColumnSelection.excluding) {
+      schema.fieldNames.filterNot(selectedColumns.contains(_)).distinct
+    } else {
+      selectedColumns.distinct
+    }
   }
 
   private def assertColumnSelectionsValid(
@@ -166,7 +171,7 @@ object DataFrameColumnsGetter {
 
   def assertColumnNamesValid(schema: StructType, columns: Seq[String]): Unit = {
     assertColumnSelectionsValid(
-      schema, MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet))))
+      schema, MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet)), false))
   }
 
   /**

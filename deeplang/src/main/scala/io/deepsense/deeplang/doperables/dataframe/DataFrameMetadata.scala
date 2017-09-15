@@ -122,7 +122,13 @@ case class DataFrameMetadata(
       if isFieldSelected(column.name, column.index, column.columnType, selection)
     } yield column
 
-    (selectedColumns.toSeq.distinct, InferenceWarnings(warnings.toVector))
+    val selected = selectedColumns.toSeq.distinct
+    val inferenceWarnings = InferenceWarnings(warnings.toVector)
+    if (multipleColumnSelection.excluding) {
+      (orderedColumns.filterNot(selected.contains(_)), inferenceWarnings)
+    } else {
+      (selected, inferenceWarnings)
+    }
   }
 
   /**

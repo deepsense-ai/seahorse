@@ -336,7 +336,8 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
       .parameters
       .getColumnSelectorParameter(ConvertType.SelectedColumns)
       .value = Some(MultipleColumnSelection(
-      Vector(NameColumnSelection(names), IndexColumnSelection(ids), TypeColumnSelection(types))))
+        Vector(NameColumnSelection(names), IndexColumnSelection(ids), TypeColumnSelection(types))
+    ))
 
     operation
       .parameters

@@ -573,7 +573,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
       TypeColumnSelection(Set(ColumnType.categorical))
-    )))
+    ), false))
 
     val expectedJson = JsArray(
       JsObject(
@@ -597,22 +597,25 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Multiple column selector can be filled with json") {
     val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
-    columnSelectorParameter.fillValueWithJson(JsArray(
-      JsObject(
-        "type" -> JsString("columnList"),
-        "values" -> JsArray(JsString("abc"), JsString("def"))),
-      JsObject(
-        "type" -> JsString("indexList"),
-        "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
+    columnSelectorParameter.fillValueWithJson(JsObject(
+      "selections" -> JsArray(
+        JsObject(
+          "type" -> JsString("columnList"),
+          "values" -> JsArray(JsString("abc"), JsString("def"))),
+        JsObject(
+          "type" -> JsString("indexList"),
+          "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
+        ),
+        JsObject(
+          "type" -> JsString("indexRange"),
+          "values" -> JsArray(JsNumber(5), JsNumber(6))
+        ),
+        JsObject(
+          "type" -> JsString("typeList"),
+          "values" -> JsArray(JsString("categorical"))
+        )
       ),
-      JsObject(
-        "type" -> JsString("indexRange"),
-        "values" -> JsArray(JsNumber(5), JsNumber(6))
-      ),
-      JsObject(
-        "type" -> JsString("typeList"),
-        "values" -> JsArray(JsString("categorical"))
-      )
+      "excluding" -> JsBoolean(false)
     ))
 
     val expectedValue = Some(MultipleColumnSelection(Vector(
@@ -620,7 +623,39 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
       TypeColumnSelection(Set(ColumnType.categorical))
-    )))
+    ), false))
+    assert(columnSelectorParameter.value == expectedValue)
+  }
+
+  test("Multiple column selector with excluding can be filled with json") {
+    val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
+    columnSelectorParameter.fillValueWithJson(JsObject(
+      "selections" -> JsArray(
+        JsObject(
+          "type" -> JsString("columnList"),
+          "values" -> JsArray(JsString("abc"), JsString("def"))),
+        JsObject(
+          "type" -> JsString("indexList"),
+          "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
+        ),
+        JsObject(
+          "type" -> JsString("indexRange"),
+          "values" -> JsArray(JsNumber(5), JsNumber(6))
+        ),
+        JsObject(
+          "type" -> JsString("typeList"),
+          "values" -> JsArray(JsString("categorical"))
+        )
+      ),
+      "excluding" -> JsBoolean(true)
+    ))
+
+    val expectedValue = Some(MultipleColumnSelection(Vector(
+      NameColumnSelection(Set("abc", "def")),
+      IndexColumnSelection(Set(1, 4, 7)),
+      IndexRangeColumnSelection(Some(5), Some(6)),
+      TypeColumnSelection(Set(ColumnType.categorical))
+    ), true))
     assert(columnSelectorParameter.value == expectedValue)
   }
 
@@ -632,21 +667,24 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("IndexRangeColumnSelection can be filled with an empty or too short list") {
     val columnSelectorParameter = ColumnSelectorParameter("", required = false, portIndex = 0)
-    columnSelectorParameter.fillValueWithJson(JsArray(
-      JsObject(
-        "type" -> JsString("indexRange"),
-        "values" -> JsArray()
+    columnSelectorParameter.fillValueWithJson(JsObject(
+      "selections" -> JsArray(
+        JsObject(
+          "type" -> JsString("indexRange"),
+          "values" -> JsArray()
+        ),
+        JsObject(
+          "type" -> JsString("indexRange"),
+          "values" -> JsArray(JsNumber(1))
+        )
       ),
-      JsObject(
-        "type" -> JsString("indexRange"),
-        "values" -> JsArray(JsNumber(1))
-      )
+      "excluding" -> JsBoolean(false)
     ))
 
     val expectedValue = Some(MultipleColumnSelection(Vector(
       IndexRangeColumnSelection(None, None),
       IndexRangeColumnSelection(Some(1), Some(1))
-    )))
+    ), false))
     assert(columnSelectorParameter.value == expectedValue)
   }
 

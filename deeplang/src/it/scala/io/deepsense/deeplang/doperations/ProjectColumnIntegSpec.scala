@@ -18,13 +18,11 @@ package io.deepsense.deeplang.doperations
 
 import java.sql.Timestamp
 
-import scala.collection.JavaConversions._
-
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.Matchers
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -72,6 +70,7 @@ class ProjectColumnIntegSpec
             Set.empty,
             Set.empty)
         }
+        ()
       }
       "the columns selected by index does not exist" in {
         intercept[ColumnsDoNotExistException] {
@@ -81,6 +80,7 @@ class ProjectColumnIntegSpec
             Set(nonExistingColumnIndex),
             Set.empty)
         }
+        ()
       }
     }
 
@@ -121,7 +121,7 @@ class ProjectColumnIntegSpec
     valueParam.value = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(names),
       IndexColumnSelection(ids),
-      TypeColumnSelection(types))))
+      TypeColumnSelection(types)), false))
     operation
   }
 

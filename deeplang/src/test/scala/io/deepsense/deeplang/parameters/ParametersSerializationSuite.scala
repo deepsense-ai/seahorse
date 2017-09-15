@@ -106,7 +106,7 @@ class ParametersSerializationSuite
 
   test("ColumnSelectorParameter and it's value should be serializable") {
     val param = ColumnSelectorParameter("", required = false, portIndex = 0)
-    param.value = Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("xyz")))))
+    param.value = Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("xyz"))), false))
     testParameterSerialization(param)
   }
 

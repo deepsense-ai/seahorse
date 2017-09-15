@@ -41,7 +41,7 @@ object TrainRegressor {
     val regressor = TrainRegressor()
 
     val trainableParametersStub = Trainable.Parameters(
-      Some(MultipleColumnSelection(Vector(NameColumnSelection(featureColumns)))),
+      Some(MultipleColumnSelection(Vector(NameColumnSelection(featureColumns)), false)),
       Some(NameSingleColumnSelection(targetColumn))
     )
 
