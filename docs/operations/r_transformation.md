@@ -35,6 +35,8 @@ transform <- function(dataframe) {
 }
 {% endhighlight %}
 
+**Remark**: Trying to install an R package for the first time in multiple operations in parallel might cause erorrs. The operation should work properly when run again.
+
 **Since**: Seahorse 1.3.0
 
 ## Input
