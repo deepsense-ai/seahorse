@@ -1,31 +1,31 @@
 ---
 layout: global
-displayTitle: Notebook
-title: Notebook
-description: Notebook
+displayTitle: Python Notebook
+title: Python Notebook
+description: Python Notebook
 includeOperationsMenu: true
 ---
 
-The `Notebook` operation combines the capabilities of the
+The `Python Notebook` operation combines the capabilities of the
 <a target="_blank" href="{{ site.SPARK_DOCS }}/api/python/">PySpark</a> shell with
 the rich selection of features the <a target="_blank" href="https://jupyter.org/">Jupyter
 notebook</a> offers. It provides users with a unique environment to explore their data sets.
 
-`Notebooks` allow the user to analyze their data by operating directly on the input `DataFrame`
+`Python Notebooks` allow the user to analyze their data by operating directly on the input `DataFrame`
 by means of Apache Spark Python API. The results of Python code execution are presented immediately
-and retained across user's sessions. Due to their versatility, `Notebooks` serve both as a way to
+and retained across user's sessions. Due to their versatility, `Python Notebooks` serve both as a way to
 get familiarized with the data and as a record of completed research.
 
-In order to use the `Notebook`, the user has to drag and drop the operation onto the canvas and
+In order to use the `Python Notebook`, the user has to drag and drop the operation onto the canvas and
 connect a [DataFrame](../classes/dataframe.html) to its input port. The connected `DataFrame` can
-be accessed from within the `Notebook` by calling the `dataframe()` function.
+be accessed from within the `Python Notebook` by calling the `dataframe()` function.
 
-The user can start editing the code by clicking **Open notebook** in the `Notebook` operation's
+The user can start editing the code by clicking **Open notebook** in the `Python Notebook` operation's
 parameters panel.
 
-The variables and functions available in the `Notebooks`' global scope:
+The variables and functions available in the `Python Notebooks`' global scope:
 
-* `dataframe()` - a function that returns the input `DataFrame` for this `Notebook`.
+* `dataframe()` - a function that returns the input `DataFrame` for this `Python Notebook`.
 Everytime the input `DataFrame` changes, the `dataframe()` returns the updated `DataFrame`.
 
 * `sc` - Spark Context
@@ -42,17 +42,7 @@ Data visualization can be achieved using the
 ####Examples
 
 {% highlight python %}
-from pyspark.sql.types import *
-from pyspark.sql import SQLContext, Row
-
-schemaString = "datetime,weather2,weather3,windspeed,hum,temp,atemp"
-fields = [StructField(field_name, StringType(), True) for field_name in schemaString.split(",")]
-schema = StructType(fields)
-
-lines = sc.textFile("weather.csv")
-split = lines.map(lambda s: s.split(","))
-df = sqlContext.createDataFrame(split, schema)
-df.show()
+dataframe().show()
 {% endhighlight %}
 
     +--------------------+--------+--------+---------+----+----+------+
@@ -109,4 +99,4 @@ df['atemp'].plot()
 
 ## Output
 
-The `Notebook` operation does not produce any output.
+The `Python Notebook` operation does not produce any output.

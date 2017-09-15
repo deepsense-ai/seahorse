@@ -241,14 +241,14 @@ group by Name, Year
 order by Year
 {% endhighlight %}
 
-Now, let’s connect a Notebook operation to the newly created and filtered DataFrame:
+Now, let’s connect a Python Notebook operation to the newly created and filtered DataFrame:
 
 <div class="centered-container spacer" markdown="1">
   <img src="../img/usecases/us_baby_names/image_17.png"
     class="centered-image img-responsive spacer" style="width: 100%"/>
 </div>
 
-Notebook gives us the ability to interactively explore the data. We will use it to draw a plot of the names’ popularity. To do so, we need to execute the following Python code in the Notebook:
+Python Notebook gives us the ability to interactively explore the data. We will use it to draw a plot of the names’ popularity. To do so, we need to execute the following Python code in the notebook:
 
 {% highlight python %}
 import matplotlib

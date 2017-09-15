@@ -114,7 +114,7 @@ A simple Python Transformation with the following code produces a human-readable
 </p>
 <p>
 Further exploration of the resulting DataFrame with a
-<a href="../operations/notebook.html">Notebook</a> yields the messages that were
+<a href="../operations/python_notebook.html">Python Notebook</a> yields the messages that were
 incorrectly classified by our model. It’s a good starting point for the process of improving our
 model.
 </p>

@@ -13,7 +13,7 @@ Seahorse workflow is a graph of connected operations, which are consuming and pr
 Below you can find the complete list of operations available in Seahorse:
 
 * Input/Output
-  * [Notebook](operations/notebook.html)
+  * [Python Notebook](operations/python_notebook.html)
   * [Read DataFrame](operations/read_dataframe.html)
   * [Read Transformer](operations/read_transformer.html)
   * [Write DataFrame](operations/write_dataframe.html)

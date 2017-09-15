@@ -86,11 +86,11 @@ It contains information about data loaded by the Read DataFrame operation.
 The DataFrame is too wide (more than 20 columns) to allow viewing the data sample in the report,
 so we are able to explore here only the column types and names.
 If you want to explore the data a bit more, you can use
-a [Notebook](../operations/notebook.html) operation
+a [Python Notebook](../operations/python_notebook.html) operation
 (it allows interactive data exploration). Just place it on the canvas (use drag-and-drop technique)
 and connect its input port with the Read DataFrame output port
 (click on the output port and drag it to an input port of the other operation).
-Now, you can open the Notebook by selecting it on the canvas and clicking at the “Open notebook” button on the right panel.
+Now, you can open the Python Notebook by selecting it on the canvas and clicking at the “Open notebook” button on the right panel.
 
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/open_notebook_button.png">
 
