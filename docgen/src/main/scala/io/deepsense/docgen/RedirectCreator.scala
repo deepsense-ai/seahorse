@@ -46,7 +46,7 @@ trait RedirectCreator {
     val writer = new PrintWriter(redirectFile)
     writer.println("---")
     writer.println("layout: redirect")
-    writer.println("redirect: " + SparkOperationsDocGenerator.sparkDocPrefix + sparkClassName)
+    writer.println("redirect: ../operations/" + DocUtils.underscorize(operation.name) + ".html")
     writer.println("---")
     writer.flush()
     writer.close()

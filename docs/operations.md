@@ -9,7 +9,7 @@ description: Deepsense documentation homepage
 ---
 
 Operations are base building blocks for Deeplang workflow.
-Detailed description of operations can be found [here](deeplang.html#operations).
+Detailed description of operations can be found [here](deeplang_overview.html#operations).
 
 ### Operations Catalog
 List of all currently supported operations:
@@ -27,17 +27,17 @@ List of all currently supported operations:
   * [Execute Mathematical Transformation](operations/execute_mathematical_transformation.html)
   * [Execute SQL Expression](operations/execute_sql_expression.html)
   <!-- Spark ported operations -->
-  * [Assemble Vector](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.VectorAssembler)
-  * [Binarize](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Binarizer)
-  * [Convert to n-grams](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.NGram)
-  * [DCT](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.DCT)
-  * [HashingTF](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.HashingTF)
-  * [Normalize](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Normalizer)
-  * [One Hot Encode](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.OneHotEncoder)
-  * [Polynomial Expand](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.PolynomialExpansion)
-  * [Remove Stop Words](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.StopWordsRemover)
-  * [Tokenize](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Tokenizer)
-  * [Tokenize with Regex](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.RegexTokenizer)
+  * [Assemble Vector](operations/assemble_vector.html)
+  * [Binarize](operations/binarize.html)
+  * [Convert to n-grams](operations/convert_to_n-grams.html)
+  * [DCT](operations/dct.html)
+  * [HashingTF](operations/hashingtf.html)
+  * [Normalize](operations/normalize.html)
+  * [One Hot Encode](operations/one_hot_encode.html)
+  * [Polynomial Expand](operations/polynomial_expand.html)
+  * [Remove Stop Words](operations/remove_stop_words.html)
+  * [Tokenize](operations/tokenize.html)
+  * [Tokenize with Regex](operations/tokenize_with_regex.html)
 * Data Manipulation
   * [Fit](operations/fit.html)
   * [Filter Columns](operations/filter_columns.html)
@@ -46,17 +46,27 @@ List of all currently supported operations:
   * [Split](operations/split.html)
   * [Union](operations/union.html)
 * Machine Learning
-  * [PCA](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.PCA)
-  * [Standard Scaler](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.StandardScaler)
-  * [Vector Indexer](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.VectorIndex)
+  * [Count Vectorizer](operations/count_vectorizer.html)
+  * [IDF](operations/idf.html)
+  * [Min-Max Scaler](operations/min-max_scaler.html)
+  * [PCA](operations/pca.html)
+  * [Standard Scaler](operations/standard_scaler.html)
+  * [Vector Indexer](operations/vector_indexer.html)
+  * [Word2Vec](operations/word2vec.html)
   * Recommendation
-    * [ALS](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.recommendation.ALS)
+    * [ALS](operations/als.html)
   * Regression
+    * [GBT Regressor](operations/gbt_regressor.html)
+    * [Isotonic Regression](operations/isotonic_regression.html)
+    * [Linear Regression](operations/linear_regression.html)
+    * [Random Forest Regression](operations/random_forest_regression.html)
   * Classification
-    * [Logistic Regression](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.classification.LogisticRegression)
+    * [GBT Classifier](operations/gbt_classifier.html)
+    * [Logistic Regression](operations/logistic_regression.html)
   * Clustering
+    * [K-Means](operations/k-means.html)
   * Evaluation
     * [Evaluate](operations/evaluate.html)
-    * [Binary Classification Evaluator](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.BinaryClassificationEvaluator)
-    * [Multiclass Classification Evaluator](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator)
-    * [Regression Evaluator](http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.RegressionEvaluator)
+    * [Binary Classification Evaluator](operations/binary_classification_evaluator.html)
+    * [Multiclass Classification Evaluator](operations/multiclass_classification_evaluator.html)
+    * [Regression Evaluator](operations/regression_evaluator.html)

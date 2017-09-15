@@ -52,10 +52,9 @@ Create Custom Transformer does not take any input.
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>0</code></td>
-<td><code><a href="../classes/custom_transformer.html">Custom Transformer</a></code></td>
-<td>A Custom Transformer which can be used to transform a DataFrame.</td>
+<tr><td><code>0</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td>
 </tr>
 </tbody>
 </table>

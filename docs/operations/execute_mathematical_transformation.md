@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Produces a [Mathematical Transformation](../classes/mathematical_transformation.html).
+Produces a Mathematical Transformation.
 The Transformation creates a new column basing on a mathematical formula.
 The Transformation can be applied to a [DataFrame](../classes/dataframe.html)
 with [Transform](transform.html)
@@ -32,9 +32,9 @@ Execute Mathematical Transformation does not take any input.
 </thead>
 <tbody>
 <tr>
-<td><code>0</code></td>
-<td><code><a href="../classes/mathematical_transformation.html">Mathematical Transformation</a></code></td>
-<td>A Mathematical Transformation containing the formula.</td>
+<td><code>0</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td>
 </tr>
 </tbody>
 </table>

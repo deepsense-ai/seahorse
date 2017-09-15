@@ -113,18 +113,18 @@ trait DocPageCreator {
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
             "Output DataFrame"),
-          ("<code><a href=\"../traits/transformer.html\">Transformer</a></code>",
+          ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
             "Transformer that allows to apply the operation on other DataFrames using " +
             "<a href=\"transform.html\">Transform</a>")
         ))
       case (e: EstimatorAsFactory[_]) =>
         inputOutputTable(Seq(
-          ("<code><a href=\"../traits/estimator.html\">Estimator</a></code>",
+          ("<code><a href=\"../classes/estimator.html\">Estimator</a></code>",
             "Estimator that can be used in <a href=\"fit.html\">Fit</a> operation")
         ))
       case (ev: EvaluatorAsFactory[_]) =>
         inputOutputTable(Seq(
-          ("<code><a href=\"../traits/evaluator.html\">Evaluator</a></code>",
+          ("<code><a href=\"../classes/evaluator.html\">Evaluator</a></code>",
             "Evaluator that can be used in <a href=\"evaluate.html\">Evaluate</a> operation")
         ))
     }

@@ -25,17 +25,17 @@
         <li><a href="{{base}}/operations/execute_mathematical_transformation.html">Execute Mathematical Transformation</a></li>
         <li><a href="{{base}}/operations/execute_sql_expression.html">Execute SQL Expression</a></li>
         <!-- Spark ported transformations -->
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.VectorAssembler">Assemble Vector</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Binarizer">Binarize</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.NGram">Convert to n-grams</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.DCT">DCT</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.HashingTF">HashingTF</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Normalizer">Normalize</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.OneHotEncoder">One Hot Encode</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.PolynomialExpansion">Polynomial Expand</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.StopWordsRemover">Remove Stop Words</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Tokenizer">Tokenize</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.RegexTokenizer">Tokenize with Regex</a></li>
+        <li><a href="{{base}}/operations/assemble_vector.html">Assemble Vector</a></li>
+        <li><a href="{{base}}/operations/binarize.html">Binarize</a></li>
+        <li><a href="{{base}}/operations/convert_to_n-grams.html">Convert to n-grams</a></li>
+        <li><a href="{{base}}/operations/dct.html">DCT</a></li>
+        <li><a href="{{base}}/operations/hashingtf.html">HashingTF</a></li>
+        <li><a href="{{base}}/operations/normalize.html">Normalize</a></li>
+        <li><a href="{{base}}/operations/one_hot_encode.html">One Hot Encode</a></li>
+        <li><a href="{{base}}/operations/polynomial_expand.html">Polynomial Expand</a></li>
+        <li><a href="{{base}}/operations/remove_stop_words.html">Remove Stop Words</a></li>
+        <li><a href="{{base}}/operations/tokenize.html">Tokenize</a></li>
+        <li><a href="{{base}}/operations/tokenize_with_regex.html">Tokenize with Regex</a></li>
       </ul>
     </li>
     <li class="menu-group"><a href="#"><strong>Data Manipulation</strong></a>
@@ -50,33 +50,43 @@
     </li>
     <li class="menu-group"><a href="#"><strong>Machine Learning</strong></a>
       <ul class="lvl-2">
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.PCA">PCA</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.StandardScaler">Standard Scaler</a></li>
-        <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.VectorIndexer">Vector Indexer</a></li>
+        <li><a href="{{base}}/operations/count_vectorizer.html">Count Vectorizer</a></li>
+        <li><a href="{{base}}/operations/idf.html">IDF</a></li>
+        <li><a href="{{base}}/operations/min-max_scaler.html">Min-Max Scaler</a></li>
+        <li><a href="{{base}}/operations/pca.html">PCA</a></li>
+        <li><a href="{{base}}/operations/standard_scaler.html">Standard Scaler</a></li>
+        <li><a href="{{base}}/operations/vector_indexer.html">Vector Indexer</a></li>
+        <li><a href="{{base}}/operations/word2vec.html">Word2Vec</a></li>
         <li class="menu-group"><a href="#">Recommendation</a>
           <ul class="lvl-3">
-            <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.recommendation.ALS">ALS</a></li>
+            <li><a href="{{base}}/operations/als.html">ALS</a></li>
           </ul>
         </li>
         <li class="menu-group"><a href="#">Regression</a>
           <ul class="lvl-3">
+            <li><a href="{{base}}/operations/gbt_regressor.html">GBT Regressor</a></li>
+            <li><a href="{{base}}/operations/isotonic_regression.html">Isotonic Regression</a></li>
+            <li><a href="{{base}}/operations/linear_regression.html">Linear Regression</a></li>
+            <li><a href="{{base}}/operations/random_forest_regression.html">Random Forest Regression</a></li>
           </ul>
         </li>
         <li class="menu-group"><a href="#">Classification</a>
           <ul class="lvl-3">
-            <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.classification.LogisticRegression">Logistic Regression</a></li>
+            <li><a href="{{base}}/operations/gbt_classifier.html">GBT Classifier</a></li>
+            <li><a href="{{base}}/operations/logistic_regression.html">Logistic Regression</a></li>
           </ul>
         </li>
         <li class="menu-group"><a href="#">Clustering</a>
           <ul class="lvl-3">
+            <li><a href="{{base}}/operations/k-means.html">K-Means</a></li>
           </ul>
         </li>
         <li class="menu-group"><a href="#">Evaluation</a>
           <ul class="lvl-3">
             <li><a href="{{base}}/operations/evaluate.html">Evaluate</a></li>
-            <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.BinaryClassificationEvaluator">Binary Classification Evaluator</a></li>
-            <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator">Multiclass Classification Evaluator</a></li>
-            <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.RegressionEvaluator">Regression Evaluator</a></li>
+            <li><a href="{{base}}/operations/binary_classification_evaluator.html">Binary Classification Evaluator</a></li>
+            <li><a href="{{base}}/operations/multiclass_classification_evaluator.html">Multiclass Classification Evaluator</a></li>
+            <li><a href="{{base}}/operations/regression_evaluator.html">Regression Evaluator</a></li>
           </ul>
         </li>
       </ul>
