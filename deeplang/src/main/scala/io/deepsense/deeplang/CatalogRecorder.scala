@@ -57,6 +57,8 @@ object CatalogRecorder {
     catalog.registerDOperable[PCAModel]()
     catalog.registerDOperable[StandardScaler]()
     catalog.registerDOperable[StandardScalerModel]()
+    catalog.registerDOperable[MinMaxScaler]()
+    catalog.registerDOperable[MinMaxScalerModel]()
     catalog.registerDOperable[VectorIndexer]()
     catalog.registerDOperable[VectorIndexerModel]()
     catalog.registerDOperable[StringIndexer]()
@@ -153,6 +155,9 @@ object CatalogRecorder {
       DOperationCategories.ML)
 
     catalog.registerDOperation[CreateStandardScaler](
+      DOperationCategories.ML)
+
+    catalog.registerDOperation[CreateMinMaxScaler](
       DOperationCategories.ML)
 
     catalog.registerDOperation[CreateVectorIndexer](
