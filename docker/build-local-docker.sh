@@ -20,7 +20,7 @@ if [ ! -z $GIT_TAG ]; then
   GIT_BRANCH="$GIT_TAG"
 fi
 
-TAG_LATEST="$PROJECT_NAME:$GIT_BRANCH-latest"
+GIT_SHA=`git rev-parse HEAD`
 
 # Validate input parameters
 if [ ! -d $PROJECT_PATH ]; then
@@ -51,4 +51,4 @@ fi
 
 # Build and tag docker image
 echo ">>> Building docker and tagging it as latest"
-docker build -t "$TAG_LATEST" .
+docker build -t "$PROJECT_NAME:$GIT_SHA" .
