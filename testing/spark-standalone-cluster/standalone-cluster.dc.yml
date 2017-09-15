@@ -9,7 +9,13 @@ services:
     entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/master.conf"
     links:
       - hdfs
-  sparkSlave:
+  sparkSlave1:
+    image: deepsense/docker-spark-standalone:local
+    entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/slave.conf"
+    links:
+      - sparkMaster
+      - hdfs
+  sparkSlave2:
     image: deepsense/docker-spark-standalone:local
     entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/slave.conf"
     links:
