@@ -18,7 +18,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.dataframe.DataFrame
 
 class DataFrameSpliterIntegSpec
-  extends SparkIntegTestSupport
+  extends DOperationIntegTestSupport
   with GeneratorDrivenPropertyChecks
   with Matchers {
 

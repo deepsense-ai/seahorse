@@ -3,15 +3,21 @@
  *
  * Owner: Grzegorz Chilkiewicz
  */
-package io.deepsense.graphexecutor.util
+package io.deepsense.entitystorage
 
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Utility for creating unique filenames on HDFS.
  */
 object UniqueFilenameUtil {
+  val DataFrameEntityCategory = "dataframe"
+
   private val numberGenerator = new AtomicInteger(0)
+
+  /** String unique for UniqueFilenameUtil instance. It is used to create unique file path */
+  val uniqueString = UUID.randomUUID()
 
   /**
    * Returns directory for storing files of given properties.
@@ -33,21 +39,15 @@ object UniqueFilenameUtil {
    * Returns unique HDFS filename for file of given properties.
    * @param tenantId tenant id
    * @param entityCategory category of entity (file/dataframe/etc..)
-   * @param containerId optional: current container id
    * @param appLocation optional: HDFS location of deepsense application
    * @return unique HDFS filename for file of given properties
    */
   def getUniqueHdfsFilename(
       tenantId: String,
       entityCategory: String,
-      containerId: String = System.getenv("CONTAINER_ID"),
       appLocation: String = "deepsense"): String = {
-    require(containerId != null)
-    require(containerId.matches("container_\\d{13}_\\d{4}_\\d{2}_\\d{6}"))
     val directoryName = getHdfsDirectoryName(tenantId, entityCategory, appLocation)
-    val uniqueAppAttemptId =
-      containerId.substring(0, containerId.lastIndexOf("_")).replace("container", "application")
     val uniqueNumberStr = "%06d".format(numberGenerator.incrementAndGet())
-    s"$directoryName/${uniqueAppAttemptId}_file$uniqueNumberStr"
+    s"$directoryName/${uniqueString}_file$uniqueNumberStr"
   }
 }

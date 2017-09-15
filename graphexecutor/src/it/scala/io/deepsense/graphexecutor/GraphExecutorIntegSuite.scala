@@ -14,9 +14,9 @@ import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.graph._
 import io.deepsense.models.experiments.Experiment
 
+// Ignored because of problems with entitystorage
 @Ignore
 class GraphExecutorIntegSuite extends HdfsIntegTestSupport with Matchers with BeforeAndAfter {
-  //this test depends on entitystorage that is why right now is ignored.
   val simpleDataFramePathIn = s"$testDir/SimpleDataFrame"
 
   val simpleDataFramePathOut = s"$simpleDataFramePathIn.out"
@@ -65,9 +65,11 @@ class GraphExecutorIntegSuite extends HdfsIntegTestSupport with Matchers with Be
     def createGraphWithTimestampDecomposer(inPath: String, outPath: String): Experiment = {
       val graph = new Graph
       val readOp = new ReadDataFrame
+      // TODO: not path, but id of existent entity
       readOp.parameters.getStringParameter("path").value = Some(inPath)
 
       val writeOp = new WriteDataFrame
+      // TODO: not path, but name & description of entity to be created
       writeOp.parameters.getStringParameter("path").value = Some(outPath)
 
       val node1 = Node(UUID.randomUUID(), readOp)

@@ -8,6 +8,8 @@ package io.deepsense.deeplang.doperations
 
 import java.sql.Timestamp
 
+import scala.concurrent.Await
+
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -16,30 +18,49 @@ import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
+import io.deepsense.deeplang.{DOperationIntegTestSupport, ExecutionContext, DOperable}
+import io.deepsense.models.entities.{Entity, DataObjectReference, DataObjectReport, InputEntity}
 
-class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter with LazyLogging {
+class ReadDataFrameIntegSpec extends DOperationIntegTestSupport with BeforeAndAfter with LazyLogging {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
+
   val testDir = "/tests/ReadDataFrameTest"
 
   before {
     hdfsClient.delete(testDir, true)
   }
 
-  "ReadDataFrame" should "read locally saved DataFrame" in {
+  "ReadDataFrame" should "read saved DataFrame" in {
     val context = executionContext
     val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
     dataFrame.sparkDataFrame.saveAsParquetFile(testDir)
 
+    val entity = registerDataFrame(context)
+
     val operation = new ReadDataFrame
-    val pathParameter = operation.parameters.getStringParameter("path")
-    pathParameter.value = Some(testDir)
-    logger.info("Reading dataframe from hdfs: {}", pathParameter)
+    val idParameter = operation.parameters.getStringParameter(ReadDataFrame.idParam)
+    idParameter.value = Some(entity.id.toString)
+    logger.info("Reading dataframe from entity id: {}", idParameter)
     val operationResult = operation.execute(context)(Vector.empty[DOperable])
     val operationDataFrame = operationResult(0).asInstanceOf[DataFrame]
 
     assertDataFramesEqual(dataFrame, operationDataFrame)
+  }
+
+  def registerDataFrame(context: ExecutionContext): Entity = {
+    import scala.concurrent.duration._
+    implicit val timeout = 5.seconds
+    val entityF = context.entityStorageClient.createEntity(InputEntity(
+      context.tenantId,
+      "testEntity name",
+      "testEntity description",
+      "DataFrame",
+    // TODO: check if ds-dev-env-master:8020 is necessary, if yes - get it from configuration
+      Some(DataObjectReference(s"$hdfsPath$testDir")),
+      Some(DataObjectReport("testEntity Report")),
+      true))
+    Await.result(entityF, timeout)
   }
 
   def testDataFrame(builder: DataFrameBuilder): DataFrame = {

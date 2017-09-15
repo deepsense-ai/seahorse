@@ -15,9 +15,9 @@ import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.dataframe.DataFrameBuilder
-import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
+import io.deepsense.deeplang.{DOperationIntegTestSupport, DOperable}
 
-class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
+class WriteDataFrameIntegSpec extends DOperationIntegTestSupport with BeforeAndAfter {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
   val testDir = "/tests/WriteDataFrameTest"
@@ -48,8 +48,11 @@ class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter 
   def testSimpleDataFrameSchemaWithRowsSeq(rowsSeq: Seq[Row]): Unit = {
     val context = executionContext
     val operation = new WriteDataFrame
-    val pathParameter = operation.parameters.getStringParameter("path")
-    pathParameter.value = Some(testDir)
+    val nameParameter = operation.parameters.getStringParameter(WriteDataFrame.nameParam)
+    nameParameter.value = Some("test WriteDF name")
+    val descriptionParameter =
+      operation.parameters.getStringParameter(WriteDataFrame.descriptionParam)
+    descriptionParameter.value = Some("test WriteDF description")
 
     val schema: StructType = StructType(List(
       StructField("column1", StringType, true),
@@ -64,6 +67,7 @@ class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter 
     val dataFrameToSave = builder.buildDataFrame(sparkDataFrame)
     operation.execute(context)(Vector[DOperable](dataFrameToSave))
 
+    // TODO: maybe WriteDF should have param hidden from user: path?
     val loadedDataFrame = sqlContext.parquetFile(testDir)
 
     val loadedDataFrameRows = loadedDataFrame.orderBy("column1").collect()

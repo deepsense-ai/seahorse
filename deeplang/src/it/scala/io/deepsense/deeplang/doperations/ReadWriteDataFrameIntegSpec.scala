@@ -9,10 +9,10 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.scalatest.BeforeAndAfter
+import org.scalatest.{BeforeAndAfter, Ignore}
 
 import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DOperable, ExecutionContext, SparkIntegTestSupport}
+import io.deepsense.deeplang.{DOperationIntegTestSupport, DOperable, ExecutionContext}
 
 /**
  * This test requirements:
@@ -20,7 +20,10 @@ import io.deepsense.deeplang.{DOperable, ExecutionContext, SparkIntegTestSupport
  * - /tests directory with read,write privileges to Your user on HDFS
  * - /etc/hosts entry: 172.28.128.100 ds-dev-env-master
  */
-class ReadWriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
+// TODO: shouldn't it be WriteReadDataFrameIntegSpec ?
+// NOTE: ignored because of impossibility to pass id of written DF to readDF operation
+@Ignore
+class ReadWriteDataFrameIntegSpec extends DOperationIntegTestSupport with BeforeAndAfter {
 
   val testDir = "/tests/readWriteDataFrameTest"
 
@@ -32,8 +35,10 @@ class ReadWriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAf
     val context = executionContext
     val dataFrame: DataFrame = createDataFrame
 
-    writeDataFrame(context, testDir, dataFrame)
-    val retrievedDataFrame = readDataFrame(context, testDir)
+    writeDataFrame(context, dataFrame, "test name", "test description")
+    // TODO: is it possible to get entity id by its name & description?
+    val entityId = "???"
+    val retrievedDataFrame = readDataFrame(context, entityId)
 
     assertDataFramesEqual(dataFrame, retrievedDataFrame)
   }
@@ -58,19 +63,24 @@ class ReadWriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAf
 
   private def writeDataFrame(
       context: ExecutionContext,
-      path: String,
-      dataFrame: DataFrame): Unit = {
+      dataFrame: DataFrame,
+      name: String,
+      description: String): Unit = {
     val writeDataFrameOperation = new WriteDataFrame
-    val pathParameter = writeDataFrameOperation.parameters.getStringParameter("path")
-    pathParameter.value = Some(path)
+    val nameParameter =
+      writeDataFrameOperation.parameters.getStringParameter(WriteDataFrame.nameParam)
+    nameParameter.value = Some(name)
+    val descriptionParameter =
+      writeDataFrameOperation.parameters.getStringParameter(WriteDataFrame.descriptionParam)
+    descriptionParameter.value = Some(description)
 
     writeDataFrameOperation.execute(context)(Vector[DOperable](dataFrame))
   }
 
-  private def readDataFrame(context: ExecutionContext, path: String): DataFrame = {
+  private def readDataFrame(context: ExecutionContext, entityId: String): DataFrame = {
     val readDataFrameOperation = new ReadDataFrame
-    val pathParameter = readDataFrameOperation.parameters.getStringParameter("path")
-    pathParameter.value = Some(path)
+    val idParameter = readDataFrameOperation.parameters.getStringParameter(ReadDataFrame.idParam)
+    idParameter.value = Some(entityId)
 
     val operationResult = readDataFrameOperation.execute(context)(Vector.empty[DOperable])
     operationResult.head.asInstanceOf[DataFrame]

@@ -111,6 +111,11 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
 
       executionContext.sqlContext = new SQLContext(sparkContext)
       executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
+      executionContext.entityStorageClient = entityStorageClient
+      graphGuard.synchronized {
+        executionContext.tenantId = experiment.get.tenantId
+      }
+
 
       // Loop until there are nodes in graph that are ready to or during execution
       while (graphGuard.synchronized {

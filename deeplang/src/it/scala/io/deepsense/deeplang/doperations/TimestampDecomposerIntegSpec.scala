@@ -16,9 +16,9 @@ import org.joda.time.DateTime
 
 import io.deepsense.deeplang.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
-import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext, SparkIntegTestSupport}
+import io.deepsense.deeplang.{DOperationIntegTestSupport, DOperable, DOperation, ExecutionContext}
 
-class TimestampDecomposerIntegSpec extends SparkIntegTestSupport {
+class TimestampDecomposerIntegSpec extends DOperationIntegTestSupport {
 
   private[this] val timestampColumnName = "timestampColumn"
   private[this] val t1 = new DateTime(2015, 3, 30, 15, 25)
