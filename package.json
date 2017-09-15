@@ -29,7 +29,7 @@
     "angular-ui-router": "^0.2.15",
     "bootstrap": "^3.3.4",
     "deepsense-attributes-panel": "0.0.9",
-    "deepsense-catalogue-panel": "0.0.4",
+    "deepsense-catalogue-panel": "0.0.5",
     "deepsense-context-menu": "0.0.1",
     "deepsense-loading-spinner": "^1.0.2",
     "deepsense-navigation-panel": "0.0.4",
