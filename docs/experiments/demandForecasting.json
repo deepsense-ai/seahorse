@@ -1,618 +1,328 @@
 {
-  "experiment":{
-    "name":"Demand Forecasting (Bikes)",
-    "description":"Demand Forecasting (Bikes)",
-    "graph":{
-      "nodes":[
-        {
-          "id":"b13fa9ff-4728-49df-9d3a-f354a1b4d483",
-          "operation":{
-            "id":"6cf6867c-e7fd-11e4-b02c-1681e6b88ec1",
-            "name":"Score regressor",
-            "version":"0.1.0"
-          },
-          "parameters":{
+  "experiment": {
+    "name": "Demand Forecasting (Bikes) (gzes)",
+    "description": "Demand Forecasting (Bikes)",
+    "graph": {
+      "nodes": [{
+        "id": "29a71538-a84f-44d9-ad3a-9029e542bf54",
+        "operation": {
+          "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+          "name": "Split",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "split ratio": 0.7,
+          "seed": 123456789
+        }
+      }, {
+        "id": "b13fa9ff-4728-49df-9d3a-f354a1b4d483",
+        "operation": {
+          "id": "6cf6867c-e7fd-11e4-b02c-1681e6b88ec1",
+          "name": "Score regressor",
+          "version": "0.1.0"
+        },
+        "parameters": {
 
-          }
+        }
+      }, {
+        "id": "30bcd39d-8783-43a0-a314-f9680ccf7975",
+        "operation": {
+          "id": "42f2eb12-e28b-11e4-8a00-1681e6b88ec1",
+          "name": "Decompose Datetime",
+          "version": "0.1.0"
         },
-        {
-          "id":"29a71538-a84f-44d9-ad3a-9029e542bf54",
-          "operation":{
-            "id":"d273c42f-b840-4402-ba6b-18282cc68de3",
-            "name":"Split DataFrame",
-            "version":"0.1.0"
+        "parameters": {
+          "timestampColumn": {
+            "type": "column",
+            "value": "datetime"
           },
-          "parameters":{
-            "split ratio":0.7,
-            "seed":123456789
-          }
-        },
-        {
-          "id":"f8f6adb9-d80e-4b9d-a9a1-d649e7b187a1",
-          "operation":{
-            "id":"f8b3c5d0-febe-11e4-b939-0800200c9a66",
-            "name":"Convert Type",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "selectedColumns":[
-              {
-                "type":"columnList",
-                "values":[
-                  "datetime_year",
-                  "datetime_month",
-                  "datetime_day",
-                  "datetime_hour"
-                ]
-              },
-              {
-                "type":"indexList",
-                "values":[
+          "parts": {
+            "year": {
 
-                ]
-              }
-            ],
-            "targetType":{
-              "categorical":{
-
-              }
-            }
-          }
-        },
-        {
-          "id":"6f389671-0c10-4352-9056-0b6b0874fa47",
-          "operation":{
-            "id":"2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
-            "name":"Load DataFrame",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "id":"40d2292b-b22c-420e-a9ce-4e43d1a5992e"
-          }
-        },
-        {
-          "id":"b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
-          "operation":{
-            "id":"06374446-3138-4cf7-9682-f884990f3a60",
-            "name":"Join",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "joinColumns":[
-              {
-                "type":"columnList",
-                "values":[
-                  "datetime"
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "id":"53f213af-a04c-4f33-a341-8751c8e0df23",
-          "operation":{
-            "id":"b1b6eefe-f7b7-11e4-a322-1697f925ec7b",
-            "name":"One Hot Encoder",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "columns":[
-              {
-                "type":"columnList",
-                "values":[
-                  "datetime_year",
-                  "datetime_month",
-                  "datetime_day",
-                  "datetime_hour"
-                ]
-              }
-            ],
-            "with redundant":true
-          }
-        },
-        {
-          "id":"958441de-a859-4500-9171-f3a89183add3",
-          "operation":{
-            "id":"f8b3c5d0-febe-11e4-b939-0800200c9a66",
-            "name":"Convert Type",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "selectedColumns":[
-              {
-                "type":"columnList",
-                "values":[
-
-                ]
-              },
-              {
-                "type":"indexList",
-                "values":[
-                  14,
-                  61,
-                  10,
-                  17,
-                  47,
-                  73,
-                  4,
-                  42,
-                  46,
-                  39,
-                  60,
-                  24,
-                  35,
-                  6,
-                  62,
-                  20,
-                  32,
-                  7,
-                  1,
-                  55,
-                  27,
-                  13,
-                  52,
-                  56,
-                  45,
-                  66,
-                  11,
-                  67,
-                  69,
-                  12,
-                  59,
-                  58,
-                  3,
-                  5,
-                  33,
-                  19,
-                  63,
-                  51,
-                  23,
-                  48,
-                  53,
-                  15,
-                  8,
-                  38,
-                  40,
-                  64,
-                  65,
-                  44,
-                  76,
-                  57,
-                  9,
-                  21,
-                  37,
-                  41,
-                  72,
-                  71,
-                  36,
-                  70,
-                  28,
-                  74,
-                  16,
-                  18,
-                  68,
-                  26,
-                  31,
-                  49,
-                  2,
-                  34,
-                  54,
-                  29,
-                  75,
-                  25,
-                  43,
-                  50,
-                  22,
-                  30
-                ]
-              }
-            ],
-            "targetType":{
-              "numeric":{
-
-              }
-            }
-          }
-        },
-        {
-          "id":"387ca1cb-0009-46b3-8440-7c1d6b3008f4",
-          "operation":{
-            "id":"0643f308-f2fa-11e4-b9b2-1697f925ec7b",
-            "name":"Ridge Regression",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "regularization":1.0E-7,
-            "iterationsNumber":1.0
-          }
-        },
-        {
-          "id":"cbfb2037-9718-435d-ab13-a91d52b363df",
-          "operation":{
-            "id":"1163bb76-ba65-4471-9632-dfb761d20dfb",
-            "name":"Evaluate Classification",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "targetColumn":{
-              "type":"column",
-              "value":"log_count"
             },
-            "predictionColumn":{
-              "type":"column",
-              "value":"log_count_prediction"
-            }
-          }
-        },
-        {
-          "id":"eda8cb04-852f-4b08-afd4-c0c5ad4b9329",
-          "operation":{
-            "id":"2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
-            "name":"Load DataFrame",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "id":"1b9b8207-e857-4fc8-ab76-0bd950fb9ff6"
-          }
-        },
-        {
-          "id":"1359022f-c5d9-4031-acf5-4789c9ab3028",
-          "operation":{
-            "id":"95ca5225-b8e0-45c7-8ecd-a2c9d4d6861f",
-            "name":"CrossValidateRegressor",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "feature columns":[
-              {
-                "type":"indexList",
-                "values":[
-                  14,
-                  61,
-                  10,
-                  17,
-                  47,
-                  73,
-                  4,
-                  42,
-                  46,
-                  39,
-                  60,
-                  24,
-                  35,
-                  6,
-                  62,
-                  20,
-                  32,
-                  7,
-                  1,
-                  55,
-                  27,
-                  13,
-                  52,
-                  56,
-                  45,
-                  66,
-                  11,
-                  67,
-                  69,
-                  12,
-                  59,
-                  58,
-                  3,
-                  5,
-                  33,
-                  19,
-                  63,
-                  51,
-                  23,
-                  48,
-                  53,
-                  15,
-                  8,
-                  38,
-                  40,
-                  64,
-                  65,
-                  44,
-                  76,
-                  57,
-                  9,
-                  21,
-                  37,
-                  41,
-                  72,
-                  71,
-                  36,
-                  70,
-                  28,
-                  74,
-                  16,
-                  18,
-                  68,
-                  26,
-                  31,
-                  49,
-                  2,
-                  34,
-                  54,
-                  29,
-                  75,
-                  25,
-                  43,
-                  50,
-                  22,
-                  30
-                ]
-              }
-            ],
-            "target column":{
-              "type":"column",
-              "value":"log_count"
+            "hour": {
+
             },
-            "numOfFolds":2.0,
-            "shuffle":{
-              "YES":{
-                "seed":0.0
-              }
-            }
-          }
-        },
-        {
-          "id":"30bcd39d-8783-43a0-a314-f9680ccf7975",
-          "operation":{
-            "id":"42f2eb12-e28b-11e4-8a00-1681e6b88ec1",
-            "name":"Decompose Timestamp",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "timestampColumn":{
-              "type":"column",
-              "value":"datetime"
+            "day": {
+
             },
-            "parts":{
-              "year":{
+            "month": {
 
-              },
-              "month":{
-
-              },
-              "day":{
-
-              },
-              "hour":{
-
-              }
             }
-          }
-        },
-        {
-          "id":"6e2e0166-d3cf-49fe-a2da-b17bb91edb95",
-          "operation":{
-            "id":"96b28b7f-d54c-40d7-9076-839411793d20",
-            "name":"Project Columns",
-            "version":"0.1.0"
-          },
-          "parameters":{
-            "selectedColumns":[
-              {
-                "type":"indexList",
-                "values":[
-                  14,
-                  61,
-                  10,
-                  17,
-                  47,
-                  73,
-                  4,
-                  42,
-                  46,
-                  39,
-                  60,
-                  24,
-                  35,
-                  6,
-                  62,
-                  20,
-                  32,
-                  7,
-                  1,
-                  55,
-                  27,
-                  77,
-                  13,
-                  52,
-                  56,
-                  45,
-                  66,
-                  11,
-                  67,
-                  69,
-                  12,
-                  59,
-                  58,
-                  3,
-                  5,
-                  33,
-                  19,
-                  63,
-                  51,
-                  23,
-                  48,
-                  53,
-                  15,
-                  8,
-                  38,
-                  40,
-                  64,
-                  65,
-                  44,
-                  76,
-                  57,
-                  9,
-                  21,
-                  37,
-                  41,
-                  72,
-                  71,
-                  36,
-                  70,
-                  28,
-                  74,
-                  16,
-                  18,
-                  68,
-                  26,
-                  31,
-                  49,
-                  2,
-                  34,
-                  54,
-                  29,
-                  75,
-                  25,
-                  43,
-                  50,
-                  22,
-                  30
-                ]
-              }
-            ]
           }
         }
-      ],
-      "edges":[
-        {
-          "from":{
-            "nodeId":"387ca1cb-0009-46b3-8440-7c1d6b3008f4",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"1359022f-c5d9-4031-acf5-4789c9ab3028",
-            "portIndex":0
-          }
+      }, {
+        "id": "eda8cb04-852f-4b08-afd4-c0c5ad4b9329",
+        "operation": {
+          "id": "2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
+          "name": "Load DataFrame",
+          "version": "0.1.0"
         },
-        {
-          "from":{
-            "nodeId":"53f213af-a04c-4f33-a341-8751c8e0df23",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"6e2e0166-d3cf-49fe-a2da-b17bb91edb95",
-            "portIndex":0
-          }
+        "parameters": {
+          "id": "1b9b8207-e857-4fc8-ab76-0bd950fb9ff6"
+        }
+      }, {
+        "id": "1359022f-c5d9-4031-acf5-4789c9ab3028",
+        "operation": {
+          "id": "95ca5225-b8e0-45c7-8ecd-a2c9d4d6861f",
+          "name": "Cross-validate Regressor",
+          "version": "0.1.0"
         },
-        {
-          "from":{
-            "nodeId":"6e2e0166-d3cf-49fe-a2da-b17bb91edb95",
-            "portIndex":0
+        "parameters": {
+          "feature columns": [{
+            "type": "indexList",
+            "values": [1, 76]
+          }],
+          "target column": {
+            "type": "column",
+            "value": "log_count"
           },
-          "to":{
-            "nodeId":"958441de-a859-4500-9171-f3a89183add3",
-            "portIndex":0
-          }
-        },
-        {
-          "from":{
-            "nodeId":"958441de-a859-4500-9171-f3a89183add3",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"29a71538-a84f-44d9-ad3a-9029e542bf54",
-            "portIndex":0
-          }
-        },
-        {
-          "from":{
-            "nodeId":"b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"30bcd39d-8783-43a0-a314-f9680ccf7975",
-            "portIndex":0
-          }
-        },
-        {
-          "from":{
-            "nodeId":"eda8cb04-852f-4b08-afd4-c0c5ad4b9329",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
-            "portIndex":0
-          }
-        },
-        {
-          "from":{
-            "nodeId":"29a71538-a84f-44d9-ad3a-9029e542bf54",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"1359022f-c5d9-4031-acf5-4789c9ab3028",
-            "portIndex":1
-          }
-        },
-        {
-          "from":{
-            "nodeId":"f8f6adb9-d80e-4b9d-a9a1-d649e7b187a1",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"53f213af-a04c-4f33-a341-8751c8e0df23",
-            "portIndex":0
-          }
-        },
-        {
-          "from":{
-            "nodeId":"1359022f-c5d9-4031-acf5-4789c9ab3028",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"b13fa9ff-4728-49df-9d3a-f354a1b4d483",
-            "portIndex":0
-          }
-        },
-        {
-          "from":{
-            "nodeId":"6f389671-0c10-4352-9056-0b6b0874fa47",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
-            "portIndex":1
-          }
-        },
-        {
-          "from":{
-            "nodeId":"b13fa9ff-4728-49df-9d3a-f354a1b4d483",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"cbfb2037-9718-435d-ab13-a91d52b363df",
-            "portIndex":0
-          }
-        },
-        {
-          "from":{
-            "nodeId":"29a71538-a84f-44d9-ad3a-9029e542bf54",
-            "portIndex":1
-          },
-          "to":{
-            "nodeId":"b13fa9ff-4728-49df-9d3a-f354a1b4d483",
-            "portIndex":1
-          }
-        },
-        {
-          "from":{
-            "nodeId":"30bcd39d-8783-43a0-a314-f9680ccf7975",
-            "portIndex":0
-          },
-          "to":{
-            "nodeId":"f8f6adb9-d80e-4b9d-a9a1-d649e7b187a1",
-            "portIndex":0
+          "numOfFolds": 2.0,
+          "shuffle": {
+            "YES": {
+              "seed": 0.0
+            }
           }
         }
-      ]
+      }, {
+        "id": "6e2e0166-d3cf-49fe-a2da-b17bb91edb95",
+        "operation": {
+          "id": "96b28b7f-d54c-40d7-9076-839411793d20",
+          "name": "Project Columns",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "selectedColumns": [{
+            "type": "indexList",
+            "values": [1, 77]
+          }]
+        }
+      }, {
+        "id": "958441de-a859-4500-9171-f3a89183add3",
+        "operation": {
+          "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
+          "name": "Convert Type",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "selectedColumns": [{
+            "type": "columnList",
+            "values": []
+          }, {
+            "type": "indexList",
+            "values": [1, 76]
+          }],
+          "targetType": {
+            "numeric": {
+
+            }
+          }
+        }
+      }, {
+        "id": "b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
+        "operation": {
+          "id": "06374446-3138-4cf7-9682-f884990f3a60",
+          "name": "Join",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "joinColumns": [{
+            "type": "columnList",
+            "values": ["datetime"]
+          }]
+        }
+      }, {
+        "id": "53f213af-a04c-4f33-a341-8751c8e0df23",
+        "operation": {
+          "id": "b1b6eefe-f7b7-11e4-a322-1697f925ec7b",
+          "name": "One Hot Encoder",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "columns": [{
+            "type": "columnList",
+            "values": ["datetime_year", "datetime_month", "datetime_day", "datetime_hour"]
+          }],
+          "with redundant": true
+        }
+      }, {
+        "id": "387ca1cb-0009-46b3-8440-7c1d6b3008f4",
+        "operation": {
+          "id": "0643f308-f2fa-11e4-b9b2-1697f925ec7b",
+          "name": "Ridge Regression",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "regularization": 1.0E-7,
+          "iterationsNumber": 1.0
+        }
+      }, {
+        "id": "f8f6adb9-d80e-4b9d-a9a1-d649e7b187a1",
+        "operation": {
+          "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
+          "name": "Convert Type",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "selectedColumns": [{
+            "type": "columnList",
+            "values": ["datetime_year", "datetime_month", "datetime_day", "datetime_hour"]
+          }, {
+            "type": "indexList",
+            "values": [0]
+          }],
+          "targetType": {
+            "categorical": {
+
+            }
+          }
+        }
+      }, {
+        "id": "cbfb2037-9718-435d-ab13-a91d52b363df",
+        "operation": {
+          "id": "1163bb76-ba65-4471-9632-dfb761d20dfb",
+          "name": "Evaluate Classification",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "targetColumn": {
+            "type": "column",
+            "value": "log_count"
+          },
+          "predictionColumn": {
+            "type": "column",
+            "value": "log_count_prediction"
+          }
+        }
+      }, {
+        "id": "6f389671-0c10-4352-9056-0b6b0874fa47",
+        "operation": {
+          "id": "2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
+          "name": "Load DataFrame",
+          "version": "0.1.0"
+        },
+        "parameters": {
+          "id": "40d2292b-b22c-420e-a9ce-4e43d1a5992e"
+        }
+      }],
+      "edges": [{
+        "from": {
+          "nodeId": "387ca1cb-0009-46b3-8440-7c1d6b3008f4",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "1359022f-c5d9-4031-acf5-4789c9ab3028",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "53f213af-a04c-4f33-a341-8751c8e0df23",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "6e2e0166-d3cf-49fe-a2da-b17bb91edb95",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "6e2e0166-d3cf-49fe-a2da-b17bb91edb95",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "958441de-a859-4500-9171-f3a89183add3",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "958441de-a859-4500-9171-f3a89183add3",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "29a71538-a84f-44d9-ad3a-9029e542bf54",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "30bcd39d-8783-43a0-a314-f9680ccf7975",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "eda8cb04-852f-4b08-afd4-c0c5ad4b9329",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "29a71538-a84f-44d9-ad3a-9029e542bf54",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "1359022f-c5d9-4031-acf5-4789c9ab3028",
+          "portIndex": 1
+        }
+      }, {
+        "from": {
+          "nodeId": "f8f6adb9-d80e-4b9d-a9a1-d649e7b187a1",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "53f213af-a04c-4f33-a341-8751c8e0df23",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "1359022f-c5d9-4031-acf5-4789c9ab3028",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "b13fa9ff-4728-49df-9d3a-f354a1b4d483",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "6f389671-0c10-4352-9056-0b6b0874fa47",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "b6144d6a-7bc2-4cf5-99aa-8a979c739d94",
+          "portIndex": 1
+        }
+      }, {
+        "from": {
+          "nodeId": "b13fa9ff-4728-49df-9d3a-f354a1b4d483",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "cbfb2037-9718-435d-ab13-a91d52b363df",
+          "portIndex": 0
+        }
+      }, {
+        "from": {
+          "nodeId": "29a71538-a84f-44d9-ad3a-9029e542bf54",
+          "portIndex": 1
+        },
+        "to": {
+          "nodeId": "b13fa9ff-4728-49df-9d3a-f354a1b4d483",
+          "portIndex": 1
+        }
+      }, {
+        "from": {
+          "nodeId": "30bcd39d-8783-43a0-a314-f9680ccf7975",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "f8f6adb9-d80e-4b9d-a9a1-d649e7b187a1",
+          "portIndex": 0
+        }
+      }]
     }
   }
 }
