@@ -1,6 +1,7 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 import commons
+import os.path
 import subprocess
 from json_pattern_utils import match_report
 from robot.libraries.BuiltIn import BuiltIn
@@ -54,6 +55,18 @@ class WorkflowExecutorClient(object):
     if result_report_path is None:
       result_report_path = get_result_report_path()
     match_report(report_pattern_path, result_report_path)
+
+  def check_report_does_not_exist(self, report_pattern_path=None, result_report_path=None,
+                                  workflow_file_path=None):
+    if workflow_file_path is None:
+      workflow_file_path = get_workflow_path()
+    if result_report_path is None:
+      result_report_path = get_result_report_path()
+
+    if not os.path.isfile(workflow_file_path):
+      raise Exception('Workflow does not exist: ' + workflow_file_path)
+    if os.path.isfile(result_report_path):
+      raise Exception('Result report exists: ' + result_report_path)
 
 
 def spark_submit_command(**kwargs):

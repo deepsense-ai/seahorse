@@ -1,70 +1,110 @@
 {
   "workflow": {
     "nodes": [{
-      "id": "54071e32-bc9a-2e7a-884f-38bba7dacb47",
+      "id": "8698a7cf-d9f9-ed28-1327-26019fb39b5e",
       "operation": {
-        "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
+        "id": "04084863-fdda-46fd-b1fe-796c6b5a0967",
         "name": "Convert Type"
       },
       "parameters": {
-        "selected columns": null,
-        "target type": null
+        "target type": {
+          "string": {
+
+          }
+        },
+        "one or many": {
+          "Transform one column": {
+            "input column": {
+              "type": "index",
+              "value": 1
+            },
+            "transform in place": {
+              "transform in place": {
+
+              }
+            }
+          }
+        }
       }
     }, {
-      "id": "946045b4-542a-b939-43a5-61db00b62d20",
+      "id": "f94e783e-e33a-a000-fe83-5a4e67890bb6",
       "operation": {
-        "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
+        "id": "04084863-fdda-46fd-b1fe-796c6b5a0967",
         "name": "Convert Type"
       },
       "parameters": {
-        "selected columns": null,
-        "target type": null
+        "target type": {
+          "string": {
+
+          }
+        },
+        "one or many": {
+          "Transform one column": {
+            "input column": {
+              "type": "index",
+              "value": 1
+            },
+            "transform in place": {
+              "transform in place": {
+
+              }
+            }
+          }
+        }
       }
     }],
     "connections": [{
       "from": {
-        "nodeId": "54071e32-bc9a-2e7a-884f-38bba7dacb47",
+        "nodeId": "f94e783e-e33a-a000-fe83-5a4e67890bb6",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "946045b4-542a-b939-43a5-61db00b62d20",
+        "nodeId": "8698a7cf-d9f9-ed28-1327-26019fb39b5e",
         "portIndex": 0
       }
     }, {
       "from": {
-        "nodeId": "946045b4-542a-b939-43a5-61db00b62d20",
+        "nodeId": "8698a7cf-d9f9-ed28-1327-26019fb39b5e",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "54071e32-bc9a-2e7a-884f-38bba7dacb47",
+        "nodeId": "f94e783e-e33a-a000-fe83-5a4e67890bb6",
         "portIndex": 0
       }
     }]
   },
   "thirdPartyData": {
     "gui": {
-      "name": "Draft workflow",
+      "name": "negativeTests/cycle",
       "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
-        "54071e32-bc9a-2e7a-884f-38bba7dacb47": {
+        "8698a7cf-d9f9-ed28-1327-26019fb39b5e": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 485,
-            "y": 325
+            "x": 5536,
+            "y": 5240
           }
         },
-        "946045b4-542a-b939-43a5-61db00b62d20": {
+        "f94e783e-e33a-a000-fe83-5a4e67890bb6": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 710,
-            "y": 328
+            "x": 5580,
+            "y": 5081
           }
         }
       }
+    },
+    "notebooks": {
+
     }
   },
   "variables": {
 
   },
-  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "id": "6c20f9e3-2158-42b3-a663-5c8ce64e4215",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.0.0"

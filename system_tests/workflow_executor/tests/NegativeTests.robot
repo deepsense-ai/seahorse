@@ -42,13 +42,17 @@ Type Mismatch
     Run Workflow
     Check Report
 
-#Trivial Cycle
-#    Run Workflow
-#    Check Report
-#
-#Cycle
-#    Run Workflow
-#    Check Report
+Incompatible Api Version
+    Run Workflow
+    Check Report Does Not Exist
+
+Trivial Cycle
+    Run Workflow
+    Check Report Does Not Exist
+
+Cycle
+    Run Workflow
+    Check Report Does Not Exist
 
 Column Name Duplication
     [Setup]  Standard Hdfs Test Setup
