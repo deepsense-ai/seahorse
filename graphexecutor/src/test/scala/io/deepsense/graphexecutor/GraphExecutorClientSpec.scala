@@ -59,24 +59,23 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
           when(mockedExperiment.markAborted).thenReturn(abortedExperiment)
           val watcher = TestProbe()
           val yarnClient = mock[YarnClient]
-          val spawner = slowSpawner(yarnClient)
+          val applicationId = mock[ApplicationId]
+          val spawner = slowSpawner(yarnClient, applicationId)
           val gecActor = createTestGEC(spawner)
           watcher.watch(gecActor)
           val runningExperiments = TestProbe()
           launchAndWaitForSpawn(mockedExperiment, spawner, gecActor, runningExperiments)
           runningExperiments.send(gecActor, Abort(mockedExperiment.id))
           runningExperiments.expectMsg(Update(abortedExperiment))
-          eventually(Timeout(Span(8, Seconds))) {
-            verify(yarnClient, times(1)).close()
-            watcher.expectTerminated(gecActor, 1.second)
-          }
+          verifyYarnKilled(watcher, yarnClient, applicationId, gecActor)
         }
         "GE was spawned but is not ready yet" in {
           val abortedExperiment = mock[Experiment]
           when(mockedExperiment.markAborted).thenReturn(abortedExperiment)
           val watcher = TestProbe()
           val yarnClient = mock[YarnClient]
-          val spawner = succeedingSpawner(yarnClient)
+          val applicationId = mock[ApplicationId]
+          val spawner = succeedingSpawner(yarnClient, applicationId)
           val gecActor = createTestGEC(spawner)
           watcher.watch(gecActor)
           val runningExperiments = TestProbe()
@@ -86,10 +85,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
           val ge = TestProbe()
           ge.send(gecActor, ExecutorReady(mockedExperiment.id))
           ge.expectNoMsg()
-          eventually(Timeout(Span(8, Seconds))) {
-            verify(yarnClient, times(1)).close()
-            watcher.expectTerminated(gecActor, 1.second)
-          }
+          verifyYarnKilled(watcher, yarnClient, applicationId, gecActor)
         }
       }
       "abort GE and wait for the last update" when {
@@ -145,6 +141,18 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     }
   }
 
+  def verifyYarnKilled(
+      watcher: TestProbe,
+      yarnClient: YarnClient,
+      applicationId: ApplicationId,
+      gecActor: ActorRef): Unit = {
+    eventually(Timeout(Span(8, Seconds))) {
+      verify(yarnClient, times(1)).killApplication(applicationId)
+      verify(yarnClient, times(1)).close()
+      watcher.expectTerminated(gecActor, 1.second)
+    }
+  }
+
   def signalExecutorReady(gecActor: ActorRef, ge: TestProbe): Unit = {
     eventually {
       ge.send(gecActor, ExecutorReady(mockedExperiment.id))
@@ -161,7 +169,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     verifySpawnerCalled(spawner, experiment)
   }
 
-  def verifySpawnerCalled(spawner: ClusterSpawner, experiment: Experiment): Registration = {
+  def verifySpawnerCalled(spawner: ClusterSpawner, experiment: Experiment): Unit = {
     eventually {
       verify(spawner, times(1))
         .spawnOnCluster(org.mockito.Matchers.eq(experiment.id), any(), any())
@@ -190,20 +198,24 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     spawner
   }
 
-  def succeedingSpawner(yarnClient: YarnClient = mock[YarnClient]): ClusterSpawner = {
+  def succeedingSpawner(
+      yarnClient: YarnClient = mock[YarnClient],
+      applicationId: ApplicationId = mock[ApplicationId]): ClusterSpawner = {
     val spawner = mock[ClusterSpawner]
     when(spawner.spawnOnCluster(any(), any(), any()))
-      .thenReturn(Success(yarnClient, mock[ApplicationId]))
+      .thenReturn(Success(yarnClient, applicationId))
     spawner
   }
 
-  def slowSpawner(yarnClient: YarnClient = mock[YarnClient]): ClusterSpawner = {
+  def slowSpawner(
+    yarnClient: YarnClient = mock[YarnClient],
+    applicationId: ApplicationId = mock[ApplicationId]): ClusterSpawner = {
     val spawner = mock[ClusterSpawner]
     when(spawner.spawnOnCluster(any(), any(), any()))
       .thenAnswer(new Answer[Success[(YarnClient, ApplicationId)]]{
       override def answer(invocation: InvocationOnMock): Success[(YarnClient, ApplicationId)] = {
         Thread.sleep(4000)
-        Success(yarnClient, mock[ApplicationId])
+        Success(yarnClient, applicationId)
       }
     })
     spawner

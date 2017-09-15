@@ -79,8 +79,7 @@ class GraphExecutorClientActor(
    * @param yarnClient YarnClient to manipulate the launched application.
    */
   def executorSpawned(applicationId: ApplicationId, yarnClient: YarnClient): Unit = {
-    this.applicationId = applicationId
-    this.yarnClient = yarnClient
+    registerApplication(yarnClient, applicationId)
     logger.info(s"ExecutorSpawned: AppId: $applicationId, YarnClient: $yarnClient")
     context.become(waitingForExecutorReady orElse handleUnknownRequests)
   }
@@ -91,8 +90,8 @@ class GraphExecutorClientActor(
    */
   def spawnRequestedButAborted: Receive = {
     case ExecutorSpawned(appId, yc) =>
-      yarnClient = yc
-      endExecution()
+      registerApplication(yc, appId)
+      killExecution()
   }
 
   /**
@@ -118,7 +117,7 @@ class GraphExecutorClientActor(
    * When executor becomes ready, Yarn is immediately closed and the actor kills himself.
    */
   def executorNotReadyButAborted: Receive = {
-    case ExecutorReady(experimentId) => endExecution()
+    case ExecutorReady(experimentId) => killExecution()
   }
 
   /**
@@ -165,6 +164,18 @@ class GraphExecutorClientActor(
         runningExperiments ! Update(requestedExperiment.markFailed(experimentFailureDetails))
         me ! PoisonPill
     }
+  }
+
+  def registerApplication(yarnClient: YarnClient, applicationId: ApplicationId): Unit = {
+    this.yarnClient = yarnClient
+    this.applicationId = applicationId
+  }
+
+  def killExecution(): Unit = {
+    logger.debug("Killing application...")
+    yarnClient.killApplication(applicationId)
+    logger.debug("Killing application... DONE!")
+    endExecution()
   }
 
   /**
