@@ -14,6 +14,7 @@ var concat = require('gulp-concat');
 var less = require('gulp-less');
 var templateCache = require('gulp-angular-templatecache');
 var minifyCss = require('gulp-minify-css');
+var connect = require('gulp-connect');
 
 var config = require('./config.json');
 
@@ -30,12 +31,14 @@ gulp.task('html', function () {
         .pipe(templateCache({
             module: 'deepsense-catalogue-panel'
         }))
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.temp))
+        .pipe(connect.reload());
 });
 
 gulp.task('es6', function () {
     return gulp.src(config.src + '**/*.js')
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.temp))
+        .pipe(connect.reload());
 });
 
 gulp.task('less', function () {
@@ -45,7 +48,8 @@ gulp.task('less', function () {
             paths: [path.join(__dirname, 'less', 'includes')]
         }))
         .pipe(minifyCss())
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.temp))
+        .pipe(connect.reload());
 });
 
 gulp.task('concat', function () {
@@ -60,6 +64,13 @@ gulp.task('concat', function () {
         .pipe(gulp.dest(config.dist))
 });
 
+gulp.task('connect', function() {
+    connect.server({
+        root: ['./', 'test/'],
+        livereload: true
+    });
+});
+
 gulp.task('serve', function () {
     gulp.watch(config.src + '**/*', ['build']);
     gulp.watch(config.test + '**/*', ['build']);
@@ -70,7 +81,7 @@ gulp.task('build', function () {
 });
 
 gulp.task('start', function () {
-    runSequence('build', 'serve');
+    runSequence('build', 'connect', 'serve');
 });
 
 gulp.task('default', ['build']);
