@@ -16,6 +16,12 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 
 from api_version import read_api_version
 
 
+cwd = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
+
+
+git_sha = subprocess.check_output("git rev-parse HEAD", shell=True, cwd=cwd).strip()
+
+
 def main():
     description = """
     Interface for docker-compose.
@@ -28,7 +34,7 @@ def main():
     parser.add_argument('-c', '--configuration', default='linux',
                         help='Configuration to use: linux, mac',
                         action='store')
-    parser.add_argument('-b', '--backend-tag', default='master-latest',
+    parser.add_argument('-b', '--backend-tag', default=git_sha,
                         help='Git tag of the deepsense-backend repo to use',
                         action='store')
     parser.add_argument('-f', '--frontend-tag', default='master-latest',
