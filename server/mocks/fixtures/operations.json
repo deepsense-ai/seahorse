@@ -1,0 +1,92 @@
+{
+  "operations": {
+    "342342-123123-434234-234234": {
+      "id": "342342-123123-434234-234234",
+      "name": "Sql Reader",
+      "version": "1.0.4",
+      "category": "23123-12312-43242",
+      "description": "Simple sql db reader",
+      "deterministic": true
+    },
+    "23456-78901-83752": {
+      "id": "23456-78901-83752",
+      "name": "Webservice Reader",
+      "version": "2.0.3",
+      "category": "23123-12312-43242",
+      "description": "Remote webservice reader",
+      "deterministic": true
+    },
+    "11111-111111-33333": {
+      "id": "11111-111111-33333",
+      "name": "Column filter",
+      "version": "1.0.0",
+      "category": "91111-111111-11111",
+      "description": "Simple column filter",
+      "deterministic": true
+    },
+    "11111-111111-33322": {
+      "id": "11111-111111-33322",
+      "name": "Multiple column filter",
+      "version": "2.2.5",
+      "category": "91111-111111-11111",
+      "description": "Not-so-simple filter for columns",
+      "deterministic": true
+    },
+    "342342-123123-434234-12334": {
+      "id": "342342-123123-434234-12334",
+      "name": "Row Filter",
+      "version": "1.0.3",
+      "category": "91111-111111-11111",
+      "description": "Simple filters takes dataset based on...",
+      "deterministic": true
+    },
+    "11111-111111-11111": {
+      "id": "11111-111111-11111",
+      "name": "Simple filter",
+      "version": "1.0.5",
+      "category": "81111-111111-11111",
+      "description": "Some description for filter",
+      "deterministic": true
+    },
+    "11111-111111-22222": {
+      "id": "11111-111111-22222",
+      "name": "Basic filter",
+      "version": "1.0.1",
+      "category": "81111-111111-11111",
+      "description": "Basic fiter description",
+      "deterministic": true
+    },
+    "237956-23426-49857": {
+      "id": "237956-23426-49857",
+      "name": "Linear Regresion",
+      "version": "1.1.2",
+      "category": "987435-12343-56401",
+      "description": "Regresion linear model",
+      "deterministic": true
+    },
+    "11111-111111-44444": {
+      "id": "11111-111111-44444",
+      "name": "Neural Network",
+      "version": "1.2.3",
+      "category": "234234-756756-34234",
+      "description": "Neural networks inspired by biological...",
+      "deterministic": true
+    },
+    "11111-111111-55555": {
+      "id": "11111-111111-55555",
+      "name": "Decision Forest",
+      "version": "1.2.3",
+      "category": "234234-756756-34234",
+      "description": "Classification model",
+      "deterministic": true
+    }
+  },
+  "entities": {
+    "43241264-6318434-f34d234": {
+      "id": "43241264-6318434-f34d234",
+      "name": "ScientificDatasetA",
+      "category": "982345-23943-85923",
+      "description": "Dataframe description and other stuff"
+    }
+  }
+}

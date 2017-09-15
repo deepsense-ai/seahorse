@@ -1,0 +1,102 @@
+{
+  "catalog": [
+    {
+      "id": "11111-5555-9999",
+      "name": "Data store",
+      "catalog": [
+        {
+          "id": "982345-23943-85923",
+          "name": "Dataframe",
+          "items": [
+            {
+              "id": "43241264-6318434-f34d234",
+              "name": "ScientificDatasetA"
+            }
+          ]
+        },
+        {
+          "id": "90483-2345-87324",
+          "name": "Model"
+        }
+      ]
+    },
+    {
+      "id": "23123-12312-43242",
+      "name": "Data readers",
+      "items": [
+        {
+          "id": "342342-123123-434234-234234",
+          "name": "Sql Reader"
+        },
+        {
+          "id": "23456-78901-83752",
+          "name": "Webservice Reader"
+        }
+      ]
+    },
+    {
+      "id": "91111-111111-11111",
+      "name": "Filters",
+      "items": [
+        {
+          "id": "11111-111111-33333",
+          "name": "Column filter"
+        },
+        {
+          "id": "11111-111111-33322",
+          "name": "Multiple column filter"
+        },
+        {
+          "id": "342342-123123-434234-12334",
+          "name": "Row Filter"
+        }
+      ],
+      "catalog": [
+        {
+          "id": "81111-111111-11111",
+          "name": "Simple",
+          "items": [
+            {
+              "id": "11111-111111-11111",
+              "name": "Simple filter"
+            },
+            {
+              "id": "11111-111111-22222",
+              "name": "Basic filter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "71111-111111-11111",
+      "name": "Machine Learning",
+      "catalog": [
+        {
+          "id": "987435-12343-56401",
+          "name": "Reggression",
+          "items": [
+            {
+              "id": "237956-23426-49857",
+              "name": "Linear Regresion"
+            }
+          ]
+        },
+        {
+          "id": "234234-756756-34234",
+          "name": "Classification",
+          "items": [
+            {
+              "id": "11111-111111-44444",
+              "name": "Neural Network"
+            },
+            {
+              "id": "11111-111111-55555",
+              "name": "Decision Forest"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -9,7 +9,7 @@
       "nodes": {
         "080411c0-2ae4-d8ba-1ed6-6135b5d4911d": {
           "operation": {
-            "id": "342342-123123-434234-12334",
+            "id": "342342-123123-434234-234234",
             "name": "Sql Reader",
             "version": "3.1.4"
           },
@@ -22,7 +22,7 @@
         },
         "dc236792-8dcc-562e-49b7-54348d66e314": {
           "operation": {
-          "id": "342342-123123-434234-12334",
+            "id": "342342-123123-434234-12334",
             "name": "Row Filter"
           },
           "parameters": {
@@ -45,8 +45,8 @@
         },
         "04b982b7-f07c-3001-12c3-5198c9d92c34": {
           "operation": {
-            "id": "43241264-6318434-f34d234",
-            "name": "Simple Persister",
+            "id": "237956-23426-49857",
+            "name": "Linear Regresion",
             "version": "0.1.3"
           },
           "note": "Other note"
