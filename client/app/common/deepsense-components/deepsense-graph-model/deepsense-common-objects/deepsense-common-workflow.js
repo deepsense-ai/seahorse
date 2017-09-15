@@ -187,11 +187,9 @@ angular
 
         if (!edge.id) {
           throw new Error('Cannot add edge without id set.');
-        }
-        else if (!that.getNodeById(edge.startNodeId)) {
+        } else if (!that.getNodeById(edge.startNodeId)) {
           throw new Error('Cannot create edge between nodes. Start node id: ' + edge.startNodeId + ' doesn\'t exist.');
-        }
-        else if (!that.getNodeById(edge.endNodeId)) {
+        } else if (!that.getNodeById(edge.endNodeId)) {
           throw new Error('Cannot create edge between nodes. End node id: ' + edge.endNodeId + ' doesn\'t exist.');
         }
 
@@ -230,11 +228,9 @@ angular
       that.removeEdge = function removeEdge(edge) {
         if (!edge.id) {
           throw new Error('Cannot remove edge. Edge id: ' + edge.id + ' doesn\'t exist.');
-        }
-        else if (!that.getNodeById(edge.startNodeId)) {
+        } else if (!that.getNodeById(edge.startNodeId)) {
           throw new Error('Cannot remove edge between nodes. Start node id: ' + edge.startNodeId + ' doesn\'t exist.');
-        }
-        else if (!that.getNodeById(edge.startNodeId)) {
+        } else if (!that.getNodeById(edge.startNodeId)) {
           throw new Error('Cannot remove edge between nodes. End node id: ' + edge.endNodeId + ' doesn\'t exist.');
         }
 

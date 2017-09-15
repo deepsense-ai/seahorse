@@ -137,7 +137,9 @@ module.exports = {
     // {{{ ESLint : Stylistic Issues
     'array-bracket-spacing': ['error', 'never'],
     'block-spacing': 'error',
-    // 'brace-style': 'error',
+    'brace-style': ['error', '1tbs', {
+      'allowSingleLine': true
+    }],
     'camelcase': 'error',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
@@ -244,11 +246,7 @@ module.exports = {
       words: true,
       nonwords: false
     }],
-    'spaced-comment': ['error', 'always', {
-      block: {
-        balanced: true
-      }
-    }],
+    'spaced-comment': 'off',
     'unicode-bom': ['error', 'never'],
     'wrap-regex': 'off',
     // ESLint : Stylistic Issues }}}
@@ -271,7 +269,7 @@ module.exports = {
     'no-restricted-imports': 'off',
     'no-this-before-super': 'error',
     'no-useless-computed-key': 'error',
-    // 'no-useless-constructor': 'error',
+    'no-useless-constructor': 'error',
     'no-useless-rename': 'error',
     // 'no-var': 'warn',
     'object-shorthand': 'off',
@@ -289,7 +287,7 @@ module.exports = {
     'rest-spread-spacing': ['error', 'never'],
     'sort-imports': 'off',
     'symbol-description': 'error',
-    // 'template-curly-spacing': ['error', 'never'],
+    'template-curly-spacing': ['error', 'never'],
     'yield-star-spacing': ['error', 'before']
     // ESLint : ECMAScript 6 }}}
 
