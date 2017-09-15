@@ -10,10 +10,13 @@
 <body>
   <ui-view id="wrapper"
            class="animated fadeIn"
-           ng-class="{'c-home': home.$state.includes('home')}"
+           ng-class="{
+             'c-home': home.$state.includes('home')
+           }"
            ng-show="stateData.showView"
            droppable
-           droppable-type="frame"></ui-view>
+           droppable-type="frame">
+  </ui-view>
   <deepsense-loading-spinner-processing ng-if="!stateData.dataIsLoaded">
     Loading
   </deepsense-loading-spinner-processing>
