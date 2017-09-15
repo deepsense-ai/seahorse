@@ -37,7 +37,12 @@ class RandomForestRegressionModel
         SummaryEntry(
           name = "number of features",
           value = model.numFeatures.toString,
-          description = "Number of features."))
+          description = "Number of features."),
+        SummaryEntry(
+          name = "feature importances",
+          value = model.featureImportances.toDense.toString(),
+          description = "Importances of features."
+        ))
 
     super.report
       .withReportName(s"${this.getClass.getSimpleName} with ${model.numTrees} trees")
