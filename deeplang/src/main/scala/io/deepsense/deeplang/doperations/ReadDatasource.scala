@@ -124,7 +124,7 @@ object ReadDatasource {
 
   trait ReadDataSourceParameters {
     val datasourceId = DatasourceIdForReadParam(
-      name = "datasource",
+      name = "data source",
       description = None)
   }
 }
