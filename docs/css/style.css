@@ -202,8 +202,14 @@ pre {
 
 /*FOOTER*/
 
+html, body {
+  height: 100%;
+}
 footer {
-  margin-top: 30px;
+  position: relative;
+  margin-top: -69px; /* negative value of footer height */
+  height: 69px;
+  clear:both;
   padding: 0 !important;
 }
 p.footer-text {
