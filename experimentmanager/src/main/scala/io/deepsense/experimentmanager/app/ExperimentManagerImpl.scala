@@ -10,6 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
+import com.google.inject.name.Named
 
 import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.Graph.Node
@@ -24,14 +25,21 @@ import io.deepsense.experimentmanager.auth.{Authorizator, AuthorizatorProvider}
  */
 class ExperimentManagerImpl @Inject()(
   authorizatorProvider: AuthorizatorProvider,
+  storage: ExperimentStorage,
   @Assisted userContextFuture: Future[UserContext],
-  storage: ExperimentStorage)
+  @Named("roles.get") roleGet: String,
+  @Named("roles.update") roleUpdate: String,
+  @Named("roles.create") roleCreate: String,
+  @Named("roles.list") roleList: String,
+  @Named("roles.delete") roleDelete: String,
+  @Named("roles.launch") roleLaunch: String,
+  @Named("roles.abort") roleAbort: String)
   (implicit ec: ExecutionContext) extends ExperimentManager {
 
   private def authorizator: Authorizator = authorizatorProvider.forContext(userContextFuture)
 
   def get(id: Experiment.Id): Future[Option[Experiment]] = {
-    authorizator.withRole("experiment:get") { userContext =>
+    authorizator.withRole(roleGet) { userContext =>
       storage.get(id).map {
         case Some(experiment) => Some(experiment.assureOwnedBy(userContext))
         case None => None
@@ -40,7 +48,7 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def update(experiment: Experiment): Future[Experiment] = {
-    authorizator.withRole("experiment:update") { userContext =>
+    authorizator.withRole(roleUpdate) { userContext =>
       val oldExperimentOption = storage.get(experiment.id)
       oldExperimentOption.flatMap {
         case Some(oldExperiment) =>
@@ -52,9 +60,8 @@ class ExperimentManagerImpl @Inject()(
       }
     }
   }
-
   def create(inputExperiment: InputExperiment): Future[Experiment] = {
-    authorizator.withRole("experiment:create") { userContext =>
+    authorizator.withRole(roleCreate) { userContext =>
       storage.save(inputExperiment.toExperimentOf(userContext))
     }
   }
@@ -63,13 +70,13 @@ class ExperimentManagerImpl @Inject()(
     limit: Option[Int],
     page: Option[Int],
     status: Option[Experiment.Status.Value]): Future[Seq[Experiment]] = {
-    authorizator.withRole("experiments:list") { userContext =>
+    authorizator.withRole(roleList) { userContext =>
       storage.list(userContext, limit, page, status)
     }
   }
 
   def delete(id: Experiment.Id): Future[Boolean] = {
-    authorizator.withRole("experiments:delete") { userContext =>
+    authorizator.withRole(roleDelete) { userContext =>
       storage.get(id).flatMap {
         case Some(experiment) =>
           experiment.assureOwnedBy(userContext)
@@ -82,7 +89,7 @@ class ExperimentManagerImpl @Inject()(
   def launch(
     id: Experiment.Id,
     targetNodes: List[Node.Id]): Future[Experiment] = {
-    authorizator.withRole("experiments:launch") { userContext =>
+    authorizator.withRole(roleLaunch) { userContext =>
       val experimentFuture = storage.get(id)
       experimentFuture.map {
         case Some(experiment) =>
@@ -96,7 +103,7 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def abort(id: Experiment.Id, nodes: List[Node.Id]): Future[Experiment] = {
-    authorizator.withRole("experiments:abort") { userContext =>
+    authorizator.withRole(roleAbort) { userContext =>
       val experimentFuture = storage.get(id)
       experimentFuture.map {
         case Some(experiment) =>
