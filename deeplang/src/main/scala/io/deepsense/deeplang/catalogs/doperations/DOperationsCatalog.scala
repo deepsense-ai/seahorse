@@ -45,8 +45,10 @@ abstract class DOperationsCatalog {
   /**
    * Registers DOperation, which can be later viewed and created.
    * @param category category to which this operation directly belongs
+   * @param visible a flag determining if the operation should be visible in the category tree
+   * @tparam T DOperation class to register
    */
-  def registerDOperation(category: DOperationCategory, factory: () => DOperation): Unit
+  def registerDOperation(category: DOperationCategory, factory: () => DOperation, visible: Boolean = true): Unit
 }
 
 object DOperationsCatalog {
@@ -57,7 +59,7 @@ object DOperationsCatalog {
     var operations = Map.empty[DOperation.Id, DOperationDescriptor]
     private val operationFactoryByOperationId = mutable.Map.empty[DOperation.Id, () => DOperation]
 
-    def registerDOperation(category: DOperationCategory, factory: () => DOperation): Unit = {
+    def registerDOperation(category: DOperationCategory, factory: () => DOperation, visible: Boolean = true): Unit = {
       val operationInstance = factory()
       operationInstance.validate()
       val id = operationInstance.id
@@ -77,8 +79,10 @@ object DOperationsCatalog {
           s"DOperation $alreadyRegisteredOperationName is already registered with UUID $id!")
       }
       operations += id -> operationDescriptor
-      categoryTree = categoryTree.addOperation(operationDescriptor, category)
-      operationFactoryByOperationId(id) = factory
+      if(visible) {
+        categoryTree = categoryTree.addOperation(operationDescriptor, category)
+      }
+        operationFactoryByOperationId(id) = factory
     }
 
     def createDOperation(id: DOperation.Id): DOperation = operationFactoryByOperationId.get(id) match {

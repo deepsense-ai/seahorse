@@ -37,11 +37,10 @@ class DeeplangGraphSpec
     DeeplangGraph().size shouldBe 0
   }
 
-  test("Adding edge to an empty Graph should produce IllegalArgumentException") {
-    an [IllegalArgumentException] shouldBe thrownBy {
+  test("An edge added to an empty graph should be filtered out as invalid") {
       val edge = Edge(Endpoint(Node.Id.randomId, 0), Endpoint(Node.Id.randomId, 0))
-      DeeplangGraph(Set(), Set(edge))
-    }
+      val graph = DeeplangGraph(Set(), Set(edge))
+      graph.getValidEdges shouldBe Set()
   }
 
   test("Graph with two nodes should have size 2") {

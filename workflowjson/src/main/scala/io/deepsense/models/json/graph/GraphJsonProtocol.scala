@@ -17,9 +17,9 @@
 package io.deepsense.models.json.graph
 
 import spray.json._
-
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.doperations.UnknownOperation
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
 import io.deepsense.models.json.graph.OperationJsonProtocol.DOperationReader
@@ -52,7 +52,12 @@ object GraphJsonProtocol {
         } catch { case e: Throwable =>
           throw new DeserializationException(s"Node is missing a string field '$NodeId'", e)
         }
-        val operation = nodeJs.convertTo[DOperation](dOperationReader)
+        val operation = try {
+          nodeJs.convertTo[DOperation](dOperationReader)
+        } catch {
+          case e: DeserializationException =>
+            new UnknownOperation
+        }
         Node(Node.Id.fromString(nodeId), operation)
       case x =>
         throw new DeserializationException(s"Expected JsObject with a node but got $x")
@@ -81,7 +86,7 @@ object GraphJsonProtocol {
     override def write(graph: DeeplangGraph): JsValue = {
       JsObject(
         Nodes -> JsArray(graph.nodes.map(_.toJson).toVector),
-        Edges -> JsArray(graph.edges.map(_.toJson).toVector))
+        Edges -> JsArray(graph.getValidEdges.map(_.toJson).toVector))
     }
   }
 }

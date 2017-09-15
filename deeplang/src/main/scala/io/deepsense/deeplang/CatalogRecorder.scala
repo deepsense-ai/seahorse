@@ -135,6 +135,7 @@ object CatalogRecorder {
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
+    catalog.registerDOperation(DOperationCategories.Other, (() => new UnknownOperation), visible = false)
     catalog.registerDOperation(DOperationCategories.IO, () => new PythonNotebook())
     catalog.registerDOperation(DOperationCategories.IO, () => new RNotebook())
     catalog.registerDOperation(DOperationCategories.IO, () => new ReadDataFrame())
