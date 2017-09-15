@@ -130,8 +130,9 @@
         <div ng-repeat="output in node.output" class="ibox-content c-ports-info__content">
           <strong>{{$index}}:</strong>
           <span class="c-ports-info__item" ng-repeat="typeQualifier in output.typeQualifier">
-            <a target="_blank" ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{typeQualifier}}.html">{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}{{{true:
-              '', false: ', '}[$last]}}</a>
+            <a target="_blank" ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{typeQualifier}}.html">
+              {{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}{{{true: '', false: ', '}[$last]}}
+            </a>
           </span>
         </div>
       </section>
