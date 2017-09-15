@@ -13,13 +13,25 @@
   .interaction-element {
     font-size: 24px;
 
-    a.text-warning:focus {
-      color: #f8ac59;
+    &:not(:last-child) {
+      margin-right: 10px;
     }
 
-    span {
-      display: inline-block;
-      text-indent: -99999px;
+    &.zoom {
+      input {
+        margin-right: 10px;
+      }
+
+      a {
+        &:first-child {
+          margin-right: 15px;
+        }
+
+        &.text-warning:focus {
+          color: #f8ac59;
+        }
+      }
     }
+
   }
 }

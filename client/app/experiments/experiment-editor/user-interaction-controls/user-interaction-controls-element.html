@@ -1,6 +1,5 @@
-<li class="interaction-element {{::classSet}}">
-  <a href="" ng-class="{'text-warning': active}" ng-click="force($event)">
-    <span>{{::text}}</span>
+<li class="interaction-element" ng-class="classSet">
+  <a href="" ng-class="{'text-warning': active}" ng-click="activateItem($event)">
     <i class="glyphicon glyphicon-{{::icon}}"></i>
   </a>
 </li>

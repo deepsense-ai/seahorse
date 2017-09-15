@@ -14,6 +14,7 @@ function DefaultZoom() {
       relatedTo: '@'
     },
     replace: true,
+    transclude: true,
     controller: DefaultZoomController,
     controllerAs: 'defaultZoomController',
     templateUrl: 'app/experiments/experiment-editor/user-interaction-controls/user-interaction-controls-element.html'
@@ -25,38 +26,30 @@ function DefaultZoomController($scope, $timeout, $document, GraphPanelRendererSe
   var that = this;
   var internal = {};
 
-  internal.element = $document[0].querySelector($scope.relatedTo);
+  internal.relatedToElement = $document[0].querySelector($scope.relatedTo);
 
-  $scope.force = function force (event) {
-    var pseudoElement = GraphPanelRendererService.getPseudoPosition();
-
+  $scope.activateItem = function activateItem (event) {
     $scope.active = true;
     // Show to user that it has been clicked -> user experience
     $timeout(function () {
       $scope.active = false;
     }, 100);
 
-    GraphPanelRendererService.setCenter({
-      visibleDimensions: {
-        width:  jsPlumb.getContainer().parentNode.getBoundingClientRect().width,
-        height: jsPlumb.getContainer().parentNode.getBoundingClientRect().height
-      },
-      topmost: pseudoElement.topmost,
-      leftmost: pseudoElement.leftmost,
-      rightmost: pseudoElement.rightmost,
-      bottommost: pseudoElement.bottommost
-    });
     GraphPanelRendererService.setZoom(1);
+    GraphPanelRendererService.setCenter(GraphPanelRendererService.getPseudoContainerCenter());
 
     if (
-      (GraphPanelRendererService.getDifferenceAfterZoom(internal.element, 'width') -
-        parseInt(internal.element.style.left)
-      ) < 0 ||
-      (GraphPanelRendererService.getDifferenceAfterZoom(internal.element, 'height') -
-        parseInt(internal.element.style.top)
-      ) < 0
+      GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'width') -
+      parseInt(internal.relatedToElement.style.left) < 0
     ) {
-      GraphPanelRendererService.setZero();
+      GraphPanelRendererService.setZero('left');
+    }
+
+    if (
+      GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'height') -
+      parseInt(internal.relatedToElement.style.top) < 0
+    ) {
+      GraphPanelRendererService.setZero('top');
     }
   };
 

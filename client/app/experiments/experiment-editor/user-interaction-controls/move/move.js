@@ -10,13 +10,14 @@ function Move() {
       text: '@',
       classSet: '@',
       icon: '@',
-      elementToMove: '@',
+      relatedTo: '@',
       width: '=',
       height: '=',
       top: '=',
       left: '='
     },
     replace: true,
+    transclude: true,
     controller: MoveController,
     controllerAs: 'moveController',
     templateUrl: 'app/experiments/experiment-editor/user-interaction-controls/user-interaction-controls-element.html'
@@ -24,7 +25,7 @@ function Move() {
 }
 
 /* @ngInject */
-function MoveController($document, $scope, $rootScope, GraphPanelRendererService) {
+function MoveController($document, $scope) {
   var that = this;
   var internal = {};
 
@@ -42,7 +43,7 @@ function MoveController($document, $scope, $rootScope, GraphPanelRendererService
     left: ${internal.settings.css.left}px;
   `;
   internal.spacePressed = false;
-  internal.forced = false;
+  internal.itemActivated = false;
   internal.REVERSE = true;
 
   internal.isSpacePressed = function isSpacePressed (event) {
@@ -74,8 +75,8 @@ function MoveController($document, $scope, $rootScope, GraphPanelRendererService
    * Return after moving beyond border
    */
   internal.setMaximumPosition = function setMaximumPosition (direction, isReverse) {
-    var movableElementPosition = internal.elementToMove.getBoundingClientRect();
-    var staticElementWidth = internal.elementToMove.clientWidth;
+    var movableElementPosition = internal.relatedToElement.getBoundingClientRect();
+    var staticElementWidth = internal.relatedToElement.clientWidth;
     // TODO make for height the same.
     var actualShift = (staticElementWidth - movableElementPosition.width) / 2; // 3000 - 1411 / 2;
 
@@ -84,9 +85,9 @@ function MoveController($document, $scope, $rootScope, GraphPanelRendererService
     }
   };
 
-  internal.preventMovingBeyondParent = function preventMovingBeyondParent (direction, isReverse) {
-    var movableElementPosition = internal.elementToMove.getBoundingClientRect();
-    var blockerPosition = internal.elementToMoveParent.getBoundingClientRect();
+  internal.preventMovingBeyondViewPort = function preventMovingBeyondViewPort (direction, isReverse) {
+    var movableElementPosition = internal.relatedToElement.getBoundingClientRect();
+    var blockerPosition = internal.viewPort.getBoundingClientRect();
     var directionToCheck = direction;
     var preventMoving = false;
 
@@ -114,13 +115,13 @@ function MoveController($document, $scope, $rootScope, GraphPanelRendererService
     console.log(`${direction.toUpperCase()}? `, eventMovementValue < 0, eventMovementValue);
 
     if (eventMovementValue < 0) {
-      if (internal.preventMovingBeyondParent(direction, internal.REVERSE) === false) {
+      if (internal.preventMovingBeyondViewPort(direction, internal.REVERSE) === false) {
         internal.settings.css[direction] -= subtraction;
       } else {
         internal.setMaximumPosition(direction, internal.REVERSE);
       }
     } else if (eventMovementValue > 0) {
-      if (internal.preventMovingBeyondParent(direction) === false) {
+      if (internal.preventMovingBeyondViewPort(direction) === false) {
         internal.settings.css[direction] += -subtraction;
       } else {
         internal.setMaximumPosition(direction);
@@ -129,7 +130,7 @@ function MoveController($document, $scope, $rootScope, GraphPanelRendererService
   };
 
   internal.setPosition = function setPosition (direction, value) {
-    internal.elementToMove.style[direction] = value + 'px';
+    internal.relatedToElement.style[direction] = value + 'px';
   };
 
   internal.move = function move (event) {
@@ -149,43 +150,41 @@ function MoveController($document, $scope, $rootScope, GraphPanelRendererService
     // prevent selecting
     event.preventDefault();
 
-    if (internal.spacePressed || internal.forced) {
+    if (internal.spacePressed || internal.itemActivated) {
       $scope.active = true;
       internal.startCoordinates = {
         y: event.pageY,
         x: event.pageX
       };
-      internal.elementToMove.classList.add('moving');
-      internal.elementToMove.addEventListener('mousemove', internal.move);
+      internal.relatedToElement.classList.add('moving');
+      internal.relatedToElement.addEventListener('mousemove', internal.move);
     }
   };
 
   internal.moveEndListener = function moveEndListener (event) {
-    if (internal.forced === false) {
+    if (internal.itemActivated === false) {
       $scope.active = false;
       $scope.$apply();
     }
-    internal.elementToMove.classList.remove('moving');
-    internal.elementToMove.removeEventListener('mousemove', internal.move);
+    internal.relatedToElement.classList.remove('moving');
+    internal.relatedToElement.removeEventListener('mousemove', internal.move);
   };
 
   internal.updateState = function updateState () {
-    internal.settings.css.left  =  internal.elementToMove.offsetLeft;
-    internal.settings.css.top   =  internal.elementToMove.offsetTop;
+    internal.settings.css.left  =  internal.relatedToElement.offsetLeft;
+    internal.settings.css.top   =  internal.relatedToElement.offsetTop;
   };
 
   internal.init = function init () {
-    internal.elementToMove.setAttribute('style', internal.settings.initialStyles);
-    internal.elementToMove.addEventListener('mousedown', internal.moveStartListener);
+    internal.relatedToElement.setAttribute('style', internal.settings.initialStyles);
+    internal.relatedToElement.addEventListener('mousedown', internal.moveStartListener);
 
     $document.on('mouseup', internal.moveEndListener);
     $document.on('keydown', internal.keyDownListener);
     $document.on('keyup', internal.keyUpListener);
 
-    // if zoom is connected and min zoom reached
-    $rootScope.$on('Zoom.MIN_REACHED', GraphPanelRendererService.setCenter);
-    $rootScope.$on('GraphPanel.CENTERED', internal.updateState);
-    $rootScope.$on('GraphPanel.ZERO', internal.updateState);
+    $scope.$on('GraphPanel.CENTERED', internal.updateState);
+    $scope.$on('GraphPanel.ZERO', internal.updateState);
 
     $scope.$on('$destroy', () => {
       $document.off('mouseup', internal.moveEndListener);
@@ -194,14 +193,14 @@ function MoveController($document, $scope, $rootScope, GraphPanelRendererService
     });
   };
 
-  $scope.force = function force () {
-    internal.elementToMove.classList.toggle('forceMoving');
-    internal.forced = !internal.forced;
-    $scope.active = internal.forced;
+  $scope.activateItem = function activateItem () {
+    internal.relatedToElement.classList.toggle('forceMoving');
+    internal.itemActivated = !internal.itemActivated;
+    $scope.active = internal.itemActivated;
   };
 
-  internal.elementToMove = $document[0].querySelector($scope.elementToMove);
-  internal.elementToMoveParent = internal.elementToMove.parentNode;
+  internal.relatedToElement = $document[0].querySelector($scope.relatedTo);
+  internal.viewPort = internal.relatedToElement.parentNode;
   internal.init();
 
   return that;

@@ -16,65 +16,65 @@ function Zoom() {
       max: '=',
       step: '=',
       initialValue: '=',  // TODO check why does not work
-      elementToZoom: '@'
+      relatedTo: '@'
     },
+    transclude: true,
     controller: ZoomController,
     controllerAs: 'zoomController',
-    templateUrl: 'app/experiments/experiment-editor/user-interaction-controls/user-interaction-controls-element.html'
+    templateUrl: 'app/experiments/experiment-editor/user-interaction-controls/user-interaction-controls-element.html',
+    link: function(scope, element, attrs, ctrl, transclude) {
+      scope.value = scope.initialValue || 1;
+
+      transclude(scope, function(clone) {
+        element.append(clone);
+      });
+    }
   };
 }
 
 /* @ngInject */
-function ZoomController($document, $scope, GraphPanelRendererService, $rootScope) {
+function ZoomController($document, $scope, $timeout, GraphPanelRendererService) {
   var that = this;
   var internal = {};
 
   internal.max    = $scope.max;
   internal.step   = $scope.step;
-  internal.value  = $scope.initialValue || 1;
-  internal.elementToZoom            = $document[0].querySelector($scope.elementToZoom);
-  internal.elementToZoomParent      = internal.elementToZoom.parentNode;
-  internal.elementStaticWidth       = internal.elementToZoom.clientWidth;
-  internal.elementParentStaticWidth = internal.elementToZoomParent.clientWidth;
-  internal.min    = internal.elementParentStaticWidth / internal.elementStaticWidth;
+  internal.relatedToElement         = $document[0].querySelector($scope.relatedTo);
+  internal.viewPort                 = internal.relatedToElement.parentNode;
+  internal.relatedToElementStaticWidth  = internal.relatedToElement.clientWidth;
+  internal.viewPortStaticWidth          = internal.viewPort.clientWidth;
+  internal.min    = internal.viewPortStaticWidth / internal.relatedToElementStaticWidth;
 
   internal.getMinElementZoom = function getMinElementZoom () {
-    return internal.elementStaticWidth * internal.min;
+    return internal.relatedToElementStaticWidth * internal.min;
   };
 
   internal.zoomIn = function zoomIn () {
-    var result = internal.value;
+    var result = $scope.value;
 
-    if (internal.value <= internal.max) {
-      result = +(internal.value += internal.step).toFixed(2);
+    if ($scope.value <= internal.max) {
+      result = +($scope.value += internal.step).toFixed(2);
     }
 
     if (result >= internal.max) {
-      result = internal.value = internal.max;
+      result = $scope.value = internal.max;
     }
 
     return result;
   };
 
   internal.zoomOut = function zoomOut () {
-    var result = internal.value;
+    var result = $scope.value;
 
-    if (internal.value >= internal.min) {
-      result = +(internal.value -= internal.step).toFixed(2);
+    if ($scope.value >= internal.min) {
+      result = +($scope.value -= internal.step).toFixed(2);
     }
 
     if (result <= internal.min) {
-      result = internal.value = internal.min;
+      result = $scope.value = internal.min;
     }
 
     return result;
-  };
-
-  internal.handleMinZoom = function handleMinZoom (zoom) {
-    // TODO make it work with any value ... because now it is buggy.
-    $rootScope.$broadcast('Zoom.MIN_REACHED', {
-      stepAmount : internal.elementStaticWidth * internal.step * 2
-    });
   };
 
   internal.wheelListener = function wheelListener (event) {
@@ -89,33 +89,79 @@ function ZoomController($document, $scope, GraphPanelRendererService, $rootScope
       zoom = internal.zoomIn();
     }
 
-    if (zoom === internal.min && jsPlumb.getZoom() > zoom) {
-      internal.handleMinZoom(zoom);
-    }
+    var dimensionsBeforeZoom = {
+      y: internal.relatedToElement.getBoundingClientRect().height,
+      x: internal.relatedToElement.getBoundingClientRect().width
+    };
 
+    // GraphPanelRendererService.setCenter();
     GraphPanelRendererService.setZoom(zoom);
 
-    if ((
-      GraphPanelRendererService.getDifferenceAfterZoom(internal.elementToZoom, 'width') -
-      parseInt(internal.elementToZoom.style.left)
-      ) < 0 || (
-      GraphPanelRendererService.getDifferenceAfterZoom(internal.elementToZoom, 'height') -
-      parseInt(internal.elementToZoom.style.top)
-      ) < 0) {
-      GraphPanelRendererService.setZero();
+    var difAfterZoom = {
+      y: GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'height', dimensionsBeforeZoom.y),
+      x: GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'width', dimensionsBeforeZoom.x)
+    };
+
+    console.log(difAfterZoom);
+
+    console.log(internal.relatedToElement.style.left);
+    console.log(internal.relatedToElement.style.top);
+
+    internal.relatedToElement.style.left = parseInt(internal.relatedToElement.style.left) - difAfterZoom.x / 2 + 'px';
+    internal.relatedToElement.style.top = parseInt(internal.relatedToElement.style.top) - difAfterZoom.y / 2 + 'px';
+
+    console.log(internal.relatedToElement.style.left);
+    console.log(internal.relatedToElement.style.top);
+
+    /*if (
+      GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'width') -
+      parseInt(internal.relatedToElement.style.left) < 0
+    ) {
+      GraphPanelRendererService.setZero('left');
     }
+
+    if (
+      GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'height') -
+      parseInt(internal.relatedToElement.style.top) < 0
+    ) {
+      GraphPanelRendererService.setZero('top');
+    }*/
 
     event.preventDefault();
   };
 
   internal.updateState = function updateState () {
-    internal.value = jsPlumb.getZoom();
+    $scope.value = jsPlumb.getZoom();
   };
 
-  internal.elementToZoom.addEventListener('wheel', internal.wheelListener);
-  $rootScope.$on('GraphPanel.CENTERED', internal.updateState);
-  $rootScope.$on('GraphPanel.ZERO', internal.updateState);
-  $rootScope.$on('Zoom', internal.updateState);
+  internal.relatedToElement.addEventListener('wheel', internal.wheelListener);
+  $scope.$on('GraphPanel.CENTERED', internal.updateState);
+  $scope.$on('GraphPanel.ZERO', internal.updateState);
+  $scope.$on('Zoom', internal.updateState);
+
+  $scope.$watch('value', function (newValue) {
+    GraphPanelRendererService.setZoom(newValue);
+  });
+
+  $scope.activateItem = function activateItem (event) {
+    $scope.active = true;
+    // Show to user that it has been clicked -> user experience
+    $timeout(function () {
+      $scope.active = false;
+    }, 100);
+
+    internal.zoomOut();
+  };
+
+  $scope.activateAdditionalItem = function activateAdditionalItem (event) {
+    $scope.activeAdditionalItem = true;
+    // Show to user that it has been clicked -> user experience
+    $timeout(function () {
+      $scope.activeAdditionalItem = false;
+    }, 100);
+
+    internal.zoomIn();
+  };
 
   return that;
 }

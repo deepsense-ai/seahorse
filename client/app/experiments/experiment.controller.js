@@ -190,6 +190,8 @@ function ExperimentController(
     let offsetX = args.dropEvent.offsetX;
     let offsetY = args.dropEvent.offsetY;
 
+    // TODO create transparent container in order to cover right offset. Becuase dropping now above node causing error
+    // FireFox bug
     if (!offsetX && !offsetY) {
       offsetX = args.dropEvent.layerX - args.dropEvent.currentTarget.offsetLeft;
       offsetY = args.dropEvent.layerY - args.dropEvent.currentTarget.offsetTop;
