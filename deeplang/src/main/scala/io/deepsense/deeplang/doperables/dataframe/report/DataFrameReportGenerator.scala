@@ -86,17 +86,18 @@ object DataFrameReportGenerator {
   }.toMap
 
   private def schemaTable(schema: StructType): Table = {
-    val values = schema.fields.map { field =>
-      val columnName = field.name
-      val columnType = field.dataType.simpleString
-      List(Some(columnName), Some(columnType))
+    val values = schema.fields.zipWithIndex.map {
+      case (field, index) =>
+        val columnName = field.name
+        val columnType = field.dataType.simpleString
+        List(Some(index.toString), Some(columnName), Some(columnType))
     }.toList
 
     Table(
       DataFrameReportGenerator.DataSchemaTableName,
       s"Preview of columns and their types in dataset",
-      Some(List("Column name", "Column type")),
-      List(ColumnType.string, ColumnType.string),
+      Some(List("Column index", "Column name", "Column type")),
+      List(ColumnType.numeric, ColumnType.string, ColumnType.string),
       None,
       values)
   }

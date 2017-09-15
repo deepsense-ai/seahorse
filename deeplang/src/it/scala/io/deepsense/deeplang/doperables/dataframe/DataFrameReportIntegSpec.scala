@@ -109,8 +109,11 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
         val report = dataFrame.report(executionContext)
 
-        val expectedValues = for (field <- dataFrame.schema.get.fields) yield {
-          List(Some(field.name), Some(field.dataType.simpleString))
+        val expectedValues = dataFrame.schema.get.fields.zipWithIndex.map {
+          case (field, index) =>
+            val columnName = field.name
+            val columnType = field.dataType.simpleString
+            List(Some(index.toString), Some(columnName), Some(columnType))
         }
 
         val dataTable = report.content.tableByName(DataFrameReportGenerator.DataSchemaTableName).get
