@@ -141,7 +141,7 @@ This requirement can be satisfied by:
 
 * adding the JDBC jar library to cluster deployment or,
 
-* adding the JDBC jar to the driver's classpath during `spark-submit` command.
+* adding the JDBC jar to the driver's classpath during `spark-submit` command (`--jars` option).
 
 To specify JDBC jar during execution, use `spark-submit`'s option
 ``--driver-class-path``. I.e. ``--driver-class-path "path/to/jdbc-driver1.jar:path/to/jdbc-driver2.jar:workflowexecutor.jar"``.

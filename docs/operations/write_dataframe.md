@@ -21,10 +21,9 @@ It is possible to customize the file format (e.g. the values separator in CSV fo
 by setting appropriate parameters.
 
 It also supports writing data to JDBC-compatible databases.
-By default, Seahorse supports JDBC drivers:
-
-- MySQL, version 5.1.38
-- PostgreSQL, version 9.4.1207
+This functionality requires placing adequate JDBC driver JAR file to Seahorse shared folder `jars`.
+That file placement has to be performed before starting editing workflow that uses JDBC connection
+(otherwise, it will be required to stop running session and start it again).
 
 For detailed information on using custom JDBC drivers in the Batch Workflow Executor, visit
 [Custom JDBC drivers](../productionizing.html#custom-jdbc-drivers) section.
