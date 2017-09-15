@@ -32,7 +32,8 @@ module.exports = function (_path) {
         _fonts: path.join(_path, 'client', 'fonts'),
         _images: path.join(_path, 'client', 'img'),
         _static: path.join(_path, 'client', 'static'),
-        _styles: path.join(_path, 'client', 'css')
+        _styles: path.join(_path, 'client', 'css'),
+        _nodeModules: path.join(_path, 'node_modules')
       }
     },
 
