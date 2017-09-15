@@ -146,15 +146,29 @@ class SortTransformationIntegSpec extends DeeplangIntegTestSupport with Transfor
       }
     }
 
-    "produce error" when {
+    "throw exception" when {
       "given non-existing column name" in {
         new SampleData {
-          transformer.setColumns(Seq(SortColumnParam("bogus", descending = false)))
-
-          a [ColumnDoesNotExistException] shouldBe thrownBy {
+          transformer.setColumns(Seq(SortColumnParam("non-existing-column-name", descending = false)))
+          a[ColumnDoesNotExistException] shouldBe thrownBy {
             transformer.applyTransformationAndSerialization(tempDir, df)
           }
-
+        }
+      }
+      "transforming a DataFrame using non-existing column name" in {
+        new SampleData {
+          transformer.setColumns(Seq(SortColumnParam("non-existing-column-name", descending = false)))
+          intercept[ColumnDoesNotExistException] {
+            transformer._transform(executionContext, df)
+          }
+        }
+      }
+      "transforming a schema using non-existing column name" in {
+        new SampleData {
+          transformer.setColumns(Seq(SortColumnParam("non-existing-column-name", descending = false)))
+          intercept[ColumnDoesNotExistException] {
+            transformer._transformSchema(schema)
+          }
         }
       }
     }
