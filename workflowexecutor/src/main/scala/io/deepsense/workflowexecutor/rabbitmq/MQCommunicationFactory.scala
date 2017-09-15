@@ -34,20 +34,10 @@ case class MQCommunicationFactory(
 
   val exchangeType = "topic"
 
-  def createCommunicationChannel(
-      subscriptionTopic: String,
-      publicationTopic: String,
-      subscriber: ActorRef,
-      publisherActorName: String): ActorRef = {
-    registerSubscriber(subscriptionTopic, subscriber)
-    createPublisher(publicationTopic, publisherActorName)
-  }
-
   def registerSubscriber(topic: String, subscriber: ActorRef): Unit = {
-    val subscriberActor = SubscriberActor(subscriber, mqMessageDeserializer)
     val subscriberName = MQCommunication.subscriberName(topic)
     connection ! CreateChannel(
-      ChannelActor.props(setupSubscriber(topic, subscriberActor)),
+      ChannelActor.props(setupSubscriber(topic, subscriber)),
       Some(subscriberName))
   }
 
@@ -58,7 +48,7 @@ case class MQCommunicationFactory(
 
   private def setupSubscriber(
     topic: String,
-    subscriberActor: SubscriberActor)(
+    subscriber: ActorRef)(
     channel: Channel, self: ActorRef): Unit = {
     val queueName: String = MQCommunication.queueName(topic)
     val queue = channel.queueDeclare(
@@ -69,15 +59,7 @@ case class MQCommunicationFactory(
       new util.HashMap[String, AnyRef]()).getQueue
     declareExchange(channel)
     channel.queueBind(queue, MQCommunication.Exchange.seahorse, topic)
-    val basicSubscriber = MQSubscriber(subscriberActor)
-    val consumer = new DefaultConsumer(channel) {
-      override def handleDelivery(
-        consumerTag: String,
-        envelope: Envelope,
-        properties: BasicProperties,
-        body: Array[Byte]): Unit =
-        basicSubscriber.handleDelivery(body)
-    }
+    val consumer = MQSubscriber(subscriber, mqMessageDeserializer, channel)
     channel.basicConsume(queue, true, consumer)
   }
 
