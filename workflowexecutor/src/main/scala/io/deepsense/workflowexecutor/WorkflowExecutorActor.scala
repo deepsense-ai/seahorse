@@ -121,7 +121,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   def endExecution(): Unit = {
     graph = graph.updateState()
     logger.debug(s"End execution, status=${graph.state.status}")
-    result.success(GraphFinished(graph, entitiesMap(dOperableCache, reports)))
+    result.success(GraphFinished(graph, EntitiesMap(dOperableCache, reports)))
     logger.debug("Shutting down the actor system")
     context.become(ignoreAllMessages)
     shutdownSystem
@@ -134,17 +134,6 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   def collectReports(results: Results): Unit = {
     val reports = results.mapValues(_.report.content)
     this.reports = this.reports ++ reports
-  }
-
-  def entitiesMap(
-      results: WorkflowExecutorActor.Results,
-      reports: Map[Entity.Id, ReportContent]): EntitiesMap = {
-    EntitiesMap(results.map { case (id, entity) =>
-      val entry = EntitiesMap.Entry(
-        entity.getClass.getSimpleName,
-        reports.get(id))
-      (id, entry)
-    })
   }
 }
 

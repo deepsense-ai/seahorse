@@ -16,6 +16,7 @@
 
 package io.deepsense.models.workflows
 
+import io.deepsense.deeplang.DOperable
 import io.deepsense.models.entities.Entity
 import io.deepsense.reportlib.model.ReportContent
 
@@ -27,4 +28,15 @@ case class EntitiesMap(entities: Map[Entity.Id, EntitiesMap.Entry] = Map())
 
 object EntitiesMap {
   case class Entry(className: String, report: Option[ReportContent] = None)
+
+  def apply(
+      results: Map[Entity.Id, DOperable],
+      reports: Map[Entity.Id, ReportContent]): EntitiesMap = {
+    EntitiesMap(results.map { case (id, entity) =>
+      val entry = EntitiesMap.Entry(
+        entity.getClass.getCanonicalName,
+        reports.get(id))
+      (id, entry)
+    })
+  }
 }
