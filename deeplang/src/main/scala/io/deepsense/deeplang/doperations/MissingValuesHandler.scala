@@ -27,17 +27,20 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.DOperation._
 import io.deepsense.deeplang.doperables.dataframe.{CategoricalColumnMetadata, ColumnMetadata, DataFrame}
-import io.deepsense.deeplang.doperations.MissingValuesHandler.{EmptyColumnsMode, Strategy}
+import io.deepsense.deeplang.doperations.MissingValuesHandler.{EmptyColumnsStrategy, Strategy}
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.{PrefixBasedColumnCreatorParam, StringParam, ColumnSelectorParam, Params}
 import io.deepsense.deeplang.{DKnowledge, DOperation1To1, ExecutionContext}
 
 case class MissingValuesHandler()
   extends DOperation1To1[DataFrame, DataFrame]
-  with MissingValuesHandlerParams
-  with OldOperation {
+  with Params {
+
+  import MissingValuesHandler._
 
   override val name: String = "Missing Values Handler"
   override val id: Id = "e1120fbc-375b-4967-9c23-357ab768272f"
@@ -50,24 +53,58 @@ case class MissingValuesHandler()
     ((knowledge), InferenceWarnings.empty)
   }
 
+  val selectedColumns = ColumnSelectorParam(
+    name = "columns",
+    description = "Columns containing missing values to handle",
+    portIndex = 0)
+
+  def getSelectedColumns: MultipleColumnSelection = $(selectedColumns)
+  def setSelectedColumns(value: MultipleColumnSelection): this.type = set(selectedColumns, value)
+
+  val strategy = ChoiceParam[Strategy](
+    name = "strategy",
+    description = "Strategy of handling missing values")
+  setDefault(strategy, Strategy.RemoveRow())
+
+  def getStrategy: Strategy = $(strategy)
+  def setStrategy(value: Strategy): this.type = set(strategy, value)
+
+  val missingValueIndicator = ChoiceParam[MissingValueIndicatorChoice](
+    name = "missing value indicator",
+    description = "Generate missing value indicator column")
+  setDefault(missingValueIndicator, MissingValueIndicatorChoice.No())
+
+  def getMissingValueIndicator: MissingValueIndicatorChoice = $(missingValueIndicator)
+  def setMissingValueIndicator(value: MissingValueIndicatorChoice): this.type =
+    set(missingValueIndicator, value)
+
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
 
-    val strategy = Strategy.withName(strategyParam.value)
-    val columns = dataFrame.getColumnNames(selectedColumnsParam.value)
-    val indicator = getIndicator()
+    val strategy = getStrategy
+    val columns = dataFrame.getColumnNames(getSelectedColumns)
+    val indicator = getMissingValueIndicator.getIndicatorPrefix
 
     val indicatedDataFrame = addNullIndicatorColumns(context, dataFrame, columns, indicator)
 
     strategy match {
-      case Strategy.REMOVE_ROW =>
+      case Strategy.RemoveRow() =>
         removeRowsWithEmptyValues(context, indicatedDataFrame, columns, indicator)
-      case Strategy.REMOVE_COLUMN =>
+      case Strategy.RemoveColumn() =>
         removeColumnsWithEmptyValues(context, indicatedDataFrame, columns, indicator)
-      case Strategy.REPLACE_WITH_MODE =>
-        replaceWithMode(context, indicatedDataFrame, columns, indicator)
-      case Strategy.REPLACE_WITH_CUSTOM_VALUE =>
+      case (replaceWithModeStrategy: Strategy.ReplaceWithMode) =>
+        replaceWithMode(
+          context,
+          indicatedDataFrame,
+          columns,
+          replaceWithModeStrategy.getEmptyColumnStrategy,
+          indicator)
+      case (customValueStrategy: Strategy.ReplaceWithCustomValue) =>
         replaceWithCustomValue(
-          context, indicatedDataFrame, columns, customValueParameter.value, indicator)
+          context,
+          indicatedDataFrame,
+          columns,
+          customValueStrategy.getCustomValue,
+          indicator)
     }
   }
 
@@ -122,7 +159,7 @@ case class MissingValuesHandler()
     val columnMetadata = dataFrame.metadata.get.columns
 
     val columnTypes = Map(columns.map(columnName =>
-      (columnName -> dataFrame.columnType(columnName))): _*)
+      columnName -> dataFrame.columnType(columnName)): _*)
 
     if (columnTypes.values.toSet.size != 1) {
       throw new MultipleTypesReplacementException(columnTypes)
@@ -138,22 +175,22 @@ case class MissingValuesHandler()
       context: ExecutionContext,
       dataFrame: DataFrame,
       columns: Seq[String],
+      emptyColumnStrategy: EmptyColumnsStrategy,
       indicator: Option[String]) = {
 
     val columnModes = Map(columns.map(column =>
-      (column -> calculateMode(dataFrame, column))): _*)
+      column -> calculateMode(dataFrame, column)): _*)
 
     val nonEmptyColumnModes = Map[String, Any](columnModes
-      .filterKeys(column => columnModes(column) != None)
+      .filterKeys(column => columnModes(column).isDefined)
       .mapValues(_.get).toSeq: _*)
 
-    val allEmptyColumns = columnModes.keys.filter(column => columnModes(column) == None)
+    val allEmptyColumns = columnModes.keys.filter(column => columnModes(column).isEmpty)
 
     var resultDF = MissingValuesHandlerUtils.replaceNulls(context, dataFrame, columns,
       columnName => nonEmptyColumnModes.getOrElse(columnName, null))
 
-    if (emptyColumnStrategyParameter.value ==
-      MissingValuesHandler.EmptyColumnsMode.REMOVE.toString) {
+    if (emptyColumnStrategy == EmptyColumnsStrategy.RemoveEmptyColumns()) {
       val retainedColumns = dataFrame.sparkDataFrame.columns.filter(
         !allEmptyColumns.toList.contains(_))
       resultDF = context.dataFrameBuilder.buildDataFrame(
@@ -161,14 +198,6 @@ case class MissingValuesHandler()
     }
 
     resultDF
-  }
-
-  private def getIndicator(): Option[String] = {
-    if (missingValueIndicatorParam.value == BinaryChoice.YES.toString) {
-      Some(indicatorPrefixParam.value)
-    } else {
-      None
-    }
   }
 
   private def missingValueIndicatorColumn(dataFrame: DataFrame, column: String, prefix: String) = {
@@ -202,65 +231,87 @@ case class MissingValuesHandler()
 }
 
 object MissingValuesHandler {
-  class Strategy extends Enumeration {
-    type Strategy = Value
-    val REMOVE_ROW = Value("remove row")
-    val REMOVE_COLUMN = Value("remove column")
-    val REPLACE_WITH_CUSTOM_VALUE = Value("replace with custom value")
-    val REPLACE_WITH_MODE = Value("replace with mode")
+
+  sealed trait Strategy extends Choice
+
+  object Strategy {
+    case class RemoveRow() extends Strategy {
+      override val name: String = "remove row"
+      override val index: Int = 0
+    }
+
+    case class RemoveColumn() extends Strategy {
+      override val name: String = "remove column"
+      override val index: Int = 1
+    }
+
+    case class ReplaceWithCustomValue() extends Strategy {
+
+      override val name: String = "replace with custom value"
+      override val index: Int = 2
+
+      val customValue = StringParam(
+        name = "value",
+        description = "Replacement for missing values")
+
+      def getCustomValue: String = $(customValue)
+      def setCustomValue(value: String): this.type = set(customValue, value)
+    }
+
+    case class ReplaceWithMode() extends Strategy {
+
+      override val name: String = "replace with mode"
+      override val index: Int = 3
+
+      val emptyColumnStrategy = ChoiceParam[EmptyColumnsStrategy](
+        name = "empty column strategy",
+        description = "Strategy of handling columns with missing all values")
+      setDefault(emptyColumnStrategy, EmptyColumnsStrategy.RemoveEmptyColumns())
+
+      def getEmptyColumnStrategy: EmptyColumnsStrategy = $(emptyColumnStrategy)
+      def setEmptyColumnStrategy(value: EmptyColumnsStrategy): this.type =
+        set(emptyColumnStrategy, value)
+    }
   }
 
-  object Strategy extends Strategy
+  sealed trait EmptyColumnsStrategy extends Choice
 
-  class EmptyColumnsMode extends Enumeration {
-    type EmptyColumnsMode = Value
-    val REMOVE = Value("remove")
-    val RETAIN = Value("retain")
+  object EmptyColumnsStrategy {
+    case class RemoveEmptyColumns() extends EmptyColumnsStrategy {
+      override val name: String = "remove"
+      override val index: Int = 0
+    }
+    case class RetainEmptyColumns() extends EmptyColumnsStrategy {
+      override val name: String = "retain"
+      override val index: Int = 1
+    }
   }
 
-  object EmptyColumnsMode extends EmptyColumnsMode
-
-  def apply(columns: MultipleColumnSelection,
-            strategy: Strategy.Value,
-            indicator: BinaryChoice.Value = BinaryChoice.NO,
-            indicatorPrefix: Option[String] = None): MissingValuesHandler = {
-
-    val handler = MissingValuesHandler()
-    handler.selectedColumnsParam.value = columns
-    handler.strategyParam.value = strategy.toString
-    handler.missingValueIndicatorParam.value = indicator.toString
-    handler.indicatorPrefixParam.value = indicatorPrefix
-    handler
+  sealed trait MissingValueIndicatorChoice extends Choice {
+    def getIndicatorPrefix: Option[String]
   }
 
-  def replaceWithCustomValue(
-      columns: MultipleColumnSelection,
-      customValue: String,
-      indicator: BinaryChoice.Value = BinaryChoice.NO,
-      indicatorPrefix: Option[String] = None): MissingValuesHandler = {
+  object MissingValueIndicatorChoice {
+    case class Yes() extends MissingValueIndicatorChoice {
 
-    val handler = MissingValuesHandler(
-      columns,
-      Strategy.REPLACE_WITH_CUSTOM_VALUE,
-      indicator,
-      indicatorPrefix)
-    handler.customValueParameter.value = customValue
-    handler
-  }
+      override val name: String = "Yes"
+      override val index: Int = 0
 
-  def replaceWithMode(
-      columns: MultipleColumnSelection,
-      emptyColumnsMode: EmptyColumnsMode.Value,
-      indicator: BinaryChoice.Value = BinaryChoice.NO,
-      indicatorPrefix: Option[String] = None): MissingValuesHandler = {
+      val indicatorPrefix = PrefixBasedColumnCreatorParam(
+        name = "indicator column prefix",
+        description = "Prefix for columns indicating presence of missing values"
+      )
+      setDefault(indicatorPrefix, "")
 
-    val handler = MissingValuesHandler(
-      columns,
-      Strategy.REPLACE_WITH_MODE,
-      indicator,
-      indicatorPrefix)
-    handler.emptyColumnStrategyParameter.value = emptyColumnsMode.toString
-    handler
+      override def getIndicatorPrefix: Option[String] = Some($(indicatorPrefix))
+      def setIndicatorPrefix(value: String): this.type = set(indicatorPrefix, value)
+    }
+    case class No() extends MissingValueIndicatorChoice {
+      override val name: String = "No"
+      override val index: Int = 1
+
+      override def getIndicatorPrefix: Option[String] = None
+    }
   }
 }
 
@@ -312,61 +363,4 @@ private object ReplaceWithCustomValueStrategy {
     }
   }
 
-}
-
-trait MissingValuesHandlerParams {
-  val selectedColumnsParam = ColumnSelectorParameter(
-    "Columns containing missing values to handle", portIndex = 0)
-
-  val defaultStrategy = Strategy.REMOVE_ROW
-
-  val customValueParameter = StringParameter(
-    description = "Replacement for missing values",
-    default = None,
-    validator = new AcceptAllRegexValidator()
-  )
-
-  val emptyColumnStrategyParameter = ChoiceParameter(
-    "Strategy of handling columns with missing all values",
-    default = Some(EmptyColumnsMode.REMOVE.toString),
-    options = ListMap(
-      MissingValuesHandler.EmptyColumnsMode.REMOVE.toString -> ParametersSchema(),
-      MissingValuesHandler.EmptyColumnsMode.RETAIN.toString -> ParametersSchema()
-    )
-  )
-
-  val strategyParam = ChoiceParameter(
-    "Strategy of handling missing values",
-    default = Some(defaultStrategy.toString),
-    options = ListMap(
-      MissingValuesHandler.Strategy.REMOVE_ROW.toString -> ParametersSchema(),
-      MissingValuesHandler.Strategy.REMOVE_COLUMN.toString -> ParametersSchema(),
-      MissingValuesHandler.Strategy.REPLACE_WITH_CUSTOM_VALUE.toString -> ParametersSchema(
-        "value" -> customValueParameter
-      ),
-      MissingValuesHandler.Strategy.REPLACE_WITH_MODE.toString -> ParametersSchema(
-        "empty column strategy" -> emptyColumnStrategyParameter
-      )
-    )
-  )
-
-  val indicatorPrefixParam = PrefixBasedColumnCreatorParameter(
-    "Prefix for columns indicating presence of missing values",
-    default = Some("")
-  )
-
-  val missingValueIndicatorParam = ChoiceParameter.binaryChoice(
-    description = "Generate missing value indicator column",
-    default = Some(BinaryChoice.NO.toString),
-    yesSchema = ParametersSchema(
-      "indicator column prefix" -> indicatorPrefixParam
-    ),
-    noSchema = ParametersSchema()
-  )
-
-  val parameters: ParametersSchema = ParametersSchema(
-    "columns" -> selectedColumnsParam,
-    "strategy" -> strategyParam,
-    "missing value indicator" -> missingValueIndicatorParam
-  )
 }

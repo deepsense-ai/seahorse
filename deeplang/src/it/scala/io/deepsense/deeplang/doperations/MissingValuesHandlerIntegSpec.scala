@@ -55,11 +55,13 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(0))))
 
-      val handler = MissingValuesHandler(
-        columnSelection,
-        MissingValuesHandler.Strategy.REMOVE_ROW,
-        BinaryChoice.YES,
-        Some("prefix_"))
+      val handler =
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(MissingValuesHandler.Strategy.RemoveRow())
+          .setMissingValueIndicator(
+            MissingValuesHandler.MissingValueIndicatorChoice.Yes()
+              .setIndicatorPrefix("prefix_"))
 
       val resultDf = executeOperation(handler, df)
 
@@ -98,11 +100,12 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(2))))
       val resultDf = executeOperation(
-        MissingValuesHandler(
-          columnSelection,
-          MissingValuesHandler.Strategy.REMOVE_COLUMN,
-          BinaryChoice.YES,
-          Some("prefix_")),
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(MissingValuesHandler.Strategy.RemoveColumn())
+          .setMissingValueIndicator(
+            MissingValuesHandler.MissingValueIndicatorChoice.Yes()
+              .setIndicatorPrefix("prefix_")),
         df)
 
       val expectedDf = createDataFrame(
@@ -139,11 +142,15 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(0))))
 
-      val handler = MissingValuesHandler.replaceWithCustomValue(
-        columnSelection,
-        "3",
-        BinaryChoice.YES,
-        Some("prefix_"))
+      val handler =
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
+              .setCustomValue("3"))
+          .setMissingValueIndicator(
+            MissingValuesHandler.MissingValueIndicatorChoice.Yes()
+              .setIndicatorPrefix("prefix_"))
 
       val resultDf = executeOperation(handler, df)
 
@@ -178,7 +185,12 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(0))))
       val resultDf = executeOperation(
-        MissingValuesHandler.replaceWithCustomValue(columnSelection, "ccc"), df)
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
+              .setCustomValue("ccc")),
+        df)
 
       val expectedDf = createDataFrame(
         Seq(
@@ -212,7 +224,12 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(0))))
       val resultDf = executeOperation(
-        MissingValuesHandler.replaceWithCustomValue(columnSelection, "true"), df)
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
+              .setCustomValue("true")),
+        df)
 
       val expectedDf = createDataFrame(
         Seq(
@@ -250,7 +267,12 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(1))))
       val resultDf = executeOperation(
-        MissingValuesHandler.replaceWithCustomValue(columnSelection, "blue"), df)
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
+              .setCustomValue("blue"))
+        , df)
 
       val expectedDf = createDataFrame(
         Seq(
@@ -303,7 +325,12 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(0))))
       val resultDf = executeOperation(
-        MissingValuesHandler.replaceWithCustomValue(columnSelection, "2015-03-30 15:25:00.0"), df)
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
+              .setCustomValue("2015-03-30 15:25:00.0"))
+        , df)
 
       val expectedDf = createDataFrame(
         Seq(
@@ -339,7 +366,12 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
         Vector(IndexRangeColumnSelection(Some(0), Some(1))))
 
       an [MultipleTypesReplacementException] should be thrownBy executeOperation(
-        MissingValuesHandler.replaceWithCustomValue(columnSelection, "3"), df)
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
+              .setCustomValue("3"))
+        , df)
     }
 
     "throw an exception with invalid value using REPLACE_WITH_CUSTOM_VALUE strategy" in {
@@ -359,7 +391,12 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
         Vector(IndexRangeColumnSelection(Some(0), Some(0))))
 
       an [WrongReplacementValueException] should be thrownBy executeOperation(
-        MissingValuesHandler.replaceWithCustomValue(columnSelection, "aaaa"), df)
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
+              .setCustomValue("aaaa"))
+        , df)
     }
 
     "replace with mode using REPLACE_WITH_MODE strategy in RETAIN mode" in {
@@ -380,11 +417,16 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(2))))
 
-      val handler = MissingValuesHandler.replaceWithMode(
-        columnSelection,
-        MissingValuesHandler.EmptyColumnsMode.RETAIN,
-        BinaryChoice.YES,
-        Some("prefix_"))
+      val handler =
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithMode()
+              .setEmptyColumnStrategy(
+                MissingValuesHandler.EmptyColumnsStrategy.RetainEmptyColumns()))
+          .setMissingValueIndicator(
+            MissingValuesHandler.MissingValueIndicatorChoice.Yes()
+              .setIndicatorPrefix("prefix_"))
 
       val resultDf = executeOperation(handler, df)
 
@@ -430,8 +472,13 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(3))))
       val resultDf = executeOperation(
-        MissingValuesHandler.replaceWithMode(columnSelection,
-          MissingValuesHandler.EmptyColumnsMode.REMOVE), df)
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(
+            MissingValuesHandler.Strategy.ReplaceWithMode()
+              .setEmptyColumnStrategy(
+                MissingValuesHandler.EmptyColumnsStrategy.RemoveEmptyColumns()))
+        , df)
 
       val expectedDf = createDataFrame(
         Seq(

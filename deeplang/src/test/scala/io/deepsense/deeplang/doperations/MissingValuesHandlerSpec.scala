@@ -36,8 +36,10 @@ class MissingValuesHandlerSpec extends UnitSpec with DeeplangTestSupport {
       val columnSelection = MultipleColumnSelection(
         Vector(IndexRangeColumnSelection(Some(0), Some(2))))
 
-      val (knowledge, warnings) = MissingValuesHandler(
-        columnSelection, MissingValuesHandler.Strategy.REMOVE_ROW)
+      val (knowledge, warnings) =
+        new MissingValuesHandler()
+          .setSelectedColumns(columnSelection)
+          .setStrategy(MissingValuesHandler.Strategy.RemoveRow())
         .inferKnowledge(inferContext)(Vector(new DKnowledge[DataFrame](df)))
 
       warnings shouldBe empty
