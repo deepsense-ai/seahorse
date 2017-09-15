@@ -92,8 +92,8 @@
           }
         }
       },
-      "name": "EXAMPLE 3: Analyze Data Using Notebook",
-      "description": "Analyze data using Notebook"
+      "name": "EXAMPLE 3: Analyze Data Using Python Notebook",
+      "description": "Analyze data using Python Notebook"
     },
     "notebooks": {
       "3dd36a4f-58f4-0e17-705b-2cface55f2e5": {
