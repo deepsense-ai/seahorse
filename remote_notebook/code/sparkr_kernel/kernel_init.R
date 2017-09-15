@@ -16,7 +16,7 @@ assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 sparkSQLSession <- SparkR:::callJMethod(entryPoint, "getNewSparkSQLSession")
 
 sparkVersion <- SparkR:::callJMethod(sc, "version")
-if (sparkVersion %in% c("2.0.0", "2.0.1", "2.0.2")) {
+if (sparkVersion %in% c("2.0.0", "2.0.1", "2.0.2", "2.1.0")) {
   assign(".sparkRsession", SparkR:::callJMethod(sparkSQLSession, "getSparkSession"), envir = SparkR:::.sparkREnv)
   assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 } else if (sparkVersion == "1.6.1") {

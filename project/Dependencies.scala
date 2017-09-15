@@ -17,7 +17,7 @@ object Version {
 
   val spark = sys.props.getOrElse("SPARK_VERSION", "2.0.2")
   val (scala, hadoop, akka) = spark match {
-    case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "2.7", "2.4.9")
+    case "2.0.0" | "2.0.1" | "2.0.2" | "2.1.0" => ("2.11.8", "2.7", "2.4.9")
     case "1.6.1" => ("2.10.5", "2.6", "2.3.11")
   }
 
@@ -68,9 +68,9 @@ object Library {
   val stampy = "asia.stampy" % "stampy-core" % "1.0-RELEASE"
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val slickless = "io.underscore" %% "slickless" % "0.3.0"
-  val sparkCore = spark("core")
-  val sparkMLLib = spark("mllib")
-  val sparkLauncher = spark("launcher")
+  val sparkCore = spark("core") excludeAll ExclusionRule("com.chuusai", "shapeless_2.11", "2.0.0")
+  val sparkMLLib = spark("mllib") excludeAll ExclusionRule("com.chuusai", "shapeless_2.11", "2.0.0")
+  val sparkLauncher = spark("launcher") excludeAll ExclusionRule("com.chuusai", "shapeless_2.11", "2.0.0")
   val sprayCan = spray("can")
   val sprayRouting = spray("routing")
   val sprayTestkit = spray("testkit")
