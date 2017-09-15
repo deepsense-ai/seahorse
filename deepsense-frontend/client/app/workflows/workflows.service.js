@@ -91,6 +91,11 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       });
     }
 
+    _getAllWorkflows() {
+      const innerWorkflows = _.values(this._innerWorkflowByNodeId);
+      return [this.getRootWorkflow()].concat(innerWorkflows);
+    }
+
     _serializeInnerWorkflow(workflow) {
       let workflowData = workflow.serialize();
       workflowData.publicParams = workflow.publicParams;
@@ -141,12 +146,16 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       return _.last(this._workflowsStack);
     }
 
+    onInferredState(states) {
+      this._getAllWorkflows().forEach(w => w.updateState(states));
+    }
+
     clearGraph() {
       this.getCurrentWorkflow().clearGraph();
     }
 
     updateTypeKnowledge(knowledge) {
-      this.getRootWorkflow().updateTypeKnowledge(knowledge);
+      this._getAllWorkflows().forEach(w => w.updateTypeKnowledge(knowledge));
     }
 
     updateEdgesStates() {

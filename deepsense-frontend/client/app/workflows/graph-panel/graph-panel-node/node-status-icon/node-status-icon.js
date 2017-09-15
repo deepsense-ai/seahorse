@@ -2,6 +2,15 @@
 
 /*@ngInject*/
 function NodeStatusIcon() {
+
+  function getDefaultClass(node) {
+    if (node.knowledgeErrors.length > 0) {
+      return 'fa-exclamation-circle error-icon';
+    } else {
+      return '';
+    }
+  }
+
   return {
     restrict: 'E',
     scope: {
@@ -22,7 +31,7 @@ function NodeStatusIcon() {
       $scope.calculateClass = function() {
 
         if (!$scope.node.state) {
-          return '';
+          return getDefaultClass($scope.node);
         }
 
         switch ($scope.node.state.status) {
@@ -37,11 +46,7 @@ function NodeStatusIcon() {
           case 'status_failed':
             return 'status-icon--failed fa-ban';
           default:
-            if ($scope.node.knowledgeErrors.length > 0) {
-              return 'fa-exclamation-circle error-icon';
-            } else {
-              return '';
-            }
+            return getDefaultClass($scope.node);
         }
       };
     }

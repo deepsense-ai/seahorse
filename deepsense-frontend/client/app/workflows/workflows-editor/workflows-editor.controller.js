@@ -123,7 +123,7 @@ class WorkflowsEditorController {
     this.$scope.$on('ServerCommunication.MESSAGE.inferredState', (event, data) => {
       this.updateAndRerenderEdges(data);
       if (data.states) {
-        this.WorkflowService.getRootWorkflow().updateState(data.states);
+        this.WorkflowService.onInferredState(data.states);
       }
     });
 

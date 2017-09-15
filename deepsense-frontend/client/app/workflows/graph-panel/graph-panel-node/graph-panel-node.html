@@ -1,7 +1,7 @@
 <div id="node-{{ ::node.id }}"
      ng-class="{
        'selected-node': isSelected,
-       'flowchart-source-sink': getNodeType() === 'source-or-sink',
+       'flowchart-node flowchart-source-sink': getNodeType() === 'source-or-sink',
        'flowchart-node flowchart-special-node': getNodeType() === 'iconic',
        'flowchart-node flowchart-standard-node': getNodeType() === 'plain'
      }"
