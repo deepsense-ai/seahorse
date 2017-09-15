@@ -40,6 +40,7 @@ object CatalogRecorder {
     catalog.registerDOperable[UntrainedRandomForestRegression]()
     catalog.registerDOperable[TrainedRandomForestRegression]()
     catalog.registerDOperable[Report]()
+    catalog.registerDOperable[Normalizer]()
   }
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
