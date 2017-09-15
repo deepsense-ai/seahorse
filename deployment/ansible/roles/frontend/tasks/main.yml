@@ -15,7 +15,6 @@
   with_items:
     - config.js
     - default.conf
-    - htpasswd
 
 - name: Build frontend docker image
   command: docker build -t {{ds_frontend_docker_image}} {{docker_dir}}/frontend/

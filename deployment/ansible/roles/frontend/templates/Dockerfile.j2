@@ -8,7 +8,6 @@ RUN mkdir -p {{frontend_dir}}
 COPY config.js {{frontend_dir}}/
 COPY run.sh {{frontend_dir}}/
 COPY default.conf /etc/nginx/conf.d/
-COPY htpasswd /etc/nginx/.htpasswd
 
 WORKDIR {{frontend_dir}}
 
