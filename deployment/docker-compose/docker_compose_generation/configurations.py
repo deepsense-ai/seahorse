@@ -337,6 +337,9 @@ class Database(Service):
 
 
 class Notebooks(Service):
+
+    network_mode = 'host'
+
     def depends_on(self):
         return [
             RabbitMQ,
@@ -349,12 +352,11 @@ class Notebooks(Service):
             WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address().as_string()),
             HEARTBEAT_INTERVAL=2.0) \
                + self.services.RabbitMQ.credentials().as_env() \
-               + self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT') \
+               + self.services.RabbitMQ.exposed_address().as_env('MQ_HOST', 'MQ_PORT') \
                + self.services.WorkflowManager.credentials().as_env()
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8888, 60105))
-
 
 class Authorization(Service):
 

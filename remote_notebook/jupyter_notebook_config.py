@@ -5,8 +5,8 @@ import os
 from wmcontents import WMContentsManager
 
 c = get_config()
-c.NotebookApp.ip = '*'
-c.NotebookApp.port = 8888
+c.NotebookApp.ip = '127.0.0.1'
+c.NotebookApp.port = 60105
 c.NotebookApp.open_browser = False
 
 c.NotebookApp.allow_origin = '*'

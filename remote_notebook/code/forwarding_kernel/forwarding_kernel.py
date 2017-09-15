@@ -58,7 +58,7 @@ class ForwardingKernel(IPythonKernel, Logging):
 
         self.parent = parent
         self._init_argv()
-        nb_client = NotebookServerClient("localhost", 8888, self._kernel_id,
+        nb_client = NotebookServerClient("localhost", 60105, self._kernel_id,
                                          seahorse_notebook_path=self.argv.seahorse_notebook_path)
         self._session_id, self._node_id, self._port_number = nb_client.extract_dataframe_source()
 
