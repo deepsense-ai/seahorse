@@ -27,8 +27,8 @@
       disabled-mode="workflow.isReportMode"
       predef-colors="workflow.getPredefColors()"
       class="o-panel o-panel--scroll-right animated fadeInRight"
-      panel-name="deepsenseOperationAttributes"
       resizable
+      resizable-panel-name="rightPanel"
       resizable-position="left"
     >
     </deepsense-operation-attributes>
@@ -42,8 +42,8 @@
       toggle-off="StatusBar.RUN"
       toggle-animate-in="fadeOutRight o-panel--absolute"
       toggle-animate-out="fadeInRight o-general-panel"
-      panel-name="generalDataPanel"
       resizable
+      resizable-panel-name="rightPanel"
       resizable-position="left"
       resizable-add-shift="-10">
     </general-data-panel>
@@ -51,8 +51,8 @@
 
   <section
     class="c-bottom-tabs"
-    panel-name="bottomTab"
     resizable
+    resizable-panel-name="bottomTab"
     resizable-via-listener=".c-workflow-container__content"
     resizable-invisible="true"
     resizable-position="top"

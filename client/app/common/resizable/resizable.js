@@ -67,9 +67,9 @@ class Resizable {
     }
 
     function loadDimensions() {
-      if (attrs.panelName && localStorage[attrs.panelName]) {
+      if (attrs.resizablePanelName && localStorage[attrs.resizablePanelName]) {
         try {
-          let dimensions = JSON.parse(localStorage.getItem(attrs.panelName));
+          let dimensions = JSON.parse(localStorage.getItem(attrs.resizablePanelName));
           if (dimensions.width) {
             element[0].style.width = `${dimensions.width}px`;
             triggerEvent(dimensions.width);
@@ -85,13 +85,13 @@ class Resizable {
     }
 
     function saveDimensions() {
-      if (attrs.panelName) {
+      if (attrs.resizablePanelName) {
         if (attrs.resizablePosition === 'left' && width) {
-          localStorage.setItem(attrs.panelName, JSON.stringify({
+          localStorage.setItem(attrs.resizablePanelName, JSON.stringify({
             width: width
           }));
         } else if (attrs.resizablePosition === 'top' && height) {
-          localStorage.setItem(attrs.panelName, JSON.stringify({
+          localStorage.setItem(attrs.resizablePanelName, JSON.stringify({
             height: height
           }));
         }
