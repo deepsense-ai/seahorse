@@ -105,13 +105,16 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.inferredState', (event, data) => {
-      this.updateAndRerenderEdges(data);
-      if (data.states) {
-        this.WorkflowService.onInferredState(data.states);
-        if (this.WorkflowService.isWorkflowRunning()) {
-          this._setRunningMode();
-        } else {
-          this._setEditableMode();
+      const currentWorkflow = this.WorkflowService.getCurrentWorkflow();
+      if (data.id === currentWorkflow.id) {
+        this.updateAndRerenderEdges(data);
+        if (data.states) {
+          this.WorkflowService.onInferredState(data.states);
+          if (this.WorkflowService.isWorkflowRunning()) {
+            this._setRunningMode();
+          } else {
+            this._setEditableMode();
+          }
         }
       }
     });
@@ -253,6 +256,7 @@ class WorkflowsEditorController {
 
   _goToWorkflow(workflow) {
     const id = workflow.workflowId;
+    this.ServerCommunication.unsubscribeFromExchange();
     this.$state.go(this.$state.current, {id: id}, {reload: true});
   }
 
