@@ -46,14 +46,38 @@
   }
 
   &__details {
-    padding: 0 @main-space / 2 @main-space;
+    padding: 0 @main-space / 2;
+  }
+
+  &__state {
+    float: none !important;
+    margin: @main-space / 2 0 @main-space / 2 !important;
+    display: block;
+    font-size: 10px;
+    height: auto;
+    line-height: 1;
+
+    [role="progressbar"] {
+      height: auto;
+      font-size: inherit;
+      line-height: inherit;
+      padding: 3px 8px;
+    }
+  }
+
+  &__time {
+    margin: 0 0 5px;
+    display: block;
+    padding: 2px 5px;
+    background: #e7eaec;
+    border-radius: .25em;
   }
 
   &__description {
     margin: 0;
     text-transform: initial;
     font-weight: normal;
-    max-height: 48px;
+    max-height: 8ex;
     overflow: hidden;
 
     // new method of clipping by line numbers
@@ -62,6 +86,7 @@
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
+        max-height: none;
       }
     }
   }
@@ -95,8 +120,7 @@
 
     @border-top: 4px;
 
-    height: @height;
-    line-height: @height - @heading-padding * 2 - @border-top;
+    height: auto;
     padding: @heading-padding @main-space / 2;
     text-transform: uppercase;
     font-weight: bold;

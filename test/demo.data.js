@@ -14,21 +14,79 @@ angular.module('test').
         id: '88f560a9-97e3-4fa2-93ce-edad4cab7ea9',
         name: 'Sql Reader',
         operationId: '342342-123123-434234-234234',
-        parameters: null
+        parameters: null,
+        status: 'status_running',
+        stateDetails: {
+          "progress": {
+            "current": 3,
+            "total": 23
+          }
+        }
       },
       {
         description: 'Simple filters takes dataset based on...',
         id: '210ce781-0a9f-477d-99a7-5be31f7bfc02',
         name: 'Row Filter',
         operationId: '342342-123123-434234-12334',
-        parameters: null
+        parameters: null,
+        status: "status_completed",
+        stateDetails: {
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z"
+        }
       },
       {
         description: 'Neural networks inspired by biological STARTS test of description length message, hey hey hey this is a test so please welcome',
         id: 'edc02822-b8ee-4225-b070-f892a87dbf11',
         name: 'Neural Network',
         operationId: '11111-111111-44444',
-        parameters: null
+        parameters: null,
+        status: "status_aborted",
+        stateDetails: {
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:11:09Z"
+        }
+      },
+      {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'e61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
+        name: 'File To DataFrame',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        status: "status_failed",
+        stateDetails: {
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:21:23Z",
+          "progress": {
+            "current": 3,
+            "total": 23
+          },
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Something that describes the problem more precisely",
+            "details": null
+          }
+        }
+      },
+      {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'a61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
+        name: 'Test draft',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        status: "status_draft",
+        stateDetails: null
+      },
+      {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'a61a311f-ffc0-71b8-736c-3fb1e3cf8e77',
+        name: 'Test draft',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        status: "status_queued",
+        stateDetails: null
       }
     ];
 
@@ -278,7 +336,10 @@ angular.module('test').
             }
           ]
         }
-      ]
+      ],
+      [],
+      [],
+      []
     ];
 
     var parameterValues = [
@@ -342,7 +403,10 @@ angular.module('test').
             "name31": "let codilime <- 42 * 3 - 42 * 2;"
           }
         }
-      }
+      },
+      {},
+      {},
+      {}
     ];
 
     for (var i = 0; i < nodes.length; ++i) {

@@ -24,14 +24,16 @@ function OperationAttributes($timeout) {
       };
 
       scope.$watch('node', function() {
-        let heightOfOthers = jQuery(
-          '> .ibox-title--main',
-          '.operation-attributes-panel'
-        ).outerHeight(true);
-        let container = element[0];
-        let body = container.querySelector('.ibox-content');
+        scope.$applyAsync(() => {
+          let heightOfOthers = jQuery(
+            '> .ibox-title--main',
+            '.operation-attributes-panel'
+          ).outerHeight(true);
+          let container = element[0];
+          let body = container.querySelector('.ibox-content');
 
-        angular.element(body).css('height', 'calc(100% - ' + heightOfOthers + 'px)');
+          angular.element(body).css('height', 'calc(100% - ' + heightOfOthers + 'px)');
+        });
       });
     }
   };

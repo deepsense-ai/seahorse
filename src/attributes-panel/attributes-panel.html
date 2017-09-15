@@ -10,12 +10,43 @@
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
     </section>
+    <section class="operation-attributes-panel__details">
+      <div class="operation-attributes-panel__state progress progress-striped active"
+           ng-show="node.status === 'status_running'"
+           title="Currently is running">
+        <div style="width: 100%" aria-valuemax="100" aria-valuemin="0"
+             aria-valuenow="100" role="progressbar"
+             class="progress-bar progress-bar-primary">
+          {{::node.status.replace('status_', '')}}
+        </div>
+      </div>
+      <p class="operation-attributes-panel__state label"
+         ng-class="{
+          'label-info': node.status === 'status_queued',
+          'label-success': node.status === 'status_completed',
+          'label-danger': node.status === 'status_failed',
+          'label-warning': node.status === 'status_aborted'
+         }"
+         ng-hide="node.status === 'status_running'"
+         title="Status">
+        {{node.status.replace('status_', '')}}
+      </p>
+      <p class="operation-attributes-panel__time text-right"
+         ng-show="node.stateDetails.ended">
+        <span class="block">Last executed</span>
+        <i class="fa fa-clock-o"></i>
+        <time datetime="{{node.stateDetails.ended}}"
+              class="text-right">
+          {{node.stateDetails.ended | date:'medium'}}
+        </time>
+      </p>
+    </section>
   </header>
   <section class="ibox-content" custom-scroll-bar>
     <attributes-list
       ng-if="node.parameters"
       parameters-list="node.parameters">
     </attributes-list>
-    <deepsense-loading-spinner-sm ng-if="!node.parameters"></deepsense-loading-spinner-sm>
+    <deepsense-loading-spinner-sm class="text-center" ng-if="!node.parameters"></deepsense-loading-spinner-sm>
   </section>
 </aside>
