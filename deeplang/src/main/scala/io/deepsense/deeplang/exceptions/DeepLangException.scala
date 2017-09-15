@@ -23,6 +23,6 @@ abstract class DeepLangException(
     cause: Throwable = null)
   extends DeepSenseException(
     FailureCode.NodeFailure,
-    getClass.getSimpleName,
+    "DeepLang Exception",
     message,
     Option(cause))
