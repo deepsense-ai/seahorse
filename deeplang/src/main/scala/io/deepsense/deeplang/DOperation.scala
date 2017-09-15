@@ -21,6 +21,9 @@ abstract class DOperation extends Serializable {
   val outArity: Int
   val id: DOperation.Id
   val name: String
+  // NOTE: Default version value = "0.1.0"
+  // NOTE: Currently version number is semantically ignored everywhere
+  val version: String = "0.1.0"
   val parameters: ParametersSchema
 
   def inPortTypes: Vector[ru.TypeTag[_]]

@@ -42,6 +42,7 @@ trait GraphJsonTestSupport
     when(dOperation.outArity).thenReturn(outArity)
     when(dOperation.id).thenReturn(id)
     when(dOperation.name).thenReturn(name)
+    when(dOperation.version).thenReturn(version)
     val mockParameters = mock[ParametersSchema]
     when(dOperation.parameters).thenReturn(mockParameters)
     dOperation

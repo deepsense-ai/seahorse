@@ -29,7 +29,8 @@ object OperationJsonProtocol extends IdJsonProtocol {
       JsObject(
         Operation -> JsObject(
           Id -> operation.id.toJson,
-          Name -> operation.name.toJson),
+          Name -> operation.name.toJson,
+          Version -> operation.version.toJson),
         Parameters -> operation.parameters.valueToJson)
     }
   }

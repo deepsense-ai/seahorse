@@ -78,24 +78,33 @@ object DOperationCatalogTestResources {
   val nameC = "nameC"
   val nameD = "nameD"
 
+  val versionA = "versionA"
+  val versionB = "versionB"
+  val versionC = "versionC"
+  val versionD = "versionD"
+
   case class DOperationA() extends DOperationMock {
     override val id = idA
     override val name = nameA
+    override val version = versionA
   }
 
   case class DOperationB() extends DOperationMock {
     override val id = idB
     override val name = nameB
+    override val version = versionB
   }
 
   case class DOperationC() extends DOperationMock {
     override val id = idC
     override val name = nameC
+    override val version = versionC
   }
 
   case class DOperationD() extends DOperationMock {
     override val id = idD
     override val name = nameD
+    override val version = versionD
     override val inPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag, YTypeTag)
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
   }
@@ -129,13 +138,13 @@ object ViewingTestResources extends MockitoSugar {
   catalog.registerDOperation[DOperationD](categoryD, descriptionD)
 
   val expectedA = DOperationDescriptor(
-    idA, nameA, descriptionA, categoryA, parametersSchema, Nil, Nil)
+    idA, nameA, versionA, descriptionA, categoryA, parametersSchema, Nil, Nil)
   val expectedB = DOperationDescriptor(
-    idB, nameB, descriptionB, categoryB, parametersSchema, Nil, Nil)
+    idB, nameB, versionB, descriptionB, categoryB, parametersSchema, Nil, Nil)
   val expectedC = DOperationDescriptor(
-    idC, nameC, descriptionC, categoryC, parametersSchema, Nil, Nil)
+    idC, nameC, versionC, descriptionC, categoryC, parametersSchema, Nil, Nil)
   val expectedD = DOperationDescriptor(
-    idD, nameD, descriptionD, categoryD, parametersSchema,
+    idD, nameD, versionD, descriptionD, categoryD, parametersSchema,
     List(XTypeTag.tpe, YTypeTag.tpe), List(XTypeTag.tpe))
 }
 

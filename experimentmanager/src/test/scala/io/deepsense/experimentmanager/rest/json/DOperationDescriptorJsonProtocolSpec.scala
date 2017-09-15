@@ -55,7 +55,7 @@ class DOperationDescriptorJsonProtocolSpec
     when(parameters.toJson) thenReturn parametersJsRepresentation
 
     val operationDescriptor = DOperationDescriptor(
-      UUID.randomUUID, "operation name", "operation description", category, parameters,
+      UUID.randomUUID, "operation name", "0.1.0", "operation description", category, parameters,
       Seq(typeOf[A], typeOf[A with T1]), Seq(typeOf[B], typeOf[B with T2]))
 
     def name[T: TypeTag]: String = typeOf[T].typeSymbol.fullName
@@ -63,6 +63,7 @@ class DOperationDescriptorJsonProtocolSpec
     val expectedJson = JsObject(
       "id" -> JsString(operationDescriptor.id.toString),
       "name" -> JsString(operationDescriptor.name),
+      "version" -> JsString(operationDescriptor.version),
       "category" -> JsString(category.id.toString),
       "description" -> JsString(operationDescriptor.description),
       "deterministic" -> JsBoolean(false),

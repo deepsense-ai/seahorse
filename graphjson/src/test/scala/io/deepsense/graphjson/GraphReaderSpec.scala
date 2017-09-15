@@ -42,21 +42,27 @@ class GraphReaderSpec extends GraphJsonTestSupport {
     JsObject(
       "id" -> node1Id.toString.toJson,
       "operation" -> JsObject(
-        "id" -> operation1.id.toString.toJson
+        "id" -> operation1.id.toString.toJson,
+        "name" -> operation1.name.toString.toJson,
+        "version" -> operation1.version.toString.toJson
       ),
       "parameters" -> parameters1
     ),
     JsObject(
       "id" -> node2Id.toString.toJson,
       "operation" -> JsObject(
-        "id" -> operation2.id.toString.toJson
+        "id" -> operation2.id.toString.toJson,
+        "name" -> operation2.name.toString.toJson,
+        "version" -> operation2.version.toString.toJson
       ),
       "parameters" -> parameters2
     ),
     JsObject(
       "id" -> node3Id.toString.toJson,
       "operation" -> JsObject(
-        "id" -> operation3.id.toString.toJson
+        "id" -> operation3.id.toString.toJson,
+        "name" -> operation3.name.toString.toJson,
+        "version" -> operation3.version.toString.toJson
       ),
       "parameters" -> parameters3
     )

@@ -44,6 +44,7 @@ trait DOperationDescriptorJsonProtocol
   class DOperationDescriptorBaseFormat extends DOperationDescriptorShortFormat {
     override def write(obj: DOperationDescriptor): JsValue = {
       JsObject(super.write(obj).asJsObject.fields ++ Map(
+        "version" -> obj.version.toJson,
         "category" -> obj.category.id.toJson,
         "description" -> obj.description.toJson,
         "deterministic" -> false.toJson,  // TODO use real value as soon as it is supported
