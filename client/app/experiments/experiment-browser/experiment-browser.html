@@ -10,7 +10,7 @@
     <tbody>
     <tr ng-repeat="item in ::experimentList.experiments">
       <td><a ui-sref="lab.experiment({ id: item.id })">{{ ::item.name }}</a></td>
-      <td>{{ ::item.status }}</td>
+      <td>{{ ::item.state.status }}</td>
       <td>{{ ::item.updated }}</td>
     </tr>
     </tbody>

@@ -8,7 +8,9 @@
       "name" : "My experiment",
       "created" : "2015-01-20T21:11:09Z",
       "updated" : "2015-01-20T22:11:09Z",
-      "status" : "ABORTED",
+      "state": {
+        "status" : "ABORTED"
+      },
       "description" : "IS A SIMPLE LINEAR REGRESSION ABLE TO KNOCK SPOTS OFF SVM AND RANDOM FOREST?"
     },
     {
@@ -16,7 +18,9 @@
       "name" : "Pretty heat maps",
       "created" : "2015-01-20T20:06:33Z",
       "updated" : "2015-01-20T21:06:33Z",
-      "status" : "COMPLETED",
+      "state": {
+        "status" : "COMPLETED"
+      },
       "description" : "Do you know where Kamil Stoch earns most of his points in season 2013/2014?"
     },
     {
@@ -24,7 +28,9 @@
       "name" : "New Experiment",
       "created" : "2015-01-21T20:06:33Z",
       "updated" : "2015-01-21T21:06:33Z",
-      "status" : "DRAFT",
+      "state": {
+        "status" : "DRAFT"
+      },
       "description" : "A new experiment"
     },
     {
@@ -32,7 +38,9 @@
       "name" : "Draft",
       "created" : "2015-01-22T20:06:33Z",
       "updated" : "2015-01-22T21:06:33Z",
-      "status" : "DRAFT",
+      "state": {
+        "status" : "DRAFT"
+      },
       "description" : "Testing"
     },
     {
@@ -40,7 +48,9 @@
       "name" : "Test",
       "created" : "2015-01-23T20:06:33Z",
       "updated" : "2015-01-23T21:06:33Z",
-      "status" : "FAILED",
+      "state": {
+        "status" : "FAILED"
+      },
       "description" : "Pretty sure this one will fail"
     },
     {
@@ -48,7 +58,9 @@
       "name" : "Slo mo",
       "created" : "2015-01-24T20:06:33Z",
       "updated" : "2015-01-24T21:06:33Z",
-      "status" : "ABORTED",
+      "state": {
+        "status" : "ABORTED"
+      },
       "description" : "A lot of computations"
     }
   ]
