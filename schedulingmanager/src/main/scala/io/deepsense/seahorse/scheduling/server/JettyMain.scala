@@ -13,9 +13,9 @@ import io.deepsense.seahorse.scheduling.db.{Database, FlywayMigration}
 
 object JettyMain {
 
-  def main(args: Array[String]): Unit = start(args)
+  def main(args: Array[String]): Unit = start(args, SchedulingManagerConfig.jetty)
 
-  def start(args: Array[String]): Server = {
+  def start(args: Array[String], config: JettyConfig): Server = {
     Database.forceInitialization()
     FlywayMigration.run()
 
@@ -23,7 +23,7 @@ object JettyMain {
       contextPath = "/schedulingmanager/v1/",
       scalatraBootstrapClass = classOf[ScalatraBootstrap],
       webAppResourcePath = "scalatra-webapp",
-      SchedulingManagerConfig.jetty
+      config
     )
   }
 

@@ -84,6 +84,6 @@ class MqModule extends AbstractModule with Logging {
         system.terminate()
     }
 
-    subscribedWithTimeout
+    subscribedWithTimeout.map(_.data)
   }
 }

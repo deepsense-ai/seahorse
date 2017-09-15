@@ -4,20 +4,24 @@
 
 package io.deepsense.e2etests
 
+import java.net.URL
+
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scalaz.Scalaz._
 import scalaz._
 
+import akka.actor.ActorSystem
+import akka.util.Timeout
 import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig
 import com.ning.http.client.ws.WebSocketListener
 import com.ning.http.client.{AsyncHttpClient, AsyncHttpClientConfig, Response => AHCResponse}
 import org.jfarcand.wcs.{Options, WebSocket}
 import org.scalactic.source.Position
-import org.scalatest.Matchers
+import org.scalatest.{Assertion, Matchers, Succeeded}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
@@ -25,15 +29,44 @@ import play.api.libs.ws.ning.NingWSClient
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.CatalogRecorder
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.e2etests.stompoverws.StompListener
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows.{ExecutionReport, Workflow, WorkflowInfo}
 import io.deepsense.sessionmanager.rest._
 import io.deepsense.sessionmanager.rest.requests._
 import io.deepsense.sessionmanager.service.{Status => SessionStatus}
+import io.deepsense.workflowmanager.client.WorkflowManagerClient
 
-trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
+
+trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging with WorkflowJsonProtocol{
 
   import scala.concurrent.ExecutionContext.Implicits.global
+
+  protected val httpTimeout = 10 seconds
+  protected val workflowTimeout = 30 minutes
+
+  protected val baseUrl = new URL("http", "localhost", 33321, "")
+  protected val workflowsUrl = new URL(baseUrl, "/v1/workflows/")
+  protected val sessionsUrl = new URL(baseUrl, "/v1/sessions/")
+
+  implicit val as: ActorSystem = ActorSystem()
+  implicit val timeout: Timeout = httpTimeout
+
+  val operablesCatalog = new DOperableCatalog
+  val operationsCatalog = DOperationsCatalog()
+
+  CatalogRecorder.registerDOperables(operablesCatalog)
+  CatalogRecorder.registerDOperations(operationsCatalog)
+
+  override val graphReader = new GraphReader(operationsCatalog)
+
+  val client = new WorkflowManagerClient(
+    workflowsUrl
+  )
 
   protected val httpClient = NingWSClient()
 
@@ -41,25 +74,25 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
   private val mqUser = "yNNp7VJS"
   private val mqPass = "1ElYfGNW"
 
-  protected val baseUrl = "http://localhost:33321"
-  protected val workflowsUrl = s"$baseUrl/v1/workflows"
-  protected val sessionsUrl = s"$baseUrl/v1/sessions"
-
   private val ws = "ws://localhost:33321/stomp/645/bg1ozddg/websocket"
-
-  protected val httpTimeout = 10 seconds
-  private val workflowTimeout = 30 minutes
 
   private implicit val patience = PatienceConfig(
     timeout = Span(60, Seconds),
     interval = Span(10, Seconds)
   )
 
+  def runWorkflowSynchronously(workflow: WorkflowInfo, workflowId: Workflow.Id): Unit = {
+    withExecutor(workflowId, TestClusters.local()) { implicit ctx =>
+      launch(workflowId)
+      assertAllNodesCompletedSuccessfully(workflow)
+    }
+  }
+
   def ensureSeahorseIsRunning(): Unit = {
     eventually {
       logger.info("Waiting for Seahorse to boot up...")
-      val smIsUp = Await.result(httpClient.url(sessionsUrl).get, httpTimeout)
-      val wmIsUp = Await.result(httpClient.url(workflowsUrl).get, httpTimeout)
+      val smIsUp = Await.result(httpClient.url(sessionsUrl.toString).get, httpTimeout)
+      val wmIsUp = Await.result(httpClient.url(workflowsUrl.toString).get, httpTimeout)
     }
   }
 
@@ -83,7 +116,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
   def withExecutor[T](workflowId: Workflow.Id, clusterDetails: ClusterDetails)(code: ExecutorContext => T): Unit = {
     logger.info(s"Starting executor for workflow $workflowId")
 
-    httpClient.url(sessionsUrl).post(Json.parse(createSessionBody(workflowId, clusterDetails)))
+    httpClient.url(sessionsUrl.toString).post(Json.parse(createSessionBody(workflowId, clusterDetails)))
 
     ensureExecutorIsRunning(workflowId)
     logger.info(s"Executor for workflow $workflowId started")
@@ -138,7 +171,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
   private def ensureExecutorIsRunning(workflowId: Workflow.Id): Unit = {
     eventually {
       val statusString = Await.result(
-        httpClient.url(sessionsUrl)
+        httpClient.url(sessionsUrl.toString)
           .get
           .map(request => {
             val JsArray(jsonSessions: Seq[_]) =

@@ -4,13 +4,21 @@
 
 package io.deepsense.commons.service.server
 
+import java.time.Duration
+
 import com.typesafe.config.Config
 
-class JettyConfig(jettyConfig: Config) {
+case class JettyConfig(
+    port: Int,
+    stopTimeout: Duration,
+    connectorIdleTimeout: Duration,
+    maxFormContentSize: Int)
 
-  val port = jettyConfig.getInt("port")
-  val stopTimeout = jettyConfig.getDuration("stopTimeout")
-  val connectorIdleTimeout = jettyConfig.getDuration("connectorIdleTimeout")
-  val maxFormContentSize = jettyConfig.getInt("maxFormContentSize")
+object JettyConfig {
+  def apply(jettyConfig: Config): JettyConfig = new JettyConfig(
+    port = jettyConfig.getInt("port"),
+    stopTimeout = jettyConfig.getDuration("stopTimeout"),
+    connectorIdleTimeout = jettyConfig.getDuration("connectorIdleTimeout"),
+    maxFormContentSize = jettyConfig.getInt("maxFormContentSize"))
 
 }

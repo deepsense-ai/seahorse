@@ -15,7 +15,7 @@ private [stompoverws]  object SeahorseClientMessagesJsonDeserializer
   // TODO Implement InferredState reader
   case class Deserializer(graphReader: GraphReader)
     extends JsonMQDeserializer(Seq(
-      new DefaultJsonMessageDeserializer[ExecutionReport](WorkflowProtocol.executionReport),
+      new DefaultJsonMessageDeserializer[ExecutionReport](MessagesTypes.executionReport),
       new DefaultJsonMessageDeserializer[Heartbeat](MessagesTypes.heartbeat)
     ))
 

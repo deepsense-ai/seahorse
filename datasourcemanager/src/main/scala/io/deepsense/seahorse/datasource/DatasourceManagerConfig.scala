@@ -19,7 +19,7 @@ object DatasourceManagerConfig {
     ConfigFactory.load("jetty.default.conf")
   )
 
-  val jetty = new JettyConfig(config.getConfig("jetty"))
+  val jetty = JettyConfig(config.getConfig("jetty"))
   val database = new DatabaseConfig(config.getConfig("database"))
 
 }

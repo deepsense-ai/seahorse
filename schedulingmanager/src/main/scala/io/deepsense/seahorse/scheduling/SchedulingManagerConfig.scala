@@ -19,7 +19,7 @@ object SchedulingManagerConfig {
       ConfigFactory.load("database.default.conf")
   ).resolve()
 
-  val jetty = new JettyConfig(config.getConfig("jetty"))
+  val jetty = JettyConfig(config.getConfig("jetty"))
   val database = new SchedulingManagerDatabaseConfig(config.getConfig("database"))
 
 }

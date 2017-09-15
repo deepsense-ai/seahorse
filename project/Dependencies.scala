@@ -155,7 +155,7 @@ object Dependencies {
     sprayRouting
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit).map(_ % s"$Test,it")
 
-  val sessionmanager = Seq(
+  val sessionmanager = Spark.components ++ Seq(
     akkaActor,
     akkaAgent,
     apacheCommonsExec,
