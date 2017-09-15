@@ -27,12 +27,9 @@ function WorkflowsConfig($stateProvider) {
         return $q.all([
           workflowWithResultsDeferred.promise,
           Operations.load().then(OperationsHierarchyService.load)
-        ]).then((results) => {
+        ]).then(([workflows, _]) => {
           $rootScope.stateData.dataIsLoaded = true;
-
-          let deferred = $q.defer();
-          deferred.resolve(results);
-          return deferred.promise;
+          return workflows;
         });
       }
     }

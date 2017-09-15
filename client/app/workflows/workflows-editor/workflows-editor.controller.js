@@ -53,7 +53,7 @@ class WorkflowsEditorController {
     this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q,
       $scope, WorkflowService, this, GraphNodesService);
 
-    this.init(workflowWithResults[0]);
+    this.init(workflowWithResults);
   }
 
   loadReports(data) {
