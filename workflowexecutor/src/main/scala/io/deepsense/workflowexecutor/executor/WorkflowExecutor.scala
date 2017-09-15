@@ -139,12 +139,6 @@ object WorkflowExecutor extends Logging {
 
   private val config = ConfigFactory.load
 
-  private val workflowManagerConfig = WorkflowManagerConfig(
-    defaultAddress = config.getString("workflow-manager.address"),
-    path = config.getString("workflow-manager.workflows.path"),
-    timeout = config.getInt("workflow-manager.timeout")
-  )
-
   private val outputFile = "result.json"
 
   def runInNoninteractiveMode(params: ExecutionParams, pysparkPath: String): Unit = {
@@ -244,14 +238,6 @@ object WorkflowExecutor extends Logging {
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {
     val content = Future(Source.fromFile(params.workflowFilename.get).mkString)
     content.map(_.parseJson.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader))
-  }
-
-  private def downloadWorkflow(editorAddress: String, workflowId: String): Future[String] = {
-    new WorkflowDownloadClient(
-      editorAddress,
-      workflowManagerConfig.path,
-      workflowManagerConfig.timeout
-    ).downloadWorkflow(workflowId)
   }
 
   private def saveWorkflowToFile(

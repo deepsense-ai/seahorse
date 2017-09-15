@@ -48,7 +48,8 @@ case class SessionExecutor(
     messageQueuePort: Int,
     pythonExecutorPath: String,
     sessionId: String,
-    pySparkPath: String)
+    pySparkPath: String,
+    wmAddress: String)
   extends Executor {
 
   private val workflowId = Workflow.Id.fromString(sessionId)
@@ -57,6 +58,8 @@ case class SessionExecutor(
   private val keepAliveInterval = config.getInt("keep-alive.interval").seconds
   private val heartbeatInterval = config.getInt("heartbeat.interval").seconds
   private val workflowManagerTimeout = config.getInt("workflow-manager.timeout")
+  private val wmWorkflowsPath = config.getString("workflow-manager.workflows.path")
+  private val wmReportsPath = config.getString("workflow-manager.reports.path")
 
   val graphReader = new GraphReader(createDOperationsCatalog())
 
@@ -86,9 +89,9 @@ case class SessionExecutor(
     setupLivyKeepAliveLogging(system, keepAliveInterval)
     val workflowManagerClientActor = system.actorOf(
       WorkflowManagerClientActor.props(
-        config.getString("workflow-manager.local.address"),
-        config.getString("workflow-manager.workflows.path"),
-        config.getString("workflow-manager.reports.path"),
+        wmAddress,
+        wmWorkflowsPath,
+        wmReportsPath,
         graphReader))
 
     val communicationFactory: MQCommunicationFactory = createCommunicationFactory(system)
