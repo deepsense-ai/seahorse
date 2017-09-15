@@ -1,9 +1,9 @@
 <div class="c-workflows-status-bar">
   <menu-item ng-repeat="item in controller.data.menuItems"
-    label="{{::item.label}}"
-    icon="{{::item.icon}}"
+    label="{{item.label}}"
+    icon="{{item.icon}}"
     call-function="item.callFunction()"
-    href="{{::item.href}}"
-    target="{{::item.target}}">
+    href="{{item.href}}"
+    target="{{item.target}}">
   </menu-item>
 </div>

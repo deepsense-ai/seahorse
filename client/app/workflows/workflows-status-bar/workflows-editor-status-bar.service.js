@@ -2,6 +2,11 @@
 
 class WorkflowStatusBarService {
   constructor($rootScope, $stateParams, config) {
+
+    this.$rootScope = $rootScope;
+    this.$stateParams = $stateParams;
+    this.config = config;
+
     this.data = {
       menuItems: [{
         label: 'Clear',
@@ -10,24 +15,47 @@ class WorkflowStatusBarService {
       }, {
         label: 'Documentation',
         icon: 'fa-book',
-        href: config.docsHost + '/docs/latest/index.html',
+        href: this.config.docsHost + '/docs/latest/index.html',
         target: '_blank'
       }, {
         label: 'Notebook',
         icon: 'fa-terminal',
-        href: config.docsHost + '/notebooks/' + $stateParams.id + '.ipynb',
+        href: this.config.docsHost + '/notebooks/' + this.$stateParams.id + '.ipynb',
         target: '_blank'
       }, {
         label: 'Export',
         icon: 'fa-angle-double-down',
-        callFunction: () => $rootScope.$broadcast('StatusBar.EXPORT_CLICK')
+        callFunction: () => this.$rootScope.$broadcast('StatusBar.EXPORT_CLICK')
       }, {
         label: 'Run',
         icon: 'fa-play',
-        callFunction: () => $rootScope.$broadcast('StatusBar.RUN')
+        callFunction: this.executionRun.bind(this)
       }]
     };
   }
+
+  executionRun() {
+    let abortButton = {
+      label: 'Abort',
+      icon: 'fa-ban',
+      callFunction: this.executionAbort.bind(this)
+    };
+    this.data.menuItems.pop();
+    this.data.menuItems.push(abortButton);
+    this.$rootScope.$broadcast('StatusBar.RUN');
+  }
+
+  executionAbort() {
+    let runButton = {
+      label: 'Run',
+      icon: 'fa-play',
+      callFunction: this.executionRun.bind(this)
+    };
+    this.data.menuItems.pop();
+    this.data.menuItems.push(runButton);
+    this.$rootScope.$broadcast('StatusBar.ABORT');
+  }
+
 }
 
 exports.inject = function(module) {

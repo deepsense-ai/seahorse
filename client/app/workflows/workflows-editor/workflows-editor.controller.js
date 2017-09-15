@@ -38,6 +38,8 @@ class WorkflowsEditorController {
     this.selectedNode = null;
     this.Operations = Operations;
     this.catalog = Operations.getCatalog();
+    this.isReportMode = false;
+    this.eventListeners = [];
     this.zoomId = 'flowchart-box';
     this.CopyPasteService = CopyPasteService;
     this.multipleCopyParams = {
@@ -76,9 +78,32 @@ class WorkflowsEditorController {
   }
 
   initListeners() {
+    this.$scope.$on('StatusBar.RUN', () => {
+      this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.REPORT_RENDER_MODE);
+      this.GraphPanelRendererService.rerender();
+      this.unbindListeners();
+      this.isReportMode = true;
+      this.isRunning = true;
+      this.ServerCommunication.send(null, {}, JSON.stringify({
+        messageType: 'run',
+        messageBody: {
+          workflowId: this.workflow.id
+        }
+      }));
+    });
 
-    this.$scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
-      this.updateAndRerenderEdges(data);
+    this.$scope.$on('StatusBar.ABORT', () => {
+      this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
+      this.GraphPanelRendererService.rerender();
+      this.initUnbindableListeners();
+      this.isReportMode = false;
+      this.isRunning = false;
+      this.ServerCommunication.send(null, {}, JSON.stringify({
+        messageType: 'abort',
+        messageBody: {
+          workflowId: this.workflow.id
+        }
+      }));
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
@@ -90,127 +115,118 @@ class WorkflowsEditorController {
       internal.getNodeParameters.call(this, node);
     });
 
-    this.$scope.$on(this.GraphNode.MOVE, () => {
-      this.WorkflowService.saveWorkflow();
-    });
+    this.initUnbindableListeners();
+  }
 
-    this.$scope.$on(this.Edge.CREATE, (data, args) => {
-      this.WorkflowService.getWorkflow().addEdge(args.edge);
-    });
+  initUnbindableListeners() {
+    this.eventListeners = [
+      this.$scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
+        this.updateAndRerenderEdges(data);
+      }),
 
-    this.$scope.$on(this.Edge.REMOVE, (data, args) => {
-      this.WorkflowService.getWorkflow().removeEdge(args.edge);
-    });
-
-    this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
-      this.WorkflowService.getWorkflow().removeNodes(this.MultiSelectionService.getSelectedNodes());
-      this.GraphPanelRendererService.removeNodes(this.MultiSelectionService.getSelectedNodes());
-      this.MultiSelectionService.clearSelection();
-      this.unselectNode();
-      this.$scope.$apply();
-      this.WorkflowService.saveWorkflow();
-    });
-
-    this.$scope.$on('FlowChartBox.ELEMENT_DROPPED', (event, args) => {
-      let dropElementOffset = this.MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
-      let operation = this.Operations.get(args.elementId);
-      let offsetX = dropElementOffset.x;
-      let offsetY = dropElementOffset.y;
-      let positionX = offsetX || 0;
-      let positionY = offsetY || 0;
-      let elementOffsetX = 100;
-      let elementOffsetY = 30;
-      let node = internal.createNodeAndAdd.call(this, {
-        operation: operation,
-        // TODO check if we reached right and bottom end of flowchart box,
-        x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-        y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
-      });
-
-      if (this.Operations.hasWithParams(operation.id)) {
+      this.$scope.$on(this.GraphNode.MOVE, () => {
         this.WorkflowService.saveWorkflow();
-      } else {
-        this.Operations.getWithParams(operation.id)
-          .then((operationData) => {
-            node.setParameters(operationData.parameters, this.DeepsenseNodeParameters);
-            this.WorkflowService.saveWorkflow();
-          }, (error) => {
-            console.error('operation fetch error', error);
-          });
-      }
-    });
+      }),
 
-    this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
-      this.unselectNode();
-      this.$scope.$digest();
-    });
+      this.$scope.$on(this.Edge.CREATE, (data, args) => {
+        this.WorkflowService.getWorkflow().addEdge(args.edge);
+      }),
 
-    this.$scope.$on('$destroy', () => {
-      this.WorkflowService.clearWorkflow();
-      this.GraphPanelRendererService.clearWorkflow();
-      this.LastExecutionReportService.clearTimeout();
-      this.NotificationService.clearToasts();
-    });
+      this.$scope.$on(this.Edge.REMOVE, (data, args) => {
+        this.WorkflowService.getWorkflow().removeEdge(args.edge);
+      }),
 
-    this.$scope.$on('AttributesPanel.UPDATED', () => {
-      this.WorkflowService.saveWorkflow();
-    });
+      this.$scope.$on('FlowChartBox.ELEMENT_DROPPED', (event, args) => {
+        let dropElementOffset = this.MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
+        let operation = this.Operations.get(args.elementId);
+        let offsetX = dropElementOffset.x;
+        let offsetY = dropElementOffset.y;
+        let positionX = offsetX || 0;
+        let positionY = offsetY || 0;
+        let elementOffsetX = 100;
+        let elementOffsetY = 30;
+        let node = internal.createNodeAndAdd.call(this, {
+          operation: operation,
+          // TODO check if we reached right and bottom end of flowchart box,
+          x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+          y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
+        });
 
-    this.$scope.$on('StatusBar.HOME_CLICK', () => {
-      let url = this.$state.href('home');
-      window.open(url, '_blank');
-    });
+        internal.getNodeParameters.call(this, node);
+      }),
 
-    this.$scope.$on('StatusBar.SAVE_CLICK', () => {
-      this.WorkflowService.saveWorkflow();
-    });
+      this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
+        this.unselectNode();
+        this.$scope.$digest();
+      }),
 
-    this.$scope.$on('StatusBar.CLEAR_CLICK', () => {
-      this.ConfirmationModalService.showModal({
-        message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
-      }).
-      then(() => {
-        this.WorkflowService.clearGraph();
-        this.GraphPanelRendererService.rerender();
+      this.$scope.$on('AttributesPanel.UPDATED', () => {
         this.WorkflowService.saveWorkflow();
-      });
-    });
+      }),
 
-    this.$scope.$on('StatusBar.EXPORT_CLICK', () => {
-      this.ExportModalService.showModal();
-    });
+      this.$scope.$on('StatusBar.HOME_CLICK', () => {
+        let url = this.$state.href('home');
+        window.open(url, '_blank');
+      }),
 
-    this.$scope.$on('StatusBar.RUN', () => {
-      this.ServerCommunication.send(null, {}, JSON.stringify({
-        messageType: 'run',
-        messageBody: {
-          workflowId: this.workflow.id
-        }
-      }));
-    });
-
-    this.$scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
-      let url = this.$state.href('workflows.latest_report', {
-        'id': this.$stateParams.id
-      });
-      window.open(url, '_blank');
-    });
-
-    this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        this.$scope.$applyAsync(() => {
+      this.$scope.$on('StatusBar.CLEAR_CLICK', () => {
+        this.ConfirmationModalService.showModal({
+          message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
+        }).
+        then(() => {
+          this.WorkflowService.clearGraph();
           this.GraphPanelRendererService.rerender();
+          this.WorkflowService.saveWorkflow();
         });
-      }
-    });
+      }),
 
-    this.$scope.$watchCollection('workflow.getWorkflow().getEdgesIds()', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        this.$scope.$applyAsync(() => {
-          this.rerenderEdges();
+      this.$scope.$on('StatusBar.EXPORT_CLICK', () => {
+        this.ExportModalService.showModal();
+      }),
+
+      this.$scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
+        let url = this.$state.href('workflows.latest_report', {
+          'id': this.$stateParams.id
         });
-      }
-    });
+        window.open(url, '_blank');
+      }),
+
+      this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
+        this.WorkflowService.getWorkflow().removeNodes(this.MultiSelectionService.getSelectedNodes());
+        this.GraphPanelRendererService.removeNodes(this.MultiSelectionService.getSelectedNodes());
+        this.MultiSelectionService.clearSelection();
+        this.unselectNode();
+        this.$scope.$apply();
+        this.WorkflowService.saveWorkflow();
+      }),
+
+      this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          this.$scope.$applyAsync(() => {
+            this.GraphPanelRendererService.rerender();
+          });
+        }
+      }),
+
+      this.$scope.$watchCollection('workflow.getWorkflow().getEdgesIds()', (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          this.$scope.$applyAsync(() => {
+            this.rerenderEdges();
+          });
+        }
+      }),
+
+      this.$scope.$on('$destroy', () => {
+        this.WorkflowService.clearWorkflow();
+        this.GraphPanelRendererService.clearWorkflow();
+        this.LastExecutionReportService.clearTimeout();
+        this.NotificationService.clearToasts();
+      })
+    ];
+  }
+
+  unbindListeners() {
+    this.eventListeners.forEach(func => func());
   }
 
   rerenderEdges() {

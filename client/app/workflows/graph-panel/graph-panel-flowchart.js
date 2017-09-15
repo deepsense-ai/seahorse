@@ -13,6 +13,9 @@ function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
     return nodeDimensions;
   };
 
+  $scope.$on('StatusBar.RUN', () => this.isRunning = true);
+  $scope.$on('StatusBar.ABORT', () => this.isRunning = false);
+
   $scope.$on('ZOOM.ZOOM_PERFORMED', (_, data) => {
     GraphPanelRendererService.setZoom(data.zoomRatio);
   });

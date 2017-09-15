@@ -19,6 +19,9 @@
                   node="node">
       </graph-node>
     </div>
+    <deepsense-loading-spinner-processing ng-if="flowChartBoxCtrl.isRunning" bg="true">
+      Running
+    </deepsense-loading-spinner-processing>
   </div>
   <div ng-if="flowChartBoxCtrl.reportMode" class="flowchart-mask">
     <div class="flowchart-paint-area"

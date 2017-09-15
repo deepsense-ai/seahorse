@@ -65,7 +65,7 @@ class ServerCommunication {
   }
 
   send(exchangePath = EXCHANGE_PATH, headers = {}, message = {}) {
-    return this.client.send.apply(this.client, arguments);
+    return this.client && this.client.send.apply(this.client, arguments);
   }
 
   connectToRabbit() {

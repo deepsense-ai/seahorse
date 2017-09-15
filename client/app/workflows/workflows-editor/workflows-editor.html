@@ -2,7 +2,13 @@
   <operation-catalogue
     catalog-collection="::workflow.catalog"
     custom-scroll-bar
-    class="animated fadeInLeft">
+    class="animated fadeInLeft"
+    toggle
+    toggle-on="StatusBar.ABORT"
+    toggle-off="StatusBar.RUN"
+    toggle-animate-in="fadeOutLeft o-panel--absolute"
+    toggle-animate-out="fadeInLeft"
+  >
   </operation-catalogue>
 
   <flow-chart-box
@@ -14,7 +20,7 @@
   <deepsense-operation-attributes
     node="workflow.getSelectedNode()"
     ng-if="workflow.getSelectedNode()"
-    disabled-mode="false"
+    disabled-mode="workflow.isReportMode"
     predef-colors="workflow.getPredefColors()"
     class="o-panel o-panel--scroll-right animated fadeInRight">
   </deepsense-operation-attributes>
@@ -22,6 +28,11 @@
   <general-data-panel
     name="workflow.getWorkflow().name"
     description="workflow.getWorkflow().description"
-    ng-if="!workflow.getSelectedNode()">
+    ng-if="!workflow.getSelectedNode()"
+    toggle
+    toggle-on="StatusBar.ABORT"
+    toggle-off="StatusBar.RUN"
+    toggle-animate-in="fadeOutRight o-panel--absolute"
+    toggle-animate-out="fadeInRight o-general-panel">
   </general-data-panel>
 </div>
