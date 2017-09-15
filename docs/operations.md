@@ -79,3 +79,4 @@ List of all currently supported operations:
     * [Binary Classification Evaluator](operations/binary_classification_evaluator.html)
     * [Multiclass Classification Evaluator](operations/multiclass_classification_evaluator.html)
     * [Regression Evaluator](operations/regression_evaluator.html)
+  * [Grid Search](operations/grid_search.html)
