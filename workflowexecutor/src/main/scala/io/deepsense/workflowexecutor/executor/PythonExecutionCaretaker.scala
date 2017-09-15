@@ -22,13 +22,12 @@ import java.util.concurrent.atomic.AtomicReference
 import scala.annotation.tailrec
 import scala.sys.process._
 
-import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CustomOperationExecutor, DataFrameStorage, PythonCodeExecutor}
-import io.deepsense.workflowexecutor.{ExecutionParams, Unzip}
+import io.deepsense.workflowexecutor.Unzip
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
@@ -46,16 +45,11 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 class PythonExecutionCaretaker(
   pythonExecutorPath: String,
   pythonPathGenerator: PythonPathGenerator,
-  pythonBinaryOverride: Option[String],
+  pythonBinary: String,
   val sparkContext: SparkContext,
   val sqlContext: SQLContext,
   val dataFrameStorage: DataFrameStorage,
   val hostAddress: InetAddress) extends Logging {
-
-  val pythonBinary = {
-    def pythonBinaryDefault = ConfigFactory.load.getString("pythoncaretaker.python-binary-default")
-    pythonBinaryOverride.getOrElse(pythonBinaryDefault)
-  }
 
   def waitForPythonExecutor(): Unit = {
     pythonGateway.codeExecutor

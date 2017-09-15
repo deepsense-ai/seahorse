@@ -89,10 +89,16 @@ case class SessionExecutor(
       .map(new PythonPathGenerator(_))
       .getOrElse(throw new RuntimeException("Could not find PySpark!"))
 
+    val pythonBinary = {
+      def pythonBinaryDefault = ConfigFactory.load
+        .getString("pythoncaretaker.python-binary-default")
+      pythonBinaryPath.getOrElse(pythonBinaryDefault)
+    }
+
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       s"$tempPath/pyexecutor/pyexecutor.py",
       pythonPathGenerator,
-      pythonBinaryPath,
+      pythonBinary,
       sparkContext,
       sqlContext,
       dataFrameStorage,
@@ -131,6 +137,7 @@ case class SessionExecutor(
 
     val kernelManagerCaretaker = new KernelManagerCaretaker(
       system,
+      pythonBinary,
       pythonPathGenerator,
       communicationFactory,
       tempPath,

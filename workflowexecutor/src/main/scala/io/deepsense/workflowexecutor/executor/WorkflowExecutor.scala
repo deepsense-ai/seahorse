@@ -27,6 +27,7 @@ import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 import akka.actor.ActorSystem
+import com.typesafe.config.ConfigFactory
 import spray.json._
 
 import io.deepsense.commons.models.Entity
@@ -70,10 +71,13 @@ case class WorkflowExecutor(
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
     logger.info("HOST ADDRESS: {}", hostAddress.getHostAddress)
 
+    val pythonBinary = ConfigFactory.load
+        .getString("pythoncaretaker.python-binary-default")
+
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       pythonExecutorPath,
       pythonPathGenerator,
-      pythonBinaryOverride = None,
+      pythonBinary,
       sparkContext,
       sqlContext,
       dataFrameStorage,

@@ -34,6 +34,7 @@ import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 
 class KernelManagerCaretaker(
   private val actorSystem: ActorSystem,
+  private val pythonBinary: String,
   private val pythonPathGenerator: PythonPathGenerator,
   private val communicationFactory: MQCommunicationFactory,
   private val kernelManagerPath: String,
@@ -99,6 +100,7 @@ class KernelManagerCaretaker(
 
     val command = s"$kernelManagerPath" +
       s" --working-dir $workingDir" +
+      s" --python-binary $pythonBinary" +
       s" --additional-python-path ${pythonPathGenerator.pythonPath()}" +
       s" --gateway-host $gatewayHost" +
       s" --gateway-port $gatewayPort" +
