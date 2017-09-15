@@ -3,7 +3,7 @@ services:
   proxy:
     image: quay.io/deepsense_io/deepsense-proxy:master-latest
     ports:
-      - "${SEAHORSE_PORT}:8080"
+      - "8080:8080"
     environment:
       VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://workflowmanager:9080\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://sessionmanager:9082\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://notebooks:8888\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://rabbitmq:15674\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://frontend:80\"},\"name\":\"frontend\"}]}"
       DISABLE_OAUTH: "true"
@@ -25,13 +25,13 @@ services:
   frontend:
     image: quay.io/deepsense_io/deepsense-frontend:master-latest
     environment:
-      - "API_HOST=http://${SEAHORSE_HOST}"
-      - "API_PORT=${SEAHORSE_PORT}"
-      - "SESSION_API_PORT=${SEAHORSE_PORT}"
+      - "API_HOST=http://localhost"
+      - "API_PORT=8080"
+      - "SESSION_API_PORT=8080"
       - "MQ_USER=yNNp7VJS"
       - "MQ_PASS=1ElYfGNW"
-      - "SOCKETS_ADDRESS=http://${SEAHORSE_HOST}:${SEAHORSE_PORT}/"
-      - "NOTEBOOKS_HOST=http://${SEAHORSE_HOST}:${SEAHORSE_PORT}/jupyter"
+      - "SOCKETS_ADDRESS=http://localhost:8080/"
+      - "NOTEBOOKS_HOST=http://localhost:8080/jupyter"
     links:
       - rabbitmq
       - workflowmanager
@@ -61,7 +61,7 @@ services:
       - "SM_MQ_PORT=5672"
       - "TEMP_DIR=/tmp/seahorse/download"
     volumes:
-      - "${DATA_DIR}:/resources/data"
+      - "./data:/resources/data"
     links:
       - rabbitmq
       - workflowmanager
@@ -104,4 +104,4 @@ services:
     ports:
       - "1521:1521"
     volumes:
-      - "${DB_DIR}:/opt/h2-data:rw"
+      - "./h2-data:/opt/h2-data:rw"

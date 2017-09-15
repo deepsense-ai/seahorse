@@ -1,8 +1,5 @@
 #!/bin/bash
 
-export SEAHORSE_HOST=localhost
-export SEAHORSE_PORT=8080
-export DATA_DIR=./data
-export DB_DIR=./h2-data
+# Wrapper for docker-compose to have same interface on all branches
 
 exec docker-compose "$@"
