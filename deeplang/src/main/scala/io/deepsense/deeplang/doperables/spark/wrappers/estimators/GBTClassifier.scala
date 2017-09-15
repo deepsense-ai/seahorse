@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,59 +18,41 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import scala.reflect.runtime.universe._
 
-import org.apache.spark.ml
 import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTClassificationModel, GBTClassifier => SparkGBTClassifier}
-import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTClassificationModel
+import io.deepsense.deeplang.TypeUtils
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{GBTClassificationModel, VanillaGBTClassificationModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasClassificationImpurityParam, ClassificationImpurity}
+import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingEstimatorWrapper
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
-import io.deepsense.deeplang.utils.WithStringIndexing
-import io.deepsense.deeplang.{doperables, ExecutionContext, TypeUtils}
 
-class GBTClassifier()
-  extends SimpleSparkEstimatorWrapper[SparkGBTClassificationModel, GBTClassificationModel]
-  with GBTParams
-  with Logging
-  with WithStringIndexing[SparkGBTClassificationModel, GBTClassificationModel] {
+class GBTClassifier private (val vanillaGBTClassifier: VanillaGBTClassifier)
+  extends StringIndexingEstimatorWrapper[
+    SparkGBTClassificationModel,
+    SparkGBTClassifier,
+    VanillaGBTClassificationModel,
+    GBTClassificationModel](vanillaGBTClassifier) {
+
+  def this() = this(new VanillaGBTClassifier())
+}
+
+class VanillaGBTClassifier()
+  extends SparkEstimatorWrapper[
+    SparkGBTClassificationModel, SparkGBTClassifier, VanillaGBTClassificationModel]
+    with GBTParams
+    with HasClassificationImpurityParam
+    with Logging {
 
   import GBTClassifier._
 
   override lazy val maxIterationsDefault = 20.0
 
   val estimator = TypeUtils.instanceOfType(typeTag[SparkGBTClassifier])
-
-  override def sparkEstimator: ml.Estimator[SparkGBTClassificationModel] = estimator
-
-  override private[deeplang] def _fit_infer(
-      maybeSchema: Option[StructType]): GBTClassificationModel = {
-    validateParameters(maybeSchema)
-    new GBTClassificationModel()
-  }
-
-  private def validateParameters(maybeSchema: Option[StructType]): Unit = {
-    maybeSchema.foreach(schema => sparkParamMap(estimator, schema))
-  }
-
-  override private[deeplang] def _fit(
-      ctx: ExecutionContext,
-      dataFrame: DataFrame): GBTClassificationModel = {
-    val labelColumnName = dataFrame.getColumnName($(labelColumn))
-    val predictionColumnName: String = $(predictionColumn)
-    val transformer =
-      fitWithStringIndexing(ctx, dataFrame, this, labelColumnName, predictionColumnName)
-    new GBTClassificationModel(transformer)
-  }
-
-  val impurity = new ChoiceParamWrapper[SparkGBTClassifier, Impurity](
-    name = "impurity",
-    description = "The criterion used for information gain calculation.",
-    sparkParamGetter = _.impurity)
-  setDefault(impurity, Gini())
 
   val lossType = new ChoiceParamWrapper[SparkGBTClassifier, LossType](
     name = "loss function",
@@ -79,34 +61,22 @@ class GBTClassifier()
   setDefault(lossType, Logistic())
 
   override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
     impurity,
-    labelColumn,
     lossType,
     maxBins,
     maxDepth,
     maxIterations,
     minInfoGain,
     minInstancesPerNode,
-    predictionColumn,
     seed,
     stepSize,
-    subsamplingRate)
+    subsamplingRate,
+    labelColumn,
+    featuresColumn,
+    predictionColumn)
 }
 
 object GBTClassifier {
-
-  sealed abstract class Impurity(override val name: String) extends Choice {
-
-    override val params: Array[Param[_]] = declareParams()
-
-    override val choiceOrder: List[Class[_ <: Choice]] = List(
-      classOf[Entropy],
-      classOf[Gini]
-    )
-  }
-  case class Entropy() extends Impurity("entropy")
-  case class Gini() extends Impurity("gini")
 
   sealed abstract class LossType(override val name: String) extends Choice {
 

@@ -40,10 +40,10 @@ class IsotonicRegression
   setDefault(isotonic, true)
 
   override val params = declareParams(
-    featureIndex,
-    featuresColumn,
     isotonic,
+    optionalWeightColumn,
+    featureIndex,
     labelColumn,
-    predictionColumn,
-    optionalWeightColumn)
+    featuresColumn,
+    predictionColumn)
 }

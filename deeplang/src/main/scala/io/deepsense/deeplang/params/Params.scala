@@ -23,7 +23,7 @@ import spray.json._
 import io.deepsense.commons.utils.CollectionExtensions._
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.descriptions.{HasInferenceResult, ParamsInferenceResult}
-import io.deepsense.deeplang.exceptions.{DeepLangMultiException, DeepLangException}
+import io.deepsense.deeplang.exceptions.{DeepLangException, DeepLangMultiException}
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 import io.deepsense.deeplang.params.multivalue.MultipleValuesParam
 import io.deepsense.deeplang.params.wrappers.spark._
@@ -151,7 +151,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
     this
   }
 
-  val params: Array[Param[_]]
+  def params: Array[Param[_]]
 
   /**
    * Allows to declare parameters order conveniently and makes sure
@@ -162,8 +162,8 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
     val declaredParamSet = params.toSet
     val reflectionParamSet = getParamsByReflection.toSet
     require(declaredParamSet == reflectionParamSet,
-      s"[${getClass.getName}] Not all parameters {${reflectionParamSet.mkString(", ")}}" +
-        s" were declared in {${declaredParamSet.mkString(", ")}}")
+      s"[${getClass.getName}] Declared params set must be equal to reflection param set." +
+        s" Differences: ${declaredParamSet xor reflectionParamSet}")
     require(params.map(_.name).hasUniqueValues, "Names of parameters are not unique")
     params.toArray
   }
@@ -304,7 +304,9 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
     other.getClass == this.getClass && other.paramValuesToJson == this.paramValuesToJson
   }
 
-  protected def copyValues[T <: Params](to: T, extra: ParamMap = ParamMap.empty): T = {
+  // TODO Mutability leakage - it's possible to mutate object `to` internals from outside.
+  // there should be protected copyFrom from instead (not `to`).
+  def copyValues[T <: Params](to: T, extra: ParamMap = ParamMap.empty): T = {
     val map = paramMap ++ extra
     params.foreach { param =>
       if (map.contains(param) && to.hasParam(param.name)) {
@@ -324,15 +326,12 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
   private def objectExpectedException(jsValue: JsValue): DeserializationException =
     new DeserializationException(s"Cannot fill parameters schema with $jsValue object expected.")
 
-  private def unknownParamLabelException(
-      jsValue: JsValue,
-      label: String): DeserializationException = {
-    new DeserializationException(
-      s"Cannot fill parameters schema with $jsValue: unknown parameter label $label.")
-  }
-
-
   private val paramMap: ParamMap = ParamMap.empty
 
   private val defaultParamMap: ParamMap = ParamMap.empty
+
+  protected def setDefaultsFrom(params: Params): Unit = {
+    this.defaultParamMap ++= params.defaultParamMap
+  }
+
 }

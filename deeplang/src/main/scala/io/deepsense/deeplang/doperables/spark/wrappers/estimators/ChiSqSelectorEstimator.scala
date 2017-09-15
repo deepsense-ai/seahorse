@@ -49,8 +49,7 @@ class ChiSqSelectorEstimator
     numTopFeatures,
     featuresColumn,
     outputColumn,
-    labelColumn
-  )
+    labelColumn)
 
   def setNumTopFeatures(value: Int): this.type = set(numTopFeatures -> value)
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2016, deepsense.io
+ * Copyright 2015, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,22 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
+import scala.language.reflectiveCalls
+
 import org.apache.spark.ml
+import org.apache.spark.ml.regression.RandomForestRegressor
 
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
-trait HasCheckpointInterval extends Params {
+trait HasNumTreesParam extends Params {
 
-  val checkpointInterval = new IntParamWrapper[
-      ml.param.Params { val checkpointInterval: ml.param.IntParam }](
-    name = "checkpoint interval",
-    description = """The checkpoint interval. E.g. 10 means that the cache will get checkpointed
-        |every 10 iterations.""".stripMargin,
-    sparkParamGetter = _.checkpointInterval,
+  val numTrees = new IntParamWrapper[ml.param.Params { val numTrees: ml.param.IntParam }](
+    name = "num trees",
+    description = "The number of trees to train.",
+    sparkParamGetter = _.numTrees,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
-  setDefault(checkpointInterval, 10.0)
+  setDefault(numTrees, 20.0)
+
 }

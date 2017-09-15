@@ -37,9 +37,9 @@ class LinearRegression
     regularizationParam,
     tolerance,
     standardization,
-    featuresColumn,
-    labelColumn,
-    predictionColumn,
     optionalWeightColumn,
-    solver)
+    solver,
+    labelColumn,
+    featuresColumn,
+    predictionColumn)
 }

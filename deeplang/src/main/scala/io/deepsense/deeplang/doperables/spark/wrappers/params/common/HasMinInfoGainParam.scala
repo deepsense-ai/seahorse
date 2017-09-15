@@ -1,5 +1,5 @@
 /**
- * Copyright 2016, deepsense.io
+ * Copyright 2015, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,23 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
+import scala.language.reflectiveCalls
+
 import org.apache.spark.ml
+import org.apache.spark.ml.regression.RandomForestRegressor
 
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
+import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.wrappers.spark.{DoubleParamWrapper, IntParamWrapper}
 
-trait HasFeaturesColumn extends Params {
+trait HasMinInfoGainParam extends Params {
 
-  val featuresColumn =
-    new SingleColumnSelectorParamWrapper[
-      ml.param.Params { val featuresCol: ml.param.Param[String] }](
-      name = "features column",
-      description = "The features column for model fitting.",
-      sparkParamGetter = _.featuresCol,
-      portIndex = 0)
-  setDefault(featuresColumn, NameSingleColumnSelection("features"))
+  val minInfoGain =
+    new DoubleParamWrapper[ml.param.Params { val minInfoGain: ml.param.DoubleParam }](
+      name = "min information gain",
+      description = "The minimum information gain for a split to be considered at a tree node.",
+      sparkParamGetter = _.minInfoGain,
+      RangeValidator(0.0, Double.MaxValue))
+  setDefault(minInfoGain, 0.0)
+
 }

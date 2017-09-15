@@ -24,27 +24,22 @@ import org.apache.spark.ml.regression.{GBTRegressionModel => SparkGBTRegressionM
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTRegressionModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasRegressionImpurityParam
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
 
-class GBTRegressor
+class GBTRegression
   extends SparkEstimatorWrapper[
     SparkGBTRegressionModel,
     SparkGBTRegressor,
     GBTRegressionModel]
-  with GBTParams {
+  with GBTParams
+  with HasRegressionImpurityParam {
 
-  import GBTRegressor._
+  import GBTRegression._
 
   override lazy val maxIterationsDefault = 20.0
-
-  val impurity = new ChoiceParamWrapper[
-    ml.param.Params { val impurity: ml.param.Param[String] }, Impurity](
-    name = "impurity",
-    description = "The criterion used for information gain calculation.",
-    sparkParamGetter = _.impurity)
-  setDefault(impurity, Variance())
 
   val lossType = new ChoiceParamWrapper[
     ml.param.Params { val lossType: ml.param.Param[String] }, LossType](
@@ -54,30 +49,22 @@ class GBTRegressor
   setDefault(lossType, Squared())
 
   override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
     impurity,
-    labelColumn,
     lossType,
     maxBins,
     maxDepth,
     maxIterations,
     minInfoGain,
     minInstancesPerNode,
-    predictionColumn,
     seed,
     stepSize,
-    subsamplingRate)
+    subsamplingRate,
+    labelColumn,
+    featuresColumn,
+    predictionColumn)
 }
 
-object GBTRegressor {
-
-  sealed abstract class Impurity(override val name: String) extends Choice {
-    override val params: Array[Param[_]] = declareParams()
-    override val choiceOrder: List[Class[_ <: Choice]] = List(
-      classOf[Variance]
-    )
-  }
-  case class Variance() extends Impurity("variance")
+object GBTRegression {
 
   sealed abstract class LossType(override val name: String) extends Choice {
     override val params: Array[Param[_]] = declareParams()

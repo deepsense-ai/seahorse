@@ -53,12 +53,8 @@ abstract class SparkEstimatorWrapper
 
   override private[deeplang] def _fit_infer(maybeSchema: Option[StructType]): MW = {
     // We want to throw validation exceptions here
-    validateParams(maybeSchema)
+    validateSparkEstimatorParams(sparkEstimator, maybeSchema)
     createModelWrapperInstance().setParent(this)
-  }
-
-  private def validateParams(maybeSchema: Option[StructType]): Unit = {
-    maybeSchema.foreach(schema => sparkParamMap(sparkEstimator, schema))
   }
 
   def createEstimatorInstance(): E = TypeUtils.instanceOfType(estimatorTag)

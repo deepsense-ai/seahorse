@@ -54,8 +54,8 @@ class NaiveBayes
   override val params: Array[Param[_]] = declareParams(
     smoothing,
     modelType,
-    featuresColumn,
     labelColumn,
+    featuresColumn,
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn)

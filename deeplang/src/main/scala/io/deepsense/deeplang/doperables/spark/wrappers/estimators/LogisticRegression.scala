@@ -48,11 +48,11 @@ class LogisticRegression
     regularizationParam,
     tolerance,
     standardization,
-    featuresColumn,
+    optionalWeightColumn,
     labelColumn,
+    featuresColumn,
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn,
-    threshold,
-    optionalWeightColumn)
+    threshold)
 }

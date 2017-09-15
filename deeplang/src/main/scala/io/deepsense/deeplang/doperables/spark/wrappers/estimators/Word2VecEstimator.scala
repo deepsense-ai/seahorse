@@ -36,6 +36,5 @@ class Word2VecEstimator
     seed,
     vectorSize,
     numPartitions,
-    minCount
-  )
+    minCount)
 }

@@ -18,7 +18,7 @@ package io.deepsense.docgen
 
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationsCatalog}
 import io.deepsense.deeplang.doperables._
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.SimpleSparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingEstimatorWrapper
 import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EstimatorAsOperation, EvaluatorAsFactory, TransformerAsOperation}
 import io.deepsense.deeplang.{CatalogRecorder, DOperation}
 
@@ -50,8 +50,8 @@ trait SparkOperationsExtractor {
             Some(se.sparkEstimator.getClass.getCanonicalName)
           case (se: SparkMultiColumnEstimatorWrapper[_, _, _, _, _, _]) =>
             Some(se.sparkEstimatorWrapper.sparkEstimator.getClass.getCanonicalName)
-          case (ses: SimpleSparkEstimatorWrapper[_, _]) =>
-            Some(ses.sparkEstimator.getClass.getCanonicalName)
+          case (siw: StringIndexingEstimatorWrapper[_, _, _, _]) =>
+            Some(siw.sparkClassCanonicalName)
           case _ => None
         }
       case ev: (EvaluatorAsFactory[_]) =>
@@ -66,8 +66,8 @@ trait SparkOperationsExtractor {
             Some(ses.sparkEstimatorWrapper.sparkEstimator.getClass.getCanonicalName)
           case (ses: SparkEstimatorWrapper[_, _, _]) =>
             Some(ses.sparkEstimator.getClass.getCanonicalName)
-          case (ses: SimpleSparkEstimatorWrapper[_, _]) =>
-            Some(ses.sparkEstimator.getClass.getCanonicalName)
+          case (siw: StringIndexingEstimatorWrapper[_, _, _, _]) =>
+            Some(siw.sparkClassCanonicalName)
           case _ => None
         }
       case _ => None

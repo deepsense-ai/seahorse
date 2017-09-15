@@ -41,4 +41,13 @@ object CollectionExtensions {
 
   }
 
+  implicit class RichSet[T](set: Set[T]) {
+
+    /**
+      * Returns set with elements which are in both sets but not in their intersection
+      */
+    def xor(another: Set[T]): Set[T] = (set diff another) union (another diff set)
+
+  }
+
 }

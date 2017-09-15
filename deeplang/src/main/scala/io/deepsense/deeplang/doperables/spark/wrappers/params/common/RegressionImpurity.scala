@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.spark.wrappers.estimators
+package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
-import scala.reflect.runtime.universe.TypeTag
+import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.choice.Choice
 
-import org.apache.spark.ml
-import org.apache.spark.ml.Model
+sealed abstract class RegressionImpurity(override val name: String) extends Choice {
+  import RegressionImpurity._
 
-import io.deepsense.deeplang.doperables.{Transformer, Estimator}
-import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
+  override val params: Array[Param[_]] = declareParams()
+  override val choiceOrder: List[Class[_ <: Choice]] = List(
+    classOf[Variance]
+  )
+}
 
-abstract class SimpleSparkEstimatorWrapper[M <: Model[M], T <: Transformer]
-    ()(implicit typeTag: TypeTag[T])
-  extends Estimator[T]
-  with ParamsWithSparkWrappers {
-
-  def sparkEstimator: ml.Estimator[M]
+object RegressionImpurity {
+  case class Variance() extends RegressionImpurity("variance")
 }

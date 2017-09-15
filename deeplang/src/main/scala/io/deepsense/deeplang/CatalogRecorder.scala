@@ -64,7 +64,7 @@ object CatalogRecorder {
     catalog.registerDOperable[KMeansModel]()
     catalog.registerDOperable[LDA]()
     catalog.registerDOperable[LDAModel]()
-    catalog.registerDOperable[GBTRegressor]()
+    catalog.registerDOperable[GBTRegression]()
     catalog.registerDOperable[GBTRegressionModel]()
     catalog.registerDOperable[IsotonicRegression]()
     catalog.registerDOperable[IsotonicRegressionModel]()
@@ -72,6 +72,8 @@ object CatalogRecorder {
     catalog.registerDOperable[LinearRegressionModel]()
     catalog.registerDOperable[RandomForestRegression]()
     catalog.registerDOperable[RandomForestRegressionModel]()
+    catalog.registerDOperable[DecisionTreeRegression]()
+    catalog.registerDOperable[DecisionTreeRegressionModel]()
     catalog.registerDOperable[PCAEstimator]()
     catalog.registerDOperable[PCAModel]()
     catalog.registerDOperable[StandardScalerEstimator]()
@@ -91,6 +93,10 @@ object CatalogRecorder {
     catalog.registerDOperable[IDFModel]()
     catalog.registerDOperable[GBTClassifier]()
     catalog.registerDOperable[GBTClassificationModel]()
+    catalog.registerDOperable[RandomForestClassifier]()
+    catalog.registerDOperable[RandomForestClassificationModel]()
+    catalog.registerDOperable[DecisionTreeClassifier]()
+    catalog.registerDOperable[DecisionTreeClassificationModel]()
     catalog.registerDOperable[MultilayerPerceptronClassifier]()
     catalog.registerDOperable[MultilayerPerceptronClassifierModel]()
     catalog.registerDOperable[QuantileDiscretizerEstimator]()
@@ -261,10 +267,19 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateRandomForestRegression](
       DOperationCategories.ML.Regression)
 
-    catalog.registerDOperation[CreateGBTRegressor](
+    catalog.registerDOperation[CreateDecisionTreeRegression](
+      DOperationCategories.ML.Regression)
+
+    catalog.registerDOperation[CreateGBTRegression](
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateGBTClassifier](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateRandomForestClassifier](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateDecisionTreeClassifier](
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateLogisticRegression](

@@ -17,7 +17,7 @@ description: Seahorse documentation homepage
 Follow the instructions in [Seahorse Desktop](bundled_image_overview.html) to download and run Seahorse Desktop.
 
 ## Test It
-Go to <a href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
+Go to <a target="_blank" href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
 If Seahorse Desktop was set up correctly, you will see the main page of Seahorse web-based
 user interface:
 
@@ -69,7 +69,7 @@ For the `Read DataFrame` the report contains a data sample of the read [DataFram
 
 
 #### Query It!
-Loaded [transactions.csv](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv)
+Loaded <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv">transactions.csv</a>
 file contains apartment prices from 3 cities.
 It has 5 columns and 1000 rows (header row and 999 data rows).
 Each row provides information about the apartment:
@@ -82,14 +82,14 @@ city, number of bedrooms, number of bathrooms, size of the apartment (in square 
 
 Let's calculate the average apartment price for each city:
 
-* From the **Operation Catalogue**, drag a [Execute SQL Expression](operations/execute_sql_expression.html)
+* From the **Operation Catalogue**, drag a [SQL Transformation](operations/sql_transformation.html)
 operation onto your canvas.
-* Drag the `Read DataFrame` output to the `Execute SQL Expression` input to make a connection.
-* Fill the `Execute SQL Expression` operation's parameters:
+* Drag the `Read DataFrame` output to the `SQL Transformation` input to make a connection.
+* Fill the `SQL Transformation` operation's parameters:
   * Set **DATAFRAME ID** to `transactions`. In SQL expression you will refer to the DataFrame by this name.
   * Set **EXPRESSION** to `SELECT city, AVG(price) as avg_price FROM transactions GROUP BY city`
 * Click **RUN** to execute this workflow and you will see two completed nodes.
-* To view results by clicking on the first output port of the `Execute SQL Expression`.
+* To view results by clicking on the first output port of the `SQL Transformation`.
 
 <img class="img-responsive" style="margin: 0 auto; width:60%; height:auto" src="./img/quickstart/report.png" />
 
@@ -102,7 +102,7 @@ Congratulations! You have successfully created your first Seahorse application.
 The goal of this exercise is to build a model predicting apartment prices based on 3 features:
 <code>beds</code>, <code>baths</code> and <code>sq_ft</code>.
 
-The dataset [transactions.csv](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv) has 5 columns and 1,000 rows
+The dataset <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv">transactions.csv</a> has 5 columns and 1,000 rows
 (header row and 999 data rows).
 Each row provides information about the apartment:
 city, number of bedrooms, number of bathrooms, size of the apartment (in square feet) and its price.
@@ -300,7 +300,7 @@ to interactively analyze data.
     in the **SOURCE** parameter - the dataset will be downloaded from this location
 
 * Process the dataset before opening the notebook
-  * Drag [Custom Python Operation](operations/custom_python_operation.html) to your canvas
+  * Drag [Python Transformation](operations/python_transformation.html) to your canvas
   * Put the following code in the **CODE** parameter, in order to extract the <code>FCE</code> value
     from <code>Certificates</code> column to a separate column:
 

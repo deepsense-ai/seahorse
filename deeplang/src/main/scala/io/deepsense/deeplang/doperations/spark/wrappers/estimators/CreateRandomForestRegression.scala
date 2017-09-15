@@ -20,7 +20,6 @@ import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.documentation.SparkOperationDocumentation
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.RandomForestRegression
-import io.deepsense.deeplang.doperables.spark.wrappers.models.RandomForestRegressionModel
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
 class CreateRandomForestRegression extends EstimatorAsFactory[RandomForestRegression]

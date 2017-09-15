@@ -67,15 +67,18 @@ List of all currently supported operations:
 * Machine Learning
   * Classification
     * [GBT Classifier](operations/gbt_classifier.html)
+    * [Random Forest Classifier](operations/random_forest_classifier.html)
+    * [Decision Tree Classifier](operations/decision_tree_classifier.html)
     * [Logistic Regression](operations/logistic_regression.html)
     * [Multilayer Perceptron Classifier](operations/multilayer_perceptron_classifier.html)
     * [Naive Bayes](operations/naive_bayes.html)
   * Regression
     * [AFT Survival Regression](operations/aft_survival_regression.html)
-    * [GBT Regressor](operations/gbt_regressor.html)
+    * [GBT Regression](operations/gbt_regression.html)
     * [Isotonic Regression](operations/isotonic_regression.html)
     * [Linear Regression](operations/linear_regression.html)
     * [Random Forest Regression](operations/random_forest_regression.html)
+    * [Decision Tree Regression](operations/decision_tree_regression.html)
   * Clustering
     * [K-Means](operations/k-means.html)
     * [LDA](operations/lda.html)

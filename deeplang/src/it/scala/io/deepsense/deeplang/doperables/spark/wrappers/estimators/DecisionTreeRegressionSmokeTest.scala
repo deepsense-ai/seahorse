@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,30 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.RegressionImpurity.Variance
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class GBTRegressorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
+class DecisionTreeRegressionSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
-  override def className: String = "GBTRegressor"
+  override def className: String = "DecisionTreeRegression"
 
-  override val estimator = new GBTRegressor()
-
-  private val labelColumnName = "myRating"
+  override val estimator = new DecisionTreeRegression()
 
   import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
+    maxDepth -> 4.0,
+    maxBins -> 25.0,
+    minInstancesPerNode -> 1.0,
+    minInfoGain -> 0.1,
+    maxMemoryInMB -> 200.0,
+    cacheNodeIds -> false,
+    checkpointInterval -> 11.0,
+    seed -> 125.0,
+    impurity -> Variance(),
     featuresColumn -> NameSingleColumnSelection("myFeatures"),
-    impurity -> GBTRegressor.Variance(),
-    labelColumn -> NameSingleColumnSelection(labelColumnName),
-    lossType -> GBTRegressor.Squared(),
-    maxBins -> 2.0,
-    maxDepth -> 6.0,
-    maxIterations -> 10.0,
-    minInfoGain -> 0.0,
-    minInstancesPerNode -> 1,
-    predictionColumn -> "prediction",
-    seed -> 100.0,
-    stepSize -> 0.11,
-    subsamplingRate -> 0.999
+    labelColumn -> NameSingleColumnSelection("myLabel"),
+    predictionColumn -> "pred"
   )
 }

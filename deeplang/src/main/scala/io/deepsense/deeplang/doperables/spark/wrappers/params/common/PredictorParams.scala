@@ -22,5 +22,5 @@ import io.deepsense.deeplang.params.Params
 
 trait PredictorParams
   extends Params
-  with HasFeaturesColumn
+  with HasFeaturesColumnParam
   with HasPredictionColumnCreatorParam

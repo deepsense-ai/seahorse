@@ -34,7 +34,7 @@ class ALS
   with HasMaxIterationsParam
   with HasSeedParam
   with HasRegularizationParam
-  with HasCheckpointInterval {
+  with HasCheckpointIntervalParam {
 
   val alpha = new DoubleParamWrapper[SparkALS](
     name = "alpha",
@@ -87,16 +87,15 @@ class ALS
     alpha,
     checkpointInterval,
     implicitPrefs,
-    itemColumn,
     maxIterations,
     nonnegative,
     numItemBlocks,
     numUserBlocks,
-    predictionColumn,
     rank,
     ratingColumn,
     regularizationParam,
     seed,
-    userColumn
-  )
+    itemColumn,
+    predictionColumn,
+    userColumn)
 }

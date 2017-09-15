@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 import org.apache.spark.sql.types.{DoubleType, Metadata, StructType}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ClassificationImpurity
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.utils.DataFrameUtils
@@ -32,11 +33,11 @@ class GBTClassifierSmokeTest
 
   private val labelColumnName = "myRating"
 
-  import estimator._
+  import estimator.vanillaGBTClassifier._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featuresColumn -> NameSingleColumnSelection("myFeatures"),
-    impurity -> GBTClassifier.Entropy(),
+    impurity -> ClassificationImpurity.Entropy(),
     labelColumn -> NameSingleColumnSelection(labelColumnName),
     lossType -> GBTClassifier.Logistic(),
     maxBins -> 2.0,
