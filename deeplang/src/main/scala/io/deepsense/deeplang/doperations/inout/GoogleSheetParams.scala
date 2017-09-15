@@ -23,7 +23,7 @@ trait GoogleSheetParams { this: Params =>
 
   val googleSheetId = StringParam(
     name = "Google Sheet Id",
-    description = Some("Id of the google sheet."))
+    description = None)
 
   def getGoogleSheetId(): GoogleSheetId = $(googleSheetId)
   def setGoogleSheetId(value: GoogleSheetId): this.type = set(googleSheetId, value)
@@ -31,7 +31,7 @@ trait GoogleSheetParams { this: Params =>
   val serviceAccountCredentials = StringParam(
     name = "Google Service Account credentials JSON",
     description = Some("Json file representing google service account credentials to be used for accessing " +
-      "google sheet."))
+      "Google sheet."))
 
   def getGoogleServiceAccountCredentials(): GoogleCretendialsJson = $(serviceAccountCredentials)
   def setGoogleServiceAccountCredentials(value: GoogleCretendialsJson): this.type =

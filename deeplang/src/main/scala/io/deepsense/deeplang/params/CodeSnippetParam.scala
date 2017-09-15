@@ -22,7 +22,7 @@ import spray.json.JsValue
 import io.deepsense.deeplang.params.ParameterType.ParameterType
 
 case class CodeSnippetParam(
-    name: String,
+    override val name: String,
     override val description: Option[String],
     language: CodeSnippetLanguage)
   extends ParamWithJsFormat[String] {

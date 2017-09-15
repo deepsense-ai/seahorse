@@ -23,8 +23,8 @@ import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam}
 class PythonTransformer extends CustomCodeTransformer {
 
   override lazy val codeParameter = CodeSnippetParam(
-    name = "code",
-    description = Some("Operation source code."),
+    name = "transformer code",
+    description = None,
     language = CodeSnippetLanguage(CodeSnippetLanguage.python)
   )
   setDefault(codeParameter -> "def transform(dataframe):\n    return dataframe")

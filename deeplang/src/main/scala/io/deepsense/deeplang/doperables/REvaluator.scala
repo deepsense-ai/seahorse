@@ -24,7 +24,7 @@ class REvaluator extends CustomCodeEvaluator {
 
   override val codeParameter = CodeSnippetParam(
     name = "R evaluator code",
-    description = Some("R evaluator source code."),
+    description = None,
     language = CodeSnippetLanguage(CodeSnippetLanguage.r))
   setDefault(codeParameter ->
     """evaluate <- function(dataframe){

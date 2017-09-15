@@ -103,7 +103,7 @@ object CsvParameters {
 
       val customColumnSeparator = StringParam(
         name = "custom separator",
-        description = Some("Custom column separator."),
+        description = None,
         validator = new SingleCharRegexValidator)
       setDefault(customColumnSeparator, ",")
 

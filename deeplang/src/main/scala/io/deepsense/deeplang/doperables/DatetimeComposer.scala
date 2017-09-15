@@ -43,7 +43,7 @@ case class DatetimeComposer() extends Transformer {
 
   val outputColumnParam = SingleColumnCreatorParam(
     name = "output column",
-    description = Some("Column to save results.")
+    description = Some("Column to save results to.")
   )
   setDefault(outputColumnParam, "Timestamp")
 

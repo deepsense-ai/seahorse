@@ -38,7 +38,7 @@ case class SqlColumnTransformer() extends MultiColumnTransformer {
 
   val formula = StringParam(
     name = "formula",
-    description = Some("SQL formula involving input column as \"x\"."))
+    description = Some("SQL formula that uses input column as \"x\"."))
   setDefault(formula -> "x")
   def getFormula: String = $(formula)
   def setFormula(value: String): this.type = set(formula, value)

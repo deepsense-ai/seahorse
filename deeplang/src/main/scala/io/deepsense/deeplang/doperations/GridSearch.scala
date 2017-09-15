@@ -63,7 +63,7 @@ case class GridSearch()
 
   val numberOfFolds = new NumericParam(
     name = "number of folds",
-    description = Some("Number of folds."),
+    description = None,
     validator = RangeValidator(
       begin = 2.0,
       end = Int.MaxValue,

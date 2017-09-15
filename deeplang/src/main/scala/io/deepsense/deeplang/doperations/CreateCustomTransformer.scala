@@ -43,7 +43,7 @@ case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransfor
 
   val innerWorkflow = WorkflowParam(
     name = "inner workflow",
-    description = Some("Inner workflow of the Transformer."))
+    description = None)
   setDefault(innerWorkflow, defaultWorkflow)
 
   // Inner workflow should be of type InnerWorkflow instead of raw json.

@@ -42,7 +42,7 @@ class ParamsSequenceSpec
   className should {
     "throw an exception when params don't have no-arg constructor" in {
       an [NoArgumentConstructorRequiredException] should be thrownBy
-        ParamsSequence[ParamsWithoutNoArgConstructor](name = "paramsSequence", description = Some(""))
+        ParamsSequence[ParamsWithoutNoArgConstructor](name = "paramsSequence", description = None)
     }
   }
 

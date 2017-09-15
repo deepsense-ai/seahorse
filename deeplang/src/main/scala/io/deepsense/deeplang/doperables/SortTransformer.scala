@@ -32,8 +32,8 @@ import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, Name
 class SortTransformer extends Transformer {
 
   val columns = ParamsSequence[SortColumnParam](
-    name = "sort columns",
-    description = Some("Columns to sort by")
+    name = "columns to sort by",
+    description = Some("Columns that will be used to sort the DataFrame.")
   )
 
   def getColumns: Seq[SortColumnParam] = $(columns)
@@ -71,13 +71,13 @@ class SortColumnParam extends Params {
 
   val column = SingleColumnSelectorParam(
     name = columnNameParamName,
-    description = Some("Column name"),
+    description = None,
     portIndex = 0
   )
 
   val descending = BooleanParam(
     name = descendingFlagParamName,
-    description = Some("Sort in descending order when true")
+    description = Some("Should sort in descending order?")
   )
 
   setDefault(descending, false)

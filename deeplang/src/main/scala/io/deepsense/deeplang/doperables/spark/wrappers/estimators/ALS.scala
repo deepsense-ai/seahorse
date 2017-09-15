@@ -54,7 +54,7 @@ class ALS
 
   val nonnegative = new BooleanParamWrapper[SparkALS](
     name = "nonnegative",
-    description = Some("Whether to apply nonnegativity constraints."),
+    description = Some("Whether to apply nonnegativity constraints for least squares."),
     sparkParamGetter = _.nonnegative)
   setDefault(nonnegative, true)
 

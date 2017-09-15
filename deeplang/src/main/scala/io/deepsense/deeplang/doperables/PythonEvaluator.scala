@@ -24,7 +24,7 @@ case class PythonEvaluator() extends CustomCodeEvaluator {
 
   override val codeParameter = CodeSnippetParam(
     name = "python evaluator code",
-    description = Some("Python evaluator source code."),
+    description = None,
     language = CodeSnippetLanguage(CodeSnippetLanguage.python))
   setDefault(codeParameter ->
     """from math import sqrt

@@ -24,7 +24,7 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.ParameterType
 
 class ChoiceParam[T <: Choice](
-    val name: String,
+    override val name: String,
     override val description: Option[String])
     (implicit tag: TypeTag[T])
   extends AbstractChoiceParam[T, T] {

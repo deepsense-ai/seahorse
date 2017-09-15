@@ -28,7 +28,7 @@ class RColumnTransformer() extends CustomCodeColumnTransformer {
 
   override val codeParameter = CodeSnippetParam(
     name = "column operation code",
-    description = Some("Column operation source code"),
+    description = None,
     language = CodeSnippetLanguage(CodeSnippetLanguage.r)
   )
   setDefault(codeParameter ->
