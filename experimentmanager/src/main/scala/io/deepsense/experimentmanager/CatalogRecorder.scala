@@ -127,5 +127,10 @@ object CatalogRecorder {
       DOperationCategories.ML.FeatureSelection,
       "Selects most important features of dataframe"
     )
+
+    catalog.registerDOperation[ConvertType](
+      DOperationCategories.DataManipulation,
+      "Converts columns to a different type"
+    )
   }
 }

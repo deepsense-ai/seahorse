@@ -4,6 +4,9 @@
 
 package io.deepsense.deeplang.doperations
 
+import java.sql.Timestamp
+
+import org.apache.spark.SparkException
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.{DateTime, DateTimeZone}
@@ -11,7 +14,6 @@ import org.joda.time.{DateTime, DateTimeZone}
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperations.exceptions.TypeConversionException
 import io.deepsense.deeplang.parameters.ColumnType._
 import io.deepsense.deeplang.parameters._
 
@@ -25,7 +27,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
       "are Doubles" should {
         "cast them to String" in {
           val converted = useConvertType(Set(doubleId), Set.empty, Set.empty, targetType)
-          val expected = toDouble(Set(doubleId))
+          val expected = toString(Set(doubleId))
           assertDataFramesEqual(converted, expected)
         }
       }
@@ -68,10 +70,12 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
             assertDataFramesEqual(converted, expected)
           }
         }
-        "fail with a TypeConversionException" when {
-          "strings DO NOT represent numbers" should {
-            a[TypeConversionException] should be thrownBy
+        "fail" when {
+          "strings DO NOT represent numbers" in {
+            a[SparkException] should be thrownBy {
               useConvertType(Set(nonNumStrId), Set.empty, Set.empty, targetType)
+                .sparkDataFrame.collect()
+            }
           }
         }
       }
@@ -89,19 +93,19 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
           assertDataFramesEqual(converted, expected)
         }
       }
-      "are Categorical" which {
-        "are strings" should {
-          "return values as Double" when {
-            "strings represent numbers" in {
-              val converted = useConvertType(Set(numCatId), Set.empty, Set.empty, targetType)
-              val expected = toDouble(Set(numCatId))
-              assertDataFramesEqual(converted, expected)
-            }
+      "are Categorical" should {
+        "return values as Double" when {
+          "strings represent numbers" in {
+            val converted = useConvertType(Set(numCatId), Set.empty, Set.empty, targetType)
+            val expected = toDouble(Set(numCatId))
+            assertDataFramesEqual(converted, expected)
           }
-          "fail with a TypeConversionException" when {
-            "strings DO NOT represent numbers" in {
-              a[TypeConversionException] should be thrownBy
-                useConvertType(Set(nonNumCatId), Set.empty, Set.empty, targetType)
+        }
+        "fail" when {
+          "strings DO NOT represent numbers" in {
+            a[SparkException] should be thrownBy {
+              useConvertType(Set(nonNumCatId), Set.empty, Set.empty, targetType)
+                .sparkDataFrame.collect()
             }
           }
         }
@@ -148,7 +152,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
     }
   }
 
-  override def beforeAll(): Registration = {
+  override def beforeAll(): Unit = {
     super.beforeAll()
     inputDataFrame = createDataFrame(inputRows, schema)
   }
@@ -185,7 +189,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
     val original = Seq(true, null, false)
     val asString = Seq("true", null, "false")
     val asDouble = Seq(1.0, null, 0.0)
-    val mapping = CategoriesMapping(Seq("false", "true"))
+    val mapping = CategoriesMapping(Seq("true", "false"))
     val asCategorical = mapSeq(mapping, original)
     ColumnContainer(original, asDouble, asString, asCategorical, mapping, emptyMetadata)
   }
@@ -193,13 +197,15 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
   val timestampColumn = {
     val dateTime1 = new DateTime(1989, 4, 23, 3, 14, 15, 926, DateTimeZone.UTC)
     val dateTime2 = dateTime1.plusDays(1).plusMinutes(1)
+    val timestamp1 = new Timestamp(dateTime1.getMillis)
+    val timestamp2 = new Timestamp(dateTime2.getMillis)
     val dateTime1String = "1989-04-23T03:14:15.926Z"
     val dateTime2String = "1989-04-24T03:15:15.926Z"
-    val original = Seq(dateTime1, null, dateTime2)
+    val original = Seq(timestamp1, null, timestamp2)
     val asString = Seq(dateTime1String, null, dateTime2String)
     val asDouble = Seq(dateTime1.getMillis.toDouble, null, dateTime2.getMillis.toDouble)
     val mapping = CategoriesMapping(Seq(dateTime1String, dateTime2String))
-    val asCategorical = Seq(0, null, 1)
+    val asCategorical = mapSeq(mapping, asString)
     ColumnContainer(original, asDouble, asString, asCategorical, mapping, emptyMetadata)
   }
 
