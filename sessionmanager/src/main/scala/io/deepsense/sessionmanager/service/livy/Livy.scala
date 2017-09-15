@@ -6,14 +6,8 @@ package io.deepsense.sessionmanager.service.livy
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList}
+import io.deepsense.sessionmanager.service.livy.responses.Batch
 
 trait Livy {
   def createSession(workflowId: Id, userId: String): Future[Batch]
-
-  def killSession(id: Int): Future[Boolean]
-
-  def listSessions(): Future[BatchList]
-
-  def getSession(id: Int): Future[Option[Batch]]
 }

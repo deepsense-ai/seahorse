@@ -80,7 +80,8 @@ object Dependencies {
     "spray.io"               at "http://repo.spray.io",
     "seahorse.deepsense.io"  at
       "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-release",
-    "seahorse.snapshot"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-snapshot"
+    "seahorse.snapshot"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-snapshot",
+    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/"
   )
 
   object Spark {

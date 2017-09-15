@@ -2,7 +2,7 @@
  * Copyright (c) 2016, CodiLime Inc.
  */
 
-package io.deepsense.sessionmanager.storage.impl
+package io.deepsense.sessionmanager.service.eventstore
 
 import scala.concurrent.duration._
 

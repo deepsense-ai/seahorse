@@ -12,7 +12,7 @@ import io.deepsense.commons.rest.RestModule
 import io.deepsense.sessionmanager.mq.MqModule
 import io.deepsense.sessionmanager.rest.ApisModule
 import io.deepsense.sessionmanager.service.ServiceModule
-import io.deepsense.sessionmanager.storage.impl.SessionStorageModule
+import io.deepsense.sessionmanager.service.eventstore.PersistentEventStoreModule
 
 class SessionManagerAppModule extends AbstractModule {
   override def configure(): Unit = {
@@ -28,8 +28,8 @@ class SessionManagerAppModule extends AbstractModule {
   }
 
   private def installServices(): Unit = {
+    install(new PersistentEventStoreModule)
     install(new ServiceModule)
-    install(new SessionStorageModule)
   }
 
   private def installServer(): Unit = {

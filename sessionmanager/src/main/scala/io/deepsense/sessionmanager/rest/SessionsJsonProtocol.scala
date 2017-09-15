@@ -10,25 +10,28 @@ import spray.json._
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
-import io.deepsense.sessionmanager.service.Session
+import io.deepsense.sessionmanager.service.{Session, Status}
 
 trait SessionsJsonProtocol
   extends DefaultJsonProtocol
   with IdJsonProtocol
   with SprayJsonSupport {
 
-  implicit val sessionFormat = new RootJsonFormat[Session] {
-    override def write(obj: Session): JsValue = {
-      JsObject(
-        "workflowId" -> obj.workflowId.toJson,
-        "sessionId" -> obj.workflowId.toJson,
-        "status" -> JsString(obj.status.toString)
-      )
+  implicit val statusFormat = new RootJsonFormat[Status.Value] {
+    override def read(json: JsValue): Status.Value = json match {
+      case JsString(value) =>
+        value match {
+          case "running" => Status.Running
+          case "creating" => Status.Creating
+          case "error" => Status.Error
+        }
+      case x => deserializationError(s"Expected 'status' to be a string but got $x")
     }
 
-    override def read(json: JsValue): Session =
-      throw new UnsupportedOperationException()
+    override def write(obj: Status.Value): JsValue = JsString(obj.toString)
   }
+
+  implicit val sessionFormat = jsonFormat2(Session.apply)
 
   implicit val createSessionFormat = jsonFormat1(CreateSession)
 
@@ -39,8 +42,14 @@ trait SessionsJsonProtocol
       )
     }
 
-    override def read(json: JsValue): ListSessionsResponse =
-      throw new UnsupportedOperationException()
+    override def read(json: JsValue): ListSessionsResponse = {
+      val sessions = json.asJsObject().fields.getOrElse(
+        "sessions", deserializationError("Expected 'sessions' field!"))
+      sessions match {
+        case JsArray(elements) => ListSessionsResponse(elements.map(_.convertTo[Session]).toList)
+        case x => deserializationError(s"Expected 'sessions' to be an array but got $x")
+      }
+    }
   }
 }
 

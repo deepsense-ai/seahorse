@@ -4,18 +4,24 @@
 
 package io.deepsense.sessionmanager.mq
 
+import java.util.concurrent.TimeoutException
+
+import scala.concurrent.Future
+import scala.util.control.NonFatal
+
 import akka.actor.{ActorRef, ActorSystem}
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq.ConnectionActor
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
 
-class MqModule extends AbstractModule {
+class MqModule extends AbstractModule with Logging {
   override def configure(): Unit = {}
 
   @Provides
@@ -46,5 +52,34 @@ class MqModule extends AbstractModule {
   def createSessionExecutorClients(
       communicationFactory: MQCommunicationFactory): SessionExecutorClients = {
     new SessionExecutorClients(communicationFactory)
+  }
+
+  @Provides
+  @Singleton
+  @Named("SessionService.HeartbeatSubscribed")
+  def heartbeatSubscriber(
+      system: ActorSystem,
+      communicationFactory: MQCommunicationFactory,
+      @Named("SessionService.Actor") sessionServiceActor: ActorRef,
+      @Named("queue.heartbeat.subscription.timeout") timeout: Long): Future[Unit] = {
+    import io.deepsense.sessionmanager.mq.MQCommunicationFactoryEnrichments._
+    val subscribed = communicationFactory
+      .registerBroadcastSubscriber("seahorse_heartbeats_all", sessionServiceActor)
+
+    import system.dispatcher
+
+    val subscribedWithTimeout = Future.firstCompletedOf(List(subscribed, Future {
+      Thread.sleep(timeout)
+      throw new TimeoutException
+    }))
+
+    subscribedWithTimeout.onFailure {
+      case NonFatal(e) =>
+        logger.error(s"Haven't subscribed to Heartbeats after '$timeout' millis." +
+          " Shutting down!")
+        system.shutdown()
+    }
+
+    subscribedWithTimeout
   }
 }

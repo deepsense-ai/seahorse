@@ -4,28 +4,33 @@
 
 package io.deepsense.sessionmanager.rest
 
-import javax.inject.Named
+import scala.concurrent.{ExecutionContext, Future}
 
 import com.google.inject.Inject
+import com.google.inject.name.Named
+import shapeless.HNil
+import spray.http.StatusCodes
+import spray.routing._
+
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{Cors, RestComponent}
+import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.service.{Session, SessionService}
-import spray.http.StatusCodes
-import spray.routing._
 
-import scala.concurrent.ExecutionContext
-
-class SessionsApi @Inject() (
+class SessionsApi @Inject()(
   @Named("session-api.prefix") private val sessionsApiPrefix: String,
+  @Named("SessionService.HeartbeatSubscribed") private val heartbeatSubscribed: Future[Unit],
   private val sessionService: SessionService
-)(implicit ec: ExecutionContext) extends RestComponent
+)(implicit ec: ExecutionContext)
+  extends RestComponent
   with Directives
   with Cors
   with SessionsJsonProtocol
-  with IdJsonProtocol {
+  with IdJsonProtocol
+  with Logging {
 
   private val sessionsPathPrefixMatcher = PathMatchers.separateOnSlashes(sessionsApiPrefix)
   private val SeahorseUserIdHeaderName = "X-Seahorse-UserId".toLowerCase
@@ -41,30 +46,34 @@ class SessionsApi @Inject() (
             complete("Session Manager")
           }
         } ~
-        pathPrefix(sessionsPathPrefixMatcher) {
-          path(JavaUUID) { sessionId =>
-            get {
-              complete {
-                val session = sessionService.getSession(sessionId)
-                session.map(_.map(Envelope(_)))
+        handleRejections(rejectionHandler) {
+          waitForHeartbeat {
+            pathPrefix(sessionsPathPrefixMatcher) {
+              path(JavaUUID) { sessionId =>
+                get {
+                  complete {
+                    val session = sessionService.getSession(sessionId)
+                    session.map(_.map(Envelope(_)))
+                  }
+                } ~
+                delete {
+                  onSuccess(sessionService.killSession(sessionId)) { _ =>
+                    complete(StatusCodes.OK)
+                  }
+                }
+              } ~
+              pathEndOrSingleSlash {
+                post {
+                  entity(as[CreateSession]) { request =>
+                    val session = sessionService.createSession(request.workflowId, userId)
+                    val enveloped = session.map(Envelope(_))
+                    complete(enveloped)
+                  }
+                } ~
+                get {
+                  complete(sessionService.listSessions())
+                }
               }
-            } ~
-            delete {
-              onSuccess(sessionService.killSession(sessionId)) { _ =>
-                complete(StatusCodes.OK)
-              }
-            }
-          } ~
-          pathEndOrSingleSlash {
-            post {
-              entity(as[CreateSession]) { request =>
-                val session = sessionService.createSession(request.workflowId, userId)
-                val enveloped = session.map(Envelope(_))
-                complete(enveloped)
-              }
-            } ~
-            get {
-              complete(sessionService.listSessions())
             }
           }
         }
@@ -78,4 +87,20 @@ class SessionsApi @Inject() (
       case None => complete(StatusCodes.BadRequest)
     }
   }
+
+  val rejectionHandler: RejectionHandler = RejectionHandler {
+    case NotSubscribedToHeartbeatsRejection :: _ =>
+      complete {
+        logger.warn("Rejected a request because not yet subscribed to Heartbeats!")
+        (StatusCodes.ServiceUnavailable, "Session Manager is starting!")
+      }
+  }
+
+  private def waitForHeartbeat: Directive0 = {
+    extract(_ => heartbeatSubscribed.isCompleted)
+      .flatMap[HNil](if (_) pass else reject(NotSubscribedToHeartbeatsRejection)) &
+      cancelRejection(NotSubscribedToHeartbeatsRejection)
+  }
+
+  case object NotSubscribedToHeartbeatsRejection extends Rejection
 }
