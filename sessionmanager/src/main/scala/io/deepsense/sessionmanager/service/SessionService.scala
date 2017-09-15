@@ -27,20 +27,24 @@ class SessionService @Inject() (
   private implicit val implicitTimeout = Timeout(timeout, TimeUnit.MILLISECONDS)
 
   def getSession(workflowId: Id): Future[Option[Session]] = {
+    logger.info(s"Getting session '$workflowId'")
     (serviceActor ? SessionServiceActor.GetRequest(workflowId)).mapTo[Option[Session]]
   }
 
   def createSession(workflowId: Id): Future[Id] = {
+    logger.info(s"Creating session '$workflowId'")
     (serviceActor ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Id]
   }
 
   def listSessions(): Future[ListSessionsResponse] = {
+    logger.info(s"Listing sessions")
     (serviceActor ? SessionServiceActor.ListRequest())
       .mapTo[List[Session]]
       .map(ListSessionsResponse)
   }
 
   def killSession(workflowId: Id): Future[Unit] = {
+    logger.info(s"Killing session '$workflowId'")
     (serviceActor ? SessionServiceActor.KillRequest(workflowId)).mapTo[Unit]
   }
 }

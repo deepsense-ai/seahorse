@@ -5,6 +5,7 @@
 package io.deepsense.sessionmanager.service.actors
 
 import scala.concurrent.Future
+import scala.util.Success
 
 import akka.actor.Actor
 import akka.pattern.pipe
@@ -49,6 +50,7 @@ class SessionServiceActor @Inject()(
   }
 
   private def handleHeartbeat(heartbeat: Heartbeat): Unit = {
+    logger.trace(s"Received Heartbeat $heartbeat")
     val workflowId: Id = heartbeat.sessionId
     eventStore.heartbeat(workflowId).foreach {
       case Left(_) =>
@@ -67,6 +69,7 @@ class SessionServiceActor @Inject()(
 
   private def eventToSession(workflowId: Id, event: Event): Session = {
     val status = statusInferencer.statusFromEvent(event, DateTime.now)
+    logger.info(s"Session '$workflowId' is '$status'")
     Session(workflowId, status)
   }
 
@@ -78,8 +81,12 @@ class SessionServiceActor @Inject()(
 
   private def handleCreate(id: Id): Future[Id] = {
     eventStore.started(id).flatMap {
-      case Left(_) => Future.successful(id)
-      case Right(_) => livyClient.createSession(id).map(_ => id)
+      case Left(_) =>
+        logger.info(s"Session '$id' already exists!")
+        Future.successful(id)
+      case Right(_) =>
+        logger.info(s"Session '$id' does not exist. Creating!")
+        livyClient.createSession(id).map(_ => id)
     }
   }
 

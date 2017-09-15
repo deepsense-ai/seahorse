@@ -17,6 +17,7 @@ import slick.lifted.ProvenShape
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.EventStore
 import io.deepsense.sessionmanager.service.EventStore._
 
@@ -24,7 +25,7 @@ class PersistentEventStore @Inject() (
   @Named("EventStore") db: JdbcDriver#API#Database,
   @Named("EventStore") driver: JdbcDriver,
   @Named("eventstore.table") tableName: String
-)(implicit ec: ExecutionContext) extends EventStore {
+)(implicit ec: ExecutionContext) extends EventStore with Logging {
 
   import driver.api._
 
@@ -52,12 +53,21 @@ class PersistentEventStore @Inject() (
       .result
       .headOption
       .map(_.map(rowToEvent))
-    db.run(query)
+    val event = db.run(query)
+    event.onSuccess {
+      case x => logger.info(s"LastEvent for '$workflowId' is: $x")
+    }
+
+    event
   }
 
   override def getLastEvents: Future[Map[Id, Event]] = {
     val query = sessions.result
-    db.run(query).map(_.map(rowToEvent).map(e => (e.workflowId, e)).toMap)
+    val lastEvents = db.run(query).map(_.map(rowToEvent).map(e => (e.workflowId, e)).toMap)
+    lastEvents.onSuccess {
+      case x => logger.info(s"LastEvents are: $x")
+    }
+    lastEvents
   }
 
   override def killed(workflowId: Id): Future[Unit] = {
@@ -71,17 +81,24 @@ class PersistentEventStore @Inject() (
 
     val update = query.update(heartbeatName, DateTimeConverter.now)
     db.run(update).map {
-      case 1 => Right(())
-      case _ => Left(InvalidWorkflowId())
+      case 1 =>
+        logger.trace(s"Got Heartbeat: $workflowId")
+        Right(())
+      case _ =>
+        logger.debug(s"Got incorrect Heartbeat: $workflowId")
+        Left(InvalidWorkflowId())
     }
   }
 
   override def started(workflowId: Id): Future[Either[SessionExists, Unit]] = {
     val insert = sessions += (workflowId.value, startedName, DateTimeConverter.now)
     db.run(insert).map {
-      case 1 => Right(())
+      case 1 =>
+        logger.debug(s"Recored a new session $workflowId")
+        Right(())
     }.recover {
       case ex: SQLException if matchesError(ex, ErrorCodes.UniqueViolation) =>
+        logger.debug(s"Session $workflowId already exists!")
         Left(SessionExists())
     }
   }

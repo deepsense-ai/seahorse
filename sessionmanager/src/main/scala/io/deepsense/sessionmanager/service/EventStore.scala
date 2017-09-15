@@ -44,7 +44,7 @@ trait EventStore {
   def started(workflowId: Id): Future[Either[SessionExists, Unit]]
 
   /**
-    * Remove events for the specified workflow from the store.
+    * Removes events for the specified workflow from the store.
     * @param workflowId The id of the workflow that the event links to.
     * @return Always return Unit.
     */
