@@ -4,9 +4,6 @@
 function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
                                      additionalControls, WorkflowsApiClient) {
   _.assign(this, {
-    backToHome () {
-      $rootScope.$broadcast('StatusBar.HOME_CLICK');
-    },
     exportWorkflow () {
       $rootScope.$broadcast('StatusBar.EXPORT_CLICK');
     },

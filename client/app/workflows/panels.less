@@ -1,17 +1,17 @@
 // Common things for all panels on both workflow views
 // Variables
-@panelMainWidth: 250px;
-@generalPanelPadding: 14px 15px 7px 5px;
+@panel-main-width: 250px;
+@general-panel-padding: 14px 15px 7px 5px;
 
 // Mixins
 @import "./mixins.less";
 
 .panelsMinWidth() {
-  min-width: @panelMainWidth;
+  min-width: @panel-main-width;
 }
 
 .panelsMaxWidth() {
-  max-width: @panelMainWidth;
+  max-width: @panel-main-width;
 }
 
 .spaceBetween(@side: right, @size: 10px) {
@@ -22,7 +22,7 @@
 .operations-tree {
   .spaceBetween(right, 3px);
 
-  width: @panelMainWidth;
+  width: @panel-main-width;
   padding: 0 1px 0 0;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.75);
@@ -41,10 +41,10 @@
   .spaceBetween(left);
 
   position: static;
-  flex: 1;
   border-right: 0;
   border-bottom: 0;
   border-top: 0;
+  width: @panel-main-width;
 }
 
 .o-general-data-panel {
@@ -53,17 +53,17 @@
   margin-left: 0;
 
   &__content {
-    padding: @generalPanelPadding;
+    padding: @general-panel-padding;
   }
 
   &__ibox-title {
     &--editor-mode {
-      padding: @generalPanelPadding;
+      padding: @general-panel-padding;
       height: 64px;
     }
 
     &--report-mode {
-      padding: @generalPanelPadding;
+      padding: @general-panel-padding;
       height: 48px;
     }
   }
@@ -126,7 +126,7 @@
   }
 
   &--absolute {
-    .dynamicHeight();
+    .heightWithNavOffset();
 
     position: absolute;
     z-index: 1;
@@ -135,7 +135,7 @@
   }
 
   &--dynamic-top {
-    .dynamicTop();
+    .topWithNavOffset();
   }
 
   &--scroll-right {

@@ -1,3 +1,4 @@
+@import "../../css/variables";
 @import "./mixins.less";
 @import "./workflows-editor/workflows-editor.less";
 @import "./workflows-execution-report/workflows-execution-report.less";
@@ -9,17 +10,17 @@
 @import "./panels.less";
 
 .c-dynamic-part {
-  .dynamicHeight();
+  .heightWithNavOffset();
 
   display: block;
-  margin-top: 10px;
 }
 
 .c-main-header {
-  height: 75px;
+  height: @navigation-bar-height;
   display: flex;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
+  width: ~"calc(100% - @{panel-main-width})";
 
   &__nav-bar {
     width: 100%;
@@ -30,4 +31,9 @@
   display: flex;
   height: 100%;
   clear: both;
+}
+
+.c-navigation-bar {
+  width: @panel-main-width;
+  min-width: @panel-main-width;
 }

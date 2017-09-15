@@ -3,9 +3,6 @@
 /* @ngInject */
 function NavigationBar() {
   return {
-    scope: {
-      title: '='
-    },
     templateUrl: 'app/common/navigation-bar/navigation-bar.html'
   };
 }

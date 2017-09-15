@@ -1,8 +1,11 @@
-.dynamicHeight() {
+@import "../../css/variables";
+
+.heightWithNavOffset(@marginTop: 0) {
+  @bar-height: @navigation-bar-height + @marginTop;
   //noinspection CssInvalidPropertyValue
-  height: calc(~'100% - 85px');
+  height: ~"calc(100% - @{bar-height})";
 }
 
-.dynamicTop() {
-  top: 85px;
+.topWithNavOffset() {
+  top: @navigation-bar-height;
 }

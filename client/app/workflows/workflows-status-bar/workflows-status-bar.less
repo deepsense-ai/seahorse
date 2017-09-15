@@ -1,4 +1,6 @@
 .c-workflows-status-bar {
+  @media-break: 1450px;
+
   margin: 0;
   text-align: center;
   align-items: center;
@@ -30,26 +32,42 @@
     &:hover:before {
       width: 100%;
     }
+
+    &--last-execution {
+      @media-break: 1300px;
+
+      @media (max-width: @media-break) {
+        flex: 1.50;
+      }
+    }
   }
 
   &__text {
     flex: 0.85;
     font-size: 14px;
+
+    @media (max-width: @media-break) {
+      font-size: 12px;
+    }
   }
 
   &__icon {
+    @media-break: 1350px;
+
     background-color: rgba(0,0,0,0.15);
     padding: 4px 0;
     flex: 0.15;
 
-    @media (max-width: 850px) {
+    @media (max-width: @media-break) {
       display: none;
     }
-  }
 
-  &--6-items &__icon {
-    @media (max-width: 1210px) {
-      display: none;
+    &--last-execution {
+      @media-break: 1615px;
+
+      @media (max-width: @media-break) {
+        display: none;
+      }
     }
   }
 }

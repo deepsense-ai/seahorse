@@ -1,10 +1,4 @@
-<div class="c-workflows-status-bar c-workflows-status-bar--6-items">
-  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
-     ng-click="controller.backToHome()">
-    <i class="fa fa-file-text fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Home</span>
-  </a>
-
+<div class="c-workflows-status-bar">
   <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
      ng-click="controller.saveWorkflow()">
     <i class="fa fa-save fa-2x c-workflows-status-bar__icon"></i>
@@ -31,17 +25,21 @@
   </a>
 
   <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
-     ng-show="controller.run"
+     ng-if="controller.run"
      ng-click="controller.run()">
     <i class="fa fa-play fa-2x c-workflows-status-bar__icon"></i>
     <span class="c-workflows-status-bar__text">Run</span>
   </a>
 
-  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
+  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item
+            c-workflows-status-bar__item--last-execution"
      ng-show="controller.lastExecutedReport"
-     ng-click="controller.lastExecutedReport()"
-     style="flex: 1.40;">
-    <i class="fa fa-backward fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Last execution report</span>
+     ng-click="controller.lastExecutedReport()">
+    <i class="fa fa-backward fa-2x c-workflows-status-bar__icon
+              c-workflows-status-bar__icon--last-execution"></i>
+    <span class="c-workflows-status-bar__text
+                  c-workflows-status-bar__text--last-execution">
+      Last execution report
+    </span>
   </a>
 </div>

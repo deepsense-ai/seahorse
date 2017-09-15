@@ -22,7 +22,7 @@ var lab = angular.module('ds.lab', [
   require('./errors/errors.module.js').name
 ]);
 
-lab.constant('additionalControls', true);
+lab.constant('additionalControls', false);
 
 require('./app.config.js').inject(lab);
 require('./app.run.js').inject(lab);
