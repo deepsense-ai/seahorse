@@ -26,7 +26,9 @@
     "ga": true,
     "UE": true,
     "Stomp": true,
-    "SockJS": true
+    "SockJS": true,
+    "d3": true,
+    "nv": true
   },
   "globalstrict": false,
   "jasmine": true,

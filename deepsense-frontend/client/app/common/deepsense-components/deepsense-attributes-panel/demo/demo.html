@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="test">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Component test</title>
+    <base href="/deepsense-frontend/deepsense-frontend/client/">
+
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.css" type="text/css"/>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" type="text/css"/>
+    <link rel="stylesheet" href="../node_modules/animate.css/animate.css"  type="text/css"/>
+    <link rel="stylesheet" href="../node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css"  type="text/css"/>
+    <link rel="stylesheet" href="app/common/deepsense-components/deepsense-attributes-panel/demo/style.css"  type="text/css"/>
+    <link rel="stylesheet/less" href="app/common/deepsense-components/deepsense-attributes-panel/deepsense-attributes-panel.less"  type="text/css"/>
+    <link rel="stylesheet" href="../node_modules/ng-switchery/dist/switchery.min.css"  type="text/css"/>
+    <link rel="stylesheet" href="../bower_components/angucomplete-alt/angucomplete-alt.css" type="text/css" />
+
+  <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            padding: 20px;
+            background-color: #f3f3f4;
+        }
+        .operation-attributes-panel {
+          overflow: auto;
+        }
+    </style>
+</head>
+<body ng-controller="TestCtrl">
+    <div class="container">
+        <div class="row text-center well">
+            <div class="col-md-4 col-lg-offset-4">
+                <select ng-model="currentNode" class="form-control" ng-options="node.id as node.name for node in testData"></select>
+            </div>
+        </div>
+
+        <button ng-click="togglePre('debug')">Toggle</button>
+        <pre class="row well default-spacing" id="debug">{{ getNode().parameters.serialize() | json }}</pre>
+    </div>
+    <deepsense-operation-attributes
+        node="getNode()"
+        is-inner-workflow = "getTestCase().isInnerWorkflow"
+        workflow="getWorkflowId()"
+        ng-if="getNode()"
+        disabled-mode="false"
+        predef-colors="['#00B1EB', '#1ab394', '#2f4050', '#f8ac59', '#ed5565', '#DD6D3F']">
+    </deepsense-operation-attributes>
+
+    <script src="../node_modules/angular/angular.js"></script>
+    <script src="../node_modules/lodash/index.js"></script>
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js"></script>
+    <script src="../node_modules/ng-switchery/dist/ng-switchery.js"></script>
+    <script src="../node_modules/angular-xeditable/xeditable.min.js"></script>
+    <script src="../node_modules/ace-webapp/src-min-noconflict/ace.js"></script>
+    <script src="../node_modules/angular-ui-ace/src/ui-ace.js"></script>
+    <script src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/angucomplete-alt/angucomplete-alt.js"></script>
+
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/demo/demo.browserify.mocks.js" type="application/javascript"></script>
+
+    <!--deepsense loading spinner -->
+    <script src="app/common/deepsense-components/deepsense-loading-spinner/loading-spinner.module.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-loading-spinner/lg/loading-spinner-lg.drv.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-loading-spinner/processing/loading-spinner-processing.drv.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-loading-spinner/sm/loading-spinner-sm.drv.js" type="text/javascript"></script>
+    <link href="app/common/deepsense-components/deepsense-loading-spinner/loading-spinner.less" rel="stylesheet/less" type="text/css">
+
+    <!--deepsense node parameters -->
+    <script src="app/common/deepsense-components/deepsense-node-parameters/deepsense-node-parameters.module.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-validators/common-validator-factory.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-validators/common-generic-validator.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-validators/common-multiple-numeric-general-validator.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-validators/common-numeric-range-validator.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-validators/common-string-regex-validator.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-validators/common-noop-validator.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-items/common-generic-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-items/common-selector-item-factory.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-items/common-single-column-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-items/common-column-list-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-items/common-single-index-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-items/common-index-list-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-items/common-type-list-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-selector/common-selector-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-choice-parameter/common-choice-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-choice-parameter/common-single-choice-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-choice-parameter/common-multiple-choice-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-parameter-factory.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-generic-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-parameters-list.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-numeric-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-string-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-boolean-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-code-snippet-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-workflow-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-multiplier-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-creator-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-prefix-based-creator-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-dynamic-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-gridsearch-parameter.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/common-parameters/common-multiple-numeric.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-node-parameters/deepsense-node-parameters.factory.js" type="text/javascript"></script>
+
+    <!--deepsense attributes panel -->
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attributes-panel.module.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-boolean/attribute-boolean-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-code-snippet/attribute-code-snippet-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-code-snippet/attribute-code-snippet-type.ctrl.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-code-snippet/attribute-code-snippet-type-modal/attribute-code-snippet-type-modal.ctrl.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-column-selector/attribute-selector-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-column-selector/attributes-serialized-view/attributes-serialized-view.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-column-selector/calculated-selected-columns/calculated-selected-columns.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-column-selector/selector-items/column-list-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-column-selector/selector-items/index-list-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-column-selector/selector-items/type-list-selector-item.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-creator-type/attribute-creator-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-dynamic-param/attribute-dynamic-param-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-dynamic-param/attribute-dynamic-param-type.service.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-gridsearch-param/attribute-gridsearch-param-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-multiple-choice/attribute-multiple-choice-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-multiple-numeric/attribute-multiple-numeric-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-multiplier/attribute-multiplier-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-numeric/attribute-numeric-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-prefix-based-creator-type/attribute-prefix-based-creator-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-single-choice/attribute-single-choice-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-string/attribute-string-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-string/attribute-string-type.service.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-workflow/attribute-workflow-type.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attributes-list/attributes-list.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attributes-panel/attributes-panel.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/attributes-panel/attributes-panel.service.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/color-picker/color-picker.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/common/common-custom-scrollbar.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/common/common-label-to-first-unlabeled.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/common/common-replace-null-with-default.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/common/common-time-diff/common-time-diff.js" type="text/javascript"></script>
+
+    <script src="../node_modules/less/dist/less.js" type="text/javascript"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/demo/demo.js"></script>
+    <script src="app/common/deepsense-components/deepsense-attributes-panel/demo/demo.data.js"></script>
+</body>
+</html>

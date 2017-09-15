@@ -2,7 +2,7 @@
 
 let angular = require('angular');
 let browser = require('bowser');
-let version = parseInt(browser.version.substring(0, 2));
+let version = parseInt(browser.version.substring(0, 2), 10);
 
 if (browser.chrome && version >= 40) {
   let lab = angular.module('ds.lab', [
@@ -12,12 +12,13 @@ if (browser.chrome && version >= 40) {
     'ngCookies',
     'debounce',
     'ds.lab.partials',
-    'deepsense.spinner',
-    'deepsense-catalogue-panel',
-    'deepsense.attributes-panel',
-    'deepsense.navigation-panel',
-    'deepsense.graph-model',
-    'deepsense.cycle-analyser',
+    require('./common/deepsense-components/deepsense-attributes-panel/attributes-panel.module.js').name,
+    require('./common/deepsense-components/deepsense-catalogue-panel/catalogue-panel.module.js').name,
+    require('./common/deepsense-components/deepsense-cycle-analyser/deepsense-cycle-analyser.js').name,
+    require('./common/deepsense-components/deepsense-graph-model/deepsense-graph-model.module.js').name,
+    require('./common/deepsense-components/deepsense-loading-spinner/loading-spinner.module.js').name,
+    require('./common/deepsense-components/deepsense-navigation-panel/deepsense-navigation-panel.js').name,
+    require('./common/deepsense-components/deepsense-node-parameters/deepsense-node-parameters.module.js').name,
     'ngFileUpload',
     'toastr',
     require('./home/home.module.js').name,
