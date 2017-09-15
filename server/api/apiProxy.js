@@ -73,8 +73,12 @@ module.exports = function apiProxy(config) {
    */
   proxy.on('proxyReq', (proxyRequest, request, response, options) => {
     if (request.method === 'PUT' || request.method === 'POST') {
+      let requestBody = '';
       request.on('data', (source) => {
-        request.body = JSON.parse(source.toString());
+        requestBody += source;
+      });
+      request.on('end', (source) => {
+        request.body = JSON.parse(requestBody.toString());
       });
     }
 

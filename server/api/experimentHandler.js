@@ -102,7 +102,7 @@ module.exports = function experimentHandler(config) {
           break;
 
         case 'PUT':
-          console.log('log:', 'update experient', id);
+          console.log('log:', 'update experiment', id);
           experimentModel.update().where({id: id}).set(getInputData(request.body))
           .then((result) => {
             deferred.resolve(mergeData(data, result[0]));
