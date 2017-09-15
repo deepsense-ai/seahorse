@@ -13,7 +13,7 @@
     "application/json"
   ],
   "paths": {
-    "/workflow/${workflowId}/schedules": {
+    "/workflow/{workflowId}/schedules": {
       "get": {
         "description": "Returns list of schedules for a workflow.",
         "operationId": "getSchedulesForWorkflow",
@@ -56,7 +56,7 @@
         }
       }
     },
-    "/workflow-schedules/${scheduleId}": {
+    "/workflow-schedules/{scheduleId}": {
       "get": {
         "operationId": "getWorkflowSchedule",
         "parameters": [
