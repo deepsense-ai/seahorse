@@ -19,6 +19,8 @@ NumericRangeValidator.prototype.validate = function(value) {
   if (typeof value !== 'number') {
     return false;
   } else {
+    let isUndefined = (v) => _.isNull(v) || _.isUndefined(v);
+
     let rangeBegin = this.schema.configuration.begin;
     let rangeEnd = this.schema.configuration.end;
     let step = this.schema.configuration.step;
@@ -61,7 +63,7 @@ NumericRangeValidator.prototype.validate = function(value) {
       if (v === rB) {
         return endIncluded;
       } else {
-        return _.isNull(step) ?
+        return isUndefined(step) ?
           v < rB :
           isMultipleOfStep(v, rB);
       }
@@ -70,7 +72,7 @@ NumericRangeValidator.prototype.validate = function(value) {
       if (v === lB) {
         return beginIncluded;
       } else {
-        return _.isNull(step) ?
+        return isUndefined(step) ?
           lB < v :
           isMultipleOfStep(v, lB);
       }
@@ -81,17 +83,17 @@ NumericRangeValidator.prototype.validate = function(value) {
       } else if (v === rB) {
         return endIncluded;
       } else {
-        return _.isNull(step) ?
+        return isUndefined(step) ?
           (lB < v) && (v < rB) :
           isMultipleOfStep(v, lB);
       }
     };
 
-    if (_.isNull(rangeBegin) && _.isNull(rangeEnd)) {
+    if (isUndefined(rangeBegin) && isUndefined(rangeEnd)) {
       return true;
-    } else if (_.isNull(rangeBegin)) {
+    } else if (isUndefined(rangeBegin)) {
       return belongsToLeftInfiniteRightBoundedInterval(value, rangeEnd);
-    } else if (_.isNull(rangeEnd)) {
+    } else if (isUndefined(rangeEnd)) {
       return belongsToLeftBoundedRightInfiniteInterval(rangeBegin, value);
     } else {
       return belongsToBoundedInterval(rangeBegin, value, rangeEnd);

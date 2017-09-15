@@ -31,7 +31,7 @@ module.exports = function (config) {
 
         browsers: ['PhantomJS'],
 
-        reporters: ['progress', 'coverage'],
+        reporters: ['progress'],
 
         preprocessors: {
             'src/**/*.js': ['browserify', 'coverage']

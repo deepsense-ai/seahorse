@@ -68,6 +68,17 @@ describe('Numeric range validator', () => {
   });
 
   describe('validates the value which belongs to the interior of the range', () => {
+    it('. The internal is unbounded.', () => {
+      let validator = new NumericRangeValidator({
+        'type': 'range',
+        'configuration': {}
+      });
+
+      expect(validator.validate(-100)).toBe(true);
+      expect(validator.validate(0)).toBe(true);
+      expect(validator.validate(200)).toBe(true);
+    });
+
     it('. The interval is bounded on both sides.', () => {
       let validator = new NumericRangeValidator({
         'type': 'range',
