@@ -22,4 +22,7 @@ object DatasourceManagerConfig {
   val jetty = JettyConfig(config.getConfig("jetty"))
   val database = new DatabaseConfig(config.getConfig("database"))
 
+  val predefinedUsersConfigPath = "predefined-users"
+  val schedulerUserConfigPath = "scheduler"
+
 }

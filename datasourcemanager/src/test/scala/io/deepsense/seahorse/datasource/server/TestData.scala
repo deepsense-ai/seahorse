@@ -6,21 +6,22 @@ package io.deepsense.seahorse.datasource.server
 
 import java.util.UUID
 
+import io.deepsense.seahorse.datasource.model.Visibility.Visibility
 import io.deepsense.seahorse.datasource.model._
 
 object TestData {
 
-  def someDatasources() = Seq(
-    someJdbcDatasource(),
-    someLibraryCsvDatasource()
+  def someDatasources(visibility: Option[Visibility] = None) = Seq(
+    someJdbcDatasource(visibility),
+    someLibraryCsvDatasource(visibility)
   )
 
-  def someDatasource() = someJdbcDatasource()
+  def someDatasource(visibility: Option[Visibility] = None) = someJdbcDatasource(visibility)
 
-  def someJdbcDatasource() = DatasourceParams(
+  def someJdbcDatasource(visibility: Option[Visibility]) = DatasourceParams(
     name = "some-name" + UUID.randomUUID(),
     downloadUri = None,
-    visibility = Visibility.privateVisibility,
+    visibility = visibility.getOrElse(Visibility.privateVisibility),
     datasourceType = DatasourceType.jdbc,
     jdbcParams = Some(JdbcParams(
       url = "jdbc://some/url" + UUID.randomUUID(),
@@ -34,10 +35,10 @@ object TestData {
     googleSpreadsheetParams = None
   )
 
-  def someLibraryCsvDatasource() = DatasourceParams(
+  def someLibraryCsvDatasource(visibility: Option[Visibility]) = DatasourceParams(
     name = "some-name" + UUID.randomUUID(),
     downloadUri = None,
-    visibility = Visibility.publicVisibility,
+    visibility = visibility.getOrElse(Visibility.publicVisibility),
     datasourceType = DatasourceType.libraryFile,
     jdbcParams = None,
     externalFileParams = None,

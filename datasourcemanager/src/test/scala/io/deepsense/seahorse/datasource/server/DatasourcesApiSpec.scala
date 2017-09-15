@@ -7,10 +7,11 @@ package io.deepsense.seahorse.datasource.server
 import java.util.UUID
 
 import org.scalatest.{FreeSpec, Matchers}
+import spray.http.StatusCodes
 
-import io.deepsense.seahorse.datasource.api.{ApiException, ApiExceptionWithJsonBody, DatasourceManagerApi}
-import io.deepsense.seahorse.datasource.db.FlywayMigration
-import io.deepsense.seahorse.datasource.model.Error
+import io.deepsense.seahorse.datasource.api.{ApiException, ApiExceptionWithJsonBody}
+import io.deepsense.seahorse.datasource.db.dbio.Get
+import io.deepsense.seahorse.datasource.model.{Error, Visibility}
 
 class DatasourcesApiSpec extends FreeSpec with Matchers {
 
@@ -19,6 +20,20 @@ class DatasourcesApiSpec extends FreeSpec with Matchers {
   "Api consumer" - {
     val userId = UUID.randomUUID()
     val userName = "Alice"
+
+    "cannot see private datasources that don't belong to him" in {
+      val otherUserId = UUID.randomUUID()
+      for {
+        dsParams <- TestData.someDatasources(Some(Visibility.privateVisibility))
+      } {
+        val id = UUID.randomUUID()
+        api.putDatasourceImpl(otherUserId, userName, id, dsParams)
+
+        (the[ApiException] thrownBy api.getDatasourceImpl(userId, id)).errorCode shouldBe StatusCodes.Forbidden.intValue
+      }
+
+    }
+
     "can manage his datasources" in {
       for (dsParams <- TestData.someDatasources()) {
         val id = UUID.randomUUID()
@@ -57,6 +72,20 @@ class DatasourcesApiSpec extends FreeSpec with Matchers {
       the[ApiException].thrownBy(
         api.getDatasourceImpl(userId, id)
       ).errorCode shouldBe 404
+    }
+  }
+
+  "Privileged api consumer" - {
+    val userId = UUID.randomUUID()
+    val userName = "Alice"
+    val privilegedUserId = Get.privilegedUsers.head
+
+    "can Get private data sources not owned by him" in {
+      for (dsParams <- TestData.someDatasources(Some(Visibility.privateVisibility))) {
+        val id = UUID.randomUUID()
+        api.putDatasourceImpl(userId, userName, id, dsParams)
+        api.getDatasourceImpl(privilegedUserId, id)
+      }
     }
   }
 
