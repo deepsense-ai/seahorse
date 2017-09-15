@@ -1,4 +1,4 @@
-# Copyright 2017, deepsense.ai
+# Copyright 2017 deepsense.ai (CodiLime, Inc)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -227,7 +227,7 @@ def apache_license_lines(year, begin, end, line_prefix):
     b = '{}\n'.format(begin) if begin is not None else ''
     e = '{}\n'.format(end) if end is not None else ''
 
-    return """{begin}{line_prefix} Copyright {year}, deepsense.ai
+    return """{begin}{line_prefix} Copyright {year} deepsense.ai (CodiLime, Inc)
 {line_prefix}
 {line_prefix} Licensed under the Apache License, Version 2.0 (the "License");
 {line_prefix} you may not use this file except in compliance with the License.
