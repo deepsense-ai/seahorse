@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 
+import java.io.FileNotFoundException
 import java.util.NoSuchElementException
 import scala.reflect.runtime._
 import scala.reflect.runtime.{universe => ru}
@@ -35,6 +36,7 @@ import org.apache.spark.sql.{Row, types}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
+import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations.exceptions.InvalidFileException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
@@ -51,7 +53,19 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
     "line separator" -> lineSeparatorParameter)
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
-    val path = pathParameter.value.get
+    FileSource.withName(sourceParameter.value.get) match {
+      case FileSource.HDFS => readFromHdfs(context)
+      case FileSource.LOCAL => readFromLocal(context)
+    }
+  }
+
+  private def readFromHdfs(context: ExecutionContext): DataFrame =
+    readFile(prependProtocol(pathParameter.value.get, "hdfs://"), context)
+
+  private def readFromLocal(context: ExecutionContext): DataFrame =
+    readFile(stripProtocol(pathParameter.value.get, "file://"), context)
+
+  private def readFile(path: String, context: ExecutionContext): DataFrame = {
     val sparkContext = context.sqlContext.sparkContext
 
     val conf = new Configuration(sparkContext.hadoopConfiguration)
@@ -69,6 +83,22 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
 
     FileFormat.withName(formatParameter.value.get) match {
       case FileFormat.CSV => dataFrameFromCSV(context, lines, csvCategoricalColumnsParameter.value)
+    }
+  }
+
+  private def stripProtocol(uri: String, protocol: String) = {
+    if (uri.startsWith(protocol)) {
+      uri.substring(protocol.length)
+    } else {
+      uri
+    }
+  }
+
+  private def prependProtocol(uri: String, protocol: String) = {
+    if (uri.startsWith(protocol)) {
+      uri
+    } else {
+      protocol + uri
     }
   }
 
@@ -176,6 +206,8 @@ trait ReadDataFrameParameters {
     required = true,
     options = ListMap(
       FileSource.LOCAL.toString -> ParametersSchema(
+        "path" -> pathParameter),
+      FileSource.HDFS.toString -> ParametersSchema(
         "path" -> pathParameter)))
 
   val customLineSeparatorParameter = StringParameter(
@@ -205,6 +237,7 @@ object ReadDataFrame {
   object FileSource extends Enumeration {
     type FileSource = Value
     val LOCAL = Value("local")
+    val HDFS = Value("hdfs")
   }
 
   object LineSeparator extends Enumeration {
