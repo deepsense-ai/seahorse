@@ -88,6 +88,9 @@ describe('experiment', () => {
           }
         }
       ],
+      initState = {
+        'nodes': {}
+      },
       serializedData = {
         'id': initId,
         'name': initName,
@@ -113,18 +116,26 @@ describe('experiment', () => {
     expect(experiment.getId()).toBe(initId);
   });
 
-  it('can create nodes and edges', () => {
+  it('can create edges', () => {
     let experiment = new Experiment();
-    experiment.createNodes(initNodes, initOperations);
+    experiment.createNodes(initNodes, initOperations, initState);
     expect(Object.keys(experiment.getEdges()).length).toBe(0);
     experiment.createEdges(initConnections);
     expect(Object.keys(experiment.getEdges()).length).toBe(1);
   });
 
-  it('can create nodes and edge', () => {
+  it('can create nodes and edges', () => {
     let experiment = new Experiment();
-    experiment.addNode(experiment.createNode(initNodes[0].id, initOperations[initNodes[0].operation.id], initNodes[0].parameters));
-    experiment.addNode(experiment.createNode(initNodes[1].id, initOperations[initNodes[1].operation.id], initNodes[1].parameters));
+    experiment.addNode(experiment.createNode({
+      'id': initNodes[0].id,
+      'operation': initOperations[initNodes[0].operation.id],
+      'parameters': initNodes[0].parameters
+    }));
+    experiment.addNode(experiment.createNode({
+      'id': initNodes[1].id,
+      'operation': initOperations[initNodes[1].operation.id],
+      'parameters': initNodes[1].parameters
+    }));
     expect(Object.keys(experiment.getNodes()).length).toBe(2);
     var edge = experiment.createEdge(initConnections[0]);
     experiment.addEdge(edge);
@@ -133,8 +144,16 @@ describe('experiment', () => {
 
   it('can remove nodes and edge', () => {
     let experiment = new Experiment();
-    experiment.addNode(experiment.createNode(initNodes[0].id, initOperations[initNodes[0].operation.id], initNodes[0].parameters));
-    experiment.addNode(experiment.createNode(initNodes[1].id, initOperations[initNodes[1].operation.id], initNodes[1].parameters));
+    experiment.addNode(experiment.createNode({
+      'id': initNodes[0].id,
+      'operation': initOperations[initNodes[0].operation.id],
+      'parameters': initNodes[0].parameters
+    }));
+    experiment.addNode(experiment.createNode({
+      'id': initNodes[1].id,
+      'operation': initOperations[initNodes[1].operation.id],
+      'parameters': initNodes[1].parameters
+    }));
     var edge = experiment.createEdge(initConnections[0]);
     experiment.addEdge(edge);
     expect(Object.keys(experiment.getEdges()).length).toEqual(1);
@@ -152,7 +171,7 @@ describe('experiment', () => {
       'name': initName,
       'description': initDescription
     });
-    experiment.createNodes(initNodes, initOperations);
+    experiment.createNodes(initNodes, initOperations, initState);
     experiment.createEdges(initConnections);
 
     expect(experiment.serialize).toEqual(jasmine.any(Function));
@@ -161,7 +180,7 @@ describe('experiment', () => {
 
   it('handle status changes', () => {
     let experiment = new Experiment();
-    expect(experiment.getStatus()).toBe(experiment.STATUS_UNKNOWN);
+    expect(experiment.getStatus()).toBe(experiment.STATUS_DEFAULT);
 
     experiment.setStatus({
       'status': 'RUNNING'

@@ -53,4 +53,25 @@ describe('graphNode', () => {
     expect(graphNode.serialize()).toEqual(serializedData);
   });
 
+  it('handle status changes', () => {
+    let graphNode = new GraphNode(initData);
+    expect(graphNode.status).toBe(graphNode.STATUS_DEFAULT);
+
+    graphNode.setStatus({
+      'status': 'QUEUED'
+    });
+    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+
+    graphNode.setStatus();
+    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    graphNode.setStatus(false);
+    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    graphNode.setStatus({});
+    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    graphNode.setStatus({
+      'status': 'x'
+    });
+    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+  });
+
 });

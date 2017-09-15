@@ -90,6 +90,17 @@ function OperationsFactory(OperationsAPIClient, $q) {
     }
   };
 
+  /**
+   * Updates each operation with its category icon.
+   */
+  var updateOperationIcons = function updateOperationIcons() {
+    for (let id in operationsData) {
+      let operation = operationsData[id],
+          category = categoryMap && categoryMap[operation.category];
+      operation.icon = category ? category.icon : DEFAULT_ICON;
+    }
+  };
+
 
   /**
    * Loads operation data from API.
@@ -98,7 +109,9 @@ function OperationsFactory(OperationsAPIClient, $q) {
    */
   var loadData = function loadData() {
     return OperationsAPIClient.getAll().then((data) => {
-      operationsData = Object.freeze(data.operations);
+      operationsData = data.operations;
+      updateOperationIcons();
+      Object.freeze(operationsData);
       return operationsData;
     });
   };
@@ -114,6 +127,7 @@ function OperationsFactory(OperationsAPIClient, $q) {
       categoryMap = {};
       createCategoryMap(catalogData);
       updateCategoryIcons();
+      updateOperationIcons();
       Object.freeze(catalogData);
       Object.freeze(categoryMap);
       return catalogData;

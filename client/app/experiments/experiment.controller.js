@@ -163,13 +163,12 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
         positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,
         offsetX = 100,
         offsetY = 30,
-        node = internal.experiment.createNode(
-          that.generateUUID(),
-          operation,
-          {},
-          positionX > offsetX ? positionX - offsetX : 0,
-          positionY > offsetY ? positionY - offsetY : 0
-        );
+        node = internal.experiment.createNode({
+          'id': that.generateUUID(),
+          'operation': operation,
+          'x': positionX > offsetX ? positionX - offsetX : 0,
+          'y': positionY > offsetY ? positionY - offsetY : 0
+        });
     internal.experiment.addNode(node);
     DrawingService.repaintEverything();
     $rootScope.$apply();

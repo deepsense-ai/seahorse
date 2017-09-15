@@ -22,7 +22,7 @@ function Experiment() {
     'FAILED':    'status_failed',
     'ABORTED':   'status_aborted'
   };
-  that.STATUS_UNKNOWN = 'status_unknown';
+  that.STATUS_DEFAULT = that.STATUS.INDRAFT;
 
 
   /**
@@ -50,26 +50,47 @@ function Experiment() {
     return internal.edges[edgeId];
   };
 
-  that.createNode = function createNode(nodeID, operation, paramValues, x, y) {
-    let paramSchemas = operation.parameters || {};
+  /**
+   * Creates graph node.
+   *
+   * @param {object} options
+   *
+   * @return {GraphNode}
+   */
+  that.createNode = function createNode(options) {
+    let operation = options.operation,
+        paramSchemas = operation.parameters || {},
+        paramValues = options.paramValues || {};
+
     return new GraphNode({
-      id: nodeID,
-      name: operation.name,
-      operationId: operation.id,
-      version: operation.version,
-      parameters: ParameterFactory.createParametersList(paramValues, paramSchemas),
-      description: operation.description,
-      input: operation.ports.input,
-      output: operation.ports.output,
-      x: x,
-      y: y
+      'id': options.id,
+      'name': operation.name,
+      'operationId': operation.id,
+      'version': operation.version,
+      'icon': operation.icon,
+      'parameters': ParameterFactory.createParametersList(paramValues, paramSchemas),
+      'description': operation.description,
+      'input': operation.ports.input,
+      'output': operation.ports.output,
+      'x': options.x,
+      'y': options.y,
+      'state': options.state
     });
   };
 
-  that.createNodes = function createNodes(nodes, operations) {
-    for (var i = 0; i < nodes.length; i++) {
-      var operation = operations[nodes[i].operation.id];
-      var node = that.createNode(nodes[i].id, operation, nodes[i].parameters, nodes[i].ui.x, nodes[i].ui.y);
+  that.createNodes = function createNodes(nodes, operations, state) {
+    for (let i = 0; i < nodes.length; i++) {
+      let data = nodes[i],
+          id = data.id,
+          operation = operations[data.operation.id],
+          node = that.createNode({
+            'id': id,
+            'operation': operation,
+            'parameters': data.parameters,
+            'x': data.ui.x,
+            'y': data.ui.y,
+            'state': state.nodes[id]
+          });
       that.addNode(node);
     }
   };
@@ -119,7 +140,7 @@ function Experiment() {
    * @return {[type]}
    */
   that.getStatus = function getStatus() {
-    return that.status || that.STATUS_UNKNOWN;
+    return that.status || that.STATUS_DEFAULT;
   };
 
   that.getParametersSchemaById = function getParametersSchemaById(id) {

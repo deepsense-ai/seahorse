@@ -10,6 +10,7 @@ function GraphNode(options) {
   this.id = options.id;
   this.operationId = options.operationId;
   this.version = options.version;
+  this.icon = options.icon;
   this.type = options.type;
   this.description = options.description;
   this.input = this.fetchPorts('input', options.input);
@@ -18,7 +19,18 @@ function GraphNode(options) {
   this.x = options.x;
   this.y = options.y;
   this.parameters = options.parameters;
+  this.setStatus(options.state);
 }
+
+GraphNode.prototype.STATUS = {
+  'INDRAFT':   'status_indraft',
+  'QUEUED':    'status_queued',
+  'RUNNING':   'status_running',
+  'COMPLETED': 'status_completed',
+  'FAILED':    'status_failed',
+  'ABORTED':   'status_aborted'
+};
+GraphNode.prototype.STATUS_DEFAULT = GraphNode.prototype.STATUS.INDRAFT;
 
 GraphNode.prototype.fetchPorts = function fetchPorts(type, ports) {
   var array = [];
@@ -56,6 +68,19 @@ GraphNode.prototype.serialize = function serialize() {
   };
 
   return data;
+};
+
+/**
+ * Sets graph node launch status.
+ *
+ * @param {object} state
+ */
+GraphNode.prototype.setStatus = function setStatus(state) {
+  if (state && state.status && Object.keys(this.STATUS).indexOf(state.status) > -1) {
+    this.status = this.STATUS[state.status];
+  } else if (!this.status) {
+    this.status = this.STATUS_DEFAULT;
+  }
 };
 
 GraphNode.CLICK = 'GraphNode.CLICK';
