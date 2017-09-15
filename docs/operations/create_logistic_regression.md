@@ -12,7 +12,7 @@ Creates an [Untrained Logistic Regression](../classes/untrained_logistic_regress
 The output model eligible for
 [training](train_classifier.html).
 
-Regression is performed using <a href="https://en.wikipedia.org/wiki/Limited-memory_BFGS">LBFGS</a>
+Regression is performed using <a target="_blank" href="https://en.wikipedia.org/wiki/Limited-memory_BFGS">LBFGS</a>
 minimizing following loss function:
 
 $$ log(1 + e^{-yw^Tx}) + \lambda\cdot\frac{1}{2}||w||^2_2 $$

@@ -10,7 +10,7 @@ description: Seahorse documentation homepage
 ---
 
 Deeplang is a
-[visual programming language](https://en.wikipedia.org/wiki/Visual_programming_language)
+<a target="_blank" href="https://en.wikipedia.org/wiki/Visual_programming_language">visual programming language</a>
 that lets users create advanced data processing and machine learning workflows.
 Deeplang workflow is a graph of connected operations,
 which are consuming and producing entities.

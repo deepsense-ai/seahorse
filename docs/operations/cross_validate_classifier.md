@@ -13,12 +13,12 @@ trained on entire [DataFrame](../classes/dataframe.html)
 and a cross-validation [report](../classes/report.html).
 
 Report contains the following metrics for each fold:
-[Area under ROC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve),
-[Log loss](https://en.wikipedia.org/wiki/Cross_entropy#Cross-entropy_error_function_and_logistic_regression),
-[Accuracy](https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification) for threshold 0.5,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve">Area under ROC</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Cross_entropy#Cross-entropy_error_function_and_logistic_regression">Log loss</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification">Accuracy</a> for threshold 0.5
 
 More details about cross-validation can be found
-[here](https://en.wikipedia.org/wiki/Cross-validation_%28statistics%29)
+<a target="_blank" href="https://en.wikipedia.org/wiki/Cross-validation_%28statistics%29">here</a>.
 
 **Since**: Seahorse 0.4.0
 

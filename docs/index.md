@@ -13,12 +13,13 @@ Seahorse introduces [Deeplang](deeplang.html) - a visual programming language th
 advanced data processing and machine learning workflows.
 
 Project Seahorse consists of two components:
-[Seahorse Editor]({{site.SEAHORSE_EDITOR_ADDRESS}}) and [Workflow Executor](workflowexecutor.html).
+<a target="_blank" href="{{site.SEAHORSE_EDITOR_ADDRESS}}">Seahorse Editor</a>
+and [Workflow Executor](workflowexecutor.html).
 
 ### Seahorse Editor
 
-[Seahorse Editor]({{site.SEAHORSE_EDITOR_ADDRESS}}) is a web-based application
-that allows user to build [Deeplang workflows](deeplang.html#workflows).
+<a target="_blank" href="{{site.SEAHORSE_EDITOR_ADDRESS}}">Seahorse Editor</a>
+is a web-based application that allows user to build [Deeplang workflows](deeplang.html#workflows).
 
 ### Workflow Executor
 

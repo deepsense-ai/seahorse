@@ -11,11 +11,11 @@ includeOperationsMenu: true
 Provides a [report](../classes/report.html)
 containing an evaluation of predictions quality in the given DataFrame.
 The report contains the following metrics:
-[Explained Variance](https://en.wikipedia.org/wiki/Explained_variation),
-[Mean Absolute Error](https://en.wikipedia.org/wiki/Mean_absolute_error),
-[Mean Square Error](https://en.wikipedia.org/wiki/Mean_squared_error),
-[r2](https://en.wikipedia.org/wiki/Coefficient_of_determination),
-[Root Mean Squared Error](https://en.wikipedia.org/wiki/Root-mean-square_deviation)
+<a target="_blank" href="https://en.wikipedia.org/wiki/Explained_variation">Explained Variance</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Mean_absolute_error">Mean Absolute Error</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Mean_squared_error">Mean Square Error</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Coefficient_of_determination">r2</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Root-mean-square_deviation">Root Mean Squared Error</a>
 
 **Since**: Seahorse 0.4.0
 

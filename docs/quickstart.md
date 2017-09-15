@@ -24,7 +24,8 @@ city, number of bedrooms, number of bathrooms, size of the apartment (in square 
 
 <img style="float:right" src="./img/quickstart_workflow.png" />
 
-* Go to [Seahorse Editor]({{ site.SEAHORSE_EDITOR_ADDRESS }}) and click **New workflow**
+* Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a>
+and click **New workflow**
   * Put <code>quickstart</code> in the **Name** section
   * Press the **create** button
 * Drag [Read DataFrame](operations/read_dataframe.html) operation

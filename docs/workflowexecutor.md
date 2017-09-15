@@ -109,14 +109,14 @@ Detailed information about command line parameters can be obtained by executing 
 
 #### Command line parameters details
 
-| Argument                                    | Meaning                                              |
-|:--------------------------------------------|:-----------------------------------------------------|
-| ``-w FILE``, ``--workflow-filename FILE``   | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
-| ``-d ID``, ``--download-workflow ID``       | Download workflow. If specified, workflow with passed ID will be downloaded from Seahorse Editor. |
-| ``-o DIR``, ``--output-directory DIR``      | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exists. Execution fails if any file is to be overwritten. |
-| ``-u``, ``--upload-report``                 | Upload execution report. If specified, POST request with execution report will be sent after completing workflow execution. |
-| ``-r LEVEL``, ``--report-level LEVEL``      | Level of details for DataFrame report generation; LEVEL is 'high', 'medium', or 'low' (default: 'medium'). |
-| ``-e HOST``, ``--editor-host HOST``         | Hostname or IP of Seahorse Editor. If not specified, the default of ``editor.seahorse.deepsense.io`` will be used.  |
+| Argument                                                        | Meaning |
+|:----------------------------------------------------------------|:--------|
+| ``-w FILE``<BR/>``--workflow-filename FILE``                    | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
+| ``-d ID``<BR/>``--download-workflow ID``                        | Download workflow. If specified, workflow with passed ID will be downloaded from Seahorse Editor. |
+| ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
+| ``-u``<BR/>``--upload-report``                                  | Upload execution report. If specified, POST request with execution report will be sent after completing workflow execution. |
+| ``-r LEVEL``<BR/>``--report-level LEVEL``                       | Level of details for DataFrame report generation; LEVEL is 'high', 'medium', or 'low' (default: 'medium'). |
+| ``-e HOST``<BR/>``--editor-host HOST``                          | Hostname or IP of Seahorse Editor. If not specified, the default of ``editor.seahorse.deepsense.io`` will be used.  |
 
 
 * **NOTE:** At least one of ``-w FILE`` or ``-d ID`` (or their long names) needs to be

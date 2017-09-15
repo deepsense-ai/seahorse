@@ -14,8 +14,9 @@ which uses calculated mean and variance to normalize
 [DataFrame](../classes/dataframe.html)
 on which [Normalizer](../classes/normalizer.html) will be applied.
 Under the hood Train Normalizer uses
-[StandardScaler.fit](http://spark.apache.org/docs/latest/api/java/org/apache/spark/ml/feature/StandardScaler.html#fit(org.apache.spark.sql.DataFrame))
-to produce [StandardScalerModel](http://spark.apache.org/docs/latest/api/java/org/apache/spark/ml/feature/StandardScalerModel.html)
+<a target="_blank" href="http://spark.apache.org/docs/latest/api/java/org/apache/spark/ml/feature/StandardScaler.html#fit(org.apache.spark.sql.DataFrame)">StandardScaler.fit</a>
+to produce
+<a target="_blank" href="http://spark.apache.org/docs/latest/api/java/org/apache/spark/ml/feature/StandardScalerModel.html">StandardScalerModel</a>
 
 **Since**: Seahorse 0.4.0
 

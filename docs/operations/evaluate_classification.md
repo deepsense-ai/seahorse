@@ -10,11 +10,11 @@ Provides a [report](../classes/report.html)
 containing an evaluation of classification quality in the given DataFrame.
 
 The report contains the following metrics:
-[Area under ROC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve),
-[Log Loss](https://en.wikipedia.org/wiki/Cross_entropy#Cross-entropy_error_function_and_logistic_regression),
-[Accuracy](https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification) by threshold,
-[F-Measure (F1 score)](https://en.wikipedia.org/wiki/F1_score) by threshold,
-[ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic).
+<a target="_blank" href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve">Area under ROC</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Cross_entropy#Cross-entropy_error_function_and_logistic_regression">Log Loss</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification">Accuracy</a> by threshold,
+<a target="_blank" href="https://en.wikipedia.org/wiki/F1_score">F-Measure (F1 score)</a> by threshold,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC curve</a>.
 
 **Since**: Seahorse 0.4.0
 

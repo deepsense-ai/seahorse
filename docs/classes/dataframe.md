@@ -10,7 +10,8 @@ description: Seahorse documentation homepage
 ## Introduction
 
 **DataFrame** is a distributed collection of data organized into named columns
-backed by [Spark SQL’s DataFrame](https://spark.apache.org/docs/latest/sql-programming-guide.html#dataframes).
+backed by
+<a target="_blank" href="https://spark.apache.org/docs/latest/sql-programming-guide.html#dataframes">Spark SQL’s DataFrame</a>.
 
 Reusing Spark’s DataFrame data structure allows Seahorse to construct DataFrames
  from a wide array of sources, e.g. structured data files, tables in Hive or
@@ -40,7 +41,8 @@ One of the main differences between Seahorse's implementation of DataFrame and
 Using categoricals helps improving execution time of Machine Learning algorithms
  later on in workflows by using integers for non-integer values.
 
-Quoting Wikipedia’s [Categorical variable](https://en.wikipedia.org/wiki/Categorical_variable):
+Quoting Wikipedia’s
+<a target="_blank" href="https://en.wikipedia.org/wiki/Categorical_variable">Categorical variable</a>:
 
 > In statistics, **a categorical variable** is a variable that can take on one
 > of a limited, and usually fixed, number of possible values, thus assigning
