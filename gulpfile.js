@@ -75,8 +75,8 @@ gulp.task('browser-sync', function () {
   });
 });
 
-gulp.task('config', function () {
-  return gulp.src([client.path + 'config.js'])
+gulp.task('copy-root-scripts', function () {
+  return gulp.src([client.path + client.rootJs])
     .pipe(gulp.dest(build.path));
 });
 
@@ -208,7 +208,7 @@ gulp.task('build', function (callback) {
   runSequence(
     'clean',
     [
-      'fonts', 'images', 'html:index', 'html:partials', 'copy:images', 'config', 'favicon', 'assets', 'less',
+      'fonts', 'images', 'html:index', 'html:partials', 'copy:images', 'copy-root-scripts', 'favicon', 'assets', 'less',
       'libs:css', 'libs:js', 'jshint', 'browserify'
     ],
     'version', 'replace', callback);
@@ -221,21 +221,15 @@ gulp.task('start', function (callback) {
     gulp.watch(client.path + client.images, ['images', browserSync.reload]);
     gulp.watch(client.path + client.lessSources, ['less']);
     gulp.watch(
-      [client.path + client.js, '|', '!' + __dirname + '/' + config.files.tests.client],
-      ['jshint', 'browserify', browserSync.reload]
+      [
+        client.path + client.js,
+        client.path + client.rootJs,
+        '|',
+        '!' + __dirname + '/' + config.files.tests.client
+      ],
+      ['jshint', 'browserify', 'copy-root-scripts', browserSync.reload]
     );
   }
-});
-
-gulp.task('watch', function (callback) {
-  devMode = true;
-  runSequence('browser-sync', callback);
-  gulp.watch(client.path + client.html, ['html:index', 'html:partials', browserSync.reload]);
-  gulp.watch(client.path + client.lessSources, ['less']);
-  gulp.watch(
-    [client.path + client.js, '|', '!' + __dirname + '/' + config.files.tests.client],
-    ['jshint', 'browserify', browserSync.reload]
-  );
 });
 
 gulp.task('default', function () {
