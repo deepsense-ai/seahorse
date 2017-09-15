@@ -14,6 +14,9 @@ let CreatorParameterConstructor = require('./common-creator-parameter.js');
 let PrefixBasedCreatorParameterConstructor = require('./common-prefix-based-creator-parameter.js');
 let DynamicParameterConstructor = require('./common-dynamic-parameter.js');
 
+let GridSearchParameterConstructor = require('./common-gridsearch-parameter.js');
+let MultipleNumericParameterConstructor = require('./common-multiple-numeric.js');
+
 /*
  * (API parameter's type value) => (constructor)
  */
@@ -29,7 +32,9 @@ let parameterConstructors = {
   'multiplier': MultiplierParameterConstructor,
   'creator': CreatorParameterConstructor,
   'prefixBasedCreator': PrefixBasedCreatorParameterConstructor,
-  'dynamic': DynamicParameterConstructor
+  'dynamic': DynamicParameterConstructor,
+  'gridSearch': GridSearchParameterConstructor,
+  'multipleNumeric': MultipleNumericParameterConstructor
 };
 
 let ParameterFactory = {

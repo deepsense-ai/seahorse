@@ -82,10 +82,10 @@ NumericRangeValidator.prototype.validate = function(value) {
         return beginIncluded;
       } else if (v === rB) {
         return endIncluded;
+      } else if (isUndefined(step)) {
+        return (lB < v) && (v < rB);
       } else {
-        return isUndefined(step) ?
-          (lB < v) && (v < rB) :
-          isMultipleOfStep(v, lB);
+        return (lB < v) && (v < rB) && isMultipleOfStep(v, lB);
       }
     };
 

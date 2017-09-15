@@ -142,8 +142,10 @@ describe('Numeric range validator', () => {
       expect(validator.validate(44.5)).toBe(true);
       expect(validator.validate(46)).toBe(false);
 
+      expect(validator.validate(38.5)).toBe(false);
       expect(validator.validate(42)).toBe(false);
       expect(validator.validate(44)).toBe(false);
+      expect(validator.validate(47.5)).toBe(false);
     });
   });
 
