@@ -27,10 +27,9 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColum
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.MultiColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.inference.exceptions.SelectedIncorrectColumnsNumber
-import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.{ParamMap, Param}
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
-
 
 /**
  * This class is returned from an Estimator when multiple column mode was selected during
@@ -124,6 +123,13 @@ abstract class MultiColumnModel[
           }
       }
     }
+  }
+
+  override def replicate(extra: ParamMap): this.type = {
+    val that = this.getClass.getConstructor().newInstance().asInstanceOf[this.type]
+    copyValues(that, extractParamMap(extra))
+      .setModels(models.map(_.replicate(extra)))
+      .asInstanceOf[this.type]
   }
 
   private def replicateWithParent(m: SCW): SCW = {
