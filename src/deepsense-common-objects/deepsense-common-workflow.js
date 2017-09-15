@@ -121,6 +121,18 @@ angular.module('deepsense.graph-model').
         return that.status || that.STATUS_DEFAULT;
       };
 
+      that.getThirdPartyData = function getThirdPartyData () {
+        return {
+          'gui': {
+            'name': internal.name,
+            'description': internal.description,
+            'nodes': {
+
+            }
+          }
+        };
+      };
+
       that.updateState = function updateState(state) {
         for (let id in state.nodes) {
           let node = internal.nodes[id];
@@ -205,15 +217,7 @@ angular.module('deepsense.graph-model').
             'nodes': [],
             'connections': []
           },
-          'thirdPartyData': {
-            'gui': {
-              'name': internal.name,
-              'description': internal.description,
-              'nodes': {
-
-              }
-            }
-          }
+          'thirdPartyData': that.getThirdPartyData()
         };
 
         for (let id in internal.nodes) {

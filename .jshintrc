@@ -9,7 +9,7 @@
   "evil": false,
   "forin": false,
   "maxdepth": 5,
-  "maxstatements": 32,
+  "maxstatements": 33,
   "maxcomplexity": 12,
   "globals": {
     "angular": true,
