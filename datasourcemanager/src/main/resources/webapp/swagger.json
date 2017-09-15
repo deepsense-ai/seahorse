@@ -1,0 +1,242 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Seahorse Datasource Manager API",
+    "description": "Seahorse Datasources API",
+    "version": "1.4.0"
+  },
+  "basePath": "/datasourcemanager/v1",
+  "schemes": [
+    "http"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/datasources": {
+      "get": {
+        "description": "Returns list of all datasources",
+        "operationId": "getDatasources",
+        "responses": {
+          "200": {
+            "description": "List of all datasources",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Datasource"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasources/{datasourceId}": {
+      "get": {
+        "operationId": "getDatasource",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted or updated datasource",
+            "schema": {
+              "$ref": "#/definitions/Datasource"
+            }
+          },
+          "404": {
+            "description": "Datasource not exists",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Creates a new datasource or overrides datasource for given id",
+        "operationId": "putDatasource",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "datasource",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Datasource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted or updated datasource",
+            "schema": {
+              "$ref": "#/definitions/Datasource"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDatasource",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datasource deleted successfully"
+          },
+          "404": {
+            "description": "Datasource not exists",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Datasource": {
+      "type": "object",
+      "required": ["id", "name", "datasourceType"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "downloadUri": {
+          "description": "Read only. Any updates to this field will be ignored.",
+          "type": "string"
+        },
+        "datasourceType": {
+          "$ref": "#/definitions/DatasourceType"
+        },
+        "jdbcParams": {
+          "$ref": "#/definitions/JdbcParams"
+        },
+        "fileParams": {
+          "$ref": "#/definitions/FileParams"
+        }
+      }
+    },
+    "DatasourceType": {
+      "type": "string",
+      "enum": [
+        "jdbc",
+        "file"
+      ]
+    },
+    "JdbcParams": {
+      "description": "Defined for JDBC datasource type",
+      "type": "object",
+      "required": [
+        "url",
+        "driver",
+        "table"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "driver": {
+          "type": "string"
+        },
+        "table": {
+          "type": "string"
+        }
+      }
+    },
+    "FileParams": {
+      "description": "Defined for File datasource type",
+      "type": "object",
+      "required": [
+        "path",
+        "fileScheme",
+        "fileFormat"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "fileScheme": {
+          "$ref": "#/definitions/FileScheme"
+        },
+        "fileFormat": {
+          "$ref": "#/definitions/FileFormat"
+        },
+        "csvFileFormatParams": {
+          "$ref": "#/definitions/CsvFileFormatParams"
+        }
+      }
+    },
+    "FileFormat": {
+      "type": "string",
+      "enum": [
+        "csv",
+        "json",
+        "parquet"
+      ]
+    },
+    "CsvFileFormatParams": {
+      "type": "object",
+      "description": "Defined for csv format type",
+      "required": [
+        "separator",
+        "includeHeader"
+      ],
+      "properties": {
+        "separator": {
+          "type": "string"
+        },
+        "includeHeader": {
+          "type": "boolean"
+        }
+      }
+    },
+    "FileScheme": {
+      "type": "string",
+      "enum": [
+        "http",
+        "https",
+        "ftp",
+        "hdfs",
+        "file"
+      ]
+    },
+    "Error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
