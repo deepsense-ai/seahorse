@@ -44,6 +44,18 @@ class EntitiesApi @Inject() (
       pathPrefix(pathPrefixMatcher) {
         path(JavaUUID) { idParameter =>
           val entityId: Entity.Id = idParameter
+          get {
+            withUserContext { userContext =>
+              complete(
+                authorizatorProvider.forContext(userContext).withRole(roleGet) { userContext =>
+                  entityService.getEntityReport(userContext.tenantId, idParameter).map {
+                    case Some(entity) => Map("entity" -> entity)
+                    case None => throw EntityNotFoundException(entityId)
+                  }
+                }
+              )
+            }
+          } ~
           put {
             withUserContext { userContext =>
               entity(as[UserEntityDescriptor]) { entityDescription =>
@@ -55,7 +67,7 @@ class EntitiesApi @Inject() (
                     authorizatorProvider.forContext(userContext).withRole(roleUpdate) {
                       userContext =>
                         entityService.updateEntity(userContext.tenantId, entityDescription).map {
-                          case Some(entity) => entity
+                          case Some(entity) => Map("entity" -> entity)
                           case None => throw EntityNotFoundException(entityId)
                         }
                     }

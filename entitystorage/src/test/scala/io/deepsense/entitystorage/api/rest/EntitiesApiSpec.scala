@@ -66,6 +66,28 @@ class EntitiesApiSpec
     }
   }
 
+  "GET /entities/:id" should {
+    "return entities" in {
+      Get(s"/$apiPrefix/${addedEntity.id}") ~>
+        addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
+        status should be(StatusCodes.OK)
+
+        implicit val entityProtocol = EntityJsonProtocol
+        val expectedEntity = Map("entity" -> addedEntity.reportOnly)
+
+        responseAs[Map[String, Entity]] shouldBe expectedEntity
+      }
+    }
+    "return NotFound" when {
+      "entity does not exists" in {
+        Get(s"/$apiPrefix/${notAddedEntity.id}") ~>
+          addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+      }
+    }
+  }
+
   "PUT /entities/:id" should {
     "return NotFound" when {
       "entity does not exists" in {
@@ -88,7 +110,7 @@ class EntitiesApiSpec
       Put(s"/$apiPrefix/${addedEntityDescriptor.id}", addedEntityDescriptor) ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
-        responseAs[Entity] shouldBe entities.head
+        responseAs[Map[String, Entity]] shouldBe Map("entity" -> addedEntity)
         verify(entityService).updateEntity(correctTenantA, addedEntityDescriptor)
       }
     }
@@ -125,11 +147,19 @@ class EntitiesApiSpec
     val entityService = mock[EntityService]
     when(entityService.getAll(anyString())).thenReturn(Future.successful(entities))
     when(entityService.deleteEntity(any(), any())).thenReturn(Future.successful(()))
-    when(entityService.updateEntity(anyString(), any())).thenAnswer(
+    when(entityService.updateEntity(any(), any())).thenAnswer(
       new Answer[Future[Option[Entity]]] {
         override def answer(invocationOnMock: InvocationOnMock): Future[Option[Entity]] = {
           val entity = invocationOnMock.getArgumentAt(1, classOf[UserEntityDescriptor])
           val result = if (entity == notAddedEntityDescriptor) None else Some(addedEntity)
+          Future.successful(result)
+        }
+      })
+    when(entityService.getEntityReport(any(), any())).thenAnswer(
+      new Answer[Future[Option[Entity]]] {
+        override def answer(invocationOnMock: InvocationOnMock): Future[Option[Entity]] = {
+          val entityId = invocationOnMock.getArgumentAt(1, classOf[Entity.Id])
+          val result = if (entityId == notAddedEntity.id) None else Some(addedEntity.reportOnly)
           Future.successful(result)
         }
       })
