@@ -238,13 +238,13 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (3.5, "a", 1.5, 5, 2.5, "one"),
-      (3.5, "a", 1.5, 5, 3.5, "four"),
-      (3.6, "b", 1.6, 6, 2.6, "two"),
-      (3.7, "c", 1.7, 10, 2.7, "three"),
-      (4.6, "d", 1.6, 9, 2.6, "two"),
-      (4.5, "e", 1.5, 11, 2.5, "one"),
-      (4.5, "e", 1.5, 11, 3.5, "four")
+      (3.5, "a", 1.5, 5.0, 2.5, "one"),
+      (3.5, "a", 1.5, 5.0, 3.5, "four"),
+      (3.6, "b", 1.6, 6.0, 2.6, "two"),
+      (3.7, "c", 1.7, 10.0, 2.7, "three"),
+      (4.6, "d", 1.6, 9.0, 2.6, "two"),
+      (4.5, "e", 1.5, 11.0, 2.5, "one"),
+      (4.5, "e", 1.5, 11.0, 3.5, "four")
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       appendPrefix(schemaL.fields, leftPrefix) ++
@@ -298,13 +298,13 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (1.5, 3.5, "a", 5, 2.5, "one"),
-      (1.5, 3.5, "a", 5, 3.5, "four"),
-      (1.6, 3.6, "b", 6, 2.6, "two"),
-      (1.7, 3.7, "c", 10, 2.7, "three"),
-      (1.6, 4.6, "d", 9, 2.6, "two"),
-      (1.5, 4.5, "e", 11, 2.5, "one"),
-      (1.5, 4.5, "e", 11, 3.5, "four")
+      (1.5, 3.5, "a", 5.0, 2.5, "one"),
+      (1.5, 3.5, "a", 5.0, 3.5, "four"),
+      (1.6, 3.6, "b", 6.0, 2.6, "two"),
+      (1.7, 3.7, "c", 10.0, 2.7, "three"),
+      (1.6, 4.6, "d", 9.0, 2.6, "two"),
+      (1.5, 4.5, "e", 11.0, 2.5, "one"),
+      (1.5, 4.5, "e", 11.0, 3.5, "four")
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       appendPrefix(schemaL.fields, leftPrefix) ++
@@ -354,9 +354,9 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (2.5, "a", 1.5, 5, "one"),
-      (3.6, "b", 1.6, 6, null),
-      (3.7, "c", 1.7, 10, null)
+      (2.5, "a", 1.5, 5.0, "one"),
+      (3.6, "b", 1.6, 6.0, null),
+      (3.7, "c", 1.7, 10.0, null)
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       appendPrefix(schemaL.fields, leftTablePrefix) ++
@@ -401,9 +401,9 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (2.5, "a", 1.5, 5, "one"),
-      (3.6, "b", 1.6, 6, null),
-      (3.7, "c", 1.7, 10, null)
+      (2.5, "a", 1.5, 5.0, "one"),
+      (3.6, "b", 1.6, 6.0, null),
+      (3.7, "c", 1.7, 10.0, null)
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       schemaL.fields ++ Seq(StructField(colsR(2), StringType))
@@ -447,9 +447,9 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (2.5, "a", 1.5, 5, "one"),
-      (3.6, "b", 1.6, 6, null),
-      (3.7, "c", 1.7, 10, null)
+      (2.5, "a", 1.5, 5.0, "one"),
+      (3.6, "b", 1.6, 6.0, null),
+      (3.7, "c", 1.7, 10.0, null)
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       schemaL.fields ++ Seq(StructField(colsR(2), StringType))

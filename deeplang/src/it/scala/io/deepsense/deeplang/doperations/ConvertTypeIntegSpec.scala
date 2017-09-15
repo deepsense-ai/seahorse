@@ -27,7 +27,7 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.parameters._
 
 class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
@@ -171,7 +171,12 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
         "use their ISO 8601 representation as category names" in {
           val converted = useConvertType(Set(timestampId), Set.empty, Set.empty, targetType)
           val expected = toCategorical(Set(timestampId))
-          assertDataFramesEqual(converted, expected)
+
+          val convertedMapper = CategoricalMapper(converted, executionContext.dataFrameBuilder)
+          val uncategorizedConverted = convertedMapper.uncategorized(converted)
+          val expectedMapper = CategoricalMapper(converted, executionContext.dataFrameBuilder)
+          val uncategorizedExpected = expectedMapper.uncategorized(expected)
+          assertDataFramesEqual(uncategorizedConverted, uncategorizedExpected)
         }
       }
       "are Categorical" should {

@@ -61,8 +61,8 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
         // TODO: replace should be removed after spark upgrade to version containing bugfix. DS-635
         val newColumnName = (prefix + columnName + "_" + value).replace(".", "_")
 
-        s"IF(`$columnName` IS NULL, CAST(NULL as Double), IF(`$columnName`=$id, 1.0, 0.0))" +
-          s"as `$newColumnName`"
+        s"IF(`$columnName` IS NULL, CAST(NULL as Double), " +
+          s"IF(`$columnName`=$id, CAST(1.0 as Double), CAST(0.0 as Double))) as `$newColumnName`"
       }
     }
 

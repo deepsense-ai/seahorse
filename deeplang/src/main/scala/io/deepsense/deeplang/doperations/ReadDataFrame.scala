@@ -143,6 +143,7 @@ case class ReadDataFrame()
     val schemaWithCategoricals = StructType(
       sparkDataFrame.schema.zipWithIndex.map { case (column, index) =>
         if (categoricals.contain(index)) {
+          // TODO: This could be main problem cause for DS-2066
           column.copy(dataType = StringType)
         } else {
           column

@@ -21,7 +21,7 @@ object Version {
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
   val cassandra = "2.1.5"
-  val cassandraConnector = "1.4.0"
+  val cassandraConnector = "1.5.0-M2"
   val cassandraUnit = "2.1.3.1"
   val hadoop = "2.6.0"
   val mockito = "1.10.19"
@@ -30,7 +30,7 @@ object Version {
   val scalacheck = "1.12.2"
   val scalatest = "3.0.0-SNAP4"
   val scoverage = "1.0.4"
-  val spark = "1.4.0"
+  val spark = "1.5.2"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
 }
@@ -82,7 +82,8 @@ object Dependencies {
     "typesafe.com" at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org" at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"     at "http://repo.spray.io",
-    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/"
+    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/",
+    "central.maven.org" at "http://central.maven.org/maven2/"
   )
 
   val commons = Seq(

@@ -37,7 +37,7 @@ case class MathematicalTransformation(
     override def apply(context: ExecutionContext)(p: Unit)(dataFrame: DataFrame): DataFrame = {
       val (transformedSparkDataFrame, schema) = try {
         val transformedSparkDataFrame =
-          dataFrame.sparkDataFrame.selectExpr("*", s"$formula AS `$columnName`")
+          dataFrame.sparkDataFrame.selectExpr("*", s"CAST($formula as Double) AS `$columnName`")
         val schema = StructType(transformedSparkDataFrame.schema.map { _.copy(nullable = true) })
         (transformedSparkDataFrame, schema)
       }

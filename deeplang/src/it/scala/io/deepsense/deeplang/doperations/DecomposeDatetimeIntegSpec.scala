@@ -42,7 +42,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
         List(Some(new Timestamp(t1.getMillis)), Some(new Timestamp(t2.getMillis)))
       )
       val expectedData: Seq[Row] = Seq(
-        createDecomposedTimestampRow(schema, 0, t1), createDecomposedTimestampRow(schema, 1, t2)
+        createDecomposedTimestampRow(schema, 0L, t1), createDecomposedTimestampRow(schema, 1L, t2)
       )
       shouldDecomposeTimestamp(schema, data, expectedData, prefix = None)
     }
@@ -55,7 +55,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
         List(Some(new Timestamp(t1.getMillis)), Some(new Timestamp(t2.getMillis)))
       )
       val expectedData: Seq[Row] = Seq(
-        createDecomposedTimestampRow(schema, 0, t1), createDecomposedTimestampRow(schema, 1, t2)
+        createDecomposedTimestampRow(schema, 0L, t1), createDecomposedTimestampRow(schema, 1L, t2)
       )
       shouldDecomposeTimestamp(schema, data, expectedData, prefix)
     }
@@ -67,7 +67,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       val prefix = None
       val data = createData(List(Some(new Timestamp(t1.getMillis)), prefix))
       val expectedData: Seq[Row] = Seq(
-        createDecomposedTimestampRow(schema, 0, t1),
+        createDecomposedTimestampRow(schema, 0L, t1),
         new GenericRowWithSchema(Array(1, null, null, null, null, null, null, null),
           resultSchema(schema, prefix))
       )
@@ -132,7 +132,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
     resultDataFrame
   }
 
-  private def createDecomposedTimestampRow(schema: StructType, id: Int, t: DateTime): Row = {
+  private def createDecomposedTimestampRow(schema: StructType, id: Long, t: DateTime): Row = {
     new GenericRowWithSchema(Array(id, new Timestamp(t.getMillis), t.getYear, t.getMonthOfYear,
       t.getDayOfMonth, t.getHourOfDay, t.getMinuteOfHour, t.getSecondOfMinute), schema)
   }
@@ -153,7 +153,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
   }
 
   private def createData(timestamps: Seq[Option[Timestamp]]): RDD[Row] = {
-    sparkContext.parallelize(timestamps.zipWithIndex.map(p => Row(p._2, p._1.orNull)))
+    sparkContext.parallelize(timestamps.zipWithIndex.map(p => Row(p._2.toLong, p._1.orNull)))
   }
 
   private def createSchema: StructType = {

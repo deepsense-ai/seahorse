@@ -165,16 +165,14 @@ case class WriteDataFrame()
             case (_, TimestampType) =>
               DateTimeConverter.toString(
                 DateTimeConverter.fromMillis(value.asInstanceOf[Timestamp].getTime))
-            case _ => value
+            case (x, _) => value.toString
           }
         })
 
     def stringifySelectedTypes(schema: StructType): StructType = {
       StructType(
         schema.map {
-          case field@StructField(_, BooleanType, _, _) => field.copy(dataType = StringType)
-          case field@StructField(_, TimestampType, _, _) => field.copy(dataType = StringType)
-          case field => field
+          case field@StructField(_, _, _, _) => field.copy(dataType = StringType)
         }
       )
     }

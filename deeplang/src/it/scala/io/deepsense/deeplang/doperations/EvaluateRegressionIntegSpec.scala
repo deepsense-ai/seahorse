@@ -94,7 +94,7 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
       val report = evaluateRegression(testDataFrame, targetColumnName, predictionColumnName)
       assertEvaluateRegressionReport(
         report,
-        List(List(Some("24"), Some("1"), Some("0"), Some("0"), Some("1"), Some("0"))))
+        List(List(Some("24"), Some("0.666667"), Some("0"), Some("0"), Some("1"), Some("0"))))
     }
     "return report for not entirely correct predictions" in {
       val dataFrameWithWrongPredictions = createDataFrame(wrongPredictionsRows, schema)
@@ -104,7 +104,14 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
         predictionColumnName)
       assertEvaluateRegressionReport(
         report,
-        List(List(Some("24"), Some("1"), Some("0.1"), Some("0.01"), Some("0.985"), Some("0.1"))))
+        List(List(
+          Some("24"),
+          Some("0.676667"),
+          Some("0.1"),
+          Some("0.01"),
+          Some("0.985"),
+          Some("0.1")))
+      )
     }
   }
 

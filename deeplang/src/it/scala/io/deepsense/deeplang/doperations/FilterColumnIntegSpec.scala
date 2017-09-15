@@ -46,9 +46,9 @@ class FilterColumnsIntegSpec
   def schema = StructType(columns)
 
   // Projected:  0  "b"/1   "a"/2 3                                     "z"/4
-  val row1 = Seq(1, "str1", 10.0, new Timestamp(DateTime.now.getMillis), true)
-  val row2 = Seq(2, "str2", 20.0, new Timestamp(DateTime.now.getMillis), false)
-  val row3 = Seq(3, "str3", 30.0, new Timestamp(DateTime.now.getMillis), false)
+  val row1 = Seq(1.0, "str1", 10.0, new Timestamp(DateTime.now.getMillis), true)
+  val row2 = Seq(2.0, "str2", 20.0, new Timestamp(DateTime.now.getMillis), false)
+  val row3 = Seq(3.0, "str3", 30.0, new Timestamp(DateTime.now.getMillis), false)
   val data = Seq(row1, row2, row3)
 
   "FilterColumns" should {
