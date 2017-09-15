@@ -2,8 +2,43 @@
 # Copyright (c) 2016, CodiLime Inc.
 #
 
-set -ex
+if [[ "$#" -eq 0 ]]; then
+  echo "error: no tests specified"
+  echo "supported options:"
+  echo "-b, --batch"
+  echo "-s, --session"
+  echo "-a, --all"
+  exit 1
+fi
 
+# parse parameters
+RUN_BATCH_TESTS=false
+RUN_SESSIONMANAGER_TESTS=false
+while (( "$#" )); do
+  key="$1"
+
+  case $key in
+    -b|--batch)
+    RUN_BATCH_TESTS=true
+    shift
+    ;;
+    -s|--session)
+    RUN_SESSIONMANAGER_TESTS=true
+    shift
+    ;;
+    -a|--all)
+    RUN_BATCH_TESTS=true
+    RUN_SESSIONMANAGER_TESTS=true
+    ;;
+    *)
+    echo "error: unknown option $key"
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+set -ex
 # `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
 
@@ -45,6 +80,7 @@ deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG dow
  cd ../deployment/docker-compose
  mkdir -p jars
  cp -r ../../e2etestssdk/target/scala-2.11/*.jar jars
+ ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG --generate-only --yaml-file docker-compose.yml
  ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG up -d
 )
 
@@ -64,8 +100,12 @@ docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE up -d
 export MESOS_MASTER_IP=10.254.0.2
 
 ## Run sbt tests
-
-sbt e2etests/clean e2etests/test
+if $RUN_SESSIONMANAGER_TESTS ; then
+  sbt e2etests/clean "e2etests/testOnly io.deepsense.e2etests.*"
+fi
+if $RUN_BATCH_TESTS ; then
+  sbt e2etests/clean "e2etests/testOnly io.deepsense.batche2etests.*"
+fi
 
 SBT_EXIT_CODE=$?
 exit $SBT_EXIT_CODE

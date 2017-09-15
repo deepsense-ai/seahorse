@@ -26,6 +26,13 @@ rm -rf /var/lib/apt/lists/*
 
 ENV MESOS_WORK_DIR /tmp/mesos
 
+# Download spark executor
+RUN mkdir /spark-2.0.0 && \
+    wget -q -O /spark-2.0.0/packed.tgz \
+    http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz && \
+    tar -xzf /spark-2.0.0/packed.tgz -C /spark-2.0.0 && \
+    rm /spark-2.0.0/packed.tgz
+
 # Install conda
 RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \
     https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh && \

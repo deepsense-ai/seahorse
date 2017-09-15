@@ -106,25 +106,13 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
           completedNodes = nsr.nodeStatuses.getOrElse(Map.empty).getOrElse(NodeStatusName.Completed, 0)
           numberOfNodes <- numberOfNodesFut
         } yield {
-          if (errorNodeStatuses > 0) {
-            s"Errors: $errorNodeStatuses nodes failed for workflow id: ${workflow.id}. name: ${workflow.name}".failure
-          } else {
-            logger.info(s"$completedNodes nodes completed." +
-              s" Need all $numberOfNodes nodes completed for workflow id: ${workflow.id}. name: ${workflow.name}")
-
-            if (completedNodes > numberOfNodes) {
-              logger.error(
-                s"""FATAL. INVESTIGATE
-                    |
-                    |Number of completed nodes is larger than number of nodes
-                  """.
-                  stripMargin)
-            }
-
-            completedNodes shouldEqual numberOfNodes
-
-            "All nodes completed".success
-          }
+          checkCompletedNodesNumber(
+            errorNodeStatuses,
+            completedNodes,
+            numberOfNodes,
+            workflow.id,
+            workflow.name
+          )
         }, httpTimeout)
     }(PatienceConfig(timeout = workflowTimeout, interval = 5 seconds), implicitly[Position])
 
@@ -132,6 +120,32 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
       case Success(_) =>
       case Failure(nodeReport) =>
         fail(s"Some nodes failed for workflow id: ${workflow.id}. name: ${workflow.name}'. Node report: $nodeReport")
+    }
+  }
+
+  def checkCompletedNodesNumber(errorNodeStatuses: Int,
+                                completedNodes: Int,
+                                numberOfNodes: Int,
+                                workflowID: Workflow.Id,
+                                workflowName: String): Validation[String, String] = {
+    if (errorNodeStatuses > 0) {
+      s"Errors: $errorNodeStatuses nodes failed for workflow id: $workflowID. name: $workflowName".failure
+    } else {
+      logger.info(s"$completedNodes nodes completed." +
+        s" Need all $numberOfNodes nodes completed for workflow id: $workflowID. name: $workflowName")
+
+      if (completedNodes > numberOfNodes) {
+        logger.error(
+          s"""FATAL. INVESTIGATE
+              |
+              |Number of completed nodes is larger than number of nodes
+            """.
+            stripMargin)
+      }
+
+      completedNodes shouldEqual numberOfNodes
+
+      "All nodes completed".success
     }
   }
 
