@@ -3,13 +3,15 @@
 #this script prepares the seahorse environment, specifically the
 #database, containing 1.3 workflows to be migrated
 
+{
+
 SCRIPT_DIR=`dirname $0`
 
-. "$SCRIPT_DIR/common.sh" > /dev/null
+. "$SCRIPT_DIR/common.sh"
 
 WORKDIR="$WORKDIR_NO_TIMESTAMP".`date +%Y%m%d%H%M%S`
 mkdir -p $WORKDIR/h2-data
-pushd $WORKDIR >/dev/null
+pushd $WORKDIR
 
 WORKFLOWS_DIR="$PROJECT_ROOT/workflowmanager/src/test/resources/versionconverter"
 
@@ -28,7 +30,7 @@ H2_SHELL_CLASS=org.h2.tools.Shell
 INSERT_TEST_WORKFLOWS_SCRIPT=insert_test_workflows.sql
 
 function wait_for_workflowmanager() {
-    until curl -m 1 $WORKFLOWMANAGER_URL >/dev/null 2>&1; do sleep 1; done
+    until curl -m 1 $WORKFLOWMANAGER_URL; do sleep 1; done
 }
 
 function fetch_h2_jar() {
@@ -41,20 +43,22 @@ function create_sql_script() {
 
 fetch_h2_jar
 #create db file, so that it's not owned by root
-java -cp $H2_JAR $H2_SHELL_CLASS -url $H2_JDBC_URL <<<"quit" >/dev/null
+java -cp $H2_JAR $H2_SHELL_CLASS -url $H2_JDBC_URL <<<"quit"
 
 $DOCKER_COMPOSE_CALL --generate-only
-docker-compose up -d >/dev/null || exit 1
+docker-compose up -d || exit 1
 wait_for_workflowmanager
 
 # db and its tables are created at this point
 
-docker-compose kill >/dev/null
-docker-compose down -v >/dev/null
+docker-compose kill
+docker-compose down -v
 
 create_sql_script # that inserts 1.3 worklows as examples
-java -cp $H2_JAR $H2_RUN_SCRIPT_CLASS -url $H2_JDBC_URL -script ./$INSERT_TEST_WORKFLOWS_SCRIPT > /dev/null || exit 1
+java -cp $H2_JAR $H2_RUN_SCRIPT_CLASS -url $H2_JDBC_URL -script ./$INSERT_TEST_WORKFLOWS_SCRIPT || exit 1
 
-popd >/dev/null
+popd
+
+} > /dev/null
 
 echo $WORKDIR
