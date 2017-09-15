@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS "SESSIONS" (
+  "workflow" UUID NOT NULL,
+  "event" VARCHAR NOT NULL,
+  "at" TIMESTAMP NOT NULL,
+  PRIMARY KEY ("workflow")
+);

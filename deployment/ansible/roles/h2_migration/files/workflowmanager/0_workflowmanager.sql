@@ -4,6 +4,8 @@ create table if not exists WORKFLOWS (
   deleted BOOLEAN,
   created BIGINT,
   updated BIGINT,
+  owner_id VARCHAR2,
+  owner_name VARCHAR2,
   primary key (id));
 
 create table if not exists NOTEBOOKS (
