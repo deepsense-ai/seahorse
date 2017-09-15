@@ -34,8 +34,9 @@ import io.deepsense.deeplang.params.{Param, ParamMap}
   * Thats why this class must be abstract.
   */
 abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[MD]](
-    private var pipelinedModel: PipelineModel,
     private var wrappedModel: SparkModelWrapper[MD, E]) extends Transformer {
+
+  private var pipelinedModel: PipelineModel = null
 
   private[stringindexingwrapper] def setPipelinedModel(
       pipelinedModel: PipelineModel): this.type = {

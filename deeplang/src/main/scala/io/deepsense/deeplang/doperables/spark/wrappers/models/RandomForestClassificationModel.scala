@@ -29,11 +29,10 @@ import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrap
 import io.deepsense.deeplang.params.Param
 
 class RandomForestClassificationModel(
-    pipelineModel: PipelineModel,
     vanillaModel: VanillaRandomForestClassificationModel)
-  extends StringIndexingWrapperModel(pipelineModel, vanillaModel) {
+  extends StringIndexingWrapperModel(vanillaModel) {
 
-  def this() = this(null, new VanillaRandomForestClassificationModel())
+  def this() = this(new VanillaRandomForestClassificationModel())
 }
 
 class VanillaRandomForestClassificationModel

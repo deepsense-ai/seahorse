@@ -29,11 +29,10 @@ import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrap
 import io.deepsense.deeplang.params.{ParamMap, Param}
 
 class GBTClassificationModel(
-    pipelineModel: PipelineModel,
     vanilaModel: VanillaGBTClassificationModel)
-  extends StringIndexingWrapperModel(pipelineModel, vanilaModel) {
+  extends StringIndexingWrapperModel(vanilaModel) {
 
-  def this() = this(null, new VanillaGBTClassificationModel())
+  def this() = this(new VanillaGBTClassificationModel())
 }
 
 class VanillaGBTClassificationModel()
