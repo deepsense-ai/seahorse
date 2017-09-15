@@ -72,7 +72,8 @@ function ReportCtrl($scope, $rootScope, $uibModal, PageService) {
 
     $rootScope.$broadcast('Resizable.FIT', {
       name: 'height',
-      amount: '25px'
+      amount: '25px',
+      selector: '.c-bottom-tabs'
     });
   };
 

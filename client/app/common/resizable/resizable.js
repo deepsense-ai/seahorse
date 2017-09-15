@@ -114,7 +114,7 @@ class Resizable {
       });
 
       scope.$on('Resizable.FIT', (e, data) => {
-        if (data.name === 'height') {
+        if (data.name === 'height' && $(element[0]).is(data.selector)) {
           element[0].style[data.name] = data.amount;
           height = parseInt(element[0].style.height);
         }

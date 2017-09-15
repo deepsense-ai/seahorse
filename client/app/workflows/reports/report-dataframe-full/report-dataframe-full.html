@@ -10,19 +10,19 @@
 
           <small>Columns</small>
           <h4>
-            <span> {{ controller.dataframeHeaderData.columnCount }} </span>
+            <span> {{ controller.dataframeHeaderData().columnCount }} </span>
           </h4>
         </div>
         <div class="col-xs-6">
           <small>Rows</small>
           <h4>
-            {{ controller.dataframeHeaderData.previewRowCount }} <span>/ {{ controller.dataframeHeaderData.rowCount }} </span>
+            {{ controller.dataframeHeaderData().previewRowCount }} <span>/ {{ controller.dataframeHeaderData().rowCount }} </span>
           </h4>
         </div>
       </div>
     </div>
 
-    <report-table table="controller.dataSample"
+    <report-table table="controller.dataSample()"
                   distributions="controller.report.distributions"
                   datatypes-visible="true"></report-table>
 

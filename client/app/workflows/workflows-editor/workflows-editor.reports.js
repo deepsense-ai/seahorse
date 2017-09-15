@@ -31,7 +31,7 @@ class WorkflowsEditorReports {
           this.Report.getReport(reportEntityId).then(report => {
             this.reportName = '';
             this.report = report;
-            this.reportName = report.getReportName();
+            this.reportName = report.name;
             this.Report.openReport();
           });
         }

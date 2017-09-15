@@ -44,7 +44,8 @@ function ReportsFactory($q, $rootScope) {
 
     $rootScope.$broadcast('Resizable.FIT', {
       name: 'height',
-      amount: '250px'
+      amount: '250px',
+      selector: '.c-bottom-tabs'
     });
   };
 
