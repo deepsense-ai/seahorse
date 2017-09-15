@@ -16,12 +16,6 @@ function PresetModalCtrl($uibModalInstance, $log, PresetService, PresetModalLabe
   vm.cancel = cancel;
   vm.isEditingEnabled = isEditingEnabled;
 
-  $uibModalInstance.rendered.then(()=>{
-    const uriInputs = $('.preset-modal .uri-input');
-    if (uriInputs.length > 0)
-      uriInputs[0].focus();
-  });
-
   function isPresetNameUsed() {
     return vm.presetForm.presetName.$dirty && PresetService.isNameUsed(vm.presetForm.presetName.$viewValue);
   }

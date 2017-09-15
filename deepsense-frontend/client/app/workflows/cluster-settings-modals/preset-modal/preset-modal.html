@@ -64,6 +64,7 @@
                  ng-focus="controller.focused = field"
                  name="{{::field}}"
                  type="{{::controller.labels[field].type}}"
+                 ng-attr-autofocus="{{::field === 'uri'}}"
           />
           <div class="input-validation-error" >
             <span ng-if="controller.errors[field]">{{controller.errors[field]}}</span>
