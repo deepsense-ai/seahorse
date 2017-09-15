@@ -96,13 +96,13 @@ Report content example
 
       "description": "Evaluate classification summary",
 
-      "columnNames": ["DataFrame Size", "AUC"],
+      "columnNames": ["DataFrame size", "AUC", "Logarithmic Loss"],
 
       "blockType": "table",
 
       "rowNames": null,
 
-      "values": [["24", "1"]]
+      "values": [["24", "1", "0.01005"]]
 
     },
 

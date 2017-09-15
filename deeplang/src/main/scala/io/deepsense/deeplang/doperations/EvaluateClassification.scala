@@ -31,10 +31,11 @@ case class EvaluateClassification() extends Evaluator {
       new BinaryClassificationMetrics(predictionsAndLabels, EvaluateClassification.MetricsNumBins)
 
     logger.info("Computing LogarithmicLoss metric")
-    // TODO: Add metric: LogarithmicLoss
-    // https://spark.apache.org/docs/1.3.1/api/scala
-    //   /index.html#org.apache.spark.mllib.tree.loss.LogLoss$
-    // https://www.kaggle.com/wiki/LogarithmicLoss
+    val logLossSum = predictionsAndLabels.map {
+      case (prediction, label) =>
+        label * math.log(prediction) + (1.0 - label) * math.log(1.0 - prediction)
+    }.sum()
+    val logLoss = logLossSum * -1.0 / dataFrameSize
 
     logger.info("Computing accuracyByThreshold metric")
     // TODO: This implementation of accuracy computing is inefficient
@@ -87,18 +88,20 @@ case class EvaluateClassification() extends Evaluator {
       "Evaluate classification summary",
       Some(
         List(
-          "DataFrame Size",
-          "AUC")),
+          "DataFrame size",
+          "AUC",
+          "Logarithmic Loss")),
       None,
       List(
         List(
           Some(dataFrameSize.toString),
-          Some(DoubleUtils.double2String(metrics.areaUnderROC()))
+          Some(DoubleUtils.double2String(metrics.areaUnderROC())),
+          Some(DoubleUtils.double2String(logLoss))
         ))
     )
 
     logger.info("Assembling evaluation report")
-    Report(ReportContent(
+    val report = Report(ReportContent(
       EvaluateClassification.ReportName,
       Map(
         summaryTable.name -> summaryTable,
@@ -106,6 +109,11 @@ case class EvaluateClassification() extends Evaluator {
         fMeasureByThresholdTable.name -> fMeasureByThresholdTable,
         rocTable.name -> rocTable)
     ))
+
+    import spray.json._
+    import io.deepsense.reportlib.model.ReportJsonProtocol._
+    logger.debug("EvaluateClassification report = " + report.content.toJson.prettyPrint)
+    report
   }
 
   private def accuracyForThreshold(

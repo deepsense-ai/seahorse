@@ -119,7 +119,7 @@ object CatalogRecorder {
     )
 
     catalog.registerDOperation[EvaluateClassification](
-      DOperationCategories.ML,
+      DOperationCategories.ML.Classification,
       "Evaluate classification model"
     )
 

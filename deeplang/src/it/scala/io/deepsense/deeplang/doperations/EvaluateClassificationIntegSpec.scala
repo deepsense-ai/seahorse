@@ -128,11 +128,12 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
       "Evaluate classification summary",
       Some(
         List(
-          "DataFrame Size",
-          "AUC")),
+          "DataFrame size",
+          "AUC",
+          "Logarithmic Loss")),
       None,
       List(
-        List(Some("24"), Some("1")))
+        List(Some("24"), Some("1"), Some("0.01005")))
     )
 
     Report(ReportContent(
