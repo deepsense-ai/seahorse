@@ -15,13 +15,7 @@ services:
       - WM_HOST=10.10.10.110
       - WM_PORT=$GENERATED_WM_PORT
       - SESSION_EXECUTOR_PATH=hdfs://nameservice1/tmp/we_notebooks.jar
-      - PYEXECUTOR_DIR=hdfs://nameservice1/tmp
-      - PYEXECUTOR_JAR=we_notebooks2.jar
-      - PYSPARK_DIR=hdfs://nameservice1/tmp
-      - PYSPARK_ZIP=pyspark-1.6.zip
-      - KERNEL_MANAGER_ZIP=notebook_executing_kernel.zip
-      - KERNEL_MANAGER_DIR=hdfs://nameservice1/tmp
-      - KERNEL_MANAGER_PIKA_ZIP=hdfs://nameservice1/tmp/pika-0.10.0.tar.gz
+      - SESSION_EXECUTOR_DEPS_PATH=hdfs://nameservice1/tmp/we-deps.zip
   frontend:
     image: docker-registry.intra.codilime.com/tap/deepsense-frontend
     environment:

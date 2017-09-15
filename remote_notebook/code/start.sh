@@ -67,6 +67,9 @@ if [ -z "$SESSION_ID" ];   then echo "Parameter --session-id is required"; exit 
 
 # Exit script after first erroneous instruction
 set -ex
+
+cd $WORKING_DIR
+
 echo "INSTALLING DEPENDENCIES"
 
 export PATH=/opt/cloudera/parcels/Anaconda-4.0.0/bin:$PATH
@@ -75,8 +78,6 @@ pip install --root $LOCAL_PATH pika-0.10.0.tar.gz
 
 export PYTHONPATH="$LOCAL_PATH/opt/cloudera/parcels/Anaconda-4.0.0/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
 echo "PYTHONPATH=$PYTHONPATH"
-
-cd $WORKING_DIR
 
 echo "start executing_kernel_manager"
 python executing_kernel/executing_kernel_manager.py \

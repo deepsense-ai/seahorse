@@ -14,38 +14,27 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
     "generate correct POST requests" in {
       val workflowId = Id.randomId
       val jarPath = "jarPath"
+      val depsPath = "hdfs://depsPath/depsFile"
+      val depsFile = "depsFile"
       val className = "className"
       val queueHost = "queueHost"
       val queuePort = 1234
-      val pyExecutorDir = "we"
-      val pyExecutorJar = "we2.jar"
-      val pySparkDir = "spark"
-      val pySparkZip = "pyspark.zip"
       val wmScheme = "http"
       val wmHost = "wmhost"
       val wmPort = "9080"
       val wmAddress = s"$wmScheme://$wmHost:$wmPort"
-      val kmDir = "kmdir"
-      val kmZip = "km.zip"
-      val pikaZip = "pika.zip"
 
       val builder = new SessionExecutorRequestBodyBuilder(
         className,
         jarPath,
+        depsPath,
         queueHost,
         queuePort,
         false,
-        pyExecutorDir,
-        pyExecutorJar,
-        pySparkDir,
-        pySparkZip,
         wmScheme,
         wmHost,
         wmPort,
-        false,
-        kmDir,
-        kmZip,
-        pikaZip
+        false
       )
 
       val request = builder.createSession(workflowId)
@@ -58,19 +47,14 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
           "-m", queueHost,
           "--message-queue-port", queuePort.toString,
           "--wm-address", wmAddress,
-          "-p", pyExecutorJar,
-          "-z", pySparkZip,
           "-j", workflowId.toString(),
-          "--kernel-manager-archive", kmZip
+          "-d", depsFile
         ),
         Seq(
-          s"$pyExecutorDir/$pyExecutorJar",
-          s"$pySparkDir/$pySparkZip",
-          s"$kmDir/$kmZip",
-          pikaZip
+          depsPath
         ),
         Map(
-          "spark.driver.extraClassPath" -> pyExecutorJar
+          "spark.driver.extraClassPath" -> "__app__.jar"
         )
       )
 
