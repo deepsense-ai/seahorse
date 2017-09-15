@@ -2,10 +2,11 @@
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
-              WorkflowCloneService, SessionManager, config, UserService) {
+              WorkflowCloneService, ServerCommunication, SessionManager, config, UserService) {
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
+    ServerCommunication.unsubscribeFromAllExchanges();
     this._isWorkflowLoading = false;
     this.isWorkflowListEmpty = false;
     this.isErrorConnectingToVagrant = false;

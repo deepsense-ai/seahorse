@@ -256,7 +256,7 @@ class WorkflowsEditorController {
 
   _goToWorkflow(workflow) {
     const id = workflow.workflowId;
-    this.ServerCommunication.unsubscribeFromExchange();
+    this.ServerCommunication.unsubscribeFromAllExchanges();
     this.$state.go(this.$state.current, {id: id}, {reload: true});
   }
 

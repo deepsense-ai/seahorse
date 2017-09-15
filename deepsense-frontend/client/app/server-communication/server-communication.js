@@ -122,7 +122,7 @@ class ServerCommunication {
     this.$log.info('Subscribe to exchange ' + uri + ', subscription: ', newSubscription);
   }
 
-  unsubscribeFromExchange() {
+  unsubscribeFromAllExchanges() {
     for(let key in this.exchangeSubscriptions) {
       if (this.exchangeSubscriptions.hasOwnProperty(key)) {
         this.exchangeSubscriptions[key].unsubscribe();
