@@ -15,7 +15,7 @@ import org.mockito.stubbing.Answer
 import spray.http.HttpHeaders.{RawHeader, `Content-Disposition`}
 import spray.http._
 import spray.json._
-import spray.routing.Route
+import spray.routing.{HttpServiceBase, Route}
 
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
@@ -43,6 +43,7 @@ class WorkflowsApiSpec
   extends StandardSpec
   with UnitTestSupport
   with ApiSpecSupport
+  with HttpServiceBase
   with WorkflowJsonProtocol
   with InferredStateJsonProtocol
   with WorkflowWithVariablesJsonProtocol
@@ -267,7 +268,7 @@ class WorkflowsApiSpec
     "return Unauthorized" when {
       "no credentials were sent" in {
         Get(s"/$apiPrefix") ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> sealRoute(testRoute) ~> check {
           status should be(StatusCodes.Unauthorized)
           header[HttpHeaders.`WWW-Authenticate`].get.challenges.head shouldBe a[HttpChallenge]
         }
@@ -275,7 +276,7 @@ class WorkflowsApiSpec
       "invalid credentials were sent" in {
         Get(s"/$apiPrefix") ~>
           addCredentials(invalidCredentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> sealRoute(testRoute) ~> check {
           status should be(StatusCodes.Unauthorized)
           header[HttpHeaders.`WWW-Authenticate`].get.challenges.head shouldBe a[HttpChallenge]
         }

@@ -4,9 +4,12 @@ services:
     ports:
      - "9080:9080"
     image: docker-registry.intra.codilime.com/tap/deepsense-workflowmanager:seahorse_on_tap_multiuser-latest
+    environment:
+      - WM_AUTH_USER=Some_User
+      - WM_AUTH_PASS=Some_Password
   sessionmanager:
     ports:
-     - "9082:9082"
+      - "9082:9082"
     image: docker-registry.intra.codilime.com/tap/deepsense-sessionmanager:seahorse_on_tap_multiuser-latest
     environment:
       - LIVY_BASE_URL=http://livy.seahorse.gotapaas.eu
@@ -64,3 +67,5 @@ services:
       - "8080:8080"
     environment:
       VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"authorizationUri\":\"http://login.seahorse.gotapaas.eu/oauth/authorize\",\"tokenUri\":\"http://uaa.seahorse.gotapaas.eu/oauth/token\",\"clientId\":\"seahorse_client_2\",\"clientSecret\":\"seahorse01\",\"userInfoUri\":\"http://login.seahorse.gotapaas.eu/userinfo\"},\"name\":\"sso\"},{\"credentials\":{\"host\":\"http://workflowmanager:9080\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://sessionmanager:9082\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://notebooks:8888\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://rabbitmq:15674\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://frontend:80\"},\"name\":\"frontend\"}]}"
+      WM_AUTH_USER: "Some_User"
+      WM_AUTH_PASS: "Some_Password"
