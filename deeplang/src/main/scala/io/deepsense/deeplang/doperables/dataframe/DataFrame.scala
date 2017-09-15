@@ -44,7 +44,7 @@ case class DataFrame private[dataframe] (
   with DataFrameReportGenerator
   with DataFrameColumnsGetter {
 
-  def this() = this(null, null)
+  def this() = this(null, None)
 
   /**
    * Creates new DataFrame with new columns added.
