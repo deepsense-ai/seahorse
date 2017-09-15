@@ -6,7 +6,7 @@ description: Word2Vec
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Transforms vectors of words into vectors of numeric codes for the purpose of further
+Transforms array of words into vector of numeric codes for the purpose of further
 processing by NLP or machine learning algorithms.
 
 This operation is ported from Spark ML.
