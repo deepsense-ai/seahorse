@@ -12,7 +12,6 @@ if (browser.chrome && version >= 40) {
     'debounce',
     'ds.lab.partials',
     'deepsense.spinner',
-    'deepsense-context-menu',
     'deepsense-catalogue-panel',
     'deepsense.attributes-panel',
     'deepsense.navigation-panel',
