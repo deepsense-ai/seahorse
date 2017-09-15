@@ -36,7 +36,7 @@ function PresetService(PresetsApiService, WorkflowService) {
 
   /**
    * @return {Array|undefined}
-     */
+   */
   function getAll() {
     return presets;
   }
@@ -44,7 +44,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {Object} presetCandidate
    * @return {Promise}
-     */
+   */
   function createPreset(presetCandidate) {
     return PresetsApiService.create(presetCandidate)
       .then(fetch);
@@ -54,7 +54,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {Number} id
    * @return {Promise}
-     */
+   */
   function deletePreset(id) {
     return PresetsApiService.remove(id)
       .then(fetch);
@@ -63,7 +63,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {Object} presetCandidate
    * @return {Promise}
-     */
+   */
   function updatePreset(presetCandidate) {
     return PresetsApiService.update(presetCandidate.id, presetCandidate)
       .then(fetch);
@@ -80,7 +80,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {Object} preset
    * @returns {Boolean}
-     */
+   */
   function isValid(preset) {
     return validate(preset);
   }
@@ -98,7 +98,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {String} name
    * @returns {Boolean}
-     */
+   */
   function isNameUsed(name) {
     if (presets) {
       return Object.keys(presets).filter((key) => {

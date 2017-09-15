@@ -1,0 +1,29 @@
+@import "../../../css/variables";
+
+@base-margin: 8px;
+@half-base-margin: (@base-margin / 2);
+
+
+.workflow-schedules {
+  margin-top: 0.5em;
+
+  &__item {
+    padding: (@base-margin * 2) 0;
+    border-bottom: 1px solid @color-light-grey;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &--new {
+      padding: @half-base-margin @half-base-margin @half-base-margin (@base-margin * 1.5);
+      border: 0;
+      box-shadow: 0 0 2px 1px @seahorse-grey;
+    }
+  }
+
+  &__status-message {
+    margin: 0 @base-margin 1.5em (@base-margin * 1.5);
+    font-style: italic;
+  }
+}

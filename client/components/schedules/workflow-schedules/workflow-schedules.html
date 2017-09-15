@@ -1,0 +1,36 @@
+<div class="workflow-schedules">
+  <button
+    ng-if="!$ctrl.addingSchedule"
+    class="btn btn-sm btn-grey o-general-data-panel__btn"
+    ng-click="$ctrl.startAddingSchedule()"
+  >
+    Add schedule
+  </button>
+  <div
+    ng-if="$ctrl.addingSchedule"
+    class="workflow-schedules__item workflow-schedules__item--new"
+  >
+    <new-schedule
+      cluster-presets="$ctrl.presets"
+      on-cancel="$ctrl.stopAddingSchedule()"
+      on-create="$ctrl.finishAddingSchedule()"
+      workflow-id="$ctrl.workflow.id"
+    ></new-schedule>
+  </div>
+
+  <div
+    ng-repeat="schedule in $ctrl.schedules | reverse"
+    class="workflow-schedules__item"
+  >
+    <schedule
+      schedule-data="schedule"
+      cluster-presets="$ctrl.presets"
+      on-delete="$ctrl.getSchedules()"
+      on-update="$ctrl.updateSchedule($event);"
+    ></schedule>
+  </div>
+
+  <div class="workflow-schedules__status-message" ng-if="!$ctrl.schedules.length && !$ctrl.addingSchedule">
+    Schedules are not defined
+  </div>
+</div>

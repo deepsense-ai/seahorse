@@ -9,8 +9,8 @@ function GeneralDataPanel() {
     templateUrl: tpl,
     replace: true,
     scope: true,
-    controller: 'GeneralDataPanelCtrl',
-    controllerAs: 'controller',
+    controller: 'GeneralDataPanelController',
+    controllerAs: '$ctrl',
     bindToController: {
       'name': '=',
       'workflow': '=',

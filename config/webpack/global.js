@@ -35,6 +35,7 @@ module.exports = function (_path) {
         NODE_MODULES: path.join(_path, 'node_modules'),
         SRC: path.join(_path, 'client'),
         STATIC: path.join(_path, 'client', 'static'),
+        VENDOR: path.join(_path, 'vendor'),
         _styles: path.join(_path, 'client', 'css')
       }
     },
@@ -45,7 +46,12 @@ module.exports = function (_path) {
 
     module: {
       preLoaders: [{
-        test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/
+        test: /\.js$/,
+        loader: 'eslint-loader',
+        exclude: [
+          /node_modules/,
+          /vendor/
+        ]
       }],
       noParse: [],
       loaders: [

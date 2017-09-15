@@ -4,8 +4,7 @@ const ENTER_KEY_CODE = 13;
 const ESCAPE_KEY_CODE = 27;
 
 /* @ngInject */
-function GeneralDataPanelCtrl() {
-
+function GeneralDataPanelController() {
   this.editableInputs = {
     name: false,
     description: false
@@ -41,5 +40,5 @@ function GeneralDataPanelCtrl() {
 }
 
 exports.inject = function (module) {
-  module.controller('GeneralDataPanelCtrl', GeneralDataPanelCtrl);
+  module.controller('GeneralDataPanelController', GeneralDataPanelController);
 };

@@ -3,8 +3,8 @@
 let angular = require('angular');
 let browserValidator = require('./browser.validator.js');
 
-import commonModule from 'COMMON/common.module';
-import componentsModule from 'COMPONENTS/components.module';
+import { CommonModule } from 'COMMON/common.module';
+import { ComponentModule } from 'COMPONENTS/components.module';
 
 import '../css/app.less';
 
@@ -15,8 +15,8 @@ if (browserValidator.isBrowserSupported()) {
     'ngSanitize',
     'ngCookies',
     'rt.debounce',
-    commonModule,
-    componentsModule,
+    CommonModule,
+    ComponentModule,
     require('./common/deepsense-components/deepsense-attributes-panel/attributes-panel.module.js').name,
     require('./common/deepsense-components/deepsense-catalogue-panel/catalogue-panel.module.js').name,
     require('./common/deepsense-components/deepsense-cycle-analyser/deepsense-cycle-analyser.js').name,

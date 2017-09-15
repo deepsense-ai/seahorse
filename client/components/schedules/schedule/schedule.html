@@ -1,0 +1,66 @@
+<div class="schedule" ng-class="{'schedule--invalid': !$ctrl.valid}">
+  <div class="schedule__attributes">
+    <div class="schedule-attribute schedule-cron">
+      <div class="schedule-attribute__content">
+        <span class="schedule-attribute__label">Run workflow</span>
+        <span class="schedule-attribute__value" jq-cron="$ctrl.jqCronSettings" ng-model="$ctrl.model.schedule.cron"></span>
+      </div>
+    </div>
+
+    <div class="schedule-attribute schedule-cluster-preset">
+      <div class="schedule-attribute__content">
+        <span class="schedule-attribute__label">Using</span>
+        <select
+          class="form-control schedule-attribute__input"
+          ng-model="$ctrl.model.executionInfo.presetId"
+          ng-options="preset.id as preset.name for preset in $ctrl.clusterPresets"
+        >
+          <option value="">-- choose preset --</option>
+        </select>
+        <span class="schedule-attribute__label">cluster preset</span>
+      </div>
+      <div class="schedule-attribute__errors">
+        <p
+          ng-if="$ctrl.error.presetId.required"
+          class="schedule-attribute-error"
+        >Cluster preset is required</p>
+      </div>
+    </div>
+
+    <div class="schedule-attribute schedule-email">
+      <div class="schedule-attribute__content">
+        <span class="schedule-attribute__label">Send report to</span>
+        <span
+          ng-if="!$ctrl.editing.emailForReports"
+          class="schedule-attribute__value schedule-attribute__value--editable"
+          ng-click="$ctrl.startEditEmailForReports()"
+        >
+          {{$ctrl.model.executionInfo.emailForReports || '-- enter email --'}}
+        </span>
+        <input
+          ng-if="$ctrl.editing.emailForReports"
+          class="form-control schedule-attribute__input"
+          ng-model="$ctrl.model.executionInfo.emailForReports"
+          ng-blur="$ctrl.finishEditEmailForReports()"
+          on-kbd-enter="$ctrl.finishEditEmailForReports()"
+          on-kbd-esc="$ctrl.cancelEditEmailForReports()"
+          focus-element="$ctrl.editing.emailForReports"
+        />
+      </div>
+      <div class="schedule-attribute__errors">
+        <p
+          ng-if="$ctrl.error.emailForReports.required"
+          class="schedule-attribute-error"
+        >Email is required</p>
+        <p
+          ng-show="$ctrl.error.emailForReports.email"
+          class="schedule-attribute-error"
+        >Not valid email</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="schedule__actions">
+    <span class="schedule-action sa sa-delete" ng-click="$ctrl.deleteSchedule()" title="Delete schedule"></span>
+  </div>
+</div>
