@@ -16,13 +16,12 @@
 
 package io.deepsense.deeplang.doperations.readwritedataframe
 
-import java.io.{IOException, FileOutputStream, OutputStreamWriter, BufferedWriter}
-import java.nio.file.{Paths, Files}
+import java.io.{BufferedWriter, FileOutputStream, IOException, OutputStreamWriter}
+import java.nio.file.{FileAlreadyExistsException, Files, Paths}
 import java.util.UUID
 
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{Path, FileSystem}
-
+import org.apache.hadoop.fs.{FileSystem, Path}
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 
@@ -60,8 +59,14 @@ object FileDownloader {
 
   private def downloadFileToDriver(url: String)
                                   (implicit context: ExecutionContext) = {
-    val outFilePath = Files.createTempFile(
-      Files.createDirectories(Paths.get(context.tempPath)), "download", ".csv")
+    val outputDirPath = Paths.get(context.tempPath)
+    // We're checking if the output is a directory following symlinks.
+    // The default behaviour of createDirectories is NOT to follow symlinks
+    if (!Files.isDirectory(outputDirPath)) {
+      Files.createDirectories(outputDirPath)
+    }
+
+    val outFilePath = Files.createTempFile(outputDirPath, "download", ".csv")
     // content is a stream. Do not invoke stuff like .toList() on it.
     val content = scala.io.Source.fromURL(url).getLines()
     val writer: BufferedWriter =

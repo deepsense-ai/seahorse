@@ -20,7 +20,7 @@ import java.util.UUID
 
 import org.scalatest._
 
-import io.deepsense.commons.utils.{CollectionExtensions, Logging}
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice
@@ -28,6 +28,12 @@ import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
 import io.deepsense.deeplang.utils.DataFrameMatchers
 
+/**
+ * This suite shouldn't be executed on its own.
+ * It depends on an external standalone spark cluster.
+ * It should be executed as a part of [[ClusterDependentSpecsSuite]].
+ */
+@DoNotDiscover
 class InputOutputSpec extends
   FreeSpec with BeforeAndAfter with BeforeAndAfterAll with TestFiles with Logging {
 
@@ -68,7 +74,7 @@ class InputOutputSpec extends
                 val dataframe = read(path, driverFileFormat)
 
                 info("Saving dataframe to HDFS")
-                val someHdfsTmpPath = generateSomeHdfsTmpPath()
+                val someHdfsTmpPath = StandaloneSparkClusterForTests.generateSomeHdfsTmpPath()
                 write(someHdfsTmpPath, OutputFromInputFileFormat(clusterFileFormat))(dataframe)
 
                 info("Reading dataframe from HDFS back")
@@ -92,9 +98,6 @@ class InputOutputSpec extends
       }
     }
   }
-
-  private def generateSomeHdfsTmpPath(): String =
-    FileScheme.HDFS.pathPrefix + "spark-cluster-3/tmp/seahorse_tests/" + UUID.randomUUID()
 
   private def generateSomeDriverTmpPath(): String =
     absoluteTestsDirPath.fullPath + "tmp-" + UUID.randomUUID() + ".data"
