@@ -2,7 +2,7 @@
  * Copyright (c) 2016, CodiLime Inc.
  */
 
-import scala.languageFeature.postfixOps
+import scala.language.postfixOps
 
 import sbt.Keys._
 import sbt._
