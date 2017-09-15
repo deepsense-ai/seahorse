@@ -6,53 +6,71 @@ title: Quick Start
 description: Seahorse documentation homepage
 
 ---
-## Setup
-<div class="centered-container" markdown="1">
-  [![Download Seahorse](img/quickstart/download-button.png){: .centered-image .img-responsive}](https://s3.amazonaws.com/workflowexecutor/seahorse/releases/1.0.0/Vagrantfile)
-  _Requires <a target="_blank" href="http://download.virtualbox.org/virtualbox/5.0.10/">VirtualBox 5.0.10</a> and
-  <a target="_blank" href="https://releases.hashicorp.com/vagrant/1.8.1/">Vagrant 1.8.1</a>_
-</div>
 
-* Run `vagrant up` from directory where `Vagrantfile` was downloaded. This may take a few minutes.
-* After [Seahorse Bundled Image](bundled_image_overview.html) was installed, in
-[Chrome browser](https://www.google.pl/chrome/browser/) go to locally hosted
-<a target="_blank" href=" {{ site.SEAHORSE_EDITOR_ADDRESS }} ">Seahorse Editor</a>.
+**Table of Contents**
+
+* Table of Contents
+{:toc}
+
+## Setup
+
+Follow the instructions in [Seahorse Bundled Image](bundled_image_overview.html) to download and run Seahorse Bundled Image.
 
 ## Test It
-In the the main page of Seahorse you can manage existing workflows and create new ones. To make a new one:
+Go to <a href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
+If Seahorse Bundled Image was set up correctly, you will see the main page of Seahorse web-based 
+user interface: 
 
-* Click **New workflow** from the menu.
-* Name your workflow with `quickstart` so you can distinguish it later on.
-* Press the **Create** button.
+<p style="text-align:center;">
+    <img class="centered-image img-responsive spacer" src="./img/seahorse_main.png">
+    <em>Home Screen of Seahorse</em>
+</p>
+On the main page of Seahorse you can see a list of all available projects which we call `workflows`.
+Initially, the list contains a set of examples included in order to give you a sense of what is possible in Seahorse.
+You can examine the examples to learn how to solve common data-related problems. 
+From the main page you can also create a new empty workflow or upload the previously exported workflow.
 
 ### Create a New Workflow
-You've been redirected to workflow editor page where you can interactively compound complex algorithms.
 
-In Seahorse, algorithms are represented as graphs of connected [operations](operations.html),
-which are consuming and producing [entities](deeplang_overview.html#entities-and-classes).
+To create a new workflow:
 
-Let's start with a single one.
+* Click **New Workflow** from the menu.
+* Name your workflow and add a description.
+* Press the **Create** button.
+
+You've been redirected to workflow editor where you can create your application in a visual way.
+
+<p style="text-align:center;">
+    <img class="centered-image img-responsive spacer" src="./img/empty_workflow.png">
+    <em>Seahorse</em>
+</p>
+
+In Seahorse, an application is represented as a graph of connected [operations](operations.html).
+Operations represent various stages of data processing - from data ingestion and clean-up,
+through a broad range of transformations, up to predictive modelling and reporting.
+
 
 #### Read Data
 
+First thing that we want to do in our quick start example is to read some data.
+
 <img class="img-responsive" style="display: inline-block; float:right; width:35%; height:auto" src="./img/quickstart/warning_read_dataframe.png" />
 
-* From left panel called **Operation catalogue**, drag [Read DataFrame](operations/read_dataframe.html) operation
-  to your canvas.
-* As you can see the operation yields a warning. You can read it by moving the cursor over the exclamation mark.
-* Click on **Read DataFrame** node on canvas to unfold the parameters panel.
-* Fill missing **SOURCE** with example data set
+* From the left panel called the **Operation Catalogue**, drag a [Read DataFrame](operations/read_dataframe.html) operation
+  onto your canvas.
+* As you can see, the operation yields a warning. You can read it by moving the cursor over the exclamation mark.
+* Click on the `Read DataFrame` node on the canvas to unfold the parameters panel.
+* Fill in the missing value for the **SOURCE** parameter with a path to the example data set:
 `https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv`
-* To make Seahorse fetch data, select dropped **Read DataFrame** and press **Run**.
-Node will change its state to **RUNNING** and after a while to **COMPLETED**.
+* Press **RUN**. The node will change its state to **RUNNING** and after a while to **COMPLETED**.
 Execution time statistics are provided in the right panel.
-* You can view sample data of any completed operation with [DataFrame](classes/dataframe.html)
-output by clicking its port icon.
+* You can see reports for every executed operation by clicking on output ports (little blue icons on the bottom edge of operation nodes) of the operation.
+For the `Read DataFrame` the report contains a data sample of the read [DataFrame](classes/dataframe.html).
 
 
 #### Query It!
-Loaded [transactions.csv file](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv)
-contains apartment prices from 3 cities.
+Loaded [transactions.csv](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv)
+file contains apartment prices from 3 cities.
 It has 5 columns and 1000 rows (header row and 999 data rows).
 Each row provides information about the apartment:
 city, number of bedrooms, number of bathrooms, size of the apartment (in square feet) and its price.
@@ -64,19 +82,18 @@ city, number of bedrooms, number of bathrooms, size of the apartment (in square 
 
 Let's calculate the average apartment price for each city:
 
-* From the **Operation catalogue**, drag [Execute SQL Expression](operations/execute_sql_expression.html) operation
-  to your canvas.
-* Drag **Read DataFrame** output to **Execute SQL Expression** input to make a connection.
-* Select **Execute SQL Expression** operation.
-* Fill its parameters:
+* From the **Operation Catalogue**, drag a [Execute SQL Expression](operations/execute_sql_expression.html)
+operation onto your canvas.
+* Drag the `Read DataFrame` output to the `Execute SQL Expression` input to make a connection.
+* Fill the `Execute SQL Expression` operation's parameters:
   * Set **DATAFRAME ID** to `transactions`. In SQL expression you will refer to the DataFrame by this name.
   * Set **EXPRESSION** to `SELECT city, AVG(price) as avg_price FROM transactions GROUP BY city`
-* Click **Run** to execute this workflow and you will see two completed nodes.
-* To view results, click on the first output port of **Execute SQL Expression**.
+* Click **RUN** to execute this workflow and you will see two completed nodes.
+* To view results by clicking on the first output port of the `Execute SQL Expression`.
 
 <img class="img-responsive" style="margin: 0 auto; width:60%; height:auto" src="./img/quickstart/report.png" />
 
-Congratulations! You have successfully made your first Seahorse application.
+Congratulations! You have successfully created your first Seahorse application.
 
 ## Examples
 
@@ -85,7 +102,7 @@ Congratulations! You have successfully made your first Seahorse application.
 The goal of this exercise is to build a model predicting apartment prices based on 3 features:
 <code>beds</code>, <code>baths</code> and <code>sq_ft</code>.
 
-The dataset [transactions.csv](/_static/transactions.csv) has 5 columns and 1,000 rows
+The dataset [transactions.csv](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv) has 5 columns and 1,000 rows
 (header row and 999 data rows).
 Each row provides information about the apartment:
 city, number of bedrooms, number of bathrooms, size of the apartment (in square feet) and its price.
@@ -97,9 +114,9 @@ city, number of bedrooms, number of bathrooms, size of the apartment (in square 
     ...
 
 To build the model we will split our initial dataset
-into two parts - training and validation sets. We will train the
-Linear Regression model using training set.
-The model will be scored (against validation part of the dataset) and report of
+into two parts - training and validation sets. We will train a
+linear regression model using training set.
+The model will be scored (against the validation part of the dataset) and report of
 the scoring will be produced (model performance report).
 
 #### Create a New Workflow
@@ -107,14 +124,14 @@ the scoring will be produced (model performance report).
 <img class="img-responsive" style="float:right" src="./img/examples_workflow1.png" />
 
 1. Create an empty workflow
-   * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a> and click **New workflow**
+   * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a> and click **New workflow**
    * Put <code>machinelearning1</code> in the **Name** section - setting a meaningful name will help
      when looking for a workflow in the workflow list
    * Press the **create** button
 
 2. Set the source of your data
-   * Drag [Read DataFrame](operations/read_dataframe.html) operation to your canvas
-   * Click on **Read DataFrame** operation - menu on the right to show its parameters
+   * Drag a [Read DataFrame](operations/read_dataframe.html) operation to your canvas
+   * Click on the `Read DataFrame` operation - the panel on the right now shows its parameters
    * Put <code>https://seahorse.deepsense.io/_static/transactions.csv</code> in the **SOURCE**
      parameter - once executed, the dataset will be downloaded from that location
 
@@ -174,7 +191,7 @@ the scoring will be produced (model performance report).
 #### Execute the Workflow
 {:.no_toc}
 
-* Click on the **Evaluate** node.
+* Click on the `Evaluate` node.
   This will mark the node to be executed. All required predecessor nodes will be executed as well.
 * Press **RUN** button from the top menu.
   This operation will execute the workflow and may take some time. During the execution you can see
@@ -185,7 +202,7 @@ the scoring will be produced (model performance report).
 #### View the Reports
 {:.no_toc}
 
-Click on the report icon under the **Evaluate** node. Report panel with evaluation metrics
+Click on the report icon under the `Evaluate` node. Report panel with evaluation metrics
 will be shown at the bottom of the screen. These metrics are showing our model's performance.
 In the next example we will try to improve these metrics.
 
@@ -203,7 +220,7 @@ We will now add the <code>city</code> feature to the model.
 In our dataset <code>city</code> is a text column,
 and [Linear Regression](operations/linear_regression.html)
 algorithm only works on numerical columns.
-Quick view on the <code>city</code> column values suggests it is a categorical column - column
+A quick glance on the <code>city</code> column's values suggests that it might be a categorical column - a column
 containing only a small, fixed set of different values. We will process this feature before
 executing linear regression algorithm on the data.
 
@@ -211,7 +228,7 @@ executing linear regression algorithm on the data.
 
 <img class="img-responsive" style="float:right" src="./img/examples_workflow2.png" />
 
-1. Open workflow from **Example 1** in the <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a>
+1. Open workflow from **Example 1** in the <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a>
 
 2. Convert <code>city</code> feature to categorical
    * Add [String Indexer](operations/string_indexer.html) to the canvas
@@ -231,8 +248,8 @@ executing linear regression algorithm on the data.
      * In the **INPUT COLUMNS** section click **Edit selection**
      * Add <code>city_index</code> to the list - we only want to add <code>city_encoded</code>
        column to the features
-   * As a result of executing the operations above, in our dataset we will have additional
-     columns with values <code>0</code> or <code>1</code> for each possible value of <code>city</code>
+   * As a result of executing the operations above, our dataset will contain additional
+     columns with values <code>0</code> or <code>1</code> for each possible value of the <code>city</code>
      column.
 
 3. Update connections between Read DataFrame and Assemble Vector nodes as shown in the picture.
@@ -244,13 +261,13 @@ executing linear regression algorithm on the data.
 #### Execute the Workflow
 {:.no_toc}
 
-* Click on the **Evaluate** node
+* Click on the `Evaluate` node
 * Press **RUN** button from the top menu
 
 #### View the Reports
 {:.no_toc}
 
-Click on the report icon under the **Evaluate** node. As you can see the model performance is much
+Click on the report icon under the `Evaluate` node. As you can see the model performance is much
 better than in the previous example.
 
 <div class="centered-container" markdown="1">
@@ -260,15 +277,15 @@ better than in the previous example.
 
 ### Example 3 - Analyze the Data Using a Notebook
 
-The goal of this exercise is to show how to use the [Notebook](operations/notebook.html)
-and interactively analyze data.
+The goal of this exercise is to show how to use an embedded [Notebook](operations/notebook.html)
+to interactively analyze data.
 
 #### Create a New Workflow
 
 <img class="img-responsive" style="float:right; padding: 1em;" src="./img/examples_workflow3.png" />
 
 * Create an empty workflow
-  * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a> and click **New workflow**
+  * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a> and click **New workflow**
   * Put <code>notebook1</code> in the **Name** section
   * Press the **Create** button
 
@@ -298,8 +315,10 @@ def transform(dataframe):
       "SELECT Math, English, get_fce(Certificates) as FCE FROM df")
 {% endhighlight %}
 
-* Use [Notebook](operations/notebook.html) to interactively analyze data
-  * Drag Notebook to your canvas
+This snippet of code uses a user-defined SQL function that utilizes Python’s json library in order to parse our Certificates column.
+
+* Use a [Notebook](operations/notebook.html) to interactively analyze data
+  * Drag a Notebook operation from the palette to your canvas
   * Connect operations as presented in the picture
 
 #### Execute and Edit the Notebook
@@ -308,7 +327,7 @@ Select the created Notebook node and click **Open notebook** in the right
 panel. A notebook window will be shown, where you can write Python code snippets, execute them and
 see the execution results.
 
-##### Use Spark Context
+##### Use the Spark Context
 {:.no_toc}
 
 The Spark Context is available in the notebook as a global variable `sc`.
@@ -331,7 +350,7 @@ sc.parallelize([1,2,3,4,5]).map(lambda x: x*x).collect()
 </tr>
 </table>
 
-##### Use SQLContext
+##### Use the SQLContext
 {:.no_toc}
 
 SQLContext can be accessed as a global variable `sqlContext`.

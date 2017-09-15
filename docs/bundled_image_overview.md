@@ -20,7 +20,7 @@ Seahorse Bundled Image is a virtual machine containing all necessary components 
 The purpose of Seahorse Bundled Image is to present important features of Seahorse rather than
 production use, this is why it is limited to a single-node Spark cluster.
 To learn more about scaling up and using Seahorse in production, see the
-<a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> page. 
+<a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> page.
 
 <img class="img-responsive" src="./img/bundled_image_overview.png" />
 
@@ -31,9 +31,10 @@ To learn more about scaling up and using Seahorse in production, see the
 * Max number of columns in a DataFrame: 100
 * Max row size: 1 MB
 
-Above limitations refers only to Seahorse Bundled Image. 
+Above limitations refer only to Seahorse Bundled Image.
+To learn more about scaling up and using Seahorse in production,
+see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> page. 
 
-Interested in processing unlimited data? 
 
 <div class="contact-block">
 	<div>
@@ -42,8 +43,8 @@ Interested in processing unlimited data?
 	</div>
 	<div>
 		<button class="contact-block-button">
-			<a href="http://deepsense.io/about-us/contact/">
-			Contact us for pricing details!
+			<a target="_blank" href="http://deepsense.io/about-us/contact/">
+			Contact us for details!
 			</a>
 		</button>
 	</div>

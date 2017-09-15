@@ -361,6 +361,7 @@ p.footer-text span {
 .contact-block-info {
   margin-top: 10px;
   height: 10px;
+  font-weight: bold;
 }
 
 .contact-block-button > a {
