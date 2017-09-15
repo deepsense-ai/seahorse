@@ -23,7 +23,7 @@ function PiePlot() {
     const chartValues = _.map(data.counts, function (val, idx) {
       const shortVal = parseFloat(val).toPrecision(LABEL_PRECISION);
       return {
-        x: `${data.buckets[idx]}: ${shortVal}`,
+        x: data.buckets[idx],
         y: val
       };
     });
