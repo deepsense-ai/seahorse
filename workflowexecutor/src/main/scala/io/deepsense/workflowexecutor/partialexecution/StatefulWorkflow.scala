@@ -41,12 +41,12 @@ class StatefulWorkflow(
   def launch(nodes: Set[Node.Id]): Unit = {
     val newExecution = execution.updateStructure(execution.graph.directedGraph, nodes)
     val inferred = newExecution.inferAndApplyKnowledge(executionContext.inferContext)
-    val map: Option[Execution] = inferred.error.map(_ => inferred)
+    val map: Option[Execution] = inferred.graph.executionFailure.map(_ => inferred)
     execution = map.getOrElse(inferred.enqueue)
   }
 
   def startReadyNodes(): Seq[ReadyNode] = {
-    val readyNodes = execution.readyNodes
+    val readyNodes = execution.graph.readyNodes
     execution = readyNodes.foldLeft(execution) {
       case (runningExecution, readyNode) => runningExecution.nodeStarted(readyNode.node.id)
     }
@@ -95,7 +95,7 @@ class StatefulWorkflow(
   /**
     * When execution is running struct update will be ignored.
     */
-  def updateStructure(workflow: Workflow): InferredState = {
+  def updateStructure(workflow: Workflow): Unit = {
     execution = execution match {
       case IdleExecution(_, _) => execution.updateStructure(workflow.graph)
       case _ =>
@@ -104,17 +104,16 @@ class StatefulWorkflow(
         execution
     }
     additionalData = workflow.additionalData
-    inferState()
   }
 
-  def inferState(): InferredState = {
+  def inferState: InferredState = {
     stateInferrer.inferState(execution)
   }
 
   private def getChangedNodes(startingPointExecution: Execution): Map[Id, NodeState] = {
-    execution.states.filterNot { case (id, stateWithResults) =>
-      startingPointExecution.states.contains(id) &&
-        stateWithResults.clearKnowledge == startingPointExecution.states(id).clearKnowledge
+    execution.graph.states.filterNot { case (id, stateWithResults) =>
+      startingPointExecution.graph.states.contains(id) &&
+        stateWithResults.clearKnowledge == startingPointExecution.graph.states(id).clearKnowledge
     }.mapValues(_.nodeState)
   }
 }
@@ -155,7 +154,7 @@ class DefaultStateInferrer(
   extends StateInferrer {
 
   override def inferState(execution: Execution): InferredState = {
-    val knowledge = execution.inferKnowledge(executionContext.inferContext)
+    val knowledge = execution.graph.inferKnowledge(executionContext.inferContext)
     InferredState(workflowId, knowledge, execution.executionReport.statesOnly)
   }
 }

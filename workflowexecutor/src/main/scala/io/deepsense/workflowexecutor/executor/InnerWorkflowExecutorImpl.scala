@@ -70,7 +70,7 @@ class InnerWorkflowExecutorImpl(override val graphReader: GraphReader)
     run(statefulWorkflow, executionContext)
 
     val (_, result) =
-      statefulWorkflow.currentExecution.states(innerWorkflow.sink.id).dOperables.head
+      statefulWorkflow.currentExecution.graph.states(innerWorkflow.sink.id).dOperables.head
     result.asInstanceOf[DataFrame]
   }
 

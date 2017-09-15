@@ -49,20 +49,42 @@ class ExecutionSpec
     "have all nodes Draft" when {
       "empty" in {
         val execution = Execution.empty
-        execution.states.values.toSet should have size 0
+        execution.graph.states.values.toSet should have size 0
       }
       "created with selection" in {
         val execution = Execution(statefulGraph, Set(idA, idB))
-        execution.states should have size execution.graph.size
+        execution.graph.states should have size execution.graph.size
         execution.selectedNodes.foreach {
-          n => execution.states(n) shouldBe NodeStateWithResults.draft
+          n => execution.graph.states(n) shouldBe NodeStateWithResults.draft
         }
+      }
+    }
+    "have all previously queued nodes get aborted after aborting execution" in {
+      val firstNodeRunningAndRestAreQueued =
+        directedGraph.nodes.map(n => n.id -> nodeState(Queued())).toMap
+
+      val statefulGraph = StatefulGraph(
+        directedGraph,
+        firstNodeRunningAndRestAreQueued,
+        None
+      )
+
+      val running = RunningExecution(
+        statefulGraph,
+        statefulGraph,
+        allNodesIds.toSet)
+
+      val aborted = running.abort
+      aborted.graph.states.values.foreach { nodeState =>
+        nodeState.isAborted shouldBe true
       }
     }
     "infer knowledge only on the selected part" in {
       val graph = mock[StatefulGraph]
+      when(graph.readyNodes).thenReturn(Seq.empty)
       when(graph.directedGraph).thenReturn(DeeplangGraph())
       val subgraph = mock[StatefulGraph]
+      when(subgraph.readyNodes).thenReturn(Seq.empty)
       when(graph.subgraph(any())).thenReturn(subgraph)
       when(subgraph.enqueueDraft).thenReturn(subgraph)
 
@@ -70,6 +92,7 @@ class ExecutionSpec
       val execution = IdleExecution(graph, nodes)
 
       val inferenceResult = mock[StatefulGraph]
+      when(inferenceResult.readyNodes).thenReturn(Seq.empty)
       when(subgraph.inferAndApplyKnowledge(any())).thenReturn(inferenceResult)
       when(graph.updateStates(any())).thenReturn(inferenceResult)
 
@@ -100,11 +123,11 @@ class ExecutionSpec
         val updated =
           execution.updateStructure(statefulGraph.directedGraph, Set(idC))
 
-        updated.states(idA) shouldBe execution.states(idA)
-        updated.states(idB) shouldBe execution.states(idB).draft
-        updated.states(idC) shouldBe execution.states(idC).draft
-        updated.states(idD) shouldBe execution.states(idD).draft
-        updated.states(idE) shouldBe execution.states(idE).draft
+        updated.graph.states(idA) shouldBe execution.graph.states(idA)
+        updated.graph.states(idB) shouldBe execution.graph.states(idB).draft
+        updated.graph.states(idC) shouldBe execution.graph.states(idC).draft
+        updated.graph.states(idD) shouldBe execution.graph.states(idD).draft
+        updated.graph.states(idE) shouldBe execution.graph.states(idE).draft
     }
     "enqueue all nodes" when {
       "all nodes where specified" in {
@@ -130,7 +153,7 @@ class ExecutionSpec
             queuedGraph,
             allNodesIds.toSet)
 
-        enqueued.states.forall { case (_, state) => state.isQueued } shouldBe true
+        enqueued.graph.states.forall { case (_, state) => state.isQueued } shouldBe true
       }
     }
     "mark all selected nodes as Draft" in {
@@ -153,11 +176,11 @@ class ExecutionSpec
       val updated =
         execution.updateStructure(statefulGraph.directedGraph, Set(idC, idE))
 
-      updated.states(idA) shouldBe execution.states(idA)
-      updated.states(idB) shouldBe execution.states(idB)
-      updated.states(idC) shouldBe execution.states(idC).draft
-      updated.states(idD) shouldBe execution.states(idD).draft
-      updated.states(idE) shouldBe execution.states(idE).draft
+      updated.graph.states(idA) shouldBe execution.graph.states(idA)
+      updated.graph.states(idB) shouldBe execution.graph.states(idB)
+      updated.graph.states(idC) shouldBe execution.graph.states(idC).draft
+      updated.graph.states(idD) shouldBe execution.graph.states(idD).draft
+      updated.graph.states(idE) shouldBe execution.graph.states(idE).draft
     }
     "not execute operations that are already completed (if they are not selected)" +
       "finish execution if the selected subgraph finished" in {
@@ -184,17 +207,18 @@ class ExecutionSpec
           .updateStructure(statefulGraph.directedGraph, Set(idC, idE))
           .enqueue
 
-      enqueued.states(idA) shouldBe execution.states(idA)
-      enqueued.states(idB) shouldBe execution.states(idB)
-      enqueued.states(idC) shouldBe stateWC.draft.enqueue
-      enqueued.states(idD) shouldBe stateWD.draft
-      enqueued.states(idE) shouldBe stateWE.draft.enqueue
+      enqueued.graph.states(idA) shouldBe execution.graph.states(idA)
+      enqueued.graph.states(idB) shouldBe execution.graph.states(idB)
+      enqueued.graph.states(idC) shouldBe stateWC.draft.enqueue
+      enqueued.graph.states(idD) shouldBe stateWD.draft
+      enqueued.graph.states(idE) shouldBe stateWE.draft.enqueue
 
-      enqueued.readyNodes.map(rn => rn.node) should contain theSameElementsAs List(nodeC, nodeE)
+      enqueued.graph.readyNodes.map(
+        rn => rn.node) should contain theSameElementsAs List(nodeC, nodeE)
       val cStarted = enqueued.nodeStarted(idC)
-      cStarted.readyNodes.map(rn => rn.node) should contain theSameElementsAs List(nodeE)
+      cStarted.graph.readyNodes.map(rn => rn.node) should contain theSameElementsAs List(nodeE)
       val eStarted = cStarted.nodeStarted(idE)
-      eStarted.readyNodes.map(rn => rn.node) shouldBe 'empty
+      eStarted.graph.readyNodes.map(rn => rn.node) shouldBe 'empty
 
       val idCResults = results(idC)
       val idEResults = results(idE)
@@ -210,10 +234,12 @@ class ExecutionSpec
     }
     "expose inference errors" in {
       val failedGraph = mock[StatefulGraph]
+      when(failedGraph.readyNodes).thenReturn(Seq.empty)
       val failureDescription = Some(mock[FailureDescription])
       when(failedGraph.executionFailure).thenReturn(failureDescription)
 
       val graph = mock[StatefulGraph]
+      when(graph.readyNodes).thenReturn(Seq.empty)
       val directedGraph = mock[DeeplangGraph]
       when(directedGraph.nodes).thenReturn(Set[DeeplangNode]())
       when(graph.directedGraph).thenReturn(directedGraph)
@@ -223,7 +249,8 @@ class ExecutionSpec
       when(graph.executionFailure).thenReturn(None)
 
       val execution = IdleExecution(graph, Set())
-      execution.inferAndApplyKnowledge(mock[InferContext]).error shouldBe failureDescription
+      execution.inferAndApplyKnowledge(
+        mock[InferContext]).graph.executionFailure shouldBe failureDescription
     }
     "reset successors state when predecessor is replaced" in {
       val changedC = Node(Node.Id.randomId, op1To1) // Notice: different Id
@@ -237,18 +264,18 @@ class ExecutionSpec
           stateC: NodeStateWithResults,
           execution: IdleExecution): Unit = {
         val updatedExecution = execution.updateStructure(updatedGraph, Set(idE))
-        updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
-        updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
-        updatedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
-        updatedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
-        updatedExecution.states(idE) shouldBe stateWE.draft
+        updatedExecution.graph.states(idA) shouldBe statefulGraph.states(idA)
+        updatedExecution.graph.states(idB) shouldBe statefulGraph.states(idB)
+        updatedExecution.graph.states(changedC.id) shouldBe NodeStateWithResults.draft
+        updatedExecution.graph.states(idD) shouldBe stateWD.draft.clearKnowledge
+        updatedExecution.graph.states(idE) shouldBe stateWE.draft
 
         val queuedExecution = updatedExecution.enqueue
-        queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
-        queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
-        queuedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
-        queuedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
-        queuedExecution.states(idE) shouldBe stateWE.draft.enqueue
+        queuedExecution.graph.states(idA) shouldBe statefulGraph.states(idA)
+        queuedExecution.graph.states(idB) shouldBe statefulGraph.states(idB)
+        queuedExecution.graph.states(changedC.id) shouldBe NodeStateWithResults.draft
+        queuedExecution.graph.states(idD) shouldBe stateWD.draft.clearKnowledge
+        queuedExecution.graph.states(idE) shouldBe stateWE.draft.enqueue
       }
 
 
@@ -269,18 +296,18 @@ class ExecutionSpec
           stateC: NodeStateWithResults,
           execution: IdleExecution): Unit = {
         val updatedExecution = execution.updateStructure(updatedGraph, Set(idE))
-        updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
-        updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
-        updatedExecution.states(changedC.id) shouldBe stateC.draft.clearKnowledge
-        updatedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
-        updatedExecution.states(idE) shouldBe stateWE.draft
+        updatedExecution.graph.states(idA) shouldBe statefulGraph.states(idA)
+        updatedExecution.graph.states(idB) shouldBe statefulGraph.states(idB)
+        updatedExecution.graph.states(changedC.id) shouldBe stateC.draft.clearKnowledge
+        updatedExecution.graph.states(idD) shouldBe stateWD.draft.clearKnowledge
+        updatedExecution.graph.states(idE) shouldBe stateWE.draft
 
         val queuedExecution = updatedExecution.enqueue
-        queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
-        queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
-        queuedExecution.states(changedC.id) shouldBe stateC.draft.clearKnowledge
-        queuedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
-        queuedExecution.states(idE) shouldBe stateWE.draft.enqueue
+        queuedExecution.graph.states(idA) shouldBe statefulGraph.states(idA)
+        queuedExecution.graph.states(idB) shouldBe statefulGraph.states(idB)
+        queuedExecution.graph.states(changedC.id) shouldBe stateC.draft.clearKnowledge
+        queuedExecution.graph.states(idD) shouldBe stateWD.draft.clearKnowledge
+        queuedExecution.graph.states(idE) shouldBe stateWE.draft.enqueue
       }
 
 
@@ -336,9 +363,9 @@ class ExecutionSpec
 
         val updatedExecution = execution.updateStructure(newStructure)
 
-        updatedExecution.states(node1.id).nodeState.nodeStatus shouldBe a[Completed]
-        updatedExecution.states(node2.id).nodeState.nodeStatus shouldBe a[nodestate.Draft]
-        updatedExecution.states(node3.id).nodeState.nodeStatus shouldBe a[nodestate.Draft]
+        updatedExecution.graph.states(node1.id).nodeState.nodeStatus shouldBe a[Completed]
+        updatedExecution.graph.states(node2.id).nodeState.nodeStatus shouldBe a[nodestate.Draft]
+        updatedExecution.graph.states(node3.id).nodeState.nodeStatus shouldBe a[nodestate.Draft]
       }
     }
   }

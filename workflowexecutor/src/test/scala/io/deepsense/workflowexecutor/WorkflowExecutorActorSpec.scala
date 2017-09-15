@@ -176,7 +176,7 @@ class WorkflowExecutorActorSpec
             executionStatus.executionReport.nodesStatuses.size shouldBe 1
             executionStatus.executionReport.nodesStatuses(node2.id) shouldBe a[nodestate.Running]
           }
-          wea.underlyingActor.execution.states(node1.id).nodeState.nodeStatus shouldBe
+          wea.underlyingActor.execution.graph.states(node1.id).nodeState.nodeStatus shouldBe
             a[nodestate.Completed]
         }
         eventually {
@@ -314,8 +314,8 @@ class WorkflowExecutorActorSpec
         val workflow: Workflow = mock[Workflow]
         val workflowWithResults: WorkflowWithResults = mock[WorkflowWithResults]
         val inferredState = mock[InferredState]
-        when(statefulWorkflow.updateStructure(workflow)).thenReturn(inferredState)
         when(statefulWorkflow.workflowWithResults).thenReturn(workflowWithResults)
+        when(statefulWorkflow.inferState).thenReturn(inferredState)
 
         probe.send(wea, UpdateStruct(workflow))
 

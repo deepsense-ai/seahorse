@@ -88,7 +88,7 @@ abstract class WorkflowExecutorActor(
   def initWhenStateIsAvailable(): Unit = {
     val results: WorkflowWithResults = statefulWorkflow.workflowWithResults
     sendWorkflowWithResults(results)
-    sendInferredState(statefulWorkflow.inferState())
+    sendInferredState(statefulWorkflow.inferState)
   }
 
   def sendWorkflowWithResults(workflowWithResults: WorkflowWithResults): Unit = {
@@ -96,10 +96,10 @@ abstract class WorkflowExecutorActor(
   }
 
   private def updateStruct(workflow: Workflow): Unit = {
-    val inferredState = statefulWorkflow.updateStructure(workflow)
+    statefulWorkflow.updateStructure(workflow)
     val workflowWithResults: WorkflowWithResults = statefulWorkflow.workflowWithResults
     workflowManagerClientActor.foreach(_ ! SaveWorkflow(workflowWithResults))
-    sendInferredState(inferredState)
+    sendInferredState(statefulWorkflow.inferState)
   }
 
   def sendInferredState(inferredState: InferredState): Unit = {
@@ -131,7 +131,7 @@ abstract class WorkflowExecutorActor(
         terminationListener.foreach(_ ! getExecutionStatus)
         context.unbecome()
         context.become(ready())
-        Some(statefulWorkflow.inferState())
+        Some(statefulWorkflow.inferState)
       case running: RunningExecution =>
         launchReadyNodes()
         context.unbecome()
@@ -158,7 +158,7 @@ abstract class WorkflowExecutorActor(
   }
 
   def executionToStatus(execution: Execution): ExecutionStatus = {
-    ExecutionStatus(ExecutionReport(execution.states.mapValues(_.nodeState)))
+    ExecutionStatus(ExecutionReport(execution.graph.states.mapValues(_.nodeState)))
   }
 
   def launchReadyNodes(): Unit = {
@@ -271,7 +271,7 @@ class GraphNodeExecutorFactoryImpl extends GraphNodeExecutorFactory {
 // This is a separate class in order to make logs look better.
 case class WorkflowProgress() extends Logging {
   def logProgress(execution: Execution): Unit = {
-    val states = execution.states.values
+    val states = execution.graph.states.values
     val completed = states.count(_.isCompleted)
     logger.info(
       s"$completed ${if (completed == 1) "node" else "nodes"} successfully completed, " +

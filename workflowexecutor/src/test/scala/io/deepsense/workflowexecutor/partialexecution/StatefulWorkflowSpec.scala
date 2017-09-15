@@ -47,8 +47,8 @@ class StatefulWorkflowSpec extends WorkflowTestSupport with MockitoSugar {
     val nodeId: Id = Node.Id.randomId
     val executionReport =
       ExecutionReport(Map(nodeId -> NodeState(Draft(), Some(EntitiesMap()))))
-    "updateStruct" when {
-      "execution is idle" in {
+    "actually updateStruct only" when {
+      "execution is idle (but third party should be updated anyway)" in {
         val updatedExecution: IdleExecution = mock[IdleExecution]
         when(updatedExecution.executionReport).thenReturn(executionReport)
         def idleExecutionFactory(graph: StatefulGraph): Execution = {
@@ -59,12 +59,10 @@ class StatefulWorkflowSpec extends WorkflowTestSupport with MockitoSugar {
         val statefulWorkflow =
           StatefulWorkflow(mock[CommonExecutionContext], worklfowWithResults, idleExecutionFactory)
 
-        val inferredState = statefulWorkflow.updateStructure(workflow)
+        statefulWorkflow.updateStructure(workflow)
 
         statefulWorkflow.currentExecution shouldBe updatedExecution
         statefulWorkflow.currentAdditionalData shouldBe newThirdPartyData
-        inferredState.states shouldBe
-          ExecutionReport(Map(nodeId -> NodeState(Draft(), None))) // removed reports
       }
     }
     "ignore struct update and only update thirdPartyData when execution is started" in {
@@ -74,12 +72,10 @@ class StatefulWorkflowSpec extends WorkflowTestSupport with MockitoSugar {
       val statefulWorkflow =
         StatefulWorkflow(mock[CommonExecutionContext], worklfowWithResults, runningExecutionFactory)
 
-      val inferredState = statefulWorkflow.updateStructure(workflow)
+      statefulWorkflow.updateStructure(workflow)
 
       statefulWorkflow.currentExecution shouldBe runningExecution // not changed
       statefulWorkflow.currentAdditionalData shouldBe newThirdPartyData // updated
-      inferredState.states shouldBe
-        ExecutionReport(Map(nodeId -> NodeState(Draft(), None))) // removed reports
     }
     "not change states when only thirdPartyData is updated" in {
       val workflowId = Workflow.Id.randomId
