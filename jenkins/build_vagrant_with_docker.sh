@@ -1,13 +1,18 @@
 #!/bin/bash -ex
 # Copyright (c) 2016, CodiLime Inc.
 #
-# Usage ./build_vagrant_with_docker.sh SEAHORSE_BUILD_TAG
+# Builds Seahorse vagrant image that internally uses Seahorse docker images.
+
+
+# Set working directory to project root file
+# `dirname $0` gives folder containing script
+cd `dirname $0`"/../"
 
 ./jenkins/scripts/checkout-submodules.sh
 
 # Check if number of parameters is correct
 if [ $# != 1 ]; then
-  echo ">>> Exactly one parameter must be provided."
+  echo "Usage: jenkins/build_vagrant_with_docker.sh SEAHORSE_BUILD_TAG"
   exit 1
 fi
 
@@ -19,7 +24,7 @@ VAGRANT_BOX_NAME="seahorse-vm"
 PUBLISH_DIR="../image_publication"
 
 # Download docker-compose config file
-cd ../deployment/vagrant_with_docker
+cd deployment/vagrant_with_docker
 rm -f $ARTIFACT_NAME
 wget $COMPOSE_FILE
 mv $ARTIFACT_NAME docker-compose.yml
