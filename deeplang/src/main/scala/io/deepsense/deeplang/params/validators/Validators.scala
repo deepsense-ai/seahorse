@@ -44,21 +44,21 @@ case class RangeValidator(
 
   val validatorType = ValidatorType.Range
 
-  override def validate(parameter: Double): Vector[DeepLangException] = {
+  override def validate(name: String, parameter: Double): Vector[DeepLangException] = {
     val beginComparison: (Double, Double) => Boolean = if (beginIncluded) (_ >= _) else (_ > _)
     val endComparison: (Double, Double) => Boolean = if (endIncluded) (_ <= _) else (_ < _)
     if (!(beginComparison(parameter, begin) && endComparison(parameter, end))) {
-      Vector(new OutOfRangeException(parameter, begin, end))
+      Vector(new OutOfRangeException(name, parameter, begin, end))
     } else {
-      validateStep(parameter)
+      validateStep(name, parameter)
     }
   }
 
   /** Validates if parameter value can be reached using given step */
-  private def validateStep(value: Double): Vector[DeepLangException] = {
+  private def validateStep(name: String, value: Double): Vector[DeepLangException] = {
     step.foreach {
       s => if (math.abs(takeSteps(countStepsTo(value, s), s) - value) >= Epsilon) {
-        return Vector(OutOfRangeWithStepException(value, begin, end, s))
+        return Vector(OutOfRangeWithStepException(name, value, begin, end, s))
       }
     }
     Vector.empty
@@ -192,7 +192,7 @@ case class RegexValidator(
 
   val validatorType = ValidatorType.Regex
 
-  override def validate(parameter: String): Vector[DeepLangException] = {
+  override def validate(name: String, parameter: String): Vector[DeepLangException] = {
     if (parameter matches regex.toString) {
       Vector.empty
     } else {

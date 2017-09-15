@@ -26,7 +26,7 @@ import io.deepsense.deeplang.params.validators.ValidatorType.ValidatorType
 trait Validator[ParameterType] extends Serializable {
   val validatorType: ValidatorType
 
-  def validate(parameter: ParameterType): Vector[DeepLangException]
+  def validate(name: String, parameter: ParameterType): Vector[DeepLangException]
 
   final def toJson: JsObject = {
     import DefaultJsonProtocol._
