@@ -36,7 +36,7 @@ gulp.task('clean', function () {
 gulp.task('browser-sync', function () {
   return browserSync({
     server: {
-      baseDir: build.path,
+      baseDir: build.path
     },
     open: !devMode
   });
