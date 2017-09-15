@@ -82,13 +82,13 @@ class DOperationSuite extends FunSuite {
   test("Getting type required in input port") {
     import DOperationForPortTypes._
     val op = new SimpleOperation
-    assert(op.inPortType(0) == ru.typeOf[DClassesForDOperations.A1])
+    assert(op.inPortType(0) == ru.typeTag[DClassesForDOperations.A1])
   }
 
   test("Getting type required in output port") {
     import DOperationForPortTypes._
     val op = new SimpleOperation
-    assert(op.outPortType(0) == ru.typeOf[DClassesForDOperations.A2])
+    assert(op.outPortType(0) == ru.typeTag[DClassesForDOperations.A2])
   }
 
   test("Requesting type of non-existing input port throws") {

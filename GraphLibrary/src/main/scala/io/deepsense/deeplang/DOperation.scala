@@ -16,9 +16,9 @@ abstract class DOperation(val parameters: DParameters) {
   val inArity: Int
   val outArity: Int
 
-  def inPortType(index: Int): ru.Type
+  def inPortType(index: Int): ru.TypeTag[_]
 
-  def outPortType(index: Int): ru.Type
+  def outPortType(index: Int): ru.TypeTag[_]
 
   def execute(l: Vector[DOperable]): Vector[DOperable]
 

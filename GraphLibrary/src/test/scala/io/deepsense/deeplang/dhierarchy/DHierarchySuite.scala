@@ -6,7 +6,6 @@
 
 package io.deepsense.deeplang.dhierarchy
 
-import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.{FunSuite, Matchers}
@@ -83,6 +82,13 @@ class DHierarchySuite extends FunSuite with Matchers {
     check[H.A](b, c)
     check[H.T3](b, c)
     check[H.T with H.T2]()
+  }
+
+  test("Getting concrete subclasses instances using ru.TypeTag") {
+    val h = new DHierarchy
+    h.registerDOperable[H.B]()
+    val t = ru.typeTag[H.T]
+    h.concreteSubclassesInstances(t) should contain theSameElementsAs List(new H.B)
   }
 
   test("Listing DTraits and DClasses") {
