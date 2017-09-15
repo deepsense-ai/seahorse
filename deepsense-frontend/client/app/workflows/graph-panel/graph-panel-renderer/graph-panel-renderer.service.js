@@ -31,6 +31,7 @@ import { GraphPanelStyler} from './graph-panel-styler.js';
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
   DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService) {
+
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, {
       strokeStyle: '#61B7CF'
@@ -88,6 +89,17 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.init = function init(workflow) {
+    jsPlumb.registerEndpointTypes({
+      'selected': {
+        endpointStyle: {
+          fillStyle: "#2f4050",
+          radius: 20,
+          lineWidth: 2
+        },
+        cssClass: 'output-endpoint-selected-style-report-mode'
+      }
+    });
+
     internal.reset();
     jsPlumb.setContainer($document[0].querySelector('.flowchart-paint-area'));
     jsPlumb.importDefaults({
@@ -108,7 +120,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     instance.repaintEverything();
   };
 
-  that.repaintEverything = function redrawEverything() {
+  that.repaintEverything = function repaintEverything() {
     jsPlumb.repaintEverything();
   };
 
@@ -128,11 +140,15 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     });
   };
 
-  that.rerender = function rerender(workflow) {
+  that.rerender = function rerender(workflow, selectedPortId) {
     that.init(workflow);
     that.renderPorts(workflow);
     that.renderEdges(workflow);
     that.repaintEverything();
+    if (selectedPortId) {
+      let previouslySelected = jsPlumb.getEndpoint(selectedPortId);
+      previouslySelected.toggleType('selected');
+    }
   };
 
   that.renderPorts = function renderPorts(workflow) {
@@ -212,19 +228,19 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       // There is a conflict between multiselection and output port click when isSource = false.
       let eventForLeftClick = internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? 'click' : 'mousedown';
       port.bind(eventForLeftClick, (port, event) => {
-        $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
-          reference: port,
-          portObject: ports[i],
-          event: event,
-        });
-
-        event.stopPropagation();
+        if (hasReport) {
+          $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
+            reference: port,
+            portObject: ports[i],
+            event: event
+          });
+          that.rerender(workflow, ports[i].id);
+        }
       });
 
       port.canvas.addEventListener('mousedown', (event) => {
         if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
           ConnectionHinterService.highlightOperations(workflow, port);
-          event.stopPropagation();
         }
       });
 

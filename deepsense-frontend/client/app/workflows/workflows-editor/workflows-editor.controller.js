@@ -43,7 +43,7 @@ class WorkflowsEditorController {
       this.Report.createReportEntities(report.id, report);
       this._initReportListeners();
       this.$scope.$applyAsync(() => {
-        this.GraphPanelRendererService.rerender(this.getWorkflow());
+        this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
       });
     }
   }
@@ -60,15 +60,11 @@ class WorkflowsEditorController {
         portIdx: data.portObject.index,
         node: node
       };
-      this.MultiSelectionService.clearSelection();
-      this.MultiSelectionService.addNodeIdsToSelection([node.id]);
-      this.workflowIdForReport = workflow.id;
-      this.nodeIdForReport = node.id;
-      this.selectedNode = node;
-      this.loadParametersForNode();
+      this.selectedOutputPort = data.portObject.id;
 
       let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
       this.loadReportById(reportEntityId);
+      this.Report.openReport();
     });
 
     this.inited = true;
@@ -151,15 +147,6 @@ class WorkflowsEditorController {
       this.$scope.$digest();
     });
 
-    this.$scope.$on('OpenReportTab.SELECT_NODE', () => {
-      if (this.workflowIdForReport && this.nodeIdForReport) {
-        let workflow = this.getWorkflow();
-        let node = workflow.getNodeById(this.nodeIdForReport);
-        this.selectedNode = node;
-        this.loadParametersForNode();
-      }
-    });
-
     this.$scope.$on('ServerCommunication.EXECUTION_FINISHED', () => {
       this.restoreEditableMode();
     });
@@ -222,7 +209,7 @@ class WorkflowsEditorController {
         }).
         then(() => {
           this.WorkflowService.clearGraph();
-          this.GraphPanelRendererService.rerender(this.getWorkflow());
+          this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
         });
       }),
 
@@ -255,7 +242,7 @@ class WorkflowsEditorController {
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
         if (newValue !== oldValue) {
           this.$scope.$applyAsync(() => {
-            this.GraphPanelRendererService.rerender(this.getWorkflow());
+            this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
           });
         }
       }),
@@ -324,7 +311,6 @@ class WorkflowsEditorController {
     if (this.Report.hasReportEntity(reportEntityId)) {
       this.Report.getReport(reportEntityId).then(report => {
         this.report = report;
-        this.Report.openReport();
       });
     }
   }
@@ -345,7 +331,6 @@ class WorkflowsEditorController {
     if (this.selectedNode) {
       this.MultiSelectionService.removeNodeIdsFromSelection([this.selectedNode.id]);
       this.selectedNode = null;
-      this.selectedNodeBeforeRun = null;
     }
   }
 

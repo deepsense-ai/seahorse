@@ -29,8 +29,6 @@ class BottomBarService {
       amount: height,
       selector: '.c-bottom-tabs'
     });
-
-    this.$rootScope.$broadcast('OpenReportTab.SELECT_NODE');
   }
 
   deactivatePanel(panelName) {
@@ -46,10 +44,6 @@ class BottomBarService {
       amount: '25px',
       selector: '.c-bottom-tabs'
     });
-
-    this.$timeout(() => {
-      this.$rootScope.$broadcast('AttributePanel.UNSELECT_NODE');
-    }, 0);
   }
 
 }
