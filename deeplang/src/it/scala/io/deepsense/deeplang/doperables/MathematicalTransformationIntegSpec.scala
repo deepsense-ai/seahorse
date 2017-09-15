@@ -16,12 +16,13 @@
 
 package io.deepsense.deeplang.doperables
 
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.DOperationExecutionException
+import io.deepsense.deeplang.doperations.exceptions._
 
 class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
 
@@ -36,61 +37,109 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
   "CreateMathematicalTransformation" should {
 
     "create Transformation that counts ABS properly" in {
-      runTest(s"ABS($column1)", column3, Seq(1.0, 1.1, 1.2, 1.3, null))
+      runTest("ABS(x)", column1, column3, Seq(1.0, 1.1, 1.2, 1.3, null))
     }
 
     "create Transformation that counts POW properly" in {
-      runTest(s"POW($column1, 2.0)", column3, Seq(1.0, 1.21, 1.44, 1.69, null))
+      runTest("POW(x, 2.0)", column1, column3, Seq(1.0, 1.21, 1.44, 1.69, null))
     }
 
     "create Transformation that counts SQRT properly" in {
-      runTest(s"SQRT($column2)", column3, Seq(0.447, 1.483, null, 2.04, null))
+      runTest("SQRT(x)", column2, column3, Seq(0.447, 1.483, null, 2.04, null))
     }
 
     "create Transformation that counts SIN properly" in {
-      runTest(s"SIN($column1)", column3, Seq(0.841, -0.891, 0.932, -0.96, null))
+      runTest("SIN(x)", column1, column3, Seq(0.841, -0.891, 0.932, -0.96, null))
     }
 
     "create Transformation that counts COS properly" in {
-      runTest(s"COS($column1)", column3, Seq(0.540, 0.453, 0.362, 0.267, null))
+      runTest("COS(x)", column1, column3, Seq(0.540, 0.453, 0.362, 0.267, null))
     }
 
     "create Transformation that counts TAN properly" in {
-      runTest(s"TAN($column1)", column3, Seq(1.557, -1.964, 2.572, -3.602, null))
+      runTest("TAN(x)", column1, column3, Seq(1.557, -1.964, 2.572, -3.602, null))
     }
 
     "create Transformation that counts LN properly" in {
-      runTest(s"LN($column2)", column3, Seq(-1.609, 0.788, null, 1.435, null))
-    }
-
-    "create Transformation that counts MINIMUM properly" in {
-      runTest(s"MINIMUM($column1, $column2)", column3, Seq(0.2, -1.1, null, -1.3, null))
-    }
-
-    "create Transformation that counts MAXIMUM properly" in {
-      runTest(s"MAXIMUM($column1, $column2)", column3, Seq(1.0, 2.2, null, 4.2, null))
+      runTest("LN(x)", column2, column3, Seq(-1.609, 0.788, null, 1.435, null))
     }
 
     "create Transformation that counts FLOOR properly" in {
-      runTest(s"FLOOR($column1)", column3, Seq(1.0, -2.0, 1.0, -2.0, null))
+      runTest("FLOOR(x)", column1, column3, Seq(1.0, -2.0, 1.0, -2.0, null))
     }
 
     "create Transformation that counts CEIL properly" in {
-      runTest(s"CEIL($column1)", column3, Seq(1.0, -1.0, 2.0, -1.0, null))
+      runTest("CEIL(x)", column1, column3, Seq(1.0, -1.0, 2.0, -1.0, null))
     }
 
     "create Transformation that counts SIGNUM properly" in {
-      runTest(s"SIGNUM($column1)", column3, Seq(1.0, -1.0, 1.0, -1.0, null))
+      runTest("SIGNUM(x)", column1, column3, Seq(1.0, -1.0, 1.0, -1.0, null))
+    }
+  }
+
+  it should {
+    "create Transformation that counts MINIMUM properly" in {
+      runTest(s"MINIMUM($column1, $column2)", column1, column3, Seq(0.2, -1.1, null, -1.3, null))
+    }
+
+    "create Transformation that counts MAXIMUM properly" in {
+      runTest(s"MAXIMUM($column1, $column2)", column1, column3, Seq(1.0, 2.2, null, 4.2, null))
     }
 
     "create Transformation that counts complex formulas properly" in {
-      runTest(s"MAXIMUM(SIN($column2) + 1.0, ABS($column1 - 2.0))", column3,
+      runTest(s"MAXIMUM(SIN($column2) + 1.0, ABS($column1 - 2.0))", column1, column3,
         Seq(1.19, 3.1, null, 3.3, null))
+    }
+  }
+
+  it should {
+    "detect missing inputColumn during inference" in {
+      a[ColumnDoesNotExistException] shouldBe thrownBy(
+        MathematicalTransformation()
+          .setFormula("x * 2")
+          .setInputColumn(NameSingleColumnSelection("nonExistingCol"))
+          .setOutputColumnName(column3)
+          ._transformSchema(schema))
+    }
+    "detect SQL syntax error during inference" in {
+      a[MathematicalExpressionSyntaxException] shouldBe thrownBy(
+        MathematicalTransformation()
+          .setFormula("+++---")
+          .setInputColumn(NameSingleColumnSelection(column1))
+          .setOutputColumnName(column3)
+      ._transformSchema(schema))
+    }
+    "detect non-existent column during inference" in {
+      a[ColumnsDoNotExistException] shouldBe thrownBy(
+        MathematicalTransformation()
+          .setFormula("nonExistingCol")
+          .setInputColumn(NameSingleColumnSelection(column1))
+          .setOutputColumnName(column3)
+        ._transformSchema(schema)
+      )
+    }
+    "detect that alias conflicts with a column name form input DF" in {
+      a[ColumnAliasNotUniqueException] shouldBe thrownBy(
+        MathematicalTransformation()
+          .setFormula("c0")
+          .setInputColumnAlias("c0")
+          .setInputColumn(NameSingleColumnSelection(column1))
+          .setOutputColumnName(column3)
+          ._transformSchema(schema))
+    }
+  }
+
+  it should {
+    "work with user-defined column alias" in {
+      runTest("ABS(y)", column1, column3, Seq(1.0, 1.1, 1.2, 1.3, null), "y")
     }
 
     "create Transformation that produces properly escaped column name" in {
       val dataFrame = applyFormulaToDataFrame(
-        s"COS($column1)", s"$column3needsEscaping",
+        "COS(x)",
+        column1,
+        s"$column3needsEscaping",
+        "x",
         prepareDataFrame())
       val rows = dataFrame.sparkDataFrame.collect()
       validateColumn(rows, Seq(0.540, 0.453, 0.362, 0.267, null))
@@ -99,9 +148,12 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
     }
 
     "fail when 2 comma-separated formulas are provided" in {
-      intercept[DOperationExecutionException] {
+      intercept[MathematicalExpressionSyntaxException] {
         val dataFrame = applyFormulaToDataFrame(
-          s"MAXIMUM($column1), SIN($column1)", "name",
+          "MAXIMUM(x), SIN(x)",
+          column1,
+          "name",
+          "x",
           prepareDataFrame())
         dataFrame.sparkDataFrame.collect()
       };()
@@ -109,33 +161,51 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
 
     "fail when formula is not correct" in {
       intercept[DOperationExecutionException] {
-        val dataFrame = applyFormulaToDataFrame("MAXIMUM(", "name", prepareDataFrame())
+        val dataFrame =
+          applyFormulaToDataFrame("MAXIMUM(", "name", column1, "x", prepareDataFrame())
         dataFrame.sparkDataFrame.collect()
       };()
     }
 
     "produce NaN if the argument given to the function is not correct" in {
       // counting LN from negative number
-      val dataFrame = applyFormulaToDataFrame(s"LN($column1)", column3, prepareDataFrame())
+      val dataFrame =
+        applyFormulaToDataFrame("LN(x)", column1, column3, "x", prepareDataFrame())
       val rowWithNegativeValue = 1
       val rowWithNaN = dataFrame.sparkDataFrame.collect()(rowWithNegativeValue)
       rowWithNaN.getDouble(resultColumn).isNaN shouldBe true
     }
 
     "always create nullable columns" in {
-      runTest(s"cast(1.0 as double)", column3, Seq(1.0, 1.0, 1.0, 1.0, 1.0))
+      runTest("cast(1.0 as double)", column1, column3, Seq(1.0, 1.0, 1.0, 1.0, 1.0))
     }
   }
 
-  def runTest(formula: String, columnName: String, expectedValues: Seq[Any]) : Unit = {
-    val dataFrame = applyFormulaToDataFrame(formula, columnName, prepareDataFrame())
+  def runTest(
+      formula: String,
+      inputColumnName: String,
+      outputColumnName: String,
+      expectedValues: Seq[Any],
+      columnAlias: String = "x") : Unit = {
+    val dataFrame = applyFormulaToDataFrame(
+      formula,
+      inputColumnName,
+      outputColumnName,
+      columnAlias,
+      prepareDataFrame())
     val rows = dataFrame.sparkDataFrame.collect()
     validateSchema(dataFrame.sparkDataFrame.schema)
     validateColumn(rows, expectedValues)
   }
 
-  def applyFormulaToDataFrame(formula: String, columnName: String, df: DataFrame): DataFrame = {
-    val transformation = prepareTransformation(formula, columnName)
+  def applyFormulaToDataFrame(
+      formula: String,
+      inputColumnName: String,
+      outputColumnName: String,
+      columnAlias: String,
+      df: DataFrame): DataFrame = {
+    val transformation =
+      prepareTransformation(formula, inputColumnName, outputColumnName, columnAlias)
     applyTransformation(transformation, df)
   }
 
@@ -143,11 +213,16 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
     transformation.transform.apply(executionContext)(())(df)
   }
 
-  def prepareTransformation(formula: String, columnName: String): MathematicalTransformation = {
-    val mathematicalTransformation = MathematicalTransformation()
-    mathematicalTransformation.setFormula(formula)
-    mathematicalTransformation.setColumnName(columnName)
-    mathematicalTransformation
+  def prepareTransformation(
+      formula: String,
+      inputColumnName: String,
+      outputColumnName: String,
+      columnAlias: String): MathematicalTransformation = {
+    MathematicalTransformation()
+      .setFormula(formula)
+      .setInputColumn(NameSingleColumnSelection(inputColumnName))
+      .setOutputColumnName(outputColumnName)
+      .setInputColumnAlias(columnAlias)
   }
 
   def validateSchema(schema: StructType): Unit = {
@@ -178,10 +253,6 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
   }
 
   def prepareDataFrame(): DataFrame = {
-    val schema: StructType = StructType(List(
-      StructField(column0, StringType),
-      StructField(column1, DoubleType),
-      StructField(column2, DoubleType)))
     val manualRowsSeq: Seq[Row] = Seq(
       Row("aaa", 1.0, 0.2),
       Row("bbb", -1.1, 2.2),
@@ -190,4 +261,9 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
       Row("eee", null, null))
     createDataFrame(manualRowsSeq, schema)
   }
+
+  val schema: StructType = StructType(List(
+    StructField(column0, StringType),
+    StructField(column1, DoubleType),
+    StructField(column2, DoubleType)))
 }

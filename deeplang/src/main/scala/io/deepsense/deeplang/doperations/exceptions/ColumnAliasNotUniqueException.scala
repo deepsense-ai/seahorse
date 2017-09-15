@@ -16,11 +16,7 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-case class MathematicalTransformationExecutionException(
-    inputColumnName: String,
-    formula: String,
-    outputColumnName: String,
-    rootCause: Option[Throwable])
-  extends DOperationExecutionException(
-    s"Problem while executing MathematicalTransformation with the following formula: '$formula'",
-    rootCause)
+import io.deepsense.deeplang.exceptions.DeepLangException
+
+case class ColumnAliasNotUniqueException(alias: String) extends DeepLangException(
+  s"Alias '${alias}' is not unique within the input DataFrame")

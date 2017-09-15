@@ -16,6 +16,10 @@
 
 package io.deepsense.deeplang.doperables
 
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
+import io.deepsense.deeplang.params.{Param, Params}
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml
 import org.apache.spark.ml.param.{DoubleParam, ParamMap}
@@ -24,10 +28,7 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.params.{Params, Param}
-import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
+import scala.language.reflectiveCalls
 
 object EstimatorModelWrappersFixtures extends MockitoSugar {
 
