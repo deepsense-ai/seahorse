@@ -23,7 +23,6 @@ case class ProtocolJsonDeserializer(graphReader: GraphReader)
   extends JsonMQDeserializer(
     Seq(
       WorkflowProtocol.AbortDeserializer,
-      WorkflowProtocol.LaunchDeserializer,
       WorkflowProtocol.UpdateWorkflowDeserializer(graphReader),
       WorkflowProtocol.SynchronizeDeserializer,
       NotebookProtocol.KernelManagerReadyDeserializer))

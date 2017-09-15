@@ -22,6 +22,7 @@ import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.message.global.HeartbeatJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.global.PoisonPillJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.global.ReadyJsonProtocol._
+import io.deepsense.workflowexecutor.communication.message.global.LaunchJsonProtocol._
 
 object Global {
   val charset = Charset.forName("UTF-8")
@@ -37,9 +38,12 @@ object Global {
   object ReadyDeserializer extends DefaultJsonMessageDeserializer[Ready](ready)
   object ReadySerializer extends DefaultJsonMessageSerializer[Ready](ready)
 
+  object LaunchDeserializer extends DefaultJsonMessageDeserializer[Launch](launch)
+  object LaunchSerializer extends DefaultJsonMessageSerializer[Launch](launch)
+
   object GlobalMQSerializer extends JsonMQSerializer(
-    Seq(HeartbeatSerializer, PoisonPillSerializer, ReadySerializer))
+    Seq(HeartbeatSerializer, PoisonPillSerializer, ReadySerializer, LaunchSerializer))
 
   object GlobalMQDeserializer extends JsonMQDeserializer(
-    Seq(HeartbeatDeserializer, PoisonPillDeserializer, ReadyDeserializer))
+    Seq(HeartbeatDeserializer, PoisonPillDeserializer, ReadyDeserializer, LaunchDeserializer))
 }

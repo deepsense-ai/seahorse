@@ -26,5 +26,6 @@ object Constants {
     val heartbeat = "heartbeat"
     val poisonPill = "poisonPill"
     val ready = "ready"
+    val launch = "launch"
   }
 }

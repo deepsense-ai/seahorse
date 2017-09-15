@@ -23,7 +23,6 @@ import io.deepsense.models.workflows.{ExecutionReport, InferredState, WorkflowWi
 import io.deepsense.models.json.workflow.ExecutionReportJsonProtocol._
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow.AbortJsonProtocol._
-import io.deepsense.workflowexecutor.communication.message.workflow.LaunchJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.workflow.SynchronizeJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.json.Constants.MessagesTypes._
@@ -39,8 +38,6 @@ object WorkflowProtocol {
 
 
   object AbortDeserializer extends DefaultJsonMessageDeserializer[Abort](abort)
-
-  object LaunchDeserializer extends DefaultJsonMessageDeserializer[Launch](launch)
 
   object SynchronizeDeserializer extends DefaultJsonMessageDeserializer[Synchronize](synchronize)
   object SynchronizeSerializer extends DefaultJsonMessageSerializer[Synchronize](synchronize)
