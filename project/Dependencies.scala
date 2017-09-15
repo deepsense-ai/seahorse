@@ -137,7 +137,7 @@ object Dependencies {
     sprayCan,
     sprayJson,
     sprayRouting
-  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
+  ) ++ scalatraAndJetty ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
 
   val workflowmanager = Spark.components ++ Seq(
     akkaActor,
@@ -181,7 +181,11 @@ object Dependencies {
     scalajs
   )
 
-  val schedulingmanager = Seq()
+  val schedulingmanager =  scalatraAndJetty ++ json4s ++ Seq(
+    h2,
+    flyway,
+    scalajs
+  )
 
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
