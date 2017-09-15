@@ -118,7 +118,9 @@ class ExperimentsApi @Inject() (
                       .forContext(userContext)
                       .get(experimentId)
                       .map(_.map((experiment =>
-                        Envelope(MetadataInference.run(experiment, nodeId, portIndex)))))
+                        Envelope(
+                          MetadataInference.run(
+                            experiment, nodeId, portIndex, inferContext)))))
                   }
                 }
               }

@@ -22,7 +22,7 @@ trait ColumnMetadataJsonProtocol
   with SprayJsonSupport
   with ColumnTypeJsonProtocol
   with NullOptions {
-  implicit val columnMetadataFormat = jsonFormat2(ColumnMetadata.apply)
+  implicit val columnMetadataFormat = jsonFormat3(ColumnMetadata.apply)
 }
 
 trait CategoriesMappingJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
@@ -49,9 +49,7 @@ trait DataFrameMetadataJsonProtocol
         "isExact" -> dfm.isExact.toJson,
         "isColumnCountExact" -> dfm.isColumnCountExact.toJson,
         "columns" -> dfm.columns.toJson,
-        "categoricalMappings" -> (dfm.categoricalMappings.map(
-          (entry: (Int, CategoriesMapping)) => (entry._1.toString, entry._2)))
-          .toJson)
+        "categoricalMappings" -> dfm.categoricalMappings.toJson)
     override def read(value: JsValue): DataFrameMetadata =
       throw new RuntimeException("Not supported")
   }

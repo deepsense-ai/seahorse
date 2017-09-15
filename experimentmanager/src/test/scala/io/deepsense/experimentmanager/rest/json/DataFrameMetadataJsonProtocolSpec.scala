@@ -14,8 +14,8 @@ class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with Mock
 
   "DataFrameMetadata with full knowledge" should "be correctly serialized to json" in {
     val metadata = DataFrameMetadata(true, true,
-      Seq(ColumnMetadata(Some("x"), Some(ColumnType.categorical))),
-      Map(0 -> CategoriesMapping(Seq("a", "b", "c"))))
+      Map("x" -> ColumnMetadata("x", Some(0), Some(ColumnType.categorical))),
+      Map("x" -> CategoriesMapping(Seq("a", "b", "c"))))
     val serializingVisitor = new MetadataJsonSerializingVisitor
 
     val expectedJson = JsObject(
@@ -23,12 +23,13 @@ class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with Mock
       "content" -> JsObject(
         "isExact" -> JsBoolean(true),
         "isColumnCountExact" -> JsBoolean(true),
-        "columns" -> JsArray(
-          JsObject(
+        "columns" -> JsObject(
+          "x" -> JsObject(
             "name" -> JsString("x"),
+            "index" -> JsNumber(0),
             "columnType" -> JsString("categorical"))),
         "categoricalMappings" -> JsObject(
-          "0" -> JsArray(Vector("a", "b", "c").map(JsString(_)))
+          "x" -> JsArray(Vector("a", "b", "c").map(JsString(_)))
         )
       )
     )
@@ -38,8 +39,8 @@ class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with Mock
 
   "DataFrameMetadata with partial knowledge" should "be correctly serialized to json" in {
     val metadata = DataFrameMetadata(false, false,
-      Seq(ColumnMetadata(None, None)),
-      Map(0 -> CategoriesMapping(Seq("a", "b", "c"))))
+      Map("x" -> ColumnMetadata("x", None, None)),
+      Map("x" -> CategoriesMapping(Seq("a", "b", "c"))))
     val serializingVisitor = new MetadataJsonSerializingVisitor
 
     val expectedJson = JsObject(
@@ -47,12 +48,13 @@ class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with Mock
       "content" -> JsObject(
         "isExact" -> JsBoolean(false),
         "isColumnCountExact" -> JsBoolean(false),
-        "columns" -> JsArray(
-          JsObject(
-            "name" -> JsNull,
+        "columns" -> JsObject(
+          "x" -> JsObject(
+            "name" -> JsString("x"),
+            "index" -> JsNull,
             "columnType" -> JsNull)),
         "categoricalMappings" -> JsObject(
-          "0" -> JsArray(Vector("a", "b", "c").map(JsString(_)))
+          "x" -> JsArray(Vector("a", "b", "c").map(JsString(_)))
         )
       )
     )

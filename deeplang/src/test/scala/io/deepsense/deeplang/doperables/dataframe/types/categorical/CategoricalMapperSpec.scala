@@ -14,8 +14,8 @@ class CategoricalMapperSpec extends UnitSpec {
   "CategoricalMapper" should {
 
     val mappings: CategoricalMappingsMap = Map(
-      1 -> CategoriesMapping(Seq("A", "B", "C")),
-      2 -> CategoriesMapping(Seq("cat", "dog"))
+      "categorical_1" -> CategoriesMapping(Seq("A", "B", "C")),
+      "categorical_2" -> CategoriesMapping(Seq("cat", "dog"))
     )
 
     val schema = StructType(Seq(
@@ -29,11 +29,11 @@ class CategoricalMapperSpec extends UnitSpec {
       StructField(
         "categorical_1",
         IntegerType,
-        metadata = MappingMetadataConverter.mappingToMetadata(mappings(1))),
+        metadata = MappingMetadataConverter.mappingToMetadata(mappings("categorical_1"))),
       StructField(
         "categorical_2",
         IntegerType,
-        metadata = MappingMetadataConverter.mappingToMetadata(mappings(2)))
+        metadata = MappingMetadataConverter.mappingToMetadata(mappings("categorical_2")))
     ))
 
     "update schema based on mappings" in {

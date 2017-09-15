@@ -21,12 +21,13 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
 
   def categorized(columnsNames: String*): DataFrame = {
     val distinctValues = columnsNames.map(n => n -> distinctColumnValues(n)).toMap
-    val mappings = distinctValues.map {
+    val columnNameMappings = distinctValues.map {
       case (columnName, values) =>
-        columnIndex(columnName) -> CategoriesMapping(values.toSeq)
+        columnName -> CategoriesMapping(values.toSeq)
     }
-    val remappedRdd = mapCategoricals(mappings)
-    dataFrameWithMappingMetadata(remappedRdd, mappings)
+    val indexMappings = columnNameMappings.map(mapping => (columnIndex(mapping._1), mapping._2))
+    val remappedRdd = mapCategoricals(indexMappings)
+    dataFrameWithMappingMetadata(remappedRdd, columnNameMappings)
   }
 
   private def distinctColumnValues(column: String): Array[String] = {
@@ -54,7 +55,7 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
     }
   }
 
-  private def mapCategoricals(mappings: CategoricalMappingsMap): RDD[Row] = {
+  private def mapCategoricals(mappings: Map[Int, CategoriesMapping]): RDD[Row] = {
     sparkDataFrame.map(r => {
       val seq = Row.unapplySeq(r).get.zipWithIndex
       val mappedSeq = seq.map { case (value, index) =>
@@ -90,23 +91,23 @@ object CategoricalMapper {
   /**
    * A map from column index to categorical mapping for this column
    */
-  type CategoricalMappingsMap = Map[Int, CategoriesMapping]
+  type CategoricalMappingsMap = Map[String, CategoriesMapping]
 
-  def categorizedSchema(schema: StructType, mappings: Map[Int, CategoriesMapping]): StructType = {
-    val mappedType = schema.iterator.zipWithIndex.map { case (field, index) =>
+  def categorizedSchema(
+      schema: StructType, mappings: Map[String, CategoriesMapping]): StructType = {
+    val mappedType = schema.map(field =>
       mappings
-        .get(index)
+        .get(field.name)
         .map { m =>
         val updatedMetadata = MappingMetadataConverter.mappingToMetadata(m, field.metadata)
         field.copy(metadata = updatedMetadata, dataType = IntegerType)
-      }.getOrElse(field)
-    }
+      }.getOrElse(field))
     StructType(mappedType.toSeq)
   }
 
   def mappingsMapFromSchema(schema: StructType): CategoricalMappingsMap = {
-    schema.zipWithIndex.flatMap {
-      case (field, index) => mappingFromMetadata(field.metadata).map(index -> _)
-    }.toMap
+    schema.flatMap(field =>
+      mappingFromMetadata(field.metadata).map(field.name -> _)
+    ).toMap
   }
 }

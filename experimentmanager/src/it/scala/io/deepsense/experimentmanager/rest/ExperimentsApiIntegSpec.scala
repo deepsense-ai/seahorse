@@ -4,10 +4,19 @@
 
 package io.deepsense.experimentmanager.rest
 
+import com.google.inject.util.Modules
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import  io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.{Transformation, Report}
+import io.deepsense.deeplang.doperations.MathematicalOperation
+import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+
 import scala.concurrent.Await
 
 import com.google.common.base.Function
-import com.google.inject.{Key, TypeLiteral}
+import com.google.inject._
 import org.jclouds.ContextBuilder
 import org.jclouds.compute.ComputeServiceContext
 import org.jclouds.domain.Credentials
@@ -17,9 +26,9 @@ import spray.routing.Route
 
 import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.experimentmanager.storage.cassandra.ExperimentDaoCassandraImpl
-import io.deepsense.experimentmanager.{ExperimentsTableCreator, ExperimentManagerIntegTestSupport}
+import io.deepsense.experimentmanager.{DOperationCategories, ExperimentsTableCreator, ExperimentManagerIntegTestSupport}
 import io.deepsense.experimentmanager.storage.ExperimentStorage
-import io.deepsense.graph.Graph
+import io.deepsense.graph.{Node, Graph}
 import io.deepsense.models.experiments.Experiment
 
 class ExperimentsApiIntegSpec
@@ -32,6 +41,7 @@ class ExperimentsApiIntegSpec
   override def cassandraKeySpaceName: String = "experimentmanager"
 
   var experimentA: Experiment = null
+  var experimentAN: Experiment = null
   var experimentB: Experiment = null
   var experimentStorage: ExperimentStorage = null
 
@@ -42,6 +52,7 @@ class ExperimentsApiIntegSpec
   lazy val tenantB = tenantId("userB")
 
   override def experimentOfTenantA: Experiment = experimentA
+  override def experimentOfTenantAWithNode = experimentAN
   override def experimentOfTenantB: Experiment = experimentB
 
   override val tenantAId: String = tenantA
@@ -63,8 +74,22 @@ class ExperimentsApiIntegSpec
 
   override val apiPrefix: String = apiPrefixFromConfig
 
+  override protected def appGuiceModule : Module =
+    Modules.`override`(super.appGuiceModule).`with`(new AbstractModule {
+      override def configure(): Unit = {}
+      @Singleton
+      @Provides
+      def provideGraphReader(dOperationsCatalog: DOperationsCatalog): GraphReader = graphReader
+    })
+
   before {
     ExperimentsTableCreator.create(cassandraTableName, session)
+
+    catalog.registerDOperation[MathematicalOperation](
+      DOperationCategories.DataManipulation,
+      "Performs a mathematical operation")
+
+    dOperableCatalog.registerDOperable[Transformation]()
 
     experimentA = Experiment(
       Experiment.Id.randomId,
@@ -73,6 +98,13 @@ class ExperimentsApiIntegSpec
       Graph(),
       created,
       updated)
+
+    experimentAN = Experiment(
+      Experiment.Id.randomId,
+      tenantAId,
+      "Experiment of Tenant A with node",
+      Graph(Set(Node(nodeUUID, catalog.createDOperation(catalog.operations.keys.head))), Set())
+    )
 
     experimentB = Experiment(
       Experiment.Id.randomId,
@@ -85,6 +117,7 @@ class ExperimentsApiIntegSpec
     experimentStorage = getInstance[ExperimentStorage]
     import scala.concurrent.duration._
     Await.ready(experimentStorage.save(experimentA), 2.seconds)
+    Await.ready(experimentStorage.save(experimentAN), 2.seconds)
     Await.ready(experimentStorage.save(experimentB), 2.seconds)
   }
 

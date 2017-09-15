@@ -15,11 +15,14 @@ import io.deepsense.experimentmanager.rest.json.DataFrameMetadataJsonProtocol._
 
 object MetadataInference {
   def run(
-      experiment: Experiment, nodeId: Node.Id, portIndex: Int): Seq[Option[AbstractMetadata]] = {
+      experiment: Experiment,
+      nodeId: Node.Id,
+      portIndex: Int,
+      baseContext: InferContext): Seq[Option[AbstractMetadata]] = {
     experiment.graph.inferKnowledge(
       nodeId,
       portIndex,
-      new InferContext(new DOperableCatalog, true)).types.toList.map(
+      new InferContext(baseContext.dOperableCatalog, true)).types.toList.map(
         (operable: DOperable) => operable.inferredMetadata)
   }
 }

@@ -16,8 +16,8 @@ class MetadataSpec extends UnitSpec {
   "Metadata" should {
 
     val mappings: CategoricalMappingsMap = Map(
-      1 -> CategoriesMapping(Seq("A", "B", "C")),
-      3 -> CategoriesMapping(Seq("cat", "dog"))
+      "categorical_1" -> CategoriesMapping(Seq("A", "B", "C")),
+      "categorical_2" -> CategoriesMapping(Seq("cat", "dog"))
     )
 
     val schema = StructType(Seq(
@@ -27,24 +27,28 @@ class MetadataSpec extends UnitSpec {
       StructField(
         "categorical_1",
         IntegerType,
-        metadata = MappingMetadataConverter.mappingToMetadata(mappings(1))),
+        metadata = MappingMetadataConverter.mappingToMetadata(mappings("categorical_1"))),
       StructField(
         "string_column",
         StringType),
       StructField(
         "categorical_2",
         IntegerType,
-        metadata = MappingMetadataConverter.mappingToMetadata(mappings(3)))
+        metadata = MappingMetadataConverter.mappingToMetadata(mappings("categorical_2")))
     ))
 
     val metadata = DataFrameMetadata(
       isExact = true,
       isColumnCountExact = true,
-      columns = Seq(
-        ColumnMetadata(name = Some("num_column"), columnType = Some(ColumnType.numeric)),
-        ColumnMetadata(name = Some("categorical_1"), columnType = Some(ColumnType.categorical)),
-        ColumnMetadata(name = Some("string_column"), columnType = Some(ColumnType.string)),
-        ColumnMetadata(name = Some("categorical_2"), columnType = Some(ColumnType.categorical))
+      columns = Map(
+        "num_column" -> ColumnMetadata(
+          name = "num_column", index = Some(0), columnType = Some(ColumnType.numeric)),
+        "categorical_1" -> ColumnMetadata(
+          name = "categorical_1", index = Some(1), columnType = Some(ColumnType.categorical)),
+        "string_column" -> ColumnMetadata(
+          name = "string_column", index = Some(2), columnType = Some(ColumnType.string)),
+        "categorical_2" -> ColumnMetadata(
+          name = "categorical_2", index = Some(3), columnType = Some(ColumnType.categorical))
       ),
       categoricalMappings = mappings
     )

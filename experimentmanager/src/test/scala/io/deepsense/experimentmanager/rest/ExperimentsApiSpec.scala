@@ -43,10 +43,9 @@ class ExperimentsApiSpec
 
   val created = DateTimeConverter.now
   val updated = created.plusHours(1)
-  val catalog = mock[DOperationsCatalog]
-  val dOperableCatalog = mock[DOperableCatalog]
-  override val inferContext: InferContext = mock[InferContext]
-  when(inferContext.dOperableCatalog).thenReturn(dOperableCatalog)
+  val catalog = DOperationsCatalog()
+  val dOperableCatalog = new DOperableCatalog
+  override val inferContext: InferContext = new InferContext(dOperableCatalog, true)
   override val graphReader: GraphReader = new GraphReader(catalog)
   case class LaunchActionWrapper(launch: LaunchAction)
   case class AbortActionWrapper(abort: AbortAction)
