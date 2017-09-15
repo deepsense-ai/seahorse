@@ -28,6 +28,12 @@ You can now run it using `docker-compose up`. Seahorse will start at [http://loc
 
 ### Running tests
 
+Initialize the submodules before running the tests:
+```console
+git submodule init
+git submodule update
+```
+
 Backend tests:
 ```console
 ./build/build_and_run_tests.sh
@@ -39,11 +45,11 @@ Frontend tests:
 ```
 
 End-to-end integration tests:
-```
+```console
 ./build/e2e_tests.sh -a
 ```
 
-### Bash completition for Python scripts
+### Bash competition for Python scripts
 
 Some of our Python scripts used by devs support bash autocompletion using argcomplete.
 
