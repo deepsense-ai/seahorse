@@ -11,7 +11,7 @@ ds_editor_port: 8002
 ds_wm_ip: "{{docker_ip}}"
 ds_wm_port: 9081
 ds_wm_public_port: 9080
-static_allowed_http_req_rate_per_second: 100
-static_block_period_in_seconds: 60
-wm_allowed_http_req_rate_per_second: 50
-wm_block_period_in_seconds: 60
+static_allowed_http_req_rate_per_second_per_ip: 100
+static_ip_block_period_in_seconds: 60
+wm_allowed_http_req_rate_per_second_per_ip: 50
+wm_ip_block_period_in_seconds: 60

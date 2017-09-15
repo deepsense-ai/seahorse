@@ -24,11 +24,11 @@ frontend seahorse
   acl acl_editor hdr(Host) -i editor.deepsense.io editor.seahorse.deepsense.io
   acl acl_documentation hdr(Host) -i seahorse.deepsense.io
   acl acl_aws_health_check hdr_beg(User-Agent) -i Amazon\ Route\ 53\ Health\ Check\ Service
-  acl too_fast sc0_http_req_rate() gt {{static_allowed_http_req_rate_per_second}}
+  acl too_fast sc0_http_req_rate() gt {{static_allowed_http_req_rate_per_second_per_ip}}
   acl block_ip sc0_inc_gpc0 gt 0
   acl blocked_ip sc0_get_gpc0 gt 0
 
-  stick-table type ip size 1m expire {{static_block_period_in_seconds}}s store gpc0,http_req_rate(1s)
+  stick-table type ip size 1m expire {{static_ip_block_period_in_seconds}}s store gpc0,http_req_rate(1s)
 
   tcp-request connection track-sc0 src
   tcp-request connection reject if blocked_ip
@@ -47,11 +47,11 @@ frontend workflow_manager
   bind 0.0.0.0:{{ds_wm_public_port}} ssl crt /usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem crt /usr/local/etc/haproxy/deepsense.io.pem
 
   acl acl_aws_health_check hdr_beg(User-Agent) -i Amazon\ Route\ 53\ Health\ Check\ Service
-  acl too_fast sc0_http_req_rate() gt {{wm_allowed_http_req_rate_per_second}}
+  acl too_fast sc0_http_req_rate() gt {{wm_allowed_http_req_rate_per_second_per_ip}}
   acl block_ip sc0_inc_gpc0 gt 0
   acl blocked_ip sc0_get_gpc0 gt 0
 
-  stick-table type ip size 1m expire {{wm_block_period_in_seconds}}s store gpc0,http_req_rate(1s)
+  stick-table type ip size 1m expire {{wm_ip_block_period_in_seconds}}s store gpc0,http_req_rate(1s)
 
   tcp-request connection track-sc0 src
   tcp-request connection reject if blocked_ip
