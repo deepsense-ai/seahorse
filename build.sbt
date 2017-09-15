@@ -18,3 +18,6 @@ addCommandAlias("ds-it",
     ";entitystorage/it:test " +
     ";workflowmanager/it:test " +
     ";deploy-model-service/it:test")
+
+addCommandAlias("sPublish", "aetherDeploy")
+addCommandAlias("sPublishLocal", "aetherInstall")

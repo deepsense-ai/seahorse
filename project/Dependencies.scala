@@ -20,7 +20,7 @@ object Version {
   val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
-  val seahorse      = "0.1.19"
+  val seahorse      = "0.4.0-SNAPSHOT"
 }
 
 object Library {
@@ -79,7 +79,8 @@ object Dependencies {
     "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
-    "seahorse.deepsense.io"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-release"
+    "seahorse.deepsense.io"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-release",
+    "seahorse.snapshot    "  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-snapshot"
   )
 
   val commons = Seq(
