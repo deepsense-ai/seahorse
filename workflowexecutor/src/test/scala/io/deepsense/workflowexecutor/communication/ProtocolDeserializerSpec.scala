@@ -53,8 +53,7 @@ class ProtocolDeserializerSpec
         )
       )
 
-      val bytes = rawMessage.compactPrint.getBytes(StandardCharsets.UTF_8)
-      val readMessage = protocolDeserializer.deserializeMessage(bytes)
+      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
 
       verify(graphReader).read(graphJs)
 
@@ -63,5 +62,26 @@ class ProtocolDeserializerSpec
         graph,
         nodesToExecute)
     }
+    "deserialize Abort messages" in {
+      val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
+      val workflowId = Workflow.Id.randomId
+
+      val rawMessage = JsObject(
+        "messageType" -> JsString("abort"),
+        "messageBody" -> JsObject(
+          "workflowId" -> JsString(workflowId.toString)
+        )
+      )
+
+      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
+      readMessage shouldBe Abort(workflowId)
+    }
+  }
+
+  def serializeAndRead(
+      protocolDeserializer: ProtocolDeserializer,
+      rawMessage: JsObject): ReadMessageMQ = {
+    val bytes = rawMessage.compactPrint.getBytes(StandardCharsets.UTF_8)
+    protocolDeserializer.deserializeMessage(bytes)
   }
 }

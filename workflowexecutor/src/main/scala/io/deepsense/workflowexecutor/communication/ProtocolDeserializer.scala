@@ -27,6 +27,7 @@ case class ProtocolDeserializer(
   with WorkflowJsonProtocol
   with ConnectJsonProtocol
   with LaunchJsonProtocol
+  with AbortJsonProtocol
   with GetPythonGatewayAddressJsonProtocol {
 
   override protected def deserializeJson(jsObject: JsObject): ReadMessageMQ = {
@@ -37,6 +38,7 @@ case class ProtocolDeserializer(
     messageType match {
       case Connect.messageType => body.convertTo[Connect]
       case Launch.messageType => body.convertTo[Launch]
+      case Abort.messageType => body.convertTo[Abort]
       case GetPythonGatewayAddress.messageType => body.convertTo[GetPythonGatewayAddress]
     }
   }

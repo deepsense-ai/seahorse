@@ -16,11 +16,12 @@
 
 package io.deepsense.workflowexecutor.rabbitmq
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ActorSelection, Actor, ActorRef}
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.WorkflowExecutorActor
-import io.deepsense.workflowexecutor.communication.Launch
+import io.deepsense.workflowexecutor.communication.{Abort, Launch}
 
 case class WorkflowChannelSubscriber(
   executionDispatcher: ActorRef) extends Actor with Logging {
@@ -28,7 +29,12 @@ case class WorkflowChannelSubscriber(
   override def receive: Receive = {
     case Launch(id, directedGraph, nodesToExecute) =>
       logger.debug(s"LAUNCH! '$id' -> $directedGraph")
-      val selection = context.actorSelection(executionDispatcher.path./(id.toString))
-      selection ! WorkflowExecutorActor.Messages.Launch(directedGraph, nodesToExecute)
+      actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Launch(directedGraph, nodesToExecute)
+    case Abort(id) =>
+      logger.debug(s"ABORT! '$id'")
+      actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Abort()
   }
+
+  private def actorsForWorkflow(workflowId: Workflow.Id): ActorSelection =
+    context.actorSelection(executionDispatcher.path./(workflowId.toString))
 }
