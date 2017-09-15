@@ -89,7 +89,7 @@ case class Join()
     logger.debug("Rename join columns in right DataFrame if they are present in left DataFrame")
     rsdf.columns.foreach { col =>
       if (renamedLeftColumns.valuesIterator.contains(col)) {
-        val newCol = DataFrameColumnsGetter.uniqueColumnName(rdf.sparkDataFrame.schema, col, "join")
+        val newCol = DataFrameColumnsGetter.uniqueSuffixedColumnName(col)
         renamedRightColumns.put(col, newCol)
         rsdf = rsdf.withColumnRenamed(col, newCol)
       }
@@ -136,6 +136,7 @@ case class Join()
   }
 
   private def inferSchema(leftSchema: StructType, rightSchema: StructType): StructType = {
+
     val (leftJoinColumnNames, rightJoinColumnNames) = validateSchemas(leftSchema, rightSchema)
 
     val renamedLeftColumns = appendPrefixes(leftSchema, getLeftPrefix)
@@ -146,10 +147,9 @@ case class Join()
     var prefixedRightSchema = StructType(
       rightSchema.map(field => field.copy(name = renamedRightColumns(field.name))))
 
-    logger.debug("Rename join columns in right DataFrame if they are present in left DataFrame")
     prefixedRightSchema.foreach { col =>
       if (renamedLeftColumns.valuesIterator.contains(col.name)) {
-        val newCol = DataFrameColumnsGetter.uniqueColumnName(rightSchema, col.name, "join")
+        val newCol = DataFrameColumnsGetter.uniqueSuffixedColumnName(col.name)
         renamedRightColumns.put(col.name, newCol)
 
         prefixedRightSchema = StructType(prefixedRightSchema.updated(
