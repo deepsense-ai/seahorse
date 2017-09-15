@@ -24,6 +24,8 @@ class EntityDaoCassandraImpl @Inject() (
     (implicit ec: ExecutionContext)
   extends EntityDao {
 
+  private val queryBuilder = new QueryBuilder(session.getCluster)
+
   override def getAllSaved(tenantId: String): Future[List[EntityInfo]] = {
     Future(session.execute(
       getAllQuery(tenantId, selectedFields = EntityRowMapper.EntityInfoFields))
@@ -62,7 +64,7 @@ class EntityDaoCassandraImpl @Inject() (
   }
 
   private def getAllQuery(tenantId: String, selectedFields: Seq[String]): Where = {
-    QueryBuilder
+    queryBuilder
       .select(selectedFields: _*)
       .from(table)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
@@ -70,7 +72,9 @@ class EntityDaoCassandraImpl @Inject() (
   }
 
   private def getQuery(tenantId: String, id: Entity.Id, selectedFields: Seq[String]): Select = {
-    QueryBuilder.select(selectedFields: _*).from(table)
+    queryBuilder
+      .select(selectedFields: _*)
+      .from(table)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
       .and(QueryBuilder.eq(EntityRowMapper.Id, id.value)).limit(1)
   }
@@ -103,14 +107,17 @@ class EntityDaoCassandraImpl @Inject() (
   }
 
   private def inputQuery(entity: InputEntityFields): Update.Assignments = {
-    QueryBuilder.update(table)
+    queryBuilder
+      .update(table)
       .`with`(set(EntityRowMapper.Name, entity.name))
       .and(set(EntityRowMapper.Description, entity.description))
       .and(set(EntityRowMapper.Saved, entity.saved))
   }
 
   private def deleteQuery(tenantId: String, id: Entity.Id): Delete.Where = {
-    QueryBuilder.delete().from(table)
+    queryBuilder
+      .delete()
+      .from(table)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
       .and(QueryBuilder.eq(EntityRowMapper.Id, id.value))
   }

@@ -37,8 +37,8 @@ object EntityRowMapper {
     name = row.getString(Name),
     description = row.getString(Description),
     dClass = row.getString(DClass),
-    created = DateTimeConverter.fromMillis(row.getDate(Created).getTime),
-    updated = DateTimeConverter.fromMillis(row.getDate(Updated).getTime),
+    created = DateTimeConverter.fromMillis(row.getTimestamp(Created).getTime),
+    updated = DateTimeConverter.fromMillis(row.getTimestamp(Updated).getTime),
     saved = row.getBool(Saved))
 
   def toEntityWithData(row: Row): EntityWithData = {

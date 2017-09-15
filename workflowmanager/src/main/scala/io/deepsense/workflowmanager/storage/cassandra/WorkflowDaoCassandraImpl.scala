@@ -25,6 +25,8 @@ class WorkflowDaoCassandraImpl @Inject() (
     (implicit ec: ExecutionContext)
   extends WorkflowStorage  {
 
+  private val queryBuilder = new QueryBuilder(session.getCluster)
+
   override def get(id: Workflow.Id): Future[Option[Either[String, Workflow]]] = {
     Future(session.execute(getWorkflowQuery(id)))
       .map(rs => Option(rs.one()).map(workflowRowMapper.toWorkflow))
@@ -72,7 +74,7 @@ class WorkflowDaoCassandraImpl @Inject() (
   }
 
   private def getAllWorkflowsQuery(): Select.Where = {
-    QueryBuilder.select(
+    queryBuilder.select(
       WorkflowRowMapper.Id,
       WorkflowRowMapper.Workflow,
       WorkflowRowMapper.Created,
@@ -89,7 +91,9 @@ class WorkflowDaoCassandraImpl @Inject() (
     getQuery(id, Seq(WorkflowRowMapper.ResultsUploadTime))
 
   private def getQuery(id: Workflow.Id, columns: Seq[String]): Select = {
-    QueryBuilder.select(columns: _*).from(table)
+    queryBuilder
+      .select(columns: _*)
+      .from(table)
       .where(QueryBuilder.eq(WorkflowRowMapper.Id, id.value))
       .and(QueryBuilder.eq(WorkflowRowMapper.Deleted, false))
       .limit(1)
@@ -121,7 +125,7 @@ class WorkflowDaoCassandraImpl @Inject() (
 
   private def updateQuery(id: Id, valuesToSet: Seq[(String, Any)]): Update.Where = {
     val queryWithAssignments =
-      valuesToSet.foldLeft(QueryBuilder.update(table).`with`()) {
+      valuesToSet.foldLeft(queryBuilder.update(table).`with`()) {
         case (assignments, (field, value)) => assignments.and(set(field, value))
       }
 
@@ -131,7 +135,8 @@ class WorkflowDaoCassandraImpl @Inject() (
   }
 
   private def deleteQuery(id: Workflow.Id): Update.Where = {
-    QueryBuilder.update(table)
+    queryBuilder
+      .update(table)
       .`with`(set(WorkflowRowMapper.Deleted, true))
       .where(QueryBuilder.eq(WorkflowRowMapper.Id, id.value))
   }

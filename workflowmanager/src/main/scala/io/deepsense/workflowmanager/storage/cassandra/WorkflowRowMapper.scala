@@ -41,7 +41,8 @@ case class WorkflowRowMapper @Inject() (
   }
 
   def toResultsUploadTime(row: Row): Option[DateTime] = {
-    getDate(row, WorkflowRowMapper.ResultsUploadTime)
+    Option(row.getTimestamp(WorkflowRowMapper.ResultsUploadTime))
+      .map(s => DateTimeConverter.fromMillis(s.getTime))
   }
 
   def workflowToCell(workflow: Workflow): String = workflow.toJson.compactPrint
@@ -52,7 +53,7 @@ case class WorkflowRowMapper @Inject() (
     resultsUploadTime.getMillis
 
   private def getDate(row: Row, column: String): Option[DateTime] = {
-    Option(row.getDate(column)).map(s => DateTimeConverter.fromMillis(s.getTime))
+    Option(row.getTimestamp(column)).map(s => DateTimeConverter.fromMillis(s.getTime))
   }
 
   override def currentVersion: Version = CurrentBuild.version

@@ -15,9 +15,9 @@ class ClusterFactory {
       user: String,
       password: String,
       reconnectDelay: Long): Cluster = {
-    require(StringUtils.isNoneBlank(host), "Cassandra cluster's host can not be empty")
-    require(StringUtils.isNoneBlank(user), "Cassandra cluster's user can not be empty")
-    require(StringUtils.isNoneBlank(password), "Cassandra cluster's password can not be empty")
+    require(StringUtils.isNotBlank(host), "Cassandra cluster's host can not be empty")
+    require(StringUtils.isNotBlank(user), "Cassandra cluster's user can not be empty")
+    require(StringUtils.isNotBlank(password), "Cassandra cluster's password can not be empty")
     Cluster.builder()
       .addContactPoint(host)
       .withPort(port)

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils
 
 class SessionFactory {
   def connect(cluster: Cluster, keySpace: String): Session = {
-    require(StringUtils.isNoneBlank(keySpace), "Cassandra cluster's keyspace can not be empty")
+    require(StringUtils.isNotBlank(keySpace), "Cassandra cluster's keyspace can not be empty")
     blocking {
       val session = cluster.connect()
       session.execute(s"USE $keySpace;")

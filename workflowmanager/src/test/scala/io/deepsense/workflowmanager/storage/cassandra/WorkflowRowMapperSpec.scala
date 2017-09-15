@@ -107,8 +107,7 @@ class WorkflowRowMapperSpec
       "it's there" in
         withResultsUploadTime(DateTimeConverter.now) {
           (dateTime, row) =>
-            workflowRowMapper()
-              .toResultsUploadTime(row) shouldBe Some(dateTime)
+            workflowRowMapper().toResultsUploadTime(row) shouldBe Some(dateTime)
         }
     }
     "return None" when {
@@ -139,7 +138,7 @@ class WorkflowRowMapperSpec
 
   def withResultsUploadTime(dateTime: DateTime)(testCode: (DateTime, Row) => Any): Unit = {
     val rowWorkflow = mock[Row]
-    when(rowWorkflow.getDate(WorkflowRowMapper.ResultsUploadTime)).thenReturn(
+    when(rowWorkflow.getTimestamp(WorkflowRowMapper.ResultsUploadTime)).thenReturn(
       new Date(dateTime.getMillis))
     testCode(dateTime, rowWorkflow)
   }

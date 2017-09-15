@@ -112,7 +112,7 @@ class EntityDaoCassandraImplIntegSpec
     try {
       testCode
     } finally {
-      session.execute(QueryBuilder.truncate(cassandraTableName))
+      session.execute(new QueryBuilder(session.getCluster).truncate(cassandraTableName))
     }
   }
 }

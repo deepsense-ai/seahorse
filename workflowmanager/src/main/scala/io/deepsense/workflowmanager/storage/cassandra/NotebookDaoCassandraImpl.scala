@@ -26,6 +26,8 @@ class NotebookDaoCassandraImpl @Inject() (
 
   import NotebookDaoCassandraImpl._
 
+  private val queryBuilder = new QueryBuilder(session.getCluster)
+
   override def get(workflowId: Workflow.Id, nodeId: Node.Id): Future[Option[String]] = {
     Future(session.execute(getQuery(workflowId, nodeId))).map(rs => {
       val rows = rs.all()
@@ -55,13 +57,13 @@ class NotebookDaoCassandraImpl @Inject() (
   private def getQuery(
       workflowId: Workflow.Id,
       nodeId: Node.Id): Select.Where = {
-    QueryBuilder.select(Notebook).from(table)
+    queryBuilder.select(Notebook).from(table)
       .where(QueryBuilder.eq(WorkflowId, workflowId.value))
       .and(QueryBuilder.eq(NodeId, nodeId.value))
   }
 
   private def getAllQuery(workflowId: Workflow.Id): Select.Where = {
-    QueryBuilder.select(NodeId, Notebook).from(table)
+    queryBuilder.select(NodeId, Notebook).from(table)
       .where(QueryBuilder.eq(WorkflowId, workflowId.value))
   }
 
@@ -69,7 +71,7 @@ class NotebookDaoCassandraImpl @Inject() (
       workflowId: Workflow.Id,
       nodeId: Node.Id,
       notebook: String): Update.Where = {
-    QueryBuilder.update(table).`with`()
+    queryBuilder.update(table).`with`()
       .and(set(Notebook, notebook))
       .where(QueryBuilder.eq(WorkflowId, workflowId.value))
       .and(QueryBuilder.eq(NodeId, nodeId.value))

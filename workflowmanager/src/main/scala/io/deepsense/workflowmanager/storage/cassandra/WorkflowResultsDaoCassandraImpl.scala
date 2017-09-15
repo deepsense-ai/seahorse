@@ -22,6 +22,8 @@ class WorkflowResultsDaoCassandraImpl @Inject() (
     (implicit ec: ExecutionContext)
   extends WorkflowResultsStorage {
 
+  private val queryBuilder = new QueryBuilder(session.getCluster)
+
   override def get(
       id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
     Future(session.execute(getQuery(id)))
@@ -33,13 +35,16 @@ class WorkflowResultsDaoCassandraImpl @Inject() (
   }
 
   private def getQuery(id: ExecutionReportWithId.Id): Select = {
-    QueryBuilder.select().from(table)
+    queryBuilder
+      .select()
+      .from(table)
       .where(QueryBuilder.eq(WorkflowRowMapper.Id, id.value))
       .limit(1)
   }
 
   private def saveQuery(results: WorkflowWithSavedResults): Update.Where = {
-    QueryBuilder.update(table)
+    queryBuilder
+      .update(table)
       .`with`(set(WorkflowRowMapper.Results, workflowRowMapper.resultsToCell(results)))
       .where(QueryBuilder.eq(WorkflowRowMapper.Id, results.executionReport.id.value))
   }
