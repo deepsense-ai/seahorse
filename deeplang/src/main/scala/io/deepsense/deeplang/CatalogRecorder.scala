@@ -44,6 +44,7 @@ object CatalogRecorder {
     catalog.registerDOperable[RowsFilterer]()
     catalog.registerDOperable[MissingValuesHandler]()
     catalog.registerDOperable[Projector]()
+    catalog.registerDOperable[DatetimeComposer]()
     catalog.registerDOperable[DatetimeDecomposer]()
     catalog.registerDOperable[SqlTransformer]()
     catalog.registerDOperable[SqlColumnTransformer]()
@@ -204,6 +205,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[Binarize](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[ComposeDatetime](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[ConvertType](
