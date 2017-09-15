@@ -71,7 +71,7 @@ class CrossValidateClassifierIntegSpec
     Row("aa", 1.0, 1.0))
 
   val logisticRegression =
-    CreateLogisticRegression(1, 0.0001).execute(executionContext)(Vector()).head
+    CreateLogisticRegression(0, 1, 0.0001).execute(executionContext)(Vector()).head
 
   def createClassifier(numberOfFolds: Int) = {
     val classifier = new CrossValidateRegressor

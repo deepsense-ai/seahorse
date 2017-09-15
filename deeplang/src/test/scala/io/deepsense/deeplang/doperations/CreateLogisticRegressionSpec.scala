@@ -24,7 +24,7 @@ import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 class CreateLogisticRegressionSpec extends UnitSpec {
   "CreateLogisticRegression DOperation" should {
     "create LogisticRegressionModel" in {
-      val createLogisticRegression = CreateLogisticRegression(1, 0.0001)
+      val createLogisticRegression = CreateLogisticRegression(0, 1, 0.0001)
       val context = mock[ExecutionContext]
       val resultVector = createLogisticRegression.execute(context)(Vector.empty)
       val result = resultVector.head.asInstanceOf[UntrainedLogisticRegression]
