@@ -243,14 +243,6 @@ class WorkflowsEditorController {
         this.NotificationService.clearToasts();
       }),
 
-      this.$scope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
-        let workflow = this.WorkflowService._innerWorkflowByNodeId[data.nodeId];
-        this.WorkflowService._workflowsStack.push(workflow);
-      }),
-
-      this.$scope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
-        this.WorkflowService._workflowsStack.pop();
-      })
     ];
   }
 

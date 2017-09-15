@@ -21,6 +21,15 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         console.log('Saving workflow after change...', serializedWorkflow);
         WorkflowsApiClient.updateWorkflow(serializedWorkflow);
       }, 200);
+
+      $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
+        let workflow = this._innerWorkflowByNodeId[data.nodeId];
+        this._workflowsStack.push(workflow);
+      });
+
+      $rootScope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
+        this._workflowsStack.pop();
+      });
     }
 
     initRootWorkflow(workflowData) {
@@ -37,7 +46,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
 
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER)
-        .forEach((node) => this.initInnerWorkflow(node));
+        .forEach((node) => this.initInnerWorkflow(node, workflow));
 
       $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
       $rootScope.$watch(() => SessionManager.statusForWorkflowId(workflow.id), (newStatus) => {
@@ -54,7 +63,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         SessionManagerApi.deleteSessionById(workflow.id);
       });
 
-      this._watchForNewCustomTransformers(workflow);
+      this._watchForNewCustomTransformers(workflow, workflow);
       this._workflowsStack.push(workflow);
 
       const unregisterSynchronization = $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
@@ -67,28 +76,33 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
     }
 
     // TODO Add enums for workflowType, workflowStatus
-    initInnerWorkflow(node) {
+    initInnerWorkflow(node, rootWorkflow) {
       let innerWorkflowData = node.parametersValues[INNER_WORKFLOW_PARAM_NAME];
       let innerWorkflow = this._deserializeInnerWorkflow(innerWorkflowData);
       innerWorkflow.workflowType = 'inner';
       innerWorkflow.workflowStatus = 'editor';
       innerWorkflow.sessionStatus = SessionStatus.NOT_RUNNING;
+      innerWorkflow.owner = rootWorkflow.owner;
 
       innerWorkflow.publicParams = innerWorkflow.publicParams || [];
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
 
       let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER);
-      _.forEach(nestedCustomTransformerNodes, (node) => this.initInnerWorkflow(node));
+      _.forEach(nestedCustomTransformerNodes, (node) => this.initInnerWorkflow(node, rootWorkflow));
+
+      $rootScope.$watch(() => SessionManager.statusForWorkflowId(rootWorkflow.id), (newStatus) => {
+        innerWorkflow.sessionStatus = newStatus;
+      });
 
       $rootScope.$watch(() => this._serializeInnerWorkflow(innerWorkflow), (newVal) => {
         node.parametersValues = node.parametersValues || {};
         node.parametersValues[INNER_WORKFLOW_PARAM_NAME] = newVal;
       }, true);
 
-      this._watchForNewCustomTransformers(innerWorkflow);
+      this._watchForNewCustomTransformers(innerWorkflow, rootWorkflow);
     }
 
-    _watchForNewCustomTransformers(workflow) {
+    _watchForNewCustomTransformers(workflow, rootWorkflow) {
       $rootScope.$watchCollection(() => workflow.getNodes(), (newNodes, oldNodes) => {
         let addedNodeIds = _.difference(_.keys(newNodes), _.keys(oldNodes));
         let addedNodes = _.map(addedNodeIds, nodeId => newNodes[nodeId]);
@@ -97,7 +111,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
           if (_.isUndefined(addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME])) {
             addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME] = DefaultInnerWorkflowGenerator.create();
           }
-          this.initInnerWorkflow(addedNode);
+          this.initInnerWorkflow(addedNode, rootWorkflow);
         });
       });
     }
