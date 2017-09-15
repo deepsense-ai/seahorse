@@ -43,21 +43,21 @@ object CatalogRecorder {
 
     catalog.registerDOperation[ReadFile](
       DOperationCategories.IO,
-      "Reads file from HDFS")
+      "Reads a file from HDFS")
 
     catalog.registerDOperation[LoadDataFrame](
       DOperationCategories.IO,
-      "Loads DataFrame from HDFS"
+      "Loads a DataFrame from HDFS"
     )
 
     catalog.registerDOperation[SaveDataFrame](
       DOperationCategories.IO,
-      "Save DataFrame to HDFS"
+      "Saves a DataFrame to HDFS"
     )
 
     catalog.registerDOperation[DataFrameSplitter](
       DOperationCategories.DataManipulation,
-      "Splits DataFrame into two DataFrames"
+      "Splits a DataFrame into two DataFrames"
     )
 
     catalog.registerDOperation[Join](
@@ -67,77 +67,77 @@ object CatalogRecorder {
 
     catalog.registerDOperation[OneHotEncoder](
       DOperationCategories.DataManipulation,
-      "One-hot encodes categorical columns"
+      "One-hot encodes categorical columns of a DataFrame"
     )
 
     catalog.registerDOperation[ProjectColumns](
       DOperationCategories.DataManipulation,
-      "Projects columns of dataframe"
+      "Projects selected columns of a DataFrame"
     )
 
     catalog.registerDOperation[TimestampDecomposer](
       DOperationCategories.DataManipulation,
-      "Decomposes selected columns from timestamp to numeric"
+      "Extracts Numeric fields (year, month, etc.) from a Timestamp"
     )
 
     catalog.registerDOperation[CreateRidgeRegression](
       DOperationCategories.ML.Regression,
-      "Creates untrained ridge regression model"
+      "Creates an untrained ridge regression model"
     )
 
     catalog.registerDOperation[TrainRegressor](
       DOperationCategories.ML.Regression,
-      "Trains regression model"
+      "Trains a regression model"
     )
 
     catalog.registerDOperation[ScoreRegressor](
       DOperationCategories.ML.Regression,
-      "Scores trained regression model"
+      "Scores a trained regression model"
     )
 
     catalog.registerDOperation[CrossValidateRegressor](
       DOperationCategories.ML.Regression,
-      "Cross-validates regression model"
+      "Cross-validates a regression model"
     )
 
     catalog.registerDOperation[EvaluateRegression](
       DOperationCategories.ML.Regression,
-      "Evaluate regression model"
+      "Evaluates a regression model"
     )
 
     catalog.registerDOperation[CreateLogisticRegression](
       DOperationCategories.ML.Classification,
-      "Creates untrained logistic regression model"
+      "Creates an untrained logistic regression model"
     )
 
     catalog.registerDOperation[TrainClassifier](
       DOperationCategories.ML.Classification,
-      "Trained classification model"
+      "Trains a classification model"
     )
 
     catalog.registerDOperation[ScoreClassifier](
       DOperationCategories.ML.Classification,
-      "Scores trained classification model"
+      "Scores a trained classification model"
     )
 
     catalog.registerDOperation[EvaluateClassification](
       DOperationCategories.ML.Classification,
-      "Evaluate classification model"
+      "Evaluates a classification model"
     )
 
     catalog.registerDOperation[ApplyTransformation](
       DOperationCategories.Transformation,
-      "Apply Transformation"
+      "Applies a Transformation to a DataFrame"
     )
 
     catalog.registerDOperation[SelectImportantFeatures](
       DOperationCategories.ML.FeatureSelection,
-      "Selects most important features of dataframe"
+      "Selects most important features of a DataFrame"
     )
 
     catalog.registerDOperation[ConvertType](
       DOperationCategories.DataManipulation,
-      "Converts columns to a different type"
+      "Converts selected columns of a DataFrame to a different type"
     )
   }
 }
