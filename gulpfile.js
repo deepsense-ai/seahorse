@@ -11,7 +11,7 @@ var gulp = require('gulp'),
     browserifyShim = require('browserify-shim'),
     browserifyAnnotate = require('browserify-ngannotate'),
     buffer = require('vinyl-buffer'),
-    to5Browserify = require('6to5ify'),
+    babelifygul = require('babelify'),
     uglify = require('gulp-uglify'),
     source = require('vinyl-source-stream'),
     del = require('del'),
@@ -101,7 +101,7 @@ gulp.task('browserify', function () {
       entries: [client.path + client.app],
       debug: devMode
     })
-    .transform(to5Browserify)
+    .transform(babelifygul)
     .transform(browserifyAnnotate, {
         add: true,
         // jshint -W106

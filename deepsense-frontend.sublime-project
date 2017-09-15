@@ -16,6 +16,7 @@
 		"default_encoding": "UTF-8",
 		"default_line_ending": "unix",
 		"detect_indentation": true,
+		"ensure_newline_at_eof_on_save": true,
 		"fallback_encoding": "UTF-8",
 		"show_encoding": true,
 		"show_line_endings": true,
