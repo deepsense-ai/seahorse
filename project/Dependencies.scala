@@ -168,8 +168,7 @@ object Dependencies {
 
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
-    "org.jfarcand" % "wcs" % "1.4", // won't currently work with scala 2.11
-    // Author released 1.5 only for scala 2.11 so operator %% won't work.
+    "org.jfarcand" % "wcs" % "1.5",
     scalaz
   ) ++ Seq(scalatest).map(_ % s"$Test,it")
 }
