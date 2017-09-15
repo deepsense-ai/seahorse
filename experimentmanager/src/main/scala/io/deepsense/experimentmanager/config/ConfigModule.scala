@@ -8,9 +8,9 @@ package io.deepsense.experimentmanager.config
 
 import scala.collection.JavaConversions._
 
+import com.google.inject.name.Names
 import com.typesafe.config.ConfigValueType._
 import com.typesafe.config.{Config, ConfigFactory, ConfigValue}
-import net.codingwell.scalaguice.BindingExtensions._
 import net.codingwell.scalaguice.ScalaModule
 
 /**
@@ -56,7 +56,7 @@ class ConfigModule extends ScalaModule {
   protected[this] def loadConfig(): Config = {
     ConfigFactoryExt.enableEnvOverride()
     ConfigFactory.invalidateCaches()
-    val config = ConfigFactory.load()
+    val config = ConfigFactory.load
     config
   }
 
@@ -90,7 +90,7 @@ class ConfigModule extends ScalaModule {
    */
   private def bindPrimitive(key: String, value: ConfigValue): Unit = {
     val unwrapped = value.unwrapped.toString
-    binderAccess.bindConstant.annotatedWithName(key).to(unwrapped)
+    bindConstant.annotatedWith(Names.named(key)).to(unwrapped)
   }
 
   /**
@@ -101,23 +101,22 @@ class ConfigModule extends ScalaModule {
     val list = value.unwrapped.asInstanceOf[java.util.List[Any]]
     if (list.size == 0) {
       // Seq[Int|Double|Boolean] type params will only match a value bound as Seq[Any]
-      bind[Seq[Any]].annotatedWithName(key).toInstance(Seq())
-      // Seq[String] type params will only match a value bound as Seq[String]
-      bind[Seq[String]].annotatedWithName(key).toInstance(Seq())
+      bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(Seq())
+      bind[Seq[String]].annotatedWith(Names.named(key)).toInstance(Seq())
     } else {
       val seq = list.get(0) match {
         case x: Integer =>
           val v = list.collect({case x: java.lang.Integer => x.intValue}).toSeq
-          bind[Seq[Any]].annotatedWithName(key).toInstance(v)
+          bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(v)
         case x: Double =>
           val v = list.collect({case x: java.lang.Double => x.doubleValue}).toSeq
-          bind[Seq[Any]].annotatedWithName(key).toInstance(v)
+          bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(v)
         case x: Boolean =>
           val v = list.collect({case x: java.lang.Boolean => x.booleanValue}).toSeq
-          bind[Seq[Any]].annotatedWithName(key).toInstance(v)
+          bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(v)
         case x: String =>
           val v = list.collect({case x: String => x}).toSeq
-          bind[Seq[String]].annotatedWithName(key).toInstance(v)
+          bind[Seq[String]].annotatedWith(Names.named(key)).toInstance(v)
         case x =>
           throw new AssertionError("Unsupported list type " + x.getClass)
       }

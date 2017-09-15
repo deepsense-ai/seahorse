@@ -11,6 +11,7 @@ import net.codingwell.scalaguice.ScalaModule
 import io.deepsense.experimentmanager.akka.AkkaModule
 import io.deepsense.experimentmanager.app.{ApisModule, ServicesModule}
 import io.deepsense.experimentmanager.config.ConfigModule
+import io.deepsense.experimentmanager.jclouds.{KeystoneApiModule, TokenApiModule}
 import io.deepsense.experimentmanager.rest.RestModule
 
 /**
@@ -27,6 +28,8 @@ class ExperimentManagerAppModule extends ScalaModule {
   private def installCore(): Unit = {
     install(new ConfigModule)
     install(new AkkaModule)
+    install(new KeystoneApiModule)
+    install(new TokenApiModule)
   }
 
   private def installServices(): Unit = {

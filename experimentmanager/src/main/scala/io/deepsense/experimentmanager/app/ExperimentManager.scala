@@ -6,7 +6,6 @@
 
 package io.deepsense.experimentmanager.app
 
-import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Future
 
 import io.deepsense.experimentmanager.app.models.Graph.Node
@@ -27,6 +26,7 @@ trait ExperimentManager {
   /**
    * Updates an experiment.
    * @param experiment An experiment to be updated.
+   * @return The updated experiment.
    */
   def update(experiment: Experiment): Future[Experiment]
 
@@ -47,19 +47,22 @@ trait ExperimentManager {
   def experiments(
       limit: Option[Int],
       page: Option[Int],
-      status: Option[Experiment.Status.Value]): Future[IndexedSeq[Experiment]]
+      status: Option[Experiment.Status.Value]): Future[Seq[Experiment]]
 
   /**
    * Deletes an experiment by Id.
    * @param id An identifier of the experiment to delete.
+   * @return True if the experiment was deleted.
+   *         Otherwise false.
    */
-  def delete(id: Experiment.Id): Future[Unit]
+  def delete(id: Experiment.Id): Future[Boolean]
 
   /**
    * Launches an experiment with the specified Id.
    * @param id The Id of an experiment to launch.
    * @param targetNodes Nodes that should be calculated in the launch.
    *                    Empty means to calculate all.
+   * @return The launched experiment.
    */
   def launch(
       id: Experiment.Id,
@@ -70,6 +73,7 @@ trait ExperimentManager {
    * empty aborts whole experiment.
    * @param id An identifier of the experiment to abort.
    * @param nodes List of experiment's nodes to abort.
+   * @return The aborted experiment.
    */
   def abort(id: Experiment.Id, nodes: List[Node.Id]): Future[Experiment]
 }
