@@ -6,6 +6,7 @@
 
 package io.deepsense.graphlibrary
 
+import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
 import java.util.UUID
 
 import org.scalatest.{Matchers, FunSuite}
@@ -94,6 +95,25 @@ class GraphSuite extends FunSuite with Matchers {
     assert(node.state.status == Status.COMPLETED)
   }
 
+  test("Programmer can list all nodes in graph") {
+    import DOperationTestClasses._
+
+    // Create a Graph instance and list of its nodes.
+    val graph = new Graph
+    val nodes = List(
+      graph.addNode(UUID.randomUUID(), new DOperation0To1Test),
+      graph.addNode(UUID.randomUUID(), new DOperation1To1Test))
+
+    assert(graph.nodesList.size == graph.size)
+    // Check equality of lists elements sets.
+    assert(graph.nodesList.toSet == nodes.toSet)
+
+    graph.addNode(UUID.randomUUID(), new DOperation1To0Test)
+    assert(graph.nodesList.size == graph.size)
+    // Check lack of equality of lists elements sets after new node is added to graph.
+    assert(graph.nodesList.toSet != nodes.toSet)
+  }
+
   test("Programmer can list operations ready for execution") {
     import DOperationTestClasses._
 
@@ -108,7 +128,7 @@ class GraphSuite extends FunSuite with Matchers {
     graph.markAsQueued(nodeNotReady.id)
 
     // get list of operations ready for execution
-    val readyList = graph.readyNodes()
+    val readyList = graph.readyNodes
 
     assert(readyList.length == 1)
     assert(readyList.head == nodeReady)
@@ -211,5 +231,34 @@ class GraphSuite extends FunSuite with Matchers {
       node4.id -> knowledgeA12)
 
     graphKnowledge.knowledgeMap should contain theSameElementsAs graphKnowledgeExpected
+  }
+
+  test("Non-empty Graph should be serializable") {
+    import DOperationTestClasses._
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation0To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val edges = List(
+      (node1, node2, 0, 0),
+      (node1, node3, 0, 0),
+      (node2, node4, 0, 0),
+      (node3, node4, 0, 1))
+    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
+
+    val bytesOut = new ByteArrayOutputStream()
+    val oos = new ObjectOutputStream(bytesOut)
+    oos.writeObject(graph)
+    oos.flush()
+    oos.close()
+
+    val bufferIn = new ByteArrayInputStream(bytesOut.toByteArray)
+    val streamIn = new ObjectInputStream(bufferIn)
+    val graphIn = streamIn.readObject().asInstanceOf[Graph]
+
+    assert(graphIn.size == graph.size)
+    // Verify that both graphs have the same nodes ids set
+    assert(graphIn.nodesList.map(n => n.id).toSet == graph.nodesList.map(n => n.id).toSet)
   }
 }

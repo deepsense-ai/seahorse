@@ -6,6 +6,8 @@
 
 package io.deepsense.graphlibrary
 
+import java.util.UUID
+
 import scala.collection.mutable.{Set, Map}
 import scala.reflect.runtime.{universe => ru}
 
@@ -31,7 +33,8 @@ private[graphlibrary] object Color extends Enumeration {
  * State of each node can be changed during the execution.
  * This class is not thread safe.
  */
-class Graph {
+@SerialVersionUID(1L)
+class Graph extends Serializable {
   private[graphlibrary] case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
     var color: Color.Color = Color.WHITE
     var state: State = State.inDraft
@@ -84,7 +87,7 @@ class Graph {
 
     def resetState(): Unit = markWhite()
 
-    override def toString(): String = id.toString
+    override def toString: String = id.toString
   }
 
   private val nodes: Map[Node.Id, GraphNode] = Map()
@@ -95,12 +98,20 @@ class Graph {
     node
   }
 
+  /**
+   * Provides access to all graph nodes.
+   * @return List of graph nodes
+   */
+  def nodesList : List[Node] = {
+    nodes.values.toList
+  }
+
   def addEdge(nodeFrom: Node.Id, nodeTo: Node.Id, portFrom: Int, portTo: Int): Unit = {
     nodes(nodeFrom).addSuccessor(portFrom, nodes(nodeTo))
     nodes(nodeTo).addPredecessor(portTo, nodes(nodeFrom))
   }
 
-  def readyNodes(): List[Node] = {
+  def readyNodes: List[Node] = {
     val queuedNodes = nodes.values.filter(_.state.status == Status.QUEUED)
     queuedNodes.filter(_.predecessors.forall(
       (p: Option[Node]) => p.isDefined && p.get.state.status == Status.COMPLETED)).toList
@@ -122,7 +133,7 @@ class Graph {
     node.state = State.running(Progress(0, total))
   }
 
-  def markAsCompleted(id: Node.Id, results: List[Node.Id]): Unit = {
+  def markAsCompleted(id: Node.Id, results: List[UUID]): Unit = {
     val node = nodes(id)
     node.state = node.state.completed(results)
   }
@@ -182,13 +193,6 @@ class Graph {
   }
 
   def size: Int = nodes.size
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[Graph]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: Graph => (that canEqual this) && nodes == that.nodes
-    case _ => false
-  }
 
   override def hashCode(): Int = {
     val state = Seq(nodes)

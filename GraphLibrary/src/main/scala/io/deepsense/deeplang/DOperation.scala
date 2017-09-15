@@ -14,7 +14,8 @@ import io.deepsense.deeplang.parameters.ParametersSchema
  * DOperation that receives and returns instances of DOperable.
  * Can infer its output type basing on type knowledge.
  */
-abstract class DOperation {
+@SerialVersionUID(1L)
+abstract class DOperation extends Serializable {
   val inArity: Int
   val outArity: Int
   var parameters: ParametersSchema = _

@@ -2,20 +2,22 @@
 //
 // Owner: Radoslaw Kotowski
 
-name := "GraphLibrary"
+organization := "com.codilime"
 
-version := "1.0"
+name := "graphlibrary"
 
-scalaVersion := "2.10.4"
+version := "0.1.0"
+
+scalaVersion := "2.11.5"
 
 ideaExcludeFolders += ".idea"
 
 ideaExcludeFolders += ".idea_modules"
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-  "com.github.nscala-time" %% "nscala-time" % "1.8.0",
-  "org.scala-lang" % "scala-reflect" % "2.10.4"
+  "org.scalatest"           %% "scalatest"      % "2.2.4"   % "test",
+  "com.github.nscala-time"  %% "nscala-time"    % "1.8.0",
+  "org.scala-lang"          %  "scala-reflect"  % "2.11.5"
 )
 
 fork := true // fork all test tasks and run tasks

@@ -42,9 +42,15 @@ object Node {
       started: Option[DateTime] = None,
       ended: Option[DateTime] = None,
       progress: Option[Progress] = None,
-      results: Option[List[Node.Id]] = None) {
-    private[graphlibrary] def completed(results: List[Node.Id]): State = {
-      State(Status.COMPLETED, started, Some(DateTime.now()), None, Some(results))
+      // TODO: results should be changed to list of datasets UUIDs
+      results: Option[List[UUID]] = None) {
+    private[graphlibrary] def completed(results: List[UUID]): State = {
+      State(
+        Status.COMPLETED,
+        started,
+        Some(DateTime.now()),
+        Some(Progress(progress.get.total, progress.get.total)),
+        Some(results))
     }
 
     private[graphlibrary] def failed: State = {
