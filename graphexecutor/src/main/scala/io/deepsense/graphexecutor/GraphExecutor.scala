@@ -42,6 +42,7 @@ object GraphExecutor extends LazyLogging {
     // All INFOs are printed out to stderr on Hadoop YARN (dev env)
     // Go to /opt/hadoop/logs/userlogs/application_*/container_*/stderr to see progress
     logger.debug(s"Starting with args: ${args.mkString("[", ", ", "]")}")
+    logger.debug(s"CLASSPATH=   " + System.getenv("CLASSPATH"))
     val injector = Guice.createInjector(
       new ConfigModule("graphexecutor.conf"),
       new GraphExecutorModule,

@@ -8,7 +8,6 @@ import java.net.URI
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.permission.{FsAction, FsPermission}
 import org.apache.hadoop.hdfs.DFSClient
-import org.apache.hadoop.net.ConnectTimeoutException
 import org.scalatest._
 
 import io.deepsense.deeplang.DSHdfsClient
@@ -50,25 +49,12 @@ trait HdfsIntegTestSupport
     config.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
     config.addResource(getClass().getResource("/conf/hadoop/yarn-site.xml"))
     config.addResource(getClass().getResource("/conf/hadoop/hdfs-site.xml"))
-    // http://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/core-default.xml
-    // defaults to 20000 millis
-    config.setInt("ipc.client.connect.timeout", 1)
-    // defaults to 10
-    config.setInt("ipc.client.connect.max.retries", 1)
-    // defauts to 45
-    config.setInt("ipc.client.connect.max.retries.on.timeouts", 10)
     import HdfsForIntegTestsProperties._
-    println(s"Connecting to HDFS at $MasterHostname:$HdfsNameNodePort")
-    try {
-      cli = Some(new DFSClient(new URI("hdfs://" + MasterHostname + ":" + HdfsNameNodePort), config))
-      dsHdfsClient = Some(new DSHdfsClient(cli.get))
+    cli = Some(new DFSClient(new URI("hdfs://" + MasterHostname + ":" + HdfsNameNodePort), config))
+    dsHdfsClient = Some(new DSHdfsClient(cli.get))
 
-      copyFilesToHdfs()
-    } catch {
-      case e: Exception =>
-        println("Did you perhaps forget to start your development environment? " + e.getMessage)
-        throw e
-    }
+    // Deploy test-specific files
+    copyFilesToHdfs()
   }
 
   override def afterAll(): Unit = {

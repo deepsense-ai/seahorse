@@ -22,7 +22,7 @@ import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.clusterspawner.DefaultClusterSpawner
 import io.deepsense.graphexecutor.{GraphExecutorClientActor, HdfsIntegTestSupport, SimpleGraphExecutionIntegSuiteEntities}
 import io.deepsense.models.experiments.Experiment
-import io.deepsense.models.messages.{Abort, Get, Launch}
+import io.deepsense.models.messages.{Update, Abort, Get, Launch}
 
 class EMtoGESpec
   extends HdfsIntegTestSupport
@@ -35,8 +35,7 @@ class EMtoGESpec
   var runningExperimentsActorRef: TestActorRef[RunningExperimentsActor] = _
   var testProbe: TestProbe = _
 
-  implicit val timeout: FiniteDuration = 2.minutes
-
+  // Used by eventually block
   implicit override val patienceConfig =
     PatienceConfig(timeout = scaled(Span(60, Seconds)), interval = scaled(Span(2, Seconds)))
 
@@ -47,9 +46,9 @@ class EMtoGESpec
       testProbe.send(runningExperimentsActorRef, Launch(experiment))
 
       eventually {
-        stateOfExperiment(experiment) shouldBe Experiment.State.running
+        experimentById(experiment.id) shouldBe 'Running
         waitTillExperimentFinishes(experiment)
-        stateOfExperiment(experiment) shouldBe Experiment.State.completed
+        experimentById(experiment.id) shouldBe 'Completed
       }
     }
 
@@ -60,16 +59,13 @@ class EMtoGESpec
 
       eventually {
         waitTillExperimentFinishes(experiment)
-
-        val errorMsg = "java.lang.IllegalArgumentException: Invalid UUID string: Invalid UUID for testing purposes"
-
         val state = stateOfExperiment(experiment)
-        state.status shouldBe Experiment.Status.Failed
+        experimentById(experiment.id) shouldBe 'Failed
         val failureDescription: FailureDescription = state.error.get
         failureDescription.code shouldBe NodeFailure
-        failureDescription.title shouldBe "Node Failure"
+        failureDescription.title shouldBe Experiment.failureMessage(experiment.id)
         failureDescription.message shouldBe None
-        failureDescription.details shouldBe None
+        failureDescription.details shouldBe Map()
       }
     }
 
@@ -78,38 +74,31 @@ class EMtoGESpec
 
       testProbe.send(runningExperimentsActorRef, Launch(experiment))
       eventually {
-        stateOfExperiment(experiment) shouldBe Experiment.State.running
+        experimentById(experiment.id) shouldBe 'Running
       }
       testProbe.send(runningExperimentsActorRef, Get(experiment.id))
-      val Some(exp) = testProbe.expectMsgType[Option[Experiment]](1.minute)
+      val Some(exp) = testProbe.expectMsgType[Option[Experiment]]
       exp.isRunning shouldBe true
 
       // FIXME Is it really needed? Can't we leave the experiment to die itself?
       eventually {
-        waitTillExperimentFinishes(experiment)
-        stateOfExperiment(experiment) shouldBe Experiment.State.completed
+        experimentById(experiment.id) shouldBe 'Completed
       }
     }
 
-    "abort running experiment" in {
-      val experiment = oneNodeExperiment()
-
-      testProbe.send(runningExperimentsActorRef, Launch(experiment))
-      eventually {
-        stateOfExperiment(experiment) shouldBe Experiment.State.running
-      }
-      testProbe.send(runningExperimentsActorRef, Abort(experiment.id))
-      eventually {
-        val Success(exp) = testProbe.expectMsgType[Try[Experiment]]
-        exp.isAborted shouldBe true
-      }
-    }
+    "abort running experiment" is pending
   }
 
   def stateOfExperiment(experiment: Experiment): Experiment.State = {
     testProbe.send(runningExperimentsActorRef, Get(experiment.id))
-    val Some(exp) = testProbe.expectMsgType[Option[Experiment]](1.minute)
+    val Some(exp) = testProbe.expectMsgType[Option[Experiment]]
     exp.state
+  }
+
+  def experimentById(id: Experiment.Id): Experiment = {
+    testProbe.send(runningExperimentsActorRef, Get(id))
+    val Some(exp) = testProbe.expectMsgType[Option[Experiment]]
+    exp
   }
 
   def waitTillExperimentFinishes(experiment: Experiment): Unit = {
@@ -121,7 +110,7 @@ class EMtoGESpec
 
     eventually {
       testProbe.send(runningExperimentsActorRef, Get(experiment.id))
-      val Some(e) = testProbe.expectMsgType[Option[Experiment]](1.minute)
+      val Some(e) = testProbe.expectMsgType[Option[Experiment]]
       graphCompleted(e) shouldBe true
     }
   }
@@ -151,22 +140,13 @@ class EMtoGESpec
   override def beforeAll(): Unit = {
     super.beforeAll()
 
-    val actorSystemName = "EMtoGESpec"
-    val host = "172.28.128.1"
-    val port = 10000 + Random.nextInt(100)
-    val actorName = "RunningExperimentsActor"
+    val config = ConfigFactory.load
 
-    import scala.collection.JavaConverters._
-    system = ActorSystem(
-      actorSystemName,
-      ConfigFactory.parseMap(
-        Map(
-          "akka.actor.provider" -> "akka.remote.RemoteActorRefProvider",
-          "akka.remote.netty.tcp.hostname" -> host,
-          "akka.remote.netty.tcp.port" -> port.toString
-        ).asJava
-      )
-    )
+    val actorSystemName = "EMtoGESpec"
+    val akkaConfig = config.getConfig("deepsense")
+    val actorName = "RunningExperimentsActor-" + getClass.getSimpleName
+
+    system = ActorSystem(actorSystemName, akkaConfig)
     testProbe = TestProbe()
     val gecMaker: (ActorRefFactory, String, String) => ActorRef = {
       (f, entitystorageLabel, experimentId) =>
@@ -184,7 +164,10 @@ class EMtoGESpec
       actorName)
   }
 
-  override def afterAll(): Unit = system.shutdown()
+  override def afterAll(): Unit = {
+    super.afterAll()
+    system.shutdown()
+  }
 
   override def requiredFiles: Map[String, String] =
     Map("/SimpleDataFrame" -> SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)

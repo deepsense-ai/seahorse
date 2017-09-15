@@ -91,7 +91,7 @@ case class Experiment(
     val experimentFailureDetails = FailureDescription(
       errorId,
       NodeFailure,
-      s"One or more nodes failed in experiment: $id")
+      Experiment.failureMessage(id))
     copy(graph = this.graph.markAsFailed(nodeId, nodeFailureDetails))
       .markFailed(experimentFailureDetails)
   }
@@ -110,6 +110,8 @@ object Experiment {
 
   type Id = models.Id
   val Id = models.Id
+
+  def failureMessage(id: Id) = s"One or more nodes failed in the experiment: $id"
 
   def computeExperimentState(graph: Graph): Experiment.State = {
     import Experiment.State._
