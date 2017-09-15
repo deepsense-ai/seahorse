@@ -11,7 +11,7 @@ find . -name target -type d -exec rm -rf {} \; || true
   ./jenkins/prepare_sdk_dependencies.sh
   cd seahorse-sdk-example
   sbt clean
-  sbt test && grep -q SNAPSHOT "../version.sbt"
+  sbt test
 )
 
 sbt clean
