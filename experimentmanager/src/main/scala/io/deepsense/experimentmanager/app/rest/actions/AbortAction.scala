@@ -9,7 +9,8 @@ package io.deepsense.experimentmanager.app.rest.actions
 import scala.concurrent.Future
 
 import io.deepsense.experimentmanager.app.ExperimentManager
-import io.deepsense.experimentmanager.app.models.{Experiment, Node}
+import io.deepsense.experimentmanager.app.models.Experiment
+import io.deepsense.experimentmanager.app.models.Graph.Node
 
 /**
  * Abort experiment action.

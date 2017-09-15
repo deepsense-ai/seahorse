@@ -6,7 +6,22 @@
 
 package io.deepsense.experimentmanager.app.models
 
+import io.deepsense.experimentmanager.app.models.{Id => IdModel}
+
 /**
- * Graph model.
+ * A Graph in an experiment. Yet to be implemented.
  */
-case class Graph()
+case class Graph() // TODO Implement and write docs.
+
+object Graph {
+
+  /**
+   * A node in a graph.
+   * @param id
+   */
+  case class Node(id: Node.Id)
+
+  object Node {
+    type Id = IdModel
+  }
+}

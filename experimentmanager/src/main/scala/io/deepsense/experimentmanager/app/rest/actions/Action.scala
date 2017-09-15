@@ -15,5 +15,5 @@ import io.deepsense.experimentmanager.app.models.Experiment
  * Experiment Manager's REST API action.
  */
 trait Action {
-  def run(id: Experiment.Id, experimentManager: ExperimentManager): Future[AnyRef]
+  def run(id: Experiment.Id, experimentManager: ExperimentManager): Future[Experiment]
 }

@@ -9,7 +9,8 @@ package io.deepsense.experimentmanager.app
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Future
 
-import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment, Node}
+import io.deepsense.experimentmanager.app.models.Graph.Node
+import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment}
 
 /**
  * Experiment Manager's API
@@ -43,7 +44,7 @@ trait ExperimentManager {
    * @param status Filters experiments by their statuses.
    * @return A filtered page of experiments.
    */
-  def list(
+  def experiments(
       limit: Option[Int],
       page: Option[Int],
       status: Option[Experiment.Status.Value]): Future[IndexedSeq[Experiment]]
@@ -52,7 +53,7 @@ trait ExperimentManager {
    * Deletes an experiment by Id.
    * @param id An identifier of the experiment to delete.
    */
-  def delete(id: Experiment.Id)
+  def delete(id: Experiment.Id): Future[Unit]
 
   /**
    * Launches an experiment with the specified Id.

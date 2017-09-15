@@ -6,22 +6,20 @@
 
 package io.deepsense.experimentmanager.app.models
 
-import java.util.UUID
+import io.deepsense.experimentmanager.app.models.{Id => IdModel}
 
 /**
  * Experiment model.
  */
-case class Experiment(id: Experiment.Id, name: String, description: Option[String])
+case class Experiment(
+    id: Experiment.Id,
+    name: String,
+    description: String = "",
+    graph: Graph = Graph())
+  extends BaseExperiment(name, description, graph)
 
 object Experiment {
-
-  case class Id(value: UUID) {
-    override def toString: String = value.toString
-  }
-
-  object Id {
-    implicit def fromUuid(uuid: UUID): Id = Id(uuid)
-  }
+  type Id = IdModel
 
   object Status extends Enumeration {
     type Status = Value
