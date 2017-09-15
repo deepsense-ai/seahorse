@@ -18,7 +18,7 @@ object Version {
   val spark = "2.0.0"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
-  val seahorse = "1.2.0-DESKTOP-SNAPSHOT"
+  val seahorse = "1.3.0-LOCAL-SNAPSHOT"
   val wiremock = "1.57"
   val flyway = "4.0"
 }
@@ -39,7 +39,6 @@ object Library {
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
 
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
-
 
   val akkaActor = akka("actor")
   val akkaAgent = akka("agent")
@@ -87,15 +86,16 @@ object Dependencies {
 
   import Library._
 
+  // file:// won't work with relative path
+  val projectAbsPath = Path.absolute(new File(".")).getAbsolutePath
+
   val resolvers = Seq(
     "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
-    "seahorse.deepsense.io"  at
-      "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-release",
-    "seahorse.snapshot"      at
-      "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-snapshot",
     "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/",
+    "embedded-ivy-repo-for-workflow-executor" at
+      s"file://$projectAbsPath/seahorse-workflow-executor/target/ds-workflow-executor-ivy-repo",
     Classpaths.typesafeReleases
   )
 

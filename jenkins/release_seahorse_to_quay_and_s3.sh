@@ -7,6 +7,8 @@
 # $API_VERSION
 # $RELEASE_TO_S3
 
+./jenkins/scripts/checkout-submodules.sh
+
 SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
 API_VERSION="${API_VERSION?Need to set API_VERSION. For example setting it to 1.3.0"
 RELEASE_TO_S3="${RELEASE_TO_S3?Need to set RELEASE_TO_S3 to \"false\" for not releasing to S3. Set RELEASE_TO_S3 to anything else for releasing to S3."
@@ -40,8 +42,6 @@ echo "RELEASE_TO_S3 equals to $RELEASE_TO_S3, continue job and Release artifacts
 
 
 ARTIFACTORY_CREDENTIALS=$HOME/.artifactory_credentials
-ARTIFACTORY_USER=`grep "user=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
-ARTIFACTORY_PASSWORD=`grep "password=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 
 SEAHORSE_WORKFLOWEXECUTOR_REPOSITORY="seahorse-workflowexecutor"
@@ -68,19 +68,8 @@ SEAHORSE_VM_BOX_FILE="seahorse-vm-${API_VERSION}.box"
 URL="https://s3.amazonaws.com/${RELEASE_PATH}/${SEAHORSE_VM_BOX_FILE}"
 sed -e "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" -e "s#SEAHORSE_BOX_NAME_VARIABLE#seahorse-vm-${API_VERSION}#" -e "s#SEAHORSE_BOX_HOSTNAME_VARIABLE#seahorse-vm-${API_VERSION//./-}#" deployment/image_publication/Vagrantfile.template > $VAGRANTFILE
 
-md5Value="`md5sum "${VAGRANTFILE}"`"
-md5Value="${md5Value:0:32}"
-sha1Value="`sha1sum "${VAGRANTFILE}"`"
-sha1Value="${sha1Value:0:40}"
-
-URL_WITH_TAG="${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${VAGRANTFILE}"
-
-echo "** INFO: Uploading $VAGRANTFILE to ${URL_WITH_TAG} **"
-curl -i -X PUT -u $ARTIFACTORY_USER:$ARTIFACTORY_PASSWORD \
- -H "X-Checksum-Md5: $md5Value" \
- -H "X-Checksum-Sha1: $sha1Value" \
- -T "${VAGRANTFILE}" \
- "${URL_WITH_TAG}"
+source jenkins/publish_to_artifactory_function.sh
+publish_to_artifactory $VAGRANTFILE ${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${VAGRANTFILE}
 
 
 echo "Publish to S3 $VAGRANTFILE"

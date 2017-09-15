@@ -7,6 +7,8 @@ package io.deepsense.libraryservice
 import java.io._
 
 import io.deepsense.libraryservice.FileEntryJsonProtocol._
+import io.deepsense.libraryservice.FileOperations._
+import io.deepsense.libraryservice.FileEntry._
 import org.scalatra._
 import org.scalatra.servlet.{FileUploadSupport, SizeConstraintExceededException}
 import spray.json._
@@ -22,7 +24,7 @@ class LibraryServlet extends ScalatraServlet with FileUploadSupport with CorsSup
       RequestEntityTooLarge("Size of the uploaded file exceeds the limit")
   }
 
-  options("/*"){
+  options("/*") {
     response.setHeader(
       "Access-Control-Allow-Headers",
       request.getHeader("Access-Control-Request-Headers"))
@@ -30,58 +32,73 @@ class LibraryServlet extends ScalatraServlet with FileUploadSupport with CorsSup
 
   // This is for easy manual testing
   get("/upload") {
-      <html>
-        <body>
+    <html>
+      <body>
         <form action={url("/library")} method="post" enctype="multipart/form-data">
-          <p>File to upload: <input type="file" name="file" /></p>
-          <p><input type="submit" value="Upload" /></p>
+          <p>File to upload:
+            <input type="file" name="file"/>
+          </p>
+          <p>
+            <input type="submit" value="Upload"/>
+          </p>
         </form>
-        </body>
-      </html>
+      </body>
+    </html>
   }
 
   post(ApiPrefix) {
     fileParams.get("file") match {
       case Some(uploadedFile) =>
         val name = uploadedFile.name
-        val file = getFile(name)
+        val file = new File(libraryDir, name)
         uploadedFile.write(file)
-      case None => BadRequest("No file provided")
+      case None => BadRequest("No file sent")
+    }
+  }
+
+  post(s"$ApiPrefix/*") {
+    val path = getPathFromParams
+    new File(path).mkdirs()
+    fileParams.get("file") match {
+      case Some(uploadedFile) =>
+        val name = uploadedFile.name
+        val file = new File(path, name)
+        uploadedFile.write(file)
+      case None => Ok(s"Directories on path $path have been created")
     }
   }
 
   get(ApiPrefix) {
-    val files = libraryDir.listFiles(new FileFilter{ def accept(f: File) = f.isFile })
-    val sortedFiles = files.sortBy(f => f.getName)
-    val names = sortedFiles.map(_.getName)
-    val fileEntries = names.map(FileEntry.apply)
-    Ok(fileEntries.toJson)
+    Ok(fileToFileEntry(libraryDir).toJson)
   }
 
-  get(s"$ApiPrefix/:name") {
-    val name = params("name")
-    getProperFile(name) match {
-      case Some(file) => Ok(file)
-      case None => fileNotFound(name)
+  get(s"$ApiPrefix/*") {
+    val path = getPathFromParams
+    getProperFile(path) match {
+      case Some(file) => Ok(
+        if (file.isFile) {
+          file
+        } else {
+          fileToFileEntry(file).toJson
+        })
+      case None => fileNotFound(path)
     }
   }
 
-  delete(s"$ApiPrefix/:name") {
-    val name = params("name")
-    getProperFile(name) match {
+  delete(s"$ApiPrefix/*") {
+    val path = getPathFromParams
+    getProperFile(path) match {
       case Some(file) =>
-        file.delete()
-        Ok(s"File '$name' has been deleted")
+        deleteRecursively(file)
+        Ok(s"'$path' has been deleted")
       case None =>
-        fileNotFound(name)
+        fileNotFound(path)
     }
   }
 
-  private def getFile(name: String): File = new File(libraryDir, name)
-
-  private def getProperFile(name: String): Option[File] = {
-    val file = getFile(name)
-    if (file.exists && file.isFile) {
+  private def getProperFile(path: String): Option[File] = {
+    val file = new File(path)
+    if (file.exists) {
       Some(file)
     } else {
       None
@@ -89,4 +106,6 @@ class LibraryServlet extends ScalatraServlet with FileUploadSupport with CorsSup
   }
 
   private def fileNotFound(name: String) = NotFound(s"File with name '$name' not found")
+
+  private def getPathFromParams = libraryDir + "/" + params("splat")
 }

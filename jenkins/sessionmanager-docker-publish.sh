@@ -4,6 +4,8 @@
 # Build and publish deepsense-sessionmanager docker
 # $SEAHORSE_BUILD_TAG required for deployment
 
+./jenkins/scripts/checkout-submodules.sh
+
 SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
 
 # Set working directory to project root file
@@ -11,7 +13,7 @@ SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For exa
 cd `dirname $0`"/../"
 
 SBT_OPTS="-XX:MaxPermSize=4G" \
-  sbt -Dsbt.log.noformat=true clean compile it:compile sessionmanager/docker:publishLocal
+  sbt clean publishWeClasses sessionmanager/docker:publishLocal
 
 cd deployment/docker
 ./publish-local-docker.sh ../../sessionmanager/ deepsense-sessionmanager $SEAHORSE_BUILD_TAG
