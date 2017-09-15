@@ -187,8 +187,8 @@ trait Params extends Serializable {
     defaultParamMap ++ paramMap ++ extra
   }
 
-  def replicate(extra: ParamMap = ParamMap.empty): Params = {
-    val that = this.getClass.getConstructor().newInstance()
+  def replicate(extra: ParamMap = ParamMap.empty): this.type = {
+    val that = this.getClass.getConstructor().newInstance().asInstanceOf[this.type]
     copyValues(that, extra)
   }
 

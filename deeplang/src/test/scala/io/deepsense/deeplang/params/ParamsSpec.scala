@@ -24,48 +24,7 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.parameters.ParameterType._
 
 class ParamsSpec extends UnitSpec {
-
-  case class MockException(override val message: String) extends DeepLangException(message)
-
-  case class MockParam(name: String) extends Param[Int] {
-    override val description: String = "description"
-    override val parameterType: ParameterType = mock[ParameterType]
-
-    override def toJson(default: Option[Any]): JsObject = JsObject(
-      "name" -> name.toJson,
-      "default" -> default.map(_.asInstanceOf[Int]).map(JsNumber(_)).getOrElse(JsNull)
-    )
-
-    override def valueToJson(value: Int): JsValue = value.toJson
-    override def valueFromJson(jsValue: JsValue): Int = jsValue.convertTo[Int]
-
-    override def validate(value: Int): Vector[DeepLangException] = Vector(MockException(name))
-  }
-
-  val defaultForParam1 = 1
-
-  // This class also shows how Params trait is to be used
-  case class WithParams() extends Params {
-    val param2 = MockParam("name of param2")
-    val param1 = MockParam("name of param1")
-
-    val params = declareParams(param2, param1)
-
-    def set1(v: Int): this.type = set(param1 -> v)
-    def set2(v: Int): this.type = set(param2 -> v)
-
-    def get1: Int = $(param1)
-    def get2: Int = $(param2)
-
-    def is1Set: Boolean = isSet(param1)
-
-    def is1Defined: Boolean = isDefined(param1)
-    def is2Defined: Boolean = isDefined(param2)
-
-    def clear1: this.type = clear(param1)
-
-    setDefault(param1 -> defaultForParam1)
-  }
+  import ParamsSpec._
 
   "Class with Params" should {
 
@@ -226,8 +185,6 @@ class ParamsSpec extends UnitSpec {
     }
   }
   "Params.sameAs" should {
-    class WithParamsA extends WithParams
-    class WithParamsB extends WithParams
     val valueOne = 100
     val valueTwo = 5
     "return true" when {
@@ -243,6 +200,12 @@ class ParamsSpec extends UnitSpec {
 
         withParamsA1.set2(valueTwo)
         withParamsA2.set2(valueTwo)
+        withParamsA1.sameAs(withParamsA2) shouldBe true
+      }
+      "comparing replicated Params" in {
+        val withParamsA1 = new WithParamsA
+        val withParamsA2 = withParamsA1.replicate()
+        withParamsA1.eq(withParamsA2) shouldBe false
         withParamsA1.sameAs(withParamsA2) shouldBe true
       }
     }
@@ -264,4 +227,52 @@ class ParamsSpec extends UnitSpec {
       }
     }
   }
+}
+
+object ParamsSpec extends UnitSpec {
+  case class MockException(override val message: String) extends DeepLangException(message)
+
+  case class MockParam(name: String) extends Param[Int] {
+    override val description: String = "description"
+    override val parameterType: ParameterType = mock[ParameterType]
+
+    override def toJson(default: Option[Any]): JsObject = JsObject(
+      "name" -> name.toJson,
+      "default" -> default.map(_.asInstanceOf[Int]).map(JsNumber(_)).getOrElse(JsNull)
+    )
+
+    override def valueToJson(value: Int): JsValue = value.toJson
+    override def valueFromJson(jsValue: JsValue): Int = jsValue.convertTo[Int]
+
+    override def validate(value: Int): Vector[DeepLangException] = Vector(MockException(name))
+  }
+
+  val defaultForParam1 = 1
+
+  // This class also shows how Params trait is to be used
+  case class WithParams() extends Params {
+    val param2 = MockParam("name of param2")
+    val param1 = MockParam("name of param1")
+
+    val params = declareParams(param2, param1)
+
+    def set1(v: Int): this.type = set(param1 -> v)
+    def set2(v: Int): this.type = set(param2 -> v)
+
+    def get1: Int = $(param1)
+    def get2: Int = $(param2)
+
+    def is1Set: Boolean = isSet(param1)
+
+    def is1Defined: Boolean = isDefined(param1)
+    def is2Defined: Boolean = isDefined(param2)
+
+    def clear1: this.type = clear(param1)
+
+    setDefault(param1 -> defaultForParam1)
+  }
+
+
+  class WithParamsA extends WithParams
+  class WithParamsB extends WithParams
 }

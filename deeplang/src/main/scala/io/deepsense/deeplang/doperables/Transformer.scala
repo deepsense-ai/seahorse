@@ -57,7 +57,4 @@ abstract class Transformer extends DOperable with Params with Logging {
       }
     }
   }
-
-  override def replicate(extra: ParamMap): Transformer =
-    super.replicate(extra).asInstanceOf[Transformer]
 }
