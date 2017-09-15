@@ -181,6 +181,8 @@ object Dependencies {
     scalajs
   )
 
+  val schedulingmanager = Seq()
+
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
     "org.jfarcand" % "wcs" % "1.5",

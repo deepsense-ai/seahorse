@@ -20,6 +20,7 @@ lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseG
 lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, backendcommons, backendcommons % "test->test")
 lazy val libraryservice         = project dependsOn (backendcommons, backendcommons % "test->test")
 lazy val datasourcemanager      = project dependsOn (backendcommons)
+lazy val schedulingmanager      = project dependsOn (backendcommons)
 
 lazy val seahorseWorkflowExecutorProjects = Seq(
     seahorseCommons,
@@ -36,7 +37,8 @@ lazy val seahorseBackendProjects = Seq(
     workflowmanager,
     sessionmanager,
     libraryservice,
-    datasourcemanager
+    datasourcemanager,
+    schedulingmanager
 )
 
 lazy val rootProjects: Seq[sbt.ProjectReference] =
