@@ -7,7 +7,7 @@
 package io.deepsense.deeplang.parameters
 
 import org.scalatest.FunSuite
-import spray.json.JsonWriter
+import spray.json.{JsValue, JsonWriter}
 
 import io.deepsense.deeplang.parameters.exceptions._
 
@@ -29,6 +29,9 @@ class ParametersValidationSuite extends FunSuite {
     override def validateDefined(any: Integer): Unit = {
       throw new ValidationException("Mock exception") {}
     }
+
+    protected def definedValueToJson(definedValue: HeldValue) = ???
+    // this is never used in this suite
   }
 
   test("Validation of valid parameters is possible") {

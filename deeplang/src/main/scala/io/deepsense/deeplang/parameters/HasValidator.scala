@@ -14,7 +14,7 @@ import spray.json.JsObject
 trait HasValidator extends Parameter {
   val validator: Validator[HeldValue]
 
-  override def validateDefined(definedValue: HeldValue) = {
+  override protected def validateDefined(definedValue: HeldValue) = {
     validator.validate(definedValue)
   }
 

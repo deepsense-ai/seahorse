@@ -8,6 +8,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json._
+
 /**
  * Represents selecting one of variety of options.
  * @param label name denoting selected option
@@ -29,19 +31,29 @@ case class Multiplied(schemas: List[ParametersSchema])
 /**
  * Represents selecting single column of dataframe.
  */
-sealed abstract class SingleColumnSelection(typeName: String)
+sealed abstract class SingleColumnSelection(typeName: String) extends DefaultJsonProtocol {
+  final def toJson: JsValue = {
+    JsObject("type" -> typeName.toJson, "value" -> valueToJson)
+  }
+
+  protected def valueToJson: JsValue
+}
 
 /**
  * Points to column of dataframe with given index.
  * @param value index of chosen column
  */
-case class IndexSingleColumnSelection(value: Int) extends SingleColumnSelection("index")
+case class IndexSingleColumnSelection(value: Int) extends SingleColumnSelection("index") {
+  override protected def valueToJson: JsValue = value.toJson
+}
 
 /**
  * Points to column of dataframe with given name.
  * @param value name of chosen column
  */
-case class NameSingleColumnSelection(value: String) extends SingleColumnSelection("column")
+case class NameSingleColumnSelection(value: String) extends SingleColumnSelection("column") {
+  override protected def valueToJson: JsValue = value.toJson
+}
 
 /**
  * Represents selecting subset of columns of dataframe. It consists of a few column selections,

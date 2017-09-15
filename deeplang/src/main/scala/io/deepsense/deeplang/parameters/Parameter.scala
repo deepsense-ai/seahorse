@@ -40,12 +40,10 @@ abstract class Parameter extends DefaultJsonProtocol {
    * Validates held value.
    * If value is set to None and required, exception is thrown.
    */
-  final def validate: Unit = {
-    value match {
-      case Some(definedValue) => validateDefined(definedValue)
-      case None => if (required) {
-        throw ParameterRequiredException(parameterType)
-      }
+  final def validate: Unit = value match {
+    case Some(definedValue) => validateDefined(definedValue)
+    case None => if (required) {
+      throw ParameterRequiredException(parameterType)
     }
   }
 
@@ -57,7 +55,7 @@ abstract class Parameter extends DefaultJsonProtocol {
   protected def validateDefined(definedValue: HeldValue): Unit = { }
 
   /**
-   * Provides Json representation describing this parameter.
+   * Json representation describing this parameter.
    */
   def toJson: JsObject = JsObject(basicJsonFields)
 
@@ -70,4 +68,18 @@ abstract class Parameter extends DefaultJsonProtocol {
       "description" -> description.toJson,
       "required" -> required.toJson)
   }
+
+  /**
+   * Json representation of value held by this parameter.
+   * If it is not provided, it returns JsNull.
+   */
+  final def valueToJson: JsValue = value match {
+    case Some(definedValue) => definedValueToJson(definedValue)
+    case None => JsNull
+  }
+
+  /**
+   * Json representation of value held by parameter if it is provided.
+   */
+  protected def definedValueToJson(definedValue: HeldValue): JsValue
 }

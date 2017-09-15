@@ -6,7 +6,7 @@
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.JsObject
+import spray.json.{JsValue, JsObject}
 
 import io.deepsense.deeplang.parameters.ParameterConversions._
 import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
@@ -34,9 +34,20 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
     new ParametersSchema(replicatedSchemaMap)
   }
 
+  /**
+   * Tells if this schema does not contain any parameters.
+   */
   def isEmpty: Boolean = schemaMap.isEmpty
 
-  def toJson: JsObject = JsObject(schemaMap.mapValues(_.toJson))
+  /**
+   * Json representation describing parameters of this schema.
+   */
+  def toJson: JsValue = JsObject(schemaMap.mapValues(_.toJson))
+
+  /**
+   * Json representation of values held by this schema's parameters.
+   */
+  def valueToJson: JsValue = JsObject(schemaMap.mapValues(_.valueToJson))
 
   def getBooleanParameter(name: String): BooleanParameter = get[BooleanParameter](name)
 

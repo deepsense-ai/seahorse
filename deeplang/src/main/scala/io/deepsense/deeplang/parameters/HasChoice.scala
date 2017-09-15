@@ -52,4 +52,8 @@ trait HasChoice extends Parameter {
       if (option.isEmpty) JsNull else option.toJson}))
     JsObject(super.toJson.fields + valuesField)
   }
+
+  protected def selectionToJson(selection: Selection): (String, JsValue) = {
+    selection match { case Selection(label, schema) => label -> schema.valueToJson }
+  }
 }

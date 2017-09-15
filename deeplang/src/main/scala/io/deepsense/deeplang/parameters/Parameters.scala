@@ -24,6 +24,8 @@ case class BooleanParameter(
   private[parameters] def replicate: Parameter = copy()
 
   override protected def defaultValueToJson(defaultValue: Boolean) = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: Boolean): JsValue = definedValue.toJson
 }
 
 case class NumericParameter(
@@ -43,7 +45,9 @@ case class NumericParameter(
 
   private[parameters] def replicate: Parameter = copy()
 
-  override protected def defaultValueToJson(defaultValue: Double) = defaultValue.toJson
+  override protected def defaultValueToJson(defaultValue: Double): JsValue = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: Double): JsValue = definedValue.toJson
 }
 
 case class StringParameter(
@@ -63,7 +67,9 @@ case class StringParameter(
 
   private[parameters] def replicate: Parameter = copy()
 
-  override protected def defaultValueToJson(defaultValue: String) = defaultValue.toJson
+  override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: String): JsValue = definedValue.toJson
 }
 
 /**
@@ -93,7 +99,7 @@ case class ChoiceParameter(
 
   def value: Option[Selection] = _value
 
-  override def validateDefined(definedValue: Selection): Unit = {
+  override protected def validateDefined(definedValue: Selection): Unit = {
     validateChoices(Traversable(definedValue))
   }
 
@@ -110,7 +116,11 @@ case class ChoiceParameter(
 
   private[parameters] def replicate: Parameter = copy()
 
-  override protected def defaultValueToJson(defaultValue: String) = defaultValue.toJson
+  override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: Selection): JsValue = {
+    JsObject(selectionToJson(definedValue))
+  }
 }
 
 /**
@@ -140,7 +150,7 @@ case class MultipleChoiceParameter(
 
   def value: Option[MultipleSelection] = _value
 
-  override def validateDefined(definedValue: MultipleSelection): Unit = {
+  override protected def validateDefined(definedValue: MultipleSelection): Unit = {
     validateChoices(definedValue.choices)
   }
 
@@ -156,8 +166,13 @@ case class MultipleChoiceParameter(
 
   private[parameters] def replicate: Parameter = copy()
 
-  override protected def defaultValueToJson(defaultValue: Traversable[String]) = {
+  override protected def defaultValueToJson(defaultValue: Traversable[String]): JsValue = {
     defaultValue.toList.toJson
+  }
+
+  override protected def definedValueToJson(definedValue: MultipleSelection): JsValue = {
+    val fields = for (selection <- definedValue.choices.toSeq) yield selectionToJson(selection)
+    JsObject(fields: _*)
   }
 }
 
@@ -179,7 +194,7 @@ case class MultiplierParameter(
   def value: Option[Multiplied] = _value
 
   /** Validates each filled schema. */
-  override def validateDefined(definedValue: Multiplied): Unit = {
+  override protected def validateDefined(definedValue: Multiplied): Unit = {
     definedValue.schemas.foreach(_.validate)
   }
 
@@ -202,6 +217,11 @@ case class MultiplierParameter(
   override def toJson: JsObject = {
     JsObject(basicJsonFields + ("values" -> valuesSchema.toJson))
   }
+
+  override protected def definedValueToJson(definedValue: Multiplied): JsValue = {
+    val fields = for (schema <- definedValue.schemas) yield schema.valueToJson
+    JsArray(fields:_*)
+  }
 }
 
 /**
@@ -211,7 +231,7 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
   val parameterType = ParameterType.ColumnSelector
 
   /** Tells if this selectors selects single column or many. */
-  val isSingle: Boolean
+  protected val isSingle: Boolean
 
   override def toJson: JsObject = {
     JsObject(basicJsonFields + ("isSingle" -> isSingle.toJson))
@@ -227,11 +247,15 @@ case class SingleColumnSelectorParameter(
   extends AbstractColumnSelectorParameter {
   type HeldValue = SingleColumnSelection
 
-  val isSingle = true
+  protected val isSingle = true
 
   var value: Option[SingleColumnSelection] = None
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def definedValueToJson(definedValue: SingleColumnSelection): JsValue = {
+    definedValue.toJson
+  }
 }
 
 /**
@@ -243,9 +267,14 @@ case class ColumnSelectorParameter(
   extends AbstractColumnSelectorParameter {
   type HeldValue = MultipleColumnSelection
 
-  val isSingle = false
+  protected val isSingle = false
 
   var value: Option[MultipleColumnSelection] = None
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def definedValueToJson(definedValue: MultipleColumnSelection): JsValue = {
+    val fields = definedValue.selections.map(_.toJson)
+    JsArray(fields:_*)
+  }
 }
