@@ -30,6 +30,14 @@
         ["Jeremy", "63", "TECHNO"],
         ["Richard", "12", "POP"]
       ]
+    },
+    "DataFrame Size": {
+      "name": "DataFrame Size",
+      "description": "DataFrame Size. Number of columns and number of rows in the DataFrame.",
+      "columnNames": ["Number of columns", "Number of rows"],
+      "blockType": "table",
+      "rowNames": null,
+      "values": [["3", "10000"]]
     }
   },
   "distributions": {

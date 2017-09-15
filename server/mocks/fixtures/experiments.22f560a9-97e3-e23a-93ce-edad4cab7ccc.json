@@ -91,6 +91,27 @@
               }
             }
           }
+        },
+        {
+          "id": "c1b7dc79-de57-91f4-4265-128119369bab",
+          "operation": {
+            "id": "59032-19830-83129",
+            "name": "Spliter",
+            "version": "1.1.5"
+          },
+          "parameters": {
+            "split ratio": 0.5,
+            "seed": 2
+          }
+        },
+        {
+          "id": "260917d6-aa20-cca0-1e5e-ead9605954b0",
+          "operation": {
+            "id": "237956-23426-49857",
+            "name": "Linear Regresion",
+            "version": "1.1.2"
+          },
+          "parameters": {}
         }
       ],
       "edges": [
@@ -110,7 +131,27 @@
             "portIndex": 0
           },
           "to": {
+            "nodeId": "c1b7dc79-de57-91f4-4265-128119369bab",
+            "portIndex": 0
+          }
+        },
+        {
+          "from": {
+            "nodeId": "c1b7dc79-de57-91f4-4265-128119369bab",
+            "portIndex": 1
+          },
+          "to": {
             "nodeId": "edc02822-b8ee-4225-b070-f892a87dbf11",
+            "portIndex": 0
+          }
+        },
+        {
+          "from": {
+            "nodeId": "c1b7dc79-de57-91f4-4265-128119369bab",
+            "portIndex": 0
+          },
+          "to": {
+            "nodeId": "260917d6-aa20-cca0-1e5e-ead9605954b0",
             "portIndex": 0
           }
         }
@@ -138,6 +179,18 @@
         "edc02822-b8ee-4225-b070-f892a87dbf11": {
           "status": "COMPLETED",
           "results": ["test-02"]
+        },
+        "c1b7dc79-de57-91f4-4265-128119369bab": {
+          "status": "COMPLETED",
+          "started": "2015-05-12T21:11:09Z",
+          "ended": "2015-05-12T21:12:09Z",
+          "results": ["test-01", "test-03"]
+        },
+        "260917d6-aa20-cca0-1e5e-ead9605954b0": {
+          "status": "COMPLETED",
+          "started": "2015-05-12T21:11:09Z",
+          "ended": "2015-05-12T21:12:09Z",
+          "results": ["test-04"]
         }
       }
     },
@@ -149,6 +202,13 @@
         ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
       ],
       "edc02822-b8ee-4225-b070-f892a87dbf11": [
+        ["io.deepsense.deeplang.doperables.Scorable"]
+      ],
+      "c1b7dc79-de57-91f4-4265-128119369bab": [
+        ["io.deepsense.deeplang.doperables.dataframe.DataFrame"],
+        ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+      ],
+      "260917d6-aa20-cca0-1e5e-ead9605954b0": [
         ["io.deepsense.deeplang.doperables.Scorable"]
       ]
     }

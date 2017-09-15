@@ -1,0 +1,64 @@
+{
+  "operation": {
+    "id": "59032-19830-83129",
+    "name": "Spliter",
+    "version": "1.1.5",
+    "category": "23123-12312-43242",
+    "description": "Splits dataset",
+    "deterministic": true,
+    "ports": {
+      "input": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+        }
+      ],
+      "output": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+        },
+        {
+          "portIndex": 1,
+          "required": true,
+          "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+        }
+      ]
+    },
+    "parameters": {
+      "split ratio": {
+        "description": "Proportion of splitting",
+        "validator": {
+          "type": "range",
+          "configuration": {
+            "begin": 0.0,
+            "end": 1.0,
+            "beginIncluded": true,
+            "endIncluded": true
+            }
+        },
+        "default": 0.5,
+        "type": "numeric",
+        "required": true
+      },
+      "seed": {
+        "description": "Seed value",
+        "validator": {
+          "type": "range",
+          "configuration": {
+            "begin": -1073741824,
+            "step": 1.0,
+            "beginIncluded": true,
+            "endIncluded": true,
+            "end": 1073741823
+          }
+        },
+        "default": 1.0,
+        "type": "numeric",
+        "required": true
+      }
+    }
+  }
+}
