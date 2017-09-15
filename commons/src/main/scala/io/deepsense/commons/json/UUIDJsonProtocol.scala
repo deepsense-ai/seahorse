@@ -12,7 +12,7 @@ import spray.httpx.SprayJsonSupport
 trait UUIDJsonProtocol {
 
   implicit object UUIDFormat extends JsonFormat[UUID] with SprayJsonSupport {
-    override def write(obj: UUID) = JsString(obj.toString)
+    override def write(obj: UUID): JsValue = JsString(obj.toString)
 
     override def read(json: JsValue): UUID = json match {
       case JsString(x) => UUID.fromString(x)

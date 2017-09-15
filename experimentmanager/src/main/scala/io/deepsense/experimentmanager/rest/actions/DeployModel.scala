@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
 package io.deepsense.experimentmanager.rest.actions
 
 import scala.concurrent.Future

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.models.entities
@@ -27,11 +27,11 @@ case class Entity (
     saved: Boolean = true)
   extends HasTenantId {
 
-  def reportOnly = copy(data = None)
+  def reportOnly: Entity = copy(data = None)
 
-  def dataOnly = copy(report = None)
+  def dataOnly: Entity = copy(report = None)
 
-  def descriptor = CompactEntityDescriptor(this)
+  def descriptor: CompactEntityDescriptor = CompactEntityDescriptor(this)
 
   def updateWith(userEntityDescriptor: UserEntityDescriptor): Entity = copy(
     name = userEntityDescriptor.name,

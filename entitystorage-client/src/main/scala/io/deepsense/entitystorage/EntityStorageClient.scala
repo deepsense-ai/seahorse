@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.entitystorage
 
 import scala.concurrent.Future

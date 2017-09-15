@@ -219,7 +219,7 @@ case class ParametersSequence(
 
   override protected def definedValueToJson(definedValue: Vector[ParametersSchema]): JsValue = {
     val fields = for (schema <- definedValue) yield schema.valueToJson
-    JsArray(fields:_*)
+    JsArray(fields: _*)
   }
 
   /**
@@ -292,7 +292,7 @@ case class ColumnSelectorParameter(
 
   override protected def definedValueToJson(definedValue: MultipleColumnSelection): JsValue = {
     val fields = definedValue.selections.map(_.toJson)
-    JsArray(fields:_*)
+    JsArray(fields: _*)
   }
 
   override protected def valueFromDefinedJson(jsValue: JsValue): MultipleColumnSelection = {

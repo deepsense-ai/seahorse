@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.graphexecutor.deployment
 
 import java.net.URI
@@ -13,6 +14,8 @@ import org.apache.hadoop.hdfs.DFSClient
 
 import io.deepsense.deeplang.DSHdfsClient
 import io.deepsense.graphexecutor.Constants
+
+// scalastyle:off println
 
 /**
  * Performs DeepSense.io deployment on external HDFS cluster.
@@ -97,3 +100,5 @@ object DeployOnHdfs {
     s"hdfs://$hdfsHostname:$hdfsPort"
   }
 }
+
+// scalastyle:on println

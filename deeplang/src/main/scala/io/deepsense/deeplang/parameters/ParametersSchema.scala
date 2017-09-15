@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.parameters
@@ -128,5 +128,5 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
 }
 
 object ParametersSchema {
-  def apply(args: (String, Parameter)*) = new ParametersSchema(ListMap(args: _*))
+  def apply(args: (String, Parameter)*): ParametersSchema = new ParametersSchema(ListMap(args: _*))
 }

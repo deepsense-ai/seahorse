@@ -15,15 +15,10 @@ import io.deepsense.deeplang.parameters.ParametersSchema
 object DClassesForDOperations {
   trait A extends DOperable {
     def report: Report = ???
+    def save(context: ExecutionContext)(path: String): Unit = ???
   }
-  class A1 extends A {
-    override def equals(any: Any) = any.isInstanceOf[A1]
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
-  class A2 extends A {
-    override def equals(any: Any) = any.isInstanceOf[A2]
-    override def save(context: ExecutionContext)(path: String): Unit = ???
-  }
+  case class A1() extends A
+  case class A2() extends A
 }
 
 object DOperationTestClasses {
@@ -58,7 +53,7 @@ object DOperationTestClasses {
     logger.trace("Initializing logging to test the serialization")
     override protected def _execute(context: ExecutionContext)(t0: A): A = ???
 
-    def trace(message: String) = logger.trace(message)
+    def trace(message: String): Unit = logger.trace(message)
   }
 }
 
@@ -231,13 +226,13 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
     val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
     val nodes = Set(node1, node2, node3, node4)
-    val edges = List(
-      (node1, node2, 0, 0),
-      (node1, node3, 0, 0),
-      (node2, node4, 0, 0),
-      (node3, node4, 0, 1))
-    val edgesSet = edges.map(n =>Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
-    val graph = Graph(nodes, edgesSet)
+    val edges = Set(
+      Edge(node1, 0, node2, 0),
+      Edge(node1, 0, node3, 0),
+      Edge(node2, 0, node4, 0),
+      Edge(node3, 0, node4, 1)
+    )
+    val graph = Graph(nodes, edges)
 
     graph.predecessors(node1.id).size shouldBe 0
     graph.predecessors(node2.id) should

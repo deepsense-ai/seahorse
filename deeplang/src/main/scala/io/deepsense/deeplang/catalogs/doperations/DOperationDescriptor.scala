@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.catalogs.doperations
@@ -23,7 +23,7 @@ case class DOperationDescriptor(
     outPorts: Seq[Type]) {
 
   override def toString: String = {
-    def portsToString(ports: Seq[Type]) = {
+    def portsToString(ports: Seq[Type]): String = {
       ports.map(DOperationDescriptor.typeToString).mkString(", ")
     }
     s"$name(${portsToString(inPorts)} => ${portsToString(outPorts)})"

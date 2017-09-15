@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.rest
@@ -76,7 +76,7 @@ class ExperimentsApiSpec
   val experimentA2Id = Experiment.Id.randomId
   val experimentBId = Experiment.Id.randomId
 
-  def experimentOfTenantA = Experiment(
+  protected def experimentOfTenantA = Experiment(
     experimentAId,
     tenantAId,
     "Experiment of Tenant A",
@@ -84,7 +84,7 @@ class ExperimentsApiSpec
     created,
     updated)
 
-  def experimentOfTenantA2 = Experiment(
+  protected def experimentOfTenantA2 = Experiment(
     experimentA2Id,
     tenantAId,
     "Second experiment of Tenant A",
@@ -92,7 +92,7 @@ class ExperimentsApiSpec
     created,
     updated)
 
-  def experimentOfTenantB = Experiment(
+  protected def experimentOfTenantB = Experiment(
     experimentBId,
     tenantBId,
     "Experiment of Tenant B",
@@ -298,7 +298,7 @@ class ExperimentsApiSpec
 
   s"POST /experiments/:id/action (with LaunchAction)" should {
     "return Unauthorized" when {
-      def launchAction = LaunchActionWrapper(
+      def launchAction: LaunchActionWrapper = LaunchActionWrapper(
         LaunchAction(
           Some(
             List(

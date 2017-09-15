@@ -11,7 +11,7 @@ import io.deepsense.deeplang.DSHdfsClient
 import io.deepsense.deploymodelservice.{Model, CreateModelResponse}
 
 trait Deployable extends Serializable {
-  def deploy(f:(Model)=>Future[CreateModelResponse]): Future[CreateModelResponse]
+  def deploy(f: (Model) => Future[CreateModelResponse]): Future[CreateModelResponse]
 }
 
 object DeployableLoader extends Logging {

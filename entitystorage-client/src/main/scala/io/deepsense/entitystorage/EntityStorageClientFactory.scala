@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.entitystorage
 
 import scala.concurrent.Await
@@ -25,7 +26,7 @@ trait EntityStorageClientFactory {
   /**
    * Closes EntityStorageClientFactory. After close, create cannot be executed.
    */
-  def close()
+  def close(): Unit
 }
 
 case class EntityStorageClientFactoryImpl(

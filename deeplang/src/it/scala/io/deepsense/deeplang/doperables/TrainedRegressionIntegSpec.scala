@@ -1,6 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
  */
 
 package io.deepsense.deeplang.doperables
@@ -20,7 +19,8 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.{DSHdfsClient, DeeplangIntegTestSupport, ExecutionContext}
 
-abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel] extends DeeplangIntegTestSupport {
+abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
+  extends DeeplangIntegTestSupport {
 
   protected val inputVectors = Seq(
     Vectors.dense(1.5, 3.5),

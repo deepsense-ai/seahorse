@@ -6,7 +6,7 @@ package io.deepsense.deploymodelservice
 
 import scala.collection.mutable
 
-import akka.actor.Actor
+import akka.actor.{ActorContext, Actor}
 import spray.http.HttpHeaders
 import spray.routing._
 
@@ -15,9 +15,9 @@ import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
 
 class DeployModelServiceActor extends Actor with DeployModelService {
 
-  override def actorRefFactory = context
+  override def actorRefFactory: ActorContext = context
 
-  override def receive = runRoute(myRoute)
+  override def receive: Actor.Receive = runRoute(myRoute)
 
   override val repository: ModelRepository = new ModelRepository()
 }

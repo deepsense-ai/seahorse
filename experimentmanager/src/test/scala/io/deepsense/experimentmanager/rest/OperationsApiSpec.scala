@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.rest
@@ -61,7 +61,7 @@ class OperationsApiSpec
   val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), Map.empty, Set.empty)
   when(dOperationsCatalog.categoryTree) thenReturn categoryTreeMock
 
-  override def createRestComponent(tokenTranslator: TokenTranslator): Route  = {
+  override def createRestComponent(tokenTranslator: TokenTranslator): Route = {
     new OperationsApi(
       tokenTranslator,
       dOperableCatalog,

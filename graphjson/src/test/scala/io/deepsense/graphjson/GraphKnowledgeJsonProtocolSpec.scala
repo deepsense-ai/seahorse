@@ -16,7 +16,7 @@ class GraphKnowledgeJsonProtocolSpec extends GraphJsonTestSupport {
   val mockOperable2 = mock[DOperable]
   val mockOperable3 = mock[DOperable]
 
-  val setOfKnowledge = Set(mockOperable3,mockOperable2)
+  val setOfKnowledge = Set(mockOperable3, mockOperable2)
   val knowledgeVector = Vector(
     new DKnowledge(Set(mockOperable1)),
     new DKnowledge(setOfKnowledge))

@@ -13,7 +13,7 @@ import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
 trait Validator[ParameterType] extends Serializable {
   val validatorType: ValidatorType
 
-  def validate(parameter: ParameterType)
+  def validate(parameter: ParameterType): Unit
 
   final def toJson: JsObject = {
     import DefaultJsonProtocol._

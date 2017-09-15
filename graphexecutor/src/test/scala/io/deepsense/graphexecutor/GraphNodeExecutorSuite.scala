@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.graphexecutor
 
 import scala.collection.mutable
@@ -51,12 +52,8 @@ class GraphNodeExecutorSuite extends FunSuite with Matchers {
   // TODO: this classes could be replaced with real DOperations with the same arity
   object DClassesForDOperations {
     trait A extends DOperableMock
-    class A1 extends A {
-      override def equals(any: Any) = any.isInstanceOf[A1]
-    }
-    class A2 extends A {
-      override def equals(any: Any) = any.isInstanceOf[A2]
-    }
+    case class A1() extends A
+    case class A2() extends A
   }
 
   object DOperationTestClasses {
@@ -100,10 +97,10 @@ class GraphNodeExecutorSuite extends FunSuite with Matchers {
     val node2 = Node(nodeId2, new DOperation2To1Test)
     val nodes = Set(node1, node2)
     // NOTE: node1 first (second) output goes to second (first) input port of node2
-    val edgesList = List(
-      (node1, node2, 0, 1),
-      (node1, node2, 1, 0))
-    val edges = edgesList.map(n => Edge(Endpoint(n._1.id,  n._3), Endpoint(n._2.id, n._4))).toSet
+    val edges = Set(
+      Edge(node1, 0, node2, 1),
+      Edge(node1, 1, node2, 0)
+    )
     Graph(nodes, edges)
   }
 }

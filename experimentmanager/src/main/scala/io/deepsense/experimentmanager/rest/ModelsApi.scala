@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
 package io.deepsense.experimentmanager.rest
 
 import java.net.URI
@@ -12,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.DFSClient
 import spray.http.StatusCodes
-import spray.routing.PathMatchers
+import spray.routing.{PathMatchers, Route}
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
@@ -20,7 +24,7 @@ import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang
 import io.deepsense.deeplang.{DSHdfsClient, ExecutionContext => DExecutionContext}
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
-import io.deepsense.entitystorage.EntityStorageClientFactoryImpl
+import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactoryImpl}
 import io.deepsense.experimentmanager.rest.actions.DeployModel
 
 
@@ -51,7 +55,7 @@ class ModelsApi @Inject()(
 
   val esFactory = EntityStorageClientFactoryImpl()
 
-  def entityStorageClient() = {
+  def entityStorageClient(): EntityStorageClient = {
     esFactory.create(
       "root-actor-system",
       entityStorageHostname,
@@ -59,7 +63,7 @@ class ModelsApi @Inject()(
       "EntitiesApiActor", 10)
   }
 
-  override def route = {
+  override def route: Route = {
     handleRejections(rejectionHandler) {
       handleExceptions(exceptionHandler) {
         pathPrefix(pathPrefixMatcher) {

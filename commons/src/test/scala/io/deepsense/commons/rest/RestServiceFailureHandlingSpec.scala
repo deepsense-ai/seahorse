@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.commons.rest
 
+import akka.actor.ActorSystem
 import spray.http.StatusCodes
 import spray.testkit.ScalatestRouteTest
 
@@ -13,7 +14,7 @@ class RestServiceFailureHandlingSpec
   extends StandardSpec
   with RestService
   with ScalatestRouteTest {
-  override def actorRefFactory = system
+  override def actorRefFactory: ActorSystem = system
 
   override def apis: Seq[RestComponent] = {
     Seq(new FailureTestApi()(executor))

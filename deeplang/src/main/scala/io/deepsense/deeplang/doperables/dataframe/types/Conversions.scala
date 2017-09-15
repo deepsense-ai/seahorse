@@ -53,18 +53,22 @@ object Conversions {
   )
 
   def booleanToString(b: JavaBoolean): String = nullOr[JavaBoolean, String](_.toString)(b)
+
   def doubleToString(d: JavaDouble): String =
     nullOr[JavaDouble, String](DoubleUtils.double2String(_))(d)
+
   def timestampToString(t: Timestamp): String =
     nullOr[Timestamp, String] { x =>
       DateTimeConverter.toString(DateTimeConverter.fromMillis(x.getTime))
     }(t)
-  def categoricalToString(mapping: CategoriesMapping)(c: JavaInteger) =
+
+  def categoricalToString(mapping: CategoriesMapping)(c: JavaInteger): String =
     nullOr[JavaInteger, String](mapping.idToValue(_))(c)
+
   def booleanToDouble(b: JavaBoolean): JavaDouble =
     nullOr[JavaBoolean, JavaDouble](x => if (x) 1.0 else 0.0)(b)
-  def stringToDouble(s: String): JavaDouble = {
-    nullOr[String, java.lang.Double] { x =>
+
+  def stringToDouble(s: String): JavaDouble = nullOr[String, java.lang.Double] { x =>
       try {
         java.lang.Double.parseDouble(x)
       } catch {
@@ -72,15 +76,14 @@ object Conversions {
           throw new TypeConversionException(x, ColumnType.string, ColumnType.numeric)
       }
     }(s)
-  }
+
   def timestampToDouble(t: Timestamp): JavaDouble =
     nullOr[Timestamp, JavaDouble](_.getTime.toDouble)(t)
-  def anyToString(x: Any): String = {
-    x match {
-      case d: JavaDouble => doubleToString(d)
-      case t: Timestamp => timestampToString(t)
-      case s: String => s
-      case b: JavaBoolean => booleanToString(b)
-    }
+
+  def anyToString(x: Any): String = x match {
+    case d: JavaDouble => doubleToString(d)
+    case t: Timestamp => timestampToString(t)
+    case s: String => s
+    case b: JavaBoolean => booleanToString(b)
   }
 }

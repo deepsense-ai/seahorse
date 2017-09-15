@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  *
  * Wraps all constants. This class is an ersatz of configuration library.
  *
  * TODO: This class usage should be replaced with usage
  * of deepsense confguration library & specific configuration files.
  */
+
 package io.deepsense.graphexecutor
 
 object Constants {

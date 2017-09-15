@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.graphexecutor
 
 import java.io._
@@ -250,5 +251,5 @@ object GraphExecutorClient {
   val ExecutorMemoryProperty = "spark.executor.memory"
   val DriverMemoryProperty = "spark.driver.memory"
 
-  def apply() = new GraphExecutorClient()
+  def apply(): GraphExecutorClient = new GraphExecutorClient()
 }

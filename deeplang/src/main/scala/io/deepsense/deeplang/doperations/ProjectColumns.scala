@@ -25,7 +25,7 @@ case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val columns = dataFrame.getColumnNames(parameters.getColumnSelection(selectedColumns).get)
     if (columns.nonEmpty) {
-      val projected = dataFrame.sparkDataFrame.select(columns.head, columns.tail:_*)
+      val projected = dataFrame.sparkDataFrame.select(columns.head, columns.tail: _*)
       context.dataFrameBuilder.buildDataFrame(projected)
     } else {
       DataFrame.empty(context)

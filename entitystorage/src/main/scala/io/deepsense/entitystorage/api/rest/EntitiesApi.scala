@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.entitystorage.api.rest
@@ -10,7 +10,7 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
 import spray.http.StatusCodes
-import spray.routing.{ExceptionHandler, PathMatchers}
+import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.AuthorizatorProvider
@@ -37,7 +37,7 @@ class EntitiesApi @Inject() (
   require(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
-  def route = handleRejections(rejectionHandler) {
+  def route: Route = handleRejections(rejectionHandler) {
     handleExceptions(exceptionHandler) {
       pathPrefix(pathPrefixMatcher) {
         path(JavaUUID / "report") { idParameter =>

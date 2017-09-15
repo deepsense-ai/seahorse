@@ -13,7 +13,7 @@ import io.deepsense.commons.models.Id
 
 trait IdJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit object IdFormat extends RootJsonFormat[Id] {
-    override def write(obj: Id) = JsString(obj.value.toString)
+    override def write(obj: Id): JsValue = JsString(obj.value.toString)
     override def read(json: JsValue): Id = json match {
       case JsString(x) => Id(UUID.fromString(x))
       case x => deserializationError(s"Expected Id as UUID in JsString, but got $x")

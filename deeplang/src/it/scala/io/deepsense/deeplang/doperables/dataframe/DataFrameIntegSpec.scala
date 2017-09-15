@@ -13,7 +13,7 @@ import io.deepsense.deeplang.parameters._
 class DataFrameIntegSpec extends DeeplangIntegTestSupport {
 
   "DataFrame" should {
-    def schema = StructType(List(
+    def schema: StructType = StructType(List(
       StructField("c", DoubleType),
       StructField("b", StringType),
       StructField("a", DoubleType),
@@ -23,7 +23,7 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
       StructField("m", IntegerType)
     ))
 
-    def dataFrame = createDataFrame(Seq.empty, schema)
+    def dataFrame: DataFrame = createDataFrame(Seq.empty, schema)
 
     "return correct sequence of columns' names based on column selection" when {
 

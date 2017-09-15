@@ -62,7 +62,7 @@ object CategoriesMapping {
 }
 
 case class IdToIdMapping(map: Map[Int, Int]) {
-  def mapId(id: Int) = map(id)
+  def mapId(id: Int): Int = map(id)
   val isEmpty: Boolean = map.isEmpty
 }
 

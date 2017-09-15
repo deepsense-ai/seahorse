@@ -32,7 +32,7 @@ case class SelectImportantFeatures() extends DOperation1To1[DataFrame, DataFrame
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     context.dataFrameBuilder.buildDataFrame(
-      dataFrame.sparkDataFrame.select(ColumnsNames.head, ColumnsNames.tail:_*))
+      dataFrame.sparkDataFrame.select(ColumnsNames.head, ColumnsNames.tail: _*))
   }
 }
 

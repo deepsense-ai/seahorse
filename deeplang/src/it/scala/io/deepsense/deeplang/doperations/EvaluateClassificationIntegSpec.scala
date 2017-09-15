@@ -1,6 +1,7 @@
-/*
- * Copyright (c) 2015, CodiLime, Inc.
+/**
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.Row
@@ -49,7 +50,7 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
     Row("z", 1.0, 0.99))
 
   "EvaluateClassification" should {
-    def testDataFrame = createDataFrame(correctRows, schema)
+    def testDataFrame: DataFrame = createDataFrame(correctRows, schema)
     "throw exception" when {
       "selected target column is not Double" in {
         a[WrongColumnTypeException] should be thrownBy {

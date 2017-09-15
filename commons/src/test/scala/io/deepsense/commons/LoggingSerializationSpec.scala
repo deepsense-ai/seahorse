@@ -6,7 +6,7 @@ package io.deepsense.commons
 
 import java.io.NotSerializableException
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.{LazyLogging, Logger}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.utils.Logging
@@ -38,9 +38,9 @@ class LoggingSerializationSpec
 }
 
 class NonSerializableTestObject extends Serializable with LazyLogging {
-  def getLogger = this.logger
+  def getLogger: Logger = this.logger
 }
 
 class SerializableTestObject extends Serializable with Logging {
-  def getLogger = this.logger
+  def getLogger: Logger = this.logger
 }

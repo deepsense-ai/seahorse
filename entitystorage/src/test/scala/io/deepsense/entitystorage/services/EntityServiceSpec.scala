@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.entitystorage.services
@@ -16,14 +16,12 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.entitystorage.models.EntityMatchers
 import io.deepsense.entitystorage.storage.EntityDao
-import io.deepsense.models.entities.{UserEntityDescriptor, Entity}
+import io.deepsense.models.entities.{Entity, UserEntityDescriptor}
 
 class EntityServiceSpec
   extends FlatSpec
   with Matchers
-  with EntityMatchers
   with MockitoSugar
   with EntityTestFactory
   with BeforeAndAfter
@@ -65,11 +63,11 @@ class EntityServiceSpec
     val entity = captor.getValue
 
     entity should have (
-      tenantId(inputEntity.tenantId),
-      dClass(inputEntity.dClass),
-      name(inputEntity.name),
-      description(inputEntity.description),
-      saved(inputEntity.saved)
+      'tenantId (inputEntity.tenantId),
+      'dClass (inputEntity.dClass),
+      'name (inputEntity.name),
+      'description (inputEntity.description),
+      'saved (inputEntity.saved)
     )
     entity.data shouldBe inputEntity.data
     entity.report shouldBe inputEntity.report

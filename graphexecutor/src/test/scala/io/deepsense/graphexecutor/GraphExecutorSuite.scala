@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.graphexecutor
 
 import org.scalatest.{Matchers, WordSpec}

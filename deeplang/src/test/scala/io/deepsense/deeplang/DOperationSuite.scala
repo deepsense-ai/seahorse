@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang
@@ -15,12 +15,8 @@ import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Val
 
 object DClassesForDOperations {
   trait A extends DOperableMock
-  class A1 extends A {
-    override def equals(any: Any) = any.isInstanceOf[A1]
-  }
-  class A2 extends A {
-    override def equals(any: Any) = any.isInstanceOf[A2]
-  }
+  case class A1() extends A
+  case class A2() extends A
 }
 
 object DOperationForPortTypes {

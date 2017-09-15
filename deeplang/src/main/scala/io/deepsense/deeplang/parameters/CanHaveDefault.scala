@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
 package io.deepsense.deeplang.parameters
 
 import spray.json._

@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.experimentmanager.execution
 
 import scala.concurrent.duration._
@@ -84,7 +85,7 @@ class EMtoGESpec
     }
   }
 
-  def createExperiment() = {
+  def createExperiment(): Experiment = {
     val graph = Graph(
       Set(Node(
         Node.Id.randomId,
@@ -96,7 +97,7 @@ class EMtoGESpec
       graph)
   }
 
-  def createExperimentWithFailingGraph() = {
+  def createExperimentWithFailingGraph(): Experiment = {
     val graph = Graph(
       Set(Node(Node.Id.randomId, LoadDataFrame("Invalid UUID for testing purposes"))))
     Experiment(

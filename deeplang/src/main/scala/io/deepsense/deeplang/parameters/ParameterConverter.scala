@@ -27,25 +27,25 @@ abstract class ParameterConverter[T <: Parameter : ru.TypeTag] {
  */
 object ParameterConversions {
   implicit object ToStringParameter extends ParameterConverter[StringParameter] {
-    def convertPF = {
+    def convertPF: PartialFunction[Any, StringParameter] = {
       case p: StringParameter => p
     }
   }
 
   implicit object ToNumericParameter extends ParameterConverter[NumericParameter] {
-    def convertPF = {
+    def convertPF: PartialFunction[Any, NumericParameter] = {
       case p: NumericParameter => p
     }
   }
 
   implicit object ToBooleanParameter extends ParameterConverter[BooleanParameter] {
-    def convertPF = {
+    def convertPF: PartialFunction[Any, BooleanParameter] = {
       case p: BooleanParameter => p
     }
   }
 
   implicit object ToChoiceParameter extends ParameterConverter[ChoiceParameter] {
-    def convertPF = {
+    def convertPF: PartialFunction[Any, ChoiceParameter] = {
       case p: ChoiceParameter => p
     }
   }
@@ -53,7 +53,7 @@ object ParameterConversions {
   implicit object ToMultipleChoiceParameter
     extends ParameterConverter[MultipleChoiceParameter] {
 
-    def convertPF = {
+    def convertPF: PartialFunction[Any, MultipleChoiceParameter] = {
       case p: MultipleChoiceParameter => p
     }
   }
@@ -61,21 +61,23 @@ object ParameterConversions {
   implicit object ToMultiplicatedParameter
     extends ParameterConverter[ParametersSequence] {
 
-    def convertPF = {
+    def convertPF: PartialFunction[Any, ParametersSequence] = {
       case p: ParametersSequence => p
     }
   }
 
   implicit object ToSingleColumnSelectorParameter
     extends ParameterConverter[SingleColumnSelectorParameter] {
-    def convertPF = {
+
+    def convertPF: PartialFunction[Any, SingleColumnSelectorParameter] = {
       case p: SingleColumnSelectorParameter => p
     }
   }
 
   implicit object ToColumnSelectionParameter
-      extends ParameterConverter[ColumnSelectorParameter] {
-    def convertPF = {
+    extends ParameterConverter[ColumnSelectorParameter] {
+
+    def convertPF: PartialFunction[Any, ColumnSelectorParameter] = {
       case p: ColumnSelectorParameter => p
     }
   }

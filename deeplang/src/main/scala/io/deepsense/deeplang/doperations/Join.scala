@@ -114,7 +114,7 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
     val columns = ldf.sparkDataFrame.columns ++
       rsdf.columns.filter(col => !renamedJoinColumns.valuesIterator.contains(col))
     assert(columns.nonEmpty)
-    val duplicateColumnsRemoved = joinedDataFrame.select(columns.head, columns.tail:_*)
+    val duplicateColumnsRemoved = joinedDataFrame.select(columns.head, columns.tail: _*)
 
     // NOTE: We perform only LEFT OUTER JOIN, thus we do not need to change CategoricalMetadata
     // in resultDataFrame (CategoricalMetadata for left DataFrame, already there is sufficient)

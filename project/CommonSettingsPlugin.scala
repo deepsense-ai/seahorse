@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 import sbt.Keys._
 import sbt._
 import sbtfilter.Plugin._
@@ -43,14 +44,15 @@ object CommonSettingsPlugin extends AutoPlugin {
     Seq(
       testOptions := Seq(
         // Put results in target/test-reports
-        Tests.Argument(TestFrameworks.ScalaTest,
-        "-o",
-        "-u", "target/test-reports",
-        "-y", "org.scalatest.FlatSpec",
-        "-y", "org.scalatest.WordSpec",
-        "-y", "org.scalatest.FunSuite"
-      )
-    ),
+        Tests.Argument(
+          TestFrameworks.ScalaTest,
+          "-o",
+          "-u", "target/test-reports",
+          "-y", "org.scalatest.FlatSpec",
+          "-y", "org.scalatest.WordSpec",
+          "-y", "org.scalatest.FunSuite"
+        )
+      ),
       fork := true,
       javaOptions := Seq("-Denv=test", s"-DlogFile=${name.value}"),
       unmanagedClasspath += baseDirectory.value / "conf"

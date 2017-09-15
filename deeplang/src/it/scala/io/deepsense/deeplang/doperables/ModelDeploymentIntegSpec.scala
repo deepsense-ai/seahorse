@@ -55,7 +55,7 @@ class ModelDeploymentIntegSpec
       val deploymentResult = retrieved.deploy(toService)
       import scala.concurrent.ExecutionContext.Implicits.global
       deploymentResult.onComplete {
-        case Success(value) =>value shouldBe response
+        case Success(value) => value shouldBe response
         case _ =>
       }
     }

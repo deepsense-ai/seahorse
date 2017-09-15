@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.deeplang.doperations
@@ -91,6 +91,6 @@ object DecomposeDatetime {
    * Possible options for multiChoice parameter representing parts of timestamp to extract
    */
   private val timeUnits: ListMap[String, ParametersSchema] =
-    ListMap(timestampParts.map(p => p.name -> ParametersSchema()):_*)
+    ListMap(timestampParts.map(_.name -> ParametersSchema()): _*)
 
 }

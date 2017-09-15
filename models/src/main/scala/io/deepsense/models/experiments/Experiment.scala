@@ -78,7 +78,7 @@ object Experiment {
       id: Experiment.Id,
       tenantId: String,
       name: String,
-      graph: Graph) = {
+      graph: Graph): Experiment = {
     val created = DateTimeConverter.now
     new Experiment(id, tenantId, name, graph, created, created)
   }
@@ -115,18 +115,18 @@ object Experiment {
   }
 
   case class State(status: Status, error: Option[String]) {
-    def draft = State.draft
-    def running = State.running
-    def completed = State.completed
-    def failed(message: String) = State.failed(message)
-    def aborted = State.aborted
+    def draft: State = State.draft
+    def running: State = State.running
+    def completed: State = State.completed
+    def failed(message: String): State = State.failed(message)
+    def aborted: State = State.aborted
   }
 
   object State {
     val draft = State(Status.Draft, None)
     val running = State(Status.Running, None)
     val completed = State(Status.Completed, None)
-    def failed(message: String) = State(Status.Failed, Some(message))
+    def failed(message: String): State = State(Status.Failed, Some(message))
     val aborted = State(Status.Aborted, None)
   }
 }

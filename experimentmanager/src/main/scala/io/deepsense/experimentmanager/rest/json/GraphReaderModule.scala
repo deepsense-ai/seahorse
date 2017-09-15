@@ -16,7 +16,7 @@ class GraphReaderModule extends AbstractModule {
 
   @Singleton
   @Provides
-  def provideGraphReader(dOperationsCatalog: DOperationsCatalog) = {
+  def provideGraphReader(dOperationsCatalog: DOperationsCatalog): GraphReader = {
     new GraphReader(dOperationsCatalog)
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.experimentmanager.rest
@@ -35,8 +35,8 @@ class ExperimentsApiIntegSpec
   lazy val tenantA = tenantId("userA")
   lazy val tenantB = tenantId("userB")
 
-  override def experimentOfTenantA = experimentA
-  override def experimentOfTenantB = experimentB
+  override def experimentOfTenantA: Experiment = experimentA
+  override def experimentOfTenantB: Experiment = experimentB
 
   override val tenantAId: String = tenantA
 

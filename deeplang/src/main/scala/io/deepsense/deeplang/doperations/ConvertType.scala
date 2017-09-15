@@ -29,7 +29,7 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
       "Target type of the columns",
       None,
       required = true,
-      options = ListMap(ColumnType.values.toList.map(v => v.toString -> ParametersSchema()):_*)
+      options = ListMap(ColumnType.values.toList.map(_.toString -> ParametersSchema()): _*)
     )
   )
 

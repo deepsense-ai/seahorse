@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.entitystorage
 
 import akka.actor.ActorSystem
@@ -66,7 +67,5 @@ class EntityStorageClientSpec(actorSystem: ActorSystem)
     }
   }
 
-  override def afterAll() {
-    TestKit.shutdownActorSystem(system)
-  }
+  override def afterAll(): Unit = TestKit.shutdownActorSystem(system)
 }
