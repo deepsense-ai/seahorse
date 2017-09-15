@@ -16,7 +16,11 @@
         "name": "Split"
       },
       "parameters": {
-        "split ratio": 0.3
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.3
+          }
+        }
       }
     }, {
       "id": "1f54823d-acd4-5eec-80f4-3af576c096b8",

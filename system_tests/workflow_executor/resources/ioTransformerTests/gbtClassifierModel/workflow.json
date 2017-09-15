@@ -45,7 +45,11 @@
         "name": "Split"
       },
       "parameters": {
-        "split ratio": 0.3
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.3
+          }
+        }
       }
     }],
     "connections": [{
