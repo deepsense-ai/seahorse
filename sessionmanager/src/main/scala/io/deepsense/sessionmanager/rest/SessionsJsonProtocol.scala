@@ -11,7 +11,7 @@ import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.Session
-import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
+import io.deepsense.sessionmanager.service.SessionServiceActor.KilledResponse
 
 trait SessionsJsonProtocol
   extends DefaultJsonProtocol
@@ -21,8 +21,8 @@ trait SessionsJsonProtocol
   implicit val sessionFormat = new RootJsonFormat[Session] {
     override def write(obj: Session): JsValue = {
       JsObject(
-        "workflowId" -> obj.handle.workflowId.toJson,
-        "sessionId" -> obj.handle.workflowId.toJson,
+        "workflowId" -> obj.workflowId.toJson,
+        "sessionId" -> obj.workflowId.toJson,
         "status" -> JsString(obj.status.toString)
       )
     }
@@ -30,7 +30,7 @@ trait SessionsJsonProtocol
     override def read(json: JsValue): Session =
       throw new UnsupportedOperationException()
   }
-  implicit val killResponseFormat = jsonFormat2(KillResponse)
+  implicit val killResponseFormat = jsonFormat0(KilledResponse)
   implicit val createSessionFormat = jsonFormat1(CreateSession)
 
   implicit val listSessionsResponseFormat = new RootJsonFormat[ListSessionsResponse] {

@@ -10,6 +10,7 @@ import io.deepsense.sessionmanager.service.livy.responses.BatchState.BatchState
 object Status extends Enumeration {
   type Status = Value
   val Running = Value("running")
+  val Creating = Value("creating")
   val Error = Value("error")
 
   def fromBatchStatus(batchStatus: BatchState): Status = {

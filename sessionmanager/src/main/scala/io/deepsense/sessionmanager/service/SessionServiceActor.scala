@@ -4,7 +4,6 @@
 
 package io.deepsense.sessionmanager.service
 
-import scala.collection.mutable
 import scala.concurrent.Future
 
 import akka.actor.Actor
@@ -16,139 +15,145 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.SessionServiceActor._
 import io.deepsense.sessionmanager.service.livy.Livy
 import io.deepsense.sessionmanager.service.livy.responses.Batch
+import io.deepsense.sessionmanager.storage.SessionStorage._
+import io.deepsense.sessionmanager.storage._
 
-class SessionServiceActor private[service](
+class SessionServiceActor @Inject()(
   private val livyClient: Livy,
-  private val initialHandles: Seq[LivySessionHandle] = Seq.empty,
-  private val initialFutureSessions: Map[Id, Future[Session]] = Map.empty
+  private val sessionStorage: SessionStorage
 ) extends Actor with Logging {
-
-  @Inject()
-  def this(livyClient: Livy) = {
-    this(livyClient, Seq.empty, Map.empty)
-  }
-
-  private val sessions =
-    mutable.Map[Id, LivySessionHandle](initialHandles.map(h => (h.workflowId, h)): _*)
-  private val creating =
-    mutable.Map[Id, Future[Session]](initialFutureSessions.toSeq: _*)
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
   override def receive: Receive = {
     case r: Request => handleRequest(r)
-    case sm: SelfMessage => handleSelfMessage(sm)
     case x => unhandled(x)
   }
 
   private def handleRequest(request: Request): Unit = {
     request match {
       case GetRequest(id) =>
-        val session = creating.get(id).orElse(sessions.get(id).map(sessionFromHandle))
-        transform(session) pipeTo sender()
-      case KillRequest(id) => handleKill(id)
-      case ListRequest() => handleList()
-      case CreateRequest(id) => handleCreate(id)
+        handleGet(id) pipeTo sender()
+      case KillRequest(id) =>
+        handleKill(id) pipeTo sender()
+      case ListRequest() =>
+        handleList() pipeTo sender()
+      case CreateRequest(id) =>
+        handleCreate(id) pipeTo sender()
     }
   }
 
-  private def handleSelfMessage(x: SelfMessage): Unit = x match {
-    case SelfLivySessionHandle(handle) =>
-      creating.remove(handle.workflowId)
-      sessions.put(handle.workflowId, handle)
-    case SelfKillResponse(response) =>
-      sessions.remove(response.id)
+  private def handleGet(id: Id): Future[Option[Session]] = {
+    sessionStorage.get(id).flatMap(toSession)
   }
 
-  private def handleKill(id: Id): Unit = {
-    if (sessions.contains(id)) {
-      sessions(id) match {
-        case LivySessionHandle(workflowId, batchId) =>
-          val message = livyClient.killSession(batchId).map {
-            k => KillResponse(id, k)
-          }
-          pipeResponseToSelf(message)
-          message pipeTo sender()
-      }
-    } else {
-      sender() ! KillResponse(id, killed = false)
-    }
+  private def handleList(): Future[Seq[Session]] = {
+    val futureBatchesMap = livyClient.listSessions().map(_.sessions.map(b => (b.id, b)).toMap)
+    val futureSessionsMap = sessionStorage.getAll
+
+    val running = runningWithoutPurgedDeadSessions(futureSessionsMap, futureBatchesMap)
+    val creating = creatingSessions(futureSessionsMap)
+
+    for {
+      seqRunning <- running
+      seqCreating <- creating
+    } yield seqRunning ++ seqCreating
   }
 
-  private def handleList(): Unit = {
-    val batches = livyClient.listSessions()
-    val sessionsToSend = batches.map {
-      batchesList =>
-        val livyBatches = batchesList.sessions.map(b => (b.id, b)).toMap
-        val rawSessions = sessions.map {
-          case (id, handle) =>
-            livyBatches
-              .get(handle.batchId)
-              .map(b => createSession(handle, b))
+  private def handleCreate(id: Id): Future[Session] = {
+    sessionStorage.create(id).flatMap {
+      case Right(CreateSucceeded(version)) =>
+        val livyBatch = livyClient.createSession(id)
+        livyBatch.onFailure {
+          case ex => sessionStorage.delete(id, version)
         }
-        val flattenSessions = rawSessions.flatten
-        flattenSessions.toList
-    }
-    sessionsToSend pipeTo sender()
-  }
-
-  private def sessionFromHandle(handle: LivySessionHandle): Future[Session] = {
-    handle match {
-      case LivySessionHandle(workflowId, batchId) =>
-        val livyBatch = livyClient.getSession(batchId)
-        livyBatch.collect {
-          case None =>
-            logger.error(s"Livy's Batch($batchId) for Workflow '$workflowId' does not exist!")
-        }
-        livyBatch.map(_.get).map {
+        livyBatch.flatMap {
           batch =>
-            createSession(handle, batch)
+            sessionStorage.setBatchId(id, batch.id, version).flatMap {
+              case Right(SetBatchIdSucceeded(_)) =>
+                Future.successful(Session(id, batch))
+              case Left(OptimisticLockFailed()) =>
+                livyClient.killSession(batch.id).flatMap(_ => handleCreate(id))
+            }
         }
+      case Left(CreateFailed()) => Future.successful(Session(id))
     }
   }
 
-  private def createSession(handle: LivySessionHandle, batch: Batch): Session = {
-    Session(handle, Status.fromBatchStatus(batch.state))
-  }
-
-  private def handleCreate(workflowId: Id): Unit = {
-    creating.get(workflowId) match {
-      case Some(futureSession) => futureSession pipeTo sender()
+  private def handleKill(id: Id): Future[KilledResponse] = {
+    sessionStorage.get(id).flatMap {
       case None =>
-        sessions.get(workflowId) match {
-          case Some(handle) => sessionFromHandle(handle) pipeTo sender()
-          case None =>
-            val livyBatch = livyClient.createSession(workflowId)
-            val livyHandle = livyBatch.map {
-              batch =>
-                LivySessionHandle(workflowId, batch.id)
-            }
-
-            pipeHandleToSelf(livyHandle)
-
-            val session = livyBatch.flatMap { batch =>
-                livyHandle.map {
-                  h => createSession(h, batch)
-                }
-            }
-            creating.put(workflowId, session)
-            session pipeTo sender()
+        Future.successful(KilledResponse())
+      case Some(SessionRow(_, Some(batchId), version)) =>
+        livyClient.killSession(batchId).flatMap {
+          _ => sessionStorage.delete(id, version).map {
+            _ => KilledResponse()
+          }
+        }
+      case Some(SessionRow(_, None, version)) =>
+        logger.error(s"Kill request for session in creating state! No Livy session will be killed.")
+        sessionStorage.delete(id, version).map {
+          _ => KilledResponse()
         }
     }
   }
 
-  private def transform[T](o: Option[Future[T]]): Future[Option[T]] =
-    o.map(f => f.map(Option(_))).getOrElse(Future.successful(None))
+  private def toSession(optSessionRow: Option[SessionRow]): Future[Option[Session]] = {
+    optSessionRow match {
+      case Some(sessionRow) =>
+        val id = sessionRow.workflowId
+        val version = sessionRow.version
+        sessionRow.optBatchId match {
+          case Some(batchId) =>
+            val livyBatch = livyClient.getSession(batchId)
+            livyBatch.flatMap {
+              case None =>
+                deleteNonExistingSession(id, batchId, version).map(_ => None)
+              case Some(batch) =>
+                Future.successful(Some(Session(id, batch)))
+            }
+          case None =>
+            Future.successful(Some(Session(id)))
+        }
+      case None => Future.successful(None)
+    }
+  }
 
-  private sealed trait SelfMessage
-  private case class SelfLivySessionHandle(handle: LivySessionHandle) extends SelfMessage
-  private case class SelfKillResponse(response: KillResponse) extends SelfMessage
+  private def creatingSessions(storedSessions: Future[Map[Id, SessionRow]])
+      : Future[Seq[Session]] = {
+    storedSessions.map {
+      case sessionsMap =>
+        (for ((id, sessionRow) <- sessionsMap if sessionRow.optBatchId.isEmpty)
+          yield Session(id, None, Status.Creating)).toSeq
+    }
+  }
 
-  private def pipeResponseToSelf(msg: Future[KillResponse]): Unit =
-    msg.map(SelfKillResponse) pipeTo self
+  private def runningWithoutPurgedDeadSessions(
+      storedSessions: Future[Map[Id, SessionRow]],
+      livySessions: Future[Map[Int, Batch]] ): Future[Seq[Session]] = {
+    for {
+      sessionMap <- storedSessions
+      batchesMap <- livySessions
+      running <- Future.sequence(
+        sessionMap.values.collect {
+          case SessionRow(id, Some(batchId), version) if batchesMap.contains(batchId) =>
+            Future.successful(Some(Session(id, batchesMap.get(batchId).get)))
+          case SessionRow(id, Some(batchId), version) if !batchesMap.contains(batchId) =>
+            deleteNonExistingSession(id, batchId, version).map(_ => None)
+        }.toSeq)
+    } yield running.flatten
+  }
 
-  private def pipeHandleToSelf(msg: Future[LivySessionHandle]): Unit =
-    msg.map(SelfLivySessionHandle) pipeTo self
+  private def deleteNonExistingSession(id: Id, batchId: Int, version: Int): Future[DeleteResult] = {
+    logger.error(
+      s"""Livy's Batch($batchId) for Workflow('$id') does not exist!
+          |Removing from storage...""".stripMargin)
+    sessionStorage.delete(id, version).map(
+      result => {
+        logger.error(s"Livy's Batch($batchId) and Workflow('$id') removed from storage")
+        result
+      })
+  }
 }
 
 object SessionServiceActor {
@@ -159,5 +164,6 @@ object SessionServiceActor {
   case class CreateRequest(workflowId: Id) extends Request
 
   sealed trait Response
-  case class KillResponse(id: Id, killed: Boolean) extends Response
+  case class KilledResponse() extends Response
+  case class CreationFailureResponse() extends Response
 }

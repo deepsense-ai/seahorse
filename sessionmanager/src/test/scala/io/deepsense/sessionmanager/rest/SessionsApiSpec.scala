@@ -19,7 +19,7 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
-import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
+import io.deepsense.sessionmanager.service.SessionServiceActor.KilledResponse
 import io.deepsense.sessionmanager.service._
 
 class SessionsApiSpec
@@ -91,7 +91,7 @@ class SessionsApiSpec
       Get(s"/$apiPrefix") ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         responseAs[ListSessionsResponse]
-          sessions.map(s => (s.handle.workflowId, s.status)) should contain theSameElementsAs
+          sessions.map(s => (s.workflowId, s.status)) should contain theSameElementsAs
           List(
             (workflowId1, status1),
             (workflowId2, status2),
@@ -112,7 +112,7 @@ class SessionsApiSpec
         Get(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.OK
           val returnedSession = responseAs[Envelope[Session]].content
-          returnedSession.handle.workflowId shouldBe workflowId
+          returnedSession.workflowId shouldBe workflowId
           returnedSession.status shouldBe sessionStatus
         }
       }
@@ -140,7 +140,7 @@ class SessionsApiSpec
       Post(s"/$apiPrefix", CreateSession(workflowId)) ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         val returnedSession = responseAs[Envelope[Session]].content
-        returnedSession.handle.workflowId shouldBe workflowId
+        returnedSession.workflowId shouldBe workflowId
         returnedSession.status shouldBe sessionStatus
       }
     }
@@ -149,13 +149,13 @@ class SessionsApiSpec
   "DELETE /sessions/:id" should {
     "pass killing request to the service" in {
       val workflowId: Id = Id.randomId
-      val killed: KillResponse = KillResponse(workflowId, killed = true)
+      val killed: KilledResponse = KilledResponse()
       val service = mock[SessionService]
       when(service.killSession(workflowId)).thenReturn(Future.successful(killed))
 
       Delete(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
-        responseAs[KillResponse] shouldBe killed
+        responseAs[KilledResponse] shouldBe killed
         verify(service, times(1)).killSession(workflowId)
       }
     }

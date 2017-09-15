@@ -16,7 +16,7 @@ import com.google.inject.name.Named
 
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
-import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
+import io.deepsense.sessionmanager.service.SessionServiceActor.KilledResponse
 
 class SessionService @Inject() (
   @Named("SessionService.Actor") private val serviceActor: ActorRef,
@@ -39,7 +39,7 @@ class SessionService @Inject() (
       .map(ListSessionsResponse)
   }
 
-  def killSession(workflowId: Id): Future[KillResponse] = {
-    (serviceActor ? SessionServiceActor.KillRequest(workflowId)).mapTo[KillResponse]
+  def killSession(workflowId: Id): Future[KilledResponse] = {
+    (serviceActor ? SessionServiceActor.KillRequest(workflowId)).mapTo[KilledResponse]
   }
 }

@@ -108,9 +108,12 @@ object Dependencies {
 
   val sessionmanager = Seq(
     akkaActor,
+    h2,
+    slick,
     sprayCan,
     sprayClient,
     sprayJson,
     sprayRouting
-  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit, wiremock).map(_ % s"$Test,it")
+  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit, wiremock)
+    .map(_ % s"$Test,it")
 }
