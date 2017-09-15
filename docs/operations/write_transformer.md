@@ -9,7 +9,10 @@ includeOperationsMenu: true
 
 A `Write Transformer` operation saves a [Transformer](../classes/transformer.html) to a directory at the specified location.
 
-It supports writing `Transformers` to the local file system and HDFS.
+It can be subsequently read using the [Read Transformer](read_transformer.html) operation.
+
+A `Transformer` can be written to HDFS.
+Additionally, in local cluster mode `Transformer` can be written to local filesystem.
 
 **NOTE:** Only crucial attributes of the `Transformer` are written.
 Attributes that are not used during `Transformer` execution might be lost after `Transformer` write&read flow.
