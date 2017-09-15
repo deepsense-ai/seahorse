@@ -37,7 +37,7 @@ class WorkflowResultsDaoCassandraImplIntegSpec
   val inferContext: InferContext = mock[InferContext]
   val rowMapper = new WorkflowRowMapper(graphReader)
 
-  val paramSchema = ParametersSchema("param1" -> new BooleanParameter("desc", None, false, None))
+  val paramSchema = ParametersSchema("param1" -> new BooleanParameter("desc", None, None))
 
   val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", paramSchema)
   val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", paramSchema)
@@ -79,18 +79,20 @@ class WorkflowResultsDaoCassandraImplIntegSpec
 
   def createResult(
       resultId: ExecutionReportWithId.Id,
-      graph: Graph): WorkflowWithSavedResults = {
+      graph: StatefulGraph): WorkflowWithSavedResults = {
     val metadata = WorkflowMetadata(
       apiVersion = CurrentBuild.version.humanReadable,
       workflowType = WorkflowType.Batch)
     val thirdPartyData = ThirdPartyData("{}")
     val executionReport: ExecutionReportWithId = ExecutionReportWithId(
       resultId,
-      Status.Failed,
+      graphstate.Failed(FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
       DateTimeConverter.now,
       DateTimeConverter.now,
-      Some(FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
-      Map(Node.Id.randomId -> State(Status.Failed)),
+      Map(Node.Id.randomId -> nodestate.Failed(
+        DateTimeConverter.now,
+        DateTimeConverter.now,
+        FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title"))),
       EntitiesMap())
     WorkflowWithSavedResults(
       Workflow.Id.randomId,
@@ -100,7 +102,7 @@ class WorkflowResultsDaoCassandraImplIntegSpec
       executionReport)
   }
 
-  def createGraph() : Graph = {
+  def createGraph() : StatefulGraph = {
     val node1 = Node(Node.Id.randomId, operation1)
     val node2 = Node(Node.Id.randomId, operation2)
     val node3 = Node(Node.Id.randomId, operation3)
@@ -112,6 +114,6 @@ class WorkflowResultsDaoCassandraImplIntegSpec
       (node2, node4, 0, 0),
       (node3, node4, 0, 1))
     val edges = edgesList.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
-    Graph(nodes, edges)
+    StatefulGraph(nodes, edges)
   }
 }

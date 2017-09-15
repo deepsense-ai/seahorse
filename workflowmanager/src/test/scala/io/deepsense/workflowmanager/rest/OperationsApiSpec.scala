@@ -12,7 +12,6 @@ import spray.http.StatusCodes
 import spray.json._
 import spray.routing.Route
 
-import io.deepsense.commons.auth.directives.AuthDirectives
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}

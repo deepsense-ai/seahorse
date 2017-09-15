@@ -5,6 +5,7 @@
 package io.deepsense.workflowmanager
 
 import com.google.inject.Guice
+
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog

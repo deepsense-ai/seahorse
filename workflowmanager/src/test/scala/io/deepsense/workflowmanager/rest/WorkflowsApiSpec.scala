@@ -25,7 +25,7 @@ import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.{models, StandardSpec, UnitTestSupport}
+import io.deepsense.commons.{StandardSpec, UnitTestSupport, models}
 import io.deepsense.deeplang.DOperationCategories
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -35,8 +35,8 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowStorage}
-import io.deepsense.workflowmanager.{ApisModule, WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
+import io.deepsense.workflowmanager.storage.{InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec
   extends StandardSpec
@@ -90,7 +90,7 @@ class WorkflowsApiSpec
       : (Workflow, GraphKnowledge) = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
-    val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
+    val graph = StatefulGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
     val thirdPartyData = ThirdPartyData(JsObject(
       "gui" -> JsObject(
@@ -104,12 +104,14 @@ class WorkflowsApiSpec
 
   def newWorkflowWithResults(id: Workflow.Id, wf: Workflow): WorkflowWithResults = {
     val executionReport = ExecutionReport(
-      Status.Failed,
-      DateTimeConverter.now,
-      DateTimeConverter.now,
-      Some(FailureDescription(
+      graphstate.Failed(FailureDescription(
         DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
-      Map(Node.Id.randomId -> State(Status.Failed)),
+      DateTimeConverter.now,
+      DateTimeConverter.now,
+      Map(Node.Id.randomId -> nodestate.Failed(
+        DateTimeConverter.now,
+        DateTimeConverter.now,
+        FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title"))),
       EntitiesMap())
 
     WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData, executionReport)
@@ -118,7 +120,8 @@ class WorkflowsApiSpec
   def cyclicWorkflow: Workflow = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
-    val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
+    val graph = StatefulGraph(
+      Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
     val metadata = WorkflowMetadata(
       WorkflowType.Batch, apiVersion = BuildInfo.version)
     val thirdPartyData = ThirdPartyData("{}")

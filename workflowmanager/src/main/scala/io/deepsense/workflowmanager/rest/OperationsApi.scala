@@ -14,10 +14,10 @@ import spray.httpx.SprayJsonSupport
 import spray.routing.{PathMatchers, Route}
 
 import io.deepsense.commons.auth.AuthorizatorProvider
-import io.deepsense.commons.auth.directives.{AuthDirectives, AbstractAuthDirectives, InsecureAuthDirectives}
+import io.deepsense.commons.auth.directives.{AbstractAuthDirectives, AuthDirectives, InsecureAuthDirectives}
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.json.envelope.Envelope
-import io.deepsense.commons.rest.{RestApiAbstractAuth, RestApi, RestComponent}
+import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.models.json.workflow.DeepLangJsonProtocol

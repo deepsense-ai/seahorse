@@ -5,6 +5,7 @@
 package io.deepsense.workflowmanager.deeplang
 
 import com.google.inject.{AbstractModule, Provides, Scopes, Singleton}
+
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferContext

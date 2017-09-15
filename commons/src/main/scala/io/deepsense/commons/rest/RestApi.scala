@@ -76,7 +76,7 @@ trait RestApiAbstractAuth
             "Malformed request",
             Some(s"The request content does not seem to be JSON: $message"),
             Map())
-        case Some(_: DeserializationException) | Some(_: IllegalArgumentException)=>
+        case Some(_: DeserializationException) | Some(_: IllegalArgumentException) =>
           FailureDescription(
             DeepSenseFailure.Id.randomId,
             FailureCode.UnexpectedError,

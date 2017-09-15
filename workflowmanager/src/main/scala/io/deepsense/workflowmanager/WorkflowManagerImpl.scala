@@ -60,9 +60,7 @@ class WorkflowManagerImpl @Inject()(
 
   def update(workflowId: Id, workflow: Workflow): Future[WorkflowWithKnowledge] = {
     logger.debug(s"Update workflow id: $workflowId, workflow: $workflow")
-    if (workflow.graph.containsCycle) {
-      Future.failed(new CyclicGraphException())
-    } else {
+    whenGraphAcyclic(workflow) {
       authorizator.withRole(roleUpdate) { userContext =>
         workflowStorage.get(workflowId).flatMap {
           case Some(_) =>
@@ -75,9 +73,7 @@ class WorkflowManagerImpl @Inject()(
 
   def create(workflow: Workflow): Future[WorkflowWithKnowledge] = {
     logger.debug("Create workflow: {}", workflow)
-    if (workflow.graph.containsCycle) {
-      Future.failed(new CyclicGraphException())
-    } else {
+    whenGraphAcyclic(workflow) {
       authorizator.withRole(roleCreate) {
         userContext => {
           val workflowId = Workflow.Id.randomId
@@ -140,5 +136,12 @@ class WorkflowManagerImpl @Inject()(
   private def withVariables(id: Workflow.Id, workflow: Workflow): WorkflowWithVariables = {
     WorkflowWithVariables(
       id, workflow.metadata, workflow.graph, workflow.additionalData, Variables())
+  }
+
+  private def whenGraphAcyclic[T](workflow: Workflow)(f: => Future[T]): Future[T] = {
+    workflow.graph.topologicallySorted match {
+      case Some(_) => f
+      case None => Future.failed(new CyclicGraphException())
+    }
   }
 }

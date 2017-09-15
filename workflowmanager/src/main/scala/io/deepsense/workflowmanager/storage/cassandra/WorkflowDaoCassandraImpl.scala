@@ -4,12 +4,10 @@
 
 package io.deepsense.workflowmanager.storage.cassandra
 
-import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 
 import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.QueryBuilder._
-import com.datastax.driver.core.querybuilder.Update.Assignments
 import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
