@@ -306,7 +306,10 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.addOutputPoint = function addOutputPoint(nodeElement, ports, nodeObj) {
-    var anchors = ['BottomCenter', 'BottomLeft', 'BottomRight'];
+    var anchors = (ports.length === 1) ?
+      ['BottomCenter'] :
+      ['BottomLeft', 'BottomCenter', 'BottomRight'];
+
     for (let i = 0; i < ports.length; i++) {
       let port = jsPlumb.addEndpoint(nodeElement, outputStyle, {
         anchor: anchors[i],
@@ -334,7 +337,10 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.addInputPoint = function addInputPoint(node, ports) {
-    var anchors = ['TopCenter', 'TopLeft', 'TopRight'];
+    var anchors = (ports.length === 1) ?
+      ['TopCenter'] :
+      ['TopLeft', 'TopCenter', 'TopRight'];
+
     for (let i = 0; i < ports.length; i++) {
       let port = jsPlumb.addEndpoint(node, inputStyle, {
         anchor: anchors[i],
