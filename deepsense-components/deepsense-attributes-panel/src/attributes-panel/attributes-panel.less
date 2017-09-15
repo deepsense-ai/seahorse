@@ -269,6 +269,25 @@
     }
   }
 
+  .node-edition-section {
+    &__editable-text {
+      align-self: flex-start;
+      padding: 8px;
+    }
+
+    &__editable-text:hover {
+      cursor: pointer;
+      padding: 7px;
+      border: 1px solid #337ab7;
+    }
+
+    &__editable-info {
+      font-weight: 400;
+      font-size: 13px;
+      text-transform: none;
+    }
+  }
+
   @media (min-width: 768px) {
     .form-inline .form-control {
       max-width: 49%;

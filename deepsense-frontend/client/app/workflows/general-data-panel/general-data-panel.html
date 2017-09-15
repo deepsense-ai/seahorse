@@ -1,28 +1,51 @@
 <aside class="ibox o-general-data-panel o-panel o-panel--scroll-right animated fadeInRight">
   <header class="o-general-data-panel__ibox-title--editor-mode">
-    <h4 class="ibox-title__name"
-        uib-tooltip="{{controller.name ? 'Edit workflow name' : ''}}"
-        tooltip-placement="left"
-        tooltip-append-to-body="true">
-      <span editable-text="controller.name"
-            class="o-panel__title">
-        {{controller.name || 'Enter workflow name'}}
-      </span>
-    </h4>
+    <p class="o-general-data-panel__header">Workflow name:</p>
+    <p class="o-general-data-panel__editable-text"
+       ng-click="controller.enableEdition('name')"
+       ng-if="!controller.editableInputs.name"
+       uib-tooltip="{{controller.name ? 'Edit workflow name' : ''}}"
+       tooltip-placement="left"
+       tooltip-append-to-body="true">
+      {{controller.name || 'Enter workflow name'}}
+    </p>
+    <div ng-if="controller.editableInputs.name">
+      <input class="form-control o-general-data-panel__editable-input"
+             ng-model="controller.buffer.name"
+             ng-blur="controller.hideInput('name')"
+             ng-keydown="controller.saveNewValue($event, 'name')"
+             focus-element="controller.editableInputs.name"
+      />
+      <span class="o-general-data-panel__editable-info">Press esc to <a href="" ng-click="controller.hideInput('name')">Cancel</a></span>
+    </div>
   </header>
   <section class="ibox-content o-general-data-panel__content" custom-scroll-bar>
     <header>
-      <auto-text-area value="controller.description"
-                      uib-tooltip="Edit workflow's description"
-                      tooltip-placement="left"
-                      tooltip-append-to-body="true"></auto-text-area>
+      <p class="o-general-data-panel__header">Description:</p>
+      <p class="o-general-data-panel__editable-text"
+         ng-click="controller.enableEdition('description')"
+         ng-if="!controller.editableInputs.description"
+         uib-tooltip="{{controller.name ? 'Edit description' : ''}}"
+         tooltip-placement="left"
+         tooltip-append-to-body="true">
+        {{controller.description || 'Enter description name'}}
+      </p>
+      <div ng-if="controller.editableInputs.description">
+        <input class="form-control o-general-data-panel__editable-input"
+               ng-model="controller.buffer.description"
+               ng-blur="controller.hideInput('description')"
+               ng-keydown="controller.saveNewValue($event, 'description')"
+               focus-element="controller.editableInputs.description"
+        />
+        <span class="o-general-data-panel__editable-info">Press esc to <a href="" ng-click="controller.hideInput('description')">Cancel</a></span>
+      </div>
     </header>
   </section>
   <section ng-if="controller.publicParams.length > 0">
-      <public-params-list
-              workflow="controller.workflow"
-              public-params="controller.publicParams"
-      ></public-params-list>
+    <public-params-listre
+      workflow="controller.workflow"
+      public-params="controller.publicParams"
+    ></public-params-listre>
   </section>
 
 </aside>

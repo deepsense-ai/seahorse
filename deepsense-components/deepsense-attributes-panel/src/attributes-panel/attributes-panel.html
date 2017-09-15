@@ -1,15 +1,24 @@
 <aside class="ibox operation-attributes-panel animated fadeIn">
   <header class="ibox-title ibox-title--main">
-    <section class="ibox-title flex-content--no-flex" ng-hide="disabledMode && !node.uiName">
+    <section class="ibox-title node-edition-section flex-content--no-flex" ng-hide="disabledMode && !node.uiName">
       <span color-picker></span>
-      <h4 class="ibox-title__name"
-          tooltip-placement="left"
-          uib-tooltip="{{!disabledMode && node.uiName ? 'Click to change name' : ''}}"
-          tooltip-trigger="mouseenter"
-          tooltip-append-to-body="true">
-        <span editable-text="node.uiName" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
-        <span ng-if="disabledMode && node.uiName">{{node.uiName}}</span>
-      </h4>
+      <p class="node-edition-section__editable-text"
+         ng-click="controller.enableEdition()"
+         ng-if="!controller.nodeNameInputVisible"
+         uib-tooltip="{{!disabledMode ? 'Click to change name' : ''}}"
+         tooltip-placement="left"
+         tooltip-append-to-body="true">
+        {{node.uiName || 'Enter custom name'}}
+      </p>
+      <div ng-if="controller.nodeNameInputVisible">
+        <input class="form-control o-general-data-panel__editable-input"
+               ng-model="controller.nodeNameBuffer"
+               ng-blur="controller.hideInput()"
+               ng-keydown="controller.saveNewValue($event)"
+               focus-element="controller.nodeNameInputVisible"
+        />
+        <span class="node-edition-section__editable-info">Press esc to <a href="" ng-click="controller.hideInput()">Cancel</a></span>
+      </div>
     </section>
     <section class="operation-attributes-panel__details" ng-class="{'u-top-border': disabledMode && !node.uiName}">
       <p class="operation-attributes-panel__title m-b-xs" ng-class="{'m-t-n-xs': !disabledMode}">{{ node.name }}</p>

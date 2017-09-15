@@ -141,6 +141,33 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         });
       };
 
+      this.nodeNameBuffer = '';
+      this.nodeNameInputVisible = false;
+
+      this.showInput = () => {
+        this.nodeNameInputVisible = true;
+      };
+
+      this.hideInput = () => {
+        this.nodeNameInputVisible = false;
+      };
+
+      this.enableEdition = () => {
+        if (!$scope.disabledMode) {
+          this.showInput();
+          this.nodeNameBuffer = $scope.node.uiName;
+        }
+      };
+
+      this.saveNewValue = (event) => {
+        if (event.keyCode === 13) { // Enter key code
+          $scope.node.uiName = this.nodeNameBuffer;
+          this.hideInput();
+        } else if (event.keyCode === 27) { // Escape key code
+          this.hideInput();
+        }
+      }
+
     },
     controllerAs: 'controller'
   };

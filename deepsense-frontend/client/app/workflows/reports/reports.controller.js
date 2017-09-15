@@ -90,7 +90,7 @@ function ReportCtrl($scope, $uibModal, BottomBarService) {
               if (this.colType === 'numeric') {
                 return $filter('precision')(value);
               } else if (this.colType === 'timestamp') {
-                return moment(new Date(value)).format('YYYY-MM-DD HH:mm:ss')
+                return moment(new Date(value)).format('YYYY-MM-DD HH:mm:ss');
               }
               return value;
             }
