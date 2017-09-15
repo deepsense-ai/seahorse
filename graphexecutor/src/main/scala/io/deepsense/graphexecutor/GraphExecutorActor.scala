@@ -5,7 +5,6 @@
 package io.deepsense.graphexecutor
 
 import scala.concurrent.Await
-import scala.util.Success
 
 import akka.actor._
 import akka.util.Timeout
@@ -57,6 +56,9 @@ class GraphExecutorActor(
     experiment = e.markRunning
     executionContext.tenantId = experiment.tenantId
     launchReadyNodes(experiment)
+    if (experiment.readyNodes.isEmpty) {
+      endExecution()
+    }
   }
 
   def nodeStarted(id: Node.Id): Unit = {

@@ -117,6 +117,18 @@ class GraphExecutorActorSpec
       gea.nodesToVisit shouldBe empty
     }
 
+    def launchEmptyExperiment(): Unit = {
+      val nodes = List()
+      val nodeExecutors = Seq()
+      when(graph.readyNodes).thenReturn(nodes)
+      when(graph.nodes).thenReturn(Set.empty[Node])
+      gea.expectedNodes = nodes
+      gea.nodeExecutors = nodeExecutors
+      gea.expectedDOperableCache = Map.empty
+
+      geaRef ! Launch(experiment)
+    }
+
     def mockOperation(): DOperation = {
       val operation = mock[DOperation]
       when(operation.inArity) thenReturn 0
@@ -256,6 +268,18 @@ class GraphExecutorActorSpec
         geaRef ! Abort(experiment.id)
 
         gec.expectMsg(Update(experimentWithUpdatedState))
+
+        verifySystemShutDown()
+      }
+      "experiment is empty" in new TestCase {
+        startCommunication()
+        launchEmptyExperiment()
+
+        val completedExperiment =
+          experiment.copy(graph = graph, state = experiment.state.completed)
+
+        gec.expectMsg(Update(completedExperiment))
+        gec.expectNoMsg()
 
         verifySystemShutDown()
       }
