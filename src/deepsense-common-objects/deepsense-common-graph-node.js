@@ -116,14 +116,18 @@ angular.module('deepsense.graph-model').
         join('<br/>');
     };
 
+    GraphNode.prototype.getIncomingEdge = function getIncomingEdge(portIndex) {
+      let edges = _.values(this.edges);
+      return _.find(edges, edge => (edge.endNodeId === this.id && edge.endPortId === portIndex));
+    };
+
     /**
      * Knowledge incoming to this node in given portIndex
      * @param {Number} portIndex Index of node's port to which knowledge incomes
      * @returns {Object|undefined} Knowledge that incomes to [[portIndex]], or undefined if no edge is connected
      */
-    GraphNode.prototype.getIncomingKnowledge = function getIncomingEdge(portIndex) {
-      let edges = _.values(this.edges);
-      let incomingEdge =  _.find(edges, edge =>  (edge.endNodeId === this.id && edge.endPortId === portIndex));
+    GraphNode.prototype.getIncomingKnowledge = function getIncomingKnowledge(portIndex) {
+      let incomingEdge = this.getIncomingEdge(portIndex);
       if (incomingEdge) {
         let {startPortId, startNodeId} = incomingEdge;
         let parentNode = this.nodeGetter(startNodeId);
