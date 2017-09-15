@@ -78,6 +78,10 @@
           {
             "$ref": "#/parameters/userIdParam"
           },
+
+          {
+            "$ref": "#/parameters/userNameParam"
+          },
           {
             "name": "datasourceId",
             "in": "path",
@@ -157,12 +161,19 @@
       "required": true,
       "type": "string",
       "format": "uuid"
+    },
+    "userNameParam": {
+      "name": "x-seahorse-username",
+      "description": "Seahorse user name. When used in frontend this parameter is set by proxy.",
+      "in": "header",
+      "required": true,
+      "type": "string"
     }
   },
   "definitions": {
     "Datasource": {
       "type": "object",
-      "required": ["id", "creationDateTime", "ownerId", "accessLevel", "params"],
+      "required": ["id", "creationDateTime", "ownerId", "ownerName", "accessLevel", "params"],
       "properties": {
         "id": {
           "type": "string",
@@ -175,6 +186,9 @@
         "ownerId": {
           "type": "string",
           "format": "uuid"
+        },
+        "ownerName": {
+          "type": "string"
         },
         "accessLevel": {
           "$ref": "#/definitions/AccessLevel"
