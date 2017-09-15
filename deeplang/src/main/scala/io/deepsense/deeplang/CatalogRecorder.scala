@@ -44,8 +44,8 @@ object CatalogRecorder {
     catalog.registerDOperable[RowsFilterer]()
     catalog.registerDOperable[DatetimeDecomposer]()
     catalog.registerDOperable[MathematicalTransformation]()
-    catalog.registerDOperable[MissingValuesHandler]()
     catalog.registerDOperable[SqlExpression]()
+    catalog.registerDOperable[MissingValuesHandler]()
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
     catalog.registerDOperable[CustomPythonColumnOperationTransformer]()
@@ -165,13 +165,13 @@ object CatalogRecorder {
     catalog.registerDOperation[ExecuteMathematicalTransformation](
       DOperationCategories.Transformation)
 
+    catalog.registerDOperation[ExecuteSqlExpression](
+      DOperationCategories.Transformation)
+
     catalog.registerDOperation[ConvertType](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[DecomposeDatetime](
-      DOperationCategories.Transformation.FeatureConversion)
-
-    catalog.registerDOperation[ExecuteSqlExpression](
       DOperationCategories.Transformation.FeatureConversion)
 
     // operations generated from Spark transformers
