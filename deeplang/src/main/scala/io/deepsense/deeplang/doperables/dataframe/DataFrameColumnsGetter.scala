@@ -36,21 +36,7 @@ trait DataFrameColumnsGetter {
    * or non-existing column name is selected.
    */
   def getColumnName(singleColumnSelection: SingleColumnSelection): String =
-    tryGetColumnName(singleColumnSelection).getOrElse {
-      throw ColumnDoesNotExistException(singleColumnSelection, this.schema.get)
-    }
-
-  private def tryGetColumnName(singleColumnSelection: SingleColumnSelection): Option[String] =
-    singleColumnSelection match {
-      case NameSingleColumnSelection(name) =>
-        if (sparkDataFrame.schema.fieldNames.contains(name)) Some(name) else None
-      case IndexSingleColumnSelection(index) =>
-        if (index >= 0 && index < sparkDataFrame.schema.length) {
-          Some(sparkDataFrame.schema.fieldNames(index))
-        } else {
-          None
-        }
-    }
+    DataFrameColumnsGetter.getColumnName(sparkDataFrame.schema, singleColumnSelection)
 
   /**
    * Names of columns selected by provided selections.
@@ -59,9 +45,8 @@ trait DataFrameColumnsGetter {
    * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
    * or non-existing column names are selected.
    */
-  def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] = {
+  def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] =
     DataFrameColumnsGetter.getColumnNames(sparkDataFrame.schema, multipleColumnSelection)
-  }
 
   /**
    * Column type by column name.
@@ -130,6 +115,32 @@ object DataFrameColumnsGetter {
     (baseColumnName + "_" + addedPart + levelSuffix).replace(".", "_")
     // TODO: 'replace' should be removed after spark upgrade to 1.4 version. DS-635
   }
+
+  /**
+   * Returns name of column based on selection.
+   * Throws [[ColumnDoesNotExistException]] if out-of-range index
+   * or non-existing column name is selected.
+   */
+  def getColumnName(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection): String =
+    tryGetColumnName(schema, singleColumnSelection).getOrElse {
+      throw ColumnDoesNotExistException(singleColumnSelection, schema)
+    }
+
+  private def tryGetColumnName(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection): Option[String] =
+    singleColumnSelection match {
+      case NameSingleColumnSelection(name) =>
+        if (schema.fieldNames.contains(name)) Some(name) else None
+      case IndexSingleColumnSelection(index) =>
+        if (index >= 0 && index < schema.length) {
+          Some(schema.fieldNames(index))
+        } else {
+          None
+        }
+    }
 
   /**
    * Names of columns selected by provided selections.
