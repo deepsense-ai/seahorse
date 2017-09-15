@@ -18,8 +18,6 @@ package io.deepsense.deeplang.params
 
 import spray.json._
 
-import io.deepsense.deeplang.params.validators.ColumnRegexValidator
-
 class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColumnCreatorParam] {
 
   override def className: String = "SingleColumnCreatorParam"
@@ -33,13 +31,7 @@ class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColum
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
       "isGriddable" -> JsFalse,
-      "default" -> JsNull,
-      "validator" -> JsObject(
-        "type" -> JsString("regex"),
-        "configuration" -> JsObject(
-          "regex" -> JsString(ColumnRegexValidator.regex)
-        )
-      )
+      "default" -> JsNull
     )
     (param, expectedJson)
   }
