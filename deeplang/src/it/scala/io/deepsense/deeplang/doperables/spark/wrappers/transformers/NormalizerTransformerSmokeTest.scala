@@ -23,37 +23,37 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class DiscreteCosineTransformerSmokeTest
-  extends AbstractTransformerWrapperSmokeTest[DiscreteCosineTransformer]
+class NormalizerTransformerSmokeTest
+  extends AbstractTransformerWrapperSmokeTest[NormalizerTransformer]
   with MultiColumnTransformerWrapperTestSupport {
 
-  override def transformerWithParams: DiscreteCosineTransformer = {
+  override def transformerWithParams: NormalizerTransformer = {
     val inPlace = NoInPlaceChoice()
-      .setColumnName("dct")
+      .setColumnName("normalize")
 
     val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection("v"))
       .setInPlace(inPlace)
 
-    val transformer = new DiscreteCosineTransformer()
+    val transformer = new NormalizerTransformer()
     transformer.set(Seq(
       transformer.singleOrMultiChoiceParam -> single,
-      transformer.inverse -> false
+      transformer.p -> 1.0
     ): _*)
   }
 
   override def testValues: Seq[(Any, Any)] = {
     val input = Seq(
-      Vectors.dense(0.0),
-      Vectors.dense(1.0),
-      Vectors.dense(2.0)
+      Vectors.dense(0.0, 100.0, 100.0),
+      Vectors.dense(1.0, 1.0, 0.0),
+      Vectors.dense(-3.0, 3.0, 0.0)
     )
-    val inputAfterDCT = Seq(
-      Vectors.dense(0.0),
-      Vectors.dense(1.0),
-      Vectors.dense(2.0)
+    val inputAfterNormalize = Seq(
+      Vectors.dense(0.0, 0.5, 0.5),
+      Vectors.dense(0.5, 0.5, 0.0),
+      Vectors.dense(-0.5, 0.5, 0.0)
     )
-    input.zip(inputAfterDCT)
+    input.zip(inputAfterNormalize)
   }
 
   override def inputType: DataType = new VectorUDT
