@@ -19,9 +19,11 @@ List of all currently supported operations:
   * [Write DataFrame](operations/write_dataframe.html)
 * Transformations
   * [Custom Python Operation](operations/custom_python_operation.html)
+  * [Create Custom Transformer](operations/create_custom_transformer.html)
   * [Create Mathematical Transformation](operations/create_mathematical_transformation.html)
   * [Apply Transformation](operations/apply_transformation.html)
   * [Train Normalizer](operations/train_normalizer.html)
+  * [Transform](operations/transform.html)
 * Data Manipulation
   * [One Hot Encoder](operations/one_hot_encoder.html)
   * [Join](operations/join.html)

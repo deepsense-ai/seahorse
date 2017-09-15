@@ -16,6 +16,7 @@ Detailed description of entities, classes and traits can be found [here](deeplan
 List of all supported classes and traits:
 
 * Classes
+  * [Custom Transformer](classes/custom_transformer.html)
   * [DataFrame](classes/dataframe.html)
   * [Mathematical Transformation](classes/mathematical_transformation.html)
   * [Normalizer](classes/normalizer.html)
@@ -44,4 +45,5 @@ List of all supported classes and traits:
   * [Scorable](traits/scorable.html)
   * [Trainable](traits/trainable.html)
   * [Transformation](traits/transformation.html)
+  * [Transformer](traits/transformer.html)
   * [UnsupervisedTrainable](traits/unsupervised_trainable.html)

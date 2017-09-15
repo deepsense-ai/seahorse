@@ -23,7 +23,7 @@ Workflow file contains up to 5 sections: [metadata](#metadata), [workflow](#work
 [variables](#variables), [executionReport](#execution-report),
 [thirdPartyData](#third-party-data) and an optional identifier.
 
-{% highlight javascript %}
+{% highlight json %}
 {
   "id": "bbf34cbb-9ee6-442f-80a8-22886b860933",
   "metadata": { ... },
@@ -47,7 +47,7 @@ type and Seahorse API version.
 ##### Example
 {:.no_toc}
 
-{% highlight javascript %}
+{% highlight json %}
 "metadata": {
   "type": "batch",
   "apiVersion": "{{ site.WORKFLOW_EXECUTOR_VERSION }}"
@@ -85,7 +85,7 @@ Connections represent flow of data. Data from one operation output port can be c
 ##### Example
 {:.no_toc}
 
-{% highlight javascript %}
+{% highlight json %}
 "workflow": {
   "nodes": [
     {
@@ -111,7 +111,7 @@ Connections represent flow of data. Data from one operation output port can be c
       }
     },
     {
-      "id": "c20f5b58-4193-11e5-a151-feff819cdc9f"
+      "id": "c20f5b58-4193-11e5-a151-feff819cdc9f",
       "operation": {
 	"id": "d273c42f-b840-4402-ba6b-18282cc68de3",
 	"name": "Split DataFrame",
@@ -178,7 +178,7 @@ Subsection *resultEntities* contains information about entities created as a res
 ##### Example
 {:.no_toc}
 
-{% highlight javascript %}
+{% highlight json %}
 "executionReport": {
   "status": "COMPLETED",
   "error": null,
@@ -190,8 +190,8 @@ Subsection *resultEntities* contains information about entities created as a res
       "started": "2015-05-12T21:11:09Z",
       "ended": "2015-05-14T12:03:55Z",
       "results": [
-	"2518d941-43cb-4288-b959-bc4441b86083",
-	"50570c02-bf62-4352-b68a-69873261a234"
+	      "2518d941-43cb-4288-b959-bc4441b86083",
+	      "50570c02-bf62-4352-b68a-69873261a234"
       ],
       "error": null
     },
@@ -200,7 +200,7 @@ Subsection *resultEntities* contains information about entities created as a res
       "started": "2015-05-12T21:11:09Z",
       "ended": "2015-05-14T12:03:55Z",
       "results": [
-	"c376d234-b64f-4cec-8c47-6a3e54adf181"
+	      "c376d234-b64f-4cec-8c47-6a3e54adf181"
       ],
       "error": null
     }
@@ -230,7 +230,7 @@ by the [Workflow Executor](workflowexecutor.html).
 ##### Example
 {:.no_toc}
 
-{% highlight javascript %}
+{% highlight json %}
 "thirdPartyData": {
   "customVersioningApp": {
     "version": "2.3.4",
@@ -242,7 +242,7 @@ by the [Workflow Executor](workflowexecutor.html).
 ## Example of Workflow File
 
 <div class="collapsable-content">
-{% highlight javascript %}
+{% highlight json %}
 {
   "id": "bbf34cbb-9ee6-442f-80a8-22886b860933",
   "metadata": {

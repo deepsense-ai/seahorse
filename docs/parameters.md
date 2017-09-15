@@ -75,8 +75,24 @@ Holds code snippet string value. Different languages (language is choosed by ope
 
 **Example value:**
 
-    def operation_main(data_frame_1):
-      return data_frame_1
+{% highlight python %}
+def operation_main(data_frame_1):
+  return data_frame_1
+{% endhighlight %}
+
+### JSON
+This parameter holds a JSON object.
+
+**Example of use:** description of the transformation in `CustomTransformer` operation
+
+**Example value:**
+
+{% highlight json %}
+{
+  "field": "value",
+  "array": [ "value1", "value2" ]
+}
+{% endhighlight %}
 
 
 ### <a name="parameters_sequence"></a>Parameters Sequence
