@@ -1,7 +1,7 @@
 <div class="preset-modal" ng-form="controller.presetForm">
 
   <div class="modal-header preset-modal__header">
-    <div class="row form-row" ng-if="!controller.isEditingEnabled() && !controller.working && !controller.preset.isDefault">
+    <div class="row form-row" ng-if="!controller.isEditingEnabled() && !controller.isSaving && !controller.preset.isDefault">
       <div class="col-md-12 editing-blocked">
         <b>Editing is blocked.</b>
         <span>In order to edit this preset, please stop editing your workflow first. </span>
@@ -108,7 +108,7 @@
             ng-click="controller.ok()"
             ng-if="controller.isEditingEnabled()"
             ng-disabled="controller.preset.isDefault">
-      {{(controller.working) ? 'Saving' : 'Save'}}
+      {{(controller.isSaving) ? 'Saving' : 'Save'}}
     </button>
   </div>
 

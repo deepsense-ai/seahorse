@@ -25,9 +25,9 @@ function PresetService(PresetsApiService, WorkflowService) {
    * @returns {Promise}
    */
   function fetch() {
-    return PresetsApiService.getAll().then((result) => {
-      presets = result
-    }).then(() => WorkflowService.fetchCluster(WorkflowService.getRootWorkflow()));
+    return PresetsApiService.getAll()
+      .then((result) => presets = result)
+      .then(() => WorkflowService.fetchCluster(WorkflowService.getRootWorkflow()));
   }
 
   /**

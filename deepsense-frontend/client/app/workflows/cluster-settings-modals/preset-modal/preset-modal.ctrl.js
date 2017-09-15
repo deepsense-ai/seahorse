@@ -8,7 +8,7 @@ function PresetModalCtrl($uibModalInstance, $log, PresetService, PresetModalLabe
   vm.preset = angular.copy(preset) || {isEditable: true, isDefault: false};
   vm.isSnapshot = isSnapshot;
   vm.focused = undefined;
-  vm.working = false;
+  vm.isSaving = false;
 
   vm.isPresetNameUsed = isPresetNameUsed;
   vm.isNameInputInvalid = isNameInputInvalid;
@@ -35,12 +35,12 @@ function PresetModalCtrl($uibModalInstance, $log, PresetService, PresetModalLabe
     if (!PresetService.isValid(vm.preset)) {
       vm.errors = formatErrors(PresetService.getErrors(), type);
     } else {
-      vm.working = true;
+      vm.isSaving = true;
       PresetService.savePreset(vm.preset)
         .then($uibModalInstance.close)
         .catch(function handleFailure(error) {
           $log.error('Problem with saving preset', error, vm.preset);
-          vm.working = false;
+          vm.isSaving = false;
           return true;
         });
     }
@@ -55,7 +55,7 @@ function PresetModalCtrl($uibModalInstance, $log, PresetService, PresetModalLabe
   }
 
   function isEditingEnabled() {
-    return vm.preset.isEditable && !vm.isSnapshot && !vm.working;
+    return vm.preset.isEditable && !vm.isSnapshot && !vm.isSaving;
   }
 
   function formatErrors(errors, type) {

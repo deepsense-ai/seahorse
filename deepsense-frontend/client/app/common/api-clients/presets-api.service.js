@@ -15,7 +15,7 @@ function PresetsApi($http, config) {
    * @returns {Promise}
    */
   function getAll() {
-    return $http.get(URL).then(function processResult(result){
+    return $http.get(URL).then(function processResult(result) {
       return result.data;
     });
   }
@@ -25,7 +25,7 @@ function PresetsApi($http, config) {
    * @returns {Promise}
    */
   function get(id) {
-    return $http.get(`${URL}/${id}`).then(function processResult(result){
+    return $http.get(`${URL}/${id}`).then(function processResult(result) {
       return result.data;
     });
   }
@@ -36,7 +36,6 @@ function PresetsApi($http, config) {
    */
   function create(preset) {
     return $http.post(`${URL}`, preset);
-
   }
 
   /**

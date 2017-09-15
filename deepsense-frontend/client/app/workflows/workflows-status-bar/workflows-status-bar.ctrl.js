@@ -36,8 +36,8 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, P
 
   function getCurrentPreset() {
     return WorkflowService.isExecutorForCurrentWorkflowRunning() ?
-      SessionManager.clusterInfoForWorkflowId(vm.workflowId)
-      : WorkflowService.getRootWorkflow().cluster;
+      SessionManager.clusterInfoForWorkflowId(vm.workflowId) :
+      WorkflowService.getRootWorkflow().cluster;
   }
 
   function formatPresetType(type) {

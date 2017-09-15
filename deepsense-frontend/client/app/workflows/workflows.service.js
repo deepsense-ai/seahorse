@@ -1,9 +1,9 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, ConfirmationModalService,
-  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager, ServerCommunication,
-  UserService) {
+function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations,
+                         ConfirmationModalService, DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi,
+                         SessionStatus, SessionManager, ServerCommunication, UserService) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
