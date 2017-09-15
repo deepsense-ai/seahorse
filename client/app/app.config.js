@@ -14,6 +14,7 @@ function AppConfig($stateProvider, $urlRouterProvider, toastrConfig) {
     'positionClass': 'toast-bottom-left',
     'progressBar': true,
     'timeOut': 3500,
+    'maxOpened': 5,
     'iconClasses': {
       'error': 'notification--error fa-exclamation-circle',
       'info': 'toast-info',

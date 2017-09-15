@@ -65,8 +65,8 @@ describe('NotificationService', function () {
   });
 
   it('should have constructed with necessary properties', function () {
-    expect(NotificationService.root).toBeDefined();
-    expect(NotificationService.root).toEqual($rootScope); // I AM ROOT
+    expect(NotificationService.$rootScope).toBeDefined();
+    expect(NotificationService.$rootScope).toEqual($rootScope); // I AM ROOT
     expect(NotificationService.toastr).toBeDefined();
     expect(NotificationService.toastr).toEqual(toastr);
     expect(NotificationService.staticMessages).toBeDefined();
@@ -96,7 +96,7 @@ describe('NotificationService', function () {
 
   describe('should have init events listeners method', function () {
     beforeEach(function () {
-      spyOn(NotificationService.root, '$on');
+      spyOn(NotificationService.$rootScope, '$on');
       spyOn(NotificationService, 'transportEventToShowByName');
     });
 
@@ -110,7 +110,7 @@ describe('NotificationService', function () {
 
       for (var eventName in NotificationService.staticMessages) {
         if (NotificationService.staticMessages.hasOwnProperty(eventName)) {
-          expect(NotificationService.root.$on)
+          expect(NotificationService.$rootScope.$on)
             .toHaveBeenCalledWith(eventName, jasmine.any(Function));
         }
       }
@@ -121,7 +121,7 @@ describe('NotificationService', function () {
 
       for (var eventName in NotificationService.dynamicMessages) {
         if (NotificationService.dynamicMessages.hasOwnProperty(eventName)) {
-          expect(NotificationService.root.$on)
+          expect(NotificationService.$rootScope.$on)
             .toHaveBeenCalledWith(eventName, jasmine.any(Function));
         }
       }

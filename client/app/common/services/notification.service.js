@@ -17,12 +17,12 @@ class LogHandlingService {
 }
 
 class NotificationService extends LogHandlingService {
-  constructor /* @ngInject */ ($rootScope, $log, toastr) {
+  constructor ($rootScope, $log, toastr) {
     super($log);
 
     _.assign(this, {
       'toastr': toastr,
-      'root': $rootScope
+      '$rootScope': $rootScope
     });
 
     /* Array of all messages in order to delete them after some time */
@@ -89,6 +89,8 @@ class NotificationService extends LogHandlingService {
         );
       }
     };
+
+    this.initEventListeners();
   }
 
   transportEventToShowByName (event) {
@@ -142,7 +144,7 @@ class NotificationService extends LogHandlingService {
   initEventListeners () {
     for (let staticEventName in this.staticMessages) {
       if (this.staticMessages.hasOwnProperty(staticEventName)) {
-        this.root.$on(
+        this.$rootScope.$on(
           staticEventName,
           this.transportEventToShowByName.bind(this)
         );
@@ -151,7 +153,7 @@ class NotificationService extends LogHandlingService {
 
     for (let dynamicEventName in this.dynamicMessages) {
       if (this.dynamicMessages.hasOwnProperty(dynamicEventName)) {
-        this.root.$on(dynamicEventName, this.dynamicMessages[dynamicEventName]);
+        this.$rootScope.$on(dynamicEventName, this.dynamicMessages[dynamicEventName]);
       }
     }
   }
@@ -183,10 +185,16 @@ class NotificationService extends LogHandlingService {
 
     return data[key];
   }
+
+  /* @ngInject */
+  static factory($rootScope, $log, toastr) {
+    NotificationService.instance = new NotificationService($rootScope, $log, toastr);
+    return NotificationService.instance;
+  }
 }
 
 exports.function = NotificationService;
 
 exports.inject = function (module) {
-  module.service('NotificationService', NotificationService);
+  module.service('NotificationService', NotificationService.factory);
 };
