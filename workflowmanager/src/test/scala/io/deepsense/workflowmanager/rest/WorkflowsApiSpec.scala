@@ -209,7 +209,7 @@ class WorkflowsApiSpec
         ()
       }
     }
-    "return an workflow" when {
+    "return a workflow" when {
       "auth token is correct, user has roles" in {
         Get(s"/$apiPrefix/$workflowAId") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
@@ -226,6 +226,15 @@ class WorkflowsApiSpec
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields("knowledge") shouldBe knowledgeA.results.toJson
           resultJs.fields("id") shouldBe workflowAId.toJson
+        }
+        ()
+      }
+    }
+    "return a conflict" when {
+      "incompatible version" in {
+        Get(s"/$apiPrefix/${obsoleteVersionWorkflowId}") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.Conflict)
         }
         ()
       }
@@ -742,6 +751,15 @@ class WorkflowsApiSpec
         ()
       }
     }
+    "return a conflict" when {
+      "incompatible version" in {
+        Get(s"/$reportsPrefix/${obsoleteVersionWorkflowResultId}") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.Conflict)
+        }
+        ()
+      }
+    }
   }
 
   s"GET :id/report" should {
@@ -791,6 +809,15 @@ class WorkflowsApiSpec
 
           val returnedWorkflow = responseAs[WorkflowWithSavedResults]
           returnedWorkflow.executionReport.id shouldBe workflowBWithSavedResults.executionReport.id
+        }
+        ()
+      }
+    }
+    "return a conflict" when {
+      "incompatible version" in {
+        Get(s"/$apiPrefix/${obsoleteVersionWorkflowId}/report") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.Conflict)
         }
         ()
       }

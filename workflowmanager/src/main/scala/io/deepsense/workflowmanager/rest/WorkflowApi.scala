@@ -10,7 +10,7 @@ import scala.util.{Failure, Success, Try}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
-import spray.http.HttpHeaders.{`Content-Type`, `Content-Disposition`}
+import spray.http.HttpHeaders.`Content-Disposition`
 import spray.http.MediaTypes._
 import spray.http._
 import spray.httpx.unmarshalling.Unmarshaller
@@ -90,10 +90,10 @@ abstract class WorkflowApi @Inject() (
               val workflowId = Id(idParameter)
               get {
                 withUserContext { userContext =>
-                  complete {
-                    workflowManagerProvider
-                      .forContext(userContext)
-                      .get(workflowId)
+                  onComplete (workflowManagerProvider.forContext(userContext).get(workflowId)) {
+                    checkEither orElse {
+                      case Success(Some(Right(r))) => complete(StatusCodes.OK, r)
+                    }
                   }
                 }
               } ~
@@ -177,9 +177,12 @@ abstract class WorkflowApi @Inject() (
               val workflowId = Id(idParameter)
               get {
                 withUserContext { userContext =>
-                  complete {
+                  onComplete(
                     workflowManagerProvider.forContext(userContext)
-                      .getLatestExecutionReport(workflowId)
+                      .getLatestExecutionReport(workflowId)) {
+                      checkEither orElse {
+                        case Success(Some(Right(r))) => complete(StatusCodes.OK, r)
+                      }
                   }
                 }
               }
@@ -221,8 +224,11 @@ abstract class WorkflowApi @Inject() (
               val reportId = ExecutionReportWithId.Id(idParameter)
               get {
                 withUserContext { userContext =>
-                  complete {
-                    workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
+                  onComplete(
+                    workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)) {
+                    checkEither orElse {
+                      case Success(Some(Right(r))) => complete(StatusCodes.OK, r)
+                    }
                   }
                 }
               }
@@ -246,6 +252,12 @@ abstract class WorkflowApi @Inject() (
         }
       }
     }
+  }
+
+  def checkEither: PartialFunction[Try[Option[Either[String, Any]]], Route] = {
+    case Success(Some(Left(s))) => complete(StatusCodes.Conflict, s)
+    case Success(None) => complete(StatusCodes.NotFound)
+    case Failure(exception) => failWith(exception)
   }
 
   override def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
