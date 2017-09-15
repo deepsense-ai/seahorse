@@ -44,22 +44,21 @@ class WorkflowStateDaoImpl @Inject()(
 
   override def save(workflowId: Id, state: Map[Node.Id, NodeState]): Future[Unit] = {
 
-    def update(nodeId: Node.Id, nodeResults: Results, nodeReports: Reports) = {
-      val previousState = db.run(workflowStates.filter(
+    def update(nodeId: Node.Id, nodeResults: Results, nodeReports: Reports): Future[Unit] =
+      for {
+        previousState <- db.run(workflowStates.filter(
           s => s.workflowId === workflowId.value && s.nodeId === nodeId.value).result)
-      val previousReport = previousState.map {
-        case Seq() => None
-        case Seq((_, _, _, _, previousReports)) => previousReports
-      }
+        _ <- {
+          val previousReports = previousState.headOption.flatMap {
+            case (_, _, _, _, reports) => reports
+          }
+          val reportsToInsert = nodeReports.map(entitiesMapToCell).orElse(previousReports)
+          val value = (workflowId.value, nodeId.value, DateTimeConverter.now.getMillis,
+            nodeResultsToCell(nodeResults), reportsToInsert)
 
-      previousReport.map {
-        case previousReports =>
-          val reports = nodeReports.map(entitiesMapToCell)
-          db.run(workflowStates.insertOrUpdate(
-            (workflowId.value, nodeId.value, DateTimeConverter.now.getMillis,
-              nodeResultsToCell(nodeResults), reports.orElse(previousReports))))
-      }
-    }
+          db.run(workflowStates.insertOrUpdate(value))
+        }
+      } yield ()
 
     val futures = state.map {
       case (nodeId, nodeState) => update(nodeId, nodeState.nodeStatus.results, nodeState.reports)
