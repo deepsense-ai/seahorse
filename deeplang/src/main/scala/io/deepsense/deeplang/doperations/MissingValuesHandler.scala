@@ -362,7 +362,7 @@ trait MissingValuesHandlerParams {
     default = Some(BinaryChoice.NO.toString),
     required = true,
     yesSchema = ParametersSchema(
-      "indicator column" -> indicatorPrefixParam
+      "indicator column prefix" -> indicatorPrefixParam
     ),
     noSchema = ParametersSchema()
   )
