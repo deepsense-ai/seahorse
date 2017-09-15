@@ -48,7 +48,7 @@ object VersionConverter extends DefaultJsonProtocol{
     val portIndex = "portIndex"
     val to = "to"
     val workflow = "workflow"
-    val datasourceId = "datasourceId"
+    val datasourceId = "data source"
   }
 
    val inputPortChanges13to14: Map[String, Map[Int, Int]] = Map(

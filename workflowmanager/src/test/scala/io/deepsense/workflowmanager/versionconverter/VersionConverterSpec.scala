@@ -115,7 +115,7 @@ class VersionConverterSpec extends WordSpec with Matchers {
           operationId = extractOperationId(n)
           if operationId == readDatasourceId || operationId == writeDatasourceId
         } yield {
-          n.asJsObject.fields("parameters").asJsObject.fields("datasourceId").convertTo[String]
+          n.asJsObject.fields("parameters").asJsObject.fields("data source").convertTo[String]
         }
 
         val datasourceIds = newDatasources.map(_.getId)

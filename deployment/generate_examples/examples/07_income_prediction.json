@@ -172,7 +172,7 @@
         "name": "Read Datasource"
       },
       "parameters": {
-        "datasourceId": "1d351f2a-8cfc-4b84-8943-1bf8494e86c2"
+        "data source": "1d351f2a-8cfc-4b84-8943-1bf8494e86c2"
       }
     }, {
       "id": "781acc08-fc7a-108d-f00c-71b59bd0f2a8",
