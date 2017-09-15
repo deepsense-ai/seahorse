@@ -49,7 +49,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "JDBC test",
+      "name": "Cassandra test",
       "description": "",
       "nodes": {
         "02f14ccc-c877-c242-bb82-534d0cac90d3": {

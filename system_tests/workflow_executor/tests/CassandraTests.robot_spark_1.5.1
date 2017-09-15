@@ -1,11 +1,27 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Keywords ***
+Start Docker With Cassandra Database
+    Build Docker Image    system_tests/cassandra    resources/cassandraTests
+    Kill Docker Container    cassandra
+    Remove Docker Container    cassandra
+    Run Docker Container    system_tests/cassandra    cassandra    -p    7000:7000    -p    7001:7001    -p    7199:7199    -p    9042:9042    -p    9160:9160
+    Delay    30.0
+
+Stop Docker With Cassandra Database
+    Kill Docker Container    cassandra
+
+
 *** Settings ***
+Suite Setup       Start Docker With Cassandra Database
+Suite Teardown    Stop Docker With Cassandra Database
+
 Library    OperatingSystem
 Library    Collections
 Library    ../lib/CassandraClient.py
-Library    ../lib/CassandraClient.py
+Library    ../lib/DockerClient.py
 Library    ../lib/WorkflowExecutorClient.py
+
 
 *** Test Cases ***
 Read Write Cassandra
@@ -20,7 +36,7 @@ Read Write Cassandra
 
     Remove Directory    readWriteCassandraOutput    recursive=yes
     Create Output Directory    readWriteCassandraOutput
-    Run Workflow Local    ${dir}workflow.json    --conf spark.cassandra.connection.host=spark-cluster-1 --conf spark.cassandra.auth.username=cassandra --conf spark.cassandra.auth.password=cassandra
+    Run Workflow Local    ${dir}workflow.json    --conf spark.cassandra.connection.host=localhost --conf spark.cassandra.auth.username=cassandra --conf spark.cassandra.auth.password=cassandra
 
     Check Execution Status
     Check Report    ${dir}expectedReportPattern.json

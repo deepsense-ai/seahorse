@@ -3,15 +3,15 @@
 *** Keywords ***
 Connect To Docker Mysql Database
     Build Docker Image    system_tests/mysql    resources/mySQLTests
-    Kill Docker Container    mysqld
-    Remove Docker Container    mysqld
-    Run Docker Container    system_tests/mysql    mysqld    -e    MYSQL_USER=system_tests    -e    MYSQL_PASS=pass    -p    3306:3306
+    Kill Docker Container    mysql
+    Remove Docker Container    mysql
+    Run Docker Container    system_tests/mysql    mysql    -e    MYSQL_USER=system_tests    -e    MYSQL_PASS=pass    -p    3306:3306
     Delay    30.0
     Connect To Database    pymysql    mysql    system_tests    pass    localhost    3306
 
 Disconnect From Docker Mysql Database
     Disconnect From Database
-    Kill Docker Container    mysqld
+    Kill Docker Container    mysql
 
 
 *** Settings ***
