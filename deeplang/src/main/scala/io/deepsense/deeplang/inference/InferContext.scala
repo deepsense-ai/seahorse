@@ -31,3 +31,9 @@ case class InferContext(
     tenantId: String,
     dOperableCatalog: DOperableCatalog,
     fullInference: Boolean)
+
+object InferContext {
+  // This is a temporary solution. See DS-1924.
+  def forTypeInference(dOperableCatalog: DOperableCatalog): InferContext =
+    InferContext(null, null, "", dOperableCatalog, fullInference = false)
+}
