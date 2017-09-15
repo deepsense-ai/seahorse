@@ -50,5 +50,5 @@ class CountVectorizerEstimator
     RangeValidator(0.0, Int.MaxValue, beginIncluded = false, step = Some(1.0)))
   setDefault(vocabSize, (1 << 18).toDouble)
 
-  override protected def getSpecificParams: Array[Param[_]] = Array(minDF, minTF, vocabSize)
+  override protected def getSpecificParams: Array[Param[_]] = Array(vocabSize, minDF, minTF)
 }

@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: GBT Regressor
-title: GBT Regressor
-description: GBT Regressor
+displayTitle: GBT Regression
+title: GBT Regression
+description: GBT Regression
 usesMathJax: true
 includeOperationsMenu: true
 ---

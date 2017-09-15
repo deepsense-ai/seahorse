@@ -43,7 +43,7 @@ class DecisionTreeRegression
     checkpointInterval,
     seed,
     impurity,
-    featuresColumn,
     labelColumn,
+    featuresColumn,
     predictionColumn)
 }

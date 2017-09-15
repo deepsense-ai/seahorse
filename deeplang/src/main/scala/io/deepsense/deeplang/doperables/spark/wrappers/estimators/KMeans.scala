@@ -54,14 +54,14 @@ class KMeans
   setDefault(initSteps, 5.0)
 
   override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
     k,
     maxIterations,
-    predictionColumn,
     seed,
     tolerance,
     initMode,
-    initSteps)
+    initSteps,
+    featuresColumn,
+    predictionColumn)
 }
 
 object KMeans {

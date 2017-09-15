@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.FeatureSubsetStrategy
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.RegressionImpurity.Variance
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -36,7 +37,7 @@ class RandomForestRegressionSmokeTest extends AbstractEstimatorModelWrapperSmoke
     maxMemoryInMB -> 256.0,
     cacheNodeIds -> false,
     checkpointInterval -> 10.0,
-    impurity -> RegressionImpurity.Variance(),
+    impurity -> Variance(),
     subsamplingRate -> 1.0,
     seed -> 1.0,
     numTrees -> 20.0,

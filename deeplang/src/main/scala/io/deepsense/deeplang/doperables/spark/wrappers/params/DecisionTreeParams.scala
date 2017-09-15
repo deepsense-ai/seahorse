@@ -24,7 +24,7 @@ import io.deepsense.deeplang.params.Params
 trait DecisionTreeParams
   extends Params
   with PredictorParams
-  with HasCheckpointInterval
+  with HasCheckpointIntervalParam
   with HasSeedParam
   with HasMaxDepthParam
   with HasMaxBinsParam

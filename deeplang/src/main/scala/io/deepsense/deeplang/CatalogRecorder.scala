@@ -64,7 +64,7 @@ object CatalogRecorder {
     catalog.registerDOperable[KMeansModel]()
     catalog.registerDOperable[LDA]()
     catalog.registerDOperable[LDAModel]()
-    catalog.registerDOperable[GBTRegressor]()
+    catalog.registerDOperable[GBTRegression]()
     catalog.registerDOperable[GBTRegressionModel]()
     catalog.registerDOperable[IsotonicRegression]()
     catalog.registerDOperable[IsotonicRegressionModel]()
@@ -270,7 +270,7 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateDecisionTreeRegression](
       DOperationCategories.ML.Regression)
 
-    catalog.registerDOperation[CreateGBTRegressor](
+    catalog.registerDOperation[CreateGBTRegression](
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateGBTClassifier](

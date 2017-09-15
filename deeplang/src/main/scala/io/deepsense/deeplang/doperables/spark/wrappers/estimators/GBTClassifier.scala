@@ -61,19 +61,19 @@ class VanillaGBTClassifier()
   setDefault(lossType, Logistic())
 
   override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
     impurity,
-    labelColumn,
     lossType,
     maxBins,
     maxDepth,
     maxIterations,
     minInfoGain,
     minInstancesPerNode,
-    predictionColumn,
     seed,
     stepSize,
-    subsamplingRate)
+    subsamplingRate,
+    labelColumn,
+    featuresColumn,
+    predictionColumn)
 }
 
 object GBTClassifier {

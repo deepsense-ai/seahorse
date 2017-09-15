@@ -54,10 +54,10 @@ class AFTSurvivalRegression
     fitIntercept,
     maxIterations,
     tolerance,
-    featuresColumn,
     labelColumn,
-    predictionColumn,
     censorColumn,
+    featuresColumn,
+    predictionColumn,
     quantileProbabilities,
     optionalQuantilesColumn)
 }

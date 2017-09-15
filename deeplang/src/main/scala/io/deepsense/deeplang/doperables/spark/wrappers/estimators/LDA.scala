@@ -21,14 +21,13 @@ import org.apache.spark.ml.clustering.{LDA => SparkLDA, LDAModel => SparkLDAMode
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.LDAModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
-import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark._
 
 class LDA extends SparkEstimatorWrapper[SparkLDAModel, SparkLDA, LDAModel]
-  with HasCheckpointInterval
-  with HasFeaturesColumn
+  with HasCheckpointIntervalParam
+  with HasFeaturesColumnParam
   with HasNumberOfClustersParam
   with HasMaxIterationsParam
   with HasSeedParam {
@@ -68,13 +67,13 @@ class LDA extends SparkEstimatorWrapper[SparkLDAModel, SparkLDA, LDAModel]
 
   val params = declareParams(
     checkpointInterval,
-    featuresColumn,
     k,
     maxIterations,
     optimizer,
-    seed,
     subsamplingRate,
-    topicDistributionColumn)
+    topicDistributionColumn,
+    featuresColumn,
+    seed)
 }
 
 object LDA {

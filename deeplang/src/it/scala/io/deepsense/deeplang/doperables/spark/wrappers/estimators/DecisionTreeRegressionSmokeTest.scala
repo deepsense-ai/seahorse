@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.RegressionImpurity.Variance
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.RegressionImpurity.Variance
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 

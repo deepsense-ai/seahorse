@@ -58,8 +58,7 @@ class RandomForestRegression
     seed,
     numTrees,
     featureSubsetStrategy,
+    labelColumn,
     featuresColumn,
-    predictionColumn,
-    labelColumn
-  )
+    predictionColumn)
 }

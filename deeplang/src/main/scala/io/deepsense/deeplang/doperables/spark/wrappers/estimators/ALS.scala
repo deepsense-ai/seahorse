@@ -87,16 +87,15 @@ class ALS
     alpha,
     checkpointInterval,
     implicitPrefs,
-    itemColumn,
     maxIterations,
     nonnegative,
     numItemBlocks,
     numUserBlocks,
-    predictionColumn,
     rank,
     ratingColumn,
     regularizationParam,
     seed,
-    userColumn
-  )
+    itemColumn,
+    predictionColumn,
+    userColumn)
 }

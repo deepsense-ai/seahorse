@@ -21,7 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.params.selections.{SingleColumnSelection, NameSingleColumnSelection}
+import io.deepsense.deeplang.params.selections.{NameSingleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
 
 trait HasFeaturesColumnParam extends Params {

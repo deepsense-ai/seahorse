@@ -29,7 +29,7 @@ import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
 
-class GBTRegressor
+class GBTRegression
   extends SparkEstimatorWrapper[
     SparkGBTRegressionModel,
     SparkGBTRegressor,
@@ -37,7 +37,7 @@ class GBTRegressor
   with GBTParams
   with HasRegressionImpurityParam {
 
-  import GBTRegressor._
+  import GBTRegression._
 
   override lazy val maxIterationsDefault = 20.0
 
@@ -49,22 +49,22 @@ class GBTRegressor
   setDefault(lossType, Squared())
 
   override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
     impurity,
-    labelColumn,
     lossType,
     maxBins,
     maxDepth,
     maxIterations,
     minInfoGain,
     minInstancesPerNode,
-    predictionColumn,
     seed,
     stepSize,
-    subsamplingRate)
+    subsamplingRate,
+    labelColumn,
+    featuresColumn,
+    predictionColumn)
 }
 
-object GBTRegressor {
+object GBTRegression {
 
   sealed abstract class LossType(override val name: String) extends Choice {
     override val params: Array[Param[_]] = declareParams()

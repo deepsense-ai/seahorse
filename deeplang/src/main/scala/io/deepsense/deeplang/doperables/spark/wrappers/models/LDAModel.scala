@@ -21,10 +21,10 @@ import org.apache.spark.ml.clustering.{LDA => SparkLDA, LDAModel => SparkLDAMode
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeaturesColumn, HasSeedParam}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeaturesColumnParam, HasSeedParam}
 
 class LDAModel extends SparkModelWrapper[SparkLDAModel, SparkLDA]
-  with HasFeaturesColumn
+  with HasFeaturesColumnParam
   with HasSeedParam {
 
   val params = declareParams(

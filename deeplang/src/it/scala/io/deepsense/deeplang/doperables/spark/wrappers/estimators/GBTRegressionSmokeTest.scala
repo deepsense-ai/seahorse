@@ -16,14 +16,15 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.RegressionImpurity.Variance
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class GBTRegressorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
+class GBTRegressionSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
-  override def className: String = "GBTRegressor"
+  override def className: String = "GBTRegression"
 
-  override val estimator = new GBTRegressor()
+  override val estimator = new GBTRegression()
 
   private val labelColumnName = "myRating"
 
@@ -31,9 +32,9 @@ class GBTRegressorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featuresColumn -> NameSingleColumnSelection("myFeatures"),
-    impurity -> RegressionImpurity.Variance(),
+    impurity -> Variance(),
     labelColumn -> NameSingleColumnSelection(labelColumnName),
-    lossType -> GBTRegressor.Squared(),
+    lossType -> GBTRegression.Squared(),
     maxBins -> 2.0,
     maxDepth -> 6.0,
     maxIterations -> 10.0,

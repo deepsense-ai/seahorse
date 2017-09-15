@@ -52,12 +52,11 @@ class MultilayerPerceptronClassifier
   setDefault(layersParam, Array(1.0, 1.0))
 
   override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
-    labelColumn,
     layersParam,
     maxIterations,
-    predictionColumn,
     seed,
-    tolerance
-  )
+    tolerance,
+    labelColumn,
+    featuresColumn,
+    predictionColumn)
 }

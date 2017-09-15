@@ -56,8 +56,8 @@ class VanillaDecisionTreeClassifier
     checkpointInterval,
     seed,
     impurity,
-    featuresColumn,
     labelColumn,
+    featuresColumn,
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn)

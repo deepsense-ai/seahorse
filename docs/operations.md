@@ -74,7 +74,7 @@ List of all currently supported operations:
     * [Naive Bayes](operations/naive_bayes.html)
   * Regression
     * [AFT Survival Regression](operations/aft_survival_regression.html)
-    * [GBT Regressor](operations/gbt_regressor.html)
+    * [GBT Regression](operations/gbt_regression.html)
     * [Isotonic Regression](operations/isotonic_regression.html)
     * [Linear Regression](operations/linear_regression.html)
     * [Random Forest Regression](operations/random_forest_regression.html)

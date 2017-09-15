@@ -19,9 +19,8 @@ package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 import scala.language.reflectiveCalls
 
 import org.apache.spark.ml
-
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.RegressionImpurity
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ClassificationImpurity._
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.RegressionImpurity
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
 

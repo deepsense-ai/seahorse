@@ -57,11 +57,6 @@ class VanillaRandomForestClassifier
     with HasClassificationImpurityParam {
 
   override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
-    predictionColumn,
-    labelColumn,
-    probabilityColumn,
-    rawPredictionColumn,
     maxDepth,
     maxBins,
     minInstancesPerNode,
@@ -73,7 +68,12 @@ class VanillaRandomForestClassifier
     subsamplingRate,
     seed,
     numTrees,
-    featureSubsetStrategy // TODO Thresholds param
+    featureSubsetStrategy,
+    labelColumn,
+    featuresColumn,
+    probabilityColumn,
+    rawPredictionColumn,
+    predictionColumn
+    // TODO Thresholds param
   )
-
 }
