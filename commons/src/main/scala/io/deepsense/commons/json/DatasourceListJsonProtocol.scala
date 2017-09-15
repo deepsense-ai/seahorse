@@ -25,10 +25,9 @@ import com.google.gson.reflect.TypeToken
 import io.deepsense.api.datasourcemanager.model.Datasource
 import io.deepsense.commons.rest.client.datasources.DatasourceTypes.DatasourceList
 
-
 object DatasourceListJsonProtocol {
-  val t = new TypeToken[java.util.LinkedList[Datasource]](){}.getType()
-  val gson = new GsonBuilder().serializeNulls().create()
+  private val t = new TypeToken[java.util.LinkedList[Datasource]](){}.getType()
+  private val gson = new GsonBuilder().serializeNulls().create()
 
   def fromString(json: String): DatasourceList = {
     val ds: java.util.List[Datasource] = gson.fromJson(json, t)
@@ -38,4 +37,5 @@ object DatasourceListJsonProtocol {
   def toString(datasources: DatasourceList): String = {
     gson.toJson(datasources.asJava)
   }
+
 }

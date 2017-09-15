@@ -36,6 +36,7 @@ import io.deepsense.commons.json.DatasourceListJsonProtocol
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.rest.client.datasources.DatasourceInMemoryClientFactory
+import io.deepsense.commons.rest.client.datasources.DatasourceTypes.DatasourceList
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{OperationExecutionDispatcher, _}
 import io.deepsense.graph.CyclicGraphException
@@ -111,8 +112,8 @@ case class WorkflowExecutor(
 
     val libraryPath = "/library"
 
-    val datasources =
-      DatasourceListJsonProtocol.fromString(workflow.thirdPartyData.getFields("datasources").toString)
+    val datasources = WorkflowExecutor.datasourcesFrom(workflow)
+
     val executionContext = createExecutionContext(
       dataFrameStorage = dataFrameStorage,
       executionMode = ExecutionMode.Batch,
@@ -178,6 +179,12 @@ object WorkflowExecutor extends Logging {
 
   private val outputFile = "result.json"
 
+  def datasourcesFrom(workflow: WorkflowWithVariables): DatasourceList = {
+    val datasourcesJson = workflow.thirdPartyData.fields("datasources")
+    val datasourcesJsonString = datasourcesJson.compactPrint
+    DatasourceListJsonProtocol.fromString(datasourcesJsonString)
+  }
+
   def runInNoninteractiveMode(
       params: ExecutionParams,
       pythonPathGenerator: PythonPathGenerator): Unit = {
@@ -192,7 +199,9 @@ object WorkflowExecutor extends Logging {
           case Success(r) =>
             val emptyWorkflowInfo = WorkflowInfo.forId(w.id)
             WorkflowWithResults(w.id, w.metadata, w.graph, w.thirdPartyData, r, emptyWorkflowInfo)
-          case Failure(ex) => throw ex;
+          case Failure(ex) =>
+            logger.error(s"Error while processing workflow: $workflow")
+            throw ex
         }
     )
 
