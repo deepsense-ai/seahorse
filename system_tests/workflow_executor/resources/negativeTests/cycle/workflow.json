@@ -1,0 +1,73 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "54071e32-bc9a-2e7a-884f-38bba7dacb47",
+      "operation": {
+        "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
+        "name": "Convert Type"
+      },
+      "parameters": {
+        "selected columns": null,
+        "target type": null
+      }
+    }, {
+      "id": "946045b4-542a-b939-43a5-61db00b62d20",
+      "operation": {
+        "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
+        "name": "Convert Type"
+      },
+      "parameters": {
+        "selected columns": null,
+        "target type": null
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "54071e32-bc9a-2e7a-884f-38bba7dacb47",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "946045b4-542a-b939-43a5-61db00b62d20",
+        "portIndex": 0
+      }
+    },
+    {
+      "from": {
+        "nodeId": "946045b4-542a-b939-43a5-61db00b62d20",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "54071e32-bc9a-2e7a-884f-38bba7dacb47",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Draft workflow",
+      "description": "",
+      "nodes": {
+        "54071e32-bc9a-2e7a-884f-38bba7dacb47": {
+          "coordinates": {
+            "x": 485,
+            "y": 325
+          }
+        },
+        "946045b4-542a-b939-43a5-61db00b62d20": {
+          "coordinates": {
+            "x": 710,
+            "y": 328
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

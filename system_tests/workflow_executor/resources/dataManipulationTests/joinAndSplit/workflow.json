@@ -1,0 +1,224 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "31f196ac-d3a5-3859-c678-27105f7a6d2b",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/joinAndSplit/frame2.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "88706332-7105-0970-cd38-80a870a5a84b",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
+      }
+    }, {
+      "id": "94d963d6-92e7-64b9-05e8-15661774d1bb",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split ratio": 0.5,
+        "seed": 800.0
+      }
+    }, {
+      "id": "01ccc706-2912-c87d-5f02-9604a7db2b5f",
+      "operation": {
+        "id": "06374446-3138-4cf7-9682-f884990f3a60",
+        "name": "Join"
+      },
+      "parameters": {
+        "join columns": [{
+          "left column": {
+            "type": "column",
+            "value": "name"
+          },
+          "right column": {
+            "type": "column",
+            "value": "name"
+          }
+        }, {
+          "left column": {
+            "type": "column",
+            "value": "surname"
+          },
+          "right column": {
+            "type": "column",
+            "value": "surname"
+          }
+        }],
+        "left prefix": null,
+        "right prefix": null
+      }
+    }, {
+      "id": "e66b493e-ac08-2f96-a5c8-f907189dc5f9",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
+      }
+    }, {
+      "id": "c21973ce-4bea-ba68-9d92-d4045d11dda2",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/joinAndSplit/frame1.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "01ccc706-2912-c87d-5f02-9604a7db2b5f",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "94d963d6-92e7-64b9-05e8-15661774d1bb",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "c21973ce-4bea-ba68-9d92-d4045d11dda2",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "01ccc706-2912-c87d-5f02-9604a7db2b5f",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "94d963d6-92e7-64b9-05e8-15661774d1bb",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "88706332-7105-0970-cd38-80a870a5a84b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "31f196ac-d3a5-3859-c678-27105f7a6d2b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "01ccc706-2912-c87d-5f02-9604a7db2b5f",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "94d963d6-92e7-64b9-05e8-15661774d1bb",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "e66b493e-ac08-2f96-a5c8-f907189dc5f9",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Join And Split",
+      "description": "",
+      "nodes": {
+        "31f196ac-d3a5-3859-c678-27105f7a6d2b": {
+          "coordinates": {
+            "x": 677,
+            "y": 104
+          }
+        },
+        "01ccc706-2912-c87d-5f02-9604a7db2b5f": {
+          "coordinates": {
+            "x": 534,
+            "y": 234
+          }
+        },
+        "e66b493e-ac08-2f96-a5c8-f907189dc5f9": {
+          "coordinates": {
+            "x": 711,
+            "y": 551
+          }
+        },
+        "c21973ce-4bea-ba68-9d92-d4045d11dda2": {
+          "coordinates": {
+            "x": 401,
+            "y": 103
+          }
+        },
+        "88706332-7105-0970-cd38-80a870a5a84b": {
+          "coordinates": {
+            "x": 300,
+            "y": 544
+          }
+        },
+        "94d963d6-92e7-64b9-05e8-15661774d1bb": {
+          "coordinates": {
+            "x": 539,
+            "y": 386
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "8079e76e-46ce-4c05-ae04-b430a502b66b",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

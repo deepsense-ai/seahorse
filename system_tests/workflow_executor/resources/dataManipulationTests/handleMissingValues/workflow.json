@@ -1,0 +1,119 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "bd38bef6-85c2-b9e5-a332-fea055a530f3",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/handleMissingValues/input.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": false,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "7cc30ecb-ff8d-60a7-7810-11772c2a7ada",
+      "operation": {
+        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
+        "name": "Handle Missing Values"
+      },
+      "parameters": {
+        "columns": {
+          "selections": [{
+            "type": "indexRange",
+            "values": [0, 0]
+          }],
+          "excluding": false
+        },
+        "strategy": {
+          "remove row": {
+
+          }
+        }
+      }
+    }, {
+      "id": "0059c035-14de-e045-4163-683d8a337097",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/handleMissingValues/output.csv"
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "bd38bef6-85c2-b9e5-a332-fea055a530f3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "7cc30ecb-ff8d-60a7-7810-11772c2a7ada",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "7cc30ecb-ff8d-60a7-7810-11772c2a7ada",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0059c035-14de-e045-4163-683d8a337097",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Draft workflow",
+      "description": "",
+      "nodes": {
+        "bd38bef6-85c2-b9e5-a332-fea055a530f3": {
+          "coordinates": {
+            "x": 192,
+            "y": 33
+          }
+        },
+        "7cc30ecb-ff8d-60a7-7810-11772c2a7ada": {
+          "coordinates": {
+            "x": 209,
+            "y": 180
+          }
+        },
+        "0059c035-14de-e045-4163-683d8a337097": {
+          "coordinates": {
+            "x": 220,
+            "y": 320
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "2d7541f2-6f37-438d-880d-299ea99a2895",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

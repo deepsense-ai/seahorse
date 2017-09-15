@@ -1,0 +1,109 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "a47fa4cf-9833-8541-31cd-98bfe9c57aab",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/sqlExpression/input.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "b3fb1448-9874-3f6c-f259-89b08c4c3689",
+      "operation": {
+        "id": "530e1420-7fbe-416b-b685-6c1e0f1137fc",
+        "name": "SQL Expression"
+      },
+      "parameters": {
+        "dataframe id": "frame",
+        "expression": "select city, avg(salary) as avg_salary from frame where work_time = 1 group by city"
+      }
+    }, {
+      "id": "4c433dfc-9f43-d1d7-2032-bb37847d4f37",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/sqlExpression/output.csv"
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "a47fa4cf-9833-8541-31cd-98bfe9c57aab",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "b3fb1448-9874-3f6c-f259-89b08c4c3689",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "b3fb1448-9874-3f6c-f259-89b08c4c3689",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "4c433dfc-9f43-d1d7-2032-bb37847d4f37",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "SQL Expression",
+      "description": "",
+      "nodes": {
+        "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
+          "coordinates": {
+            "x": 306,
+            "y": 31
+          }
+        },
+        "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
+          "coordinates": {
+            "x": 298,
+            "y": 196
+          }
+        },
+        "4c433dfc-9f43-d1d7-2032-bb37847d4f37": {
+          "coordinates": {
+            "x": 276,
+            "y": 349
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "d13ff60f-fdc3-4e32-864a-89260d09cb2a",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

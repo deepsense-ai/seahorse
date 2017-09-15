@@ -1,0 +1,53 @@
+{
+  "tolerance": 0.01,
+  "test-cases": [
+    {
+      "point": {
+        "features": [1]
+      },
+      "expected": 3
+    },
+    {
+      "point": {
+        "features": [10]
+      },
+      "expected": 30
+    },
+    {
+      "point": {
+        "features": [5]
+      },
+      "expected": 15
+    },
+    {
+      "point": {
+        "features": [7]
+      },
+      "expected": 21
+    },
+    {
+      "point": {
+        "features": [-1]
+      },
+      "expected": -3
+    },
+    {
+      "point": {
+        "features": [1.5]
+      },
+      "expected": 4.5
+    },
+    {
+      "point": {
+        "features": [-10000]
+      },
+      "expected": -30000
+    },
+    {
+      "point": {
+        "features": [10000]
+      },
+      "expected": 30000
+    }
+  ]
+}

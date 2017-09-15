@@ -1,0 +1,27 @@
+{
+  "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": [
+    {
+      "report": {
+        "tables": {
+          "Data Sample": {
+            "columnNames": ["col_a", "col_b", "col_c"]
+          },
+          "DataFrame Size": {
+            "values": [["3", "50"]]
+          }
+        },
+        "distributions": {
+          "col_a": {
+            "subtype": "categorical",
+            "buckets": ["blue", "red"],
+            "counts": [25, 25]
+          },
+          "col_b": {
+            "subtype": "continuous"
+          }
+        }
+      }
+    }
+  ],
+  "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": []
+}

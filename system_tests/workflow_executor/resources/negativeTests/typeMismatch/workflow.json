@@ -1,0 +1,63 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "4f6b7735-cc9f-871d-34c1-961aa9afec7d",
+      "operation": {
+        "id": "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251",
+        "name": "Mathematical Operation"
+      },
+      "parameters": {
+        "formula": "2",
+        "column name": "two"
+      }
+    }, {
+      "id": "b83ca380-73af-bc2d-4929-d9638eaa04da",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split ratio": 0.5,
+        "seed": 1.0
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "4f6b7735-cc9f-871d-34c1-961aa9afec7d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "b83ca380-73af-bc2d-4929-d9638eaa04da",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Draft workflow",
+      "description": "",
+      "nodes": {
+        "4f6b7735-cc9f-871d-34c1-961aa9afec7d": {
+          "coordinates": {
+            "x": 178,
+            "y": 56
+          }
+        },
+        "b83ca380-73af-bc2d-4929-d9638eaa04da": {
+          "coordinates": {
+            "x": 188,
+            "y": 178
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

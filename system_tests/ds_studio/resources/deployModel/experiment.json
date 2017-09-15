@@ -1,0 +1,109 @@
+{
+  "experiment": {
+    "name": "Deploy Model Service",
+    "description": "Experiment to test Deploy Model Service",
+    "graph": {
+      "nodes": [
+        {
+          "id": "2c6064ea-64c1-2cb1-b5c6-4b5f8ed46bd4",
+          "operation": {
+            "id": "748975b2-38f0-40b4-8550-3faf4840b7c5",
+            "name": "Read File",
+            "version": "0.1.0"
+          },
+          "parameters": {
+            "path": "/system_tests/file.csv",
+            "line separator": {
+              "Unix line separator": {}
+            }
+          }
+        },
+        {
+          "id": "6be53f0a-effb-d131-8b13-2db7d4e524f9",
+          "operation": {
+            "id": "83bad450-f87c-11e4-b939-0800200c9a66",
+            "name": "File To DataFrame",
+            "version": "0.1.0"
+          },
+          "parameters": {
+            "format": {
+              "CSV": {
+                "separator": ",",
+                "names included": true
+              }
+            },
+            "categorical columns": null
+          }
+        },
+        {
+          "id": "0777f6e1-9cbb-be45-cac4-ec903da8af45",
+          "operation": {
+            "id": "c526714c-e7fb-11e4-b02c-1681e6b88ec1",
+            "name": "Train Regressor",
+            "version": "0.1.0"
+          },
+          "parameters": {
+            "feature columns": [
+              {
+                "type": "indexRange",
+                "values": [
+                  0,
+                  0
+                ]
+              }
+            ],
+            "target column": {
+              "type": "column",
+              "value": "f_x"
+            }
+          }
+        },
+        {
+          "id": "7cc5bc2f-d885-9aeb-0e8b-6c59e83edc72",
+          "operation": {
+            "id": "0643f308-f2fa-11e4-b9b2-1697f925ec7b",
+            "name": "Ridge Regression",
+            "version": "0.1.0"
+          },
+          "parameters": {
+            "regularization": 0,
+            "iterations number": 1,
+            "mini batch fraction": 1.0
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": {
+            "nodeId": "2c6064ea-64c1-2cb1-b5c6-4b5f8ed46bd4",
+            "portIndex": 0
+          },
+          "to": {
+            "nodeId": "6be53f0a-effb-d131-8b13-2db7d4e524f9",
+            "portIndex": 0
+          }
+        },
+        {
+          "from": {
+            "nodeId": "7cc5bc2f-d885-9aeb-0e8b-6c59e83edc72",
+            "portIndex": 0
+          },
+          "to": {
+            "nodeId": "0777f6e1-9cbb-be45-cac4-ec903da8af45",
+            "portIndex": 0
+          }
+        },
+        {
+          "from": {
+            "nodeId": "6be53f0a-effb-d131-8b13-2db7d4e524f9",
+            "portIndex": 0
+          },
+          "to": {
+            "nodeId": "0777f6e1-9cbb-be45-cac4-ec903da8af45",
+            "portIndex": 1
+          }
+        }
+      ]
+    }
+  }
+}

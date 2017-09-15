@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "IncorrectWorkflow",
+    "title": "Cyclic workflow"
+  }
+}

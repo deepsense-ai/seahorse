@@ -1,0 +1,24 @@
+{
+  "bd38bef6-85c2-b9e5-a332-fea055a530f3": [
+    {
+      "report": {
+        "tables": {
+          "DataFrame Size": {
+            "values": [["2", "13"]]
+          }
+        }
+      }
+    }
+  ],
+  "7cc30ecb-ff8d-60a7-7810-11772c2a7ada": [
+    {
+      "report": {
+        "tables": {
+          "DataFrame Size": {
+            "values": [["2", "10"]]
+          }
+        }
+      }
+    }
+  ]
+}

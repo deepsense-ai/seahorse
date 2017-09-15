@@ -1,0 +1,39 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "38fc9517-698f-9e76-77be-933cccb9b5ff",
+      "operation": {
+        "id": "ed20e602-ff91-11e4-a322-1697f925ec7b",
+        "name": "Logistic Regression"
+      },
+      "parameters": {
+        "iterations number": null,
+        "regularization": 0.0,
+        "tolerance": 0.00010
+      }
+    }],
+    "connections": []
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Draft workflow",
+      "description": "",
+      "nodes": {
+        "38fc9517-698f-9e76-77be-933cccb9b5ff": {
+          "coordinates": {
+            "x": 223,
+            "y": 130
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

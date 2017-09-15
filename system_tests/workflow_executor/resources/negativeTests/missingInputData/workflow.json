@@ -1,0 +1,62 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "cddb6010-df82-b049-f2db-6c99c28e8ae4",
+      "operation": {
+        "id": "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251",
+        "name": "Mathematical Operation"
+      },
+      "parameters": {
+        "formula": "2 * x",
+        "column name": "2x"
+      }
+    }, {
+      "id": "e2c00dfd-6f18-5029-c62e-d1d18453c763",
+      "operation": {
+        "id": "f6e1f59b-d04d-44e2-ae35-2fcada44d23f",
+        "name": "Apply Transformation"
+      },
+      "parameters": {
+
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "cddb6010-df82-b049-f2db-6c99c28e8ae4",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "e2c00dfd-6f18-5029-c62e-d1d18453c763",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Draft workflow",
+      "description": "",
+      "nodes": {
+        "cddb6010-df82-b049-f2db-6c99c28e8ae4": {
+          "coordinates": {
+            "x": 460,
+            "y": 210
+          }
+        },
+        "e2c00dfd-6f18-5029-c62e-d1d18453c763": {
+          "coordinates": {
+            "x": 649,
+            "y": 359
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

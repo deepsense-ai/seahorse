@@ -1,0 +1,345 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "c1555b5c-9eb8-9c32-f526-e54c9219dbd3",
+      "operation": {
+        "id": "95ca5225-b8e0-45c7-8ecd-a2c9d4d6861f",
+        "name": "Cross-validate Regressor"
+      },
+      "parameters": {
+        "feature columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["x", "x2", "x3"]
+          }],
+          "excluding": false
+        },
+        "target column": {
+          "type": "column",
+          "value": "value"
+        },
+        "number of folds": 10.0,
+        "shuffle": {
+          "Yes": {
+            "seed": 4.0
+          }
+        }
+      }
+    }, {
+      "id": "35d18089-bfac-8744-ebf3-f9a043a98d4b",
+      "operation": {
+        "id": "c526714c-e7fb-11e4-b02c-1681e6b88ec1",
+        "name": "Train Regressor"
+      },
+      "parameters": {
+        "feature columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["x", "x2", "x3"]
+          }],
+          "excluding": false
+        },
+        "target column": {
+          "type": "column",
+          "value": "value"
+        }
+      }
+    }, {
+      "id": "3a978f24-6996-89d5-9492-e8a7caa1572f",
+      "operation": {
+        "id": "6cf6867c-e7fd-11e4-b02c-1681e6b88ec1",
+        "name": "Score regressor"
+      },
+      "parameters": {
+        "prediction column": "prediction"
+      }
+    }, {
+      "id": "645b1ec5-3242-acd3-027d-6f42db0b3f55",
+      "operation": {
+        "id": "0643f308-f2fa-11e4-b9b2-1697f925ec7b",
+        "name": "Ridge Regression"
+      },
+      "parameters": {
+        "regularization": 0.0,
+        "iterations number": 10.0,
+        "mini batch fraction": 1.0
+      }
+    }, {
+      "id": "07c2a748-9312-4bc1-7b64-71cfa2e47547",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/ridgeRegression/training.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "2a743933-9198-2f0c-a736-aa2567e6b7a3",
+      "operation": {
+        "id": "6cf6867c-e7fd-11e4-b02c-1681e6b88ec1",
+        "name": "Score regressor"
+      },
+      "parameters": {
+        "prediction column": "prediction"
+      }
+    }, {
+      "id": "1bae8b7c-dee5-8ac5-bbf8-babd1eec04c8",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split ratio": 0.66,
+        "seed": 8.0
+      }
+    }, {
+      "id": "bbf9f00c-a0de-156e-7586-297908535113",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/ridgeRegression/test.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "cf6d288e-7a15-3e2e-6d5a-a9c77b979397",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/ridgeRegression/output.csv"
+      }
+    }, {
+      "id": "ecdcf75a-25d5-c393-4592-068a9e70b5ec",
+      "operation": {
+        "id": "f2a43e21-331e-42d3-8c02-7db1da20bc00",
+        "name": "Evaluate Regression"
+      },
+      "parameters": {
+        "target column": {
+          "type": "column",
+          "value": "value"
+        },
+        "prediction column": {
+          "type": "column",
+          "value": "prediction"
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "2a743933-9198-2f0c-a736-aa2567e6b7a3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "cf6d288e-7a15-3e2e-6d5a-a9c77b979397",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "645b1ec5-3242-acd3-027d-6f42db0b3f55",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "35d18089-bfac-8744-ebf3-f9a043a98d4b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "3a978f24-6996-89d5-9492-e8a7caa1572f",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "ecdcf75a-25d5-c393-4592-068a9e70b5ec",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "645b1ec5-3242-acd3-027d-6f42db0b3f55",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "c1555b5c-9eb8-9c32-f526-e54c9219dbd3",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "07c2a748-9312-4bc1-7b64-71cfa2e47547",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "1bae8b7c-dee5-8ac5-bbf8-babd1eec04c8",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "bbf9f00c-a0de-156e-7586-297908535113",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2a743933-9198-2f0c-a736-aa2567e6b7a3",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "c1555b5c-9eb8-9c32-f526-e54c9219dbd3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "3a978f24-6996-89d5-9492-e8a7caa1572f",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "35d18089-bfac-8744-ebf3-f9a043a98d4b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2a743933-9198-2f0c-a736-aa2567e6b7a3",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "1bae8b7c-dee5-8ac5-bbf8-babd1eec04c8",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "3a978f24-6996-89d5-9492-e8a7caa1572f",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "07c2a748-9312-4bc1-7b64-71cfa2e47547",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "35d18089-bfac-8744-ebf3-f9a043a98d4b",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "1bae8b7c-dee5-8ac5-bbf8-babd1eec04c8",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "c1555b5c-9eb8-9c32-f526-e54c9219dbd3",
+        "portIndex": 1
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Ridge Regression on 10x^3 - 90x^2 + 230x - 149",
+      "description": "",
+      "nodes": {
+        "645b1ec5-3242-acd3-027d-6f42db0b3f55": {
+          "coordinates": {
+            "x": 161,
+            "y": 106
+          }
+        },
+        "07c2a748-9312-4bc1-7b64-71cfa2e47547": {
+          "coordinates": {
+            "x": 470,
+            "y": 51
+          }
+        },
+        "35d18089-bfac-8744-ebf3-f9a043a98d4b": {
+          "coordinates": {
+            "x": 670,
+            "y": 311
+          }
+        },
+        "ecdcf75a-25d5-c393-4592-068a9e70b5ec": {
+          "coordinates": {
+            "x": 447,
+            "y": 575
+          }
+        },
+        "3a978f24-6996-89d5-9492-e8a7caa1572f": {
+          "coordinates": {
+            "x": 449,
+            "y": 440
+          }
+        },
+        "2a743933-9198-2f0c-a736-aa2567e6b7a3": {
+          "coordinates": {
+            "x": 787,
+            "y": 438
+          }
+        },
+        "cf6d288e-7a15-3e2e-6d5a-a9c77b979397": {
+          "coordinates": {
+            "x": 795,
+            "y": 567
+          }
+        },
+        "c1555b5c-9eb8-9c32-f526-e54c9219dbd3": {
+          "coordinates": {
+            "x": 306,
+            "y": 302
+          }
+        },
+        "bbf9f00c-a0de-156e-7586-297908535113": {
+          "coordinates": {
+            "x": 893,
+            "y": 313
+          }
+        },
+        "1bae8b7c-dee5-8ac5-bbf8-babd1eec04c8": {
+          "coordinates": {
+            "x": 435,
+            "y": 188
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "a17feb2d-7e3e-4563-b9f8-0be9462cd33a",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

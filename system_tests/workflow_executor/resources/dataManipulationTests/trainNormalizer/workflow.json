@@ -1,0 +1,209 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "ef2e9d7c-d515-7859-46dd-0212e33bc5eb",
+      "operation": {
+        "id": "f6e1f59b-d04d-44e2-ae35-2fcada44d23f",
+        "name": "Apply Transformation"
+      },
+      "parameters": {
+
+      }
+    }, {
+      "id": "5c114e9a-fb80-269f-5783-76ea2c9fc709",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame1.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "060a89ba-0b95-ddea-59bb-ed6744f1c6de",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/trainNormalizer/output1.csv"
+      }
+    }, {
+      "id": "7123550a-656c-33cd-6bfd-a2f6676951f3",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/trainNormalizer/output2.csv"
+      }
+    }, {
+      "id": "8223aac0-024d-3a10-5382-7dd5667fe730",
+      "operation": {
+        "id": "9ae1a3f8-a70b-44bf-b162-e3b16dc6fded",
+        "name": "Train Normalizer"
+      },
+      "parameters": {
+        "selected columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["x", "y"]
+          }],
+          "excluding": false
+        }
+      }
+    }, {
+      "id": "c21d9612-9d23-4053-80e5-121879c67c0e",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame2.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "8223aac0-024d-3a10-5382-7dd5667fe730",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "060a89ba-0b95-ddea-59bb-ed6744f1c6de",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "5c114e9a-fb80-269f-5783-76ea2c9fc709",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "8223aac0-024d-3a10-5382-7dd5667fe730",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "ef2e9d7c-d515-7859-46dd-0212e33bc5eb",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "7123550a-656c-33cd-6bfd-a2f6676951f3",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "8223aac0-024d-3a10-5382-7dd5667fe730",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "ef2e9d7c-d515-7859-46dd-0212e33bc5eb",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "c21d9612-9d23-4053-80e5-121879c67c0e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "ef2e9d7c-d515-7859-46dd-0212e33bc5eb",
+        "portIndex": 1
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Normalizer",
+      "description": "",
+      "nodes": {
+        "8223aac0-024d-3a10-5382-7dd5667fe730": {
+          "coordinates": {
+            "x": 244,
+            "y": 173
+          }
+        },
+        "5c114e9a-fb80-269f-5783-76ea2c9fc709": {
+          "coordinates": {
+            "x": 101,
+            "y": 26
+          }
+        },
+        "060a89ba-0b95-ddea-59bb-ed6744f1c6de": {
+          "coordinates": {
+            "x": 149,
+            "y": 368
+          }
+        },
+        "ef2e9d7c-d515-7859-46dd-0212e33bc5eb": {
+          "coordinates": {
+            "x": 488,
+            "y": 252
+          }
+        },
+        "c21d9612-9d23-4053-80e5-121879c67c0e": {
+          "coordinates": {
+            "x": 467,
+            "y": 16
+          }
+        },
+        "7123550a-656c-33cd-6bfd-a2f6676951f3": {
+          "coordinates": {
+            "x": 446,
+            "y": 384
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "794fa4d4-5ea3-4f08-9e8c-8ae28e4aba92",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}

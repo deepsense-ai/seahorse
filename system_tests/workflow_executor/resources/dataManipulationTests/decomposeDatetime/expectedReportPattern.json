@@ -1,0 +1,26 @@
+{
+  "0bad8fe5-759c-589e-683f-1d733618d66a": [
+    {
+      "report": {
+        "tables": {
+          "Data Sample": {
+            "columnNames": ["packed_day", "packed_timestamp", "year", "month", "day", "timestamp_hour", "timestamp_minutes", "timestamp_seconds"]
+          },
+          "DataFrame Size": {
+            "values": [["8", "10"]]
+          }
+        },
+        "distributions": {
+          "year": {
+            "buckets": ["2015"],
+            "counts": [10]
+          },
+          "timestamp_minutes": {
+            "buckets": ["0"],
+            "counts": [10]
+          }
+        }
+      }
+    }
+  ]
+}

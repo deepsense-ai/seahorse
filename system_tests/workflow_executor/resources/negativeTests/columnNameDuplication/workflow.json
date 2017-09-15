@@ -1,0 +1,101 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "a4918563-8fd0-d012-7b4c-fbe642bf2d5f",
+      "operation": {
+        "id": "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251",
+        "name": "Mathematical Operation"
+      },
+      "parameters": {
+        "formula": "2 * x",
+        "column name": "y"
+      }
+    }, {
+      "id": "178880ae-e53d-519c-f819-8731c14fcf23",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/columnNameDuplication/input.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "085cee75-7692-2056-8993-580f164b2e74",
+      "operation": {
+        "id": "f6e1f59b-d04d-44e2-ae35-2fcada44d23f",
+        "name": "Apply Transformation"
+      },
+      "parameters": {
+
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "a4918563-8fd0-d012-7b4c-fbe642bf2d5f",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "085cee75-7692-2056-8993-580f164b2e74",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "178880ae-e53d-519c-f819-8731c14fcf23",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "085cee75-7692-2056-8993-580f164b2e74",
+        "portIndex": 1
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Draft workflow",
+      "description": "",
+      "nodes": {
+        "a4918563-8fd0-d012-7b4c-fbe642bf2d5f": {
+          "coordinates": {
+            "x": 152,
+            "y": 119
+          }
+        },
+        "178880ae-e53d-519c-f819-8731c14fcf23": {
+          "coordinates": {
+            "x": 410,
+            "y": 64
+          }
+        },
+        "085cee75-7692-2056-8993-580f164b2e74": {
+          "coordinates": {
+            "x": 369,
+            "y": 245
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.4.0"
+  }
+}
