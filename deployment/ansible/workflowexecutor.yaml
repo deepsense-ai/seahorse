@@ -12,6 +12,8 @@
     - include: tasks/create_download_dir.yml
     - include: tasks/artifactory_get.yml artifact_path={{workflowexecutor_artifact_path}} artifactid={{workflowexecutor_artifact_id}} artifacttype=jar
     - include: tasks/download_supervisor.yml
+    - include: tasks/artifactory_get.yml artifact_path={{mysql_connector_jar_path}} artifactid={{mysql_connector_jar_id}} artifacttype=jar
+    - include: tasks/artifactory_get.yml artifact_path={{postgresql_connector_jar_path}} artifactid={{postgresql_connector_jar_id}} artifacttype=jar
 
 - name: Set up WorkflowExecutor application
   hosts: master

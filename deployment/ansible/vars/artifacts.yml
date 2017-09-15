@@ -10,3 +10,9 @@ frontend_version: latest
 workflowexecutor_artifact_id: deepsense-workflowexecutor
 workflowexecutor_version: latest
 workflowexecutor_build_version: 1.0.0-SNAPSHOT
+
+extra_jars: "{{install_dir}}/extra-jars"
+mysql_connector_jar_path: "ext-third-party/mysql-connector-java/mysql-connector-java/5.1.38/mysql-connector-java-5.1.38-bin.jar"
+mysql_connector_jar_id: "mysql-connector-java-5.1.38-bin"
+postgresql_connector_jar_path: "ext-third-party/org/postgresql/postgresql/9.4.1207/postgresql-9.4.1207.jar"
+postgresql_connector_jar_id: "postgresql-9.4.1207"
