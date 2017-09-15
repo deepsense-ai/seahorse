@@ -76,7 +76,8 @@
   },
   "browserify-shim": {
     "angular": "global:angular",
-    "jsPlumb": "global:jsPlumb"
+    "jsPlumb": "global:jsPlumb",
+    "$": "global:$"
   },
   "files": {
     "build": {

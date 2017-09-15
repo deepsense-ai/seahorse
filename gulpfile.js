@@ -47,7 +47,7 @@ gulp.task('nodemon', function (callback) {
           'js': 'node --harmony'
       },
       script: server.path + server.app,
-      verbose: true,
+    verbose: false,
       watch: [server.path]
     })
     .on('start', function () {
@@ -128,8 +128,7 @@ gulp.task('jshint', function () {
       './gulpfile.js'
     ])
     .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(jshint.reporter('fail'));
+    .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('browserify', function () {

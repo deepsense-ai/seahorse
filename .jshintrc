@@ -9,16 +9,20 @@
   "evil": false,
   "forin": false,
   "globals": {
-    "angular": true
+    "angular": true,
+    "jsPlumb": true
   },
   "globalstrict": false,
   "jasmine": true,
   "jquery": true,
-  "maxparams": 3,
   "newcap": true,
   "noarg": true,
   "nonbsp": true,
   "plusplus": false,
+  "predef": [
+    "angular",
+    "console"
+  ],
   "quotmark": true,
   "smarttabs": true,
   "strict": true,

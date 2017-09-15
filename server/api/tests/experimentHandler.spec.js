@@ -12,14 +12,16 @@ describe('Experiment handler', () => {
       mockData = {
         'experiment': {
           'graph': {
-            'nodes': {
-              '101': {
+            'nodes': [
+              {
+                'id': '101',
                 'text': 'value'
               },
-              '102': {
+              {
+                'id': '102',
                 'text': 'other'
               }
-            }
+            ]
           },
         }
       },
@@ -148,10 +150,20 @@ describe('Experiment handler', () => {
         expect(success).toBe(true);
         expect(error).toBe(false);
         expect(responseData).not.toEqual(mockData);
-        expect(responseData.experiment.graph.nodes['101'].ui).not.toBeUndefined();
-        expect(responseData.experiment.graph.nodes['101'].ui.extended).toBe(true);
-        expect(responseData.experiment.graph.nodes['101'].ui).not.toBeUndefined();
-        expect(responseData.experiment.graph.nodes['102'].ui).toBeUndefined();
+
+        let node101, node102;
+        for (let i = responseData.experiment.graph.nodes.length - 1; i >= 0; i--) {
+          let node = responseData.experiment.graph.nodes[i];
+          if (node.id === '101') {
+            node101 = node;
+          } else if (node.id === '102') {
+            node102 = node;
+          }
+        }
+        expect(node101.ui).not.toBeUndefined();
+        expect(node101.ui.extended).toBe(true);
+        expect(node101.ui).not.toBeUndefined();
+        expect(node102.ui).toBeUndefined();
       });
     });
 

@@ -5,9 +5,9 @@
     "name": "Another Model",
     "saved": true,
     "dclass": "DModel",
-    "description:" "A model this is",
+    "description": "A model this is",
     "created": "2015-01-20T20:09:00Z",
-    "updated": "2015-01-20T21:09:30Z"
+    "updated": "2015-01-20T21:09:30Z",
     "data": {
       "url": "hdfs://10.0.0.1/PPwlfqCNO0UB"
     }

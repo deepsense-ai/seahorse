@@ -6,8 +6,9 @@
     "created": "2015-01-20T20:06:33Z",
     "updated": "2015-01-22T20:06:33Z",
     "graph": {
-      "nodes": {
-        "080411c0-2ae4-d8ba-1ed6-6135b5d4911d": {
+      "nodes": [
+        {
+          "id": "930485-24522-26235",
           "operation": {
             "id": "342342-123123-434234-234234",
             "name": "Sql Reader",
@@ -20,10 +21,12 @@
             }
           }
         },
-        "dc236792-8dcc-562e-49b7-54348d66e314": {
+        {
+          "id": "938247-23569-245982",
           "operation": {
             "id": "342342-123123-434234-12334",
-            "name": "Row Filter"
+            "name": "Row Filter",
+            "version": "1.0.3"
           },
           "parameters": {
             "column_name": {
@@ -37,40 +40,35 @@
             }
           }
         },
-        "18c90b87-7721-88c2-1b93-ef8b946a3b96": {
-          "entity": {
-            "id": "43241264-6318434-f34d234",
-            "name": "ScientificDatasetA"
-          }
-        },
-        "04b982b7-f07c-3001-12c3-5198c9d92c34": {
+        {
+          "id": "203845-89456-98374",
           "operation": {
             "id": "237956-23426-49857",
             "name": "Linear Regresion",
-            "version": "0.1.3"
+            "version": "1.1.2"
           },
           "note": "Other note"
         }
-      },
+      ],
       "edges": [
         {
           "from": {
-            "node": "080411c0-2ae4-d8ba-1ed6-6135b5d4911d",
-            "port": 0
+            "node": "930485-24522-26235",
+            "portIndex": 0
           },
           "to": {
-            "node": "04b982b7-f07c-3001-12c3-5198c9d92c34",
-            "port": 0
+            "node": "938247-23569-245982",
+            "portIndex": 0
           }
         },
         {
           "from": {
-            "node": "dc236792-8dcc-562e-49b7-54348d66e314",
-            "port": 0
+            "node": "938247-23569-245982",
+            "portIndex": 0
           },
           "to": {
-            "node": "04b982b7-f07c-3001-12c3-5198c9d92c34",
-            "port": 0
+            "node": "203845-89456-98374",
+            "portIndex": 0
           }
         }
       ]
@@ -79,12 +77,12 @@
       "status": "RUNNING",
       "error": null,
       "nodes": {
-        "080411c0-2ae4-d8ba-1ed6-6135b5d4911d": {
+        "930485-24522-26235": {
           "status": "COMPLETED",
           "started": "2015-01-20T20:06:33Z",
           "ended": "2015-01-20T20:07:33Z"
         },
-        "dc236792-8dcc-562e-49b7-54348d66e314": {
+        "938247-23569-245982": {
           "status": "RUNNING",
           "started": "2015-01-20T20:07:33Z",
           "progress": {
@@ -92,32 +90,19 @@
             "total": 542124
           }
         },
-        "18c90b87-7721-88c2-1b93-ef8b946a3b96": {
-          "status": "COMPLETED",
-          "started": "2015-01-20T20:06:33Z",
-          "ended": "2015-01-20T20:06:43Z",
-          "results": [
-            "5f8e3ce4-ec5f-066e-9d86-3c9c73697a5e",
-            "b2dd7c9e-77bc-bda0-f0fe-adf51da8146b",
-            "28f7705b-40cb-2c55-2a80-dd4dac091e32"
-          ]
-        },
-        "04b982b7-f07c-3001-12c3-5198c9d92c34": {
+        "203845-89456-98374": {
           "status": "QUEUED"
         }
       }
     },
     "typeKnowledge": {
-      "080411c0-2ae4-d8ba-1ed6-6135b5d4911d": [
+      "930485-24522-26235": [
         ["DataFrame"]
       ],
-      "dc236792-8dcc-562e-49b7-54348d66e314": [
+      "938247-23569-245982": [
         ["DataFrame"]
       ],
-      "18c90b87-7721-88c2-1b93-ef8b946a3b96": [
-        ["DataFrame"]
-      ],
-      "04b982b7-f07c-3001-12c3-5198c9d92c34": [
+      "203845-89456-98374": [
         ["DataFrame"]
       ]
     }

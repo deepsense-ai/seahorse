@@ -1,0 +1,44 @@
+@import "nodes.less";
+@import "connections.less";
+
+._jsPlumb_drag_select * {
+  user-select: none;
+}
+
+._jsPlumb_connector {
+  z-index: 18;
+}
+
+._jsPlumb_endpoint {
+  z-index: 19;
+}
+
+path,
+._jsPlumb_endpoint {
+  cursor: pointer;
+}
+
+.flowchart-box {
+  position: absolute;
+  width: 100%;
+  background-color: #efefef;
+  overflow: auto;
+  margin: 10px auto;
+  height: 1000px;
+}
+
+.flowchart-node:hover {
+  border: 1px solid #123456;
+}
+
+.flowchart-box .active {
+  border: 1px solid green;
+}
+
+.flowchart-box .hover {
+  border: 1px solid red;
+}
+
+.flowchart-box ._jsPlumb_connector {
+  z-index: 4;
+}

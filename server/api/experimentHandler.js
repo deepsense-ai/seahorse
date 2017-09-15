@@ -24,8 +24,10 @@ module.exports = function experimentHandler(config) {
     };
 
     if (body.experiment.graph && body.experiment.graph.nodes) {
-      for (let nodeId in body.experiment.graph.nodes) {
-        data.nodes[nodeId] = body.experiment.graph.nodes[nodeId].ui;
+      let graphNodes = body.experiment.graph.nodes;
+      for (let i = graphNodes.length - 1; i >= 0; i--) {
+        let node = graphNodes[i];
+        data.nodes[node.id] = node.ui;
       }
     }
 
@@ -47,12 +49,15 @@ module.exports = function experimentHandler(config) {
       }
       return data;
     }
-    for (let nodeId in local.nodes) {
-      let node = data.experiment.graph.nodes[nodeId];
-      if (node) {
-        node.ui = local.nodes[nodeId];
+    let graphNodes = data.experiment.graph.nodes;
+    for (let i = graphNodes.length - 1; i >= 0; i--) {
+      let graphNode = graphNodes[i],
+        localNode = local.nodes[graphNode.id];
+      if (localNode) {
+        graphNode.ui = localNode;
       }
     }
+
     return data;
   };
 

@@ -1,7 +1,13 @@
-  <div>
-    <div class="flowchart-box" id="flowchart-box">
-      <div class="flowchart-node" id="flowchart-node-1"><strong>1</strong></div>
-      <div class="flowchart-node" id="flowchart-node-2"><strong>2</strong></div>
-      <div class="flowchart-node" id="flowchart-node-3"><strong>3</strong></div>
+<div>
+  <div class="flowchart-box">
+    <div id="node-{{node.id}}"
+         ng-repeat="node in experiment.getExperiment().getNodes()"
+         on-render-finish
+         jsplumb-draggable
+         class="flowchart-node dataframe"
+         ng-style="{'left':node.x+'px','top':node.y+'px'}">
+      <span>{{node.name}} </br> {{node.description}} </span>
+      <span class="hidden">{{node.id}}</span>
     </div>
   </div>
+</div>

@@ -3,10 +3,31 @@
     "342342-123123-434234-234234": {
       "id": "342342-123123-434234-234234",
       "name": "Sql Reader",
-      "version": "1.0.4",
+      "version": "3.1.4",
       "category": "23123-12312-43242",
       "description": "Simple sql db reader",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          },
+          {
+            "portIndex": 1,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "23456-78901-83752": {
       "id": "23456-78901-83752",
@@ -14,7 +35,28 @@
       "version": "2.0.3",
       "category": "23123-12312-43242",
       "description": "Remote webservice reader",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          },
+          {
+            "portIndex": 1,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "11111-111111-33333": {
       "id": "11111-111111-33333",
@@ -22,7 +64,23 @@
       "version": "1.0.0",
       "category": "91111-111111-11111",
       "description": "Simple column filter",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "11111-111111-33322": {
       "id": "11111-111111-33322",
@@ -30,7 +88,23 @@
       "version": "2.2.5",
       "category": "91111-111111-11111",
       "description": "Not-so-simple filter for columns",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "342342-123123-434234-12334": {
       "id": "342342-123123-434234-12334",
@@ -38,7 +112,23 @@
       "version": "1.0.3",
       "category": "91111-111111-11111",
       "description": "Simple filters takes dataset based on...",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "11111-111111-11111": {
       "id": "11111-111111-11111",
@@ -46,7 +136,23 @@
       "version": "1.0.5",
       "category": "81111-111111-11111",
       "description": "Some description for filter",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "11111-111111-22222": {
       "id": "11111-111111-22222",
@@ -54,7 +160,23 @@
       "version": "1.0.1",
       "category": "81111-111111-11111",
       "description": "Basic fiter description",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "237956-23426-49857": {
       "id": "237956-23426-49857",
@@ -62,7 +184,23 @@
       "version": "1.1.2",
       "category": "987435-12343-56401",
       "description": "Regresion linear model",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "11111-111111-44444": {
       "id": "11111-111111-44444",
@@ -70,7 +208,23 @@
       "version": "1.2.3",
       "category": "234234-756756-34234",
       "description": "Neural networks inspired by biological...",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     },
     "11111-111111-55555": {
       "id": "11111-111111-55555",
@@ -78,7 +232,23 @@
       "version": "1.2.3",
       "category": "234234-756756-34234",
       "description": "Classification model",
-      "deterministic": true
+      "deterministic": true,
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["SomeDOperation"]
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["OtherDOperation"]
+          }
+        ]
+      }
     }
   },
   "entities": {

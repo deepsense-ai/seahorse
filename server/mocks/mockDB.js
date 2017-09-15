@@ -18,7 +18,7 @@ module.exports = function mockDB(apiConfig) {
       orm = new Waterline(),
       config = {
         adapters: {
-          diskDB: disk,
+          diskDB: disk
         },
         connections: {
           mockconfig: {
@@ -71,8 +71,9 @@ module.exports = function mockDB(apiConfig) {
                     let uiData = {
                       nodes: {}
                     };
-                    for (let n in item.experiment.graph.nodes) {
-                      uiData.nodes[n] = {
+                    let graphNodes = item.experiment.graph.nodes;
+                    for (let i = graphNodes.length - 1; i >= 0; i--) {
+                      uiData.nodes[graphNodes[i].id] = {
                         x: 100 + 50 * Math.floor(Math.random() * 10),
                         y: 100 + 100 * Math.floor(Math.random() * 10),
                       };

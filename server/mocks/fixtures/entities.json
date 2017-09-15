@@ -6,7 +6,7 @@
       "name": "Frame",
       "saved": true,
       "dclass": "DDataframe",
-      "description:" "This is a data frame",
+      "description:": "This is a data frame",
       "created": "2015-01-20T20:06:00Z",
       "updated": "2015-01-20T21:06:30Z"
     },
@@ -16,7 +16,7 @@
       "name": "Data",
       "saved": true,
       "dclass": "DDataframe",
-      "description:" "This is also a data frame",
+      "description:": "This is also a data frame",
       "created": "2015-01-20T20:07:00Z",
       "updated": "2015-01-20T21:07:30Z"
     },
@@ -26,7 +26,7 @@
       "name": "A Model",
       "saved": true,
       "dclass": "DModel",
-      "description:" "A model this is",
+      "description:": "A model this is",
       "created": "2015-01-20T20:08:00Z",
       "updated": "2015-01-20T21:08:30Z"
     },
@@ -36,7 +36,7 @@
       "name": "Another Model",
       "saved": true,
       "dclass": "DModel",
-      "description:" "A model this is",
+      "description:": "A model this is",
       "created": "2015-01-20T20:09:00Z",
       "updated": "2015-01-20T21:09:30Z"
     },
@@ -46,7 +46,7 @@
       "name": "A File",
       "saved": true,
       "dclass": "DFile",
-      "description:" "Oh, a file!",
+      "description:": "Oh, a file!",
       "created": "2015-01-20T20:10:00Z",
       "updated": "2015-01-20T21:10:30Z"
     },
@@ -56,7 +56,7 @@
       "name": "Named filter",
       "saved": true,
       "dclass": "DFilter",
-      "description:" "A filter. How convenient",
+      "description:": "A filter. How convenient",
       "created": "2015-01-20T20:11:00Z",
       "updated": "2015-01-20T21:11:30Z"
     }

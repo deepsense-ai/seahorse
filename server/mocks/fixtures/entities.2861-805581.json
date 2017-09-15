@@ -5,9 +5,9 @@
     "name": "Named filter",
     "saved": true,
     "dclass": "DFilter",
-    "description:" "A filter. How convenient",
+    "description": "A filter. How convenient",
     "created": "2015-01-20T20:11:00Z",
-    "updated": "2015-01-20T21:11:30Z"
+    "updated": "2015-01-20T21:11:30Z",
     "data": {
       "url": "hdfs://10.0.0.1/YoXugrmqmOc2"
     }
