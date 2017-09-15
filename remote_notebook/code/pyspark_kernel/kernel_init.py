@@ -3,6 +3,7 @@
 from pyspark import SparkContext
 from pyspark import SparkConf
 from pyspark.sql import SQLContext
+from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 from py4j.java_gateway import JavaGateway, GatewayClient, java_import
 from py4j.protocol import Py4JJavaError
@@ -35,6 +36,7 @@ sc = SparkContext(
 
 sqlContext = SQLContext(sc)
 
+spark = SparkSession.builder.getOrCreate()
 
 def dataframe():
     # workflow_id, node_id and port_number are set in the kernel
