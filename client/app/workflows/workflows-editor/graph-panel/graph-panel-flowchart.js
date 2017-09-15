@@ -127,7 +127,7 @@ function FlowChartBoxController($scope, $element, $window,
 
       data.dropEvent = dropEvent;
       data.elementId = dropEvent.dataTransfer.getData('elementId');
-      data.target = dropEvent.target;
+      data.target = $element[0];
 
       $scope.$emit('FlowChartBox.ELEMENT_DROPPED', data);
     }
