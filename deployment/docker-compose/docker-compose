@@ -1,15 +1,16 @@
 #!/bin/bash
 # Copyright (c) 2016, CodiLime Inc.
 
-if [ "$#" -lt "2" ]; then
-    echo "Usage: ./docker-compose DOCKER_TAG COMMAND [COMMAND_OPTIONS*]"
+if [ "$#" -lt "3" ]; then
+    echo "Usage: ./docker-compose FRONTEND_TAG BACKEND_TAG COMMAND [COMMAND_OPTIONS*]"
     exit 1
 fi
 
-DOCKER_TAG=$1
-# Remove first parameter (DOCKER_TAG) from "$@"
+FRONTEND_TAG=$1
+shift
+BACKEND_TAG=$1
 shift
 
-./prepare_docker-compose docker-compose.tmpl.yml docker-compose.yml $DOCKER_TAG
+./prepare_docker-compose docker-compose.tmpl.yml docker-compose.yml $FRONTEND_TAG $BACKEND_TAG
 
 exec docker-compose "$@"

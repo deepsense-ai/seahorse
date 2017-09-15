@@ -1,16 +1,17 @@
 #!/bin/bash
 # Copyright (c) 2016, CodiLime Inc.
 
-if [ "$#" != "3" ]; then
-    echo "Usage: ./prepare_docker-compose TEMPLATE TARGET DOCKER_TAG"
+if [ "$#" != "4" ]; then
+    echo "Usage: ./prepare_docker-compose TEMPLATE TARGET FRONTEND_TAG BACKEND_TAG"
     exit 1
 fi
 
 TEMPLATE=$1
 TARGET=$2
-DOCKER_TAG=$3
+FRONTEND_TAG=$3
+BACKEND_TAG=$4
 
-DOCKER_REPOSITORY="docker-repo.deepsense.codilime.com/deepsense_io"
+DOCKER_REPOSITORY=${DOCKER_REPOSITORY:-"docker-repo.deepsense.codilime.com/deepsense_io"}
 
 EXPOSED_SM_PORT=60100
 EXPOSED_MQ_PORT=60101
@@ -26,7 +27,8 @@ rm -f $TARGET
 cp $TEMPLATE $TARGET
 
 sed -i 's|\$DOCKER_REPOSITORY|'"$DOCKER_REPOSITORY"'|g' $TARGET
-sed -i 's|\$DOCKER_TAG|'"$DOCKER_TAG"'|g' $TARGET
+sed -i 's|\$FRONTEND_TAG|'"$FRONTEND_TAG"'|g' $TARGET
+sed -i 's|\$BACKEND_TAG|'"$BACKEND_TAG"'|g' $TARGET
 sed -i 's|\$EXPOSED_SM_PORT|'"$EXPOSED_SM_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_MQ_PORT|'"$EXPOSED_MQ_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_MQ_WEBSOCKET_PORT|'"$EXPOSED_MQ_WEBSOCKET_PORT"'|g' $TARGET

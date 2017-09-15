@@ -15,6 +15,7 @@ object TestClusters extends Logging {
 
   def allAvailableClusters: Seq[ClusterDetails] = {
     val standalone = standaloneClusterPresetOpt()
+    val mesos = mesosClusterPresetOpt()
 
     if(standalone.isEmpty) {
       logger.warn(
@@ -23,8 +24,16 @@ object TestClusters extends Logging {
         """.stripMargin
       )
     }
+    if(mesos.isEmpty) {
+      logger.warn(
+        """Mesos master ip is not provided.
+          |To run tests against Mesos cluster set MESOS_MASTER_IP env variable
+        """.stripMargin
+      )
+    }
 
     Seq(
+    // mesos, // Mesos doesn't work with R TODO FIX
       standalone,
       Some(local)
     ).flatten
@@ -51,5 +60,18 @@ object TestClusters extends Logging {
 
   private def standaloneClusterMasterIpOpt() = sys.env.get(sparkStandaloneEnv)
   private val sparkStandaloneEnv = "SPARK_STANDALONE_MASTER_IP"
+
+  private def mesosClusterPresetOpt() = for {
+    mesosClusterMasterIp <- mesosClusterMasterIpOpt()
+  } yield ClusterDetails(
+    name = "some-mesos" + UUID.randomUUID(),
+    id = None,
+    clusterType = ClusterType.mesos,
+    uri = s"mesos://$mesosClusterMasterIp:5050",
+    userIP = HostAddressResolver.getHostAddress()
+  )
+
+  private def mesosClusterMasterIpOpt() = sys.env.get(mesosStandaloneEnv)
+  private val mesosStandaloneEnv = "MESOS_MASTER_IP"
 
 }
