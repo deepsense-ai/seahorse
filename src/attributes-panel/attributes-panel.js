@@ -45,7 +45,11 @@ function OperationAttributes($timeout, AttributesPanelService) {
             <h2>Error title:</h2>
             <pre class="o-error-trace">{{::node.state.error.title || 'No title'}}</pre>
             <h2>Error message:</h2>
-            <pre class="o-error-trace">{{::node.state.error.message || 'No message'}}</pre>`,
+            <pre class="o-error-trace">{{::node.state.error.message || 'No message'}}</pre>
+            <div ng-if="::node.state.error.details.stacktrace">
+              <h2>Stack trace:</h2>
+              <pre class="o-error-trace">{{::node.state.error.details.stacktrace}}</pre>
+            </div>`,
           windowClass: 'o-modal--error'
         });
       };

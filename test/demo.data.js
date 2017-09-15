@@ -62,7 +62,11 @@ angular.module('test').
             "code": 42,
             "title": "Question unknown",
             "message": "Something that describes the problem more precisely",
-            "details": null
+            "details": {"stacktrace": "exception404\nexception502\nLorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing"
+            }
           }
         }
       },
@@ -87,7 +91,96 @@ angular.module('test').
               " impedit magnam maxime odio omnis reiciendis suscipit tempora " +
               "temporibus tenetur totam unde, voluptatum. Architecto, dolorum?",
             "details": {
-              "stacktrace": "exception404\nexception502"
+              "stacktrace": "exception404\nexception502\nLorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
             }
           }
         },
