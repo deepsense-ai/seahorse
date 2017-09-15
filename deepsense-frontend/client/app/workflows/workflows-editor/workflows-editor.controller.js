@@ -84,6 +84,7 @@ class WorkflowsEditorController {
   }
 
   initListeners() {
+
     this.$scope.$on('ServerCommunication.MESSAGE.ready', (event, ready) => {
       this.$log.debug('Received a Ready message from Session Executor. Reconnecting.');
 
@@ -95,7 +96,7 @@ class WorkflowsEditorController {
           message: ready.content.text
         });
 
-        this.$rootScope.$broadcast('ServerCommunication.EXECUTION_FINISHED');
+        this._setEditableMode();
       }
     });
 
@@ -122,7 +123,7 @@ class WorkflowsEditorController {
         this.loadReportById(reportEntityId);
       }
       if (!this.WorkflowService.isWorkflowRunning()) {
-        this.$rootScope.$broadcast('ServerCommunication.EXECUTION_FINISHED');
+        this._setEditableMode();
       }
     });
 
@@ -144,13 +145,8 @@ class WorkflowsEditorController {
       this.$scope.$digest();
     });
 
-    this.$scope.$on('ServerCommunication.EXECUTION_FINISHED', () => {
-      this._setEditableMode();
-    });
-
     this.$scope.$on('StatusBar.ABORT', () => {
       this.ServerCommunication.sendAbortToWorkflowExchange();
-      this._setEditableMode();
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
@@ -274,6 +270,10 @@ class WorkflowsEditorController {
     this.WorkflowService.getCurrentWorkflow().isRunning = true;
     this.CopyPasteService.setEnabled(false);
     this.isRunning = true;
+    // This event and WorkflowEditor.EDITOR_MODE_SET are used here ONLY for toggle directive, because its
+    // driven by events. toggle directive should probably accept boolean argument. In that case we would
+    // simply pass isRunning property there and would get rid of those two events.
+    this.$rootScope.$broadcast('WorkflowEditor.RUNNING_MODE_SET');
   }
 
   _setEditableMode() {
@@ -282,6 +282,7 @@ class WorkflowsEditorController {
     this.WorkflowService.getCurrentWorkflow().isRunning = false;
     this.CopyPasteService.setEnabled(true);
     this.isRunning = false;
+    this.$rootScope.$broadcast('WorkflowEditor.EDITOR_MODE_SET');
   }
 
   _unbindEditorListeners() {

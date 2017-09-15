@@ -8,8 +8,8 @@
       custom-scroll-bar
       toggle
       toggle-init="!workflow.isRunning"
-      toggle-on="StatusBar.ABORT ServerCommunication.EXECUTION_FINISHED"
-      toggle-off="StatusBar.RUN"
+      toggle-on="WorkflowEditor.EDITOR_MODE_SET"
+      toggle-off="WorkflowEditor.RUNNING_MODE_SET"
       toggle-animate-in="animated fadeOutLeft o-panel--absolute"
       toggle-animate-out="animated fadeInLeft">
     </operation-catalogue>
@@ -43,8 +43,8 @@
       public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
       ng-if="!workflow.getSelectedNode()"
       toggle
-      toggle-on="StatusBar.ABORT ServerCommunication.EXECUTION_FINISHED"
-      toggle-off="StatusBar.RUN"
+      toggle-on="WorkflowEditor.EDITOR_MODE_SET"
+      toggle-off="WorkflowEditor.RUNNING_MODE_SET"
       toggle-animate-in="fadeOutRight o-panel--absolute"
       toggle-animate-out="fadeInRight o-general-panel"
       resizable
