@@ -88,5 +88,15 @@ object CatalogRecorder {
       DOperationCategories.ML.Regression,
       "Cross-validates regression model"
     )
+
+    catalog.registerDOperation[EvaluateRegression](
+      DOperationCategories.ML,
+      "Evaluate Regression"
+    )
+
+    catalog.registerDOperation[ApplyTransformation](
+      DOperationCategories.Utils,
+      "Apply Transformation"
+    )
   }
 }

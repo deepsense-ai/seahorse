@@ -51,7 +51,7 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
       case NameSingleColumnSelection(name) =>
         if (sparkDataFrame.schema.fieldNames.contains(name)) Some(name) else None
       case IndexSingleColumnSelection(index) =>
-        if (index >=0 && index < sparkDataFrame.schema.length) {
+        if (index >= 0 && index < sparkDataFrame.schema.length) {
           Some(sparkDataFrame.schema.fieldNames(index))
         } else {
           None
@@ -243,9 +243,7 @@ object DataFrame {
   /**
    * Converts spark's column type used in schemas to column type.
    */
-  private [DataFrame] def sparkColumnTypeToColumnType(
-      sparkColumnType: sql.types.DataType): ColumnType =
-
+  def sparkColumnTypeToColumnType(sparkColumnType: sql.types.DataType): ColumnType =
     sparkColumnType match {
       case sql.types.DoubleType => ColumnType.numeric
       case sql.types.StringType => ColumnType.string

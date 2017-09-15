@@ -15,7 +15,6 @@ import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.reportlib.model.Table
 
-@Ignore
 class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
 
   val nameColumnName = "name"
@@ -24,7 +23,7 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
   val schemaSeq = Seq(
     StructField(nameColumnName, StringType),
     StructField(targetColumnName, DoubleType),
-    StructField("prediction", DoubleType))
+    StructField(predictionColumnName, DoubleType))
   val schema = StructType(schemaSeq)
   val correctRows = Seq(
     Row("a", 1.0, 1.0),
@@ -110,12 +109,12 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
         "Evaluate regression metrics",
         Some(
           List(
-            "dataFrameSize",
-            "explainedVariance",
-            "meanAbsoluteError",
-            "meanSquaredError",
+            "DataFrame Size",
+            "Explained Variance",
+            "Mean Absolute Error",
+            "Mean Squared Error",
             "r2",
-            "rootMeanSquaredError")),
+            "Root Mean Squared Error")),
         None,
         values
     )

@@ -4,10 +4,7 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import java.math.RoundingMode
 import java.sql.Timestamp
-import java.text.{DecimalFormat, DecimalFormatSymbols}
-import java.util.Locale
 
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.mllib.stat.{MultivariateStatisticalSummary, Statistics}
@@ -16,6 +13,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{ColumnName, Row}
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.reportlib.model
@@ -270,8 +268,8 @@ trait DataFrameReportGenerator {
       structField: StructField)(
       d: Double): String = structField.dataType match {
     case BooleanType => if (d == 0D) false.toString else true.toString
-    case LongType => double2String(d)
-    case DoubleType => double2String(d)
+    case LongType => DoubleUtils.double2String(d)
+    case DoubleType => DoubleUtils.double2String(d)
     case TimestampType =>
       DateTimeConverter.toString(DateTimeConverter.fromMillis(d.toLong))
     case IntegerType if categoricalMetadata.isCategorical(structField.name) =>
@@ -303,19 +301,12 @@ trait DataFrameReportGenerator {
       structField.dataType match {
         case TimestampType => Some(DateTimeConverter.toString(
           DateTimeConverter.fromMillis(row.get(index).asInstanceOf[Timestamp].getTime)))
-        case DoubleType => Some(double2String(row.getDouble(index)))
+        case DoubleType => Some(DoubleUtils.double2String(row.getDouble(index)))
         case IntegerType if categoricalMetadata.isCategorical(index) =>
           Some(categoricalMetadata.mapping(index).idToValue(row.getInt(index)))
         case _ => Some(row(index).toString)
       }
     }
-  }
-
-  private def double2String(d: Double): String = {
-    val formatter: DecimalFormat =
-      new DecimalFormat("#.######", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    formatter.setRoundingMode(RoundingMode.HALF_UP)
-    formatter.format(d)
   }
 }
 
@@ -334,3 +325,4 @@ private case class Quartiles(
   median: Option[String],
   third: Option[String],
   outliers: Seq[String])
+
