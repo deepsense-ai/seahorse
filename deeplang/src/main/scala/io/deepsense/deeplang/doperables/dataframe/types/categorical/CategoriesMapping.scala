@@ -9,8 +9,9 @@ package io.deepsense.deeplang.doperables.dataframe.types.categorical
  * by its id and the id of a value.
  */
 case class CategoriesMapping(valueToId: Map[String, Int], idToValue: Map[Int, String]) {
-  val values = valueToId.keySet
-  val ids = idToValue.keySet
+  private val valueIdPairs = valueToId.toList.sortBy { case (value, _) => value }
+  val values = valueIdPairs.map(_._1)
+  val ids = valueIdPairs.map(_._2)
   val isEmpty: Boolean = valueToId.isEmpty
 
   /**
@@ -52,6 +53,7 @@ case class CategoriesMapping(valueToId: Map[String, Int], idToValue: Map[Int, St
 object CategoriesMapping {
   val empty = CategoriesMapping(Map.empty, Map.empty)
   def apply(values: Seq[String]): CategoriesMapping = {
+    require(values.forall(_ != null), "Mapping can not contain null")
     val zippedWithIndex = values.zipWithIndex
     val valueToId = zippedWithIndex.toMap
     val idToValue = zippedWithIndex.map(_.swap).toMap

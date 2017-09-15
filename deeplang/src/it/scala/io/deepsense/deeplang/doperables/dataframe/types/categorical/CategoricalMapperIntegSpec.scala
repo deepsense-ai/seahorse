@@ -16,7 +16,7 @@ class CategoricalMapperIntegSpec extends DeeplangIntegTestSupport {
     Row("y_abc", "y", "abc"),
     Row("z_abc", "z", "abc"),
     Row("x_ABC", "x", "ABC"),
-    Row("y_ABC", "y", "ABC"),
+    Row("y_null", "y", null),
     Row("z_ABC", "z", "ABC")
   )
 
@@ -41,12 +41,17 @@ class CategoricalMapperIntegSpec extends DeeplangIntegTestSupport {
 
       def expectedCategories(value: String) = {
         val categories = value.split("_")
-        (categories(0), categories(1))
+        val category2 = if (categories(1) == "null") null else categories(1)
+        (categories(0), category2)
       }
 
       categorized.sparkDataFrame.collect().foreach(r => {
         def mapIdToName(column: Int) =
-          categoricalMetadata.mapping(column).idToValue(r.getInt(column))
+          if (r.isNullAt(column)) {
+            null
+          } else {
+            categoricalMetadata.mapping(column).idToValue(r.getInt(column))
+          }
 
         val (expectedCat1, expectedCat2) = expectedCategories(r.getString(0))
         mapIdToName(1) shouldBe expectedCat1

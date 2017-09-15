@@ -46,5 +46,14 @@ class MappingSpec extends UnitSpec {
         valueInFinalMapping shouldBe value
       }
     }
+    "disallow to create a mapping with a null" in {
+      an[IllegalArgumentException] should be thrownBy CategoriesMapping(Seq("a", null, "b"))
+    }
+    "sort values alphabetically" in {
+      val values = Seq("a", "Z", "t", "w", "A")
+      val orderedValues = Seq( "A", "Z", "a", "t", "w")
+      val m = CategoriesMapping(values)
+      m.values shouldBe orderedValues
+    }
   }
 }

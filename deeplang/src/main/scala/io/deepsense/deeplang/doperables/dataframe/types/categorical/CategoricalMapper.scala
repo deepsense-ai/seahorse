@@ -26,6 +26,7 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
   private def distinctColumnValues(column: String): Array[String] =
     sparkDataFrame
       .select(column)
+      .filter(sparkDataFrame(column).isNotNull)
       .distinct
       .map(r => r(0).asInstanceOf[String])
       .collect()
@@ -36,7 +37,7 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
       val mappedSeq = seq.map { case (value, index) =>
         mappings
           .get(index)
-          .map(m => m.valueToId(value.asInstanceOf[String]))
+          .map { m => if (value == null) null else m.valueToId(value.asInstanceOf[String]) }
           .getOrElse(value)
       }
       Row(mappedSeq: _*)
