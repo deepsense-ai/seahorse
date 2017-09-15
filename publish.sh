@@ -48,7 +48,7 @@ function prepare_environment() {
 function build() {
   echo "** Building package **"
   gulp clean
-  gulp build
+  gulp build --dev
 }
 
 function calculate_full_version() {
