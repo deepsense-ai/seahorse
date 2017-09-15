@@ -5,17 +5,17 @@
 
 angular.module('ds.lab').constant('config', {
   // localhost - from docker compose
-  'apiHost': 'http://localhost',
+  'apiHost': window.location.protocol + '//' + window.location.hostname,
   'docsHost': 'https://seahorse.deepsense.io',
-  'notebookHost': 'http://localhost:8080/jupyter',
-  'sessionApiPort': '8080',
+  'notebookHost': window.location.protocol + '//' + window.location.host + '/jupyter',
+  'sessionApiPort': window.location.port,
   'sessionPollingInterval': 1000,
-  'apiPort': '8080',
+  'apiPort': window.location.port,
   'apiVersion': '1.2.0',
   'editorVersion': '1.2.0',
   'urlApiVersion': 'v1',
   'resultsRefreshInterval': 10000,
-  'socketConnectionHost': 'http://localhost:8080/',
+  'socketConnectionHost': window.location.protocol + '//' + window.location.host + '/',
   'socketReconnectionInterval': 1000,
   'mqUser': 'yNNp7VJS',
   'mqPass': '1ElYfGNW'
