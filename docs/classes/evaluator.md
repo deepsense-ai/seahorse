@@ -9,15 +9,14 @@ description: Seahorse documentation homepage
 ---
 ## Introduction
 
-$$Evaluator: DataFrame \rightarrow MetricValue$$
+Evaluator is an abstraction of calculating [DataFrame](../classes/dataframe.html) metrics. It consumes a DataFrame and produces a [MetricValue](../classes/metric_value.html).
 
-Evaluator is an abstraction of calculating `DataFrame` metrics. It consumes a `DataFrame` and produces a `MetricValue`.
+Evaluators can be executed using [Evaluate](../operations/evaluate.html) operation.
 
-Evaluators can be executed by **Evaluate** generic operation.
+![evaluator diagram](../img/evaluator.png){: .img-responsive .centered-image .spacer}
 
 ## Example
+[Regression Evaluator](../operations/regression_evaluator.html) is an operation that outputs an Evaluator. It is passed to Evaluate operation,
+which calculates regression metrics on a previously scored DataFrame.
 
-**Regression Evaluator** is an operation that outputs an `Evaluator`. It is passed to **Evaluate** operation,
-which calculates regression metrics on a previously scored `DataFrame`.
-
-![estimator example](../img/evaluator_example.png){: .img-responsive}
+![evaluator example](../img/evaluator_example.png){: .img-responsive .centered-image .spacer}
