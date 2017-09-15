@@ -21,8 +21,6 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const timeout = require('connect-timeout');
 const reverseProxy = require('./reverse-proxy');
-const authorizationQuota = require('./authorization-middleware/authorization-quota');
-const resendLinkHack = require('./authorization-middleware/resend-link-hack');
 const config = require('./config/config');
 
 const app = express();
@@ -41,13 +39,7 @@ if (config.get('FORCE_HTTPS') === "true") {
 
 app.use(express.static('app/server/html'));
 app.all("/wait.html");
-app.all("/quota.html");
 
-app.all("/authorization/create_account*",
-  resendLinkHack.forwardResendActivationLinkToForgotPasswordLink,
-  authorizationQuota.forward,
-  reverseProxy.forward
-);
 app.all("/authorization/**",
   reverseProxy.forward
 );
