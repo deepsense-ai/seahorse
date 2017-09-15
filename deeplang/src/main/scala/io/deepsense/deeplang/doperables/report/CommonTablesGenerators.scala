@@ -20,14 +20,26 @@ import org.apache.spark.mllib.linalg.DenseMatrix
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.params.ParamMap
+import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.utils.SparkTypeConverter.sparkAnyToString
 import io.deepsense.reportlib.model._
+
 object CommonTablesGenerators {
 
+  private def paramMapToDescriptionLists(params: ParamMap): List[List[Option[String]]] = {
+    params.toSeq.flatMap(
+      pair => pair.value match {
+        case choice: Choice =>
+          Seq(List(Some(pair.param.name), Some(choice.toString), Some(pair.param.description))) ++
+            paramMapToDescriptionLists(choice.extractParamMap())
+        case value =>
+          Seq(List(Some(pair.param.name), Some(value.toString), Some(pair.param.description)))
+      }
+    ).toList
+  }
+
   def params(params: ParamMap): Table = {
-    val values = params.toSeq.map(
-      pair =>
-        List(Some(pair.param.name), Some(pair.value.toString), Some(pair.param.description))).toList
+    val values = paramMapToDescriptionLists(params)
     Table(
       name = "Parameters",
       description = "Parameters",
