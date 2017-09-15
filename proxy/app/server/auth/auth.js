@@ -9,12 +9,9 @@ var config = require('../config/config');
 var passport = oauth2.passport;
 var strategy = oauth2.strategy;
 
-var sso = config.getSso();
-
 module.exports = {
   init: init,
   login: login,
-  checkLoggedIn: checkLoggedIn
 };
 
 function init(app) {
@@ -42,7 +39,7 @@ function init(app) {
     req.logout();
     strategy.reset();
     var oauthPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: "oauth"})
-    res.redirect(sso.logoutUri+"?redirect=" + oauthPage);
+    res.redirect(config.oauth.logoutUri+"?redirect=" + oauthPage);
   });
 }
 
@@ -56,13 +53,5 @@ function login(req, res, next) {
     res.redirect('/oauth');
   } else {
     next();
-  }
-}
-
-function checkLoggedIn(req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    res.status(401).send('session_expired');
   }
 }

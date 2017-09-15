@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2016, CodiLime Inc.
  */
-var request = require('request'),
+const request = require('request'),
     _ = require('underscore'),
     url = require('url'),
     util = require('util'),
@@ -11,50 +11,29 @@ var request = require('request'),
     httpException = require('./utils/http-exception'),
     gatewayErrors = require('./gateway-errors');
 
-var basicAuthCredentials = new Buffer(
+const basicAuthCredentials = new Buffer(
       config.get('WM_AUTH_USER') + ':' + config.get('WM_AUTH_PASS')
     ).toString('base64');
 
-var httpProxy = require('http-proxy');
-var proxy = httpProxy.createProxyServer({ ws : true });
+const httpProxy = require('http-proxy');
+const proxy = httpProxy.createProxyServer({ ws : true });
 proxy.on('error', function(err, req) {
   console.error(err, req.url);
 });
 
-function getHost(service, path) {
-  if(!service) {
-    throw 'Service must be defined';
-  }
-
-  const userProvidedService = config.getUserProvidedSerice(service.name);
-  return userProvidedService.host;
-}
-
-function getServiceName(requestUrl) {
-  return _.find(serviceMapping, function(service){
-    return requestUrl.match(service.path);
-  });
-}
-
 function getTargetHost(req, res) {
-  var path = req.url;
-  var service = getServiceName(path);
-  if(!service) {
+  const path = req.url;
+
+  const service = serviceMapping.getServiceForRequest(path);
+  if(_.isUndefined(service)) {
     throw404(res, util.format("No service found for the path: %s", JSON.stringify(path)));
     return;
   }
-
-  var host = getHost(service, path);
-  if(!host) {
-    throw404(res, util.format("No route found for service  %s", JSON.stringify(service)));
-    return;
-  }
-
-  return host;
+  return service.host
 }
 
-function forwardRequest(req, res) {
-  var service = getServiceName(req.url);
+function forward(req, res) {
+  const service = serviceMapping.getServiceForRequest(req.url);
   if (service.auth === 'basic') {
     req.headers['authorization'] = 'basic ' + basicAuthCredentials;
   }
@@ -75,18 +54,19 @@ function forwardRequest(req, res) {
   req.headers['x-forwarded-host'] = req.headers['host'];
   req.clearTimeout();
 
-  var options = {
+  const options = {
     target: getTargetHost(req, res),
     timeout: config.get('timeout'),
-  }
-  if (typeof service.proxyTimeout !== 'undefined') {
+  };
+
+  if(!_.isUndefined(service.proxyTimeout)) {
       options.proxyTimeout = service.proxyTimeout;
   }
 
   proxy.web(req, res, options, function (e) {
         console.error(e);
-        if (typeof service.timeoutRedirectionPage !== 'undefined') {
-          var waitPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: "wait.html"})
+        if (!_.isUndefined(service.timeoutRedirectionPage)) {
+          const waitPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: service.timeoutRedirectionPage});
           res.writeHead(302, {'Location': waitPage});
           res.end();
         }
@@ -106,7 +86,7 @@ function handleProxyError(res, serviceName, path) {
       return;
     }
 
-    var error = gatewayErrors.getError(httpError.code);
+    const error = gatewayErrors.getError(httpError.code);
     httpException.throw(res, error.code, error.title, util.format(error.description, serviceName, path), httpError);
   };
 }
@@ -116,6 +96,6 @@ function throw404(res, message) {
 }
 
 module.exports = {
-  forwardWebSocket: forwardWebSocket,
-  forward: forwardRequest
+  forwardWebSocket,
+  forward
 };

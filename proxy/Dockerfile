@@ -5,23 +5,17 @@ RUN apt-get update && \
     apt-get install --no-install-recommends --no-install-suggests -y git && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir -p /opt/docker
+WORKDIR /opt/docker
 
-COPY package.json /usr/src/app/
+COPY package.json .
 RUN npm install
 
-COPY . /usr/src/app
+COPY . .
+# TODO Building should occur before ever adding js files as docker layer (or we should squash some layers)
+# Otherwise someone might access source code
+RUN npm run build && \
+    rm -rf app
 
-RUN  node_modules/.bin/obfuscator --root app/server/ \
-       --entry app/server/server.js \
-       $(find app/ -name "*.js") \
-       $(find app/ -name "*.json") \
-       --out app/server/server.js.obfuscated
-
-RUN chmod +x app/server/server.js.obfuscated
-RUN find app -name "*.js" | xargs rm
-RUN find app -name "*.json" | xargs rm
-
-CMD [ "npm", "start"]
-
+RUN chmod +x start_proxy.sh
+CMD ["./start_proxy.sh"]

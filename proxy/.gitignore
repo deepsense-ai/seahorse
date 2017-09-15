@@ -19,3 +19,7 @@ src/coverage
 .settings
 .classpath
 .project
+
+# npm building
+lib/*
+dist/

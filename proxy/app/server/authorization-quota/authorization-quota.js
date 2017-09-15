@@ -1,23 +1,19 @@
 /**
  * Copyright (c) 2016, CodiLime Inc.
  */
-var session = require('express-session');
-var config = require('../config/config');
-var request = require('request');
-
-var sso = config.getSso();
+const session = require('express-session');
+const config = require('../config/config');
+const request = require('request');
 
 /*
  * When user quota is changed also change numbers in Seahorse documentation
  * We need one account for admin, so user_quota = number_of_user + 1 (for admin)
  */
-var user_quota = 2
+const user_quota = 2;
 
 module.exports = {
     forward: checkUserQuota,
 };
-
-
 
 function getToken(success, failure, tokenUri, client_id, client_secret) {
 
@@ -42,10 +38,10 @@ function getToken(success, failure, tokenUri, client_id, client_secret) {
 }
 
 function checkUserQuota(req, res, next) {
-    var handleScimUserResponse = function(error, response, body) {
+    const handleScimUserResponse = function(error, response, body) {
         if (!error && response.statusCode == 200) {
           console.error(body);
-          users = JSON.parse(body)
+          const users = JSON.parse(body)
           if (users.totalResults < user_quota) {
               next()
           } else {
@@ -54,17 +50,17 @@ function checkUserQuota(req, res, next) {
         } else {
           res.redirect('/quota.html?limit_code=404');
         }
-    }
+    };
 
-    var callUsersUri = function(key) {
-        var usersUri = sso.tokenUri + "/../../Users"
+    const callUsersUri = function(key) {
+        const usersUri = config.oauth.tokenUri + "/../../Users"
         request.get(usersUri, handleScimUserResponse).auth(null, null, true, key);
-    }
+    };
 
-    var failure = function(error) {
+    const failure = function(error) {
         console.error('Cannot connect to auth server');
         res.redirect('/quota.html?limit_code=401');
-    }
+    };
 
-    getToken(callUsersUri, failure, sso.tokenUri, "admin", "adminsecret");
+    getToken(callUsersUri, failure, config.oauth.tokenUri, "admin", "adminsecret");
 }

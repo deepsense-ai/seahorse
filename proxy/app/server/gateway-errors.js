@@ -25,5 +25,5 @@ function getError(code) {
 }
 
 module.exports = {
-  getError: getError
+  getError
 };

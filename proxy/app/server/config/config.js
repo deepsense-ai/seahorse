@@ -1,33 +1,40 @@
 /**
  * Copyright (c) 2016, CodiLime Inc.
  */
-var _ = require('underscore');
-var defaults = require('./default-config.json');
+const _ = require('underscore');
+const defaults = require('./default-config.json');
+const serviceMapping = require('./service-mapping');
+const thr = require('throw');
 
-var thr = require('throw');
+const oauth = {
+  "clientSecret": "seahorse01",
+  "tokenUri": `${serviceMapping.authorization.host}/authorization/oauth/token`,
+  "clientId": "Seahorse",
+  "logoutUri": "/authorization/logout.do",
+  "authorizationUri": "/authorization/oauth/authorize",
+  "userInfoUri": `${serviceMapping.authorization.host}/authorization/userinfo`
+};
 
-var vcapServices = JSON.parse(process.env.VCAP_SERVICES || thr('VCAP_SERVICES env is required'));
-
-var userProvided = vcapServices['user-provided'] || [];
-
-function getUserProvidedSerice(name) {
-  var service = _.findWhere(userProvided, { name: name });
-  return service && service.credentials;
+function getMandatory(name) {
+  return getVariable(name) || thr(`${name} must be defined.`);
 }
 
 function getVariable(name) {
   if(!name || !_.isString(name)) {
     return null;
   }
-  var value = process.env[name.toUpperCase()];
-  if(!value) {
-    value = defaults[name.toLowerCase()];
+  const value = process.env[name.toUpperCase()];
+  if(value) {
+    return value;
+  } else {
+    return defaults[name.toLowerCase()];
   }
-  return value;
 }
 
+
+
 module.exports = {
-  getUserProvidedSerice: getUserProvidedSerice,
-  getSso: _.partial(getUserProvidedSerice, 'sso'),
-  get: getVariable
+  oauth,
+  getMandatory,
+  get: getVariable,
 };

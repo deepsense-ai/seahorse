@@ -44,6 +44,9 @@ trait BatchTestSupport
     val envSettings = getEnvSettings(cluster)
     val specialFlags = getSpecialFlags(cluster)
     val masterString = getMasterUri(cluster)
+    val additionalClusterOptions: Seq[String] = cluster.executorMemory.toSeq.flatMap {
+      memory => Seq("--executor-memory", memory)
+    }
 
     val exportsCommandFlat = envSettings.map{
       case(k, v) => s"export $k=$v"
@@ -55,7 +58,7 @@ trait BatchTestSupport
         "--driver-class-path", weJarPath,
         "--class", "io.deepsense.workflowexecutor.WorkflowExecutorApp",
         "--master", masterString,
-        "--files", workflowPath,
+        "--files", workflowPath) ++ additionalClusterOptions ++ Seq(
         if (additionalJars.nonEmpty) {
           "--jars " + additionalJars.map(_.toString).mkString("\"", ",", "\"")
         } else {
