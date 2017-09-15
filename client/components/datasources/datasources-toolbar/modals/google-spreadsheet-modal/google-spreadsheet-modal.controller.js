@@ -19,7 +19,9 @@ class GoogleSpreadsheetModalController {
         datasourceType: 'googleSpreadsheet',
         googleSpreadsheetParams: {
           googleSpreadsheetId: '',
-          googleServiceAccountCredentials: ''
+          googleServiceAccountCredentials: '',
+          includeHeader: false,
+          convert01ToBoolean: false
         }
       };
     }

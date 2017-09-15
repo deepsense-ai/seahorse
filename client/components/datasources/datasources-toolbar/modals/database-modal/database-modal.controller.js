@@ -12,18 +12,27 @@ class DatabaseModalController {
     this.drivers = ['com.mysql.jdbc.driver', 'com.postgresql.jdbc.driver', 'com.oracle.jdbc.driver'];
     this.copyFromQueryInput = true;
     this.sqlInstruction = '';
-    this.type = 'table';
 
     if (datasource) {
       this.originalDatasource = datasource;
       this.datasourceParams = datasource.params;
+      this.copyFromQueryInput = false;
+
+      if (datasource.params.jdbcParams.query) {
+        this.type = 'query';
+        this.sqlInstruction = datasource.params.jdbcParams.query;
+      } else if (datasource.params.jdbcParams.table) {
+        this.type = 'table';
+        this.sqlInstruction = datasource.params.jdbcParams.table;
+      }
     } else {
+      this.type = 'table';
       this.datasourceParams = {
         name: '',
         visibility: 'privateVisibility',
         datasourceType: 'jdbc',
         jdbcParams: {
-          driver: '',
+          driver: this.drivers[0],
           url: '',
           query: '',
           table: ''

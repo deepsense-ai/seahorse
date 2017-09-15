@@ -7,7 +7,6 @@
     <div class="datasources-modal__body-row half-width">
       <label class="title">Driver</label>
       <select
-        ng-init="$ctrl.datasourceParams.jdbcParams.driver = $ctrl.drivers[0]"
         ng-options="driver for driver in $ctrl.drivers"
         ng-model="$ctrl.datasourceParams.jdbcParams.driver"
         class="form-control"
