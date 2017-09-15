@@ -6,9 +6,14 @@
 
 'use strict';
 
+let GenericValidator = require('./common-generic-validator.js');
+
 function NumericRangeValidator(validatorSchema) {
   this.schema = validatorSchema;
 }
+
+NumericRangeValidator.prototype = new GenericValidator();
+NumericRangeValidator.prototype.constructor = GenericValidator;
 
 NumericRangeValidator.prototype.validate = function(value) {
   if (typeof value !== 'number') {
@@ -28,16 +33,38 @@ NumericRangeValidator.prototype.validate = function(value) {
       if (!step) {
         return true;
       } else {
-        let isInt = (n) => n % 1 === 0;
-        while (!isInt(value) || !isInt(rangeBegin) || !isInt(rangeEnd)) {
-          value *= 10;
-          rangeBegin *= 10;
-          rangeEnd *= 10;
+        /*
+         * (value - rangeBegin) needs to be a multiple of step
+         */
+
+        /* returns the length of the decimal part of the number */
+        let getLengthOfDecimalPart = (num) => {
+          let numStr = num.toString();
+          let commaPos = numStr.indexOf('.');
+          return commaPos === -1 ? -1 : numStr.length - commaPos - 1;
+        };
+
+        /* returns num * 10^power */
+        let getMultipliedNumber = (num, power) => {
+          let lengthOfDecimalPart = getLengthOfDecimalPart(num);
+          let multipliedNumberStr = num.toString().replace('.', '').concat(_.repeat('0', power - lengthOfDecimalPart));
+          return parseInt(multipliedNumberStr, 10);
+        };
+
+        let valueCommaPos = getLengthOfDecimalPart(value);
+        let rangeBeginCommaPos = getLengthOfDecimalPart(rangeBegin);
+        let stepCommaPos = getLengthOfDecimalPart(step);
+        let maxCommaPos = Math.max.call(null, valueCommaPos, rangeBeginCommaPos, stepCommaPos);
+
+        if (maxCommaPos === -1) {
+          return (value - rangeBegin) % step === 0;
+        } else {
+          let multipliedValue = getMultipliedNumber(value, maxCommaPos);
+          let multipliedRangeBegin = getMultipliedNumber(rangeBegin, maxCommaPos);
+          let multipliedStep = getMultipliedNumber(step, maxCommaPos);
+
+          return (multipliedValue - multipliedRangeBegin) % multipliedStep === 0;
         }
-
-        let r = (value - rangeBegin) / step;
-
-        return isInt(r);
       }
     }
   }

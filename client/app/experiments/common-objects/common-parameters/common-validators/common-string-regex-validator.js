@@ -6,9 +6,14 @@
 
 'use strict';
 
+let GenericValidator = require('./common-generic-validator.js');
+
 function StringRangeValidator(validatorSchema) {
   this.schema = validatorSchema;
 }
+
+StringRangeValidator.prototype = new GenericValidator();
+StringRangeValidator.prototype.constructor = GenericValidator;
 
 StringRangeValidator.prototype.validate = function(value) {
   if (typeof value !== 'string') {

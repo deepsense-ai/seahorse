@@ -6,9 +6,14 @@
 
 'use strict';
 
+let GenericValidator = require('./common-generic-validator.js');
+
 function NoopValidator() {}
 
-NoopValidator.prototype.validate = function(value) {
+NoopValidator.prototype = new GenericValidator();
+NoopValidator.prototype.constructor = GenericValidator;
+
+NoopValidator.prototype.validate = function() {
   return true;
 };
 
