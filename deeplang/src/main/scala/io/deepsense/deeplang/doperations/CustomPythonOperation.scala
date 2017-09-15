@@ -29,7 +29,7 @@ case class CustomPythonOperation()
 
   override val id: Id = "a721fe2a-5d7f-44b3-a1e7-aade16252ead"
 
-  override val name: String = "Custom Python operation"
+  override val name: String = "Custom Python Operation"
 
   val codeParameter = CodeSnippetParameter(
     description = "Operation source code",

@@ -18,6 +18,7 @@ List of all currently supported operations:
   * [Read DataFrame](operations/read_dataframe.html)
   * [Write DataFrame](operations/write_dataframe.html)
 * Transformations
+  * [Custom Python Operation](operations/custom_python_operation.html)
   * [Create Mathematical Transformation](operations/create_mathematical_transformation.html)
   * [Apply Transformation](operations/apply_transformation.html)
   * [Train Normalizer](operations/train_normalizer.html)
