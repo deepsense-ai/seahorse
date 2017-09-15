@@ -45,7 +45,7 @@ COMMIT_HASH=`git rev-parse HEAD`
 DOCKER_REGISTRY="docker-registry.intra.codilime.com"
 QUAY_REGISTRY="quay.io"
 CL_NAMESPACE="tap"
-QUAY_NAMESPACE="intelseahorse"
+QUAY_NAMESPACE="deepsense_io"
 TAG_VERSION="$PROJECT_NAME:$GIT_BRANCH-$TIMESTAMP-$COMMIT_HASH"
 TAG_LATEST="$PROJECT_NAME:$GIT_BRANCH-latest"
 
