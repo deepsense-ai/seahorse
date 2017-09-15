@@ -6,7 +6,8 @@ description: Count Vectorizer
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Extracts a vocabulary from a given collection of documents and generates a vector of token counts for each.
+Extracts the vocabulary from a given collection of documents and generates a vector
+of token counts for each document.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.CountVectorizer">org.apache.spark.ml.feature.CountVectorizer documentation</a>.
 
@@ -81,10 +82,10 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <td><code>min term frequency</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>A filter to ignore rare words in a document. For each document, terms with
-frequency/count less than the given threshold are ignored. If this is an integer >= 1,
+a frequency/count less than the given threshold are ignored. If this is an integer >= 1,
 then this specifies a count (of times the term must appear in the document); if this is
-a double in [0,1), then this specifies a fraction (out of the document's token count).
-Note that the parameter is only used in transform of CountVectorizerModel and does not
+a double in [0,1), then it specifies a fraction (out of the document's token count).
+Note that the parameter is only used in transform of CountVectorizer model and does not
 affect fitting.</td>
 </tr>
 

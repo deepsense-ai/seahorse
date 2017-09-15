@@ -24,5 +24,7 @@ class Word2Vec extends EstimatorAsOperation[Word2VecEstimator] {
 
   override val id: Id = "131c6765-6b60-44c7-9a09-0f79fbb4ad2f"
   override val name: String = "Word2Vec"
-  override val description: String = "Transforms a word into a code for further processing."
+  override val description: String =
+    """Transforms vectors of words into vectors of numeric codes for the purpose of further
+      |processing by NLP or machine learning algorithms.""".stripMargin
 }

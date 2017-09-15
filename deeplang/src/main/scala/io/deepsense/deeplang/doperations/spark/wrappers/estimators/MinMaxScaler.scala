@@ -24,7 +24,7 @@ class MinMaxScaler extends EstimatorAsOperation[MinMaxScalerEstimator] {
 
   override val id: Id = "a63b6de3-793b-4cbd-ae81-76de216d90d5"
   override val name: String = "Min-Max Scaler"
-  override val description: String = "Rescales each feature individually to a common " +
-    "range [min, max] linearly using column summary statistics " +
-    "which is also known as Min-Max normalization or rescaling"
+  override val description: String =
+    """Linearly rescales each feature to a common range [min, max] using column summary statistics.
+      |The operation is also known as Min-Max normalization or rescaling.""".stripMargin
 }

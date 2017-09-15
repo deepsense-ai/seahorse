@@ -6,7 +6,8 @@ description: Min-Max Scaler
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Rescales each feature individually to a common range [min, max] linearly using column summary statistics which is also known as Min-Max normalization or rescaling.
+Linearly rescales each feature to a common range [min, max] using column summary statistics.
+The operation is also known as Min-Max normalization or rescaling.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.MinMaxScaler">org.apache.spark.ml.feature.MinMaxScaler documentation</a>.
 
@@ -62,13 +63,13 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>min</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Lower bound after transformation, shared by all features.</td>
+<td>The lower bound after transformation, shared by all features.</td>
 </tr>
 
 <tr>
 <td><code>max</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Upper bound after transformation, shared by all features.</td>
+<td>The upper bound after transformation, shared by all features.</td>
 </tr>
 
 <tr>

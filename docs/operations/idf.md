@@ -62,7 +62,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>min documents frequency</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The minimum of documents in which a term should appear.</td>
+<td>The minimum number of documents in which a term should appear.</td>
 </tr>
 
 <tr>

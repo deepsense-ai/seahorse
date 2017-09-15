@@ -6,7 +6,8 @@ description: Word2Vec
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Transforms a word into a code for further processing.
+Transforms vectors of words into vectors of numeric codes for the purpose of further
+processing by NLP or machine learning algorithms.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.Word2Vec">org.apache.spark.ml.feature.Word2Vec documentation</a>.
 
