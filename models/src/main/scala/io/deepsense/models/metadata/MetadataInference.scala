@@ -30,13 +30,13 @@ case class MetadataInferenceResult(
 
 object MetadataInference {
   def run(
-      experiment: Workflow,
+      workflow: Workflow,
       nodeId: Node.Id,
       portIndex: Int,
       baseContext: InferContext): MetadataInferenceResult = {
 
     val inferContext = InferContext(baseContext, true)
-    val singlePortInferenceResult = experiment.graph.inferKnowledge(nodeId, portIndex, inferContext)
+    val singlePortInferenceResult = workflow.graph.inferKnowledge(nodeId, portIndex, inferContext)
 
     MetadataInferenceResult(
       singlePortInferenceResult.knowledge.types.toList.map(

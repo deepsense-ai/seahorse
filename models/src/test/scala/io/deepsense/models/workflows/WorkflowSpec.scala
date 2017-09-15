@@ -27,22 +27,22 @@ class WorkflowSpec
   with Matchers
   with MockitoSugar {
 
-  "Experiment.computeExperimentState" should {
+  "Workflow.computeWorkflowState" should {
     "return Completed on empty graph" in {
-      val experiment = newExperiment(Set.empty)
-      experiment.updateState().state shouldBe Workflow.State.completed
+      val workflow = newWorkflow(Set.empty)
+      workflow.updateState().state shouldBe Workflow.State.completed
     }
     "return Running on graph with at least one running node" is pending
     "return Draft if all nodes are in draft" in {
-      val experiment = newExperiment(Set(
+      val workflow = newWorkflow(Set(
         newNode().markDraft,
         newNode().markDraft))
-      experiment.updateState().state shouldBe Workflow.State.draft
+      workflow.updateState().state shouldBe Workflow.State.draft
     }
     "return appropriate status for graph" is pending
   }
 
-  "Experiment" should {
+  "Workflow" should {
     "mark itself and all not finished nodes as aborted" is pending
   }
 
@@ -51,7 +51,7 @@ class WorkflowSpec
     Node(Node.Id.randomId, op)
   }
 
-  private def newExperiment(nodes: Set[Node]): Workflow = Workflow(
+  private def newWorkflow(nodes: Set[Node]): Workflow = Workflow(
     id = Workflow.Id.randomId,
     name = "some name",
     tenantId = "some tenant",

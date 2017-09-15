@@ -21,7 +21,7 @@ import org.joda.time.DateTime
 /**
  * Basic information about entity.
  * @param saved Indicates if entity should be visible to end-user. This can be set to false
- *              if this entity is intermediate result of some experiment and not explicitly
+ *              if this entity is intermediate result of some workflow and not explicitly
  *              saved by user.
  */
 case class EntityInfo(

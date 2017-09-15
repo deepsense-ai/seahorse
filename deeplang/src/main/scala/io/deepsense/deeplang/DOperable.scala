@@ -24,7 +24,7 @@ import spray.json._
 /**
  * Objects of classes with this trait can be used in two ways.
  * 1. It can be object on which you can perform DOperations.
- * 2. It can be used to infer knowledge about objects that will be used later in experiment,
+ * 2. It can be used to infer knowledge about objects that will be used later in workflow,
  * before it's execution.
  * In second case, only metadata field should be used.
  */

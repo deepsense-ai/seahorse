@@ -21,8 +21,8 @@ object FailureCode extends Enumeration {
 
   val NodeFailure = Value(1)
   val LaunchingFailure = Value(2)
-  val ExperimentNotFound = Value(3)
-  val CannotUpdateRunningExperiment = Value(4)
+  val WorkflowNotFound = Value(3)
+  val CannotUpdateRunningWorkflow = Value(4)
   val EntityNotFound = Value(5)
   val UnexpectedError = Value(6)
   val IllegalArgumentException = Value(7)

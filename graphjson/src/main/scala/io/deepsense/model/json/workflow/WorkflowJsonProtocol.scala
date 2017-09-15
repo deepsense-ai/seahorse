@@ -54,7 +54,7 @@ trait WorkflowJsonProtocol
     override def write(obj: Graph): JsValue = obj.toJson(GraphWriter)
   }
 
-  implicit val experimentErrorFormat = jsonFormat5(FailureDescription.apply)
+  implicit val workflowErrorFormat = jsonFormat5(FailureDescription.apply)
 
   implicit object WorkflowFormat extends RootJsonFormat[Workflow] {
 
@@ -87,30 +87,30 @@ trait WorkflowJsonProtocol
         val created = fields(Created).convertTo[DateTime]
         val updated = fields(Updated).convertTo[DateTime]
         Workflow(id, tenantId, name, graph, created, updated, description)
-      case x => throw new DeserializationException("Could not read experiment. " +
+      case x => throw new DeserializationException("Could not read workflow. " +
         s"Expected JsObject but got $x")
     }
 
-    override def write(experiment: Workflow): JsValue = {
-      val knowledge = experiment.graph.inferKnowledge(inferContext)
+    override def write(workflow: Workflow): JsValue = {
+      val knowledge = workflow.graph.inferKnowledge(inferContext)
       JsObject(
-        Id -> experiment.id.value.toString.toJson,
-        TenantId -> experiment.tenantId.toJson,
-        Name -> experiment.name.toJson,
-        Description -> experiment.description.toJson,
-        Graph -> experiment.graph.toJson(graphFormat),
-        Created -> experiment.created.toJson,
-        Updated -> experiment.updated.toJson,
+        Id -> workflow.id.value.toString.toJson,
+        TenantId -> workflow.tenantId.toJson,
+        Name -> workflow.name.toJson,
+        Description -> workflow.description.toJson,
+        Graph -> workflow.graph.toJson(graphFormat),
+        Created -> workflow.created.toJson,
+        Updated -> workflow.updated.toJson,
         State -> JsObject(
-          Status -> JsString(experiment.state.status.toString),
-          StateError -> experiment.state.error.toJson,
+          Status -> JsString(workflow.state.status.toString),
+          StateError -> workflow.state.error.toJson,
           Nodes -> JsObject(
-            experiment.graph.nodes.map {node =>
+            workflow.graph.nodes.map {node =>
               node.id.value.toString -> node.state.toJson
             }.toMap)
         ),
         Knowledge -> JsObject(
-          experiment.graph.nodes.map {node =>
+          workflow.graph.nodes.map {node =>
             val inferenceResult = knowledge.getResult(node.id)
             node.id.value.toString ->
               JsObject(
@@ -137,12 +137,12 @@ trait WorkflowJsonProtocol
         knowledge.types.toSeq.map(operable => operable.inferredMetadata))
   }
 
-  implicit val inputExperimentFormat = jsonFormat3(InputWorkflow.apply)
+  implicit val inputWorkflowFormat = jsonFormat3(InputWorkflow.apply)
   implicit val countFormat = jsonFormat2(Count)
-  implicit val experimentsListFormat = jsonFormat2(WorkflowsList)
-  val experimentEnvelopeLabel = "experiment"
-  implicit val experimentEnvelopeFormat =
-    new EnvelopeJsonFormat[Workflow](experimentEnvelopeLabel)
-  implicit val inputExperimentEnvelopeFormat =
-    new EnvelopeJsonFormat[InputWorkflow](experimentEnvelopeLabel)
+  implicit val workflowsListFormat = jsonFormat2(WorkflowsList)
+  val workflowEnvelopeLabel = "experiment"
+  implicit val workflowEnvelopeFormat =
+    new EnvelopeJsonFormat[Workflow](workflowEnvelopeLabel)
+  implicit val inputWorkflowEnvelopeFormat =
+    new EnvelopeJsonFormat[InputWorkflow](workflowEnvelopeLabel)
 }

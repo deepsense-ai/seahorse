@@ -29,7 +29,7 @@ import io.deepsense.models.workflows.Workflow.State
 import io.deepsense.models.workflows.Workflow.Status.Status
 
 /**
- * Experiment model.
+ * Workflow model.
  */
 @SerialVersionUID(1)
 case class Workflow(
@@ -47,19 +47,19 @@ case class Workflow(
   with Logging {
 
   /**
-   * Creates a copy of the experiment with name, graph, updated, and
-   * description fields updated to reflect inputExperiment and updateDateTime
+   * Creates a copy of the workflow with name, graph, updated, and
+   * description fields updated to reflect inputWorkflow and updateDateTime
    * input parameters' values.
    *
-   * @param inputExperiment The input experiment to update with.
-   * @return Updated version of an experiment.
+   * @param inputWorkflow The input workflow to update with.
+   * @return Updated version of an workflow.
    */
-  def updatedWith(inputExperiment: InputWorkflow, updateDateTime: DateTime): Workflow = {
+  def updatedWith(inputWorkflow: InputWorkflow, updateDateTime: DateTime): Workflow = {
     copy(
-      name = inputExperiment.name,
-      graph = inputExperiment.graph,
+      name = inputWorkflow.name,
+      graph = inputWorkflow.graph,
       updated = updateDateTime,
-      description = inputExperiment.description)
+      description = inputWorkflow.description)
   }
 
   def withNode(node: Node): Workflow =
@@ -92,12 +92,12 @@ case class Workflow(
       failureTitle,
       Some(reason.toString),
       FailureDescription.stacktraceDetails(reason.getStackTrace))
-    val experimentFailureDetails = FailureDescription(
+    val workflowFailureDetails = FailureDescription(
       errorId,
       NodeFailure,
       Workflow.NodeFailureMessage)
     copy(graph = this.graph.markAsFailed(nodeId, nodeFailureDetails))
-      .markFailed(experimentFailureDetails)
+      .markFailed(workflowFailureDetails)
   }
 
   def readyNodes: List[Node] = graph.readyNodes
@@ -141,7 +141,7 @@ object Workflow {
   type Id = models.Id
   val Id = models.Id
 
-  val NodeFailureMessage = "One or more nodes failed in the experiment"
+  val NodeFailureMessage = "One or more nodes failed in the workflow"
 
   object Status extends Enumeration {
     type Status = Value
