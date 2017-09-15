@@ -3,7 +3,7 @@
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 
 /* @ngInject */
-function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDataframe = false, DeleteModalService) {
+function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDataframe, DeleteModalService) {
   const vm = this;
 
   vm.loading = true;
@@ -12,21 +12,25 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
   vm.uploadedFiles = [];
   vm.canChooseDataframe = canChooseDataframe;
 
-  vm.search = search;
   vm.openFileBrowser = openFileBrowser;
   vm.onFileSelectedHandler = onFileSelectedHandler;
   vm.selectDataframe = selectDataframe;
+  vm.getFilesForUri = getFilesForUri;
+  vm.goToParentDirectory = goToParentDirectory;
   vm.deleteFile = deleteFile;
   vm.deleteUploadedFile = deleteUploadedFile;
   vm.close = close;
 
-  $scope.$watch(LibraryService.getAll, (newValue) => {
-    vm.dataframes = newValue;
-    if (vm.dataframes && vm.dataframes.length === 0) {
-      vm.message = 'There are no files in library. Upload files in order to use them as your dataframes.';
-    } else {
-      vm.message = '';
-    }
+  $scope.$watch(() => LibraryService.getDirectoryContent(), (newValue) => {
+    handleResults(newValue);
+  });
+
+  $scope.$watch(() => LibraryService.getSearchResults(), (newValue) => {
+    vm.searchResults = newValue;
+  });
+
+  $scope.$watchGroup([() => vm.filterString, () => vm.currentDirName], () => {
+    LibraryService.searchFilesInDirectory(vm.filterString);
   });
 
   $scope.$watch(LibraryService.getUploadingFiles, (newValue) => {
@@ -35,18 +39,13 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
   }, true);
 
   LibraryService.fetchAll()
-    .then((result) => {
-      vm.dataframes = result;
+    .then(() => {
       vm.loading = false;
     })
     .catch(() => {
       vm.loading = false;
       vm.message = 'There was an error during downloading list of files.';
     });
-
-  function search(dataframe) {
-    return !vm.filterString || dataframe.name.toLowerCase().includes(vm.filterString.toLowerCase());
-  }
 
   function openFileBrowser() {
     document.getElementById('uploader-input').click();
@@ -62,19 +61,27 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
     }
   }
 
-  function deleteFile(fileName) {
+  function getFilesForUri(uri) {
+    LibraryService.getDirectoryContent(uri);
+  }
+
+  function goToParentDirectory() {
+    vm.getFilesForUri(_.last(vm.parents).uri);
+  }
+
+  function deleteFile(file) {
     DeleteModalService.handleDelete(() => {
-      LibraryService.removeFile(fileName)
+      LibraryService.removeFile(file)
         .then(() => {
-          LibraryService.removeUploadingFileByName(fileName);
+          LibraryService.removeUploadingFile(file);
         });
     }, COOKIE_NAME);
   }
 
-  function deleteUploadedFile(fileName) {
+  function deleteUploadedFile(file) {
     DeleteModalService.handleDelete(() => {
-      LibraryService.removeFile(fileName).then(() => {
-        LibraryService.removeUploadingFileByName(fileName);
+      LibraryService.removeFile(file).then(() => {
+        LibraryService.removeUploadingFile(file);
       });
     }, COOKIE_NAME);
   }
@@ -83,6 +90,27 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
     $uibModalInstance.dismiss();
   }
 
+  function handleResults(result) {
+    if (!result) return;
+
+    vm.directories = getSortedItemsByType(result.items, 'directory');
+    vm.files = getSortedItemsByType(result.items, 'file');
+
+    vm.parents = result.parents;
+    vm.currentDirName = result.name;
+
+    if (vm.files && vm.files.length === 0) {
+      vm.message = 'There are no files in this directory.';
+    } else {
+      vm.message = '';
+    }
+  }
+
+  function getSortedItemsByType(allItems, type) {
+    return _.sortBy(allItems.filter((item) => {
+      return item.kind === type;
+    }), 'name');
+  }
 }
 
 exports.inject = function (module) {

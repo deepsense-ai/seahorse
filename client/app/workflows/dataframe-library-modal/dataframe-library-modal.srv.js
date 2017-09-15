@@ -12,6 +12,7 @@ function DataframeLibraryModalService($uibModal, LibraryService) {
     return $uibModal.open({
       animation: false,
       templateUrl: tpl,
+      size: 'lg',
       controller: 'DataframeLibraryModalCtrl',
       controllerAs: 'controller',
       backdrop: 'static',

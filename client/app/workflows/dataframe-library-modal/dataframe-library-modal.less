@@ -9,17 +9,69 @@
 .dataframe-library-modal {
   &__header {
     display: flex;
-    justify-content: center;
     font-weight: bold;
     font-size: 24px;
+
+    .title {
+      width: 250px;
+    }
+
+    .input {
+      flex: 1;
+    }
+    
+    input.search-field:focus {
+      border: 1px solid @border-grey;
+    }
   }
 
   &__body {
     display: flex;
     flex-direction: column;
 
-    input.search-field:focus {
-      border: 1px solid @border-grey;
+    .content-wrapper {
+      min-height: 50vh;
+      display: flex;
+      border-bottom: 1px solid @grey;
+    }
+
+    .directories-list {
+      font-weight: 600;
+      font-size: 14px;
+      width: 250px;
+      background-color: @color-light-grey;
+
+      &__parents {
+        padding: 10px 15px;
+        background-color: @seahorse-blue;
+        color: #ffffff;
+
+        .parent {
+          &:last-of-type {
+            font-weight: bold;
+
+            &:hover {
+              cursor: default;
+            }
+          }
+        }
+      }
+
+      &__directories {
+        padding: 10px 15px;
+        color: @seahorse-blue;
+      }
+
+      .entry {
+        margin: 3px 0;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .files-list {
+      flex: 1;
     }
 
     .btn-grey {
@@ -34,10 +86,8 @@
       background-color: @light-grey;
       color: @dragzone-border;
       font-size: 16px;
-      height: 50px;
-      margin-top: 15px;
-      margin-bottom: 5px;
-      border: 2px dashed @dragzone-border;
+      height: 35px;
+      border: 1px dashed @dragzone-border;
       letter-spacing: 0.3px;
 
       &:hover {
@@ -53,6 +103,24 @@
 
     .dataframe-form {
       padding: 15px;
+      display: flex;
+      align-items: center;
+
+      .current-directory {
+        margin-right: 20px;
+        max-width: 200px;
+        font-size: 14px;
+        font-weight: bold;
+        .text-elipsis();
+      }
+
+      .add-file {
+        width: 100px;
+      }
+
+      .drop-area {
+        flex: 1;
+      }
     }
 
     .dataframe-info {
@@ -92,7 +160,6 @@
       max-height: 45vh;
       margin: 10px 0;
       border-top: 1px solid @grey;
-      border-bottom: 1px solid @grey;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -127,6 +194,14 @@
         font-weight: bold;
       }
 
+      .directory {
+        color: @seahorse-light-blue;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
       .dataframe-uploaded {
         font-weight: bold;
         padding-left: 5px;
@@ -152,16 +227,27 @@
         }
       }
 
-      .seahorse-font {
-        font-family: seahorse-symbol;
-      }
-
-      span.seahorse-font {
+      span.sa {
         font-size: 24px;
         margin: 0 4px;
 
         &:hover {
           cursor: pointer;
+        }
+      }
+    }
+    .folder {
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 40px;
+      padding-top: 10px;
+      width: 100%;
+
+      .dataframe {
+        padding-left: 20px;
+
+        &:last-child {
+          border-bottom: 1px solid @border-grey;
         }
       }
     }
@@ -172,5 +258,4 @@
     justify-content: center;
     padding: 15px;
   }
-
 }

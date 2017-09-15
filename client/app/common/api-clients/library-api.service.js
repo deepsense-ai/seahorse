@@ -6,24 +6,51 @@ function LibraryApi($http, config) {
   const service = this;
 
   service.getAll = getAll;
+  service.removeFile = removeFile;
+  service.uploadFile = uploadFile;
+
   service.upload = upload;
   service.remove = remove;
   service.getDownloadUrlForFile = getDownloadUrlForFile;
   service.getUriForFile = getUriForFile;
+  service.URL = URL;
+
 
   /**
    * @returns {Promise}
    */
   function getAll() {
-    return $http.get(URL).then(function processResult(result) {
-      return result.data.map((file) => {
-        return Object.assign(file, {
-          downloadUrl: getDownloadUrlForFile(file.name),
-          uri: getUriForFile(file.name)
-        });
+    return $http.get(URL)
+      .then((result) => {
+        return result.data;
       });
+  }
+
+
+  function removeFile(fileUrl) {
+    return $http.delete(fileUrl);
+  }
+
+
+  function uploadFile(file, directory, progressHandler) {
+    const fd = new FormData();
+    let directoryUrl = _.compact([URL, directory]).join('/');
+
+    fd.append('file', file);
+    return $http.post(directoryUrl, fd, {
+      transformRequest: angular.identity,
+      headers: {'Content-Type': undefined},
+      uploadEventHandlers: {
+        progress: function (param) {
+          const uploadProgress = Math.ceil(param.loaded / param.total * 100);
+          progressHandler(uploadProgress);
+        }
+      }
     });
   }
+
+
+  // TODO: Code below: review, update, remove unused
 
   /**
    * @param {File} file

@@ -1,8 +1,15 @@
 <div class="dataframe-library-modal">
-  <div class="modal-header dataframe-library-modal__header">Library</div>
+  <div class="modal-header dataframe-library-modal__header">
+    <div class="title">Select Data Frame</div>
+    <div class="input">
+      <input class="form-control search-field"
+             ng-model="controller.filterString"
+             placeholder="Search in {{controller.currentDirName}}"
+      />
+    </div>
+  </div>
 
   <div class="dataframe-library-modal__body">
-
     <input
       multiple
       type="file"
@@ -11,92 +18,140 @@
       file-upload-change="controller.onFileSelectedHandler"
     >
 
-    <div class="dataframe-form">
-      <div class="row">
-        <div class="col-md-2">
-          <button class="btn btn-grey" ng-click="controller.openFileBrowser()">
-            <i class="fa fa-plus"></i>
-            <span>Add file</span>
-          </button>
+    <div class="content-wrapper">
+      <div class="directories-list">
+        <div class="directories-list__parents">
+          <div class="entry parent"
+               ng-repeat="folder in controller.parents track by $index"
+               ng-click="controller.getFilesForUri(folder.uri)"
+          >
+            {{folder.name}}
+          </div>
+          <div class="entry parent">
+            {{controller.currentDirName}}
+          </div>
         </div>
-        <div class="col-md-10">
-          <input class="form-control search-field"
-                 ng-model="controller.filterString"
-                 placeholder="Search in Library"
-          />
+
+        <div class="directories-list__directories">
+          <div class="entry sa sa-up-level"
+               ng-if="controller.parents.length > 0"
+               ng-click="controller.goToParentDirectory()">
+          </div>
+
+          <div class="entry"
+               ng-repeat="directory in controller.directories track by $index"
+               ng-click="controller.getFilesForUri(directory.uri)">
+            {{directory.name}}
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
+
+      <div class="files-list">
+        <div class="dataframe-form">
+          <div class="current-directory">
+            {{controller.currentDir}}
+          </div>
+          <div class="add-file">
+            <button class="btn btn-grey" ng-click="controller.openFileBrowser()">
+              <i class="fa fa-plus"></i>
+              <span>Add file</span>
+            </button>
+          </div>
           <div class="drop-area"
                ng-click="controller.openFileBrowser()"
                dropzone-file-upload="controller.onFileSelectedHandler">
             Drag new files here
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="dataframe-upload-progress" ng-if="controller.uploadingFiles.length > 0">
-      <div ng-repeat="uploadingFile in controller.uploadingFiles track by uploadingFile.name">
-        <div class="title"><b>{{uploadingFile.name}}</b></div>
-        <div class="uploading-section">
-          <div class="information">uploading...</div>
-          <div class="progress">
-            <uib-progressbar
-              class="progress-striped active"
-              animate="true"
-              value="uploadingFile.progress"
-              type="info">
-            </uib-progressbar>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="list-wrapper uploaded-list-wrapper" ng-if="controller.uploadedFiles">
-      <div class="dataframe" ng-repeat="dataframe in controller.uploadedFiles track by dataframe.name">
-        <div class="dataframe-name"
-             ng-click="controller.selectDataframe(dataframe)"
-             ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
-          <span>{{dataframe.name}}</span>
-          <span class="dataframe-uploaded">uploaded</span>
-        </div>
-        <div class="actions">
-          <a ng-href={{dataframe.downloadUrl}} download><span class="seahorse-font">d</span></a>
-          <span class="seahorse-font" ng-click="controller.deleteUploadedFile(dataframe.name)">t</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="dataframe-list">
-      <div class="list-wrapper" custom-scroll-bar>
-        <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
-
-        <div ng-if="!controller.loading" class="dataframe"
-             ng-repeat="dataframe in controller.dataframes | filter: controller.search track by $index">
-          <div class="dataframe-name"
-               ng-click="controller.selectDataframe(dataframe)"
-               ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
-            {{dataframe.name}}
-          </div>
-          <div class="actions">
-            <a ng-href={{dataframe.downloadUrl}} download><span class="seahorse-font">d</span></a>
-            <span class="seahorse-font" ng-click="controller.deleteFile(dataframe.name)">t</span>
+        <div class="dataframe-upload-progress" ng-if="controller.uploadingFiles.length > 0">
+          <div ng-repeat="uploadingFile in controller.uploadingFiles track by uploadingFile.name">
+            <div class="title"><b>{{uploadingFile.path}}</b></div>
+            <div class="uploading-section">
+              <div class="information">uploading...</div>
+              <div class="progress">
+                <uib-progressbar
+                  class="progress-striped active"
+                  animate="true"
+                  value="uploadingFile.progress"
+                  type="info">
+                </uib-progressbar>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div ng-if="controller.message" class="dataframe-info">
-          {{controller.message}}
+        <div class="list-wrapper uploaded-list-wrapper" ng-if="controller.uploadedFiles">
+          <div class="dataframe" ng-repeat="dataframe in controller.uploadedFiles track by dataframe.name">
+            <div class="dataframe-name"
+                 ng-click="controller.selectDataframe(dataframe)"
+                 ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
+              <span>{{dataframe.path}}</span>
+              <span class="dataframe-uploaded">uploaded</span>
+            </div>
+            <div class="actions">
+              <a ng-href={{dataframe.downloadUrl}} download><span class="sa sa-download"></span></a>
+              <span class="sa sa-delete" ng-click="controller.deleteUploadedFile(dataframe)"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dataframe-list" ng-if="!controller.filterString">
+          <div class="list-wrapper" custom-scroll-bar>
+            <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
+
+            <div class="dataframe"
+                 ng-repeat="dataframe in controller.files">
+              <div class="dataframe-name"
+                   ng-click="controller.selectDataframe(dataframe)"
+                   ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
+                <span>{{dataframe.name}}</span>
+              </div>
+              <div class="actions">
+                <a ng-href={{dataframe.downloadUrl}} download><span class="sa sa-download"></span></a>
+                <span class="sa sa-delete" ng-click="controller.deleteFile(dataframe)"></span>
+              </div>
+            </div>
+
+            <div ng-if="controller.message" class="dataframe-info">
+              {{controller.message}}
+            </div>
+
+          </div>
+        </div>
+
+        <div class="dataframe-list" ng-if="controller.filterString">
+          <div class="list-wrapper" custom-scroll-bar>
+            <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
+
+            <div ng-repeat="folder in controller.searchResults" class="folder">
+              {{folder.name}}
+              <div class="dataframe"
+                   ng-repeat="dataframe in folder.items ">
+
+                <div class="dataframe-name"
+                     ng-click="controller.selectDataframe(dataframe)"
+                     ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
+                  <span>{{dataframe.name}}</span>
+                </div>
+                <div class="actions">
+                  <a ng-href={{dataframe.downloadUrl}} download><span class="sa sa-download"></span></a>
+                  <span class="sa sa-delete" ng-click="controller.deleteFile(dataframe)"></span>
+                </div>
+              </div>
+
+              <div ng-if="controller.searchResults.length <= 1 && controller.searchResults[0].items.length < 1" class="dataframe-info">
+                There is no search results in this folder.
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
     </div>
-
   </div>
 
   <div class="dataframe-library-modal__footer">
     <button type="button" class="btn btn-white" ng-click="controller.close()">Close</button>
   </div>
-
 </div>
