@@ -21,7 +21,7 @@ object Version {
   val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
-  val seahorse      = "0.1.3-SNAPSHOT"
+  val seahorse      = "0.1.4"
 }
 
 object Library {
@@ -64,16 +64,19 @@ object Library {
   val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
   val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
   val seahorseCommons    = seahorse("commons")
-  val seahorseReportlib  = seahorse("reportlib")
+  val seahorseDeeplang   = seahorse("deeplang")
   val seahorseESClient   = seahorse("entitystorage-client")
   val seahorseESModel    = seahorse("entitystorage-model")
-  val sparkSql           = spark("sql")
+  val seahorseModels     = seahorse("models")
+  val seahorseGraph      = seahorse("graph")
+  val seahorseGraphJson  = seahorse("graph-json")
+  val seahorseReportlib  = seahorse("reportlib")
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
   val sprayCan           = spray("can")
   val sprayRouting       = spray("routing")
   val sprayTestkit       = spray("testkit")
-  val sprayClient       = spray("client")
+  val sprayClient        = spray("client")
   val sprayJson          = "io.spray"                    %% "spray-json"          % Version.sprayJson
 }
 
@@ -85,18 +88,20 @@ object Dependencies {
     "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
-    "seahorse.deepsense.io"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-snapshot"
+    "seahorse.deepsense.io"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-release"
   )
 
   val deploymodelservice = Seq(
     akkaActor,
     sprayCan,
+    seahorseDeeplang,
     sprayJson,
     sprayRouting
   ) ++ Seq(scalatest, sprayTestkit).map(_ % s"$Test,it")
 
   val entitystorage = Seq(
-    akkaActor
+    akkaActor,
+    seahorseDeeplang
   ) ++ Seq(akkaTestkit, cassandraUnit, mockitoCore, scalatest, seahorseESClient, sprayTestkit).map(_ % s"$Test,it")
 
   val commons = Seq(
@@ -110,7 +115,6 @@ object Dependencies {
     logbackCore,
     scalaLogging,
     seahorseCommons,
-    sparkSql,
     sprayCan,
     sprayJson,
     sprayRouting,
@@ -120,23 +124,14 @@ object Dependencies {
     nscalaTime
   ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest, cassandraUnit).map(_ % Test)
 
-  val deeplang = Seq(
-    nscalaTime,
-    sprayClient,
-    scalaReflect,
-    seahorseESClient,
-    seahorseESModel,
-    seahorseReportlib,
-    sparkSql,
-    sparkMLLib,
-    sparkCore
-  ) ++ Seq(scalatest, mockitoCore, scalacheck).map(_ % Test)
-
   val workflowmanager = Seq(
     akkaActor,
     apacheCommons,
     guice,
     guiceMultibindings,
+    seahorseDeeplang,
+    seahorseESModel,
+    seahorseGraphJson,
     seahorseESModel,
     seahorseReportlib,
     sprayCan,
@@ -145,11 +140,6 @@ object Dependencies {
     sprayRouting
   ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 
-  val graph = Seq(
-    nscalaTime,
-    seahorseReportlib
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
-
   val graphexecutor = Seq(
     hadoopClient,
     hadoopCommon,
@@ -157,14 +147,10 @@ object Dependencies {
     hadoopYarnApi,
     hadoopYarnClient,
     hadoopYarnCommon,
+    seahorseDeeplang,
     seahorseESClient,
-    seahorseESModel
+    seahorseESModel,
+    seahorseGraph,
+    seahorseModels
   ) ++ Seq(sparkCore).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
-
-  val graphJson = Seq(
-    nscalaTime,
-    sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
-
-  val models = Seq(scalatest, mockitoCore).map(_ % Test)
 }

@@ -3,36 +3,19 @@
 name := "deepsense-backend"
 
 lazy val commons                = project
-lazy val models                 = project dependsOn (commons, graph)
-lazy val deeplang               = project dependsOn (commons)
 lazy val `deploy-model-service` = project dependsOn (
   commons,
-  commons % "test->test",
-  deeplang)
-lazy val `entitystorage-model`  = project dependsOn commons
-lazy val entitystorage          = project dependsOn (
-  commons,
-  commons % "test->test",
-  deeplang)
+  commons % "test->test")
+lazy val entitystorage          = project dependsOn (commons, commons % "test->test")
 lazy val workflowmanager      = project dependsOn (
   commons,
   commons % "test->test",
-  deeplang,
   graphexecutor,
   graphexecutor % "it->it",
-  graphjson,
-  graphjson % "it->it",
-  models,
   `deploy-model-service`)
-lazy val graph         = project dependsOn (commons, deeplang)
 lazy val graphexecutor = project dependsOn (
   commons,
-  commons % "test->test",
-  deeplang,
-  deeplang % "test->test",
-  graph,
-  models)
-lazy val graphjson     = project dependsOn (commons, deeplang, graph, models)
+  commons % "test->test")
 
 
 // Assembly and deploy GE without dependencies jar
@@ -55,11 +38,7 @@ addCommandAlias("deploy", ";deployGeWithDeps")
 addCommandAlias("ds-it",
   ";deploy " +
     ";commons/it:test " +
-    ";models/it:test " +
-    ";deeplang/it:test " +
     ";entitystorage/it:test " +
     ";workflowmanager/it:test " +
-    ";graph/it:test " +
     ";graphexecutor/it:test " +
-    ";graphjson/it:test " +
     ";deploy-model-service/it:test")
