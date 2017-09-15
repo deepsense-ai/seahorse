@@ -71,7 +71,7 @@ class ServerCommunication {
   reconnect() {
     this.$log.info('ServerCommunication reconnect');
     this.$timeout(() => {
-      this.connectToWebSocket();
+      this._connectToWebSocket();
     }, this.config.socketReconnectionInterval, false);
   }
 
@@ -107,7 +107,7 @@ class ServerCommunication {
     }));
   }
 
-  sendInitToWorkflowExchange() {
+  _sendInitToWorkflowExchange() {
     this.$log.info('ServerCommunication sendInitToWorkflowExchange');
     this.send(this.workflowTopicSendingUri(), {}, JSON.stringify({
       messageType: 'init',
@@ -118,7 +118,7 @@ class ServerCommunication {
   }
 
   // uri - exchange name
-  subscribeToExchange(uri) {
+  _subscribeToExchange(uri) {
     let previousSubscription = this.exchangeSubscriptions[uri];
     if (previousSubscription) {
       previousSubscription.unsubscribe();
@@ -130,15 +130,15 @@ class ServerCommunication {
     this.$log.info('Subscribe to exchange ' + uri + ', subscription: ', newSubscription);
   }
 
-  onWebSocketConnect() {
+  _onWebSocketConnect() {
     this.$log.info('ServerCommunication onWebSocketConnect');
-    this.subscribeToExchange(this.seahorseTopicListeningUri());
-    this.subscribeToExchange(this.workflowTopicListeningUri());
-    this.sendInitToWorkflowExchange();
+    this._subscribeToExchange(this.seahorseTopicListeningUri());
+    this._subscribeToExchange(this.workflowTopicListeningUri());
+    this._sendInitToWorkflowExchange();
     this.$rootScope.$broadcast('ServerCommunication.CONNECTION_ESTABLISHED');
   }
 
-  connectToWebSocket(user = 'guest', pass = 'guest') {
+  _connectToWebSocket(user = 'guest', pass = 'guest') {
     this.socket = new SockJS(`${this.config.socketConnectionHost}stomp`);
     this.client = Stomp.over(this.socket);
 
@@ -152,7 +152,7 @@ class ServerCommunication {
     this.client.connect(
       user,
       pass,
-      this.onWebSocketConnect.bind(this, this.workflowId),
+      this._onWebSocketConnect.bind(this, this.workflowId),
       this.errorHandler.bind(this, this.connectionAttemptId)
     );
   }
@@ -160,7 +160,7 @@ class ServerCommunication {
   init(workflowId) {
     console.log('ServerCommunication init', 'Server communication initialized with workflow id ' + workflowId);
     this.workflowId = workflowId; // TODO There should be no state here. Get rid of state in this service.
-    this.connectToWebSocket();
+    this._connectToWebSocket();
   }
 }
 
