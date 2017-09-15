@@ -10,7 +10,8 @@ class GenerationConfig(object):
         self.docker_repository = docker_repository
         self.tags = tags
         self.api_version = api_version
-        self.subnet = subnet
+        self.subnet = Subnet(subnet)
+        self.gateway = self.subnet.default_gateway()
 
     def tag(self, repository):
         return self.tags[repository]
@@ -30,7 +31,10 @@ class NetworksGeneration(object):
                 'ipam': {
                     'driver': 'default',
                     'config': [
-                        {'subnet': generation_config.subnet}
+                        {
+                            'subnet': generation_config.subnet.as_string(),
+                            'gateway': generation_config.gateway
+                        }
                     ]
                 }
             }

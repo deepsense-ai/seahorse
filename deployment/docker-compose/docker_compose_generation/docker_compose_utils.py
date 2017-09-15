@@ -1,5 +1,8 @@
 # Copyright (c) 2016, CodiLime Inc.
 
+import socket
+import struct
+
 
 class Services(object):
     def __init__(self):
@@ -29,6 +32,36 @@ class Env(object):
 
     def to_dict(self):
         return self.d
+
+
+class Subnet(object):
+    def __init__(self, subnet):
+        s = subnet.split("/", 1)
+        self.ip = s[0]
+        self.mask_length = s[1]
+        self.ip = Subnet.masked_ip(self.ip, int(self.mask_length))
+
+    def as_string(self):
+        return "{}/{}".format(self.ip, self.mask_length)
+
+    def __str__(self):
+        return self.as_string()
+
+    def __repr__(self):
+        return "Subnet('{}')".format(self.as_string())
+
+    def default_gateway(self):
+        return socket.inet_ntoa(
+            struct.pack(
+                "!I", struct.unpack("!I", socket.inet_aton(self.ip))[0] + 1))
+
+    @classmethod
+    def masked_ip(cls, ip, mask_length):
+        mask_length = int(mask_length)
+        mask = int("1" * mask_length + "0" * (32 - mask_length), 2)
+        masked_ip_int = struct.unpack("!I", socket.inet_aton(ip))[0] & mask
+
+        return socket.inet_ntoa(struct.pack("!I", masked_ip_int))
 
 
 class Address(object):

@@ -41,7 +41,7 @@ def main():
     parser.add_argument('-f', '--frontend-tag', default='master-latest',
                         help='Git tag of the deepsense-frontend repo to use',
                         action='store')
-    parser.add_argument('--subnet', default='10.255.3.1/24',
+    parser.add_argument('--subnet', default='10.255.3.0/24',
                         help='Network address range to use for docker-compose containers',
                         action='store')
     parser.add_argument('--docker-repo', default='docker-repo.deepsense.codilime.com/deepsense_io',
