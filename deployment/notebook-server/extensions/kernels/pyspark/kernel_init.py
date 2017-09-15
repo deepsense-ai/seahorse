@@ -34,9 +34,7 @@ sc = SparkContext(
 
 sqlContext = SQLContext(sc)
 
-# workflow_id and node_id are set in the kernel
-java_data_frame = gateway.entry_point.getDataFrame(workflow_id, node_id)
-
-dataframe = DataFrame(
-    jdf=java_data_frame,
-    sql_ctx=sqlContext)
+def dataframe():
+    # workflow_id and node_id are set in the kernel
+    java_data_frame = gateway.entry_point.getDataFrame(workflow_id, node_id)
+    return DataFrame(jdf=java_data_frame, sql_ctx=sqlContext)
