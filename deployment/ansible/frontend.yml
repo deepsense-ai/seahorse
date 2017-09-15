@@ -68,4 +68,5 @@
         env:
           PUBLIC_WM_ADDRESS: "{{ds_wm_public_address}}"
           PUBLIC_WM_PORT: "{{ds_wm_public_port}}"
+          PUBLIC_DOCS_ADDRESS: "{{ds_documentation_public_address}}"
           API_VERSION: "{{api_version}}"
