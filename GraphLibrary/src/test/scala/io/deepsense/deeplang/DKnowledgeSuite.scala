@@ -6,7 +6,18 @@
 
 package io.deepsense.deeplang
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.scalatest.FunSuite
+
+object ClassesForDKnowledge {
+  trait A extends DOperable
+  trait B extends DOperable
+  case class A1(i: Int) extends A
+  case class A2(i: Int) extends A
+  case class B1(i: Int) extends B
+  case class B2(i: Int) extends B
+}
 
 class DKnowledgeSuite extends FunSuite {
 
@@ -39,5 +50,11 @@ class DKnowledgeSuite extends FunSuite {
     val knowledge1 = DKnowledge(A(1))
     val knowledge2 = DKnowledge(A(2))
     assert(knowledge1 != knowledge2)
+  }
+
+  test("DKnowledge can intersect internal knowledge with external types") {
+    import ClassesForDKnowledge._
+    val knowledge = DKnowledge(A1(1), new A2(2), new B1(1), new B2(2))
+    assert(knowledge.filterTypes(ru.typeOf[A]) == DKnowledge(new A1(1), new A2(2)))
   }
 }

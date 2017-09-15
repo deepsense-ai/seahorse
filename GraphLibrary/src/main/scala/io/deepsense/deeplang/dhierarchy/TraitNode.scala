@@ -6,6 +6,7 @@
 
 package io.deepsense.deeplang.dhierarchy
 
+import io.deepsense.deeplang.TypeUtils
 import io.deepsense.deeplang.dhierarchy.exceptions.TraitInheritingFromClassException
 
 import scala.reflect.runtime.{universe => ru}
@@ -20,9 +21,9 @@ private[dhierarchy] class TraitNode(protected override val javaType: Class[_]) e
   }
 
   private[dhierarchy] override def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]] = {
-    val t = DHierarchy.classToType(javaType)
-    val baseTypes = t.baseClasses.map(DHierarchy.symbolToType)
-    val baseJavaTypes = baseTypes.filter(_ <:< upperBoundType).map(DHierarchy.typeToClass)
+    val t = TypeUtils.classToType(javaType)
+    val baseTypes = t.baseClasses.map(TypeUtils.symbolToType)
+    val baseJavaTypes = baseTypes.filter(_ <:< upperBoundType).map(TypeUtils.typeToClass)
     baseJavaTypes.find(!_.isInterface)
   }
 

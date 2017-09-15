@@ -9,7 +9,7 @@ package io.deepsense.deeplang.dhierarchy
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.{DOperable, TypeUtils}
 import io.deepsense.deeplang.dhierarchy.exceptions.ParametrizedTypeException
 
 /**
@@ -35,7 +35,7 @@ class DHierarchy {
       return None
     }
 
-    if (DHierarchy.isParametrized(t)) {
+    if (TypeUtils.isParametrized(t)) {
       throw new ParametrizedTypeException(t)
     }
 
@@ -63,11 +63,11 @@ class DHierarchy {
   }
 
   private def register(javaType: Class[_]): Option[Node] = {
-    register(DHierarchy.classToType(javaType), javaType)
+    register(TypeUtils.classToType(javaType), javaType)
   }
 
   private def register(t: ru.Type): Option[Node] = {
-    register(t, DHierarchy.typeToClass(t))
+    register(t, TypeUtils.typeToClass(t))
   }
 
   /** Returns nodes that correspond given type signature T. */
@@ -83,8 +83,8 @@ class DHierarchy {
 
     var uniqueBaseClasses = Set[ru.Symbol]()
     for (b <- baseClasses) {
-      val t: ru.Type = DHierarchy.symbolToType(b)
-      val uniqueTypes = uniqueBaseClasses.map(DHierarchy.symbolToType)
+      val t: ru.Type = TypeUtils.symbolToType(b)
+      val uniqueTypes = uniqueBaseClasses.map(TypeUtils.symbolToType)
       if (!uniqueTypes.exists(_ <:< t))
         uniqueBaseClasses += b
     }
@@ -113,23 +113,9 @@ class DHierarchy {
 }
 
 object DHierarchy {
-  private val mirror = ru.runtimeMirror(getClass.getClassLoader)
-
-  private[dhierarchy] def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
-
-  private[dhierarchy] def typeToClass(t: ru.Type): Class[_] = mirror.runtimeClass(t.typeSymbol.asClass)
-
-  private[dhierarchy] def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
-
-  private def isParametrized(t: ru.Type): Boolean = t.typeSymbol.asClass.typeParams.nonEmpty
-
   /** Intersection of collection of sets. */
   private def intersectSets[T](sets: Traversable[Set[T]]): Set[T] = {
     if (sets.size == 0) Set[T]()
     else sets.foldLeft(sets.head)((x, y) => x & y)
-  }
-
-  private[dhierarchy] def isAbstract(c: Class[_]): Boolean = {
-    classToType(c).typeSymbol.asClass.isAbstractClass
   }
 }

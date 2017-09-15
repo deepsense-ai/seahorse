@@ -6,8 +6,17 @@
 
 package io.deepsense.deeplang
 
+import scala.reflect.runtime.{universe => ru}
+
 class DKnowledge[T <: DOperable](val types: Set[T]) {
   def this(args: T*) = this(Set[T](args: _*))
+
+  /**
+   * Returns a DKnowledge with types that are subtypes of given Type.
+   */
+  def filterTypes(t: ru.Type): DKnowledge[T] = {
+    DKnowledge(types.filter(x => TypeUtils.classToType(x.getClass) <:< t))
+  }
 
   override def equals(other: Any): Boolean = {
     other match {

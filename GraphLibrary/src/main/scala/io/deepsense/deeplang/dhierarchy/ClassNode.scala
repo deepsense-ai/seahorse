@@ -8,6 +8,8 @@ package io.deepsense.deeplang.dhierarchy
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.deeplang.TypeUtils
+
 /**
  * Represents Class in DHierarchy graph.
  */
@@ -15,7 +17,7 @@ private[dhierarchy] class ClassNode(protected override val javaType: Class[_]) e
 
   private[dhierarchy] override def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]] = {
     val parentJavaType = javaType.getSuperclass
-    val parentType = DHierarchy.classToType(parentJavaType)
+    val parentType = TypeUtils.classToType(parentJavaType)
     if (parentType <:< upperBoundType) Some(parentJavaType) else None
   }
 
@@ -29,7 +31,7 @@ private[dhierarchy] class ClassNode(protected override val javaType: Class[_]) e
 
 private[dhierarchy] object ClassNode {
   def apply(javaType: Class[_]): ClassNode = {
-    if (DHierarchy.isAbstract(javaType))
+    if (TypeUtils.isAbstract(javaType))
       new ClassNode(javaType)
     else
       new ConcreteClassNode(javaType)
