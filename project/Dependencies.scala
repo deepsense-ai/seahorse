@@ -35,8 +35,10 @@ object Version {
 
 object Library {
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
-  val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
-  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
+  val hadoop = (name: String) =>
+    "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop exclude ("com.google.guava", "guava")
+  val spark = (name: String) =>
+    "org.apache.spark" %% s"spark-$name" % Version.spark exclude ("com.google.guava", "guava")
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
 
   val akkaActor = akka("actor")
@@ -44,7 +46,10 @@ object Library {
   val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
     Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
+  val guava = "com.google.guava" % "guava" % "16.0"
   val hadoopAWS = hadoop("aws")
+  val hadoopClient = hadoop("client")
+  val hadoopCommon = hadoop("common")
   val log4JExtras = "log4j" % "apache-log4j-extras" % "1.2.17"
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
@@ -64,8 +69,9 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
-  val wireMock = "com.github.tomakehurst" % "wiremock" %
-    Version.wireMock exclude("com.fasterxml.jackson.core", "jackson-databind")
+  val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock exclude(
+    "com.fasterxml.jackson.core", "jackson-databind") exclude (
+    "com.google.guava", "guava")
   val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
 }
 
@@ -97,7 +103,10 @@ object Dependencies {
   val deeplang = Seq(
     apacheCommons,
     amazonS3,
+    guava,
     hadoopAWS,
+    hadoopClient,
+    hadoopCommon,
     nscalaTime,
     scalaReflect,
     sparkSql,
