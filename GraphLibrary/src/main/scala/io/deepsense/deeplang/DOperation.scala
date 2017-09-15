@@ -21,7 +21,7 @@ abstract class DOperation {
 
   def outPortTypes: Vector[ru.TypeTag[_]]
 
-  def execute(l: Vector[DOperable]): Vector[DOperable]
+  def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable]
 
   def inferKnowledge(context: InferContext)
                     (l: Vector[DKnowledge[DOperable]]): Vector[DKnowledge[DOperable]]

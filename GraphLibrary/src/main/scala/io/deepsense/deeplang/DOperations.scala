@@ -58,8 +58,9 @@ abstract class DOperation0To1[
   override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute()
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)()
   }
 
   override def inferKnowledge(context: InferContext)(
@@ -67,7 +68,7 @@ abstract class DOperation0To1[
     _inferKnowledge(context)()
   }
 
-  protected def _execute(): TO_0
+  protected def _execute(context: ExecutionContext)(): TO_0
 
   protected def _inferKnowledge(context: InferContext)(): DKnowledge[TO_0] = {
     DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0])
@@ -87,8 +88,9 @@ abstract class DOperation0To2[
     ru.typeTag[TO_0],
     ru.typeTag[TO_1])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute()
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)()
   }
 
   override def inferKnowledge(context: InferContext)(
@@ -96,7 +98,7 @@ abstract class DOperation0To2[
     _inferKnowledge(context)()
   }
 
-  protected def _execute(): (TO_0, TO_1)
+  protected def _execute(context: ExecutionContext)(): (TO_0, TO_1)
 
   protected def _inferKnowledge(context: InferContext)(): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
     DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
@@ -119,8 +121,9 @@ abstract class DOperation0To3[
     ru.typeTag[TO_1],
     ru.typeTag[TO_2])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute()
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)()
   }
 
   override def inferKnowledge(context: InferContext)(
@@ -128,7 +131,7 @@ abstract class DOperation0To3[
     _inferKnowledge(context)()
   }
 
-  protected def _execute(): (TO_0, TO_1, TO_2)
+  protected def _execute(context: ExecutionContext)(): (TO_0, TO_1, TO_2)
 
   protected def _inferKnowledge(context: InferContext)(): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
     DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
@@ -148,8 +151,9 @@ abstract class DOperation1To0[
 
   override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0])
     Vector()
   }
@@ -161,7 +165,7 @@ abstract class DOperation1To0[
     Vector()
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0): Unit
 
   protected def _inferKnowledge(context: InferContext)(
@@ -182,8 +186,9 @@ abstract class DOperation1To1[
   override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0])
   }
 
@@ -193,7 +198,7 @@ abstract class DOperation1To1[
       knowledge(0).asInstanceOf[DKnowledge[TI_0]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0): TO_0
 
   protected def _inferKnowledge(context: InferContext)(
@@ -217,8 +222,9 @@ abstract class DOperation1To2[
     ru.typeTag[TO_0],
     ru.typeTag[TO_1])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0])
   }
 
@@ -228,7 +234,7 @@ abstract class DOperation1To2[
       knowledge(0).asInstanceOf[DKnowledge[TI_0]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0): (TO_0, TO_1)
 
   protected def _inferKnowledge(context: InferContext)(
@@ -255,8 +261,9 @@ abstract class DOperation1To3[
     ru.typeTag[TO_1],
     ru.typeTag[TO_2])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0])
   }
 
@@ -266,7 +273,7 @@ abstract class DOperation1To3[
       knowledge(0).asInstanceOf[DKnowledge[TI_0]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0): (TO_0, TO_1, TO_2)
 
   protected def _inferKnowledge(context: InferContext)(
@@ -290,8 +297,9 @@ abstract class DOperation2To0[
 
   override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1])
     Vector()
@@ -305,7 +313,7 @@ abstract class DOperation2To0[
     Vector()
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1): Unit
 
@@ -330,8 +338,9 @@ abstract class DOperation2To1[
   override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1])
   }
@@ -343,7 +352,7 @@ abstract class DOperation2To1[
       knowledge(1).asInstanceOf[DKnowledge[TI_1]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1): TO_0
 
@@ -371,8 +380,9 @@ abstract class DOperation2To2[
     ru.typeTag[TO_0],
     ru.typeTag[TO_1])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1])
   }
@@ -384,7 +394,7 @@ abstract class DOperation2To2[
       knowledge(1).asInstanceOf[DKnowledge[TI_1]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1): (TO_0, TO_1)
 
@@ -415,8 +425,9 @@ abstract class DOperation2To3[
     ru.typeTag[TO_1],
     ru.typeTag[TO_2])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1])
   }
@@ -428,7 +439,7 @@ abstract class DOperation2To3[
       knowledge(1).asInstanceOf[DKnowledge[TI_1]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1): (TO_0, TO_1, TO_2)
 
@@ -456,8 +467,9 @@ abstract class DOperation3To0[
 
   override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1],
       arguments(2).asInstanceOf[TI_2])
@@ -473,7 +485,7 @@ abstract class DOperation3To0[
     Vector()
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1,
       t2: TI_2): Unit
@@ -502,8 +514,9 @@ abstract class DOperation3To1[
   override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1],
       arguments(2).asInstanceOf[TI_2])
@@ -517,7 +530,7 @@ abstract class DOperation3To1[
       knowledge(2).asInstanceOf[DKnowledge[TI_2]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1,
       t2: TI_2): TO_0
@@ -549,8 +562,9 @@ abstract class DOperation3To2[
     ru.typeTag[TO_0],
     ru.typeTag[TO_1])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1],
       arguments(2).asInstanceOf[TI_2])
@@ -564,7 +578,7 @@ abstract class DOperation3To2[
       knowledge(2).asInstanceOf[DKnowledge[TI_2]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1,
       t2: TI_2): (TO_0, TO_1)
@@ -599,8 +613,9 @@ abstract class DOperation3To3[
     ru.typeTag[TO_1],
     ru.typeTag[TO_2])
 
-  override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
-    _execute(
+  override def execute(context: ExecutionContext)(
+      arguments: Vector[DOperable]): Vector[DOperable] = {
+    _execute(context)(
       arguments(0).asInstanceOf[TI_0],
       arguments(1).asInstanceOf[TI_1],
       arguments(2).asInstanceOf[TI_2])
@@ -614,7 +629,7 @@ abstract class DOperation3To3[
       knowledge(2).asInstanceOf[DKnowledge[TI_2]])
   }
 
-  protected def _execute(
+  protected def _execute(context: ExecutionContext)(
       t0: TI_0,
       t1: TI_1,
       t2: TI_2): (TO_0, TO_1, TO_2)

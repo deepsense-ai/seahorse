@@ -22,12 +22,14 @@ class DMethodSuite extends FunSuite {
 
     class C extends DOperable {
       val f: DMethod1To1[Int, A, B] = new DMethod1To1[Int, A, B] {
-        override def apply(parameters: Int)(t0: A): B = B(t0.i + parameters)
+        override def apply(context: ExecutionContext)(parameters: Int)(t0: A): B = {
+          B(t0.i + parameters)
+        }
       }
     }
 
     val c = new C
-    assert(c.f(2)(A(3)) == B(5))
+    assert(c.f(new ExecutionContext)(2)(A(3)) == B(5))
 
     val h = new DHierarchy
     h.registerDOperable[A]()
@@ -42,7 +44,7 @@ class DMethodSuite extends FunSuite {
 
     class C extends DOperable {
       val f: DMethod0To1[Int, S] = new DMethod0To1[Int, S] {
-        override def apply(parameters: Int)(): S = A(parameters)
+        override def apply(context: ExecutionContext)(parameters: Int)(): S = A(parameters)
         override def infer(context: InferContext)(parameters: Int)(): DKnowledge[S] = {
           DKnowledge(new A)
         }

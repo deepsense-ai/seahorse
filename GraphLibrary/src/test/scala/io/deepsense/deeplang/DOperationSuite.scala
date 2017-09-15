@@ -25,7 +25,7 @@ object DClassesForDOperations {
 object DOperationForPortTypes {
   import DClassesForDOperations._
   class SimpleOperation extends DOperation1To1[A1, A2] {
-    override protected def _execute(t0: A1): A2 = ???
+    override protected def _execute(context: ExecutionContext)(t0: A1): A2 = ???
   }
 }
 
@@ -37,7 +37,7 @@ class DOperationSuite extends FunSuite {
     case class IntParam(i: Int) extends DParameters
 
     class PickOne extends DOperation2To1[A1, A2, A] {
-      override protected def _execute(t1: A1, t2: A2): A = {
+      override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = {
         val intParam = parameters.asInstanceOf[IntParam]
         if (intParam.i % 2 == 1) t1 else t2
       }
@@ -49,8 +49,8 @@ class DOperationSuite extends FunSuite {
     secondPicker.parameters = IntParam(2)
 
     val input = Vector(new A1, new A2)
-    assert(firstPicker.execute(input) == Vector(new A1))
-    assert(secondPicker.execute(input) == Vector(new A2))
+    assert(firstPicker.execute(new ExecutionContext)(input) == Vector(new A1))
+    assert(secondPicker.execute(new ExecutionContext)(input) == Vector(new A2))
 
     val h = new DHierarchy
     h.registerDOperable[A1]()
@@ -65,7 +65,7 @@ class DOperationSuite extends FunSuite {
     import DClassesForDOperations._
 
     class GeneratorOfA extends DOperation0To1[A] {
-      override protected def _execute(): A = ???
+      override protected def _execute(context: ExecutionContext)(): A = ???
       override protected def _inferKnowledge(context: InferContext)(): DKnowledge[A] = {
         new DKnowledge(new A1, new A2)
       }
