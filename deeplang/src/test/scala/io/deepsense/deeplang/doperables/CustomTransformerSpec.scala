@@ -93,8 +93,8 @@ class CustomTransformerSpec extends UnitSpec {
 
     "replicate with set values" in {
       val publicParam = TypeConverter().targetType.replicate("public name")
-      val defaultValue = TargetTypeChoices.IntegerTargetTypeChoice
-      val setValue = TargetTypeChoices.StringTargetTypeChoice
+      val defaultValue = TargetTypeChoices.IntegerTargetTypeChoice()
+      val setValue = TargetTypeChoices.StringTargetTypeChoice()
       val publicParamsWithValues =
         Seq(ParamWithValues(publicParam, Some(defaultValue), Some(setValue)))
       val params: Array[Param[_]] = publicParamsWithValues.map(_.param).toArray

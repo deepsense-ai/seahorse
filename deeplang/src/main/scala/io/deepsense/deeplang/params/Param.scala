@@ -36,8 +36,6 @@ abstract class Param[T] {
 
   def validate(value: T): Vector[DeepLangException] = Vector.empty
 
-  def validateSubparams(value: T): Vector[DeepLangException] = Vector.empty
-
   val isGriddable: Boolean = false
 
   /**

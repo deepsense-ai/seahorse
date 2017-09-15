@@ -186,16 +186,14 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
    * Validates params' values by:
    * 1. testing whether the params have values set (or default values),
    * 2. testing whether the values meet the constraints,
-   * 3. testing subparameters' values (eg. for ChoiceParameters).
-   * 4. testing custom validations, possibly spanning over multiple params.
+   * 3. testing custom validations, possibly spanning over multiple params.
    */
   def validateParams: Vector[DeepLangException] = {
     val singleParameterErrors = params.flatMap { param =>
       if (isDefined(param)) {
         val paramValue: Any = $(param)
         val anyTypeParam: Param[Any] = param.asInstanceOf[Param[Any]]
-        anyTypeParam.validate(paramValue) ++
-          anyTypeParam.validateSubparams(paramValue)
+        anyTypeParam.validate(paramValue)
       } else {
         Vector(new ParamValueNotProvidedException(param.name))
       }

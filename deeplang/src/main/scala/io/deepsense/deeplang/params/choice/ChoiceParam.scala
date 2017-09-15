@@ -44,7 +44,7 @@ class ChoiceParam[T <: Choice](
     choiceFromJson(label, innerJsValue)
   }
 
-  override def validateSubparams(value: T): Vector[DeepLangException] = {
+  override def validate(value: T): Vector[DeepLangException] = {
     value.validateParams
   }
 

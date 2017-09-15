@@ -44,7 +44,7 @@ case class MultipleChoiceParam[T <: Choice](
     }.toSet
   }
 
-  override def validateSubparams(value: Set[T]): Vector[DeepLangException] = {
+  override def validate(value: Set[T]): Vector[DeepLangException] = {
     value.toVector.flatMap { _.validateParams }
   }
 

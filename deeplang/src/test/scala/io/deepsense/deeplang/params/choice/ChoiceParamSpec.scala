@@ -42,7 +42,7 @@ class ChoiceParamSpec extends AbstractChoiceParamSpec[ChoiceABC, ChoiceParam[Cho
       val param = paramFixture._1
       val value = OptionA()
       value.validateParams should not be empty
-      param.validateSubparams(value) shouldBe value.validateParams
+      param.validate(value) shouldBe value.validateParams
     }
   }
 

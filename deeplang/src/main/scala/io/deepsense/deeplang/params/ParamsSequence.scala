@@ -19,10 +19,9 @@ package io.deepsense.deeplang.params
 import java.lang.reflect.Constructor
 
 import scala.reflect.runtime.universe._
-
 import spray.json._
-
 import io.deepsense.deeplang.TypeUtils
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 
 case class ParamsSequence[T <: Params](
@@ -58,4 +57,8 @@ case class ParamsSequence[T <: Params](
   )
 
   override def replicate(name: String): ParamsSequence[T] = copy(name = name)
+
+  override def validate(value: Seq[T]): Vector[DeepLangException] = {
+    value.flatMap(_.validateParams).toVector
+  }
 }
