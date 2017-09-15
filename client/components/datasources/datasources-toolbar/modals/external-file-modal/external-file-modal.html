@@ -6,14 +6,29 @@
   <div class="datasources-modal__body">
     <div class="datasources-modal__body-row">
       <label class="title">
-        Source (http, https, ftp, sftp ...)
+        Source (http, https, ftp)
       </label>
-      <input
-        ng-model="$ctrl.datasourceParams.externalFileParams.url"
-        placeholder="Connection string"
-        class="form-control"
-        type="text"
-      />
+      <div class="icon-input">
+        <input
+          ng-model="$ctrl.datasourceParams.externalFileParams.url"
+          ng-change="$ctrl.validateUrl()"
+          placeholder="Connection string"
+          class="form-control"
+          type="text"
+        />
+        <div class="icon-input__status">
+          <div
+            ng-if="$ctrl.isUrlValid"
+            class="sa sa-ok icon-input__status--ok"
+          >
+          </div>
+          <div
+            ng-if="!$ctrl.isUrlValid"
+            class="sa sa-cross icon-input__status--error"
+          >
+          </div>
+        </div>
+      </div>
     </div>
 
     <file-settings

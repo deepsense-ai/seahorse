@@ -6,22 +6,22 @@
   <div class="datasources-modal__body">
     <div class="datasources-modal__body-row">
       <label class="title">Google sheet ID</label>
-      <div class="google-spreadsheet-input">
+      <div class="icon-input">
         <input
           ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId"
           type="text"
           class="form-control"
           placeholder="Connection string"
         />
-        <div class="google-spreadsheet-input__status">
+        <div class="icon-input__status">
           <div
             ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId !== ''"
-            class="sa sa-ok google-spreadsheet-input__status--ok"
+            class="sa sa-ok icon-input__status--ok"
           >
           </div>
           <div
             ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId === ''"
-            class="sa sa-cross google-spreadsheet-input__status--error"
+            class="sa sa-cross icon-input__status--error"
           >
           </div>
         </div>
@@ -30,22 +30,22 @@
 
     <div class="datasources-modal__body-row">
       <label class="title">Google service account credentials JSON</label>
-      <div class="google-spreadsheet-input">
+      <div class="icon-input">
         <input
           ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials"
           type="text"
           class="form-control"
           placeholder="JSON credentials"
         />
-        <div class="google-spreadsheet-input__status">
+        <div class="icon-input__status">
           <div
             ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials !== ''"
-            class="sa sa-ok google-spreadsheet-input__status--ok"
+            class="sa sa-ok icon-input__status--ok"
           >
           </div>
           <div
             ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials === ''"
-            class="sa sa-cross google-spreadsheet-input__status--error"
+            class="sa sa-cross icon-input__status--error"
           >
           </div>
         </div>

@@ -2,6 +2,8 @@
 
 import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
 
+const URL_REGEX = /(http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
+
 class ExternalFileModalController extends BaseDatasourceModalController {
   constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
@@ -43,6 +45,11 @@ class ExternalFileModalController extends BaseDatasourceModalController {
     const isNameValid = this.datasourceParams.name !== '';
 
     return isSeparatorValid && isSourceValid && isNameValid && !super.doesNameExists();
+  }
+
+  validateUrl() {
+    this.isUrlValid = this.datasourceParams.externalFileParams.url !== '' &&
+        this.datasourceParams.externalFileParams.url.match(URL_REGEX);
   }
 
   onFileSettingsChange(data) {
