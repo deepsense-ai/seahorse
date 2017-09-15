@@ -15,11 +15,11 @@ import com.google.inject.name.Named
 import org.joda.time.DateTime
 import spray.json._
 
-import io.deepsense.api.datasourcemanager.model.{Datasource}
+import io.deepsense.api.datasourcemanager.model.Datasource
 import io.deepsense.commons.auth.usercontext.UserContext
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
-import io.deepsense.commons.json.DatasourceListJsonProtocol
-import io.deepsense.commons.rest.client.datasources.DatasourceRestClientFactory
+import io.deepsense.commons.json.datasources.DatasourceListJsonProtocol
+import io.deepsense.commons.rest.client.datasources.{DatasourceRestClient, DatasourceRestClientFactory}
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.graph.Node
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionNotSupportedException
@@ -29,8 +29,6 @@ import io.deepsense.workflowmanager.exceptions.{WorkflowNotFoundException, Workf
 import io.deepsense.workflowmanager.model.WorkflowDescription
 import io.deepsense.workflowmanager.rest.CurrentBuild
 import io.deepsense.workflowmanager.storage._
-
-
 
 /**
  * Implementation of Workflow Manager.
@@ -47,10 +45,13 @@ class WorkflowManagerImpl @Inject()(
     @Named("roles.workflows.create") roleCreate: String,
     @Named("roles.workflows.delete") roleDelete: String)
     (implicit ec: ExecutionContext)
-  extends WorkflowManager with Logging {
+  extends WorkflowManager
+  with Logging {
 
   private val datasourceUrl = new URL(datasourceAddress)
   private def authorizator: Authorizator = authorizatorProvider.forContext(userContextFuture)
+
+  import WorkflowManagerImpl.Fields
 
   def get(id: Id): Future[Option[WorkflowWithResults]] = {
     logger.debug("Get workflow id: {}", id)
@@ -85,7 +86,7 @@ class WorkflowManagerImpl @Inject()(
   def download(id: Id): Future[Option[WorkflowWithVariables]] = {
     logger.debug("Download workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      getWorkflowWithNotebook(id).map(_.map(withVariables(id, _)))
+      getWorkflowWithAdditionalData(id).map(_.map(withVariables(id, _)))
     }
   }
 
@@ -111,20 +112,23 @@ class WorkflowManagerImpl @Inject()(
       userContext => {
         val workflowId = Workflow.Id.randomId
         val notebooks = extractNotebooks(workflow)
-        val workflowWithoutNotebook = workflowWithRemovedNotebooks(workflow)
+        val workflowWithoutNotebooksAndDatasources = workflowWithRemovedNotebooksAndDatasources(workflow)
         val ownerId = userContext.user.id
         val ownerName = userContext.user.name
-        Future.successful(checkAPICompatibility(workflow.metadata.apiVersion)).flatMap(_ =>
-          workflowStorage.create(workflowId, workflowWithoutNotebook, ownerId, ownerName)
-            .flatMap(_ =>
-              Future.sequence(notebooks.map {
-                case (nodeId, notebookJson) =>
-                  notebookStorage.save(workflowId, nodeId, notebookJson.toString)
-              }).map(_ => workflowId)
-            )
-        )
+        checkAPICompatibility(workflow.metadata.apiVersion)
+        for {
+          _ <- workflowStorage.create(workflowId, workflowWithoutNotebooksAndDatasources, ownerId, ownerName)
+          _ <- insertNotebooks(workflowId, notebooks)
+        } yield workflowId
       }
     }
+  }
+
+  private def insertNotebooks(workflowId: Workflow.Id, notebooks: Map[Node.Id, String]): Future[Iterable[Unit]] = {
+    Future.sequence(notebooks.map {
+      case (nodeId, notebookJson) =>
+        notebookStorage.save(workflowId, nodeId, notebookJson.toString)
+    })
   }
 
   def delete(id: Id): Future[Boolean] = {
@@ -146,7 +150,7 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("Clone workflow id: {}", id)
     authorizator.withRole(roleCreate) {
       userContext => {
-        getWorkflowWithNotebook(id).flatMap {
+        getWorkflowWithAdditionalData(id).flatMap {
           case Some(workflow) =>
             val gui = workflow.additionalData.fields("gui").asJsObject
             val guiUpdated = JsObject(
@@ -280,7 +284,7 @@ class WorkflowManagerImpl @Inject()(
       id, workflow.metadata, workflow.graph, workflow.additionalData, Variables())
   }
 
-  private def getWorkflowWithNotebook(id: Workflow.Id): Future[Option[Workflow]] = {
+  private def getWorkflowWithAdditionalData(id: Workflow.Id): Future[Option[Workflow]] = {
     workflowStorage.get(id).flatMap {
       case Some(w) => objectWorkflowWithAdditionalData(id, w.workflow).map(w => Option(w))
       case None => Future.successful(None)
@@ -289,21 +293,19 @@ class WorkflowManagerImpl @Inject()(
 
   private def addDatasourcesData(id: Workflow.Id, workflow: Workflow): Future[JsValue] = {
     authorizator.withRole(roleGet) { userContext => Future {
-      val datasourceRestClientFactory = new DatasourceRestClientFactory(datasourceUrl, userContext.user.id )
+      val datasourcesClient = datasourcesClientFromUserContext(userContext)
       val datasourcesId = workflow.graph.nodes.foldLeft(Set.empty[UUID])((acc, el) => acc ++ el.value.getDatasourcesId)
-
-      val datasourceClient = datasourceRestClientFactory.createClient
       val datasources = datasourcesId.foldLeft(List.empty[Datasource])((acc, el) =>
-        acc ++ datasourceClient.getDatasource(el))
+        acc ++ datasourcesClient.getDatasource(el))
       DatasourceListJsonProtocol.toString(datasources).parseJson
-      }
+    }
     }
   }
 
   private def addNotebooksData(id: Workflow.Id, workflow: Workflow): Future[JsValue] = {
     notebookStorage.getAll(id).map { notebooks =>
         JsObject(notebooks.collect {
-          case (nodeId, notebook) if workflow.graph.nodes.find(_.id == nodeId).isDefined =>
+          case (nodeId, notebook) if workflow.graph.nodes.exists(_.id == nodeId) =>
             (nodeId.toString, notebook.parseJson)
         })
     }
@@ -315,23 +317,23 @@ class WorkflowManagerImpl @Inject()(
       datasourceData <- addDatasourcesData(id, workflow)
     } yield {
       val additionalDataJson = workflow.additionalData
-      val notebookJson = JsObject(additionalDataJson.fields.updated("notebooks", notebookData))
-      val datasourceJson = JsObject(notebookJson.fields.updated("datasources", datasourceData))
+      val notebookJson = JsObject(additionalDataJson.fields.updated(Fields.Notebooks, notebookData))
+      val datasourceJson = JsObject(notebookJson.fields.updated(Fields.Datasources, datasourceData))
       Workflow(workflow.metadata, workflow.graph, datasourceJson)
     }
   }
 
   private def extractNotebooks(workflow: Workflow): Map[Node.Id, String] =
-    workflow.additionalData.fields.get("notebooks").map {
+    workflow.additionalData.fields.get(Fields.Notebooks).map {
       _.asJsObject.fields.map {
           case (nodeId, notebook) => (Node.Id.fromString(nodeId), notebook.toString)
         }
     }.getOrElse(Map.empty)
 
-  private def workflowWithRemovedNotebooks(workflow: Workflow): Workflow = {
-    val thirdPartyDataJson = workflow.additionalData
-    val prunedThirdPartyData = JsObject(thirdPartyDataJson.fields - "notebooks")
-    Workflow(workflow.metadata, workflow.graph, prunedThirdPartyData)
+  private def workflowWithRemovedNotebooksAndDatasources(workflow: Workflow): Workflow = {
+    val additionalDataJson = workflow.additionalData
+    val prunedAdditionalData = JsObject(additionalDataJson.fields - Fields.Notebooks - Fields.Datasources)
+    Workflow(workflow.metadata, workflow.graph, prunedAdditionalData)
   }
 
   private def checkOwner(workflowId: Workflow.Id, owner: String, user: String): Unit = {
@@ -345,5 +347,18 @@ class WorkflowManagerImpl @Inject()(
     if (!CurrentBuild.version.compatibleWith(parsedWorkflowAPIVersion)) {
       throw new WorkflowVersionNotSupportedException(parsedWorkflowAPIVersion, CurrentBuild.version)
     }
+  }
+
+  private def datasourcesClientFromUserContext(userContext: UserContext): DatasourceRestClient = {
+    val user = userContext.user
+    val datasourceRestClientFactory = new DatasourceRestClientFactory(datasourceUrl, user.id)
+    datasourceRestClientFactory.createClient
+  }
+}
+
+object WorkflowManagerImpl {
+  object Fields {
+    val Notebooks = "notebooks"
+    val Datasources = "datasources"
   }
 }

@@ -7,7 +7,6 @@ package io.deepsense.e2etests
 import org.scalatest.WordSpec
 import spray.json._
 
-import io.deepsense.commons.json.DatasourceListJsonProtocol
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
