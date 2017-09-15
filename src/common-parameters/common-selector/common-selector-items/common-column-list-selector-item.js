@@ -31,9 +31,11 @@ ColumnListSelectorItem.prototype.serialize = function serialize() {
   };
 };
 
-ColumnListSelectorItem.getType = () => { return {
-  'id': 'columnList',
-  'verbose': 'Columns list'
-};};
+ColumnListSelectorItem.getType = () => {
+  return {
+    'id': 'columnList',
+    'verbose': 'Columns list'
+  };
+};
 
 module.exports = ColumnListSelectorItem;

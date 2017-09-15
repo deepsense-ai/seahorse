@@ -14,6 +14,10 @@ function SelectorParameter(options) {
   this.name = options.name;
   this.items = this.initItems(options.value, options.schema);
   this.schema = options.schema;
+
+  if (options.hasOwnProperty('excluding')) {
+    this.excluding = options.excluding;
+  }
 }
 
 SelectorParameter.prototype = new GenericParameter();
@@ -46,12 +50,16 @@ SelectorParameter.prototype.serialize = function () {
       null :
       this.items[0].serialize();
   } else {
-    let result = [];
+    let result = {
+      excluding: this.excluding,
+      selections: []
+    };
+
     for (let i = 0; i < this.items.length; ++i) {
-      result.push(this.items[i].serialize());
+      result.selections.push(this.items[i].serialize());
     }
 
-    return result.length === 0 ?
+    return result.selections.length === 0 ?
       null :
       result;
   }

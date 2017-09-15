@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by: Grzegorz Swatowski
- */
-
 'use strict';
 
 let ParametersListConstructor = require('./common-parameters-list.js');
@@ -77,6 +71,13 @@ let ParameterFactory = {
               options.parametersLists.push(nestedParametersList)
             });
 
+            break;
+
+          case 'selector':
+            if (paramValue.hasOwnProperty('excluding')) {
+              options.excluding = paramValue.excluding;
+            }
+            options.value = paramValue.selections ? paramValue.selections : options.value;
             break;
         }
 
