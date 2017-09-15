@@ -26,13 +26,11 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future, Promise}
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
-
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import spray.json._
-
 import io.deepsense.api.datasourcemanager.model.Datasource
-import io.deepsense.commons.json.DatasourceListJsonProtocol
+import io.deepsense.commons.json.datasources.DatasourceListJsonProtocol
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.rest.client.datasources.DatasourceInMemoryClientFactory

@@ -21,26 +21,52 @@ import java.util.UUID
 
 import io.deepsense.api.datasourcemanager.ApiClient
 import io.deepsense.api.datasourcemanager.client.DefaultApi
-import io.deepsense.api.datasourcemanager.model.Datasource
+import io.deepsense.api.datasourcemanager.model.{Datasource, DatasourceParams}
+import io.deepsense.commons.utils.Logging
 
-class DatasourceRestClient(datasourceServerAddress: URL, userId: String) extends DatasourceClient {
-  val apiClient = new ApiClient()
+class DatasourceRestClient(
+    datasourceServerAddress: URL,
+    userId: String)
+  extends DatasourceClient
+  with Logging {
+
+  private val client = {
+    val apiClient = new ApiClient()
+    apiClient.setAdapterBuilder(
+      apiClient.getAdapterBuilder.baseUrl(datasourceServerAddress.toString))
+    apiClient.createService(classOf[DefaultApi])
+  }
 
   def getDatasource(uuid: UUID): Option[Datasource] = {
-    apiClient.setAdapterBuilder(
-      apiClient.getAdapterBuilder().baseUrl(datasourceServerAddress.toString))
-    val client = apiClient.createService(classOf[DefaultApi])
     val response = client.getDatasource(userId, uuid.toString).execute()
-    if (response.isSuccessful()) {
+    if (response.isSuccessful) {
       Some(response.body)
     } else {
       None
     }
   }
+
+  def addDatasource(userName: String, datasourceParams: DatasourceParams): Unit = {
+    val newUUID = UUID.randomUUID().toString
+    val response = client.putDatasource(userId, userName, newUUID, datasourceParams).execute()
+    logger.info(s"Adding datasource, userId = $userId, userName = $userName," +
+      s"uuid = $newUUID, params = $datasourceParams")
+    if (response.isSuccessful) {
+      logger.info(s"Successfully added datasource; body = ${response.body()}")
+    } else {
+      throw new Exception(
+        s"There was a problem with adding datasource," +
+          s"code: ${response.code()}, body: ${response.body()}, error body: ${response.errorBody()}."
+      )
+    }
+  }
 }
 
-class DatasourceRestClientFactory(datasourceServerAddress: URL, userId: String) extends DatasourceClientFactory {
-  override def createClient: DatasourceClient = {
+class DatasourceRestClientFactory(
+    datasourceServerAddress: URL,
+    userId: String) extends DatasourceClientFactory {
+
+  override def createClient: DatasourceRestClient = {
     new DatasourceRestClient(datasourceServerAddress, userId)
   }
 }
