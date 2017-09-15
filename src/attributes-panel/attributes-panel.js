@@ -1,13 +1,7 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 /*@ngInject*/
-function OperationAttributes($timeout, AttributesPanelService) {
+function OperationAttributes(AttributesPanelService) {
   return {
     restrict: 'E',
     scope: {
@@ -17,13 +11,16 @@ function OperationAttributes($timeout, AttributesPanelService) {
     templateUrl: 'attributes-panel/attributes-panel.html',
     replace: true,
     link: (scope, element) => {
+      scope.selected = 'parameters';
       scope.$watch('node', function() {
         scope.$applyAsync(() => {
           let container = element[0];
-          let heightOfOthers = jQuery(
-            '> .ibox-title--main',
-            container
-          ).outerHeight(true);
+          let heightOfOthers = _.reduce(jQuery(
+              '> .ibox-title--main, > .c-attributes-tabs',
+              container
+            ).map((index, el) => $(el).outerHeight(true)), (prev, next) => {
+              return prev + next;
+            });
           let body = container.querySelector('.ibox-content');
 
           angular.element(body).css('height', 'calc(100% - ' + heightOfOthers + 'px)');

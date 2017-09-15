@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Grzegorz Swatowski on 25.06.15.
- */
-
 'use strict';
 
 angular.module('test').

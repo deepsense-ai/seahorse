@@ -70,6 +70,12 @@
     margin-bottom: @main-space;
     padding: 0;
 
+    &:first-child {
+      .ibox-title {
+        border: 0;
+      }
+    }
+
     .ibox-title {
       height: auto;
       padding: 0;
@@ -302,6 +308,25 @@
   &--error {
     .modal-content {
       padding: 10px;
+    }
+  }
+}
+
+.c-ports-info {
+  &__content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__container {
+    padding: 5px !important;
+
+    &--outcomes {
+      background: #F6F6F6;
+    }
+
+    &:nth-child(1) {
+      margin-bottom: 0;
     }
   }
 }
