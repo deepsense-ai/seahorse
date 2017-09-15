@@ -17,6 +17,7 @@
 package io.deepsense.workflowexecutor.rabbitmq
 
 import java.util
+import java.util.concurrent.TimeoutException
 
 import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
@@ -25,6 +26,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import com.thenewmotion.akka.rabbitmq.ChannelActor.{Connected, Disconnected}
 import com.thenewmotion.akka.rabbitmq._
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.workflowexecutor.communication.mq.{MQCommunication, MQDeserializer, MQSerializer}
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory.NotifyingChannelActor
 
@@ -32,7 +34,7 @@ case class MQCommunicationFactory(
   system: ActorSystem,
   connection: ActorRef,
   mqMessageSerializer: MQSerializer,
-  mqMessageDeserializer: MQDeserializer) {
+  mqMessageDeserializer: MQDeserializer) extends Logging {
 
   val exchangeType = "topic"
 
@@ -71,11 +73,24 @@ case class MQCommunicationFactory(
     channel.basicConsume(queue, true, consumer)
   }
 
-  private def createMQPublisher(topic: String): MQPublisher = {
+  private def createMQPublisher(topic: String) = withTimeoutClue(channelTimeoutMsg){
     val publisherName = MQCommunication.publisherName(topic)
     val channelActor: ActorRef =
       connection.createChannel(ChannelActor.props(), Some(publisherName))(timeout = 10.seconds)
     MQPublisher(MQCommunication.Exchange.seahorse, mqMessageSerializer, channelActor)
+  }
+
+  private val channelTimeoutMsg =
+    "Timeout while trying to connect to rabbitMQ. Make sure rabbitMQ address and port is correct."
+
+  private def withTimeoutClue[T](clue: String)(code: => T): T = {
+    try {
+      code
+    } catch {
+      case timeout: TimeoutException =>
+        logger.error(clue)
+        throw timeout
+    }
   }
 
   private  def createMQBroadcaster(exchange: String): MQPublisher = {
