@@ -45,14 +45,13 @@ if [ ! -z "$SEAHORSE_BUILD_TAG" ]; then
   docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
 fi
 
-GIT_BRANCH=`git symbolic-ref --short -q HEAD || echo ""` # it fails if not on branch
-if [ ! -z "$GIT_BRANCH" ]; then
-  git fetch origin $GIT_BRANCH
-
-  if [ "$GIT_SHA" = "$(git rev-parse origin/$GIT_BRANCH)" ]
+# TODO Automatically derive branches. Make it work with any dev_* bramches
+for BRANCH in master seahorse_on_desktop seahorse_on_tap seahorse_on_bdu;
+do
+  if [ "$GIT_SHA" = "$(git rev-parse origin/$BRANCH)" ]
   then
     echo "This GIT_SHA is also tip of the origin/$GIT_BRANCH! Publishing $GIT_BRANCH-latest image"
     docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
     docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
   fi
-fi
+done
