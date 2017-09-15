@@ -3,5 +3,6 @@ angular.module('ds.lab').constant('config', {
   'apiPort': '${PROXY_PORT}',
   'apiVersion': '${API_VERSION}',
   'editorVersion': '${EDITOR_VERSION}',
-  'urlApiVersion': 'v1'
+  'urlApiVersion': 'v1',
+  'resultsRefreshInterval': '10000'
 });
