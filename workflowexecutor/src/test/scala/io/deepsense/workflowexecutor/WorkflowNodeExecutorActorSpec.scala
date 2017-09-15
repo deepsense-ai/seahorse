@@ -30,6 +30,7 @@ import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.sparkutils.AkkaUtils
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.{Delete, Start}
 
@@ -42,7 +43,7 @@ class WorkflowNodeExecutorActorSpec
   with BeforeAndAfterAll
   with Eventually {
 
-  override protected def afterAll(): Unit = system.shutdown()
+  override protected def afterAll(): Unit = AkkaUtils.terminate(system)
 
   "WorkflowNodeExecutorActor" when {
     "receives start" should {

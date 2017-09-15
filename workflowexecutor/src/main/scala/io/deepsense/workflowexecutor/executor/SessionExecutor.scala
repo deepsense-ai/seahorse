@@ -36,7 +36,7 @@ import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.sparkutils.SparkSQLSession
+import io.deepsense.sparkutils.{SparkSQLSession, AkkaUtils}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
@@ -189,7 +189,7 @@ case class SessionExecutor(
     logger.info(s"Sending Init() to WorkflowsSubscriberActor")
     workflowsSubscriberActor ! Init()
 
-    system.awaitTermination()
+    AkkaUtils.awaitTermination(system)
     cleanup(system, sparkContext, pythonExecutionCaretaker, kernelManagerCaretaker)
     logger.debug("SessionExecutor ends")
     System.exit(0)
@@ -332,7 +332,7 @@ case class SessionExecutor(
     kernelManagerCaretaker.stop()
     sparkContext.stop()
     logger.debug("Spark terminated!")
-    system.shutdown()
+    AkkaUtils.terminate(system)
     logger.debug("Akka terminated!")
   }
 }

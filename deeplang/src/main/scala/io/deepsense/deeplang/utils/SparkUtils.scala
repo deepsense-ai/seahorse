@@ -17,11 +17,10 @@
 package io.deepsense.deeplang.utils
 
 import scala.collection._
-import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
 
-import io.deepsense.deeplang.utils.aggregators.{CountOccurrencesWithKeyLimitAggregator, Aggregator}
+import io.deepsense.deeplang.utils.aggregators.CountOccurrencesWithKeyLimitAggregator
 
 /**
   * Utils for spark.

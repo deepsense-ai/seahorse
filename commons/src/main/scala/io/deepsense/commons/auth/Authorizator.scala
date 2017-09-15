@@ -29,7 +29,7 @@ trait Authorizator {
    * Checks if the authenticated user has the specified role.
    * If yes then invokes the internal function onSuccess passing UserContext
    * corresponding to the user to it as a parameter. Otherwise, fails with
-   * [[NoRoleException]]
+   * [[io.deepsense.commons.auth.exceptions.NoRoleException NoRoleException]]
    * @param role A role that the user should have.
    * @param onSuccess A function that is invoked when the user has the expected role.
    * @tparam T Return type of onSuccess function.

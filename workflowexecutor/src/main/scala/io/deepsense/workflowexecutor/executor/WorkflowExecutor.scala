@@ -36,6 +36,7 @@ import io.deepsense.deeplang.{OperationExecutionDispatcher, _}
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowInfo, WorkflowWithResults, WorkflowWithVariables}
+import io.deepsense.sparkutils.AkkaUtils
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
 import io.deepsense.workflowexecutor._
@@ -132,7 +133,7 @@ case class WorkflowExecutor(
     workflowExecutorActor ! Launch(workflow.graph.nodes.map(_.id))
 
     logger.debug("Awaiting execution end...")
-    actorSystem.awaitTermination()
+    AkkaUtils.awaitTermination(actorSystem)
 
     val report: ExecutionReport = finishedExecutionStatus.future.value.get match {
       case Failure(exception) => // WEA failed with an exception
@@ -154,7 +155,7 @@ case class WorkflowExecutor(
     logger.debug("Cleaning up...")
     pythonExecutionCaretaker.stop()
     logger.debug("PythonExecutionCaretaker terminated!")
-    actorSystem.shutdown()
+    AkkaUtils.terminate(actorSystem)
     logger.debug("Akka terminated!")
     executionContext.sparkContext.stop()
     logger.debug("Spark terminated!")

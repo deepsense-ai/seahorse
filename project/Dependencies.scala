@@ -145,9 +145,9 @@ object Dependencies {
     )
   }
 
-  val sparkutils_1_6_1 = new Spark("1.6.1").onlyInTests
+  val sparkutils_1_6_1 = new Spark("1.6.1").onlyInTests ++ Seq(akkaActor)
 
-  val sparkutils_2_0_0 = new Spark("2.0.0").onlyInTests
+  val sparkutils_2_0_0 = new Spark("2.0.0").onlyInTests ++ Seq(akkaActor)
 
   val usedSpark = new Spark(Version.spark)
 

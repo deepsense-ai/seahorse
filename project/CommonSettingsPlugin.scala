@@ -50,7 +50,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     crossScalaVersions := Seq(Versions.scala),
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
-      "-language:existentials", "-language:implicitConversions"
+      "-language:existentials", "-language:implicitConversions", "-Xfatal-warnings"
     ),
     javacOptions ++= Seq(
       "-source", Versions.java,

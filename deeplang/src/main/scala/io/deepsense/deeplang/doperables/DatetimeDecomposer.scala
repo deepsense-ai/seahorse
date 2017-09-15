@@ -32,9 +32,9 @@ import io.deepsense.deeplang.params.{Param, PrefixBasedColumnCreatorParam, Singl
  * Operation that is able to take dataframe and split its timestamp column to many columns
  * containing timestamp parts. Client can choose timestamp parts from set:
  * {year, month, day, hour, minutes, seconds} using parameters.
- * Choosing $part value will result in adding new column with name:
- * {original_timestamp_column_name}_$part of IntegerType containing $part value.
- * If a column with that name already exists {original_timestamp_column_name}_$part_N will be used,
+ * Choosing &#36;part value will result in adding new column with name:
+ * {original_timestamp_column_name}_&#36;part of IntegerType containing &#36;part value.
+ * If a column with that name already exists {original_timestamp_column_name}_&#36;part_N will be used,
  * where N is first not used Int value starting from 1.
  */
 case class DatetimeDecomposer() extends Transformer {

@@ -98,7 +98,7 @@ object DataFrame {
   def forInference(schema: Option[StructType] = None): DataFrame = DataFrame(null, schema)
 
   /**
-   * Throws [[WrongColumnTypeException]]
+   * Throws [[io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException WrongColumnTypeException]]
    * if some columns of schema have type different than one of expected.
    */
   def assertExpectedColumnType(schema: StructType, expectedTypes: ColumnType*): Unit = {
@@ -108,7 +108,8 @@ object DataFrame {
   }
 
   /**
-   * Throws [[WrongColumnTypeException]] if column has type different than one of expected.
+   * Throws [[io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException WrongColumnTypeException]]
+   * if column has type different than one of expected.
    */
   def assertExpectedColumnType(column: StructField, expectedTypes: ColumnType*): Unit = {
     val actualType = SparkConversions.sparkColumnTypeToColumnType(column.dataType)

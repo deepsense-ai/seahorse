@@ -28,7 +28,7 @@ trait Ownable extends HasTenantId {
    * Checks if this object is owned by user defined in UserContext.
    * @param owner Owner's UserContext.
    * @return The object when it is owned by the user defined in the UserContext. Otherwise throws
-   *         [[ResourceAccessDeniedException]].
+   *         [[io.deepsense.commons.auth.exceptions.ResourceAccessDeniedException ResourceAccessDeniedException]].
    */
   def assureOwnedBy(owner: UserContext): this.type = {
     if (isOwnedBy(owner)) {

@@ -23,12 +23,11 @@ import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
 import scala.io.BufferedSource
 import scala.util.{Success, Try}
-
 import org.apache.spark.SparkContext
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.Eventually._
-import org.scalatest.concurrent.Timeouts
+import org.scalatest.concurrent.{TimeLimits, Timeouts}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
@@ -39,7 +38,7 @@ import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 
-class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Timeouts {
+class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with TimeLimits {
 
   val gatewayConfig = {
     GatewayConfig(FiniteDuration(500, duration.MILLISECONDS))

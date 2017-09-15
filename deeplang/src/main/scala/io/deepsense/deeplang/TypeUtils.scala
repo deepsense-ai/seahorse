@@ -22,6 +22,7 @@ import scala.reflect.runtime.universe.Type
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
+import io.deepsense.sparkutils
 
 /**
  * Holds methods used for manipulating objects representing types.
@@ -37,7 +38,8 @@ object TypeUtils {
 
   def isParametrized(t: ru.Type): Boolean = t.typeSymbol.asClass.typeParams.nonEmpty
 
-  def isAbstract(c: Class[_]): Boolean = classToType(c).typeSymbol.asClass.isAbstractClass
+  def isAbstract(c: Class[_]): Boolean =
+    sparkutils.TypeUtils.isAbstract(classToType(c).typeSymbol.asClass)
 
   def constructorForClass(c: Class[_]): Option[Constructor[_]] = {
     val constructors = c.getConstructors

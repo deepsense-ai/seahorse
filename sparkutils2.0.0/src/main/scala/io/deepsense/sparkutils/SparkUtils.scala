@@ -17,9 +17,13 @@
 package io.deepsense.sparkutils
 
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
+import scala.reflect.api.Symbols
 import scala.reflect.runtime.universe.TypeTag
 
+import akka.actor.ActorSystem
 import org.apache.spark.ml.classification.{DecisionTreeClassificationModel, GBTClassificationModel, MultilayerPerceptronClassificationModel, RandomForestClassificationModel}
 import org.apache.spark.ml.feature.PCAModel
 import org.apache.spark.ml.linalg
@@ -134,4 +138,13 @@ object CSV {
 
 object PythonGateway {
   val gatewayServerHasCallBackClient: Boolean = false
+}
+
+object TypeUtils {
+  def isAbstract(c: Symbols#ClassSymbolApi): Boolean = c.isAbstract
+}
+
+object AkkaUtils {
+  def terminate(as: ActorSystem): Unit = as.terminate()
+  def awaitTermination(as: ActorSystem) = Await.result(as.whenTerminated, Duration.Inf)
 }

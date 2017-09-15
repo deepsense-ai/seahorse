@@ -20,13 +20,14 @@ import scala.concurrent.Promise
 
 import akka.actor.{Actor, Props}
 
+import io.deepsense.sparkutils.AkkaUtils
 import io.deepsense.models.workflows.ExecutionReport
 
 class TerminationListenerActor(finishedExecutionStatus: Promise[ExecutionReport]) extends Actor {
   override def receive: Receive = {
     case status: ExecutionReport =>
       finishedExecutionStatus.success(status)
-      context.system.shutdown()
+      AkkaUtils.terminate(context.system)
   }
 }
 

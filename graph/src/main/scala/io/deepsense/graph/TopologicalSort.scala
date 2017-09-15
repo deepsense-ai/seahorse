@@ -19,6 +19,7 @@ package io.deepsense.graph
 import scala.collection.mutable
 
 private[graph] class TopologicalSort[T](sortable: TopologicallySortable[T]) {
+  import TopologicalSort._
   private val visits: mutable.Map[Node[T], Visits] = mutable.Map()
 
   private var sorted: Option[List[Node[T]]] = Some(List.empty)
@@ -52,10 +53,12 @@ private[graph] class TopologicalSort[T](sortable: TopologicallySortable[T]) {
   private def markVisited(node: Node[T]): Unit = {
     visits(node) = Visited
   }
+}
 
-  private sealed abstract class Visits()
-  private case object InProgress extends Visits()
-  private case object Visited extends Visits()
+private[graph] object TopologicalSort {
+  private sealed abstract class Visits
+  private case object InProgress extends Visits
+  private case object Visited extends Visits
 }
 
 

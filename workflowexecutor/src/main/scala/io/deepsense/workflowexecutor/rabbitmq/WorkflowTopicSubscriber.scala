@@ -20,13 +20,14 @@ import akka.actor._
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.sparkutils.AkkaUtils
 import io.deepsense.workflowexecutor.communication.message.global.Launch
 import io.deepsense.workflowexecutor.communication.message.{global, workflow}
 import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, WorkflowExecutorActor}
 
 /**
-  * Handles messages with topic workflow.${id}. All messages directed to workflows.
+  * Handles messages with topic workflow.&#36;{id}. All messages directed to workflows.
   */
 case class WorkflowTopicSubscriber(
       actorProvider: SessionWorkflowExecutorActorProvider,
@@ -56,7 +57,7 @@ case class WorkflowTopicSubscriber(
       executorActor ! WorkflowExecutorActor.Messages.Synchronize()
     case global.PoisonPill() =>
       logger.info("Got PoisonPill! Terminating Actor System!")
-      context.system.shutdown()
+      AkkaUtils.terminate(context.system)
     case x =>
       logger.error(s"Unexpected '$x' from '${sender()}'!")
   }

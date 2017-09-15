@@ -81,6 +81,7 @@ object DirectoryListFileFinder {
       case (Left(badDirs), Right(_)) => Left(badDirs)
       case (Right(_), Left(badDir)) => Left(Seq(badDir))
       case (Right(files), Right(files2)) => Right(files ++ files2)
+      case _ => ??? // to silence buggy 2.10 non-exhaustive match warning
     }
   }
 }

@@ -19,7 +19,10 @@ package io.deepsense.sparkutils
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
+import scala.reflect.api.Symbols
 
+import akka.actor.ActorSystem
+import org.apache.spark.{ml, SparkContext}
 import org.apache.spark.ml.classification.{DecisionTreeClassificationModel, GBTClassificationModel, MultilayerPerceptronClassificationModel, RandomForestClassificationModel}
 import org.apache.spark.ml.feature.PCAModel
 import org.apache.spark.ml.regression.{DecisionTreeRegressionModel, GBTRegressionModel, RandomForestRegressionModel}
@@ -28,9 +31,8 @@ import org.apache.spark.mllib.linalg
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.expressions.Expression
-import org.apache.spark.sql.types._
-import org.apache.spark.{SparkContext, ml}
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.types.StructType
 
 class SparkSQLSession private[sparkutils](private[sparkutils] val sqlContext: SQLContext) {
   def this(sparkContext: SparkContext) = this(new HiveContext(sparkContext))
@@ -131,3 +133,11 @@ object PythonGateway {
   val gatewayServerHasCallBackClient: Boolean = true
 }
 
+object TypeUtils {
+  def isAbstract(c: Symbols#ClassSymbolApi): Boolean = c.isAbstractClass
+}
+
+object AkkaUtils {
+  def terminate(as: ActorSystem): Unit = as.shutdown()
+  def awaitTermination(as: ActorSystem): Unit = as.awaitTermination()
+}

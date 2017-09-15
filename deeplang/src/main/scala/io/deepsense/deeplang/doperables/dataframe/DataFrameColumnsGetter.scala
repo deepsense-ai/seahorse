@@ -31,8 +31,8 @@ trait DataFrameColumnsGetter {
 
   /**
    * Returns name of column based on selection.
-   * Throws [[ColumnDoesNotExistException]] if out-of-range index
-   * or non-existing column name is selected.
+   * Throws [[io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException ColumnDoesNotExistException]]
+   * if out-of-range index or non-existing column name is selected.
    */
   def getColumnName(singleColumnSelection: SingleColumnSelection): String =
     DataFrameColumnsGetter.getColumnName(sparkDataFrame.schema, singleColumnSelection)
@@ -41,8 +41,8 @@ trait DataFrameColumnsGetter {
    * Names of columns selected by provided selections.
    * Order of returned columns is the same as in schema.
    * If a column will occur in many selections, it won't be duplicated in result.
-   * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
-   * or non-existing column names are selected.
+   * Throws [[io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException ColumnsDoNotExistException]]
+   * if out-of-range indexes or non-existing column names are selected.
    */
   def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] =
     DataFrameColumnsGetter.getColumnNames(sparkDataFrame.schema, multipleColumnSelection)
@@ -56,8 +56,8 @@ object DataFrameColumnsGetter {
 
   /**
    * Returns name of column based on selection.
-   * Throws [[ColumnDoesNotExistException]] if out-of-range index
-   * or non-existing column name is selected.
+   * Throws [[io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException ColumnDoesNotExistException]]
+   * if out-of-range index or non-existing column name is selected.
    */
   def getColumnName(
       schema: StructType,
@@ -81,7 +81,8 @@ object DataFrameColumnsGetter {
     }
 
   /**
-   * Throws [[WrongColumnTypeException]] if column has type different than one of expected.
+   * Throws [[io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException WrongColumnTypeException]]
+   * if column has type different than one of expected.
    */
   def assertExpectedColumnType(
       schema: StructType,
@@ -98,8 +99,8 @@ object DataFrameColumnsGetter {
    * Names of columns selected by provided selections.
    * Order of returned columns is the same as in schema.
    * If a column will occur in many selections, it won't be duplicated in result.
-   * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
-   * or non-existing column names are selected.
+   * Throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException ColumnsDoNotExistException]]
+   * if out-of-range indexes or non-existing column names are selected.
    */
   def getColumnNames(
     schema: StructType,

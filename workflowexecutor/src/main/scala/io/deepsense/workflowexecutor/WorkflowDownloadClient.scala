@@ -29,6 +29,7 @@ import spray.http._
 import spray.util._
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sparkutils
 import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
 
 class WorkflowDownloadClient(
@@ -53,7 +54,7 @@ class WorkflowDownloadClient(
 
     futureResponse.onComplete { _ =>
       Try(IO(Http).ask(Http.CloseAll)(1.second).await)
-      system.shutdown()
+      sparkutils.AkkaUtils.terminate(system)
     }
     futureResponse.map(handleResponse)
   }
