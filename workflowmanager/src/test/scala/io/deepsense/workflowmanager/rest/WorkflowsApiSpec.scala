@@ -22,6 +22,7 @@ import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
+import io.deepsense.commons.utils.Version
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang
 import io.deepsense.deeplang.DOperation.Id
@@ -694,6 +695,7 @@ object WorkflowsApiSpec {
     override val name: String = "mock operation"
     override val description: String = "mock operation desc"
     override val params = Array[Param[_]]()
+    override val since: Version = Version(0, 0, 0)
 
     @transient
     override lazy val tTagTI_0: TypeTag[DOperable] = typeTag[DOperable]
