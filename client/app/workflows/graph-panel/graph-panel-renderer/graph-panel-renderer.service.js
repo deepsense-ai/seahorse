@@ -27,7 +27,7 @@ import { GraphPanelStyler} from './graph-panel-styler.js';
 
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
-  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService, GraphNode) {
+  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService) {
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, {
       strokeStyle: '#61B7CF'
@@ -355,26 +355,14 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     that.repaintEverything();
   };
 
-  that.bindDisablePortHighlightingsEvents = function bindDisablePortHighlightingsEvents() {
-    const disablePortHighlightings = () => {
-      $timeout(() => {
-        if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
-          ConnectionHinterService.setDefaultPortColors(internal.renderMode);
-          ConnectionHinterService.disableHighlightingOoperations();
-        }
-      }, 0, false);
-    };
-
-    $document.on('mousedown', disablePortHighlightings);
-    $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', disablePortHighlightings);
-    $rootScope.$on('Keyboard.KEY_PRESSED_DEL', disablePortHighlightings);
-    $rootScope.$on(Edge.CREATE, disablePortHighlightings);
-    $rootScope.$on(Edge.REMOVE, disablePortHighlightings);
-    $rootScope.$on(GraphNode.MOUSEDOWN, disablePortHighlightings);
-    jsPlumb.bind('connectionDragStop', disablePortHighlightings);
+  that.disablePortHighlightings = function disablePortHighlightings() {
+    $timeout(() => {
+      if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+        ConnectionHinterService.setDefaultPortColors(internal.renderMode);
+        ConnectionHinterService.disableHighlightingOoperations();
+      }
+    }, 0, false);
   };
-
-  that.bindDisablePortHighlightingsEvents();
 
   return that;
 }

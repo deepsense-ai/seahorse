@@ -5,7 +5,7 @@ import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/gr
 /* beautify preserve:end */
 
 /* @ngInject */
-function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
+function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPanelRendererService, Edge, GraphNode) {
   let nodeDimensions = {};
 
   this.getNodeDimensions = function getNodeDimensions() {
@@ -37,6 +37,17 @@ function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
       $scope.$emit('FlowChartBox.ELEMENT_DROPPED', data);
     }
   });
+
+  // Those are global. It is assumed that there is only one flowchart in application.
+  // TODO Rework it so its local. Probably use jsPlumb.getInstance()
+  $document.on('mousedown', GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on('Keyboard.KEY_PRESSED_DEL', GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on(Edge.CREATE, GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on(Edge.REMOVE, GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on(GraphNode.MOUSEDOWN, GraphPanelRendererService.disablePortHighlightings);
+  jsPlumb.bind('connectionDragStop', GraphPanelRendererService.disablePortHighlightings);
+
 }
 
 /* @ngInject */
