@@ -55,7 +55,7 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>metric</code></td>
+<td><code>multiclass metric</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The metric used in evaluation. Possible values: <code>["f1", "precision", "recall", "weightedPrecision", "weightedRecall"]</code></td>
 </tr>
