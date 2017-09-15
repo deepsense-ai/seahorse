@@ -29,8 +29,7 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperations.WriteDataFrame.CSV
-import io.deepsense.deeplang.parameters.ColumnType
+import io.deepsense.deeplang.parameters.{FileFormat, ColumnType}
 
 class WriteDataFrameIntegSpec
   extends DeeplangIntegTestSupport
@@ -83,7 +82,6 @@ class WriteDataFrameIntegSpec
   "WriteDataFrame" should {
     "write CSV file without header" in {
       val wdf = WriteDataFrame(
-        CSV,
         ",",
         false,
         absoluteWriteDataFrameTestPath + "/without-header")
@@ -93,7 +91,6 @@ class WriteDataFrameIntegSpec
 
     "write CSV file with header" in {
       val wdf = WriteDataFrame(
-        CSV,
         ",",
         true,
         absoluteWriteDataFrameTestPath + "/with-header")
@@ -103,7 +100,6 @@ class WriteDataFrameIntegSpec
 
     "write CSV file with custom separator" in {
       val wdf = WriteDataFrame(
-        CSV,
         ";",
         false,
         absoluteWriteDataFrameTestPath + "/custom-separator")

@@ -30,7 +30,8 @@ object LocationAttractiveness extends WorkflowCreator {
     testFilePath,
     (ReadDataFrame.LineSeparator.UNIX, None),
     ",",
-    true)
+    true,
+    None)
 
   // min(dist to SF, dist to LA)
   val distanceOperation: CreateMathematicalTransformation = {
@@ -87,7 +88,6 @@ object LocationAttractiveness extends WorkflowCreator {
 
   val selectImportantFeatures = ProjectColumns(importantColumns)
   val writeDataFrame: WriteDataFrame = WriteDataFrame(
-    WriteDataFrame.CSV,
     ",",
     true,
     resultFilePath)

@@ -42,6 +42,31 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
     dataFrameWithMappingMetadata(remappedRdd, columnNameMappings)
   }
 
+  /**
+   * Performs conversion of categorical columns to string columns.
+   * @param dataFrame DataFrame with categorical columns
+   * @return DataFrame with categorical columns values converted to string values
+   */
+  def uncategorized(dataFrame: DataFrame): DataFrame = {
+    val categoricalMetadata = CategoricalMetadata(dataFrame)
+
+    val rdd = dataFrame.sparkDataFrame.map( r => {
+      val seq = r.toSeq.zipWithIndex
+      val mappedSeq = seq.map { case (value, index) =>
+        if (value == null || !categoricalMetadata.isCategorical(index)) {
+          value
+        } else {
+          categoricalMetadata.mapping(index).idToValue(value.asInstanceOf[Int])
+        }
+      }
+      Row(mappedSeq: _*)
+    })
+
+    val schema = sparkDataFrame.schema
+    val updatedSchema = CategoricalMapper.uncategorizedSchema(schema, categoricalMetadata)
+    dataFrameBuilder.buildDataFrame(updatedSchema, rdd)
+  }
+
   private def distinctColumnValues(column: String): Array[String] = {
     val mappingFunction = findMappingFunction(column)
     val convertedColumn = column + "_converted" + DateTime.now.getMillis
@@ -106,13 +131,32 @@ object CategoricalMapper {
   type CategoricalMappingsMap = Map[String, CategoriesMapping]
 
   def categorizedSchema(
-      schema: StructType, mappings: Map[String, CategoriesMapping]): StructType = {
+      schema: StructType,
+      mappings: Map[String, CategoriesMapping]): StructType = {
     val mappedType = schema.map(field =>
       mappings
         .get(field.name)
         .map { m =>
         val updatedMetadata = MappingMetadataConverter.mappingToMetadata(m, field.metadata)
         field.copy(metadata = updatedMetadata, dataType = IntegerType)
+      }.getOrElse(field))
+    StructType(mappedType.toSeq)
+  }
+
+  /**
+   * Permorms conversion of categorical columns to string columns in Spark DataFrame schema.
+   * @param schema
+   * @param categoricalMetadata
+   * @return Spark DataFrame schema with categorical columns converted to string columns
+   */
+  def uncategorizedSchema(
+      schema: StructType,
+      categoricalMetadata: CategoricalMetadata): StructType = {
+    val mappedType = schema.map(field =>
+      categoricalMetadata.mappingByName
+        .get(field.name)
+        .map { m =>
+        field.copy(dataType = StringType)
       }.getOrElse(field))
     StructType(mappedType.toSeq)
   }

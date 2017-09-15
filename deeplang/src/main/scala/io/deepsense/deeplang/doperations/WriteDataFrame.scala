@@ -29,9 +29,10 @@ import org.apache.spark.sql.Row
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
 import io.deepsense.deeplang.doperations.WriteDataFrame._
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
+import io.deepsense.deeplang.parameters.FileFormat.FileFormat
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
@@ -56,12 +57,15 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
 
   val formatParameter = ChoiceParameter(
     description = "Format of the output file",
-    default = Some(CSV.name),
+    default = Some(FileFormat.CSV.toString),
     required = true,
-    options = ListMap(CSV.name -> ParametersSchema(
-      "column separator" -> columnSeparatorParameter,
-      "write header" -> writeHeaderParameter
-    ))
+    options = ListMap(
+      FileFormat.CSV.toString -> ParametersSchema(
+        "column separator" -> columnSeparatorParameter,
+        "write header" -> writeHeaderParameter),
+      FileFormat.PARQUET.toString -> ParametersSchema(),
+      FileFormat.JSON.toString -> ParametersSchema()
+    )
   )
 
   val outputFileParameter = StringParameter(
@@ -76,24 +80,34 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
-    require(contains(formatParameter.value, CSV.toString))
+    val path = outputFileParameter.value.get
 
-    val categoricalMetadata = CategoricalMetadata(dataFrame.sparkDataFrame)
-    val csv = dataFrame.sparkDataFrame.rdd
-      .map(rowToStringArray(categoricalMetadata) andThen convertToCsv)
+    FileFormat.withName(formatParameter.value.get) match {
+      case FileFormat.CSV =>
+        val categoricalMetadata = CategoricalMetadata(dataFrame.sparkDataFrame)
+        val csv = dataFrame.sparkDataFrame.rdd
+          .map(rowToStringArray(categoricalMetadata) andThen convertToCsv)
 
-    val result = if (writeHeaderParameter.value.get) {
-      context.sparkContext.parallelize(Seq(
-        convertToCsv(dataFrame.sparkDataFrame.schema.fieldNames)
-      )).union(csv)
-    } else {
-      csv
-    }
+        val result = if (writeHeaderParameter.value.get) {
+          context.sparkContext.parallelize(Seq(
+            convertToCsv (dataFrame.sparkDataFrame.schema.fieldNames)
+          )).union(csv)
+        } else {
+          csv
+        }
 
-    try {
-      result.saveAsTextFile(outputFileParameter.value.get)
-    } catch {
-      case e: IOException => throw DeepSenseIOException(e)
+        try {
+          result.saveAsTextFile(path)
+        } catch {
+          case e: IOException => throw DeepSenseIOException (e)
+        }
+      case FileFormat.PARQUET =>
+        // TODO: DS-1480 Writing DF in parquet format when column names contain forbiden characters
+        dataFrame.sparkDataFrame.write.parquet(path)
+      case FileFormat.JSON =>
+        val mapper = CategoricalMapper(dataFrame, context.dataFrameBuilder)
+        val uncategorizedDataFrame = mapper.uncategorized(dataFrame)
+        uncategorizedDataFrame.sparkDataFrame.write.json(path)
     }
   }
 
@@ -139,25 +153,26 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
 }
 
 object WriteDataFrame {
-  sealed abstract class FileType(val name: String)
+  def apply(
+      fileFormat: FileFormat,
+      path: String): WriteDataFrame = {
 
-  object FileType {
-    def forName(n: String): FileType = n.toLowerCase match {
-      case "csv" => CSV
-      case _ => ???
-    }
+    val writeDataFrame = WriteDataFrame()
+    writeDataFrame.formatParameter.value = Some(fileFormat.toString)
+    writeDataFrame.outputFileParameter.value = Some(path)
+    writeDataFrame
   }
 
-  case object CSV extends FileType("CSV")
-
+  /**
+   * WriteDataFrame: CSV file type.
+   */
   def apply(
-      fileType: FileType,
       columnSeparator: String,
       writeHeader: Boolean,
       path: String): WriteDataFrame = {
 
     val writeDataFrame = WriteDataFrame()
-    writeDataFrame.formatParameter.value = Some(fileType.name)
+    writeDataFrame.formatParameter.value = Some(FileFormat.CSV.toString)
     writeDataFrame.columnSeparatorParameter.value = Some(columnSeparator)
     writeDataFrame.writeHeaderParameter.value = Some(writeHeader)
     writeDataFrame.outputFileParameter.value = Some(path)
