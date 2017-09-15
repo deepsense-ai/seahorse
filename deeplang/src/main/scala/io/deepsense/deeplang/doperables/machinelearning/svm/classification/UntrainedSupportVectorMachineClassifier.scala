@@ -19,11 +19,13 @@ package io.deepsense.deeplang.doperables.machinelearning.svm.classification
 import org.apache.spark.mllib.classification.SVMWithSGD
 import org.apache.spark.mllib.optimization.{L1Updater, SimpleUpdater, SquaredL2Updater, Updater}
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
 import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
-import io.deepsense.deeplang.doperables.{Scorable, ColumnTypesPredicates, Report, Trainable}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.RegularizationType
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
@@ -52,6 +54,7 @@ case class UntrainedSupportVectorMachineClassifier(
       .setMiniBatchFraction(svmParameters.miniBatchFraction)
 
     TrainedSupportVectorMachineClassifier(
+      svmParameters,
       svmWithSGD.run(trainParameters.labeledPoints),
       trainParameters.features,
       trainParameters.target)
@@ -67,8 +70,21 @@ case class UntrainedSupportVectorMachineClassifier(
 
   override def toInferrable: DOperable = new UntrainedSupportVectorMachineClassifier()
 
-  override def report(executionContext: ExecutionContext): Report =
-    Report(ReportContent("Report for UntrainedSupportVectorMachineClassifier"))
+  override def report(executionContext: ExecutionContext): Report = {
+    DOperableReporter("Report for Untrained SVM Classification")
+      .withParameters(
+        description = "",
+        ("Regularization type",
+          ColumnType.string, svmParameters.regularization.toString),
+        ("Regularization parameter",
+          ColumnType.numeric, DoubleUtils.double2String(svmParameters.regParam)),
+        ("Number of iterations",
+          ColumnType.numeric, svmParameters.numIterations.toString),
+        ("Mini batch fraction",
+          ColumnType.numeric, DoubleUtils.double2String(svmParameters.miniBatchFraction))
+      )
+      .report
+  }
 
   override protected def labelPredicate: Predicate = ColumnTypesPredicates.isNumericOrBinaryValued
   override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric

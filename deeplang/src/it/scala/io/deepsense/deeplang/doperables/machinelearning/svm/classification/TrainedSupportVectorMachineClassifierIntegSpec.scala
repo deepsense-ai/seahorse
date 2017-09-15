@@ -19,14 +19,20 @@ package io.deepsense.deeplang.doperables.machinelearning.svm.classification
 import org.apache.spark.mllib.classification.SVMModel
 import org.apache.spark.mllib.linalg.Vectors
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
-import io.deepsense.deeplang.doperables.{Scorable, ScorableBaseIntegSpec}
+import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
+import io.deepsense.deeplang.doperables.{Report, Scorable, ScorableBaseIntegSpec}
+import io.deepsense.deeplang.parameters.RegularizationType
+import io.deepsense.reportlib.model.{Table, ReportContent}
 
 class TrainedSupportVectorMachineClassifierIntegSpec
   extends { override val scorableName: String = "TrainedSupportVectorMachineClassifier" }
   with ScorableBaseIntegSpec {
+
+  private val params = SupportVectorMachineParameters(RegularizationType.L1, 3, 0.1, 0.2)
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,
@@ -42,30 +48,64 @@ class TrainedSupportVectorMachineClassifierIntegSpec
 
   override def createScorableInstance(features: String*): Scorable =
     TrainedSupportVectorMachineClassifier(
+      params,
       new SVMModel(Vectors.dense(2.3), 10.0), features, "bogus target")
 
   "TrainedSupportVectorMachineClassifier" should {
     "create a report" in {
       val svmClassifier = TrainedSupportVectorMachineClassifier(
+        params,
         new SVMModel(Vectors.dense(2.3, 4.4, 1.0), 10.0), Seq("X", "Y", "Z"), "TargetColumn")
 
-      val reportTables = svmClassifier.report(mock[ExecutionContext]).content.tables
-
-      val weights = reportTables("Computed weights")
-      weights.values shouldBe List(
-        List(Some("X"), Some("2.3")),
-        List(Some("Y"), Some("4.4")),
-        List(Some("Z"), Some("1.0")))
-
-      val intercept = reportTables("Intercept")
-      intercept.values shouldBe List(
-        List(Some("10.0"))
-      )
-
-      val target = reportTables("Target column")
-      target.values shouldBe List(
-        List(Some("TargetColumn"))
-      )
+      svmClassifier.report(mock[ExecutionContext]) shouldBe Report(ReportContent(
+        "Report for Trained SVM Classification",
+        tables = Map(
+          "Model weights" -> Table(
+            "Model weights", "",
+            Some(List("Column", "Weight")),
+            List(ColumnType.string, ColumnType.numeric),
+            None,
+            values = List(
+              List(Some("X"), Some("2.3")),
+              List(Some("Y"), Some("4.4")),
+              List(Some("Z"), Some("1")))
+          ),
+          "Intercept" -> Table(
+            "Intercept", "",
+            None,
+            List(ColumnType.numeric),
+            None,
+            List(List(Some("10.0")))
+          ),
+          "Parameters" -> Table(
+            "Parameters", "",
+            Some(List(
+              "Regularization type",
+              "Regularization parameter",
+              "Number of iterations",
+              "Mini batch fraction")),
+            List(ColumnType.string, ColumnType.numeric, ColumnType.numeric, ColumnType.numeric),
+            None,
+            List(
+              List(Some("L1"), Some("0.1"), Some("3"), Some("0.2"))
+            )
+          ),
+          "Target column" -> Table(
+            "Target column", "",
+            Some(List("Target column")),
+            List(ColumnType.string),
+            None,
+            List(List(Some("TargetColumn")))
+          ),
+          "Feature columns" -> Table(
+            "Feature columns", "",
+            Some(List("Feature columns")),
+            List(ColumnType.string),
+            None,
+            List(List(Some("X")), List(Some("Y")), List(Some("Z")))
+          )
+        )
+      ))
     }
   }
 }

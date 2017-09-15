@@ -21,13 +21,16 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates._
-import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, VectorScoring}
+import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 
 case class TrainedSupportVectorMachineClassifier(
+    svmParameters: SupportVectorMachineParameters,
     model: SVMModel,
     featureColumns: Seq[String],
     targetColumn: String)
@@ -35,42 +38,25 @@ case class TrainedSupportVectorMachineClassifier(
   with Scorable
   with VectorScoring {
 
-  def this() = this(null, null, null)
+  def this() = this(null, null, null, null)
 
   override def report(executionContext: ExecutionContext): Report = {
-    val featureColumnsColumn = featureColumns.toList.map(Some.apply)
-
-    val weightsRows =
-      featureColumnsColumn zip model.weights.toArray map {
-        case (featureOpt, weight) => List(featureOpt, Some(weight.toString))
-      }
-
-    val weightsTable = Table(
-      "Computed weights",
-      "",
-      Some(List("Feature", "Weight")),
-      List(ColumnType.string, ColumnType.numeric),
-      None, weightsRows)
-
-    val targetTable = Table(
-      name = "Target column",
-      description = "",
-      columnNames = None,
-      columnTypes = List(ColumnType.string),
-      rowNames = None,
-      values = List(List(Some(targetColumn))))
-
-    val interceptTable = Table(
-      name = "Intercept",
-      description = "",
-      columnNames = None,
-      columnTypes = List(ColumnType.numeric),
-      rowNames = None,
-      values = List(List(Some(model.intercept.toString))))
-
-    Report(ReportContent(
-      "Report for Trained SVM Classification",
-      List(weightsTable, targetTable, interceptTable)))
+    DOperableReporter("Report for Trained SVM Classification")
+      .withParameters(
+        description = "",
+        ("Regularization type",
+          ColumnType.string, svmParameters.regularization.toString),
+        ("Regularization parameter",
+          ColumnType.numeric, DoubleUtils.double2String(svmParameters.regParam)),
+        ("Number of iterations",
+          ColumnType.numeric, svmParameters.numIterations.toString),
+        ("Mini batch fraction",
+          ColumnType.numeric, DoubleUtils.double2String(svmParameters.miniBatchFraction))
+      )
+      .withWeights(featureColumns, model.weights.toArray)
+      .withIntercept(model.intercept)
+      .withVectorScoring(this)
+      .report
   }
 
   override def toInferrable: DOperable = new TrainedSupportVectorMachineClassifier()

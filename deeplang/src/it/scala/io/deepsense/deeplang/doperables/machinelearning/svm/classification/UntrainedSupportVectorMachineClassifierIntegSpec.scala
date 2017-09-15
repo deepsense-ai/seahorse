@@ -16,10 +16,12 @@
 
 package io.deepsense.deeplang.doperables.machinelearning.svm.classification
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
 import io.deepsense.deeplang.parameters.RegularizationType
+import io.deepsense.reportlib.model.{Table, ReportContent}
 
 class UntrainedSupportVectorMachineClassifierIntegSpec
   extends { override val trainableName: String = "UntrainedSupportVectorMachineClassifier" }
@@ -72,8 +74,24 @@ class UntrainedSupportVectorMachineClassifierIntegSpec
       val svmUntrainedClassifier = UntrainedSupportVectorMachineClassifier(
         SupportVectorMachineParameters(RegularizationType.NONE, 10, 0.1, 1.0))
 
-      val reportContent = svmUntrainedClassifier.report(mock[ExecutionContext]).content
-      reportContent.name shouldBe "Report for UntrainedSupportVectorMachineClassifier"
+      svmUntrainedClassifier.report(mock[ExecutionContext]) shouldBe Report(ReportContent(
+        "Report for Untrained SVM Classification",
+        tables = Map(
+          "Parameters" -> Table(
+            "Parameters", "",
+            Some(List(
+              "Regularization type",
+              "Regularization parameter",
+              "Number of iterations",
+              "Mini batch fraction")),
+            List(ColumnType.string, ColumnType.numeric, ColumnType.numeric, ColumnType.numeric),
+            None,
+            List(
+              List(Some("no regularization"), Some("0.1"), Some("10"), Some("1"))
+            )
+          )
+        )
+      ))
     }
   }
 }
