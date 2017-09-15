@@ -1,6 +1,6 @@
 {
   "name": "deepsense-node-parameters",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "main": "./src/node-parameters.js",
   "description": "Parameter-related objects",
   "license": "ISC",

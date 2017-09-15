@@ -40,9 +40,9 @@ let SelectorItemFactory = {
         SingleIndexSelectorItem.getType()
       ],
       'multipleSelectorItems': [
+        TypeListSelectorItem.getType(),
         ColumnListSelectorItem.getType(),
-        IndexListSelectorItem.getType(),
-        TypeListSelectorItem.getType()
+        IndexListSelectorItem.getType()
       ]
     };
   }
