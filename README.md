@@ -44,11 +44,23 @@ EVENTS
 
 - AttributePanel.UNSELECT_NODE | `$emit()` | click | No args | Click on close icon on panel
 
+### Additional directives are exported
+
+COMPONENT MODULE `deepsense.attributes-panel`
+
+COMPONENT DIRECTIVE NAME `minValue`
+
+COMPONENT DIRECTIVE `min-value`
+
+EXAMPLE OF USAGE
+
+    <input type="number" min-value="[{Number}]" />
+
+ARGUMENTS
+
+- *min-value (optional) | {Number}  | minimum possible value of an input
+
 ### Development
 
-`gulp start` to start watchers
+`gulp start` to start watchers  
 `gulp` to build
-
-### Version
-
-0.0.6

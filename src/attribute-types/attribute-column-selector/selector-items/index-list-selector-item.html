@@ -1,6 +1,6 @@
 <div class="index-list-selector-item">
   <div class="index-list-values form-inline">
-    <input type="number" class="form-control" ng-model="item.firstNum" ng-class="{ 'single-selector': selectorIsSingle() }">
-    <input type="number" class="form-control" ng-model="item.secondNum" ng-if="!selectorIsSingle()">
+    <input type="number" class="form-control" min="0" min-value ng-model="item.firstNum" ng-class="{ 'single-selector': selectorIsSingle() }">
+    <input type="number" class="form-control" min="0" min-value ng-model="item.secondNum" ng-if="!selectorIsSingle()">
   </div>
 </div>
