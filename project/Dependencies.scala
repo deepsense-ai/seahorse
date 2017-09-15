@@ -116,6 +116,8 @@ object Dependencies {
     sparkCSV
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage, cassandra, cassandraUnit).map(_ % Test)
 
+  val docgen = Seq()
+
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val workflowJson = Seq(

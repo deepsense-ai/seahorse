@@ -24,6 +24,8 @@ lazy val deeplang               = project dependsOn (
   graph % "test->test",
   reportlib,
   reportlib % "test->test")
+lazy val docgen                 = project dependsOn (
+  deeplang)
 lazy val graph                  = project dependsOn (
   commons,
   commons % "test->test")

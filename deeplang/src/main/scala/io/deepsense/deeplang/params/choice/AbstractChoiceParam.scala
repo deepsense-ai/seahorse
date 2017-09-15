@@ -43,7 +43,7 @@ abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) ext
 
   protected def valueFromJsMap(jsMap: Map[String, JsValue]): U
 
-  protected val choiceInstances: Seq[T] = {
+  val choiceInstances: Seq[T] = {
     val directSubclasses = tag.tpe.typeSymbol.asClass.knownDirectSubclasses
     val instances: Set[T] = for (symbol <- directSubclasses)
       yield TypeUtils.constructorForType(symbol.typeSignature).getOrElse {
