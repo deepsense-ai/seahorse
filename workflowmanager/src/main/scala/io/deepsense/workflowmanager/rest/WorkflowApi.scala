@@ -246,8 +246,21 @@ abstract class WorkflowApi @Inject() (
                 post {
                   withUserId { userContext =>
                     entity(as[WorkflowPreset]) {
-                      workflowPreset => presetService.saveWorkflowsPreset(workflowPreset)
-                      complete(StatusCodes.OK)
+                      workflowPreset => {
+                        if (workflowId != workflowPreset.id.value) {
+                          logger.info("workflowId in URI and workflow preset are different")
+                          complete(StatusCodes.BadRequest)
+                        } else {
+                          onComplete(presetService.saveWorkflowsPreset(
+                            userContext, workflowId, workflowPreset)) {
+                            case Failure(exception) =>
+                              logger.info("Workflow & preset update failed", exception)
+                              failWith(exception)
+                            case Success(_) =>
+                              complete(StatusCodes.OK)
+                          }
+                        }
+                      }
                     }
                   }
                 }
