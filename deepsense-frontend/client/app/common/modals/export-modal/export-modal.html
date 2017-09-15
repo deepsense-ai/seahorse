@@ -15,19 +15,11 @@
         </div>
         <div>The downloaded
           <a href="https://seahorse.deepsense.io/docs/latest/workflowfile.html" target="_blank">workflow file</a>
-          will contain all the steps from your workflow.
-          In order to execute the workflow file on your Spark Cluster, please
-          use the
-          <a href="https://seahorse.deepsense.io/docs/latest/workflowexecutor.html" target="_blank">Workflow
-            Executor</a>.
+          will contain your entire workflow.
         </div>
         <br>
         <footer class="text-center">
-          <a class="btn btn-info"
-             ng-href="{{controller.getExecutorLink()}}">Download
-            Workflow Executor
-          </a>
-          <button type="button" class="btn btn-info"
+          <button type="button" class="btn btn-info no-selection"
                   ng-click="controller.download()" focused="">Download Workflow
           </button>
         </footer>
