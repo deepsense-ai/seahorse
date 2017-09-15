@@ -59,7 +59,8 @@ class OutputInterceptorFactory @Inject()(
 
     val fileName = {
       val time = Calendar.getInstance().getTime()
-      val format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")
+      // Colons are not allowed in Windows filenames
+      val format = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
       val formattedTime = format.format(time)
       val illegalFileNameCharactersRegExp = "[^a-zA-Z0-9.-]"
       s"$formattedTime-${clusterDetails.name.replaceAll(illegalFileNameCharactersRegExp, "_")}.log"
