@@ -1,0 +1,11 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+keystone_docker_dir: "/tmp/docker-ansible/keystone"
+wm_service_password: fahda0joek3aeBah
+es_service_password: up6Phahjah1oobai
+
+hadoop_docker_dir: "/tmp/docker-ansible/hadoop"
+
+hadoop_data_dir: "/data/hadoop"
+cassandra_data_dir: "/data/cassandra"
+keystone_data_dir: "/data/keystone"

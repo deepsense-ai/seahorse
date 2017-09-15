@@ -1,0 +1,25 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+elementtree_groupid: "elementtree"
+elementtree_artifactid: "elementtree"
+elementtree_version: "1.2.7-20070827"
+elementtree_filename: "{{elementtree_artifactid}}-{{elementtree_version}}-preview.tar.gz"
+elementtree_directory_name: "{{elementtree_artifactid}}-{{elementtree_version}}-preview"
+
+meld3_groupid: "meld3"
+meld3_artifactid: "meld3"
+meld3_version: "0.6.5"
+meld3_filename: "{{meld3_artifactid}}-{{meld3_version}}.tar.gz"
+meld3_directory_name: "{{meld3_artifactid}}-{{meld3_version}}"
+
+setuptools_groupid: "setuptools"
+setuptools_artifactid: "setuptools"
+setuptools_version: "18.0.1"
+setuptools_filename: "{{setuptools_artifactid}}-{{setuptools_version}}.tar.gz"
+setuptools_directory_name: "{{setuptools_artifactid}}-{{setuptools_version}}"
+
+supervisor_groupid: "supervisor"
+supervisor_artifactid: "supervisor"
+supervisor_version: "3.1.3"
+supervisor_filename: "{{supervisor_artifactid}}-{{supervisor_version}}.tar.gz"
+supervisor_directory_name: "{{supervisor_artifactid}}-{{supervisor_version}}"

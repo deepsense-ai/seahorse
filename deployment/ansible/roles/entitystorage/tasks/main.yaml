@@ -1,0 +1,32 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- include: ../../../tasks/deploy_package.yml
+  vars:
+    artifactid: "{{es_artifact_id}}"
+    version: "{{es_version}}"
+    package_path: "{{download_dir}}/{{artifactid}}.zip"
+
+- name: Create config file
+  template: src=application.conf.j2 dest="{{install_dir}}/application.conf"
+  notify: restart supervisor
+
+- { include: ../../supervisedprogram/tasks/main.yaml,
+    program: {
+      name: 'EntityStorage',
+      command: '{{install_dir}}/deepsense-entitystorage/bin/deepsense-entitystorage -Dconfig.file={{install_dir}}/application.conf -DlogFile=/home/ubuntu/log/deepsense/es/deepsense-entitystorage',
+      directory: "{{install_dir}}",
+      autostart: true,
+      autorestart: true,
+      startretries: 3,
+      stdout_logfile: "{{install_dir}}/std.out",
+      stdout_logfile_maxbytes: 0,
+      stderr_logfile: "{{install_dir}}/std.err",
+      stderr_logfile_maxbytes: 0,
+      user: ubuntu,
+    }
+  }
+
+- name: Force supervisor restart
+  command: /bin/true
+  notify: restart supervisor

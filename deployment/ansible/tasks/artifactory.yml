@@ -1,0 +1,15 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+# Inspired by https://github.com/ansible/ansible-examples/blob/master/tomcat-standalone/roles/tomcat/tasks/main.yml
+
+# Uses artifactory module from library directory that's automatically added to Ansible's "CLASSPATH"
+- name: Download zip package
+  artifactory:
+    base_url: "{{artifactory_base_url}}"
+    repository: "{{artifactory_repository}}"
+    groupid: io.deepsense
+    artifactid: "{{artifactid}}"
+    version: "{{version}}"
+    # Closing / is mandatory
+    path: "{{download_dir}}/"
+    filename: "{{artifactid}}.zip"

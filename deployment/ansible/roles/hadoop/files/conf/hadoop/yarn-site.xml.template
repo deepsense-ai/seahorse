@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+  Copyright (c) 2015, CodiLime Inc.
+
+  Hadoop cluster configuration
+-->
+<configuration>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>RM_HOSTNAME</value>
+    <description>The hostname of the RM.</description>
+  </property>
+
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+    <description>Whether to enable log aggregation. Log aggregation collects each container's logs
+      and moves these logs onto a file-system, for e.g. HDFS, after the application completes.
+      Users can configure the "yarn.nodemanager.remote-app-log-dir"
+      and "yarn.nodemanager.remote-app-log-dir-suffix" properties to determine where these logs are
+      moved to. Users can access the logs via the Application Timeline Server.</description>
+  </property>
+  <property>
+    <name>yarn.log.server.url</name>
+    <value>http://MASTER:19888/jobhistory/logs/</value>
+    <description>URL for job history server</description>
+  </property>
+
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>128</value>
+    <description>The minimum allocation for every container request at the RM, in MBs.
+      Memory requests lower than this won't take effect, and the specified value will
+      get allocated at minimum.</description>
+  </property>
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>YARN_MEMORY</value>
+    <description>The maximum allocation for every container request at the RM, in MBs.
+      Memory requests higher than this won't take effect, and will get capped to this value.</description>
+  </property>
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>YARN_MEMORY</value>
+    <description>Amount of physical memory, in MB, that can be allocated for containers.</description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+    <description>Whether virtual memory limits will be enforced for containers.</description>
+  </property>
+</configuration>

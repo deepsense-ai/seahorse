@@ -1,0 +1,14 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+spark_version: "1.4.0"
+spark_package_filename: "spark-ds-compiled-{{spark_version}}.tar.gz"
+
+spark_dir: "/home/ds-spark"
+ds_spark_download_dir: "/tmp/docker-ansible/spark"
+ds_spark_docker_image: "ds-spark"
+
+
+# env_prefix is very important variable:
+# if it will not match cluster hostnames prefix, cluster will not start
+env_prefix: "ds-depl-env-"
+

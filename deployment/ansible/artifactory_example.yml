@@ -1,0 +1,13 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Setups machines and components of DeepSense.io
+  hosts: vagrant
+  vars_files:
+    - group_vars/vagrant
+    - vars/main.yml
+
+  tasks:
+    - include: tasks/artifactory.yml install_dir=/tmp/entitystorage artifactid=deepsense-entitystorage
+      vars:
+        version: 0.2.0-SNAPSHOT-20150714T101945-5adb0d1-SNAPSHOT

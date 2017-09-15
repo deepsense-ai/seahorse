@@ -1,0 +1,15 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+FROM ds-nodejs-0.12.7
+
+RUN mkdir -p {{proxy_dir}}
+COPY config.json {{proxy_dir}}/
+COPY run.sh {{proxy_dir}}/
+WORKDIR {{proxy_dir}}
+RUN wget http://10.10.1.77:8081/artifactory/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend-proxy/{{ds_frontend_proxy_package_name}}/{{ds_frontend_proxy_package_name}}.zip
+RUN unzip {{ds_frontend_proxy_package_name}}.zip
+EXPOSE 8001
+ENTRYPOINT ["/bin/bash", "{{proxy_dir}}/run.sh"]
+WORKDIR {{proxy_dir}}/build
+
+CMD ["/bin/bash"]

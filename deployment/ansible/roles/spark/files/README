@@ -1,0 +1,26 @@
+Docker with spark installed.
+
+Environment variables:
+- ENV_PREFIX - environment prefix (e.g. "ds-virt-env-")
+- IS_MASTER - whether to configure a master node (default: 0)
+- NUMBER_OF_SLAVES - number of slaves (default: 0)
+
+Build:
+
+$ docker build -t deepsense/spark .
+
+Run slave:
+
+$ docker run --restart=always -e ENV_PREFIX=ds-virt-env- \
+    -p 4040:4040 -p 6066:6066 -p 7077:7077 -p 8080:8080 -p 8081:8081 -p 8888:8888 \
+    -p 7001:7001 -p 7002:7002 -p 7003:7003 -p 7004:7004 -p 7005:7005 -p 7006:7006 \
+    -p 9022:9022 \
+    -v /etc/hosts:/tmp/hosts.orig:ro -h ds-virt-env-slave1 -d deepsense/spark
+
+Run master:
+
+$ docker run --restart=always -e ENV_PREFIX=ds-virt-env- -e IS_MASTER=1 -e NUMBER_OF_SLAVES=1 \
+    -p 4040:4040 -p 6066:6066 -p 7077:7077 -p 8080:8080 -p 8081:8081 -p 8888:8888 \
+    -p 7001:7001 -p 7002:7002 -p 7003:7003 -p 7004:7004 -p 7005:7005 -p 7006:7006 \
+    -p 9022:9022 \
+    -v /etc/hosts:/tmp/hosts.orig:ro -h ds-virt-env-master -d deepsense/spark

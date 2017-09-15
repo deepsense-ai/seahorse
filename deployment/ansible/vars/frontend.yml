@@ -1,0 +1,11 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+frontend_dir: "/home/ds-frontend/frontend"
+ds_frontend_download_dir: "/tmp/docker-ansible/frontend"
+frontend_artifact_id: deepsense-frontend
+
+ds_frontend_package_name: "0.2.0-frontend-2015-07-23_18-02-46-209ed4f-SNAPSHOT"
+ds_frontend_docker_image: "ds-frontend"
+
+proxy_host: "http://ds-frontend"
+proxy_port: "8001"

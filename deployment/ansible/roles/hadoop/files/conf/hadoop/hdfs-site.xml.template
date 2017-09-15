@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Copyright (c) 2015, CodiLime Inc.
+
+  Hadoop cluster configuration
+-->
+<configuration>
+  <property>
+    <name>dfs.replication</name>
+    <value>DFS_REPLICATION</value>
+  </property>
+  <property>
+    <name>dfs.permissions.enabled</name>
+    <value>false</value>
+    <description>If "true", enable permission checking in HDFS. If "false",
+      permission checking is turned off, but all other behavior is unchanged.
+      Switching from one parameter value to the other does not change the mode,
+      owner or group of files or directories.</description>
+  </property>
+
+  <property>
+    <name>dfs.client.use.datanode.hostname</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.namenode.rpc-bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
+  <property>
+    <name>dfs.namenode.servicerpc-bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
+</configuration>

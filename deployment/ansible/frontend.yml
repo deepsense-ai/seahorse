@@ -1,0 +1,67 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Builds frontend docker images
+  hosts: localhost
+  vars_files:
+    - vars/frontend.yml
+  vars:
+    docker_dir: "/tmp/docker-ansible"
+  roles:
+    - frontend
+
+- name: Exports frontend-proxy docker image
+  hosts: localhost
+  vars_files:
+    - vars/frontend.yml
+  tasks:
+    - include: tasks/save_docker_image.yml docker_image={{ds_frontend_docker_image}} download_dir="{{ds_frontend_download_dir}}"
+
+- name: Copies frontend docker image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/frontend.yml
+  tasks:
+    - name: Assures docker dir exists
+      file: path={{ds_frontend_download_dir}} state=directory
+    - include: tasks/copy_docker_image.yml docker_tar_image={{ds_frontend_docker_image}}-docker.tar docker_dir={{ds_frontend_download_dir}} download_dir="{{ds_frontend_download_dir}}"
+
+- name: Imports frontend docker image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/frontend.yml
+  tasks:
+    - include: tasks/load_docker_image.yml docker_image={{ds_frontend_docker_image}} docker_dir={{ds_frontend_download_dir}}
+
+- name: Runs frontend image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/frontend.yml
+  vars:
+    frontend_port: "80"
+  tasks:
+    - name: Register running Docker containers
+      register: docker_containers
+      command: docker ps -a
+
+    - name: Remove previous container
+      command: docker rm -f ds-frontend
+      when: docker_containers.stdout.find(' ds-frontend ') != -1
+
+    - name: Run frontend container
+      docker:
+        name: "{{ds_frontend_docker_image}}"
+        image: "{{ds_frontend_docker_image}}"
+        state: started
+        restart_policy: always
+        ports:
+          - "{{frontend_port}}:80"
+        env:
+          PROXY_HOST: "{{proxy_host}}"
+          PROXY_PORT: "{{proxy_port}}"

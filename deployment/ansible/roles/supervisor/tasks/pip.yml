@@ -1,0 +1,10 @@
+# tasks file for supervisor
+---
+- name: install (pip) dependencies
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+    cache_valid_time: 3600
+  with_items: supervisor_pip_dependencies
+  tags: [configuration, supervisor, supervisor-pip-dependencies]

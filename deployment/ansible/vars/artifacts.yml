@@ -1,0 +1,22 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+es_artifact_id: deepsense-entitystorage
+es_version: 0.2.0-SNAPSHOT
+es_build_version: latest
+
+wm_artifact_id: deepsense-workflowmanager
+wm_version: 0.2.0-SNAPSHOT
+wm_build_version: latest
+
+ge_artifact_id: deepsense-graphexecutor
+ge_version: 0.2.0-SNAPSHOT
+ge_build_version: latest
+
+dms_artifact_id: deepsense-deploy-model-service
+dms_version: 0.2.0-SNAPSHOT
+dms_build_version: latest
+
+frontend_artifact_id: deepsense-frontend
+frontend_version: latest
+frontend_proxy_artifact_id: deepsense-frontend-proxy
+frontend_proxy_version: latest

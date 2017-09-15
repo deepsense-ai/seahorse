@@ -1,0 +1,73 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Builds keystone docker images
+  hosts: localhost
+  vars_files:
+    - vars/docker.yml
+  roles:
+    - keystone
+
+- name: Exports keystone docker image
+  hosts: localhost
+  vars_files:
+    - vars/docker.yml
+  tasks:
+    - include: tasks/save_docker_image.yml docker_image=ds-keystone download_dir="{{keystone_docker_dir}}"
+
+- name: Copies keystone docker image
+  hosts: keystone
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/docker.yml
+  tasks:
+    - name: Assures docker dir exists
+      file: path={{keystone_docker_dir}} state=directory
+    - include: tasks/copy_docker_image.yml docker_tar_image=ds-keystone-docker.tar docker_dir={{keystone_docker_dir}} download_dir="{{keystone_docker_dir}}"
+
+- name: Imports keystone docker image
+  hosts: keystone
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/docker.yml
+  tasks:
+    - include: tasks/load_docker_image.yml docker_image=ds-keystone docker_dir={{keystone_docker_dir}}
+
+- name: Ensure Keystone data directory is present
+  hosts: keystone
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/docker.yml
+  tasks:
+    - name: Create Keystone data directory
+      file: path="{{keystone_data_dir}}" state=directory owner=ubuntu group=ubuntu mode=755
+
+- name: Runs keystone image
+  hosts: keystone
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/docker.yml
+  vars:
+    keystone_admin_token: Sish2OotXeip7OoY
+    keystone_wm_password: "{{wm_service_password}}"
+    keystone_es_password: "{{es_service_password}}"
+  tasks:
+    - name: Run keystone container
+      docker:
+        docker_api_version: 1.16
+        name: ds-keystone
+        image: ds-keystone
+        state: started
+        volumes:
+          - "{{keystone_data_dir}}:/var/lib/keystone"
+        restart_policy: always
+        ports:
+          - 35357:35357
+        env:
+          ADMIN_TOKEN: "{{keystone_admin_token}}"
+          ES_PASSWORD: "{{keystone_es_password}}"
+          WM_PASSWORD: "{{keystone_wm_password}}"

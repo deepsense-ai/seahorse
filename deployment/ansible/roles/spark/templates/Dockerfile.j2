@@ -1,0 +1,30 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+FROM ubuntu:14.04
+
+RUN apt-get update && apt-get install openjdk-7-jdk wget openssh-server maven git -y
+
+# Rebuild and istall libpam with --disable-audit option
+RUN apt-get -y build-dep pam
+RUN export CONFIGURE_OPTS=--disable-audit && cd /root && apt-get -b source pam && dpkg -i libpam-doc*.deb libpam-modules*.deb libpam-runtime*.deb libpam0g*.deb
+
+COPY {{spark_package_filename}} /tmp/
+COPY scripts/install.sh /tmp/
+COPY scripts/init.sh /tmp/
+COPY scripts/run.sh /tmp/
+RUN chmod +x /tmp/install.sh
+RUN chmod +x /tmp/init.sh
+RUN chmod +x /tmp/run.sh
+
+COPY conf/ssh/id_rsa /tmp/ssh/
+COPY conf/ssh/id_rsa.pub /tmp/ssh/
+
+RUN /tmp/install.sh
+
+EXPOSE 4040 6066 7077 8080 8081 8888
+EXPOSE 7001 7002 7003 7004 7005 7006
+EXPOSE 9022
+
+ENTRYPOINT ["/tmp/init.sh"]
+
+CMD ["-d"]

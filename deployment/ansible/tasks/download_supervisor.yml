@@ -1,0 +1,38 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+- name: Download elementtree package
+  artifactory:
+    base_url: "{{artifactory_base_url}}"
+    repository: "ext-third-party"
+    groupid: "{{elementtree_groupid}}"
+    artifactid: "{{elementtree_artifactid}}"
+    version: "{{elementtree_version}}"
+    path: "{{download_dir}}/"
+    filename: "{{elementtree_filename}}"
+- name: Download meld3 package
+  artifactory:
+    base_url: "{{artifactory_base_url}}"
+    repository: "ext-third-party"
+    groupid: "{{meld3_groupid}}"
+    artifactid: "{{meld3_artifactid}}"
+    version: "{{meld3_version}}"
+    path: "{{download_dir}}/"
+    filename: "{{meld3_filename}}"
+- name: Download setuptools package
+  artifactory:
+    base_url: "{{artifactory_base_url}}"
+    repository: "ext-third-party"
+    groupid: "{{setuptools_groupid}}"
+    artifactid: "{{setuptools_artifactid}}"
+    version: "{{setuptools_version}}"
+    path: "{{download_dir}}/"
+    filename: "{{setuptools_filename}}"
+- name: Download supervisor package
+  artifactory:
+    base_url: "{{artifactory_base_url}}"
+    repository: "ext-third-party"
+    groupid: "{{supervisor_groupid}}"
+    artifactid: "{{supervisor_artifactid}}"
+    version: "{{supervisor_version}}"
+    path: "{{download_dir}}/"
+    filename: "{{supervisor_filename}}"

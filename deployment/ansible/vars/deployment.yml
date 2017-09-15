@@ -1,0 +1,23 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+download_dir: /tmp/deepsense-download
+artifactory_host: 10.10.1.77
+artifactory_port: 8081
+artifactory_repository: deepsense-backend-snapshot
+artifactory_base_url: "http://{{artifactory_host}}:{{artifactory_port}}/artifactory"
+
+
+deepsense_deployment_directory: /deepsense
+
+es_install_dir: "{{deepsense_deployment_directory}}/es"
+es_cql_dir: "{{es_install_dir}}/cql"
+
+wm_install_dir: "{{deepsense_deployment_directory}}/wm"
+wm_cql_dir: "{{wm_install_dir}}/cql"
+
+ge_install_dir: "{{deepsense_deployment_directory}}/ge"
+
+dms_install_dir: "{{deepsense_deployment_directory}}/dms"
+
+frontend_install_dir: "{{deepsense_deployment_directory}}/frontend"
+frontend_proxy_install_dir: "{{deepsense_deployment_directory}}/frontend-proxy"

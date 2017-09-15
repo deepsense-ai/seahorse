@@ -1,0 +1,29 @@
+{
+  \"version\": \"v1\",
+  \"port\": 8001,
+  \"request-token\": true,
+  \"resources\": {
+    \"entities\": {
+      \"url\": \"${ES_ENDPOINT}\"
+    },
+    \"experiments\": {
+      \"url\": \"${WM_ENDPOINT}\"
+    },
+    \"operations\": {
+      \"url\": \"${WM_ENDPOINT}\"
+    },
+    \"models\": {
+      \"url\": \"${WM_ENDPOINT}\"
+    }
+  },
+  \"keystone\": {
+    \"url\": \"${KEYSTONE_ENDPOINT}\",
+    \"auth\": {
+      \"tenantName\": \"integration-full\",
+      \"passwordCredentials\": {
+        \"username\": \"integration-full\",
+        \"password\": \"zi2ieMee8aeM4thi\"
+      }
+    }
+  }
+}

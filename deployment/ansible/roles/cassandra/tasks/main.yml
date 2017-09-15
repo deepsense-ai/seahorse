@@ -1,0 +1,14 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+- name: Run Cassandra container
+  docker:
+    name: cassandra
+    image: cassandra
+    state: started
+    restart_policy: always
+    volumes:
+      - "{{data_dir}}:/var/lib/cassandra/data"
+    expose:
+      - 9042
+    ports:
+      - "{{cassandra_server_port}}:9042"

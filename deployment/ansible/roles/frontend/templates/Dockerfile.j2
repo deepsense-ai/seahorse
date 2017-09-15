@@ -1,0 +1,22 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+FROM nginx
+
+RUN apt-get update && apt-get install wget unzip -y
+
+RUN mkdir -p {{frontend_dir}}
+
+COPY config.js {{frontend_dir}}/
+COPY run.sh {{frontend_dir}}/
+COPY default.conf /etc/nginx/conf.d/
+COPY htpasswd /etc/nginx/.htpasswd
+
+WORKDIR {{frontend_dir}}
+RUN wget http://10.10.1.77:8081/artifactory/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip
+RUN unzip {{ds_frontend_package_name}}.zip
+
+RUN cp -r build/* /usr/share/nginx/html
+
+ENTRYPOINT ["/bin/bash", "{{frontend_dir}}/run.sh"]
+
+CMD ["/bin/bash"]

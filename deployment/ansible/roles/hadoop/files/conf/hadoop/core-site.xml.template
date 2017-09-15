@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Copyright (c) 2015, CodiLime Inc.
+
+  Hadoop cluster configuration
+-->
+<configuration>
+  <property>
+    <name>fs.default.name</name>
+    <value>hdfs://MASTER:8020</value>
+  </property>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/hdfs</value>
+  </property>
+
+  <property>
+    <name>fs.hdfs.impl</name>
+    <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
+    <description>The FileSystem for hdfs: uris.</description>
+  </property>
+</configuration>

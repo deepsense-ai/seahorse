@@ -1,0 +1,40 @@
+# tasks file for supervisor
+---
+- name: create directories
+  file:
+    path: "{{ item | dirname }}/"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - "{{ supervisor_configuration_file }}"
+    - "{{ supervisor_unix_http_server_file }}"
+    - "{{ supervisor_supervisord_logfile }}"
+    - "{{ supervisor_supervisord_pidfile }}"
+    - "{{ supervisor_supervisord_childlogdir }}"
+    - "{{ supervisor_include }}"
+  tags: [configuration, supervisor, supervisor-directories]
+
+- name: update configuration file - /etc/supervisor/supervisord.conf
+  template:
+    src: etc/supervisor/supervisord.conf.j2
+    dest: "{{ supervisor_configuration_file }}"
+    owner: root
+    group: root
+    mode: 0640
+  notify: restart supervisor
+  tags: [configuration, supervisor, supervisor-configuration]
+
+- name: create symlinks
+  file: src={{ supervisor_configuration_file }} dest=/etc/supervisord.conf owner=root group=root state=link
+
+- name: update init script - /etc/init.d/supervisor
+  template:
+    src: etc/init.d/supervisor.j2
+    dest: /etc/init.d/supervisor
+    owner: root
+    group: root
+    mode: 0755
+  notify: restart supervisor
+  tags: [configuration, supervisor, supervisor-configuration]

@@ -1,0 +1,60 @@
+---
+language: python
+python: "2.7"
+
+env:
+  - ANSIBLE_VERSION=latest
+  - ANSIBLE_VERSION=1.9.1
+  - ANSIBLE_VERSION=1.9.0.1
+  - ANSIBLE_VERSION=1.8.4
+  - ANSIBLE_VERSION=1.8.3
+  - ANSIBLE_VERSION=1.8.2
+  - ANSIBLE_VERSION=1.8.1
+  - ANSIBLE_VERSION=1.8
+  - ANSIBLE_VERSION=1.7.2
+  - ANSIBLE_VERSION=1.7.1
+  - ANSIBLE_VERSION=1.7
+  - ANSIBLE_VERSION=1.6.9
+  - ANSIBLE_VERSION=1.6.8
+  - ANSIBLE_VERSION=1.6.7
+  - ANSIBLE_VERSION=1.6.6
+  - ANSIBLE_VERSION=1.6.5
+  - ANSIBLE_VERSION=1.6.4
+  - ANSIBLE_VERSION=1.6.3
+  - ANSIBLE_VERSION=1.6.2
+  - ANSIBLE_VERSION=1.6.10
+  - ANSIBLE_VERSION=1.6.1
+  - ANSIBLE_VERSION=1.6
+  - ANSIBLE_VERSION=1.5.5
+  - ANSIBLE_VERSION=1.5.4
+  - ANSIBLE_VERSION=1.5.3
+  - ANSIBLE_VERSION=1.5.2
+  - ANSIBLE_VERSION=1.5.1
+  - ANSIBLE_VERSION=1.5
+
+branches:
+  only:
+    - master
+
+before_install:
+  - sudo apt-get update -qq
+
+  # Remove supervisor
+  - sudo apt-get remove --purge supervisor || true
+
+install:
+  # Install Ansible.
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible; else pip install ansible==$ANSIBLE_VERSION; fi
+
+  # Add ansible.cfg to pick up roles path.
+  - printf "[defaults]\nroles_path = ../" > ansible.cfg
+
+script:
+  # Check the role/playbook's syntax.
+  - ansible-playbook -i tests/inventory tests/test.yml --syntax-check
+
+notifications:
+  email: false
+  hipchat:
+    rooms:
+      secure: EXxXpxXsIXqdYbQ6eSUjMIk01ga4P1l7RUTK8q1HRyvJVsoi3wVdIp4s9TIYp8qYL5AFesWw3M64FrUrXQaBm/Ai2TJREkq9esZbm6BvHaAlWHaank6h01pyWNPTckl+9oF1mxZbrhRZXGWl2zKpZ9lyf4Xv41cczO0RQYjHXTo=

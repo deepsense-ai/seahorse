@@ -1,0 +1,4 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+- name: "Save docker image"
+  shell: "docker save {{docker_image}} > {{download_dir}}/{{docker_image}}-docker.tar"

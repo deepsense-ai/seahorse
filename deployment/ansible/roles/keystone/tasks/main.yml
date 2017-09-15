@@ -1,0 +1,17 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Assures docker dir exists
+  file: path={{keystone_docker_dir}} state=directory
+
+- name: Copy dockerfile
+  copy: src=Dockerfile dest="{{keystone_docker_dir}}/Dockerfile"
+
+- name: Copy run.sh
+  copy: src=run.sh dest="{{keystone_docker_dir}}/run.sh"
+
+- name: Copy keystone.db
+  copy: src=keystone.db dest="{{keystone_docker_dir}}/keystone.db"
+
+- name: Build keystone docker image
+  docker_image: path="{{keystone_docker_dir}}" name="ds-keystone" state=build

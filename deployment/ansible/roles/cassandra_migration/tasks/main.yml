@@ -1,0 +1,16 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Delete existing Cassandra cql files
+  file: path="{{cql_dir}}/{{module}}" state=absent
+
+- name: Copy Cassandra cql files
+  copy: src="{{module}}" dest="{{cql_dir}}/{{module}}" force=true directory_mode
+
+- name: Find all cql files
+  shell: "find {{cql_dir}}/{{module}} -name '*.cql' | sort"
+  register: cql_files
+
+- name: Execute all cql files
+  command: "docker run -v {{cql_dir}}/{{module}}:{{cql_dir}}/{{module}} -it --link cassandra:cassandra --rm cassandra cqlsh cassandra -f {{item}}"
+  with_items: "{{cql_files.stdout_lines}}"

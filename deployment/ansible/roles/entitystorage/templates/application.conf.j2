@@ -1,0 +1,60 @@
+server {
+  host = {{es_server_host}}
+  port = {{es_server_port}}
+  startup.timeout = {{startup_timeout}}
+}
+
+auth-service {
+  endpoint = "http://{{keystone_host}}:35357/v2.0/"
+  identity = "{{es_auth_service_identity}}"
+  password = "{{es_auth_service_password}}"
+  timeout {
+    connection = {{auth_service_timeout_connection}}
+    socket = {{auth_service_timeout_socket}}
+  }
+}
+
+roles {
+  entities {
+    get = "{{roles_entities_get}}"
+    create = "{{roles_entities_create}}"
+    update = "{{roles_entities_update}}"
+    delete = "{{roles_entities_delete}}"
+  }
+}
+
+entities.api.prefix = "{{entities_api_prefix}}"
+
+hdfs {
+  hostname = "{{hdfs_hostname}}"
+  port = {{hdfs_port}}
+}
+
+cassandra {
+  host = "{{cassandra_host}}"
+  port = {{cassandra_port}}
+  reconnect.delay = {{cassandra_reconnect_delay}}
+  credentials {
+    user = "{{cassandra_user}}"
+    password = "{{cassandra_password}}"
+  }
+  entities {
+    table = "{{es_cassandra_table}}"
+    keyspace = "{{es_cassandra_keyspace}}"
+  }
+}
+
+deepsense {
+  akka {
+    actor {
+      provider = "akka.remote.RemoteActorRefProvider"
+    }
+    remote {
+      enabled-transports = ["akka.remote.netty.tcp"]
+      netty.tcp {
+        hostname = "{{es_akka_hostname}}"
+        port = {{es_akka_port}}
+      }
+    }
+  }
+}

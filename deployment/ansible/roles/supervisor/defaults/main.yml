@@ -1,0 +1,24 @@
+# defaults file for supervisor
+---
+supervisor_version: 3.1.3
+
+supervisor_unix_http_server_file: /var/run/supervisor.sock
+supervisor_unix_http_server_chmod: '0700'
+
+supervisor_inet_http_server_enabled: false
+supervisor_inet_http_server_port: 9001
+supervisor_inet_http_server_username: admin
+supervisor_inet_http_server_password: '4ubA&Et=ASPe'
+
+supervisor_supervisord_logfile: /var/log/supervisor/supervisord.log
+supervisor_supervisord_pidfile: /var/run/supervisord.pid
+supervisor_supervisord_childlogdir: /var/log/supervisor
+
+supervisor_supervisorctl_serverurl: "unix://{{ supervisor_unix_http_server_file }}"
+
+supervisor_include: '/etc/supervisor/conf.d/*.conf'
+
+supervisor_programs_present: {}
+supervisor_programs_absent: {}
+supervisor_groups_present: {}
+supervisor_groups_absent: {}
