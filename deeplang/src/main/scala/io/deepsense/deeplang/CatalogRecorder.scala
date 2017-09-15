@@ -146,7 +146,7 @@ object CatalogRecorder {
     )
 
     catalog.registerDOperation[SqlExpression](
-      DOperationCategories.Transformation,
+      DOperationCategories.DataManipulation,
       "Executes an SQL expression on a DataFrame"
     )
 
