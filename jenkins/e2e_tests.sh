@@ -14,7 +14,7 @@ fi
 
 # parse parameters
 RUN_BATCH_TESTS=false
-RUN_SESSIONMANAGER_TESTS=false
+RUN_SESSION_TESTS=false
 CLEANUP_ONLY=false
 while (( "$#" )); do
   key="$1"
@@ -25,12 +25,12 @@ while (( "$#" )); do
     shift
     ;;
     -s|--session)
-    RUN_SESSIONMANAGER_TESTS=true
+    RUN_SESSION_TESTS=true
     shift
     ;;
     -a|--all)
     RUN_BATCH_TESTS=true
-    RUN_SESSIONMANAGER_TESTS=true
+    RUN_SESSION_TESTS=true
     ;;
     --cleanup-only)
     CLEANUP_ONLY=true
@@ -80,10 +80,6 @@ trap cleanup EXIT
 ./jenkins/scripts/sync_up_docker_images_with_git_repo.sh
 
 ## Start Seahorse dockers
-
-deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID pull
-# destroy dockercompose_default, so we can recreate it with proper id
-deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID down
 (
  cp jenkins/resources/a_e2etests_dev_override_build.sbt seahorse-sdk-example/a_e2etests_dev_override_build.sbt
  cd seahorse-sdk-example
@@ -111,12 +107,12 @@ docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE up -d
 export MESOS_MASTER_IP=10.254.0.2
 
 ## Run sbt tests
-if $RUN_SESSIONMANAGER_TESTS ; then
-  sbt e2etests/clean "e2etests/testOnly io.deepsense.e2etests.session.*"
+TESTS_TO_RUN=""
+if [ "${RUN_SESSION_TESTS}" = true ]; then
+  TESTS_TO_RUN="${TESTS_TO_RUN} io.deepsense.e2etests.session.*"
 fi
-if $RUN_BATCH_TESTS ; then
-  sbt e2etests/clean "e2etests/testOnly io.deepsense.e2etests.batch.*"
+if [ "${RUN_BATCH_TESTS}" = true ]; then
+  TESTS_TO_RUN="${TESTS_TO_RUN} io.deepsense.e2etests.batch.*"
 fi
+sbt "e2etests/clean" "e2etests/test:testOnly ${TESTS_TO_RUN}"
 
-SBT_EXIT_CODE=$?
-exit $SBT_EXIT_CODE

@@ -13,6 +13,7 @@ import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scalaz.Scalaz._
 import scalaz._
+
 import akka.actor.ActorSystem
 import akka.util.Timeout
 import org.scalactic.source.Position
@@ -26,11 +27,10 @@ import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
 import io.deepsense.commons.utils.OptionOpts._
 import io.deepsense.deeplang.CatalogRecorder
-import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.graph.nodestate.name.NodeStatusName
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithVariablesJsonProtocol
-import io.deepsense.models.workflows.{Workflow, WorkflowInfo, WorkflowWithVariables}
+import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
 import io.deepsense.sessionmanager.rest.client.SessionManagerClient
 import io.deepsense.sessionmanager.service.Status
 import io.deepsense.workflowmanager.client.WorkflowManagerClient
@@ -41,9 +41,7 @@ trait SeahorseIntegrationTestDSL
     with Logging
     with WorkflowWithVariablesJsonProtocol {
 
-
-
-  protected val dockerComposePath = "../deployment/docker-compose/"
+  protected val dockerComposePath = "../deployment/docker-compose/"  // TODO insert jars to managed resources
 
   private val localJarsDir = new File(dockerComposePath, "jars")
   private val localJarPaths = getJarsFrom(localJarsDir)

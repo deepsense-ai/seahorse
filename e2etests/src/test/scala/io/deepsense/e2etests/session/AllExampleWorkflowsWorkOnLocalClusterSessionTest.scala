@@ -17,28 +17,29 @@ import io.deepsense.workflowmanager.model.WorkflowDescription
 
 
 class AllExampleWorkflowsWorkOnLocalClusterSessionTest
-  extends FreeSpec
+  extends WordSpec
   with Matchers
   with SeahorseIntegrationTestDSL
   with ExampleWorkflowsFetcher {
 
   info("Assuming application will be accessible under localhost:33321")
 
-  "All example workflows should be correct - all nodes run and completed successfully on a local cluster" - {
-    ensureSeahorseIsRunning()
-    val exampleWorkflowsFut = fetchExampleWorkflows()
-    Await.result(
-      exampleWorkflowsFut.map(exampleWorkflows =>
-        for {
-          exampleWorkflow <- exampleWorkflows
-        } {
-          s"Workflow '${exampleWorkflow.name}'" in {
-            Await.result(for {
-              workflow <- cloneWorkflow(exampleWorkflow)
-              _ <- runAndCleanupWorkflow(workflow, TestClusters.local())
-            } yield (), workflowTimeout)
-          }
-        }), httpTimeout)
+  ensureSeahorseIsRunning()
+
+  val exampleWorkflows = Await.result(fetchExampleWorkflows(), httpTimeout)
+
+  for {
+    exampleWorkflow <- exampleWorkflows
+  } {
+    s"Example workflow '${exampleWorkflow.name}'" should {
+      "run successfully in session mode on local cluster" in {
+        val testFuture = for {
+          workflow <- cloneWorkflow(exampleWorkflow)
+          _ <- runAndCleanupWorkflow(workflow, TestClusters.local())
+        } yield ()
+        Await.result(testFuture, workflowTimeout)
+      }
+    }
   }
 
   def cloneWorkflow(workflow: WorkflowInfo): Future[WorkflowInfo] = {
@@ -56,5 +57,4 @@ class AllExampleWorkflowsWorkOnLocalClusterSessionTest
       workflow
     }
   }
-
 }

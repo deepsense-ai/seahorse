@@ -11,7 +11,7 @@ object TestWorkflowsIterator {
   private val testsDirUri = getClass.getResource(s"/workflows").toURI
   private val testsDir = new File(testsDirUri.getPath)
 
-  case class Input(path: URI, fileContents: String)
+  case class Input(workflowLocation: URI, fileContents: String)
 
   def foreach(f: Input => Unit): Unit = foreachInDirectory(f, testsDir)
 

@@ -16,23 +16,18 @@ class AllExampleWorkflowsWorkOnLocalClusterBatchTest
   with ExampleWorkflowsFetcher
   with BatchTestInDockerSupport {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
   ensureSeahorseIsRunning()
 
-  val exampleWorkflowsFut = fetchExampleWorkflows()
-  Await.result(
-    exampleWorkflowsFut.map(exampleWorkflows =>
-      for {
-        exampleWorkflowInfo <- exampleWorkflows
-      } testExampleOnLocalCluster(exampleWorkflowInfo)
-    ), httpTimeout)
+  val exampleWorkflows = Await.result(fetchExampleWorkflows(), httpTimeout)
 
-  private def testExampleOnLocalCluster(workflowInfo: WorkflowInfo): Unit = {
+  for {
+    workflowInfo <- exampleWorkflows
+  } {
     s"Example workflow '${workflowInfo.name}'" should {
       "run successfully in batch mode on local cluster" in {
-        val workflowIdFut = Future.successful(workflowInfo.id)
-        testWorkflowFromSeahorse(TestClusters.local(), workflowInfo.name, workflowIdFut)
+        val fileName = s"${workflowInfo.name}.json"
+        val testFuture = testWorkflowFromSeahorse(TestClusters.local(), fileName, workflowInfo.id)
+        Await.result(testFuture, workflowTimeout)
       }
     }
   }

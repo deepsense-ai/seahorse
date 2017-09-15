@@ -32,13 +32,16 @@ trait BatchTestSupport
 
   def prepareSubmitCommand(
       sparkSubmitPath: String,
-      envSettings: Map[String, String],
-      masterString: String,
-      specialFlags: Seq[String],
+      cluster: ClusterDetails,
       workflowPath: File,
       weJarPath: File,
       additionalJars: Seq[URL],
       outputDirectory: File): String = {
+
+    val envSettings = getEnvSettings(cluster)
+    val specialFlags = getSpecialFlags(cluster)
+    val masterString = getMasterUri(cluster)
+
     val exportsCommandFlat = envSettings.map{
       case(k, v) => s"export $k=$v"
     }.toSeq.mkString(" && ")
@@ -87,7 +90,7 @@ trait BatchTestSupport
   }
 
   // assuming SPARK_HOME is set
-  def getEnvSettings(cluster: ClusterDetails): Map[String, String] = {
+  private def getEnvSettings(cluster: ClusterDetails): Map[String, String] = {
     val commonSettings = Map(
       "PYTHONPATH" -> "$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PYTHONPATH"
     )
@@ -100,7 +103,7 @@ trait BatchTestSupport
     }
   }
 
-  def getSpecialFlags(cluster: ClusterDetails): Seq[String] = {
+  private def getSpecialFlags(cluster: ClusterDetails): Seq[String] = {
     cluster.clusterType match {
       case ClusterType.local => Seq()
       case ClusterType.standalone => Seq()
@@ -114,7 +117,7 @@ trait BatchTestSupport
     }
   }
 
-  def getMasterUri(cluster: ClusterDetails): String = {
+  private def getMasterUri(cluster: ClusterDetails): String = {
     cluster.clusterType match {
       case ClusterType.local => "local[*]"
       case ClusterType.yarn => "yarn"

@@ -5,7 +5,7 @@ package io.deepsense.e2etests.batch
 
 import java.io.{File, PrintWriter}
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import scala.sys.process._
 
 import io.deepsense.commons.models.ClusterDetails
@@ -23,17 +23,14 @@ trait BatchTestInDockerSupport extends BatchTestSupport {
 
   private val resultsDir = new File(testsDir, "results")
 
-  private val dockerComposePath = "../deployment/docker-compose/"
-
   protected def testWorkflowFromSeahorse(
       cluster: ClusterDetails,
       fileName: String,
-      workflowIdFut: Future[Workflow.Id]): Unit = {
+      workflowId: Workflow.Id): Future[Unit] = {
 
     val cleanedFileName = cleanFileName(fileName)
 
-    val future = for {
-      workflowId <- workflowIdFut
+    for {
       workflowWithVariablesOpt <- wmclient.downloadWorkflow(workflowId)
       workflowWithVariables <- workflowWithVariablesOpt.asFuture
       _ <- wmclient.deleteWorkflow(workflowId)
@@ -48,17 +45,17 @@ trait BatchTestInDockerSupport extends BatchTestSupport {
       copyWorkflowExecutorLogs(s"workflowexecutor_$workflowId.log")
       assertSuccessfulExecution(resultFile)
     }
-    Await.result(future, workflowTimeout)
   }
 
   private def cleanFileName(fileName: String) = fileName.replaceAll("[^a-zA-Z0-9.-]", "_")
 
-  private val sessionmanagerDockerId = getContainerId("sessionmanager", s"$dockerComposePath/docker-compose.yml")
+  private val sessionmanagerDockerId = getContainerId("sessionmanager")
 
   private def copyWorkflowExecutorLogs(fileName: String): Unit = {
+    val commandToFindLastLogFile = "ls -t workflowexecutor_seahorse*.log | head -1"
     reportProcessExecution(executeProcessGatherOutput(bashExecutionOnDockerCommand(
       sessionmanagerDockerId,
-      s"cp workflowexecutor_seahorse*.log /spark_applications_logs/$fileName"
+      s"cp `$commandToFindLastLogFile` /spark_applications_logs/$fileName"
     )))
   }
 
@@ -66,10 +63,6 @@ trait BatchTestInDockerSupport extends BatchTestSupport {
       cluster: ClusterDetails,
       inputFile: File,
       resultFile: File): Unit = {
-
-    val envSettings = getEnvSettings(cluster)
-    val specialFlags = getSpecialFlags(cluster)
-    val masterString = getMasterUri(cluster)
 
     val dockerBaseDir = new File("/opt/docker/")
 
@@ -96,9 +89,7 @@ trait BatchTestInDockerSupport extends BatchTestSupport {
 
     val submitCommand = prepareSubmitCommand(
       sparkSubmitPath,
-      envSettings,
-      masterString,
-      specialFlags,
+      cluster,
       workflowPath,
       weJarPath,
       additionalJars = jarsInDockerPaths,
@@ -119,14 +110,15 @@ trait BatchTestInDockerSupport extends BatchTestSupport {
     }
 
     reportProcessExecution(runLogs)
-
   }
 
   private def reportProcessExecution(execution: Either[ProcExitError, ProcExitSuccessful]): Unit = {
     execution match {
       case Left(ProcExitError(exitCode, cmd, out, err)) =>
-        logger.error(s"Shell command '$cmd' exited with code: $exitCode")
+        val errorMessage = s"Shell command '$cmd' exited with code: $exitCode"
+        logger.error(errorMessage)
         logOutAndErr(out, err, logger.error)
+        fail(errorMessage)
       case Right(ProcExitSuccessful(out, err)) =>
         logOutAndErr(out, err, logger.info)
     }
@@ -153,8 +145,14 @@ trait BatchTestInDockerSupport extends BatchTestSupport {
     Seq("docker", "exec", dockerName, "bash", "-c", command)
   }
 
-  private def getContainerId(serviceName: String, dockerComposeFilePath: String): String = {
-    Seq("docker-compose", "-f", dockerComposeFilePath, "ps", "-q", serviceName).!!.trim
+  private def getContainerId(serviceName: String): String = {
+    val containerIds = Seq("docker", "ps", "-q", "--filter", s"name=$serviceName").!!.split("\\s+")
+    logger.info(s"Found containers with '$serviceName' in name: ${containerIds.mkString(", ")}")
+    containerIds.toSeq match {
+      case Seq(containerId) => containerId
+      case Seq() => fail(s"No containers with '$serviceName' in name. Test cannot continue")
+      case _ => fail(s"More than one container with '$serviceName' in name. Test cannot continue")
+    }
   }
 
   private def saveWorkflowToFile(file: File, workflowWithVariables: WorkflowWithVariables): Unit = {
