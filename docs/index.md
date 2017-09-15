@@ -132,7 +132,7 @@ the scoring will be produced (model performance report).
 2. Set the source of your data
    * Drag a [Read DataFrame](operations/read_dataframe.html) operation to your canvas
    * Click on the `Read DataFrame` operation - the panel on the right now shows its parameters
-   * Put <code>https://seahorse.deepsense.io/_static/transactions.csv</code> in the **SOURCE**
+   * Put <code>https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv</code> in the **SOURCE**
      parameter - once executed, the dataset will be downloaded from that location
 
 3. Select features that will be used to train and evaluate model and create a vector column
@@ -228,9 +228,13 @@ executing linear regression algorithm on the data.
 
 <img class="img-responsive" style="float:right" src="./img/examples_workflow2.png" />
 
-1. Open workflow from **Example 1** in the <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a>
+1. Open workflow from **Example 1** in <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a>
 
-2. Convert <code>city</code> feature to categorical
+2. Disconnect the `Assemble Vector` node from the `Read DataFrame` node
+   * Grab the connection going into the input port of the `Assemble Vector` node and drag it
+     anywhere on the empty space of the canvas
+
+3. Convert <code>city</code> feature to categorical
    * Add [String Indexer](operations/string_indexer.html) to the canvas
      * This operation will create a new column, <code>city_index</code>, with numbers representing
        text values from the original column
@@ -252,7 +256,7 @@ executing linear regression algorithm on the data.
      columns with values <code>0</code> or <code>1</code> for each possible value of the <code>city</code>
      column.
 
-3. Update connections between Read DataFrame and Assemble Vector nodes as shown in the picture.
+4. Update connections between Read DataFrame and Assemble Vector nodes as shown in the picture.
    This will execute the operations described in step 2 after reading the dataset and before
    assembling the <code>features</code> column used for model fitting and evaluation.
 
@@ -323,9 +327,10 @@ This snippet of code uses a user-defined SQL function that utilizes Python’s j
 
 #### Execute and Edit the Notebook
 
-Select the created Notebook node and click **Open notebook** in the right
-panel. A notebook window will be shown, where you can write Python code snippets, execute them and
-see the execution results.
+* Select the created `Notebook` node
+* Press **RUN** button from the top menu
+* Click **Open notebook** in the right panel. A notebook window will be shown, where you can write
+  Python code snippets, execute them and see the execution results.
 
 ##### Use the Spark Context
 {:.no_toc}
