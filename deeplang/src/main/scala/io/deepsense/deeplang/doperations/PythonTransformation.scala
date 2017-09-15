@@ -24,14 +24,14 @@ import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionExce
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-case class CustomPythonOperation()
+case class PythonTransformation()
   extends DOperation1To1[DataFrame, DataFrame] {
 
-  import CustomPythonOperation._
+  import PythonTransformation._
 
   override val id: Id = "a721fe2a-5d7f-44b3-a1e7-aade16252ead"
-  override val name: String = "Custom Python Operation"
-  override val description: String = "Creates a custom Python operation"
+  override val name: String = "Python Transformation"
+  override val description: String = "Creates a custom Python transformation"
 
   val codeParameter = CodeSnippetParam(
     name = "code",
@@ -72,7 +72,7 @@ case class CustomPythonOperation()
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
-object CustomPythonOperation {
+object PythonTransformation {
   val InputPortNumber: Int = 0
   val OutputPortNumber: Int = 0
 }

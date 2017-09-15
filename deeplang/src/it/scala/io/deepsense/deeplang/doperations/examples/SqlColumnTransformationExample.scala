@@ -18,14 +18,13 @@ package io.deepsense.deeplang.doperations.examples
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
-import io.deepsense.deeplang.doperations.ExecuteMathematicalTransformation
+import io.deepsense.deeplang.doperations.SqlColumnTransformation
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class ExecuteMathematicalTransformationExample
-  extends AbstractOperationExample[ExecuteMathematicalTransformation] {
+class SqlColumnTransformationExample extends AbstractOperationExample[SqlColumnTransformation] {
 
-  override def dOperation: ExecuteMathematicalTransformation = {
-    val o = new ExecuteMathematicalTransformation()
+  override def dOperation: SqlColumnTransformation = {
+    val o = new SqlColumnTransformation()
     val myalias: String = "myAlias"
 
     val inPlace = NoInPlaceChoice()

@@ -39,11 +39,23 @@
     </li>
     <li class="menu-group"><a><strong>Transformation</strong></a>
       <ul class="lvl-2">
-        <li><a href="{{base}}/operations/create_custom_transformer.html">Create Custom Transformer</a></li>
-        <li><a href="{{base}}/operations/custom_python_operation.html">Custom Python Operation</a></li>
-        <li><a href="{{base}}/operations/custom_python_column_operation.html">Custom Python Column Operation</a></li>
-        <li><a href="{{base}}/operations/execute_mathematical_transformation.html">Execute Mathematical Transformation</a></li>
-        <li><a href="{{base}}/operations/execute_sql_expression.html">Execute SQL Expression</a></li>
+        <li class="menu-group"><a>Custom</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/create_custom_transformer.html">Create Custom Transformer</a></li>
+            <li class="menu-group"><a>SQL</a>
+              <ul class="lvl-4">
+                <li><a href="{{base}}/operations/sql_transformation.html">SQL Transformation</a></li>
+                <li><a href="{{base}}/operations/sql_column_transformation.html">SQL Column Transformation</a></li>
+              </ul>
+            </li>
+            <li class="menu-group"><a>Python</a>
+              <ul class="lvl-4">
+                <li><a href="{{base}}/operations/python_transformation.html">Python Transformation</a></li>
+                <li><a href="{{base}}/operations/python_column_transformation.html">Python Column Transformation</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
         <li class="menu-group"><a>Feature Conversion</a>
           <ul class="lvl-3">
             <li><a href="{{base}}/operations/assemble_vector.html">Assemble Vector</a></li>

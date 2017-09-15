@@ -1,17 +1,17 @@
 ---
 layout: documentation
-displayTitle: Execute SQL Expression
-title: Execute SQL Expression
-description: Execute SQL Expression
+displayTitle: SQL Transformation
+title: SQL Transformation
+description: SQL Transformation
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes a Spark SQL expression provided by the user on a `DataFrame` connected to its input port.
+Executes a Spark SQL expression provided by the user on a [DataFrame](../classes/dataframe.html) connected to its input port.
 Returns the results of the execution as a `DataFrame`.
 
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
-to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.html) operation.
+to another `DataFrame` with a [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
@@ -83,4 +83,4 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
 </tbody>
 </table>
 
-{% markdown operations/examples/ExecuteSqlExpression.md %}
+{% markdown operations/examples/SqlTransformation.md %}

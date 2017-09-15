@@ -1,14 +1,17 @@
 ---
 layout: documentation
-displayTitle: Custom Python Column Operation
-title: Custom Python Column Operation
-description: Custom Python Column Operation
+displayTitle: Python Column Transformation
+title: Python Column Transformation
+description: Python Column Transformation
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes Python function provided by the user on a column (columns) of DataFrame connected to its input port.
-Returns result of Python function execution as a DataFrame and CustomPythonColumnOperationTransformer.
+Executes Python function provided by the user on a column (columns) of [DataFrame](../classes/dataframe.html) connected to its input port.
+Returns modified `DataFrame`.
+
+Also returns a [Transformer](../classes/transformer.html) that can be later applied
+to another `DataFrame` with a [Transform](transform.html) operation.
 
 The function that will be executed has to:
 

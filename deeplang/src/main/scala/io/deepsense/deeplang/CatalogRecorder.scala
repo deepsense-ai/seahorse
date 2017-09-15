@@ -42,13 +42,13 @@ object CatalogRecorder {
     catalog.registerDOperable[MetricValue]()
     catalog.registerDOperable[ColumnsFilterer]()
     catalog.registerDOperable[RowsFilterer]()
-    catalog.registerDOperable[DatetimeDecomposer]()
-    catalog.registerDOperable[MathematicalTransformation]()
-    catalog.registerDOperable[SqlExpression]()
     catalog.registerDOperable[MissingValuesHandler]()
+    catalog.registerDOperable[DatetimeDecomposer]()
+    catalog.registerDOperable[SqlColumnTransformer]()
+    catalog.registerDOperable[SqlTransformer]()
+    catalog.registerDOperable[PythonColumnTransformer]()
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
-    catalog.registerDOperable[CustomPythonColumnOperationTransformer]()
 
     // wrapped Spark ML estimators & models
     catalog.registerDOperable[LogisticRegression]()
@@ -154,19 +154,19 @@ object CatalogRecorder {
       DOperationCategories.Filtering)
 
     catalog.registerDOperation[CreateCustomTransformer](
-      DOperationCategories.Transformation)
+      DOperationCategories.Transformation.Custom)
 
-    catalog.registerDOperation[CustomPythonOperation](
-      DOperationCategories.Transformation)
+    catalog.registerDOperation[SqlTransformation](
+      DOperationCategories.Transformation.Custom.SQL)
 
-    catalog.registerDOperation[CustomPythonColumnOperation](
-      DOperationCategories.Transformation)
+    catalog.registerDOperation[SqlColumnTransformation](
+      DOperationCategories.Transformation.Custom.SQL)
 
-    catalog.registerDOperation[ExecuteMathematicalTransformation](
-      DOperationCategories.Transformation)
+    catalog.registerDOperation[PythonTransformation](
+      DOperationCategories.Transformation.Custom.Python)
 
-    catalog.registerDOperation[ExecuteSqlExpression](
-      DOperationCategories.Transformation)
+    catalog.registerDOperation[PythonColumnTransformation](
+      DOperationCategories.Transformation.Custom.Python)
 
     catalog.registerDOperation[ConvertType](
       DOperationCategories.Transformation.FeatureConversion)

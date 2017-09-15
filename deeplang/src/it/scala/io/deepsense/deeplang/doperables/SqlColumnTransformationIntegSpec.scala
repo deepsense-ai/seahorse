@@ -26,7 +26,7 @@ import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions._
 
-class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
+class SqlColumnTransformationIntegSpec extends DeeplangIntegTestSupport {
 
   val resultColumn = 3
   val delta = 0.01
@@ -36,7 +36,7 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
   val column3 = "c3"
   val column3needsEscaping = "c.strange name!"
 
-  "CreateMathematicalTransformation" should {
+  "SqlColumnTransformation" should {
 
     "create Transformation that counts ABS properly" in {
       runTest("ABS(x)", column1, column3, Seq(1.0, 1.1, 1.2, 1.3, null))
@@ -102,7 +102,7 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
         val single = SingleColumnChoice()
           .setInputColumn(NameSingleColumnSelection("nonExistingCol"))
           .setInPlace(inPlace)
-        MathematicalTransformation()
+        SqlColumnTransformer()
           .setFormula("x * 2")
           .setSingleOrMultiChoice(single)
           ._transformSchema(schema)
@@ -114,15 +114,15 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
       .setInputColumn(NameSingleColumnSelection(column1))
       .setInPlace(inPlace)
     "detect SQL syntax error during inference" in {
-      a[MathematicalExpressionSyntaxException] shouldBe thrownBy(
-        MathematicalTransformation()
+      a[SqlColumnExpressionSyntaxException] shouldBe thrownBy(
+        SqlColumnTransformer()
           .setFormula("+++---")
           .setSingleOrMultiChoice(single)
           ._transformSchema(schema))
     }
     "detect non-existent column during inference" in {
       a[ColumnsDoNotExistException] shouldBe thrownBy(
-        MathematicalTransformation()
+        SqlColumnTransformer()
           .setFormula("nonExistingCol")
           .setSingleOrMultiChoice(single)
           ._transformSchema(schema)
@@ -130,7 +130,7 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
     }
     "detect that alias conflicts with a column name form input DF" in {
       a[ColumnAliasNotUniqueException] shouldBe thrownBy(
-        MathematicalTransformation()
+        SqlColumnTransformer()
           .setFormula("c0")
           .setInputColumnAlias("c0")
           .setSingleOrMultiChoice(single)
@@ -157,7 +157,7 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
     }
 
     "fail when 2 comma-separated formulas are provided" in {
-      intercept[MathematicalExpressionSyntaxException] {
+      intercept[SqlColumnExpressionSyntaxException] {
         val dataFrame = applyFormulaToDataFrame(
           "MAXIMUM(x), SIN(x)",
           column1,
@@ -218,7 +218,7 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
     applyTransformation(transformation, df)
   }
 
-  def applyTransformation(transformation: MathematicalTransformation, df: DataFrame): DataFrame = {
+  def applyTransformation(transformation: SqlColumnTransformer, df: DataFrame): DataFrame = {
     transformation.transform.apply(executionContext)(())(df)
   }
 
@@ -226,13 +226,13 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
       formula: String,
       inputColumnName: String,
       outputColumnName: String,
-      columnAlias: String): MathematicalTransformation = {
+      columnAlias: String): SqlColumnTransformer = {
     val inPlace = NoInPlaceChoice()
       .setOutputColumn(outputColumnName)
     val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection(inputColumnName))
       .setInPlace(inPlace)
-    MathematicalTransformation()
+    SqlColumnTransformer()
       .setFormula(formula)
       .setSingleOrMultiChoice(single)
       .setInputColumnAlias(columnAlias)

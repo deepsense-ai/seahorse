@@ -34,6 +34,18 @@ object DOperationCategories {
   object Transformation
     extends DOperationCategory("3fcc6ce8-11df-433f-8db3-fa1dcc545ed8", "Transformation") {
 
+    object Custom extends DOperationCategory(
+        "c866200b-9b7e-49d8-8582-d182593629a2", "Custom", Transformation) {
+
+      object SQL
+        extends DOperationCategory(
+          "9cf8dadb-aadf-4ef3-8ede-fee31bc49d8f", "SQL", Custom)
+
+      object Python
+        extends DOperationCategory(
+          "b68164ef-253c-4e70-9b18-0316453ea61d", "Python", Custom)
+    }
+
     object FeatureConversion extends DOperationCategory(
       "6d84c023-a5f9-4713-8707-1db2c94ccd09", "Feature conversion", Transformation)
 

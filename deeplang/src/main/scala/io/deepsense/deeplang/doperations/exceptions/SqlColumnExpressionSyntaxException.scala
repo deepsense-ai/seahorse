@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.examples
+package io.deepsense.deeplang.doperations.exceptions
 
-import io.deepsense.deeplang.doperations.ExecuteSqlExpression
+import io.deepsense.deeplang.exceptions.DeepLangException
 
-class ExecuteSqlExpressionExample extends AbstractOperationExample[ExecuteSqlExpression]{
-  override def dOperation: ExecuteSqlExpression = {
-    val op = new ExecuteSqlExpression()
-    op.transformer
-      .setDataFrameId("inputDF")
-      .setExpression("select avg(temp) as avg_temp, max(windspeed) as max_windspeed from inputDF")
-    op.set(op.transformer.extractParamMap())
-  }
-
-  override def fileNames: Seq[String] = Seq("example_datetime_windspeed_hum_temp")
-}
+case class SqlColumnExpressionSyntaxException(formula: String) extends DeepLangException(
+  s"Formula: '$formula' is not a valid Spark SQL expression")

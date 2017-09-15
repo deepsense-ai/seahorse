@@ -23,7 +23,7 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
-class SqlExpressionIntegSpec extends DeeplangIntegTestSupport {
+class SqlTransformationIntegSpec extends DeeplangIntegTestSupport {
 
   val dataFrameId = "ThisIsAnId"
   val validExpression = s"select * from $dataFrameId"
@@ -46,10 +46,10 @@ class SqlExpressionIntegSpec extends DeeplangIntegTestSupport {
     Row(null, 2.1,  true)
   )
 
-  "SqlExpression" should {
+  "SqlTransformation" should {
     "allow to manipulate the input DataFrame using the specified name" in {
       val expression = s"select $secondColumn from $dataFrameId"
-      val result = executeSqlExpression(expression, dataFrameId, sampleDataFrame)
+      val result = executeSqlTransformation(expression, dataFrameId, sampleDataFrame)
       val selectedColumnsIndices = Seq(1) // 'secondColumn' index
       val expectedDataFrame = subsetDataFrame(selectedColumnsIndices)
       assertDataFramesEqual(result, expectedDataFrame)
@@ -57,13 +57,13 @@ class SqlExpressionIntegSpec extends DeeplangIntegTestSupport {
     }
     "unregister the input DataFrame after execution" in {
       val dataFrame = sampleDataFrame
-      executeSqlExpression(validExpression, dataFrameId, dataFrame)
+      executeSqlTransformation(validExpression, dataFrameId, dataFrame)
       assertTableUnregistered()
     }
     "unregister the input DataFrame if execution failed" in {
       val dataFrame = sampleDataFrame
       a [RuntimeException] should be thrownBy {
-        executeSqlExpression(invalidExpresion, dataFrameId, dataFrame)
+        executeSqlTransformation(invalidExpresion, dataFrameId, dataFrame)
       }
       assertTableUnregistered()
     }
@@ -75,8 +75,8 @@ class SqlExpressionIntegSpec extends DeeplangIntegTestSupport {
     }
   }
 
-  def executeSqlExpression(expression: String, dataFrameId: String, input: DataFrame): DataFrame =
-    new SqlExpression()
+  def executeSqlTransformation(expression: String, dataFrameId: String, input: DataFrame): DataFrame =
+    new SqlTransformer()
       .setExpression(expression)
       .setDataFrameId(dataFrameId)
       ._transform(executionContext, input)

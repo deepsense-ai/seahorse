@@ -19,14 +19,15 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.runtime.universe.TypeTag
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.SqlExpression
+import io.deepsense.deeplang.doperables.SqlColumnTransformer
 
-class ExecuteSqlExpression extends TransformerAsOperation[SqlExpression] {
+case class SqlColumnTransformation()
+  extends TransformerAsOperation[SqlColumnTransformer] {
 
-  override val id: Id = "6cba4400-d966-4a2a-8356-b37f37b4c73f"
-  override val name: String = "Execute SQL Expression"
+  override val id: Id = "012876d9-7a72-47f9-98e4-8ed26db14d6d"
+  override val name: String = "SQL Column Transformation"
   override val description: String =
-    "Executes an SQL expression on a DataFrame"
+    "Executes a SQL transformation on a column of a DataFrame"
 
-  override lazy val tTagTO_1: TypeTag[SqlExpression] = typeTag
+  override lazy val tTagTO_1: TypeTag[SqlColumnTransformer] = typeTag
 }

@@ -16,7 +16,11 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-import io.deepsense.deeplang.exceptions.DeepLangException
-
-case class MathematicalExpressionSyntaxException(formula: String) extends DeepLangException(
-  s"Formula: '$formula' is not a valid Spark SQL expression")
+case class SqlColumnTransformationExecutionException(
+    inputColumnName: String,
+    formula: String,
+    outputColumnName: String,
+    rootCause: Option[Throwable])
+  extends DOperationExecutionException(
+    s"Problem while executing SqlColumnTransformation with the following formula: '$formula'",
+    rootCause)

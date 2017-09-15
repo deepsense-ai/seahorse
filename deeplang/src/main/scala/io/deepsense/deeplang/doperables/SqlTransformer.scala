@@ -23,7 +23,7 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
 
-class SqlExpression extends Transformer {
+class SqlTransformer extends Transformer {
   val dataFrameId = StringParam(
     name = "dataframe id",
     description = "An identifier that can be used in " +

@@ -1,17 +1,17 @@
 ---
 layout: documentation
-displayTitle: Execute Mathematical Transformation
-title: Execute Mathematical Transformation
-description: Execute Mathematical Transformation
+displayTitle: SQL Column Transformation
+title: SQL Column Transformation
+description: SQL Column Transformation
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Applies a mathematical formula to a [DataFrame](../classes/dataframe.html) and produces
-a [Transformer](../classes/transformer.html) that represents the mathematical formula.
-Later on, the `Transformer` can be applied to a [DataFrame](../classes/dataframe.html)
-with a [Transform](transform.html) operation.
+Executes a SQL formula provided by the user on a column (columns) of [DataFrame](../classes/dataframe.html) connected to its input port.
+Returns modified `DataFrame`.
 
+Also returns a [Transformer](../classes/transformer.html) that can be later applied
+to another `DataFrame` with a [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
@@ -83,7 +83,7 @@ with a [Transform](transform.html) operation.
   <tr>
     <td><code>formula</code></td>
     <td><code><a href="../parameter_types.html#string">String</a></code></td>
-    <td>The mathematical formula. The formula grammar is based on SQL expressions (see below).</td>
+    <td>The SQL formula. The formula grammar is based on SQL expressions (see below).</td>
   </tr>
   <tr>
     <td><code>output column name</code></td>
@@ -150,4 +150,4 @@ Available functions and operators:
   - ``SIGNUM(expr: Double)`` returns zero if the argument is zero, 1.0 if the argument is greater
   than zero, -1.0 if the argument is less than zero
 
-{% markdown operations/examples/ExecuteMathematicalTransformation.md %}
+{% markdown operations/examples/SqlColumnTransformation.md %}

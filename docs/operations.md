@@ -32,11 +32,14 @@ List of all currently supported operations:
   * [Filter Rows](operations/filter_rows.html)
   * [Handle Missing Values](operations/handle_missing_values.html)
 * Transformation
-  * [Create Custom Transformer](operations/create_custom_transformer.html)
-  * [Custom Python Operation](operations/custom_python_operation.html)
-  * [Custom Python Column Operation](operations/custom_python_column_operation.html)
-  * [Execute Mathematical Transformation](operations/execute_mathematical_transformation.html)
-  * [Execute SQL Expression](operations/execute_sql_expression.html)
+  * Custom
+    * [Create Custom Transformer](operations/create_custom_transformer.html)
+    * SQL
+      * [SQL Transformation](operations/sql_transformation.html)
+      * [SQL Column Transformation](operations/sql_column_transformation.html)
+    * Python
+      * [Python Transformation](operations/python_transformation.html)
+      * [Python Column Transformation](operations/python_column_transformation.html)
   * Feature Conversion
     * [Assemble Vector](operations/assemble_vector.html)
     * [Binarize](operations/binarize.html)

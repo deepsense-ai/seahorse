@@ -26,7 +26,7 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.selections.NameColumnSelection
 import io.deepsense.deeplang.params.{Param, StringParam}
 
-case class MathematicalTransformation() extends MultiColumnTransformer {
+case class SqlColumnTransformer() extends MultiColumnTransformer {
 
   val inputColumnAlias = StringParam(
     name = "input column alias",
@@ -75,13 +75,13 @@ case class MathematicalTransformation() extends MultiColumnTransformer {
     }
     catch {
       case e: Exception =>
-        throw new MathematicalTransformationExecutionException(
+        throw new SqlColumnTransformationExecutionException(
           inputColumnName, formula, outputColumnName, Some(e))
     }
 
     val columns = transformedSparkDataFrame.columns
     if (columns.distinct.length != columns.length) {
-      throw new MathematicalTransformationExecutionException(
+      throw new SqlColumnTransformationExecutionException(
         inputColumnName,
         formula,
         outputColumnName,
@@ -120,7 +120,7 @@ case class MathematicalTransformation() extends MultiColumnTransformer {
       case de: DeepLangException =>
         throw de
       case e: Exception =>
-        throw MathematicalExpressionSyntaxException(formula)
+        throw SqlColumnExpressionSyntaxException(formula)
     }
   }
 

@@ -26,9 +26,9 @@ import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionExce
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 
-case class CustomPythonColumnOperationTransformer() extends MultiColumnTransformer {
+case class PythonColumnTransformer() extends MultiColumnTransformer {
 
-  import CustomPythonColumnOperationTransformer._
+  import PythonColumnTransformer._
 
   val targetType = ChoiceParam[TargetTypeChoice](
     name = "target type",
@@ -123,7 +123,7 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
   }
 }
 
-object CustomPythonColumnOperationTransformer {
+object PythonColumnTransformer {
   val InputPortNumber: Int = 0
   val OutputPortNumber: Int = 0
 }

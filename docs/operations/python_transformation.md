@@ -1,13 +1,13 @@
 ---
 layout: documentation
-displayTitle: Custom Python Operation
-title: Custom Python Operation
-description: Custom Python Operation
+displayTitle: Python Transformation
+title: Python Transformation
+description: Python Transformation
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes a Python function provided by the user on a `DataFrame` connected to its input port.
+Executes a Python function provided by the user on a [DataFrame](../classes/dataframe.html) connected to its input port.
 Returns result of the Python function as a `DataFrame`.
 
 The function that will be executed must:

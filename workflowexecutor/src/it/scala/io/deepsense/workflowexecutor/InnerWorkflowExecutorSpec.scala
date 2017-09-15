@@ -21,7 +21,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 import spray.json._
 
 import io.deepsense.commons.exception.DeepSenseException
-import io.deepsense.deeplang.doperables.MathematicalTransformation
+import io.deepsense.deeplang.doperables.SqlColumnTransformer
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.doperations._
@@ -52,11 +52,11 @@ class InnerWorkflowExecutorSpec
     val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection("column1"))
       .setInPlace(inPlace)
-    val params = MathematicalTransformation()
+    val params = SqlColumnTransformer()
       .setFormula("2*x")
       .setSingleOrMultiChoice(single)
       .paramValuesToJson
-    new ExecuteMathematicalTransformation().setParamsFromJson(params)
+    new SqlColumnTransformation().setParamsFromJson(params)
   }
 
   val failingOperation = {
@@ -65,11 +65,11 @@ class InnerWorkflowExecutorSpec
     val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection("does not exist"))
       .setInPlace(inPlace)
-    val params = MathematicalTransformation()
+    val params = SqlColumnTransformer()
       .setFormula("2*x")
       .setSingleOrMultiChoice(single)
       .paramValuesToJson
-    ExecuteMathematicalTransformation().setParamsFromJson(params)
+    SqlColumnTransformation().setParamsFromJson(params)
   }
 
   val innerNode = Node(innerNodeId, innerNodeOperation)
