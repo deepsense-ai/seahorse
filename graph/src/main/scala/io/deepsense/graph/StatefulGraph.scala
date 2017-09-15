@@ -31,7 +31,8 @@ case class StatefulGraph(
     states: Map[Node.Id, NodeState],
     state: GraphState)
   extends TopologicallySortable
-  with KnowledgeInference {
+  with KnowledgeInference
+  with NodeInferenceImpl {
 
   state match {
     case graphstate.Draft =>

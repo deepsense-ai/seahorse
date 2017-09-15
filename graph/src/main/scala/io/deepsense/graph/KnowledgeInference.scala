@@ -16,13 +16,9 @@
 
 package io.deepsense.graph
 
-import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.graph.GraphKnowledge.InferenceErrors
-import io.deepsense.graph.TypesAccordance.TypesAccordance
 
 case class SinglePortKnowledgeInferenceResult(
   knowledge: DKnowledge[DOperable],
@@ -30,7 +26,7 @@ case class SinglePortKnowledgeInferenceResult(
   errors: InferenceErrors)
 
 trait KnowledgeInference {
-  self: TopologicallySortable =>
+  self: TopologicallySortable with NodeInference =>
 
   /**
    * @return A graph knowledge with inferred results for every node.
@@ -38,7 +34,19 @@ trait KnowledgeInference {
   def inferKnowledge(context: InferContext): GraphKnowledge = {
     val sorted = topologicallySorted.getOrElse(throw CyclicGraphException())
     sorted
-      .foldLeft(GraphKnowledge())((knowledge, node) => inferKnowledge(node, context, knowledge))
+      .foldLeft(GraphKnowledge())(
+        (knowledge, node) => {
+          val inferenceResult = inferKnowledge(
+            node,
+            context,
+            inputInferenceForNode(
+              node,
+              context,
+              knowledge,
+              predecessors(node.id)))
+          knowledge.addInference(node.id, inferenceResult)
+        }
+      )
   }
 
   /**
@@ -58,136 +66,5 @@ trait KnowledgeInference {
       inferenceResult.ports(outPortIndex),
       inferenceResult.warnings,
       inferenceResult.errors)
-  }
-
-  /**
-   * @return Graph knowledge with inferred result for the given node.
-   */
-  private def inferKnowledge(
-      node: Node,
-      context: InferContext,
-      graphKnowledge: GraphKnowledge): GraphKnowledge = {
-
-    val NodeInferenceResult(inKnowledge, warnings, errors) =
-      inputInferenceForNode(node, context, graphKnowledge)
-
-    val parametersValidationErrors = node.operation.parameters.validate
-    val inferenceResult = if (context.fullInference && !parametersValidationErrors.isEmpty) {
-      createDefaultKnowledge(
-        context, node.operation, warnings, errors ++ parametersValidationErrors)
-    } else {
-      try {
-        val (outKnowledge, inferWarnings) =
-          node.operation.inferKnowledge(context)(inKnowledge.toVector)
-        NodeInferenceResult(
-          outKnowledge, warnings ++ inferWarnings, errors ++ parametersValidationErrors)
-      } catch {
-        case exception: DeepLangException =>
-          createDefaultKnowledge(context, node.operation, warnings, errors :+ exception)
-      }
-    }
-    graphKnowledge.addInference(node.id, inferenceResult)
-  }
-
-  private def inputInferenceForNode(
-      node: Node,
-      context: InferContext,
-      graphKnowledge: GraphKnowledge): NodeInferenceResult = {
-
-    (0 until predecessors(node.id).size).foldLeft(NodeInferenceResult.empty) {
-      case (NodeInferenceResult(knowledge, warnings, errors), portIndex) =>
-        val (portKnowledge, accordance) =
-          inputKnowledgeAndAccordanceForInputPort(node, context, graphKnowledge, portIndex)
-        NodeInferenceResult(
-          knowledge :+ portKnowledge, warnings ++ accordance.warnings, errors ++ accordance.errors)
-    }
-  }
-
-  private def createDefaultKnowledge(
-      context: InferContext,
-      operation: DOperation,
-      warnings: InferenceWarnings,
-      errors: Vector[DeepLangException]): NodeInferenceResult = {
-    val outKnowledge = defaultOutputKnowledge(context, operation)
-    NodeInferenceResult(outKnowledge, warnings, errors)
-  }
-
-  /**
-   * @return Input knowledge to be provided for the given input port
-   *         and type accordance for edge incoming to this port.
-   * @param node Node that contains input port.
-   * @param context InferContext for inference.
-   * @param graphKnowledge Contains inference results computed so far. This method assumes that
-   *                       graphKnowledge contains all required data.
-   */
-  private def inputKnowledgeAndAccordanceForInputPort(
-      node: Node,
-      context: InferContext,
-      graphKnowledge: GraphKnowledge,
-      portIndex: Int): (DKnowledge[DOperable], TypesAccordance) = {
-    val inPortType = node.operation.inPortTypes(portIndex).asInstanceOf[ru.TypeTag[DOperable]]
-    predecessors(node.id)(portIndex) match {
-      case None => (defaultKnowledge(context, inPortType), TypesAccordance.NotProvided(portIndex))
-      case Some(predecessor) =>
-        val outPortIndex = getSuccessorPort(predecessor.nodeId, Endpoint(node.id, portIndex)).get
-        val predecessorKnowledge = graphKnowledge.getKnowledge(predecessor.nodeId)(outPortIndex)
-        inputKnowledgeAndAccordanceForInputPort(
-          context,
-          predecessorKnowledge,
-          portIndex,
-          inPortType)
-    }
-  }
-
-  /**
-   * @return Input knowledge to be provided for the given input port
-   *         and type accordance for edge incoming to this port.
-   *         If some (but not all) types matches input port type accordance, only matching types are
-   *         placed in that port.
-   *         If no types matches port, default knowledge is placed in this port.
-   * @param predecessorKnowledge Inferred knowledge incoming to port.
-   * @param portIndex Index of input port.
-   * @param inPortType Type of input port.
-   */
-  private def inputKnowledgeAndAccordanceForInputPort(
-      context: InferContext,
-      predecessorKnowledge: DKnowledge[DOperable],
-      portIndex: Int,
-      inPortType: ru.TypeTag[DOperable]): (DKnowledge[DOperable], TypesAccordance) = {
-    val filteredTypes = predecessorKnowledge.filterTypes(inPortType.tpe)
-    val filteredSize = filteredTypes.size
-    if (filteredSize == predecessorKnowledge.size) {
-      (filteredTypes, TypesAccordance.All())
-    } else if (filteredSize == 0) {
-      (defaultKnowledge(context, inPortType), TypesAccordance.None(portIndex))
-    } else {
-      (filteredTypes, TypesAccordance.Some(portIndex))
-    }
-  }
-
-  /**
-   * @return Knowledge vector for output ports if no additional information is provided.
-   */
-  private def defaultOutputKnowledge(
-      context: InferContext,
-      operation: DOperation): Vector[DKnowledge[DOperable]] =
-    for (outPortType <- operation.outPortTypes) yield defaultKnowledge(context, outPortType)
-
-  /**
-   * @return Knowledge for port if no additional information is provided.
-   */
-  private def defaultKnowledge(
-      context: InferContext,
-      portType: ru.TypeTag[_]): DKnowledge[DOperable] = {
-    val castedType = portType.asInstanceOf[ru.TypeTag[DOperable]]
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances(castedType))
-  }
-
-  /**
-   * @return Port index which contains the given successor.
-   */
-  private def getSuccessorPort(of: Node.Id, successorEndpoint: Endpoint): Option[Int] = {
-    val successorIndex = successors(of).indexWhere(_.contains(successorEndpoint))
-    if (successorIndex != -1) Some(successorIndex) else None
   }
 }

@@ -16,225 +16,60 @@
 
 package io.deepsense.graph
 
-import scala.reflect.runtime.{universe => ru}
-
+import org.mockito.Matchers.{eq => isEqualTo, _}
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.inference.exceptions.{AllTypesNotCompilableException, NoInputEdgesException}
-import io.deepsense.deeplang.inference.warnings.SomeTypesNotCompilableWarning
-import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
-import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.parameters.exceptions.ValidationException
-import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.graph.Node.Id
 
 class KnowledgeInferenceSpec
-  extends WordSpec
-  with MockitoSugar
-  with Matchers {
+  extends AbstractInferenceSpec
+  with BeforeAndAfter {
 
-  import io.deepsense.graph.DClassesForDOperations._
-  import io.deepsense.graph.DOperationTestClasses._
+  val topologicallySortedMock = mock[TopologicallySortable]
+  val nodeInferenceMock = mock[NodeInference]
 
-  val hierarchy = new DOperableCatalog
-  hierarchy.registerDOperable[A1]()
-  hierarchy.registerDOperable[A2]()
+  val graph = DirectedGraphWithSomeLogicMocked(topologicallySortedMock, nodeInferenceMock)
 
-  val knowledgeA1: DKnowledge[DOperable] = DKnowledge(A1())
-  val knowledgeA2: DKnowledge[DOperable] = DKnowledge(A2())
-  val knowledgeA12: DKnowledge[DOperable] = DKnowledge(A1(), A2())
-
-  val typeInferenceCtx: InferContext = new InferContext(hierarchy, fullInference = false)
-  val fullInferenceCtx: InferContext = new InferContext(hierarchy, fullInference = true)
+  before {
+    reset(topologicallySortedMock)
+    reset(nodeInferenceMock)
+  }
 
   "Graph" should {
     "infer type knowledge" when {
       "graph is valid" in {
-        val graph = validGraph
-        setParamsValid(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
-          idA1A2ToFirst -> NodeInferenceResult(
+        val topologicallySortedNodes = List(
+          nodeCreateA1,
+          nodeA1ToA,
+          nodeAToA1A2,
+          nodeA1A2ToFirst
+        )
+        val nodeInferenceResultForNodes = List(
+          NodeInferenceResult(Vector(knowledgeA1)),
+          NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
+          NodeInferenceResult(Vector(knowledgeA1)),
+          NodeInferenceResult(
             Vector(knowledgeA1),
-            warnings = InferenceWarnings(DOperationA1A2ToFirst.warning))
+            warnings = mock[InferenceWarnings])
         )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "not all input knowledge accord to input type qualifiers" in {
-        val graph = graphWithNotAccordingTypes
-        setParamsValid(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idA1ToA -> NodeInferenceResult(Vector(knowledgeA12)),
-          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA1),
-            warnings = InferenceWarnings(
-              SomeTypesNotCompilableWarning(portIndex = 1),
-              DOperationA1A2ToFirst.warning
-            ),
-            errors = Vector(AllTypesNotCompilableException(portIndex = 0)))
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "knowledge was not provided for some inputs" in {
-        val graph = graphWithNotProvidedInputs
-        setParamsValid(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA1),
-            warnings = InferenceWarnings(DOperationA1A2ToFirst.warning),
-            errors = Vector(NoInputEdgesException(portIndex = 1))
-          )
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "graph is valid but params are invalid" in {
-        val graph = validGraph
-        setParamsInvalid(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA1),
-            warnings = InferenceWarnings(DOperationA1A2ToFirst.warning),
-            errors = Vector(DOperationA1A2ToFirst.parameterInvalidError))
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "not all input knowledge accords to input type qualifiers and params are invalid" in {
-        val graph = graphWithNotAccordingTypes
-        setParamsInvalid(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idA1ToA -> NodeInferenceResult(Vector(knowledgeA12)),
-          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA1),
-            warnings = InferenceWarnings(
-              SomeTypesNotCompilableWarning(portIndex = 1),
-              DOperationA1A2ToFirst.warning),
-            errors = Vector(
-              AllTypesNotCompilableException(portIndex = 0),
-              DOperationA1A2ToFirst.parameterInvalidError
-            )
-          )
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "knowledge was not provided for some inputs and params are invalid" in {
-        val graph = graphWithNotProvidedInputs
-        setParamsInvalid(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA1),
-            warnings = InferenceWarnings(DOperationA1A2ToFirst.warning),
-            errors = Vector(
-              NoInputEdgesException(portIndex = 1),
-              DOperationA1A2ToFirst.parameterInvalidError
-            )
-          )
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "graph is valid and inference throws an error" in {
-        val graph = validGraph
-        setThrowingError(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA12),
-            errors = Vector(DOperationA1A2ToFirst.inferenceError))
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "not all input knowledge accords to input type qualifiers and inference throws an error" in {
-        val graph = graphWithNotAccordingTypes
-        setThrowingError(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idA1ToA -> NodeInferenceResult(Vector(knowledgeA12)),
-          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA12),
-            warnings = InferenceWarnings(SomeTypesNotCompilableWarning(portIndex = 1)),
-            errors = Vector(
-              AllTypesNotCompilableException(portIndex = 0),
-              DOperationA1A2ToFirst.inferenceError)
-          )
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-      "knowledge was not provided for some inputs and inference throws an error" in {
-        val graph = graphWithNotProvidedInputs
-        setThrowingError(graph)
-        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA12),
-            errors = Vector(
-              NoInputEdgesException(portIndex = 1),
-              DOperationA1A2ToFirst.inferenceError)
-          )
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-      }
-    }
-    "not inference types (only infer default knowledge) when parameters are not valid " +
-      "for fullInference = true" in {
-        val graph = validGraph
-        setParamsInvalid(graph)
-        val graphKnowledge = graph.inferKnowledge(fullInferenceCtx)
-
-        val graphKnowledgeExpected = Map(
-          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
-          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
-          idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA12),
-            errors = Vector(DOperationA1A2ToFirst.parameterInvalidError))
-        )
-        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
-    }
-
-    "throw an exception" when {
-      "graph contains cycle" in {
-        intercept[CyclicGraphException] {
-          graphWithCycle.inferKnowledge(typeInferenceCtx)
+        when(topologicallySortedMock.topologicallySorted).thenReturn(Some(topologicallySortedNodes))
+        topologicallySortedNodes.zip(nodeInferenceResultForNodes).foreach {
+          case (node: Node, result: NodeInferenceResult) =>
+            nodeInferenceMockShouldInferResultForNode(node, result)
         }
-        ()
+
+        val graphKnowledge = graph.inferKnowledge(mock[InferContext])
+        val graphKnowledgeExpected = topologicallySortedNodes.map(_.id)
+          .zip(nodeInferenceResultForNodes).toMap
+        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
       }
     }
-  }
 
-  it should {
     "infer knowledge up to given output port" in {
       val graph = validGraph
-      setParamsValid(graph)
+      setParametersValid(graph)
 
       val node1Result = graph.inferKnowledge(idCreateA1, 0, typeInferenceCtx)
       val node2Port0Result = graph.inferKnowledge(idAToA1A2, 0, typeInferenceCtx)
@@ -246,95 +81,76 @@ class KnowledgeInferenceSpec
       node2Port1Result.knowledge shouldBe knowledgeA2
       node3Result.knowledge shouldBe knowledgeA1
     }
+
+    "throw an exception" when {
+      "graph contains cycle" in {
+        intercept[CyclicGraphException] {
+          val topologicallySortedMock = mock[TopologicallySortable]
+          when(topologicallySortedMock.topologicallySorted).thenReturn(None)
+          val graph = DirectedGraphWithSomeLogicMocked(
+            topologicallySortedMock,
+            nodeInferenceMock
+          )
+          graph.inferKnowledge(mock[InferContext])
+        }
+        ()
+      }
+    }
   }
 
-  /**
-   * This operation can be set to:
-   *  - have invalid parameters
-   *  - throw inference errors
-   * By default it infers A1 on its output port.
-   */
-  case class DOperationA1A2ToFirst() extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
-    import DOperationA1A2ToFirst._
+  def nodeInferenceMockShouldInferResultForNode(
+      nodeCreateA1: Node,
+      nodeCreateA1InferenceResult: NodeInferenceResult): Unit = {
+    when(nodeInferenceMock.inferKnowledge(
+      isEqualTo(nodeCreateA1),
+      any[InferContext],
+      any[NodeInferenceResult])
+    ).thenReturn(nodeCreateA1InferenceResult)
+  }
 
-    override val parameters = mock[ParametersSchema]
+  case class DirectedGraphWithSomeLogicMocked(
+      val topologicallySortableMock: TopologicallySortable,
+      val nodeInferenceMock: NodeInference)
+    extends TopologicallySortable
+    with KnowledgeInference
+    with NodeInference {
 
-    override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
-
-    def setParamsValid(): Unit = doReturn(Vector.empty).when(parameters).validate
-
-    def setParamsInvalid(): Unit = doReturn(Vector(parameterInvalidError)).when(parameters).validate
-
-    private var inferenceShouldThrow = false
-
-    def setInferenceErrorThrowing(): Unit = inferenceShouldThrow = true
-
-    override protected def _inferTypeKnowledge(
-      context: InferContext)(
-      k0: DKnowledge[A1],
-      k1: DKnowledge[A2]): (DKnowledge[A], InferenceWarnings) = {
-      if (inferenceShouldThrow) {
-        throw inferenceError
-      }
-      (k0, InferenceWarnings(warning))
+    override def inferKnowledge(
+        node: Node,
+        context: InferContext,
+        inputInferenceForNode: NodeInferenceResult): NodeInferenceResult = {
+      nodeInferenceMock.inferKnowledge(node, context, inputInferenceForNode)
     }
 
-    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
-    override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
-    override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
-  }
+    override def inputInferenceForNode(
+        node: Node,
+        context: InferContext,
+        graphKnowledge: GraphKnowledge,
+        nodePredecessorsEndpoints: IndexedSeq[Option[Endpoint]]): NodeInferenceResult = {
+      nodeInferenceMock.inputInferenceForNode(
+        node,
+        context,
+        graphKnowledge,
+        nodePredecessorsEndpoints
+      )
+    }
 
-  object DOperationA1A2ToFirst {
-    val parameterInvalidError = mock[ValidationException]
-    val inferenceError = mock[DeepLangException]
-    val warning = mock[InferenceWarning]
-  }
+    override def topologicallySorted: Option[List[Node]] =
+      topologicallySortableMock.topologicallySorted
 
-  val idCreateA1 = Node.Id.randomId
-  val idA1ToA = Node.Id.randomId
-  val idAToA1A2 = Node.Id.randomId
-  val idA1A2ToFirst = Node.Id.randomId
+    override def node(id: Id): Node = topologicallySortableMock.node(id)
 
-  private def nodeCreateA1 = Node(idCreateA1, DOperationCreateA1())
-  private def nodeA1ToA = Node(idA1ToA, DOperationA1ToA())
-  private def nodeAToA1A2 = Node(idAToA1A2, DOperationAToA1A2())
-  private def nodeA1A2ToFirst = Node(idA1A2ToFirst, DOperationA1A2ToFirst())
+    override def allPredecessorsOf(id: Id): Set[Node] =
+      topologicallySortableMock.allPredecessorsOf(id)
 
-  def validGraph: DirectedGraph = DirectedGraph(
-    nodes = Set(nodeCreateA1, nodeAToA1A2, nodeA1A2ToFirst),
-    edges = Set(
-      Edge(nodeCreateA1, 0, nodeAToA1A2, 0),
-      Edge(nodeAToA1A2, 0, nodeA1A2ToFirst, 0),
-      Edge(nodeAToA1A2, 1, nodeA1A2ToFirst, 1))
-  )
+    override def predecessors(id: Id): IndexedSeq[Option[Endpoint]] =
+      topologicallySortableMock.predecessors(id)
 
-  def graphWithNotAccordingTypes: DirectedGraph = DirectedGraph(
-    nodes = Set(nodeCreateA1, nodeA1ToA, nodeAToA1A2, nodeA1A2ToFirst),
-    edges = Set(
-      Edge(nodeCreateA1, 0, nodeA1ToA, 0),
-      Edge(nodeCreateA1, 0, nodeAToA1A2, 0),
-      Edge(nodeAToA1A2, 1, nodeA1A2ToFirst, 0),
-      Edge(nodeA1ToA, 0, nodeA1A2ToFirst, 1))
-  )
+    override def successors(id: Id): IndexedSeq[Set[Endpoint]] =
+      topologicallySortableMock.successors(id)
 
-  def graphWithNotProvidedInputs: DirectedGraph = DirectedGraph(
-    nodes = Set(nodeCreateA1, nodeA1A2ToFirst),
-    edges = Set(Edge(nodeCreateA1, 0, nodeA1A2ToFirst, 0))
-  )
+    override def edges: Set[Edge] = ???
 
-  def graphWithCycle: DirectedGraph = new DirectedGraph() {
-    override def topologicallySorted: Option[List[Node]] = None
-  }
-
-  def setParamsValid(graph: DirectedGraph): Unit = setInGraph(graph, _.setParamsValid())
-
-  def setParamsInvalid(graph: DirectedGraph): Unit = setInGraph(graph, _.setParamsInvalid())
-
-  def setThrowingError(graph: DirectedGraph): Unit =
-    setInGraph(graph, _.setInferenceErrorThrowing())
-
-  def setInGraph(graph: DirectedGraph, f: DOperationA1A2ToFirst => Unit): Unit = {
-    val node = graph.node(idA1A2ToFirst)
-    f(node.operation.asInstanceOf[DOperationA1A2ToFirst])
+    override def nodes: Set[Node] = ???
   }
 }

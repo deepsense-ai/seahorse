@@ -20,7 +20,8 @@ case class DirectedGraph(
     nodes: Set[Node] = Set(),
     edges: Set[Edge] = Set())
   extends TopologicallySortable
-  with KnowledgeInference {
+  with KnowledgeInference
+  with NodeInferenceImpl {
 
   private val nonExistingNodes: Set[Node.Id] = checkEdgesEndsExist(nodes, edges)
 
