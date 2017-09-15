@@ -7,4 +7,4 @@
 package io.deepsense.deeplang.catalogs.doperations.exceptions
 
 case class DOperationNotFoundException(operationName: String)
-  extends DOperationsCatalogException("DOperation not found: ${operationName}")
+  extends DOperationsCatalogException(s"DOperation not found: ${operationName}")
