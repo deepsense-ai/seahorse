@@ -29,7 +29,7 @@ import io.deepsense.graph.nodestate.{Completed, NodeState}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
+import io.deepsense.workflowexecutor.communication.{StatusRequest, Connect, ExecutionStatus}
 import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 /**
@@ -59,7 +59,7 @@ class WorkflowExecutorActor(
         execution)
     case NodeFailed(id, failureDescription) =>
       nodeFailed(id, failureDescription, execution)
-    case Connect(_) =>
+    case StatusRequest(_) | Connect(_) =>
       sendExecutionStatus(executionToStatus(execution))
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
@@ -101,7 +101,7 @@ class WorkflowExecutorActor(
       val nodeSet = nodes.toSet
       val updatedStructure = finishedExecution.updateStructure(graph, nodeSet)
       launch(finishedExecution, updatedStructure, nodes)
-    case Connect(_) =>
+    case StatusRequest(_) | Connect(_) =>
       sendExecutionStatus(executionToStatus(finishedExecution))
   }
 
@@ -110,7 +110,7 @@ class WorkflowExecutorActor(
       val execution = executionFactory.create(graph, nodes)
       // Received Launch for the first time. Use an empty execution as the previous state.
       launch(Execution.empty, execution, nodes)
-    case Connect(_) =>
+    case StatusRequest(_) | Connect(_) =>
       sendExecutionStatus(ExecutionStatus(Map.empty, EntitiesMap()))
   }
 

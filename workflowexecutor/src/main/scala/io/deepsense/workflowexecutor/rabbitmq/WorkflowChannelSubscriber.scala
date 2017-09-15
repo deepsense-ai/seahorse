@@ -21,12 +21,15 @@ import akka.actor.{ActorSelection, Actor, ActorRef}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.WorkflowExecutorActor
-import io.deepsense.workflowexecutor.communication.{Abort, Launch}
+import io.deepsense.workflowexecutor.communication.{StatusRequest, Abort, Launch}
 
 case class WorkflowChannelSubscriber(
   executionDispatcher: ActorRef) extends Actor with Logging {
 
   override def receive: Receive = {
+    case request @ StatusRequest(workflowId) =>
+      logger.debug(s"STATUS REQUEST! '$workflowId'")
+      actorsForWorkflow(workflowId) ! request
     case Launch(id, directedGraph, nodesToExecute) =>
       logger.debug(s"LAUNCH! '$id' -> $directedGraph")
       actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Launch(directedGraph, nodesToExecute)
