@@ -7,7 +7,6 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     compression = require('compression'),
     timeout = require('connect-timeout'),
-
     reverseProxy = require('./reverse-proxy'),
     config = require('./config/config');
 
@@ -35,6 +34,10 @@ auth.init(app);
 
 app.use(userCookieHandler);
 
+if (config.checkOrganization == 'true') {
+  app.use(require('./organization-checker/organization-checker').organizationChecker);
+}
+
 app.get('/',
   auth.login,
   reverseProxy.forward
@@ -46,6 +49,7 @@ app.all('/**',
 );
 
 app.use(timeoutHandler);
+app.use(internalErrorHandler);
 
 function httpsRedirectHandler(req, res, next) {
   if (req.headers['x-forwarded-proto'] !== 'https' && !req.headers.host.startsWith("localhost:")) {
@@ -66,14 +70,19 @@ function userCookieHandler(req, res, next) {
   next();
 }
 
-function timeoutHandler(err, req, res, next){
+function timeoutHandler(req, res, next){
   if (req.timedout) {
-    console.error("Server timeout", err);
     res.status(503);
     res.send("Server timeout");
     return;
   }
   next();
+}
+
+function internalErrorHandler(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500);
+  res.send("Internal server error");
 }
 
 module.exports = app;

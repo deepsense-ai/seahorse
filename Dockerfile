@@ -1,8 +1,9 @@
 # Copyright (c) 2016, CodiLime Inc.
+FROM docker-repo.deepsense.codilime.com/intel/tap-base-node:node4.4-jessie
 
-FROM mhart/alpine-node
-
-RUN apk add git --update-cache
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y git && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

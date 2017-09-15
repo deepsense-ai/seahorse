@@ -8,7 +8,8 @@
   "auth": "basic"
 }, {
   "path": "/v1/sessions",
-  "name": "session-manager"
+  "name": "session-manager",
+  "auth": "token"
 }, {
   "path": "/jupyter",
   "name": "jupyter"

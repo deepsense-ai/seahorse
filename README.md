@@ -5,78 +5,26 @@ Running the proxy app (dev mode)
 
     $ npm install
 
-2. Set VCAP_SERVICES env variable (see below)
+2. Make sure all ENV variables are set (check next paragraphs)
 
 3. Run the application
 
     $ npm start
 
-
-
-Running the proxy docker container
-==================================
-
-1. Build docker image
+Building docker image
+=====================
 
     $ docker build -t deepsense-proxy .
 
-2. Set VCAP_SERVICES env variable (see below)
-
-3. Run docker image
-
-    $ docker run -d -e VCAP_SERVICES="$VCAP_SERVICES" -p 8080:8080 deepsense-proxy
-
-
-
-Setting VCAP_SERVICES variable
-==============================
+Needed env variables
+====================
 
 (Modify addresses for specific environment)
-
-$ export VCAP_SERVICES='{
-  "user-provided": [
-    {
-      "credentials": {
-        "authorizationUri": "http://login.seahorse.gotapaas.eu/oauth/authorize",
-        "logoutUri": "http://login.seahorse.gotapaas.eu/logout.do",
-        "tokenUri": "http://uaa.seahorse.gotapaas.eu/oauth/token",
-        "clientId": "<CLIENT-ID>",
-        "clientSecret": "<CLIENT-SECRET>",
-        "userInfoUri": "http://login.seahorse.gotapaas.eu/userinfo"
-      },
-      "name": "sso"
-    },
-    {
-      "credentials": {
-        "host": "http://172.28.128.100:9080"
-      },
-      "name": "workflow-manager"
-    },
-    {
-      "credentials": {
-        "host": "http://172.28.128.100:9082"
-      },
-      "name": "session-manager"
-    },
-    {
-      "credentials": {
-        "host": "http://172.28.128.100:8888"
-      },
-      "name": "jupyter"
-    },
-    {
-      "credentials": {
-        "host": "http://172.28.128.100:15674"
-      },
-      "name": "rabbitmq"
-    },
-    {
-      "credentials": {
-        "host": "http://172.28.128.100:8000"
-      },
-      "name": "frontend"
-    }
-  ]
-}'
+```
+export VCAP_SERVICES='{"user-provided":[{"credentials":{"authorizationUri":"http://login.seahorse-krb.gotapaas.eu/oauth/authorize","logoutUri":"http://login.seahorse-krb.gotapaas.eu/logout.do","tokenUri":"http://uaa.seahorse-krb.gotapaas.eu/oauth/token","clientId":"seahorse_proxy_local","clientSecret":"seahorse01","userInfoUri":"http://login.seahorse-krb.gotapaas.eu/userinfo"},"name":"sso"},{"credentials":{"host":"http://workflowmanager:9080"},"name":"workflow-manager"},{"credentials":{"host":"http://sessionmanager:9082"},"name":"session-manager"},{"credentials":{"host":"http://notebooks:8888"},"name":"jupyter"},{"credentials":{"host":"http://rabbitmq:15674"},"name":"rabbitmq"},{"credentials":{"host":"http://frontend:80"},"name":"frontend"}]}'
+export DOMAIN="seahorse-krb.gotapaas.eu"
+export ORGANIZATION_ID="e06d477a-c8bb-48f0-baeb-3d709578d8af"
+export CHECK_ORGANIZATION="true"
+```
 
 # Copyright (c) 2016, CodiLime Inc.
