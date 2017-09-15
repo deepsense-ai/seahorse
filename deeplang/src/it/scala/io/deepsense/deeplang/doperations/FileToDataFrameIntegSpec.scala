@@ -171,8 +171,7 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
     val inputData = if (namedColumns) namedLines else lines
     val outputData = if (mappedCategory) rowsPreparedToBeCategorized else rows
     val outputTypes = if (mappedCategory) typesPreparedToBeCategorized else types
-    val schema =
-      StructType(columnsIndices.map(i => StructField(names(i).replace('.', '_'), outputTypes(i))))
+    val schema = StructType(columnsIndices.map(i => StructField(names(i), outputTypes(i))))
     val categoricalColumns = if (mappedCategory) {
       Seq(names(0), names(3))
     } else {
