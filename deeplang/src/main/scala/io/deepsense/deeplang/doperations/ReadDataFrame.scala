@@ -18,9 +18,12 @@ package io.deepsense.deeplang.doperations
 
 import java.io._
 import java.nio.file.Files
+import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
 
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
@@ -132,7 +135,36 @@ case class ReadDataFrame()
   }
 
   private def downloadFile(url: String, sparkContext: SparkContext): String = {
-    // TODO DS-2355 this saves the file in local filesystem, which will not work in non-local modes
+    if (sparkContext.isLocal) {
+      downloadFileToLocal(url, sparkContext)
+    } else {
+      downloadFileToHdfs(url, sparkContext)
+    }
+  }
+
+  private def downloadFileToHdfs(url: String, sparkContext: SparkContext): String = {
+    val content = scala.io.Source.fromURL(url).getLines()
+    val hdfsPath = s"hdfs:///tmp/seahorse/download/${UUID.randomUUID()}"
+
+    val configuration = new Configuration()
+    val hdfs = FileSystem.get(configuration)
+    val file = new Path(hdfsPath)
+    val hdfsStream = hdfs.create(file)
+    val writer = new BufferedWriter(new OutputStreamWriter(hdfsStream))
+    try {
+      content.foreach {s =>
+        writer.write(s)
+        writer.newLine()
+      }
+    } finally {
+      safeClose(writer)
+      hdfs.close()
+    }
+
+    hdfsPath
+  }
+
+  private def downloadFileToLocal(url: String, sparkContext: SparkContext): String = {
     val outFilePath = Files.createTempFile("download", ".csv")
     // content is a stream. Do not invoke stuff like .toList() on it.
     val content = scala.io.Source.fromURL(url).getLines()
