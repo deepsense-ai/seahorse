@@ -14,6 +14,54 @@
         }
       }
     }, {
+      "id": "60ea2171-5e74-5a9d-6c2f-5b5377560b95",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vec_1", "vec_2", "vec_3"]
+              }],
+              "excluding": false
+            },
+            "output": {
+              "append new columns": {
+                "column name prefix": "dct_"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "7ab03f96-4526-aa7b-ba7c-365d96c49f74",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vector_1", "vector_2"]
+              }],
+              "excluding": false
+            },
+            "output": {
+              "append new columns": {
+                "column name prefix": "normalize_"
+              }
+            }
+          }
+        }
+      }
+    }, {
       "id": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
       "operation": {
         "id": "c57a5b99-9184-4095-9037-9359f905628d",
@@ -41,6 +89,25 @@
             "input column": {
               "type": "column",
               "value": "vec"
+            }
+          }
+        }
+      }
+    }, {
+      "id": "cbc1f4cb-2d92-29f1-c3c1-e7d6a05e43be",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vector_1", "vector_2"]
+              }],
+              "excluding": false
             }
           }
         }
@@ -110,6 +177,22 @@
           "type": "column",
           "value": "vec"
         }
+      }
+    }, {
+      "id": "b7eee97b-18e9-5006-68e6-25523ba5e06f",
+      "operation": {
+        "id": "c57a5b99-9184-4095-9037-9359f905628d",
+        "name": "Assemble Vector"
+      },
+      "parameters": {
+        "input columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["vec_2", "vec_3"]
+          }],
+          "excluding": false
+        },
+        "output column": "vector_2"
       }
     }, {
       "id": "7b6dd308-c757-5af9-8ce9-1e0a5057cb5c",
@@ -202,6 +285,25 @@
         }
       }
     }, {
+      "id": "b17d04ce-de9f-77a6-17a4-05f564cfeb39",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vector_1", "vector_2"]
+              }],
+              "excluding": false
+            }
+          }
+        }
+      }
+    }, {
       "id": "7b32dfea-4a82-e85b-f8d3-e4e2cfb92417",
       "operation": {
         "id": "a63b6de3-793b-4cbd-ae81-76de216d90d5",
@@ -240,6 +342,54 @@
         }
       }
     }, {
+      "id": "0f1889b7-5cdd-0831-f919-4054d521e8e5",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vec_1", "vec_2", "vec_3"]
+              }],
+              "excluding": false
+            },
+            "output": {
+              "append new columns": {
+                "column name prefix": "normalize_"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "98ddbed7-05a8-c90e-7574-6f04f7327de2",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vector_1", "vector_2"]
+              }],
+              "excluding": false
+            },
+            "output": {
+              "append new columns": {
+                "column name prefix": "pe_"
+              }
+            }
+          }
+        }
+      }
+    }, {
       "id": "d1a9b941-4ef6-4f11-9d9e-66bffef8db06",
       "operation": {
         "id": "85007b46-210c-4e88-b7dc-cf46d3803b06",
@@ -253,6 +403,49 @@
         "output": {
           "append new column": {
             "output column": "standard"
+          }
+        }
+      }
+    }, {
+      "id": "a76649e3-2cd3-eec3-5748-023856839b6e",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vector_1", "vector_2"]
+              }],
+              "excluding": false
+            },
+            "output": {
+              "append new columns": {
+                "column name prefix": "dct_"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "df990fd5-a0a5-7690-a6f2-5d5a6a7de90a",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vector_1", "vector_2"]
+              }],
+              "excluding": false
+            }
           }
         }
       }
@@ -399,6 +592,41 @@
         }
       }
     }, {
+      "id": "383b7191-364c-c3e8-8853-ce3b70c0b208",
+      "operation": {
+        "id": "c57a5b99-9184-4095-9037-9359f905628d",
+        "name": "Assemble Vector"
+      },
+      "parameters": {
+        "input columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["vec_1", "vec_2"]
+          }],
+          "excluding": false
+        },
+        "output column": "vector_1"
+      }
+    }, {
+      "id": "244ecb52-0825-5633-1252-cb40bb4de05b",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vec_1", "vec_2", "vec_3"]
+              }],
+              "excluding": false
+            }
+          }
+        }
+      }
+    }, {
       "id": "0f60ec98-9e51-1ba1-e57c-247e10af10b2",
       "operation": {
         "id": "a63b6de3-793b-4cbd-ae81-76de216d90d5",
@@ -415,8 +643,97 @@
           }
         }
       }
+    }, {
+      "id": "afdf4937-da3e-d57f-c060-6ca596efa451",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vec_1", "vec_2", "vec_3"]
+              }],
+              "excluding": false
+            }
+          }
+        }
+      }
+    }, {
+      "id": "2e51bb3e-0bd4-6f4e-bc5d-af6abe81fc02",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vec_1", "vec_2", "vec_3"]
+              }],
+              "excluding": false
+            },
+            "output": {
+              "append new columns": {
+                "column name prefix": "pe_"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "e6ce9f9a-849f-9bbe-55dc-46d4dcaf7f3e",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "columnList",
+                "values": ["vec_1", "vec_2", "vec_3"]
+              }],
+              "excluding": false
+            }
+          }
+        }
+      }
     }],
     "connections": [{
+      "from": {
+        "nodeId": "383b7191-364c-c3e8-8853-ce3b70c0b208",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "b7eee97b-18e9-5006-68e6-25523ba5e06f",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0f1889b7-5cdd-0831-f919-4054d521e8e5",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "0f1889b7-5cdd-0831-f919-4054d521e8e5",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "60ea2171-5e74-5a9d-6c2f-5b5377560b95",
+        "portIndex": 0
+      }
+    }, {
       "from": {
         "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
         "portIndex": 0
@@ -436,6 +753,24 @@
       }
     }, {
       "from": {
+        "nodeId": "b7eee97b-18e9-5006-68e6-25523ba5e06f",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "df990fd5-a0a5-7690-a6f2-5d5a6a7de90a",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "60ea2171-5e74-5a9d-6c2f-5b5377560b95",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2e51bb3e-0bd4-6f4e-bc5d-af6abe81fc02",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
         "portIndex": 0
       },
@@ -445,11 +780,47 @@
       }
     }, {
       "from": {
+        "nodeId": "b7eee97b-18e9-5006-68e6-25523ba5e06f",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "cbc1f4cb-2d92-29f1-c3c1-e7d6a05e43be",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "e6ce9f9a-849f-9bbe-55dc-46d4dcaf7f3e",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "a76649e3-2cd3-eec3-5748-023856839b6e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "98ddbed7-05a8-c90e-7574-6f04f7327de2",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
         "portIndex": 0
       },
       "to": {
         "nodeId": "2e4dd4df-baeb-cb2d-b4fc-b194f0f300b2",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "b7eee97b-18e9-5006-68e6-25523ba5e06f",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "b17d04ce-de9f-77a6-17a4-05f564cfeb39",
         "portIndex": 0
       }
     }, {
@@ -526,11 +897,38 @@
       }
     }, {
       "from": {
+        "nodeId": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "afdf4937-da3e-d57f-c060-6ca596efa451",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
         "portIndex": 0
       },
       "to": {
         "nodeId": "a96ac72b-d26a-0e7c-ca58-a821b4940c96",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "b7eee97b-18e9-5006-68e6-25523ba5e06f",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "7ab03f96-4526-aa7b-ba7c-365d96c49f74",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "7ab03f96-4526-aa7b-ba7c-365d96c49f74",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a76649e3-2cd3-eec3-5748-023856839b6e",
         "portIndex": 0
       }
     }, {
@@ -598,6 +996,24 @@
       }
     }, {
       "from": {
+        "nodeId": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "383b7191-364c-c3e8-8853-ce3b70c0b208",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "244ecb52-0825-5633-1252-cb40bb4de05b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "6b106484-dcbc-6e55-fa78-1909f59dfdd6",
         "portIndex": 0
       },
@@ -626,8 +1042,8 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6193,
-            "y": 5440
+            "x": 6205,
+            "y": 5432
           }
         },
         "17d43eef-1ab8-1d3b-7fca-fea00985485e": {
@@ -650,40 +1066,64 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5931,
-            "y": 5492
+            "x": 5943,
+            "y": 5484
           }
         },
         "e3a57ea7-3f22-8095-b708-8cffbbe94b49": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4685,
-            "y": 5138
+            "x": 4665,
+            "y": 5204
           }
         },
         "4133eca0-89ad-6ce1-bcb1-ec7fb6edcc79": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4697,
-            "y": 5353
+            "x": 4677,
+            "y": 5419
+          }
+        },
+        "df990fd5-a0a5-7690-a6f2-5d5a6a7de90a": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7364,
+            "y": 4998
+          }
+        },
+        "e6ce9f9a-849f-9bbe-55dc-46d4dcaf7f3e": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4315,
+            "y": 5049
+          }
+        },
+        "7ab03f96-4526-aa7b-ba7c-365d96c49f74": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7181,
+            "y": 5191
           }
         },
         "a96ac72b-d26a-0e7c-ca58-a821b4940c96": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6753,
-            "y": 5327
+            "x": 6836,
+            "y": 5419
           }
         },
         "f7fe9543-4a7a-02da-0c09-587597cd50b3": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6235,
-            "y": 5268
+            "x": 6239,
+            "y": 5261
           }
         },
         "9d03f3e8-067a-68b4-a0d6-b010124bcfe8": {
@@ -694,20 +1134,44 @@
             "y": 5476
           }
         },
+        "afdf4937-da3e-d57f-c060-6ca596efa451": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4299,
+            "y": 4832
+          }
+        },
+        "a76649e3-2cd3-eec3-5748-023856839b6e": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7162,
+            "y": 5288
+          }
+        },
+        "cbc1f4cb-2d92-29f1-c3c1-e7d6a05e43be": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7351,
+            "y": 5090
+          }
+        },
         "268c773a-8a7d-306e-751e-eb008971eb62": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6459,
-            "y": 5488
+            "x": 6468,
+            "y": 5487
           }
         },
         "e64a9737-15d0-b1c5-55ed-4980f951a0c4": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6754,
-            "y": 5210
+            "x": 6872,
+            "y": 5316
           }
         },
         "20c4b5c3-3b61-3f08-0c38-7c0eb6d00214": {
@@ -722,8 +1186,8 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6494,
-            "y": 5386
+            "x": 6503,
+            "y": 5385
           }
         },
         "206efc32-d7e8-d02c-ae97-4dce31b2f238": {
@@ -738,8 +1202,8 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6751,
-            "y": 5095
+            "x": 6881,
+            "y": 5222
           }
         },
         "6b106484-dcbc-6e55-fa78-1909f59dfdd6": {
@@ -750,6 +1214,14 @@
             "y": 5386
           }
         },
+        "383b7191-364c-c3e8-8853-ce3b70c0b208": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6139,
+            "y": 5043
+          }
+        },
         "0f60ec98-9e51-1ba1-e57c-247e10af10b2": {
           "uiName": "",
           "color": "#00B1EB",
@@ -758,12 +1230,20 @@
             "y": 5418
           }
         },
+        "2e51bb3e-0bd4-6f4e-bc5d-af6abe81fc02": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4419,
+            "y": 5363
+          }
+        },
         "a106f0e1-0912-2c39-7ac0-922c24978f94": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4691,
-            "y": 5243
+            "x": 4671,
+            "y": 5309
           }
         },
         "abd42cba-b37c-50fb-f726-dd61733a3874": {
@@ -774,12 +1254,20 @@
             "y": 5495
           }
         },
+        "b7eee97b-18e9-5006-68e6-25523ba5e06f": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6404,
+            "y": 5038
+          }
+        },
         "7b6dd308-c757-5af9-8ce9-1e0a5057cb5c": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5890,
-            "y": 5374
+            "x": 5902,
+            "y": 5366
           }
         },
         "7b32dfea-4a82-e85b-f8d3-e4e2cfb92417": {
@@ -790,20 +1278,60 @@
             "y": 5371
           }
         },
+        "60ea2171-5e74-5a9d-6c2f-5b5377560b95": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4421,
+            "y": 5254
+          }
+        },
+        "244ecb52-0825-5633-1252-cb40bb4de05b": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4317,
+            "y": 4940
+          }
+        },
+        "b17d04ce-de9f-77a6-17a4-05f564cfeb39": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7376,
+            "y": 4899
+          }
+        },
         "4ac8b0df-04e3-362f-7f9f-f18d7248d8c4": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6441,
-            "y": 5586
+            "x": 6450,
+            "y": 5585
+          }
+        },
+        "0f1889b7-5cdd-0831-f919-4054d521e8e5": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4403,
+            "y": 5146
+          }
+        },
+        "98ddbed7-05a8-c90e-7574-6f04f7327de2": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7149,
+            "y": 5380
           }
         },
         "d1a9b941-4ef6-4f11-9d9e-66bffef8db06": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6168,
-            "y": 5533
+            "x": 6180,
+            "y": 5525
           }
         }
       }
@@ -815,7 +1343,7 @@
   "variables": {
 
   },
-  "id": "1c4926ba-c697-4353-8cdc-3b7590d70eb5",
+  "id": "d4e074d2-4d52-4e99-8291-e0792131b466",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.2.0"
