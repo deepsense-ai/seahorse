@@ -105,20 +105,6 @@ DESCRIPTION
 
 Shows difference between start and end time
 
-### Additional directives:
-
-- `<... click-listener ...>`
-- `<... input-checkbox-change-listener ...>`
-- `<... input-text-change-listener ...>`
-- `<... select-change-listener ...>`
-
-They listen on UI components' values' changes. If any change appears, the `AttributesPanel.UPDATED` event is triggered.
-The event is also triggered when:
-
-- an user changes any value in the column selector panel;
-- an user changes any node's custom name;
-- an user deletes a group in the multiplier parameter.
-
 ### Development
 
 `gulp start` to start watchers
