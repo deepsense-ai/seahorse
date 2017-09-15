@@ -38,7 +38,7 @@ class TrainedLogisticRegressionIntegSpec
           StructField("f2", DoubleType),
           StructField("f3", DoubleType))))
 
-      logisticRegression.score(executionContext)(())(df)
+      logisticRegression.score(executionContext)("prediction")(df)
 
       verify(model, times(1)).clearThreshold()
     }

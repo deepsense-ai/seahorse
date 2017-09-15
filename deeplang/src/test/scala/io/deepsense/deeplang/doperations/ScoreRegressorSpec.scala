@@ -9,7 +9,7 @@ import io.deepsense.deeplang.doperables.{Regressor, Scorable}
 
 class ScoreRegressorSpec extends ScorerSpec[Scorable with Regressor] {
 
-  override def scorer: DOperation = ScoreRegressor()
+  override def scorer: DOperation = ScoreRegressor(predictionColumnName)
 
   override def scorerName: String = "ScoreRegressor"
 }

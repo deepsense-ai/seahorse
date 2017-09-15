@@ -9,7 +9,7 @@ import io.deepsense.deeplang.doperables.{Classifier, Scorable}
 
 class ScoreClassifierSpec extends ScorerSpec[Scorable with Classifier] {
 
-  override def scorer: DOperation = ScoreClassifier()
+  override def scorer: DOperation = ScoreClassifier(predictionColumnName)
 
   override def scorerName: String = "ScoreClassifier"
 }

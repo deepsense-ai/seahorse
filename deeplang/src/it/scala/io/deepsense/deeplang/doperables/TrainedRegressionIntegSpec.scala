@@ -35,28 +35,16 @@ abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
 
   protected val modelType: Class[T]
 
+  protected val targetColumnName = "some_target"
+
   regressionName should {
-    "produce dataframe with column with '_prediction' suffix" in {
+    "produce dataframe with target column" in {
       val (scoredDataFrame, expectedDataFrame) = createScoredAndExpectedDataFrames(
         inputColumnNames = Seq("column1", "column2", "column3", "column4"),
         featureColumnNames = Seq("column1", "column4"),
-        targetColumnName = "some_target",
-        expectedPredictionColumnSuffix = "_prediction")
+        targetColumnName = targetColumnName)
 
       assertDataFramesEqual(scoredDataFrame, expectedDataFrame)
-    }
-
-    "produce dataframe with column with '_prediction_2' suffix" when {
-      "'_prediction' and '_prediction_1' are occupied" in {
-        val (scoredDataFrame, expectedDataFrame) = createScoredAndExpectedDataFrames(
-          inputColumnNames = Seq(
-            "column1", "column2", "some_target_prediction", "some_target_prediction_1"),
-          featureColumnNames = Seq("column1", "some_target_prediction_1"),
-          targetColumnName = "some_target",
-          expectedPredictionColumnSuffix = "_prediction_2")
-
-        assertDataFramesEqual(scoredDataFrame, expectedDataFrame)
-      }
     }
 
     "throw an exception" when {
@@ -65,8 +53,7 @@ abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
           createScoredAndExpectedDataFrames(
             inputColumnNames = Seq("column1", "column2", "column3", "column4"),
             featureColumnNames = Seq("column1", "non-existing"),
-            targetColumnName = "some_target",
-            expectedPredictionColumnSuffix = "_prediction_2")
+            targetColumnName = targetColumnName)
         }
       }
 
@@ -75,8 +62,7 @@ abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
           createScoredAndExpectedDataFrames(
             inputColumnNames = Seq("column1", "column2", "column3", "column4"),
             featureColumnNames = Seq("column1", "column3"),
-            targetColumnName = "some_target",
-            expectedPredictionColumnSuffix = "_prediction_2")
+            targetColumnName = targetColumnName)
         }
       }
     }
@@ -101,8 +87,7 @@ abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
   private def createScoredAndExpectedDataFrames(
     inputColumnNames: Seq[String],
     featureColumnNames: Seq[String],
-    targetColumnName: String,
-    expectedPredictionColumnSuffix: String): (DataFrame, DataFrame) = {
+    targetColumnName: String): (DataFrame, DataFrame) = {
 
     val inputRowsSeq: Seq[Row] = Seq(
       Row(1.5, 2.5, "a", 3.5),
@@ -116,14 +101,13 @@ abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
     val inputDataframe = createDataFrame(inputRowsSeq, inputSchema)
     val resultDoubles = Seq(4.5, 4.6, 4.7)
 
-    val expectedPredictionColumnName = targetColumnName + expectedPredictionColumnSuffix
     val expectedOutputDataFrame = createExpectedOutputDataFrame(
-      inputSchema, inputRowsSeq, resultDoubles, expectedPredictionColumnName)
+      inputSchema, inputRowsSeq, resultDoubles, targetColumnName)
 
     val regression: Scorable =
       createMockTrainedRegression(featureColumnNames, targetColumnName, resultDoubles)
 
-    val resultDataframe = regression.score(executionContext)(())(inputDataframe)
+    val resultDataframe = regression.score(executionContext)(targetColumnName)(inputDataframe)
 
     (resultDataframe, expectedOutputDataFrame)
   }
