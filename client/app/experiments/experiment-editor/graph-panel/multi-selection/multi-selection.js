@@ -37,8 +37,13 @@ function MultiSelection(MouseEvent, ExperimentService,
       var inSelection = [];
       var nodeDimensions;
       var experimentNodes;
+      var disabled;
 
       var startPainting = function startPainting (event) {
+        if (disabled) {
+          return false;
+        }
+
         startPoint = MouseEvent.getEventOffsetOfElement(event, element[0]);
         experimentNodes = experimentNodes || _.map(ExperimentService.getExperiment().getNodes(),
           node => {
@@ -67,9 +72,11 @@ function MultiSelection(MouseEvent, ExperimentService,
           'left': startPoint.x
         });
 
-        $selectionElement.fadeIn(200);
+        $selectionElement.stop().fadeIn(200);
 
         $document.on('mousemove', paint);
+
+        event.preventDefault();
       };
 
       var endPainting = function endPainting (event) {
@@ -222,6 +229,10 @@ function MultiSelection(MouseEvent, ExperimentService,
       scope.$on('$destroy', () => {
         $document.off('mouseup', endPainting);
         $document.off('mousemove', paint);
+      });
+
+      scope.$on('ZOOM-PANEL.MOVE-GRAB', (e, data) => {
+        disabled = data.active;
       });
 
       init();
