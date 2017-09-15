@@ -62,6 +62,13 @@
           {{::controller.state.ended | date:'medium'}}
         </time>
       </p>
+      <p class="o-state__time text-right text-uppercase font-bold gray-bg"
+         ng-show="::(controller.state.ended && controller.state.started)">
+        <span class="block">Execution time</span>
+        <i class="fa fa-clock-o"></i>
+        <time-diff start="controller.state.started"
+                   end="controller.state.ended"></time-diff>
+      </p>
     </section>
   </section>
 </aside>
