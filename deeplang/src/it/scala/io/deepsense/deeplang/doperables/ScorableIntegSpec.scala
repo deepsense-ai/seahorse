@@ -22,6 +22,7 @@ import org.mockito.AdditionalAnswers._
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 
+import scala.language.reflectiveCalls
 import scala.util.Success
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext, DeeplangIntegTestSupport, PrebuiltTypedColumns}

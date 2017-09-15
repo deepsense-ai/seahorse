@@ -41,6 +41,7 @@ import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
 import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
+import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{ExecutionParams, ReportUploadClient, WorkflowDownloadClient, WorkflowExecutorActor}
 
 /**
@@ -55,7 +56,7 @@ case class WorkflowExecutor(
   private val actorSystemName = "WorkflowExecutor"
 
   def execute(): Try[ExecutionReport] = {
-    val executionContext = createExecutionContext(reportLevel)
+    val executionContext = createExecutionContext(reportLevel, new DataFrameStorageImpl)
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
@@ -89,7 +90,7 @@ case class WorkflowExecutor(
     report
   }
 
-  private def cleanup(actorSystem: ActorSystem, executionContext: ExecutionContext): Unit = {
+  private def cleanup(actorSystem: ActorSystem, executionContext: CommonExecutionContext): Unit = {
     logger.debug("Cleaning up...")
     actorSystem.shutdown()
     logger.debug("Akka terminated!")

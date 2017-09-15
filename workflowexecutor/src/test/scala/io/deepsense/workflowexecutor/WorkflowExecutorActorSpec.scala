@@ -30,7 +30,7 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
+import io.deepsense.deeplang.{CommonExecutionContext, DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Aborted, Completed, NodeState, Queued, Running}
@@ -60,11 +60,12 @@ class WorkflowExecutorActorSpec
           val publisher = TestProbe()
           val statusListener = TestProbe()
           val wea = TestActorRef(new WorkflowExecutorActor(
-            mock[ExecutionContext],
+            mock[CommonExecutionContext],
             mock[GraphNodeExecutorFactory],
             createExecutionFactory(emptyExecution),
             Some(statusListener.ref),
-            Some(system.actorSelection(publisher.ref.path))))
+            Some(system.actorSelection(publisher.ref.path))),
+            Id.randomId.toString)
           probe.send(wea, Connect(Workflow.Id.randomId))
           verifyStatusSent(Seq(publisher))
         }
@@ -127,7 +128,8 @@ class WorkflowExecutorActorSpec
           nodeExecutorFactory(),
           new ExecutionWithoutInferenceFactory(),
           None,
-          Some(system.actorSelection(publisher.ref.path))))
+          Some(system.actorSelection(publisher.ref.path))),
+          Id.randomId.toString)
 
         val nodesIds = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
         val (graph, _) = simpleExecution(nodesIds, None)
@@ -180,7 +182,8 @@ class WorkflowExecutorActorSpec
           nodeExecutorFactory(),
           createExecutionFactory(execution),
           Some(subscriber.ref),
-          Some(system.actorSelection(publisher.ref.path))))
+          Some(system.actorSelection(publisher.ref.path))),
+          Id.randomId.toString)
         sendLaunch(probe, wea)
         eventually {
           verify(execution).inferAndApplyKnowledge(executionContext.inferContext)
@@ -365,7 +368,11 @@ class WorkflowExecutorActorSpec
       .become(wea.underlyingActor.launched(execution))
   }
 
-  val executionContext = mock[ExecutionContext]
+  val executionContext = {
+    val context = mock[CommonExecutionContext]
+    when(context.createExecutionContext(any(), any())).thenReturn(mock[ExecutionContext])
+    context
+  }
 
   def verifyNodesStarted(
       execution: Execution,
@@ -503,7 +510,8 @@ class WorkflowExecutorActorSpec
       nodeExecutorFactory,
       executionFactory,
       Some(subscriber.ref),
-      Some(system.actorSelection(publisher.ref.path))))
+      Some(system.actorSelection(publisher.ref.path))),
+      Id.randomId.toString)
 
     val statusListeners = Seq(publisher)
     (probe, wea, execution, executors, statusListeners, subscriber)

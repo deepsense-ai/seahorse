@@ -18,27 +18,28 @@ package io.deepsense.workflowexecutor.session.storage
 
 import scala.collection.concurrent.TrieMap
 
+import io.deepsense.commons.models.Id
+import io.deepsense.deeplang.DataFrameStorage
+import io.deepsense.deeplang.DataFrameStorage.{DataFrameId, DataFrameName}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.session.storage.DataFrameStorage.{DataFrameName, DataFrameId}
 
 class DataFrameStorageImpl extends DataFrameStorage {
 
   private val storage: TrieMap[DataFrameId, DataFrame] = TrieMap.empty
 
   override def get(
-      workflowId: Workflow.Id,
+      workflowId: Id,
       dataFrameName: DataFrameName): Option[DataFrame] =
     storage.get((workflowId, dataFrameName))
 
   override def put(
-      workflowId: Workflow.Id,
+      workflowId: Id,
       dataFrameName: DataFrameName,
       dataFrame: DataFrame): Unit =
     storage.put((workflowId, dataFrameName), dataFrame)
 
   override def listDataFrameNames(
-      workflowId: Workflow.Id): Iterable[DataFrameName] =
+      workflowId: Id): Iterable[DataFrameName] =
     storage.keys
       .collect { case (w, d) if w == workflowId => d }
  }

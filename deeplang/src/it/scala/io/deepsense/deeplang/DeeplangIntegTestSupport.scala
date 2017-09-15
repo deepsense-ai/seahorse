@@ -24,7 +24,9 @@ import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
+import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
+import io.deepsense.deeplang.DataFrameStorage.DataFrameName
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
@@ -39,6 +41,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   val testsDir = "target/tests"
   val absoluteTestsDirPath = new java.io.File(testsDir).getAbsoluteFile.toString
+  var commonExecutionContext: CommonExecutionContext = _
   var executionContext: ExecutionContext = _
 
   val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
@@ -48,7 +51,26 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
     fileSystemClient = LocalFileSystemClient()
+    commonExecutionContext = prepareCommonExecutionContext()
     executionContext = prepareExecutionContext()
+  }
+
+  protected def prepareCommonExecutionContext(): CommonExecutionContext = {
+    val inferContext = InferContext(
+      DataFrameBuilder(sqlContext),
+      EntityStorageClientInMemoryImpl(entityStorageInitState),
+      "testTenantId",
+      dOperableCatalog = null,
+      fullInference = true)
+
+    new MockedCommonExecutionContext(
+      sparkContext,
+      sqlContext,
+      inferContext,
+      fileSystemClient,
+      ReportLevel.HIGH,
+      "testTenantId",
+      new MockedDataFrameStorage)
   }
 
   protected def prepareExecutionContext(): ExecutionContext = {
@@ -65,7 +87,8 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       inferContext,
       fileSystemClient,
       ReportLevel.HIGH,
-      "testTenantId")
+      "testTenantId",
+      new MockedContextualDataFrameStorage)
   }
 
   protected def assertDataFramesEqual(
@@ -123,21 +146,62 @@ object DeeplangIntegTestSupport {
   UserDefinedFunctions.registerFunctions(sqlContext.udf)
 }
 
+private class MockedCommonExecutionContext(
+    override val sparkContext: SparkContext,
+    override val sqlContext: SQLContext,
+    override val inferContext: InferContext,
+    override val fsClient: FileSystemClient,
+    override val reportLevel: ReportLevel,
+    override val tenantId: String,
+    override val dataFrameStorage: DataFrameStorage)
+  extends CommonExecutionContext(
+    sparkContext,
+    sqlContext,
+    inferContext,
+    fsClient,
+    reportLevel,
+    tenantId,
+    dataFrameStorage) {
+
+  override def createExecutionContext(worflowId: Id, nodeId: Id) =
+    new MockedExecutionContext(sparkContext,
+      sqlContext,
+      inferContext,
+      fsClient,
+      reportLevel,
+      tenantId,
+      new MockedContextualDataFrameStorage)
+}
+
 private class MockedExecutionContext(
     override val sparkContext: SparkContext,
     override val sqlContext: SQLContext,
     override val inferContext: InferContext,
     override val fsClient: FileSystemClient,
     override val reportLevel: ReportLevel,
-    override val tenantId: String)
+    override val tenantId: String,
+    override val dataFrameStorage: ContextualDataFrameStorage)
   extends ExecutionContext(
     sparkContext,
     sqlContext,
     inferContext,
     fsClient,
     reportLevel,
-    tenantId) {
+    tenantId,
+    dataFrameStorage) {
 
   override def uniqueFsFileName(entityCategory: String): String =
     s"target/tests/$entityCategory/" + UUID.randomUUID().toString
 }
+
+private class MockedDataFrameStorage extends DataFrameStorage {
+
+  override def put(workflowId: Id, dataFrameName: DataFrameName, dataFrame: DataFrame): Unit = ()
+
+  override def get(workflowId: Id, dataFrameName: DataFrameName): Option[DataFrame] = ???
+
+  override def listDataFrameNames(workflowId: Id): Iterable[DataFrameName] = ???
+}
+
+private class MockedContextualDataFrameStorage
+  extends ContextualDataFrameStorage(new MockedDataFrameStorage, Id.randomId, Id.randomId)

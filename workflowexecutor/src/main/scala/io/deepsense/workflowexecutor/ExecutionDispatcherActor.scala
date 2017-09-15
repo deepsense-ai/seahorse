@@ -20,7 +20,7 @@ import akka.actor._
 import org.apache.spark.SparkContext
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.{CommonExecutionContext, DataFrameStorage, ExecutionContext}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.workflows.Workflow
@@ -32,6 +32,7 @@ import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 class ExecutionDispatcherActor(
     sparkContext: SparkContext,
     dOperableCatalog: DOperableCatalog,
+    dataFrameStorage: DataFrameStorage,
     reportLevel: ReportLevel,
     statusLogger: ActorRef)
   extends Actor
@@ -63,6 +64,7 @@ class ExecutionDispatcherActor(
       context,
       createExecutionContext(
         reportLevel,
+        dataFrameStorage,
         sparkContext = Some(sparkContext),
         dOperableCatalog = Some(dOperableCatalog)),
       workflowId,
@@ -76,8 +78,8 @@ class ExecutionDispatcherActor(
 trait WorkflowExecutorsFactory {
   def createExecutor(
     context: ActorContext,
-    executionContext: ExecutionContext,
-    workflowId: Workflow.Id,
+    executionContext: CommonExecutionContext,
+    workflowId: Id,
     statusLogger: ActorRef,
     publisher: ActorSelection): ActorRef
 }
@@ -85,7 +87,7 @@ trait WorkflowExecutorsFactory {
 trait WorkflowExecutorsFactoryImpl extends WorkflowExecutorsFactory {
   override def createExecutor(
       context: ActorContext,
-      executionContext: ExecutionContext,
+      executionContext: CommonExecutionContext,
       workflowId: Id,
       statusLogger: ActorRef,
       publisher: ActorSelection): ActorRef = {
@@ -108,11 +110,13 @@ object ExecutionDispatcherActor {
   def props(
       sparkContext: SparkContext,
       dOperableCatalog: DOperableCatalog,
+      dataFrameStorage: DataFrameStorage,
       reportLevel: ReportLevel,
       statusLogger: ActorRef): Props =
     Props(new ExecutionDispatcherActor(
       sparkContext,
       dOperableCatalog,
+      dataFrameStorage,
       reportLevel,
       statusLogger
     ) with WorkflowExecutorsFactoryImpl

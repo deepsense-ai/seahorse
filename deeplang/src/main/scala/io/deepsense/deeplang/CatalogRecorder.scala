@@ -90,6 +90,11 @@ object CatalogRecorder {
       "Saves a DataFrame to a file"
     )
 
+    catalog.registerDOperation[Notebook](
+      DOperationCategories.IO,
+      "Creates a notebook with access to the DataFrame"
+    )
+
     catalog.registerDOperation[CreateMathematicalTransformation](
       DOperationCategories.Transformation,
       "Creates a Transformation that creates a new column based on a mathematical formula"

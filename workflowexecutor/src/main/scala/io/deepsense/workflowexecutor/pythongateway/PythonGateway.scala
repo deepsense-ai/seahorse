@@ -24,14 +24,16 @@ import org.apache.spark.SparkContext
 import py4j.{CallbackClient, GatewayServer}
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.ReadOnlyDataFrameStorage
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 case class PythonGateway(
     gatewayConfig: GatewayConfig,
-    sparkContext: SparkContext) extends Logging {
+    sparkContext: SparkContext,
+    dataFrameStorage: ReadOnlyDataFrameStorage) extends Logging {
   import PythonGateway._
 
-  val entryPoint = new PythonEntryPoint(sparkContext)
+  val entryPoint = new PythonEntryPoint(sparkContext, dataFrameStorage)
 
   private[pythongateway] val gatewayServer = createGatewayServer(entryPoint)
 

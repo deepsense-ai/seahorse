@@ -19,10 +19,33 @@ package io.deepsense.deeplang
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
+import io.deepsense.commons.models.Id
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.entitystorage.{EntityStorageClient, UniqueFilenameUtil}
+
+case class CommonExecutionContext(
+    sparkContext: SparkContext,
+    sqlContext: SQLContext,
+    inferContext: InferContext,
+    fsClient: FileSystemClient,
+    reportLevel: ReportLevel,
+    tenantId: String,
+    dataFrameStorage: DataFrameStorage) {
+
+  def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext = {
+    ExecutionContext(
+      sparkContext,
+      sqlContext,
+      inferContext,
+      fsClient,
+      reportLevel,
+      tenantId,
+      ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId))
+  }
+}
 
 /** Holds information needed by DOperations and DMethods during execution. */
 case class ExecutionContext(
@@ -31,7 +54,8 @@ case class ExecutionContext(
     inferContext: InferContext,
     fsClient: FileSystemClient,
     reportLevel: ReportLevel,
-    tenantId: String) {
+    tenantId: String,
+    dataFrameStorage: ContextualDataFrameStorage) extends Logging {
 
   def dataFrameBuilder: DataFrameBuilder = inferContext.dataFrameBuilder
 
@@ -39,4 +63,14 @@ case class ExecutionContext(
 
   def uniqueFsFileName(entityCategory: String): String =
     UniqueFilenameUtil.getUniqueFsFilename(tenantId, entityCategory)
+}
+
+case class ContextualDataFrameStorage(
+  dataFrameStorage: DataFrameStorage,
+  workflowId: Id,
+  nodeId: Id) {
+
+  def store(dataFrame: DataFrame): Unit = {
+    dataFrameStorage.put(workflowId, nodeId.toString, dataFrame)
+  }
 }

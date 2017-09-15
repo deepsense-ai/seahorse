@@ -27,6 +27,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.workflowexecutor.communication.{MQCommunication, ProtocolDeserializer}
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.rabbitmq._
+import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingActor}
 
 /**
@@ -46,16 +47,18 @@ case class SessionExecutor(
     logger.debug("SessionExecutor starts")
     val sparkContext = createSparkContext()
     val dOperableCatalog = createDOperableCatalog()
+    val dataFrameStorage = new DataFrameStorageImpl
 
     implicit val system = ActorSystem()
     val statusLogger = system.actorOf(Props[StatusLoggingActor], "status-logger")
 
-    val pythonGateway = PythonGateway(PythonGateway.GatewayConfig(), sparkContext)
+    val pythonGateway = PythonGateway(PythonGateway.GatewayConfig(), sparkContext, dataFrameStorage)
     pythonGateway.start()
 
     val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
       sparkContext,
       dOperableCatalog,
+      dataFrameStorage,
       ReportLevel.HIGH,
       statusLogger), "workflows")
 
@@ -79,12 +82,13 @@ case class SessionExecutor(
       MQCommunication.seahorseExchange, createSeahorseSubscriber _)
 
     system.awaitTermination()
-    cleanup(sparkContext)
+    cleanup(sparkContext, pythonGateway)
     logger.debug("SessionExecutor ends")
   }
 
-  private def cleanup(sparkContext: SparkContext): Unit = {
+  private def cleanup(sparkContext: SparkContext, gateway: PythonGateway): Unit = {
     logger.debug("Cleaning up...")
+    gateway.stop()
     sparkContext.stop()
     logger.debug("Spark terminated!")
   }

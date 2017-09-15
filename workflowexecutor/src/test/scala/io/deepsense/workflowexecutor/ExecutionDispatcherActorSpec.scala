@@ -23,7 +23,8 @@ import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.commons.models.Id
+import io.deepsense.deeplang.{CommonExecutionContext, DataFrameStorage, ExecutionContext}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
@@ -73,12 +74,13 @@ class ExecutionDispatcherActorSpec
       TestActorRef(new ExecutionDispatcherActor(
         mock[SparkContext],
         mock[DOperableCatalog],
+        mock[DataFrameStorage],
         mock[ReportLevel],
         TestProbe().ref
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
           context: ActorContext,
-          executionContext: ExecutionContext,
+          executionContext: CommonExecutionContext,
           workflowId: Workflow.Id,
           statusLogger: ActorRef,
           publisher: ActorSelection): ActorRef = {
@@ -100,11 +102,12 @@ class ExecutionDispatcherActorSpec
       TestActorRef(new ExecutionDispatcherActorTest(
         mock[SparkContext],
         mock[DOperableCatalog],
+        mock[DataFrameStorage],
         mock[ReportLevel]
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
           context: ActorContext,
-          executionContext: ExecutionContext,
+          executionContext: CommonExecutionContext,
           workflowId: Workflow.Id,
           statusLogger: ActorRef,
           publisher: ActorSelection): ActorRef = {
@@ -122,14 +125,19 @@ class ExecutionDispatcherActorSpec
   class ExecutionDispatcherActorTest(
       sparkContext: SparkContext,
       dOperableCatalog: DOperableCatalog,
+      dataFrameStorage: DataFrameStorage,
       reportLevel: ReportLevel)
-    extends ExecutionDispatcherActor(sparkContext, dOperableCatalog, reportLevel, TestProbe().ref) {
+    extends ExecutionDispatcherActor(
+      sparkContext, dOperableCatalog, dataFrameStorage, reportLevel, TestProbe().ref) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
 
     override def createExecutionContext(
-      reportLevel: ReportLevel.ReportLevel,
-      sparkContext: Option[SparkContext],
-      dOperableCatalog: Option[DOperableCatalog]): ExecutionContext = mock[ExecutionContext]
+        reportLevel: ReportLevel.ReportLevel,
+        dataFrameStorage: DataFrameStorage,
+        sparkContext: Option[SparkContext],
+        dOperableCatalog: Option[DOperableCatalog]): CommonExecutionContext = {
+      mock[CommonExecutionContext]
+    }
   }
 }

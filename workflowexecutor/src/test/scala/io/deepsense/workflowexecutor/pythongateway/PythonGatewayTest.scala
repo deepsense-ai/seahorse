@@ -23,7 +23,6 @@ import java.util.concurrent.TimeoutException
 import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
 import scala.io.BufferedSource
-import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 import org.apache.spark.SparkContext
@@ -32,6 +31,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 
+import io.deepsense.deeplang.ReadOnlyDataFrameStorage
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 
@@ -50,7 +50,7 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
 
   "Gateway" should {
     "set up a listening port" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext])
+      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
       gateway.start()
 
       val connectionAttempt = attemptConnection(gateway.listeningPort)
@@ -60,7 +60,7 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
     }
 
     "close listening port when stopped" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext])
+      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
       gateway.start()
       Thread.sleep(500)
       gateway.stop()
@@ -71,7 +71,7 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
     }
 
     "throw on uninitialized callback client" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext])
+      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
       gateway.start()
 
       a[TimeoutException] should be thrownBy {
@@ -82,7 +82,7 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
     }
 
     "send a message on initialized callback client" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext])
+      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
       gateway.start()
 
       val command = "Hello!"
@@ -111,7 +111,7 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
 
       // This is run inside a separate thread, because failAfter doesn't seem to work otherwise
       var serverResponse: String = ""
-      failAfter(1000 millis) {
+      failAfter(1000.millis) {
         val t = new Thread(new Runnable {
           override def run(): Unit =
             serverResponse = gateway.gatewayServer.getCallbackClient.sendCommand(command)

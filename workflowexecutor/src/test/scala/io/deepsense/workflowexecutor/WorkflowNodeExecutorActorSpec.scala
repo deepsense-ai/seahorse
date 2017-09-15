@@ -52,7 +52,7 @@ class WorkflowNodeExecutorActorSpec
 
         eventually {
           verify(operation).inferKnowledge(any())(any())
-          verify(operation).execute(executionContext)(input)
+          verify(operation).execute(any())(same(input))
         }
       }
     }

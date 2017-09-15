@@ -21,6 +21,7 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.models.Id
+import io.deepsense.deeplang.DataFrameStorage
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
 class DataFrameStorageSpec

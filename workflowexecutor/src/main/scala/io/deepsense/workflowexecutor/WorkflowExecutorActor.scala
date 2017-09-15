@@ -22,7 +22,7 @@ import akka.actor._
 
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{DOperable, ExecutionContext}
+import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Completed, NodeState}
@@ -37,7 +37,7 @@ import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Executi
  * WorkflowNodeExecutorActors and collecting results.
  */
 class WorkflowExecutorActor(
-    executionContext: ExecutionContext,
+    executionContext: CommonExecutionContext,
     nodeExecutorFactory: GraphNodeExecutorFactory,
     executionFactory: ExecutionFactory,
     terminationListener: Option[ActorRef],
@@ -144,10 +144,10 @@ class WorkflowExecutorActor(
   }
 
   private def createEntitiesMap(states: Seq[NodeState]): EntitiesMap = {
-    val entities: Seq[Entity.Id] = states.flatMap(_ match {
+    val entities: Seq[Entity.Id] = states.flatMap {
       case Completed(_, _, results: Seq[Id]) => results
       case _ => Seq.empty
-    })
+    }
     val reportsContents = entities.map(id => id -> reports(id)).toMap
     val dOperables = entities.map(id => id -> dOperableCache(id)).toMap
     EntitiesMap(dOperables, reportsContents)
@@ -169,8 +169,10 @@ class WorkflowExecutorActor(
     execution.readyNodes.foldLeft(execution) {
       case (g, readyNode) =>
         val input = readyNode.input.map(dOperableCache(_)).toVector
+        val nodeExecutionContext = executionContext.createExecutionContext(
+          workflowId, readyNode.node.id)
         val nodeRef = nodeExecutorFactory
-          .createGraphNodeExecutor(context, executionContext, readyNode.node, input)
+          .createGraphNodeExecutor(context, nodeExecutionContext, readyNode.node, input)
         nodeRef ! WorkflowNodeExecutorActor.Messages.Start()
         logger.debug(s"Starting node $readyNode")
       g.nodeStarted(readyNode.node.id)
@@ -214,7 +216,7 @@ class WorkflowExecutorActor(
 
 object WorkflowExecutorActor {
   def props(
-      ec: ExecutionContext,
+      ec: CommonExecutionContext,
       publisher: Option[ActorSelection] = None,
       statusListener: Option[ActorRef] = None): Props =
     Props(new WorkflowExecutorActor(ec,

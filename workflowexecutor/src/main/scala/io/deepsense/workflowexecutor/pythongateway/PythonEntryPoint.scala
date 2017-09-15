@@ -18,19 +18,27 @@ package io.deepsense.workflowexecutor.pythongateway
 
 import scala.concurrent.Promise
 
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.api.java.JavaSparkContext
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.DataFrame
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.ReadOnlyDataFrameStorage
 
 /**
   * An entry point to our application designed to be accessible by Python process.
   */
-class PythonEntryPoint(val sparkContext: SparkContext) extends Logging {
+class PythonEntryPoint(
+    val sparkContext: SparkContext,
+    val dataFrameStorage: ReadOnlyDataFrameStorage)
+  extends Logging {
 
   def getSparkContext: JavaSparkContext = sparkContext
 
   def getSparkConf: SparkConf = sparkContext.getConf
+
+  def getDataFrame(workflowId: String, dataFrameName: String): DataFrame =
+    dataFrameStorage.get(workflowId, dataFrameName).get.sparkDataFrame
 
   private[pythongateway] val pythonPortPromise: Promise[Int] = Promise()
 

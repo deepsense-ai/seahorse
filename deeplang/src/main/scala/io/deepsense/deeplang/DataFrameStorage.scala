@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.session.storage
+package io.deepsense.deeplang
 
+import io.deepsense.commons.models.Id
+import io.deepsense.deeplang.DataFrameStorage._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.session.storage.DataFrameStorage.DataFrameName
 
 trait ReadOnlyDataFrameStorage {
 
@@ -30,7 +30,7 @@ trait ReadOnlyDataFrameStorage {
    * @return stored dataframe.
    */
   def get(
-      workflowId: Workflow.Id,
+      workflowId: Id,
       dataFrameName: DataFrameName): Option[DataFrame]
 
   /**
@@ -39,7 +39,7 @@ trait ReadOnlyDataFrameStorage {
    * @param workflowId workflow id.
    * @return names of stored dataframes.
    */
-  def listDataFrameNames(workflowId: Workflow.Id): Iterable[DataFrameName]
+  def listDataFrameNames(workflowId: Id): Iterable[DataFrameName]
 }
 
 trait DataFrameStorage extends ReadOnlyDataFrameStorage {
@@ -52,12 +52,12 @@ trait DataFrameStorage extends ReadOnlyDataFrameStorage {
    * @param dataFrame dataframe.
    */
   def put(
-      workflowId: Workflow.Id,
+      workflowId: Id,
       dataFrameName: DataFrameName,
       dataFrame: DataFrame): Unit
 }
 
 object DataFrameStorage {
   type DataFrameName = String
-  type DataFrameId = (Workflow.Id, DataFrameName)
+  type DataFrameId = (Id, DataFrameName)
 }

@@ -20,7 +20,6 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import spray.json._
 
-import io.deepsense.reportlib.model.ContinuousDistribution
 import io.deepsense.reportlib.model.factory.DistributionTestFactory
 
 class DistributionJsonSpec

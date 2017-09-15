@@ -20,6 +20,7 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.BuildInfo
+import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.{Version, Logging}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
@@ -27,7 +28,7 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{CatalogRecorder, ExecutionContext}
+import io.deepsense.deeplang.{CommonExecutionContext, DataFrameStorage, CatalogRecorder, ExecutionContext}
 
 trait Executor extends Logging {
 
@@ -36,8 +37,9 @@ trait Executor extends Logging {
 
   def createExecutionContext(
       reportLevel: ReportLevel,
+      dataFrameStorage: DataFrameStorage,
       sparkContext: Option[SparkContext] = None,
-      dOperableCatalog: Option[DOperableCatalog] = None): ExecutionContext = {
+      dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
     val sContext = sparkContext.getOrElse(createSparkContext())
     val sqlContext = createSqlContext(sContext)
@@ -52,13 +54,14 @@ trait Executor extends Logging {
       catalog,
       fullInference = true)
 
-    ExecutionContext(
+    CommonExecutionContext(
       sContext,
       sqlContext,
       inferContext,
       FileSystemClientStub(), // temporarily mocked
       reportLevel,
-      tenantId)
+      tenantId,
+      dataFrameStorage)
   }
 
   def createSparkContext(): SparkContext = {
