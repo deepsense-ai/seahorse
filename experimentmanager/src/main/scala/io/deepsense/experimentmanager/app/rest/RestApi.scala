@@ -61,7 +61,7 @@ class RestApi @Inject() (experimentManager: ExperimentManager)(implicit ec: Exec
           post {
             entity(as[Action]) { action =>
               complete {
-                action.run(experimentId, experimentManager).toString
+                action.run(experimentId, experimentManager)
               }
             }
           }
