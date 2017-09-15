@@ -90,13 +90,10 @@ set -ex
 
 cd $WORKING_DIR
 
-echo "INSTALLING DEPENDENCIES"
-
 PYTHON_DIRECTORY=$(dirname $(dirname $PYTHON_BINARY))
 
 export PATH=$PYTHON_DIRECTORY/bin:$PATH
 export LOCAL_PATH=$(pwd)/local-packages
-pip install --root $LOCAL_PATH pika-0.10.0.tar.gz
 
 export PYTHONPATH="$LOCAL_PATH/$PYTHON_DIRECTORY/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
 echo "PYTHONPATH=$PYTHONPATH"
