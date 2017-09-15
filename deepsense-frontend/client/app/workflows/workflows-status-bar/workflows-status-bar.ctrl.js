@@ -1,14 +1,14 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowStatusBarController($scope, UserService, ClusterModalService, PresetService,
-                                     DataframeLibraryModalService, SessionStatus, SessionManager,
-                                     WorkflowService, WorkflowStatusBarService, LibraryService) {
+function WorkflowStatusBarController($scope, UserService, ClusterModalService, DataframeLibraryModalService, SessionStatus,
+                                     SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService) {
 
   const vm = this;
 
   vm.workflow = WorkflowService.getCurrentWorkflow();
   vm.workflowId = vm.workflow.id;
+  vm.rootId = vm.workflow.id;
   vm.currentPreset = getCurrentPreset();
   vm.uploadingFiles = [];
 
@@ -34,9 +34,14 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, P
     vm.isUploadInProgress = newValue.filter((value) => value.status === 'uploading').length > 0;
   }, true);
 
+  $scope.$watch(() => WorkflowService.getCurrentWorkflow(), (newValue) => {
+    vm.workflow = newValue;
+    vm.workflowId = newValue.id;
+  });
+
   function getCurrentPreset() {
     return WorkflowService.isExecutorForCurrentWorkflowRunning() ?
-      SessionManager.clusterInfoForWorkflowId(vm.workflowId) :
+      SessionManager.clusterInfoForWorkflowId(vm.rootId) :
       WorkflowService.getRootWorkflow().cluster;
   }
 
