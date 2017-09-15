@@ -21,7 +21,7 @@ object Version {
   val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
-  val seahorse      = "0.1.2-SNAPSHOT"
+  val seahorse      = "0.1.3-SNAPSHOT"
 }
 
 object Library {
@@ -64,6 +64,8 @@ object Library {
   val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
   val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
   val seahorseReportlib  = seahorse("reportlib")
+  val seahorseESClient   = seahorse("entitystorage-client")
+  val seahorseESModel    = seahorse("entitystorage-model")
   val sparkSql           = spark("sql")
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
@@ -94,11 +96,7 @@ object Dependencies {
 
   val entitystorage = Seq(
     akkaActor
-  ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit, akkaTestkit).map(_ % s"$Test,it")
-
-  val entitystorageClient = Seq(
-    akkaActor
-  ) ++ Seq(scalatest, mockitoCore, akkaTestkit).map(_ % Test)
+  ) ++ Seq(akkaTestkit, cassandraUnit, mockitoCore, scalatest, seahorseESClient, sprayTestkit).map(_ % s"$Test,it")
 
   val commons = Seq(
     akkaActor,
@@ -124,6 +122,8 @@ object Dependencies {
     nscalaTime,
     sprayClient,
     scalaReflect,
+    seahorseESClient,
+    seahorseESModel,
     seahorseReportlib,
     sparkSql,
     sparkMLLib,
@@ -148,14 +148,13 @@ object Dependencies {
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val graphexecutor = Seq(
-    hadoopCommon,
-    hadoopYarnClient,
-    hadoopYarnApi,
-    hadoopYarnCommon,
-    hadoopHdfs,
     hadoopClient,
-    avroCore,
-    avroRpc
+    hadoopCommon,
+    hadoopHdfs,
+    hadoopYarnApi,
+    hadoopYarnClient,
+    hadoopYarnCommon,
+    seahorseESClient
   ) ++ Seq(sparkCore).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 
   val graphJson = Seq(

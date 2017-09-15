@@ -9,17 +9,11 @@ lazy val `deploy-model-service` = project dependsOn (
 lazy val models                 = project dependsOn (commons, graph)
 lazy val deeplang               = project dependsOn (
   commons,
-  `deploy-model-service`,
-  `entitystorage-model`,
-  `entitystorage-client`)
-lazy val `entitystorage-model`  = project dependsOn commons
+  `deploy-model-service`)
 lazy val entitystorage          = project dependsOn (
   commons,
   commons % "test->test",
-  deeplang,
-  `entitystorage-model`,
-  `entitystorage-client` % "test")
-lazy val `entitystorage-client` = project dependsOn `entitystorage-model`
+  deeplang)
 lazy val experimentmanager      = project dependsOn (
   commons,
   commons % "test->test",
@@ -36,7 +30,6 @@ lazy val graphexecutor = project dependsOn (
   commons % "test->test",
   deeplang,
   deeplang % "test->test",
-  `entitystorage-client`,
   graph,
   models)
 lazy val graphjson     = project dependsOn (commons, deeplang, graph)
@@ -64,9 +57,7 @@ addCommandAlias("ds-it",
     ";commons/it:test " +
     ";models/it:test " +
     ";deeplang/it:test " +
-    ";entitystorage-model/it:test " +
     ";entitystorage/it:test " +
-    ";entitystorage-client/it:test " +
     ";experimentmanager/it:test " +
     ";graph/it:test " +
     ";graphexecutor/it:test " +
