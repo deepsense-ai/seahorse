@@ -1,0 +1,22 @@
+{
+  "experiment": {
+    "name": "Empty Experiment",
+    "state": {
+      "status": "DRAFT",
+      "error": null,
+      "nodes": {
+
+      }
+    },
+    "description": "Empty Experiment",
+    "typeKnowledge": {
+
+    },
+    "id": "d394a3f7-1393-4555-98a7-b4f67c8241d7",
+    "graph": {
+      "nodes": [],
+      "edges": []
+    },
+    "tenantId": "679727bcc42741fc9b4d1f240d8fab39"
+  }
+}
