@@ -34,18 +34,18 @@ class Graph {
   private case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
     var color: Color.Color = Color.WHITE
     var state: State = State.inDraft
-    val predecessors: Array[GraphNode] = new Array(operation.inArity)
+    val predecessors: Array[Option[GraphNode]] = Array.fill(operation.inArity) { None }
     val successors: Array[Set[GraphNode]] = Array.fill(operation.outArity) { Set() }
 
-    def addPredecessor(index: Int, node: GraphNode): Unit = predecessors(index) = node
+    def addPredecessor(index: Int, node: GraphNode): Unit = predecessors(index) = Some(node)
 
     def addSuccessor(index: Int, node: GraphNode): Unit = successors(index) += node
 
-    def markWhite: Unit = color = Color.WHITE
+    def markWhite(): Unit = color = Color.WHITE
 
-    def markGrey: Unit = color = Color.GREY
+    def markGrey(): Unit = color = Color.GREY
 
-    def markBlack: Unit = color = Color.BLACK
+    def markBlack(): Unit = color = Color.BLACK
 
     override def toString(): String = id.toString
   }
@@ -66,7 +66,7 @@ class Graph {
   def readyNodes(): List[Node] = {
     val queuedNodes = nodes.values.filter(_.state.status == Status.QUEUED)
     queuedNodes.filter(_.predecessors.forall(
-      (p: Node) => p != null && p.state.status == Status.COMPLETED)).toList
+      (p: Option[Node]) => p.isDefined && p.get.state.status == Status.COMPLETED)).toList
   }
 
   def getNode(id: Node.Id): Node = nodes(id)
@@ -107,7 +107,7 @@ class Graph {
   }
 
   def containsCycle: Boolean = {
-    val cycleFound = nodes.values.exists(onCycle(_))
+    val cycleFound = nodes.values.exists(laysOnCycle)
     restoreColors
     cycleFound
   }
@@ -115,21 +115,21 @@ class Graph {
   /**
    * Checks if any node reachable from the start node lays on cycle.
    */
-  private def onCycle(node: GraphNode): Boolean = {
-    if (node == null) false // nothing is connected to the given input port
-    else node.color match {
+  private def laysOnCycle(node: GraphNode): Boolean = {
+    node.color match {
       case Color.BLACK => false
       case Color.GREY => true
       case Color.WHITE => {
-        node.markGrey
-        val cycleFound = node.predecessors.exists(onCycle(_))
-        node.markBlack
+        node.markGrey()
+        val cycleFound = node.predecessors.exists(
+          p => if (p.isDefined) laysOnCycle(p.get) else false)
+        node.markBlack()
         cycleFound
       }
     }
   }
 
-  private def restoreColors: Unit = nodes.values.foreach(_.markWhite)
+  private def restoreColors(): Unit = nodes.values.foreach(_.markWhite())
 
   def size: Int = nodes.size
 
