@@ -38,7 +38,7 @@ class CopyPasteService {
   }
 
   _paste(event) {
-    const isOwner = this.WorkflowService.getCurrentWorkflow().owner.id === this.UserService.getSeahorseUser().id
+    const isOwner = this.WorkflowService.getCurrentWorkflow().owner.id === this.UserService.getSeahorseUser().id;
     if (this.enabled && isOwner) {
       const isPasteTargetFocused = this.NodeCopyPasteVisitorService.isFocused();
       const dataType = `${OBJECT_TYPE}${this.NodeCopyPasteVisitorService.getType()}`;

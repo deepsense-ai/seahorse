@@ -95,7 +95,7 @@ describe('PresetService', () => {
         return {
           fetchCluster: function() {},
           getRootWorkflow: function () {}
-        }
+        };
       });
       $provide.service('PresetsApiService', function($q) {
         let mockData = {};
@@ -125,7 +125,7 @@ describe('PresetService', () => {
         };
         this.mockData = function () {
           return mockData;
-        }
+        };
       });
     });
     angular.mock.inject((_PresetService_, _PresetsApiService_, _$rootScope_, _WorkflowService_ ) => {

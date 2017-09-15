@@ -16,7 +16,7 @@ function WorkflowsConfig($stateProvider) {
         ]).then(([workflow, ..._]) => {
           const workflowOwnedByCurrentUser = UserService.getSeahorseUser().id === workflow.workflowInfo.ownerId;
           if(workflowOwnedByCurrentUser) {
-            console.log("Current user is workflows owner. Registering to topics...")
+            console.log('Current user is workflows owner. Registering to topics...');
             ServerCommunication.init(workflow.id);
           }
           $rootScope.stateData.dataIsLoaded = true;

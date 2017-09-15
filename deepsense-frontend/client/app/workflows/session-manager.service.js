@@ -26,7 +26,7 @@ function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
     SessionManagerApi.downloadSessions().
       then((result) => {
         service.sessions = result;
-      })
+      });
   }
 
   pollSessionManager();

@@ -3,7 +3,7 @@
 const COOKIE_NAME = 'SEAHORSE_DELETE_PRESET_CONFIRMATION';
 
 /* @ngInject */
-function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, ClusterModalService,
+function ChooseClusterModalCtrl($scope, $uibModalInstance, $log, DeleteModalService, ClusterModalService,
                                 PresetService, WorkflowService) {
   const vm = this;
 

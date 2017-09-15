@@ -20,7 +20,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     this.downloadWorkflows();
 
     SessionManager.checkSessionManagerState().then(() => {
-      this.sessionManagerState = 'WORKING'
+      this.sessionManagerState = 'WORKING';
     }).catch(() => {
       this.sessionManagerState = 'NOT_WORKING';
     });
@@ -29,7 +29,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
       return {
         sessions: SessionManager.sessions,
         workflows: this.workflows
-      }
+      };
     }, () => {
       _.forEach(this.workflows, (w) => {
         w.sessionStatus = SessionManager.statusForWorkflowId(w.id);

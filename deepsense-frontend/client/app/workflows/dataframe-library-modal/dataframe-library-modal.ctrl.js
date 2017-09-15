@@ -67,7 +67,7 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
       LibraryService.removeFile(fileName)
         .then(() => {
           LibraryService.removeUploadingFileByName(fileName);
-        })
+        });
     }, COOKIE_NAME);
   }
 
@@ -75,7 +75,7 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
     DeleteModalService.handleDelete(() => {
       LibraryService.removeFile(fileName).then(() => {
         LibraryService.removeUploadingFileByName(fileName);
-      })
+      });
     }, COOKIE_NAME);
   }
 

@@ -56,7 +56,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         let incomingEdge = $scope.node.getIncomingEdge(0);
         if (incomingEdge) {
           let {startPortId, startNodeId} = incomingEdge;
-          return {nodeId: startNodeId, port: startPortId}
+          return {nodeId: startNodeId, port: startPortId};
         }
         return {};
       };
@@ -72,9 +72,9 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         };
 
         const encodedParams = btoa(JSON.stringify(notebookParams));
-        const url = `${config.notebookHost}/notebooks/${$scope.workflow}/${$scope.node.id}/${encodedParams}`
+        const url = `${config.notebookHost}/notebooks/${$scope.workflow}/${$scope.node.id}/${encodedParams}`;
         return $sce.trustAsResourceUrl(url);
-      }
+      };
 
       this.getDocsHost = () => config.docsHost;
       this.getDocsVersion = () => version.getDocsVersion();

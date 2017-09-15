@@ -203,4 +203,4 @@ angular.module('test', ['deepsense-catalogue-panel'])
       element[0].style.color = 'red';
     }
   };
-})
+});

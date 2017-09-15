@@ -20,7 +20,7 @@ function NodeStatusIcon() {
     controller: function($scope, WorkflowService, UserService) {
 
       $scope.isOwner = function() {
-        return WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id
+        return WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id;
       };
 
       $scope.$watch('node.knowledgeErrors', () => {

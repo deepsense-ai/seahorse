@@ -85,7 +85,7 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config, $
       return this.makeRequest(
         this.METHOD_GET,
         `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/preset`
-      )
+      );
     }
 
     bindPresetToWorkflow(presetId, workflowId){
@@ -96,7 +96,7 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config, $
           'id' : workflowId,
           'presetId' : presetId
         }
-      )
+      );
     }
 
   }
