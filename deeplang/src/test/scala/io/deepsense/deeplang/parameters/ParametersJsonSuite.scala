@@ -465,10 +465,9 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
   test("Multiple column selector can provide json representation of it's value") {
     val columnSelectorParameter = ColumnSelectorParameter("", required = false)
     columnSelectorParameter.value = Some(MultipleColumnSelection(Vector(
-      NameColumnSelection(List("abc", "def")),
-      IndexColumnSelection(List(1, 4, 7)),
-      RoleColumnSelection(List(ColumnRole.feature, ColumnRole.ignored)),
-      TypeColumnSelection(List(ColumnType.categorical, ColumnType.ordinal))
+      NameColumnSelection(Set("abc", "def")),
+      IndexColumnSelection(Set(1, 4, 7)),
+      TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
     )))
 
     val expectedJson = JsArray(
@@ -478,10 +477,6 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
       JsObject(
         "type" -> JsString("indexList"),
         "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
-      ),
-      JsObject(
-        "type" -> JsString("roleList"),
-        "values" -> JsArray(JsString("feature"), JsString("ignored"))
       ),
       JsObject(
         "type" -> JsString("typeList"),
@@ -502,20 +497,15 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
         "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
       ),
       JsObject(
-        "type" -> JsString("roleList"),
-        "values" -> JsArray(JsString("feature"), JsString("ignored"))
-      ),
-      JsObject(
         "type" -> JsString("typeList"),
         "values" -> JsArray(JsString("categorical"), JsString("ordinal"))
       )
     ))
 
     val expectedValue = Some(MultipleColumnSelection(Vector(
-      NameColumnSelection(List("abc", "def")),
-      IndexColumnSelection(List(1, 4, 7)),
-      RoleColumnSelection(List(ColumnRole.feature, ColumnRole.ignored)),
-      TypeColumnSelection(List(ColumnType.categorical, ColumnType.ordinal))
+      NameColumnSelection(Set("abc", "def")),
+      IndexColumnSelection(Set(1, 4, 7)),
+      TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
     )))
     assert(columnSelectorParameter.value == expectedValue)
   }

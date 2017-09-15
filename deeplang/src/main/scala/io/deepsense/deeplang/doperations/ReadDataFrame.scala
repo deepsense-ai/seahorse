@@ -8,7 +8,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.concurrent.Await
 
-import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 

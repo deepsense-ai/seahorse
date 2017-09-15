@@ -9,7 +9,7 @@ import java.util.UUID
 
 import org.scalatest.{BeforeAndAfter, Matchers}
 
-import io.deepsense.deeplang.doperations.{DataFrameSpliter, ReadDataFrame, TimestampDecomposer, WriteDataFrame}
+import io.deepsense.deeplang.doperations.{DataFrameSplitter, ReadDataFrame, TimestampDecomposer, WriteDataFrame}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.graph._
 import io.deepsense.models.experiments.Experiment
@@ -109,7 +109,7 @@ class SimpleGraphExecutionIntegSuite
       Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
     val node1 = Node(UUID.randomUUID(), readOp)
 
-    val splitOp = new DataFrameSpliter
+    val splitOp = new DataFrameSplitter
     splitOp.parameters.getNumericParameter(splitOp.splitRatioParam).value = Some(0.2)
     splitOp.parameters.getNumericParameter(splitOp.seedParam).value = Some(1)
     val node2 = Node(UUID.randomUUID(), splitOp)

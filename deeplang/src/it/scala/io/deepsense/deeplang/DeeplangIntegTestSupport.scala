@@ -9,18 +9,20 @@ import java.net.URI
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.DFSClient
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
-import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 import io.deepsense.models.entities.Entity
 
 /**
  * Adds features to facilitate integration testing using Spark and entitystorage
  */
-trait DOperationIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
+trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   val hdfsPath = "hdfs://ds-dev-env-master:8020"
 
@@ -30,7 +32,6 @@ trait DOperationIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   var sparkContext: SparkContext = _
   var sqlContext: SQLContext = _
   var hdfsClient: DFSClient = _
-
 
   override def beforeAll: Unit = {
     sparkConf = new SparkConf().setMaster("local[4]").setAppName("TestApp")
@@ -57,5 +58,12 @@ trait DOperationIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     collectedRows1 should be (collectedRows2)
   }
 
-  protected def entityStorageInitState(): Map[(String, Entity.Id), Entity] = Map()
+  protected def entityStorageInitState: Map[(String, Entity.Id), Entity] = Map()
+
+  protected def createDataFrame(rowsSeq: Seq[Row], schema: StructType): DataFrame = {
+    val manualRDD: RDD[Row] = sparkContext.parallelize(rowsSeq)
+    val sparkDataFrame = sqlContext.createDataFrame(manualRDD, schema)
+    val builder = DataFrameBuilder(sqlContext)
+    builder.buildDataFrame(sparkDataFrame)
+  }
 }

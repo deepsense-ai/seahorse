@@ -5,13 +5,12 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DOperable, DOperationIntegTestSupport, ExecutionContext}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
 /**
@@ -21,7 +20,7 @@ import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
  * - /etc/hosts entry: 172.28.128.100 ds-dev-env-master
  */
 class WriteReadDataFrameIntegSpec
-  extends DOperationIntegTestSupport
+  extends DeeplangIntegTestSupport
   with BeforeAndAfter
   with DOperationsFactory {
 
@@ -48,15 +47,12 @@ class WriteReadDataFrameIntegSpec
       Row("ccc", null, 3.4, "when the music is over turn off the lights.")
     )
     val schema: StructType = StructType(List(
-      StructField("column1", StringType, nullable = true),
-      StructField("column2", LongType, nullable = true),
-      StructField("column3", DoubleType, nullable = true),
-      StructField("column4", StringType, nullable = true))
+      StructField("column1", StringType),
+      StructField("column2", LongType),
+      StructField("column3", DoubleType),
+      StructField("column4", StringType))
     )
-    val manualRDD: RDD[Row] = sparkContext.parallelize(rowsSeq)
-    val sparkDataFrame = sqlContext.createDataFrame(manualRDD, schema)
-    val builder = DataFrameBuilder(sqlContext)
-    builder.buildDataFrame(sparkDataFrame)
+    createDataFrame(rowsSeq, schema)
   }
 
   private def writeDataFrame(

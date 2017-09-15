@@ -15,10 +15,10 @@ import org.scalatest.Matchers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
-class DataFrameSpliterIntegSpec
-  extends DOperationIntegTestSupport
+class DataFrameSplitterIntegSpec
+  extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
   with Matchers {
 
@@ -58,8 +58,8 @@ class DataFrameSpliterIntegSpec
     (df1, df2)
   }
 
-  private def operation(range: Double, seed: Double): DataFrameSpliter = {
-    val operation = new DataFrameSpliter
+  private def operation(range: Double, seed: Double): DataFrameSplitter = {
+    val operation = new DataFrameSplitter
     val valueParam = operation.parameters.getNumericParameter(operation.splitRatioParam)
     valueParam.value = Some(range)
     val seedParam = operation.parameters.getNumericParameter(operation.seedParam)

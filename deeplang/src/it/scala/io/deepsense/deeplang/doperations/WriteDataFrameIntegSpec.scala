@@ -13,12 +13,12 @@ import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DOperationIntegTestSupport, DOperable}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.{DeeplangIntegTestSupport, DOperable}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
 class WriteDataFrameIntegSpec
-  extends DOperationIntegTestSupport
+  extends DeeplangIntegTestSupport
   with BeforeAndAfter
   with DOperationsFactory {
 

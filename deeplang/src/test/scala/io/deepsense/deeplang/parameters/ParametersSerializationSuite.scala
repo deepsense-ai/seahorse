@@ -90,7 +90,7 @@ class ParametersSerializationSuite extends FunSuite with Matchers with MockitoSu
 
   test("ColumnSelectorParameter and it's value should be serializable") {
     val param = ColumnSelectorParameter("", required = false)
-    param.value = Some(MultipleColumnSelection(Vector(NameColumnSelection(List("xyz")))))
+    param.value = Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("xyz")))))
     testParameterSerialization(param)
   }
 

@@ -16,12 +16,12 @@ import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DOperationIntegTestSupport, ExecutionContext, DOperable}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext, DOperable}
 import io.deepsense.models.entities.{Entity, DataObjectReference, DataObjectReport, InputEntity}
 
 class ReadDataFrameIntegSpec
-  extends DOperationIntegTestSupport
+  extends DeeplangIntegTestSupport
   with BeforeAndAfter
   with LazyLogging
   with DOperationsFactory {
@@ -72,7 +72,6 @@ class ReadDataFrameIntegSpec
       Row("aaa", 1L, 1.2, timestamp),
       Row("bbb", 2L, 2.2, timestamp),
       Row("ccc", 3L, 3.4, timestamp))
-    val manualRDD: RDD[Row] = sparkContext.parallelize(manualRowsSeq)
-    builder.buildDataFrame(schema, manualRDD)
+    createDataFrame(manualRowsSeq, schema)
   }
 }

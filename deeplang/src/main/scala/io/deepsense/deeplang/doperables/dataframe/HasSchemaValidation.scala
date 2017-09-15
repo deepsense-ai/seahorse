@@ -4,11 +4,11 @@
  * Owner: Rafal Hryciuk
  */
 
-package io.deepsense.deeplang.dataframe
-
-import org.apache.spark.sql.types._
+package io.deepsense.deeplang.doperables.dataframe
 
 import scala.collection.mutable
+
+import org.apache.spark.sql.types._
 
 trait HasSchemaValidation {
 

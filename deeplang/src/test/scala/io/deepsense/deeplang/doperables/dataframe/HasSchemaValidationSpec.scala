@@ -4,10 +4,11 @@
  * Owner: Rafal Hryciuk
  */
 
-package io.deepsense.deeplang.dataframe
+package io.deepsense.deeplang.doperables.dataframe
+
+import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.UnitSpec
-import org.apache.spark.sql.types._
 
 class HasSchemaValidationSpec extends UnitSpec {
 

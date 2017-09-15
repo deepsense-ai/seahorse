@@ -4,7 +4,7 @@
  * Owner: Rafal Hryciuk
  */
 
-package io.deepsense.deeplang.dataframe
+package io.deepsense.deeplang.doperables.dataframe
 
 object ColumnRole extends Enumeration {
   type ColumnRole = RichValue

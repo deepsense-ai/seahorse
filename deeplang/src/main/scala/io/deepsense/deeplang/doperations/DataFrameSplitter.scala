@@ -8,11 +8,11 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
-import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DOperation, DOperation1To2, ExecutionContext}
 
-class DataFrameSpliter extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
+class DataFrameSplitter extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
   override val name: String = "Split DataFrame"
 
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
@@ -38,7 +38,7 @@ class DataFrameSpliter extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
 
   override val parameters: ParametersSchema = ParametersSchema(
     splitRatioParam ->
-      NumericParameter("Proportion of spliting",
+      NumericParameter("Proportion of splitting",
         default = Some(0.5),
         required = true,
         RangeValidator(0.0, 1.0, true, true)

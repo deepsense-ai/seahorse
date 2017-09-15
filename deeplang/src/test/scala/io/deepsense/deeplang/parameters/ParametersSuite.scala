@@ -6,11 +6,10 @@
 
 package io.deepsense.deeplang.parameters
 
+import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
-
-import org.scalatest.mock.MockitoSugar
 
 class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 
@@ -136,7 +135,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   test("Getting ColumnSelector value from schema") {
     val param = ColumnSelectorParameter("description", true)
     val schema = ParametersSchema("x" -> param)
-    val values = IndexColumnSelection(List(1, 3))
+    val values = IndexColumnSelection(Set(1, 3))
     val parameter = MultipleColumnSelection(Vector(values))
     param.value = Some(parameter)
     assert(schema.getColumnSelection("x").get == parameter)

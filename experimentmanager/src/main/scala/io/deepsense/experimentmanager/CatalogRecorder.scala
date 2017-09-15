@@ -8,7 +8,8 @@ package io.deepsense.experimentmanager
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations._
 
 /**
@@ -18,6 +19,8 @@ object CatalogRecorder {
 
   def registerDOperables(catalog: DOperableCatalog) = {
     catalog.registerDOperable[DataFrame]()
+    catalog.registerDOperable[UntrainedRidgeRegression]()
+    catalog.registerDOperable[TrainedRidgeRegression]()
   }
 
   def registerDOperations(catalog: DOperationsCatalog) = {
@@ -33,9 +36,16 @@ object CatalogRecorder {
       DOperationCategories.Utils,
       "Decomposes selected columns from timestamp to numeric")
 
-    catalog.registerDOperation[DataFrameSpliter](
+    catalog.registerDOperation[DataFrameSplitter](
       DOperationCategories.Utils,
       "Splits DataFrame into two DataFrames")
-  }
 
+    catalog.registerDOperation[TrainRegressor](
+      DOperationCategories.ML.Regression,
+      "Trains linear regression model")
+
+    catalog.registerDOperation[ScoreRegressor](
+      DOperationCategories.ML.Regression,
+      "Scores trained linear regression model")
+  }
 }

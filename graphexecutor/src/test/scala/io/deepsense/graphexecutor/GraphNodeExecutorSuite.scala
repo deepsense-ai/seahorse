@@ -13,7 +13,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}

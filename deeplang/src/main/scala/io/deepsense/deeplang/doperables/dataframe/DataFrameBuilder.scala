@@ -4,7 +4,7 @@
  * Owner: Rafal Hryciuk
  */
 
-package io.deepsense.deeplang.dataframe
+package io.deepsense.deeplang.doperables.dataframe
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
@@ -21,13 +21,13 @@ class DataFrameBuilder private (sqlContext: SQLContext) extends HasSchemaValidat
     // TODO: validation will be removed. Just for testing purposes.
     validateSchema(schema)
     val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
-    new DataFrame(Some(dataFrame))
+    DataFrame(Some(dataFrame))
   }
 
-  def buildDataFrame(dataFrame: sql.DataFrame): DataFrame = {
+  def buildDataFrame(sparkDataFrame: sql.DataFrame): DataFrame = {
     // TODO: validation will be removed. Just for testing purposes.
-    validateSchema(dataFrame.schema)
-    new DataFrame(Some(dataFrame))
+    validateSchema(sparkDataFrame.schema)
+    DataFrame(Some(sparkDataFrame))
   }
 }
 
