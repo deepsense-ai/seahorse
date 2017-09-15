@@ -45,8 +45,6 @@ class WriteDataFrameIntegSpec
       metadata = MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("A", "B", "C")))),
     StructField("numeric",
       SparkConversions.columnTypeToSparkColumnType(ColumnType.numeric)),
-    StructField("ordinal",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.ordinal)),
     StructField("string",
       SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
     StructField("timestamp",
@@ -54,20 +52,20 @@ class WriteDataFrameIntegSpec
   ))
 
   val rows = Seq(
-    Row(true, 0, 0.45, 42, "3.14", timestamp),
-    Row(false, 1, null, null, "\"testing...\"", null),
-    Row(false, 2, 3.14159, 123, "Hello, world!", timestamp),
-    Row(null, null, null, null, null, null)
+    Row(true, 0, 0.45, "3.14", timestamp),
+    Row(false, 1, null, "\"testing...\"", null),
+    Row(false, 2, 3.14159, "Hello, world!", timestamp),
+    Row(null, null, null, null, null)
   )
 
   val q = "\""
 
   val rowsAsCsv = (sep: String) => Seq(
-    s"1${sep}A${sep}0.45${sep}42${sep}3.14${sep}${DateTimeConverter.toString(timestamp)}",
-    s"0${sep}B${sep}${sep}${sep}${q}${q}${q}testing...${q}${q}${q}${sep}",
-    s"0${sep}C${sep}3.14159${sep}123${sep}${q}Hello, world!${q}${sep}"
+    s"1${sep}A${sep}0.45${sep}3.14${sep}${DateTimeConverter.toString(timestamp)}",
+    s"0${sep}B${sep}${sep}${q}${q}${q}testing...${q}${q}${q}${sep}",
+    s"0${sep}C${sep}3.14159${sep}${q}Hello, world!${q}${sep}"
       + s"${DateTimeConverter.toString(timestamp)}",
-    s"${sep}${sep}${sep}${sep}${sep}"
+    s"${sep}${sep}${sep}${sep}"
   )
 
   val dataframe = createDataFrame(rows, schema)

@@ -37,9 +37,9 @@ class SaveDataFrameIntegSpec
   "SaveDataFrame" should {
     "save created DataFrame" in {
       val rows: Seq[Row] = Seq(
-        Row("aaa", 1L, 1.2, timestamp),
-        Row("bbb", 2L, 2.2, timestamp),
-        Row("ccc", 3L, 3.4, timestamp))
+        Row("aaa", 1.0, 1.2, timestamp),
+        Row("bbb", 2.0, 2.2, timestamp),
+        Row("ccc", 3.0, 3.4, timestamp))
       testSimpleDataFrameSchemaWithRowsSeq(rows)
     }
   }
@@ -47,8 +47,8 @@ class SaveDataFrameIntegSpec
   "SaveDataFrame" should {
     "save created DataFrame with missing values" in {
       val rowsSeq: Seq[Row] = Seq(
-        Row("aaa", 1L, 1.2, null),
-        Row("bbb", 2L, null, timestamp),
+        Row("aaa", 1.0, 1.2, null),
+        Row("bbb", 2.0, null, timestamp),
         Row("ccc", null, 3.4, timestamp))
       testSimpleDataFrameSchemaWithRowsSeq(rowsSeq)
     }
@@ -90,7 +90,7 @@ class SaveDataFrameIntegSpec
   private def createSchema: StructType = {
     StructType(List(
       StructField("column1", StringType),
-      StructField("column2", LongType),
+      StructField("column2", DoubleType),
       StructField("column3", DoubleType),
       StructField("column4", TimestampType)))
   }

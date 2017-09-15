@@ -173,8 +173,7 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
   val safeConvertsTo = Seq(ColumnType.string, ColumnType.categorical)
   val safeConvertsMap = Map(
     ColumnType.numeric -> (safeConvertsTo),
-    ColumnType.ordinal -> (safeConvertsTo ++ Seq(ColumnType.numeric)),
-    ColumnType.boolean -> (safeConvertsTo ++ Seq(ColumnType.numeric, ColumnType.ordinal)),
+    ColumnType.boolean -> (safeConvertsTo ++ Seq(ColumnType.numeric)),
     ColumnType.categorical -> Seq(ColumnType.string),
     ColumnType.string -> Seq(ColumnType.categorical),
     ColumnType.timestamp -> (safeConvertsTo ++ Seq(ColumnType.numeric))

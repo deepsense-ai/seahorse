@@ -54,8 +54,8 @@ class ProjectColumnIntegSpec
 
   "ProjectColumn" should {
     "select correct columns based on the column selection" in {
-      val projected = projectColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.ordinal))
-      val selectedIndices = Set(1, 2, 4) // b a z
+      val projected = projectColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.numeric))
+      val selectedIndices = Set(0, 1, 2, 4) // c b a z
       val expectedColumns = selectWithIndices[StructField](selectedIndices, columns)
       val expectedSchema = StructType(expectedColumns)
       val expectedData = data.map(r => selectWithIndices[Any](selectedIndices, r.toList))
@@ -89,7 +89,7 @@ class ProjectColumnIntegSpec
         val emptyDataFrame = projectColumns(
           Set.empty,
           Set.empty,
-          Set(ColumnType.ordinal)
+          Set(ColumnType.categorical)
         )
         emptyDataFrame.sparkDataFrame.collectAsList() shouldBe empty
       }

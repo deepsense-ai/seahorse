@@ -20,11 +20,9 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadata, DataFrame}
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameMetadata}
 import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 
 class SaveLoadDataFrameIntegSpec
@@ -33,7 +31,7 @@ class SaveLoadDataFrameIntegSpec
 
   val schema: StructType = StructType(List(
     StructField("column1", StringType),
-    StructField("column2", LongType),
+    StructField("column2", DoubleType),
     StructField("column3", DoubleType),
     StructField("column4", StringType))
   )
@@ -75,8 +73,8 @@ class SaveLoadDataFrameIntegSpec
 
   private def createDataFrame: DataFrame = {
     val rowsSeq: Seq[Row] = Seq(
-      Row("aaa", 1L, 1.2, null),
-      Row("bbb", 2L, null, "text"),
+      Row("aaa", 1.0, 1.2, null),
+      Row("bbb", 2.0, null, "text"),
       Row("ccc", null, 3.4, "when the music is over turn off the lights.")
     )
     createDataFrame(rowsSeq, schema)

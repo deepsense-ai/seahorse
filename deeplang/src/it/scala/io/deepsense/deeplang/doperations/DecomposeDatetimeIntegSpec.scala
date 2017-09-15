@@ -83,7 +83,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
           val operation = DecomposeDatetime(
             NameSingleColumnSelection("nonExistsingColumnName"), Seq("year"), prefix = None)
           val dataFrame = createDataFrame(
-            Seq.empty, StructType(List(StructField("id", LongType))))
+            Seq.empty, StructType(List(StructField("id", DoubleType))))
           executeOperation(executionContext, operation)(dataFrame)
         }
       }
@@ -92,7 +92,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
           val operation = DecomposeDatetime(
             IndexSingleColumnSelection(1), Seq("year"), prefix = None)
           val dataFrame = createDataFrame(
-            Seq.empty, StructType(List(StructField("id", LongType))))
+            Seq.empty, StructType(List(StructField("id", DoubleType))))
           executeOperation(executionContext, operation)(dataFrame)
         }
       }
@@ -101,7 +101,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
           val operation = DecomposeDatetime(
             IndexSingleColumnSelection(0), Seq("year"), prefix = None)
           val dataFrame = createDataFrame(
-            Seq.empty, StructType(List(StructField("id", LongType))))
+            Seq.empty, StructType(List(StructField("id", DoubleType))))
           executeOperation(executionContext, operation)(dataFrame)
         }
       }

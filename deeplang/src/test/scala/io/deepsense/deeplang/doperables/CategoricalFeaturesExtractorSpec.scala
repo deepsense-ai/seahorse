@@ -39,9 +39,8 @@ class CategoricalFeaturesExtractorSpec extends UnitSpec {
         verifyResult(createMetadata(
           CommonColumnMetadata("col0", Some(0), Some(ColumnType.boolean)),
           CommonColumnMetadata("col1", Some(1), Some(ColumnType.numeric)),
-          CommonColumnMetadata("col2", Some(2), Some(ColumnType.ordinal)),
-          CommonColumnMetadata("col3", Some(3), Some(ColumnType.string)),
-          CommonColumnMetadata("col4", Some(4), Some(ColumnType.timestamp))
+          CommonColumnMetadata("col2", Some(2), Some(ColumnType.string)),
+          CommonColumnMetadata("col3", Some(3), Some(ColumnType.timestamp))
         ), Map.empty)
       }
 

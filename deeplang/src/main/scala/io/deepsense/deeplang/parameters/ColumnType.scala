@@ -22,7 +22,6 @@ package io.deepsense.deeplang.parameters
 object ColumnType extends Enumeration {
   type ColumnType = Value
   val numeric = Value("numeric")
-  val ordinal = Value("ordinal")
   val boolean = Value("boolean")
   val categorical = Value("categorical")
   val string = Value("string")

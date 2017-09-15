@@ -210,14 +210,14 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(0), DoubleType),
       StructField(colsL(1), StringType),
       StructField(colsL(2), DoubleType),
-      StructField(colsL(3), LongType)
+      StructField(colsL(3), DoubleType)
     ))
     val rowsL = Seq(
-      (3.5, "a", 1.5, 5L),
-      (3.6, "b", 1.6, 6L),
-      (3.7, "c", 1.7, 10L),
-      (4.6, "d", 1.6, 9L),
-      (4.5, "e", 1.5, 11L)
+      (3.5, "a", 1.5, 5.0),
+      (3.6, "b", 1.6, 6.0),
+      (3.7, "c", 1.7, 10.0),
+      (4.6, "d", 1.6, 9.0),
+      (4.5, "e", 1.5, 11.0)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
 
@@ -270,14 +270,14 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(0), DoubleType),
       StructField(colsL(1), DoubleType),
       StructField(colsL(2), StringType),
-      StructField(colsL(3), LongType)
+      StructField(colsL(3), DoubleType)
     ))
     val rowsL = Seq(
-      (1.5, 3.5, "a", 5L),
-      (1.6, 3.6, "b", 6L),
-      (1.7, 3.7, "c", 10L),
-      (1.6, 4.6, "d", 9L),
-      (1.5, 4.5, "e", 11L)
+      (1.5, 3.5, "a", 5.0),
+      (1.6, 3.6, "b", 6.0),
+      (1.7, 3.7, "c", 10.0),
+      (1.6, 4.6, "d", 9.0),
+      (1.5, 4.5, "e", 11.0)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
 
@@ -329,12 +329,12 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(0), DoubleType),
       StructField(colsL(1), StringType),
       StructField(colsL(2), DoubleType),
-      StructField(colsL(3), LongType)
+      StructField(colsL(3), DoubleType)
     ))
     val rowsL = Seq(
-      (2.5, "a", 1.5, 5L),
-      (3.6, "b", 1.6, 6L),
-      (3.7, "c", 1.7, 10L)
+      (2.5, "a", 1.5, 5.0),
+      (3.6, "b", 1.6, 6.0),
+      (3.7, "c", 1.7, 10.0)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
 
@@ -376,12 +376,12 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(0), DoubleType),
       StructField(colsL(1), StringType),
       StructField(colsL(2), DoubleType),
-      StructField(colsL(3), LongType)
+      StructField(colsL(3), DoubleType)
     ))
     val rowsL = Seq(
-      (2.5, "a", 1.5, 5L),
-      (3.6, "b", 1.6, 6L),
-      (3.7, "c", 1.7, 10L)
+      (2.5, "a", 1.5, 5.0),
+      (3.6, "b", 1.6, 6.0),
+      (3.7, "c", 1.7, 10.0)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
 
@@ -422,12 +422,12 @@ class JoinSpec extends DeeplangIntegTestSupport {
       StructField(colsL(0), DoubleType),
       StructField(colsL(1), StringType),
       StructField(colsL(2), DoubleType),
-      StructField(colsL(3), LongType)
+      StructField(colsL(3), DoubleType)
     ))
     val rowsL = Seq(
-      (2.5, "a", 1.5, 5L),
-      (3.6, "b", 1.6, 6L),
-      (3.7, "c", 1.7, 10L)
+      (2.5, "a", 1.5, 5.0),
+      (3.6, "b", 1.6, 6.0),
+      (3.7, "c", 1.7, 10.0)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
 
@@ -668,13 +668,13 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val colsL = Vector(column1, "age")
     val schemaL = StructType(Seq(
       StructField(colsL(0), StringType),
-      StructField(colsL(1), LongType)
+      StructField(colsL(1), DoubleType)
     ))
     val rowsL = Seq(
-      ("pies", 3L),
-      ("kot", 5L),
-      ("krowa", 7L),
-      ("pies", 1L)
+      ("pies", 3.0),
+      ("kot", 5.0),
+      ("krowa", 7.0),
+      ("pies", 1.0)
     ).map(Row.fromTuple)
     val ldf = createDataFrame(rowsL, schemaL)
     val ldfCategorized =
@@ -706,10 +706,10 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     // join dataframe
     val joinRows = Seq(
-      (finalMapping.valueToId("pies"), 3L, "Rafal"),
-      (finalMapping.valueToId("kot"), 5L, "Wojtek"),
-      (finalMapping.valueToId("krowa"), 7L, null),
-      (finalMapping.valueToId("pies"), 1L, "Rafal")
+      (finalMapping.valueToId("pies"), 3.0, "Rafal"),
+      (finalMapping.valueToId("kot"), 5.0, "Wojtek"),
+      (finalMapping.valueToId("krowa"), 7.0, null),
+      (finalMapping.valueToId("pies"), 1.0, "Rafal")
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       appendPrefix(
@@ -783,13 +783,13 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
     val sameNameColumns = Seq(
       ("A", StringType),
-      ("B", LongType)
+      ("B", DoubleType)
     )
 
     object Gen {
       def generate(dt: DataType) = dt match {
         case StringType => "s"
-        case LongType => 1L
+        case DoubleType => 1.0
       }
     }
     import Gen._

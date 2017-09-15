@@ -16,13 +16,11 @@
 
 package io.deepsense.deeplang.parameters
 
-import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
-
 import scala.collection.immutable.ListMap
 
 import org.mockito.Mockito._
-import org.scalatest.{FunSuite, Matchers}
 import org.scalatest.mock.MockitoSugar
+import org.scalatest.{FunSuite, Matchers}
 import spray.json._
 
 class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
@@ -574,7 +572,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
-      TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
+      TypeColumnSelection(Set(ColumnType.categorical))
     )))
 
     val expectedJson = JsArray(
@@ -591,7 +589,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       ),
       JsObject(
         "type" -> JsString("typeList"),
-        "values" -> JsArray(JsString("categorical"), JsString("ordinal"))
+        "values" -> JsArray(JsString("categorical"))
       ))
 
     assert(columnSelectorParameter.valueToJson == expectedJson)
@@ -613,7 +611,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       ),
       JsObject(
         "type" -> JsString("typeList"),
-        "values" -> JsArray(JsString("categorical"), JsString("ordinal"))
+        "values" -> JsArray(JsString("categorical"))
       )
     ))
 
@@ -621,7 +619,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
-      TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
+      TypeColumnSelection(Set(ColumnType.categorical))
     )))
     assert(columnSelectorParameter.value == expectedValue)
   }

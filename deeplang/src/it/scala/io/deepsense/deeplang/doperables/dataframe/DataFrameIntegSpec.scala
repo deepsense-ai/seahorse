@@ -29,7 +29,6 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
       StructField("c", DoubleType),
       StructField("b", StringType),
       StructField("a", DoubleType),
-      StructField("y", LongType),
       StructField("x", TimestampType),
       StructField("z", BooleanType),
       StructField("m", IntegerType)
@@ -45,7 +44,7 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
           IndexColumnSelection(Set(1, 3)),
           TypeColumnSelection(Set(ColumnType.string, ColumnType.timestamp))
         ))
-        dataFrame.getColumnNames(selection) shouldBe Seq("b", "a", "y", "x")
+        dataFrame.getColumnNames(selection) shouldBe Seq("b", "a", "x")
       }
 
       "columns are selected in different order" in {
@@ -70,10 +69,6 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
 
       "numeric type is selected" in {
         selectSingleType(ColumnType.numeric) shouldBe Seq("c", "a")
-      }
-
-      "ordinal type is selected" in {
-        selectSingleType(ColumnType.ordinal) shouldBe Seq("y")
       }
 
       "timestamp type is selected" in {

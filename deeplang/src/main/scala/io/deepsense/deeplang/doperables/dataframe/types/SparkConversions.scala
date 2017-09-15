@@ -28,7 +28,6 @@ object SparkConversions {
     ColumnType.string -> sql.types.StringType,
     ColumnType.boolean -> sql.types.BooleanType,
     ColumnType.timestamp -> sql.types.TimestampType,
-    ColumnType.ordinal -> sql.types.LongType,
     ColumnType.categorical -> sql.types.IntegerType
   )
 
