@@ -41,7 +41,7 @@
     "font-awesome": "^4.4.0",
     "icheck": "^1.0.2",
     "ng-debounce": "^1.0.1",
-    "ng-file-upload": "^7.0.13",
+    "ng-file-upload": "7.0.13",
     "ng-switchery": "^1.0.1"
   },
   "devDependencies": {
