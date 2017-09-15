@@ -16,5 +16,5 @@ abstract class DOperation(val parameters: DParameters) {
 
   def execute(l: Vector[DOperable]): Vector[DOperable]
 
-  def inferTypes(l: Vector[DKnowledge[DOperable]]): Vector[DKnowledge[DOperable]]
+  def inferKnowledge(l: Vector[DKnowledge[DOperable]]): Vector[DKnowledge[DOperable]]
 }

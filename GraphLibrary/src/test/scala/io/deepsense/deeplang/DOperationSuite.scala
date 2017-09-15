@@ -11,24 +11,37 @@ import org.scalatest.FunSuite
 /** */
 class DOperationSuite extends FunSuite {
 
-  test("Simple operation") {
+  test("It is possible to implement simple operations") {
     trait A extends DOperable
-    class A1 extends A
-    class A2 extends A
-    class B extends DOperable
-    class B1 extends B
-    class B2 extends B
+    class A1 extends A {
+      override def equals(any: Any) = any.isInstanceOf[A1]
+    }
+    class A2 extends A {
+      override def equals(any: Any) = any.isInstanceOf[A2]
+    }
+    case class IntParam(i: Int) extends DParameters
 
-    class Op1(p: DParameters = null) extends DOperation1To1[A, B](p) {
-      override protected def _execute(t0: A): B = new B1
+    class PickOne(p: DParameters) extends DOperation2To1[A1, A2, A](p) {
+      override protected def _execute(t1: A1, t2: A2): A = {
+        val intParam = p.asInstanceOf[IntParam]
+        if (intParam.i % 2 == 1) t1 else t2
+      }
 
-      override protected def _inferTypes(k: DKnowledge[A]): DKnowledge[B] = {
-        new DKnowledge(new B1, new B2)
+      override protected def _inferKnowledge(
+          k1: DKnowledge[A1], k2: DKnowledge[A2]): DKnowledge[A] = {
+        new DKnowledge(new A1, new A2)
       }
     }
 
-    val op = new Op1
-    op.execute(Vector(new A1))
-    op.inferTypes(Vector(new DKnowledge(new A1)))
+    val firstPicker: DOperation = new PickOne(IntParam(1))
+    val secondPicker: DOperation = new PickOne(IntParam(2))
+
+    val input = Vector(new A1, new A2)
+    assert(firstPicker.execute(input) == Vector(new A1))
+    assert(secondPicker.execute(input) == Vector(new A2))
+
+    val knowledge = Vector[DKnowledge[DOperable]](DKnowledge(new A1), DKnowledge(new A2))
+    assert(firstPicker.inferKnowledge(knowledge) == Vector(DKnowledge(new A1, new A2)))
   }
 }
+
