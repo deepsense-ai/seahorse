@@ -2,7 +2,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
 # This script is idempotent and lazy. You can safely call it from other scripts to ensure dockers are built.
-
+# TODO Before updating $BRANCH-latest, we could fetch and check if it is up-to date with remote
 cd `dirname $0`"/../../"
 
 if [[ -n $(git status --porcelain) ]]; then
