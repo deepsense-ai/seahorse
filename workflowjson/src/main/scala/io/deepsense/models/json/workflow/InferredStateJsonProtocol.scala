@@ -33,13 +33,13 @@ trait InferredStateJsonProtocol
 
   implicit val nodeInferenceResultFormat = jsonFormat3(NodeInferenceResult.apply)
 
-  implicit val knowledgeFormat: RootJsonWriter[InferredState] =
+  implicit val inferredStateWriter: RootJsonWriter[InferredState] =
     new RootJsonWriter[InferredState] {
-      override def write(knowledge: InferredState): JsValue = {
+      override def write(inferredState: InferredState): JsValue = {
         JsObject(
-          "id" -> knowledge.id.toJson,
-          "knowledge" -> knowledge.graphKnowledge.results.toJson,
-          "states" -> knowledge.states.toJson)
+          "id" -> inferredState.id.toJson,
+          "knowledge" -> inferredState.graphKnowledge.results.toJson,
+          "states" -> inferredState.states.toJson)
       }
     }
 }
