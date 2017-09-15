@@ -30,7 +30,7 @@ import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
-import io.deepsense.workflowexecutor.partialexecution.{Execution, PartialExecution}
+import io.deepsense.workflowexecutor.partialexecution.{Execution, IdleExecution, RunningExecution}
 
 /**
  * WorkflowExecutorActor coordinates execution of a workflow by distributing work to
@@ -52,7 +52,7 @@ class WorkflowExecutorActor(
   val progressReporter = WorkflowProgress()
   val workflowId = self.path.name
 
-  def launched(execution: Execution): Receive = {
+  def launched(execution: RunningExecution): Receive = {
     case NodeStarted(id) => nodeStarted(id)
     case NodeCompleted(id, nodeExecutionResult) =>
       nodeCompleted(id,
@@ -71,10 +71,11 @@ class WorkflowExecutorActor(
     reports.clear()
   }
 
-  def finished(finishedExecution: Execution): Receive = {
+  def finished(finishedExecution: IdleExecution): Receive = {
     case Launch(graph, nodes) =>
+      val nodeSet = nodes.toSet
       reset()
-      val updatedStructure = finishedExecution.updateStructure(graph)
+      val updatedStructure = finishedExecution.updateStructure(graph, nodeSet)
       launch(updatedStructure, nodes)
     case Connect(_) =>
       sendExecutionStatus(executionToStatus(finishedExecution))
@@ -82,31 +83,33 @@ class WorkflowExecutorActor(
 
   override def receive: Receive = {
     case Launch(graph, nodes) => // TODO: Pass DirectedGraph instead of StatefulGraph?
-      val execution = executionFactory.create(graph)
+      val execution = executionFactory.create(graph, nodes)
       launch(execution, nodes)
     case Connect(_) =>
       sendExecutionStatus(ExecutionStatus(Map.empty, EntitiesMap()))
   }
 
-  def launch(execution: Execution, nodes: Seq[Node.Id]): Unit = {
+  def launch(execution: IdleExecution, nodes: Seq[Node.Id]): Unit = {
     val inferred = execution.inferAndApplyKnowledge(executionContext.inferContext)
-    val enqueued = inferred.error.map(_ => inferred).getOrElse(inferred.enqueue(nodes))
+    val enqueued = inferred.error.map(_ => inferred).getOrElse(inferred.enqueue)
     updateExecutionState(execution, enqueued)
   }
 
   def updateExecutionState(originalExecution: Execution, executionInProcess: Execution): Unit = {
-    val updatedExecution = if (executionInProcess.isRunning) {
-      val launchedGraph = launchReadyNodes(executionInProcess)
-      context.unbecome()
-      context.become(launched(launchedGraph))
-      launchedGraph
-    } else {
-      logger.debug(s"End of execution")
-      terminationListener.foreach(_ ! executionToStatus(executionInProcess))
-      context.unbecome()
-      context.become(finished(executionInProcess))
-      executionInProcess
+    val updatedExecution = executionInProcess match {
+      case idle: IdleExecution =>
+        logger.debug(s"End of execution")
+        terminationListener.foreach(_ ! executionToStatus(executionInProcess))
+        context.unbecome()
+        context.become(finished(idle))
+        idle
+      case running: RunningExecution =>
+        val launchedGraph = launchReadyNodes(running)
+        context.unbecome()
+        context.become(launched(launchedGraph))
+        launchedGraph
     }
+
     val executionStatus: ExecutionStatus =
       calculateExecutionStatus(originalExecution, updatedExecution)
     sendExecutionStatus(executionStatus)
@@ -147,7 +150,7 @@ class WorkflowExecutorActor(
       EntitiesMap(dOperableCache.toMap, reports.toMap), execution.error)
   }
 
-  def launchReadyNodes(execution: Execution): Execution = {
+  def launchReadyNodes(execution: RunningExecution): RunningExecution = {
     logger.debug("launchReadyNodes")
     execution.readyNodes.foldLeft(execution) {
       case (g, readyNode) =>
@@ -252,16 +255,16 @@ class GraphNodeExecutorFactoryImpl extends GraphNodeExecutorFactory {
 }
 
 trait ExecutionFactory {
-  def create(directedGraph: DirectedGraph): Execution
+  def create(directedGraph: DirectedGraph, nodes: Seq[Node.Id]): IdleExecution
   def empty: Execution
 }
 
 class PartialExecutionFactoryImpl extends ExecutionFactory {
-  override def create(directedGraph: DirectedGraph): Execution = {
-    PartialExecution(directedGraph)
+  override def create(directedGraph: DirectedGraph, nodes: Seq[Node.Id]): IdleExecution = {
+    Execution(directedGraph, nodes)
   }
 
-  override val empty: Execution = PartialExecution(DirectedGraph())
+  override val empty: Execution = Execution.empty
 }
 
 // This is a separate class in order to make logs look better.

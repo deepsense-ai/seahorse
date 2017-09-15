@@ -70,11 +70,18 @@ case class DirectedGraph(
     DirectedGraph(n.map(node), e)
   }
 
-  private def predecessorsOf(nodes: Set[Node.Id]): Set[Node.Id] = {
+  def rootNodes: Iterable[Node] = {
+    topologicallySorted.get.filter(n => predecessors(n.id).flatten.isEmpty)
+  }
+
+  def predecessorsOf(nodes: Set[Node.Id]): Set[Node.Id] = {
     nodes.flatMap {
       node => predecessors(node).flatten.map { _.nodeId }
     }
   }
+
+  def successorsOf(node: Node.Id): Set[Node.Id] =
+   successors(node).flatMap(endpoints => endpoints.map(_.nodeId)).toSet
 
   private def edgesOf(nodes: Set[Node.Id]): Set[Edge] = nodes.flatMap(edgesTo)
 

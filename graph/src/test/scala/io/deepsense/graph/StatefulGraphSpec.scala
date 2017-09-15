@@ -38,34 +38,13 @@ class StatefulGraphSpec
   with GivenWhenThen
   with GraphTestSupport {
 
-  val results = Map(
-    idA -> Seq(mock[Entity.Id]),
-    idB -> Seq(mock[Entity.Id]),
-    idC -> Seq(mock[Entity.Id]),
-    idD -> Seq(mock[Entity.Id]),
-    idE -> Seq(mock[Entity.Id], mock[Entity.Id])
-  )
-
   val states: Map[Node.Id, NodeState] = nodeIds.zip(Seq(nodeCompleted, nodeCompleted, nodeCompleted,
     nodeCompleted, nodeCompleted)).toMap
   val illegalForFinished = Seq(nodestate.Draft, nodestate.Queued, nodeRunning)
   val illegalForCompleted = illegalForFinished ++ Seq(nodeFailed, nodestate.Aborted)
 
-  def containsANodeInAnIllegalState(
-      illegalNodeStates: Seq[NodeState],
-      graphState: GraphState): Unit = {
-    illegalNodeStates.foreach { state =>
-      val illegalStates = states.updated(idB, state)
-      s"contains a node in state ${state.name}" in {
-        an[IllegalArgumentException] shouldBe thrownBy {
-          graph(nodeSet, edgeSet, illegalStates, graphState)
-        }
-      }
-    }
-  }
-
   "StatefulGraph" should {
-    "disallow to enqueue when partial execution is in progress" in {
+    "disallow to enqueue when execution is in progress" in {
       val runningGraph = StatefulGraph(nodeSet, edgeSet).enqueue
       illegalToEnqueue(runningGraph)
     }
@@ -205,22 +184,33 @@ class StatefulGraphSpec
       operation.trace("Logging just to clarify that it works after deserialization!")
       operation.tTagTI_0.tpe should not be null
     }
+    "recursively mark nodes as draft" in {
+      val stateCompleted = nodeCompleted
+      val drafted = StatefulGraph(DirectedGraph(nodeSet, edgeSet),
+        Map(
+          idA -> stateCompleted,
+          idB -> nodeFailed,
+          idC -> stateCompleted,
+          idD -> stateCompleted,
+          idE -> nodestate.Aborted
+        ),
+        None
+      ).draft(idB)
+
+      drafted.states should contain theSameElementsAs Map(
+        idA -> stateCompleted,
+        idB -> nodestate.Draft,
+        idC -> nodestate.Draft,
+        idD -> nodestate.Draft,
+        idE -> nodestate.Draft
+      )
+    }
   }
 
   def completedGraph: StatefulGraph = {
     nodeIds.foldLeft(StatefulGraph(nodeSet, edgeSet).enqueue) {
       case (graph, nodeId) => graph.nodeStarted(nodeId).nodeFinished(nodeId, results(nodeId))
     }
-  }
-
-  private def nodeRunning: nodestate.Running = nodestate.Running(DateTimeConverter.now)
-
-  private def nodeFailed: nodestate.Failed =
-    nodestate.Running(DateTimeConverter.now).fail(mock[FailureDescription])
-
-  private def nodeCompleted: nodestate.Completed = {
-    val date = DateTimeConverter.now
-    nodestate.Completed(date, date.plusMinutes(1), Seq())
   }
 
   private def graph(

@@ -19,7 +19,10 @@ package io.deepsense.graph
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
+import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang._
+import io.deepsense.models.entities.Entity
 
 trait GraphTestSupport {
   self: MockitoSugar =>
@@ -66,6 +69,14 @@ trait GraphTestSupport {
   val edgeSet = edgeList.toSet
   val nodeIds = Seq(idA, idB, idC, idD, idE)
 
+  val results = Map(
+    idA -> Seq(mock[Entity.Id]),
+    idB -> Seq(mock[Entity.Id]),
+    idC -> Seq(mock[Entity.Id]),
+    idD -> Seq(mock[Entity.Id]),
+    idE -> Seq(mock[Entity.Id], mock[Entity.Id])
+  )
+
 
   private def edges(
       idA: Node.Id,
@@ -90,5 +101,20 @@ trait GraphTestSupport {
       opE: DOperation): Seq[(Node.Id, Node)] = {
     val nodes = Seq(opA, opB, opC, opD, opE).map { o => Node(Node.Id.randomId, o)}
     nodes.map(n => n.id -> n)
+  }
+
+  protected def nodeRunning: nodestate.Running = nodestate.Running(DateTimeConverter.now)
+
+  protected def nodeFailed: nodestate.Failed =
+    nodestate.Running(DateTimeConverter.now).fail(mock[FailureDescription])
+
+  protected def nodeCompleted: nodestate.Completed = {
+    val date = DateTimeConverter.now
+    nodestate.Completed(date, date.plusMinutes(1), Seq())
+  }
+
+  protected def nodeCompletedId(nodeId: Node.Id): nodestate.Completed = {
+    val date = DateTimeConverter.now
+    nodestate.Completed(date, date.plusMinutes(1), results(nodeId))
   }
 }

@@ -36,7 +36,7 @@ lazy val reportlib              = project dependsOn commons
 lazy val workflowexecutor       = project dependsOn (
   commons % "test->test",
   deeplang,
-  graph,
+  graph % "test->test",
   models,
   workflowjson)
 

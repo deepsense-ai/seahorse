@@ -33,6 +33,9 @@ case class StatefulGraph(
   with KnowledgeInference
   with NodeInferenceImpl {
 
+  require(states.size == directedGraph.nodes.size,
+    "A graph should know states of all its nodes (and only its nodes)!")
+
   /**
    * Tells the graph that an execution of a node has started.
    */
@@ -127,6 +130,40 @@ case class StatefulGraph(
         fail(StatefulGraph.cyclicGraphFailureDescription)
       case Failure(ex) =>
         fail(StatefulGraph.genericFailureDescription(ex))
+    }
+  }
+
+  def updateStates(changedGraph: StatefulGraph): StatefulGraph = {
+    val updatedStates = states ++ changedGraph.states
+    copy(states = updatedStates)
+  }
+
+  def subgraph(nodes: Set[Node.Id]): StatefulGraph = {
+    val directedsubgraph = directedGraph.subgraph(nodes)
+    val substates = states.filter { case (id, _) => directedsubgraph.nodes.map(_.id).contains(id) }
+    copy(directedsubgraph, substates)
+  }
+
+  def draft(nodeId: Node.Id): StatefulGraph = {
+    copy(states = markChildrenDraft(states, nodeId))
+  }
+
+  def enqueueDraft: StatefulGraph = {
+    val enqueued = states.mapValues(s => if (s.isDraft) s.enqueue else s)
+    copy(states = enqueued)
+  }
+
+  private def markChildrenDraft(
+    states: Map[Node.Id, NodeState],
+    draftNodeId: Node.Id): Map[Node.Id, NodeState] = {
+    val children = directedGraph.successorsOf(draftNodeId)
+    val draftedState = states.updated(draftNodeId, nodestate.Draft)
+    if (children.isEmpty) {
+      draftedState
+    } else {
+      children.toSeq.foldLeft(draftedState){ (states, node) =>
+        markChildrenDraft(states, node)
+      }
     }
   }
 
