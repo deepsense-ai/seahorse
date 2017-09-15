@@ -340,15 +340,23 @@ p.footer-text span {
 
 .contact-block {
   padding: 40px 30px;
-  margin: 40px 0;
+  margin: 45px 0;
   display: flex;
   flex-direction: row;
-  justify-content:
-  space-around;
+  justify-content: space-around;
+  align-items: center;
   border-width: 2px;
   border-style: solid;
   border-color: #418ecc;
   font-family: 'Open Sans', sans-serif;
+  font-size: 1.3em;
+}
+
+.contact-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 55%;
 }
 
 .contact-block-button {
@@ -358,20 +366,45 @@ p.footer-text span {
   height: 60px;
 }
 
-.contact-block-info {
-  margin-top: 10px;
-  height: 10px;
-  font-weight: bold;
-}
-
 .contact-block-button > a {
-  padding: 15px 25px;
+  padding: 25px 25px;
   color: inherit;
   text-transform: uppercase;
   font-family: museo-sans, sans-serif;
   font-weight: normal;
   font-size: 16px;
   letter-spacing: 0.1px;
+}
+
+.download-button {
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  margin: 30px auto 15px auto;
+  width: 400px;
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  background-color: #418ecc
+}
+
+.download-button > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  height: 100px;
+  width: 400px;
+  color: white;
+  font-size: 26px;
+}
+
+.icon-download {
+  margin-left: 10px;
+  font-size: 19px;
+}
+
+.mb-xl {
+  margin-bottom: 30px !important;
 }
 
 code {

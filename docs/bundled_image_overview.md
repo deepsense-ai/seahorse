@@ -42,9 +42,9 @@ see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> p
 
 
 <div class="contact-block">
-	<div>
-		<p class="contact-block-info">Learn more about Seahorse enterprise-scale deployments
-		<br>- includes customized set-up, integration and 24/7 support.</p>
+	<div class="contact-info">
+		<p>Learn more about Seahorse enterprise-scale deployments
+		- includes customized set-up, integration and 24/7 support.</p>
 	</div>
 	<div>
 		<button class="contact-block-button">
