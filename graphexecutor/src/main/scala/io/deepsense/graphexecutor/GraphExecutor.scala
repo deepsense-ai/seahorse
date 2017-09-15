@@ -268,7 +268,6 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     Thread.sleep(Constants.UnregisteringAndClosingRpcServerDelay)
     rpcServer.close()
     executorsPool.shutdown()
-    // TODO: don't print anything
     entityStorageClientFactory.close()
     logger.debug("cleanup end")
   }

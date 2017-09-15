@@ -37,8 +37,6 @@ abstract class DOperationsCatalog {
    * @param description description of operation
    * @tparam T DOperation class to register
    */
-  // TODO: currently operation.name identifies operation.
-  // Move id field to DOperation and let id identify operation
   def registerDOperation[T <: DOperation : ru.TypeTag](
       category: DOperationCategory,
       description: String): Unit
