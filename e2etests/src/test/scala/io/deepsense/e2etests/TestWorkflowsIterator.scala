@@ -15,7 +15,7 @@ object TestWorkflowsIterator {
   def foreach[T](f: Input => T): Unit = foreachInDirectory(f, testsDir)
 
   private def foreachInDirectory[T](f: Input => T, dir: File): Unit = {
-    dir.listFiles.foreach { file =>
+    dir.listFiles.filter(!_.getName.startsWith("IGNORED")).foreach { file =>
       if (file.isFile) {
         val relativePath = testsDirUri.relativize(file.toURI)
         val source = scala.io.Source.fromFile(file)
