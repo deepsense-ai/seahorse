@@ -15,6 +15,15 @@ function Experiment() {
   internal.edges = {};
   internal.parameters = {};
 
+  that.STATUS = {
+    'INDRAFT':   'status_indraft',
+    'RUNNING':   'status_running',
+    'COMPLETED': 'status_completed',
+    'FAILED':    'status_failed',
+    'ABORTED':   'status_aborted'
+  };
+  that.STATUS_UNKNOWN = 'status_unknown';
+
   that.getNodes = function getNodes() {
     return internal.nodes;
   };
@@ -81,6 +90,26 @@ function Experiment() {
     internal.id = data.id;
     internal.name = data.name;
     internal.description = data.description;
+  };
+
+  /**
+   * Sets experiment status.
+   *
+   * @param {object} state
+   */
+  that.setStatus = function setStatus(state) {
+    if (state && state.status && Object.keys(that.STATUS).indexOf(state.status) > -1) {
+      that.status = that.STATUS[state.status];
+    }
+  };
+
+  /**
+   * Returns experiment status.
+   *
+   * @return {[type]}
+   */
+  that.getStatus = function getStatus() {
+    return that.status || that.STATUS_UNKNOWN;
   };
 
   that.getParametersSchemaById = function getParametersSchemaById(id) {

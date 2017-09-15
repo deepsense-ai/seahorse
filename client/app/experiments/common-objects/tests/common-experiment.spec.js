@@ -149,4 +149,25 @@ describe('experiment', () => {
     expect(experiment.serialize()).toEqual(serializedData);
   });
 
+  it('handle status changes', () => {
+    let experiment = new Experiment();
+    expect(experiment.getStatus()).toBe(experiment.STATUS_UNKNOWN);
+
+    experiment.setStatus({
+      'status': 'RUNNING'
+    });
+    expect(experiment.getStatus()).toBe(experiment.STATUS.RUNNING);
+
+    experiment.setStatus();
+    expect(experiment.getStatus()).toBe(experiment.STATUS.RUNNING);
+    experiment.setStatus(false);
+    expect(experiment.getStatus()).toBe(experiment.STATUS.RUNNING);
+    experiment.setStatus({});
+    expect(experiment.getStatus()).toBe(experiment.STATUS.RUNNING);
+    experiment.setStatus({
+      'status': 'x'
+    });
+    expect(experiment.getStatus()).toBe(experiment.STATUS.RUNNING);
+  });
+
 });
