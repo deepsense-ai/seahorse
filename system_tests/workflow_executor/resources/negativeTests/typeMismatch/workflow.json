@@ -28,15 +28,23 @@
       "id": "4f6b7735-cc9f-871d-34c1-961aa9afec7d",
       "operation": {
         "id": "012876d9-7a72-47f9-98e4-8ed26db14d6d",
-        "name": "Execute Mathematical Transformation"
+        "name": "SQL Column Transformation"
       },
       "parameters": {
         "formula": "2",
-        "input column": {
-          "type": "column",
-          "value": "two"
-        },
-        "output column name": "two_modified"
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "one"
+            },
+            "output": {
+              "append new column": {
+                "output column": "four"
+              }
+            }
+          }
+        }
       }
     }, {
       "id": "b83ca380-73af-bc2d-4929-d9638eaa04da",
@@ -73,34 +81,44 @@
     "gui": {
       "name": "TypeMismatch",
       "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
         "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 100,
-            "y": 45
+            "x": 118,
+            "y": 29
           }
         },
         "4f6b7735-cc9f-871d-34c1-961aa9afec7d": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 178,
-            "y": 56
+            "x": 132,
+            "y": 156
           }
         },
         "b83ca380-73af-bc2d-4929-d9638eaa04da": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 188,
-            "y": 178
+            "x": 191,
+            "y": 275
           }
         }
       }
+    },
+    "notebooks": {
+
     }
   },
   "variables": {
 
   },
-  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "id": "379fed31-d13c-403f-9877-6720f1855b35",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.0.0"
+    "apiVersion": "1.1.0"
   }
 }

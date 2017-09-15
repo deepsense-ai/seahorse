@@ -12,8 +12,10 @@ from json_pattern_utils import create_extracted_pattern_file
 def main(argv):
   source_path = "workflow_executor/output"
   destination_path = "workflow_executor/resources"
+  result_file = "result.json"
+  expected_pattern_file = "expectedReportPattern.json"
   try:
-    opts, args = getopt.getopt(argv, "hi:o:", [])
+    opts, args = getopt.getopt(argv, "hi:o:", ["narrow"])
   except getopt.GetoptError:
     print __file__ + ' -i <input_dir> -o <output_dir>'
     sys.exit(2)
@@ -25,6 +27,9 @@ def main(argv):
       source_path = arg
     elif opt in ("-o"):
       destination_path = arg
+    elif opt in ("--narrow"):
+      source_path = destination_path
+      result_file = expected_pattern_file
   print 'Source directory is ', source_path
   print 'Output directory is ', destination_path
 
@@ -39,9 +44,9 @@ def main(argv):
     for test_dir in test_dirs:
       source_test_path = path.join(source_suite_path, test_dir)
       destination_test_path = path.join(destination_suite_path, test_dir)
-      source_file = path.join(source_test_path, "result.json")
+      source_file = path.join(source_test_path, result_file)
       if path.isfile(source_file):
-        output_file = path.join(destination_test_path, "expectedReportPattern.json")
+        output_file = path.join(destination_test_path, expected_pattern_file)
         if not path.exists(destination_test_path):
           makedirs(destination_test_path)
         print "Analysing report source: " + source_file

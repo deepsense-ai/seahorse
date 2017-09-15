@@ -19,9 +19,6 @@ Library    ../lib/CommonSetupsAndTeardowns.py
 
 
 *** Test Cases ***
-Incorrect Workflow Error
-    Run Workflow Local
-    Check Report
 
 Execution Error
     Run Workflow Local
@@ -30,3 +27,8 @@ Execution Error
 Success
     Run Workflow Local
     Check Report
+
+## JIRA: DS-2912 Enters an infinite loop
+#Incorrect Workflow Error
+#    Run Workflow Local
+#    Check Report

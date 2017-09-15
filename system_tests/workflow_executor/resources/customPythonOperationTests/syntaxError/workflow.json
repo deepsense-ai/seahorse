@@ -28,10 +28,10 @@
       "id": "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff",
       "operation": {
         "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
-        "name": "Custom Python operation"
+        "name": "Python Transformation"
       },
       "parameters": {
-        "code": "from pyspark.sql.types import Row\nde_SYNTAX_ERROR_f transform(dataframe):\n  return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers, row.numbers*2)))"
+        "code": "from pyspark.sql.types import Row\nde_SYNTAX_ERROR_f transform(dataframe):\n    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers, row.numbers*2)))"
       }
     }],
     "connections": [{
@@ -56,7 +56,7 @@
           "color": "#00B1EB",
           "coordinates": {
             "x": 5349,
-            "y": 5152
+            "y": 5151
           }
         },
         "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff": {
@@ -68,14 +68,17 @@
           }
         }
       }
+    },
+    "notebooks": {
+
     }
   },
   "variables": {
 
   },
-  "id": "a6f96eff-1d88-4d5e-8299-ad4cac5c5f06",
+  "id": "83b21b6c-4d63-4029-809e-0e34dd71ff46",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.0.0"
+    "apiVersion": "1.1.0"
   }
 }

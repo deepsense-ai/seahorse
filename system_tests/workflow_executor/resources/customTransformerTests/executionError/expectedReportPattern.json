@@ -1,21 +1,21 @@
 {
   "executionReport": {
     "nodes": {
-      "baf99b23-6e7a-ff1a-d790-460e29524082": {
+      "3d0336e6-8b9d-fa90-3048-b3df511a26a8": {
         "status": "COMPLETED", 
         "results": [
-          "42373559-41f5-47fe-a49b-bd064784ff55"
+          "0f384a40-9eaf-4847-9812-be32c2cc73aa"
         ], 
         "error": null
       }, 
-      "a17c9162-7089-f8dd-7beb-c571dea5ff37": {
+      "aba92e81-70a8-64fb-24d8-0098db73bd93": {
         "status": "COMPLETED", 
         "results": [
-          "39c576e5-9ff7-46d3-ad83-95903de4aa64"
+          "98364ce9-ea05-48c3-9af9-765980eb7c28"
         ], 
         "error": null
       }, 
-      "2659efc3-6256-06ea-0f9a-d2137a748fa3": {
+      "503ea312-13cf-49cf-5665-d1b46b1ce7b9": {
         "status": "FAILED", 
         "results": null, 
         "error": {
@@ -24,107 +24,8 @@
       }
     }, 
     "resultEntities": {
-      "42373559-41f5-47fe-a49b-bd064784ff55": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "Parameter", 
-                "Value", 
-                "Description"
-              ], 
-              "columnTypes": [
-                "string", 
-                "string", 
-                "string"
-              ], 
-              "rowNames": null, 
-              "values": [], 
-              "name": "Parameters"
-            }
-          ], 
-          "distributions": {}, 
-          "reportType": "Model"
-        }
-      }, 
-      "39c576e5-9ff7-46d3-ad83-95903de4aa64": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "column1", 
-                "column2"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1", 
-                  "5"
-                ], 
-                [
-                  "2", 
-                  "6"
-                ], 
-                [
-                  "3", 
-                  "7"
-                ], 
-                [
-                  "4", 
-                  "8"
-                ]
-              ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "4"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }
-          ], 
-          "distributions": {
-            "column1": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "4", 
-                "mean": "2.5", 
-                "min": "1"
-              }, 
-              "name": "column1", 
-              "missingValues": 0
-            }, 
-            "column2": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "8", 
-                "mean": "6.5", 
-                "min": "5"
-              }, 
-              "name": "column2", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
-        }
-      }
-    }, 
-    "error": null
+      "98364ce9-ea05-48c3-9af9-765980eb7c28": {}, 
+      "0f384a40-9eaf-4847-9812-be32c2cc73aa": {}
+    }
   }
 }

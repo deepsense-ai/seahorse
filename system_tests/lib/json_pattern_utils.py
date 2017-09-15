@@ -12,64 +12,27 @@ import json
 
 
 class PM:
-  class Ignore: pass  # As dict value: key and value is ignored
+  class Ignore: pass  # As a dict value: key and value is ignored
 
-  class Match: pass  # As dict value: entire json structure is copied as expected pattern if exists
+  class Match: pass  # As a dict value: entire sub-structure is copied as expected pattern if exists
 
-  class Any: pass  # As dict key: keys not ignored and not directly specified
+  class Any: pass  # As a dict key: keys not ignored and not directly specified
 
 
 MAX_RELATIVE_ERROR = 0.5
 MAX_ABSOLUTE_ERROR = 1
 
 REPORT_PATTERN = {
-  'workflow': PM.Ignore,
-  'thirdPartyData': PM.Ignore,
-  'id': PM.Ignore,
-  'metadata': PM.Ignore,
   'executionReport': {
-    'resultEntities': {
-      PM.Any: {
-        'className': PM.Ignore,
-        'report': {
-          'name': PM.Ignore,
-          'tables': [
-            {
-              'description': PM.Ignore,
-              PM.Any: PM.Match
-            }
-          ],
-          'distributions': {
-            PM.Any: {
-              'description': PM.Ignore,
-              'buckets': PM.Ignore,
-              'counts': PM.Ignore,
-              'statistics': {
-                'min': PM.Match,
-                'max': PM.Match,
-                'mean': PM.Match
-              },
-              PM.Any: PM.Match
-            }
-          },
-          PM.Any: PM.Match
-        }
-      }
-    },
-    'error': {
-      'code': PM.Match,
-      'title': PM.Match
-    },
     'nodes': {
       PM.Any: {
-        'ended': PM.Ignore,
-        'started': PM.Ignore,
-        'error': {
-          'code': PM.Match
-        },
         'status': PM.Match,
-        PM.Any: PM.Match
+        'results': PM.Match,
+        'error': {'code': PM.Match}
       }
+    },
+    'resultEntities': {
+      PM.Any: {}
     }
   }
 }

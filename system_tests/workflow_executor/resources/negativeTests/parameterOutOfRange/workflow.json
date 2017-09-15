@@ -1,17 +1,7 @@
 {
   "workflow": {
     "nodes": [{
-      "id": "1870441c-f2c1-27aa-c9d5-026f9d392529",
-      "operation": {
-        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
-        "name": "Split"
-      },
-      "parameters": {
-        "split ratio": 2.0,
-        "seed": 1.0
-      }
-    }, {
-      "id": "75759e25-3236-82b6-fc04-85ad03ab7a41",
+      "id": "7f3120b5-aec4-b937-cfb6-3728dc55f9b2",
       "operation": {
         "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
         "name": "Read DataFrame"
@@ -19,29 +9,27 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "file:///tmp/file.csv",
-            "format": {
-              "CSV": {
-                "separator": {
-                  ",": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": true
-              }
-            }
+            "source": "hdfs://spark-cluster-1/system_tests/parameterOutOfRange/input.csv"
           }
         }
+      }
+    }, {
+      "id": "285193be-7abb-06ff-dd56-a0e09d2489ba",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split ratio": 2.0
       }
     }],
     "connections": [{
       "from": {
-        "nodeId": "75759e25-3236-82b6-fc04-85ad03ab7a41",
+        "nodeId": "7f3120b5-aec4-b937-cfb6-3728dc55f9b2",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "1870441c-f2c1-27aa-c9d5-026f9d392529",
+        "nodeId": "285193be-7abb-06ff-dd56-a0e09d2489ba",
         "portIndex": 0
       }
     }]
@@ -50,28 +38,36 @@
     "gui": {
       "name": "Draft workflow",
       "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
-        "1870441c-f2c1-27aa-c9d5-026f9d392529": {
+        "7f3120b5-aec4-b937-cfb6-3728dc55f9b2": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 252,
-            "y": 213
+            "x": 257,
+            "y": 76
           }
         },
-        "75759e25-3236-82b6-fc04-85ad03ab7a41": {
+        "285193be-7abb-06ff-dd56-a0e09d2489ba": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 255,
-            "y": 80
+            "x": 269,
+            "y": 217
           }
         }
       }
+    },
+    "notebooks": {
+
     }
   },
   "variables": {
 
   },
-  "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
+  "id": "9d5e4024-d735-49de-a5a0-8d21ded2ee50",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.0.0"
+    "apiVersion": "1.1.0"
   }
 }

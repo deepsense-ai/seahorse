@@ -17,68 +17,7 @@
       }
     }, 
     "resultEntities": {
-      "83cae7f5-3518-4676-8efd-5e7fb1b39294": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "numbers"
-              ], 
-              "columnTypes": [
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1"
-                ], 
-                [
-                  "2"
-                ], 
-                [
-                  "3"
-                ], 
-                [
-                  "4"
-                ]
-              ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1", 
-                  "4"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }
-          ], 
-          "distributions": {
-            "numbers": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "4", 
-                "mean": "2.5", 
-                "min": "1"
-              }, 
-              "name": "numbers", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
-        }
-      }
-    }, 
-    "error": null
+      "83cae7f5-3518-4676-8efd-5e7fb1b39294": {}
+    }
   }
 }

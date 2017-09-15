@@ -2,15 +2,13 @@
   "executionReport": {
     "nodes": {
       "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": {
-        "status": "ABORTED", 
-        "results": [], 
-        "error": null
+        "status": "FAILED", 
+        "results": null, 
+        "error": {
+          "code": "IncorrectNode"
+        }
       }
     }, 
-    "resultEntities": {}, 
-    "error": {
-      "code": "IncorrectWorkflow", 
-      "title": "Incorrect workflow"
-    }
+    "resultEntities": {}
   }
 }

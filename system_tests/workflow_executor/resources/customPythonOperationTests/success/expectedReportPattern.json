@@ -4,158 +4,23 @@
       "806d1a75-7f9b-3de1-3fc9-6f644684835d": {
         "status": "COMPLETED", 
         "results": [
-          "8ad4c5b2-d27e-450c-b423-2261efc97fb7"
+          "6e680337-0d1c-4bfc-8e21-504adeac84d6"
         ], 
         "error": null
       }, 
       "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff": {
         "status": "COMPLETED", 
         "results": [
-          "13565678-7f39-41a9-80df-e7dee0b6cfbb"
+          "2b9bc145-d832-4fee-bc1d-37f6641bb48e", 
+          "9eeb3845-1efb-4645-b106-8747a5d0f3b5"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "8ad4c5b2-d27e-450c-b423-2261efc97fb7": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "numbers"
-              ], 
-              "columnTypes": [
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1"
-                ], 
-                [
-                  "2"
-                ], 
-                [
-                  "3"
-                ], 
-                [
-                  "4"
-                ]
-              ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1", 
-                  "4"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }
-          ], 
-          "distributions": {
-            "numbers": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "4", 
-                "mean": "2.5", 
-                "min": "1"
-              }, 
-              "name": "numbers", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
-        }
-      }, 
-      "13565678-7f39-41a9-80df-e7dee0b6cfbb": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "_1", 
-                "_2"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1", 
-                  "2"
-                ], 
-                [
-                  "2", 
-                  "4"
-                ], 
-                [
-                  "3", 
-                  "6"
-                ], 
-                [
-                  "4", 
-                  "8"
-                ]
-              ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "4"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }
-          ], 
-          "distributions": {
-            "_2": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "8", 
-                "mean": "5", 
-                "min": "2"
-              }, 
-              "name": "_2", 
-              "missingValues": 0
-            }, 
-            "_1": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "4", 
-                "mean": "2.5", 
-                "min": "1"
-              }, 
-              "name": "_1", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
-        }
-      }
-    }, 
-    "error": null
+      "6e680337-0d1c-4bfc-8e21-504adeac84d6": {}, 
+      "2b9bc145-d832-4fee-bc1d-37f6641bb48e": {}, 
+      "9eeb3845-1efb-4645-b106-8747a5d0f3b5": {}
+    }
   }
 }

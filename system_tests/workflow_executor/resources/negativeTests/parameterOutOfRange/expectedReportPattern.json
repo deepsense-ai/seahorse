@@ -1,21 +1,19 @@
 {
   "executionReport": {
     "nodes": {
-      "75759e25-3236-82b6-fc04-85ad03ab7a41": {
-        "status": "ABORTED", 
-        "results": [], 
-        "error": null
+      "285193be-7abb-06ff-dd56-a0e09d2489ba": {
+        "status": "FAILED", 
+        "results": null, 
+        "error": {
+          "code": "IncorrectNode"
+        }
       }, 
-      "1870441c-f2c1-27aa-c9d5-026f9d392529": {
-        "status": "ABORTED", 
+      "7f3120b5-aec4-b937-cfb6-3728dc55f9b2": {
+        "status": "DRAFT", 
         "results": [], 
         "error": null
       }
     }, 
-    "resultEntities": {}, 
-    "error": {
-      "code": "IncorrectWorkflow", 
-      "title": "Incorrect workflow"
-    }
+    "resultEntities": {}
   }
 }

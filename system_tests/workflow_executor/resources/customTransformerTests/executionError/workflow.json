@@ -1,7 +1,7 @@
 {
   "workflow": {
     "nodes": [{
-      "id": "a17c9162-7089-f8dd-7beb-c571dea5ff37",
+      "id": "aba92e81-70a8-64fb-24d8-0098db73bd93",
       "operation": {
         "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
         "name": "Read DataFrame"
@@ -9,30 +9,18 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/customTransformerTests/success/input.csv",
-            "format": {
-              "CSV": {
-                "separator": {
-                  ",": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": false
-              }
-            }
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/customTransformerTests/success/input.csv"
           }
         }
       }
     }, {
-      "id": "baf99b23-6e7a-ff1a-d790-460e29524082",
+      "id": "3d0336e6-8b9d-fa90-3048-b3df511a26a8",
       "operation": {
         "id": "65240399-2987-41bd-ba7e-2944d60a3404",
         "name": "Create Custom Transformer"
       },
       "parameters": {
         "inner workflow": {
-          "id": "4f3af8ab-b145-4e0f-d537-bd1bde42c062",
           "workflow": {
             "nodes": [{
               "id": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
@@ -53,19 +41,27 @@
 
               }
             }, {
-              "id": "79318906-a5eb-b2ac-fb8d-d5bdca6a3059",
+              "id": "541bbde3-c0ad-4c93-4e2c-b3f9807f2215",
               "operation": {
                 "id": "012876d9-7a72-47f9-98e4-8ed26db14d6d",
-                "name": "Execute Mathematical Transformation"
+                "name": "SQL Column Transformation"
               },
               "parameters": {
-                "input column alias": "x",
-                "formula": "2*x",
-                "input column": {
-                  "type": "column",
-                  "value": "invalid column"
-                },
-                "output column name": "output"
+                "input column alias": null,
+                "formula": "x**2",
+                "operate on": {
+                  "one column": {
+                    "input column": {
+                      "type": "column",
+                      "value": "column1"
+                    },
+                    "output": {
+                      "append new column": {
+                        "output column": "output_column"
+                      }
+                    }
+                  }
+                }
               }
             }],
             "connections": [{
@@ -74,12 +70,12 @@
                 "portIndex": 0
               },
               "to": {
-                "nodeId": "79318906-a5eb-b2ac-fb8d-d5bdca6a3059",
+                "nodeId": "541bbde3-c0ad-4c93-4e2c-b3f9807f2215",
                 "portIndex": 0
               }
             }, {
               "from": {
-                "nodeId": "79318906-a5eb-b2ac-fb8d-d5bdca6a3059",
+                "nodeId": "541bbde3-c0ad-4c93-4e2c-b3f9807f2215",
                 "portIndex": 0
               },
               "to": {
@@ -109,12 +105,12 @@
                     "y": 5247
                   }
                 },
-                "79318906-a5eb-b2ac-fb8d-d5bdca6a3059": {
+                "541bbde3-c0ad-4c93-4e2c-b3f9807f2215": {
                   "uiName": "",
                   "color": "#00B1EB",
                   "coordinates": {
-                    "x": 5201,
-                    "y": 5101
+                    "x": 5185,
+                    "y": 5096
                   }
                 }
               }
@@ -123,68 +119,70 @@
           "variables": {
 
           },
-          "publicParams": []
+          "publicParams": [],
+          "id": "a280dda2-b450-9759-8fd9-4ee19241b3a1"
         }
       }
     }, {
-      "id": "2659efc3-6256-06ea-0f9a-d2137a748fa3",
+      "id": "503ea312-13cf-49cf-5665-d1b46b1ce7b9",
       "operation": {
         "id": "643d8706-24db-4674-b5b4-10b5129251fc",
         "name": "Transform"
       },
       "parameters": {
         "Parameters of input Transformer": {
+
         }
       }
     }],
     "connections": [{
       "from": {
-        "nodeId": "a17c9162-7089-f8dd-7beb-c571dea5ff37",
+        "nodeId": "aba92e81-70a8-64fb-24d8-0098db73bd93",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "2659efc3-6256-06ea-0f9a-d2137a748fa3",
+        "nodeId": "503ea312-13cf-49cf-5665-d1b46b1ce7b9",
         "portIndex": 0
       }
     }, {
       "from": {
-        "nodeId": "baf99b23-6e7a-ff1a-d790-460e29524082",
+        "nodeId": "3d0336e6-8b9d-fa90-3048-b3df511a26a8",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "2659efc3-6256-06ea-0f9a-d2137a748fa3",
+        "nodeId": "503ea312-13cf-49cf-5665-d1b46b1ce7b9",
         "portIndex": 1
       }
     }]
   },
   "thirdPartyData": {
     "gui": {
-      "name": "Create custom transformer",
+      "name": "customTransformerTests/executionError",
       "description": "",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
-        "a17c9162-7089-f8dd-7beb-c571dea5ff37": {
+        "aba92e81-70a8-64fb-24d8-0098db73bd93": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4976,
-            "y": 4987
+            "x": 5282,
+            "y": 5155
           }
         },
-        "baf99b23-6e7a-ff1a-d790-460e29524082": {
+        "3d0336e6-8b9d-fa90-3048-b3df511a26a8": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5348,
-            "y": 5000
+            "x": 5537,
+            "y": 5161
           }
         },
-        "2659efc3-6256-06ea-0f9a-d2137a748fa3": {
+        "503ea312-13cf-49cf-5665-d1b46b1ce7b9": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5164,
-            "y": 5221
+            "x": 5389,
+            "y": 5311
           }
         }
       }
@@ -196,9 +194,9 @@
   "variables": {
 
   },
-  "id": "b54d6320-3e8d-41ff-9612-bfe491cacde7",
+  "id": "fe3a0306-304e-44db-970e-2bc57628ea52",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.0.0"
+    "apiVersion": "1.1.0"
   }
 }

@@ -7,24 +7,7 @@
         "name": "Convert Type"
       },
       "parameters": {
-        "target type": {
-          "string": {
 
-          }
-        },
-        "one or many": {
-          "Transform one column": {
-            "input column": {
-              "type": "index",
-              "value": 1
-            },
-            "transform in place": {
-              "transform in place": {
-
-              }
-            }
-          }
-        }
       }
     }, {
       "id": "f94e783e-e33a-a000-fe83-5a4e67890bb6",
@@ -33,24 +16,7 @@
         "name": "Convert Type"
       },
       "parameters": {
-        "target type": {
-          "string": {
 
-          }
-        },
-        "one or many": {
-          "Transform one column": {
-            "input column": {
-              "type": "index",
-              "value": 1
-            },
-            "transform in place": {
-              "transform in place": {
-
-              }
-            }
-          }
-        }
       }
     }],
     "connections": [{
@@ -107,6 +73,6 @@
   "id": "6c20f9e3-2158-42b3-a663-5c8ce64e4215",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.0.0"
+    "apiVersion": "1.1.0"
   }
 }
