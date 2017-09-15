@@ -61,3 +61,13 @@ trait FileSystemClient {
 }
 
 case class FileInfo(size: Long, modificationTime: DateTime)
+
+object FileSystemClient {
+  def replaceLeadingTildeWithHomeDirectory(path: String): String = {
+    if (path.startsWith("~/")) {
+      path.replaceFirst("~/", System.getProperty("user.home") + "/")
+    } else {
+      path
+    }
+  }
+}
