@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2015, CodiLime, Inc.
+# Copyright (c) 2015, CodiLime Inc.
 #
 # Prepares frontend zip and publishes it to artifactory.
 # This script expects no external parameters.
@@ -20,22 +20,22 @@ function prepare_environment() {
 }
 
 function build() {
-   echo "** Building package **"
-   gulp clean
-   gulp build
+  echo "** Building package **"
+  gulp clean
+  gulp build
 }
 
 function calculate_full_version() {
-   echo "** Calculating version **"
-   DATE=`date -u +%Y-%m-%d_%H-%M-%S`
-   GIT_SHA=`git rev-parse HEAD`
-   GIT_SHA_PREFIX=${GIT_SHA:0:7}
-   export FULL_VERSION="${BASE_VERSION}-${DATE}-${GIT_SHA_PREFIX}-SNAPSHOT"
+  echo "** Calculating version **"
+  DATE=`date -u +%Y-%m-%d_%H-%M-%S`
+  GIT_SHA=`git rev-parse HEAD`
+  GIT_SHA_PREFIX=${GIT_SHA:0:7}
+  export FULL_VERSION="${BASE_VERSION}-${DATE}-${GIT_SHA_PREFIX}-SNAPSHOT"
 }
 
 function package() {
-   echo "** Preparing zip package **"
-   zip -r -q "${FULL_VERSION}.zip" build
+  echo "** Preparing zip package **"
+  zip -r -q "${FULL_VERSION}.zip" build
 }
 
 #Publishes zip file (first parameter) with given version (second parameter)
