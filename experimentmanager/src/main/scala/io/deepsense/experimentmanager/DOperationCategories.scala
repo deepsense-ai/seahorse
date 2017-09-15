@@ -28,6 +28,8 @@ object DOperationCategories {
     object Clustering extends DOperationCategory(UUID.randomUUID(), "Clustering", ML)
 
     object Evaluation extends DOperationCategory(UUID.randomUUID(), "Evaluation", ML)
+
+    object FeatureSelection extends DOperationCategory(UUID.randomUUID(), "Feature selection", ML)
   }
 
   object Utils extends DOperationCategory(UUID.randomUUID(), "Utilities", None)

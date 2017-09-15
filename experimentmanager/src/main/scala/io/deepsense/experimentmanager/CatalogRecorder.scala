@@ -65,7 +65,7 @@ object CatalogRecorder {
 
     catalog.registerDOperation[ProjectColumns](
       DOperationCategories.Utils,
-      "Projects columns...FIXME"
+      "Projects columns of dataframe"
     )
 
     catalog.registerDOperation[TimestampDecomposer](
@@ -80,7 +80,7 @@ object CatalogRecorder {
 
     catalog.registerDOperation[EvaluateRegression](
       DOperationCategories.ML.Regression,
-      "Evaluates regression...FIXME"
+      "Evaluates regression model"
     )
 
     catalog.registerDOperation[TrainRegressor](
@@ -121,6 +121,11 @@ object CatalogRecorder {
     catalog.registerDOperation[ApplyTransformation](
       DOperationCategories.Utils,
       "Apply Transformation"
+    )
+
+    catalog.registerDOperation[SelectImportantFeatures](
+      DOperationCategories.ML.FeatureSelection,
+      "Selects most important features of dataframe"
     )
   }
 }
