@@ -38,7 +38,8 @@ class ModelsApi @Inject()(
 
   val deeplangContext: deeplang.ExecutionContext = {
     val ctx = new DExecutionContext
-    ctx.hdfsClient = new DSHdfsClient(new DFSClient(new URI("hdfs://ds-dev-env-master:8020"), new Configuration()))
+    ctx.hdfsClient = new DSHdfsClient(
+      new DFSClient(new URI("hdfs://ds-dev-env-master:8020"), new Configuration()))
     val esFactory = EntityStorageClientFactoryImpl()
     ctx.entityStorageClient =
       Try(esFactory.create("root-actor-system", "127.0.0.1", 2552, "EntitiesApiActor", 10))
