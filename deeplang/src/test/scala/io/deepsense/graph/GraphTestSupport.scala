@@ -66,10 +66,10 @@ trait GraphTestSupport {
    * To each node assigns the specified Id.
    */
 
-  val nodesSeq = nodes(op0To1, op1To1, op1To1, op1To1, op2To2)
+  val nodesSeq = generateNodes(op0To1, op1To1, op1To1, op1To1, op2To2)
   val nodeSet = nodesSeq.map(_._2).toSet
   val idA :: idB :: idC :: idD :: idE :: Nil = nodesSeq.map(_._1).toList
-  val nodeA :: nodeB :: nodeC :: nodeD :: nodeE :: Nil = nodesSeq.map(_._2)
+  val nodeA :: nodeB :: nodeC :: nodeD :: nodeE :: Nil = nodesSeq.map(_._2).toList
 
   val edgeList: List[Edge] = edges(idA, idB, idC, idD, idE)
   val edge1 :: edge2 :: edge3 :: edge4 :: edge5 :: Nil = edgeList
@@ -100,13 +100,8 @@ trait GraphTestSupport {
     )
   }
 
-  private def nodes(
-      opA: DOperation,
-      opB: DOperation,
-      opC: DOperation,
-      opD: DOperation,
-      opE: DOperation): Seq[(Node.Id, DeeplangNode)] = {
-    val nodes = Seq(opA, opB, opC, opD, opE).map { o => Node(Node.Id.randomId, o)}
+  protected def generateNodes(ops: DOperation*): Seq[(Node.Id, DeeplangNode)] = {
+    val nodes = ops.map { o => Node(Node.Id.randomId, o)}
     nodes.map(n => n.id -> n)
   }
 

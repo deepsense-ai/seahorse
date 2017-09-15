@@ -206,6 +206,34 @@ class StatefulGraphSpec
       finished.readyNodes shouldBe 'empty
       finished should not be 'Running
     }
+    "have nodes that certainly won't finish aborted" in {
+      /** Diamond graph:
+        *    S
+        *   / \
+        *  U   V
+        *   \ /
+        *    T
+        * When V fails, there is no possibility that T succeeds, hence it should be aborted.
+        */
+      val Seq((idS, nodeS), (idU, nodeU), (idV, nodeV), (idT, nodeT)) = generateNodes(op0To1, op1To1, op1To1, op2To2)
+      val edges = Set(
+        Edge(Endpoint(idS, 0), Endpoint(idU, 0)),
+        Edge(Endpoint(idS, 0), Endpoint(idV, 0)),
+        Edge(Endpoint(idU, 0), Endpoint(idT, 0)),
+        Edge(Endpoint(idV, 0), Endpoint(idT, 1))
+      )
+      val graph = StatefulGraph(Set(nodeS, nodeU, nodeV, nodeT), edges)
+        .enqueue
+        .nodeStarted(idS)
+        .nodeFinished(idS, Seq(mock[Entity.Id]), Map(), Map())
+        .nodeStarted(idV)
+        .nodeFailed(idV, new DeepLangException("node execution error for test") {})
+
+      graph.states(idS) shouldBe 'Completed
+      graph.states(idU) shouldBe 'Queued
+      graph.states(idV) shouldBe 'Failed
+      graph.states(idT) shouldBe 'Aborted
+    }
     "be serializable" in {
       import io.deepsense.graph.DOperationTestClasses._
       val operationWithInitializedLogger = new DOperationAToALogging

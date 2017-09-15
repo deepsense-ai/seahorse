@@ -284,16 +284,21 @@ case class StatefulGraph(
 
   private def changeState(id: Node.Id)(
       f: (NodeStateWithResults) => NodeStateWithResults): StatefulGraph = {
-    val updatedStates = states.updated(id, f(states(id)))
-    if (nodeRunningOrReadyNodeExist(updatedStates)) {
-      copy(states = updatedStates)
-    } else {
-      if (allNodesCompleted(updatedStates)) {
-        copy(states = updatedStates)
+    val updatedStates = {
+      val newNodeState = f(states(id))
+      val withNodeUpdated = states.updated(id, newNodeState)
+      val successorsOfFailedAborted = if (newNodeState.isFailed) {
+        abortSuccessors(withNodeUpdated, id)
       } else {
-        copy(states = abortUnfinished(updatedStates))
+        withNodeUpdated
+      }
+      if (nodeRunningOrReadyNodeExist(successorsOfFailedAborted)) {
+        successorsOfFailedAborted
+      } else {
+        abortUnfinished(successorsOfFailedAborted)
       }
     }
+    copy(states = updatedStates)
   }
 
   protected def genericNodeFailureDescription(exception: Exception): FailureDescription = {
@@ -314,21 +319,38 @@ case class StatefulGraph(
     states.values.exists(_.isRunning)  || readyNodeExists
   }
 
-  private def allNodesCompleted(states: Map[Node.Id, NodeStateWithResults]): Boolean =
-    states.values.forall(_.isCompleted)
-
   private def abortUnfinished(
       unfinished: Map[Id, NodeStateWithResults]): Map[Id, NodeStateWithResults] = {
-    unfinished.mapValues {
-      case nodeStateWithResults@NodeStateWithResults(state@NodeState(status, _), _, _) =>
-        val newStatus = status match {
-        case r: Running => r.abort
-        case q: Queued => q.abort
-        case d: Draft => d.abort
-        case x => x
+    unfinished.mapValues(abortIfAbortable)
+  }
+
+  private def abortIfAbortable(nodeStateWithResults: NodeStateWithResults) = nodeStateWithResults match {
+    case NodeStateWithResults(state@NodeState(status, _), _, _) =>
+      val newStatus = status match {
+        case _: Running | _: Queued | _: Draft => status.abort
+        case _ => status
       }
       nodeStateWithResults.copy(nodeState = state.copy(nodeStatus = newStatus))
+  }
+
+  private def abortSuccessors(allNodes: Map[Id, NodeStateWithResults], id: Node.Id): Map[Id, NodeStateWithResults] = {
+    val unsuccessfulAtBeginning: Set[DeeplangNode] = Set(node(id))
+    val sorted = {
+      val sortedOpt = topologicallySorted
+      assert(sortedOpt.nonEmpty)
+      sortedOpt.get
     }
+    // if A is a predecessor of B, we will visit A first, so if A is failed/aborted, B will also be aborted.
+    val (_, updatedStates) = sorted
+      .foldLeft[(Set[DeeplangNode], Map[Id, NodeStateWithResults])](unsuccessfulAtBeginning, allNodes) {
+        case ((unsuccessfulNodes, statesMap), node) =>
+          if (allPredecessorsOf(node.id).intersect(unsuccessfulNodes).nonEmpty) {
+            (unsuccessfulNodes + node, statesMap.updated(node.id, abortIfAbortable(statesMap(node.id))))
+          } else {
+            (unsuccessfulNodes, statesMap)
+          }
+      }
+    updatedStates
   }
 }
 
