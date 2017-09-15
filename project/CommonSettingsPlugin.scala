@@ -2,12 +2,9 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-import com.typesafe.sbt.SbtGit.git
+import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.Universal
 import sbt.Keys._
 import sbt._
-import sbtrelease.ReleasePlugin.autoImport._
-import sbtrelease.ReleaseStateTransformations._
-import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.Universal
 
 object CommonSettingsPlugin extends AutoPlugin {
   override def trigger = allRequirements

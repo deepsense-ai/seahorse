@@ -38,6 +38,9 @@ deployment/ansible/vagrant
 sessionmanager.mv.db
 sessionmanager.trace.db
 
+# Swagger-generated code
+datasourcemanager/src/generated/*
+
 # Other
 remote_notebook/notebook_executing_kernel.zip
 docker-compose.yml
