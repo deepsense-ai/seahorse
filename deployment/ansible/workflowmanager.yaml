@@ -13,19 +13,6 @@
     - include: tasks/artifactory_get.yml artifact_path={{wm_artifact_path}} artifactid={{wm_artifact_id}}
     - include: tasks/download_supervisor.yml
 
-- name: Perform cassandra migration
-  hosts: cassandra
-  user: ubuntu
-  sudo: yes
-  vars_files:
-    - vars/env.yml
-    - vars/deployment.yml
-  roles:
-    - { role: cassandra_migration,
-        cql_dir: "{{wm_cql_dir}}",
-        module: "workflowmanager"
-      }
-
 - name: Set up WorkflowManager application
   hosts: master
   user: ubuntu
