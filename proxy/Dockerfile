@@ -20,5 +20,4 @@ COPY . .
 RUN npm run build && \
     rm -rf app
 
-RUN chmod +x start_proxy.sh
-CMD ["./start_proxy.sh"]
+CMD ["npm", "start"]

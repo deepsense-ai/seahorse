@@ -42,7 +42,6 @@ if (config.get('FORCE_HTTPS') === "true") {
 app.use(express.static('app/server/html'));
 app.all("/wait.html");
 app.all("/quota.html");
-app.all("/trial-expired.html");
 
 app.all("/authorization/create_account*",
   resendLinkHack.forwardResendActivationLinkToForgotPasswordLink,
@@ -62,10 +61,6 @@ if (config.get('ENABLE_AUTHORIZATION') === "true") {
 auth.init(app);
 app.use(auth.login);
 app.use(userCookieMiddleware);
-if (config.get('ENABLE_AUTHORIZATION') === "true") { // Depends on userCookieMiddleware
-  const trialTimeLimitMiddleware = require('./trial/time-limit').middleware;
-  app.use(trialTimeLimitMiddleware)
-}
 
 app.get('/', reverseProxy.forward);
 app.all('/**', reverseProxy.forward);

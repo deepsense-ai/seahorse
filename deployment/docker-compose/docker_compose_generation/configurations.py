@@ -117,11 +117,6 @@ class Proxy(Service):
         mappings.generate = True
         return mappings
 
-    def volumes(self):
-        return [
-            "trial:/trial"
-        ]
-
 
     def _service_address(self, service, name=None):
         address_no_protocol = getattr(self.services, service.name()).internal_address(name).as_string()
@@ -457,7 +452,7 @@ class EnabledAuthorization(Authorization):
 
 class Configuration(object):
     services = []
-    volumes = ["trial"]
+    volumes = []
 
     @classmethod
     def replace(cls, service):
