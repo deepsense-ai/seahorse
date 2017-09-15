@@ -8,7 +8,7 @@ import io.deepsense.workflowexecutor.communication.mq.json.Constants.MessagesTyp
 import io.deepsense.workflowexecutor.communication.mq.json.{DefaultJsonMessageDeserializer, JsonMQDeserializer}
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.WorkflowProtocol
 
-object SeahorseClientMessagesJsonDeserializer
+private [stompoverws]  object SeahorseClientMessagesJsonDeserializer
     extends ExecutionReportJsonProtocol
     with HeartbeatJsonProtocol {
 

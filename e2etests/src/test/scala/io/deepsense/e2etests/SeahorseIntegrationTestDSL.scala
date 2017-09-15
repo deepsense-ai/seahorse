@@ -15,7 +15,7 @@ import scalaz._
 import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig
 import com.ning.http.client.ws.WebSocketListener
 import com.ning.http.client.{AsyncHttpClient, AsyncHttpClientConfig, Response => AHCResponse}
-import org.jfarcand.wcs.{Options, TextListener, WebSocket}
+import org.jfarcand.wcs.{Options, WebSocket}
 import org.scalactic.source.Position
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
@@ -25,7 +25,7 @@ import play.api.libs.ws.ning.NingWSClient
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
-import io.deepsense.e2etests.stompoverws.ExecutionReportParser
+import io.deepsense.e2etests.stompoverws.StompListener
 import io.deepsense.models.workflows.{ExecutionReport, Workflow, WorkflowInfo}
 import io.deepsense.sessionmanager.rest._
 import io.deepsense.sessionmanager.rest.requests._
@@ -88,23 +88,10 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     ensureExecutorIsRunning(workflowId)
     logger.info(s"Executor for workflow $workflowId started")
 
-    val websocketMessages = mutable.MutableList[String]()
-    val executionReports = mutable.MutableList[ExecutionReport]()
+    val stompListener = new StompListener()
+    val wsClient = MyWebSocket().open(ws).listener(stompListener)
 
-    val wsClient = MyWebSocket().open(ws).listener(new TextListener {
-      override def onMessage(message: String): Unit = {
-        logger.debug(s"Received raw message $message")
-        websocketMessages += message
-        try {
-          ExecutionReportParser.parse(message).foreach(report => executionReports += report)
-        } catch {
-          // TODO Implement all messages deserializers.
-          case e => logger.warn("Error when parsing message", e)
-        }
-      }
-    })
-
-    implicit val ctx = ExecutorContext(wsClient, websocketMessages, executionReports)
+    implicit val ctx = ExecutorContext(wsClient, stompListener.websocketMessages, stompListener.executionReports)
 
     wsClient.send(
       s"""["CONNECT\nlogin:$mqUser\npasscode:$mqPass\naccept-version:1.1,1.0\n
