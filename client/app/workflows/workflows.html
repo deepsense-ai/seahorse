@@ -1,0 +1,9 @@
+<section class="u-full-height">
+  <header class="c-main-header"
+          ng-controller="NavigationController as navigationController">
+    <navigation-bar title="navigationController.getTitle()"></navigation-bar>
+    <div class="c-main-header__nav-bar" ui-view="navBar"></div>
+  </header>
+  <deepsense-loading-spinner-lg ng-cloak ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
+  <div ui-view="reportView" class="c-dynamic-part"></div>
+</section>

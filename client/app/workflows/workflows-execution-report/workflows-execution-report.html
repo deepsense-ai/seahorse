@@ -1,0 +1,17 @@
+<div class="workflow-container">
+  <flow-chart-box
+    nodes="workflow.getWorkflow().getNodes()"
+    selected-node="workflow.getSelectedNode()"
+    report-mode="true"
+    title="Read only"></flow-chart-box>
+
+  <deepsense-operation-attributes
+    node="workflow.getSelectedNode()"
+    ng-if="workflow.getSelectedNode()"
+    disabled-mode="true">
+  </deepsense-operation-attributes>
+
+  <aside class="o-read-only text-warning">
+    <p>This is read only view</p>
+  </aside>
+</div>

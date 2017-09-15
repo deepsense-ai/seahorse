@@ -72,7 +72,7 @@ describe('WorkflowsApiClient', () => {
         });
     });
 
-    afterEach(function() {
+    afterEach(() => {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
     });
@@ -207,7 +207,7 @@ describe('WorkflowsApiClient', () => {
         });
     });
 
-    afterEach(function() {
+    afterEach(() => {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
     });
@@ -235,6 +235,128 @@ describe('WorkflowsApiClient', () => {
       promiseIsRejected($httpBackend, mockRequest,
         () => WorkflowsApiClient.updateWorkflow(serializedWorkflow),
         () => { $httpBackend.expectPUT(url, dataRequest); }
+      );
+    });
+  });
+
+  describe('should have getLatestReport method', () => {
+    let $httpBackend;
+    let mockRequest;
+
+    let id = 'workflow-id';
+    let url = `/${URL_API_VERSION}/workflows/${id}/report`;
+    let dataResponse = {
+      metadata: {
+        type: API_TYPE,
+        apiVersion: API_VERSION
+      },
+      id: id,
+      workflow: {
+        'nodes': [],
+        'connections': []
+      },
+      executionReport: {},
+      thirdPartyData: {}
+    };
+
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend.
+          when('GET', url).
+          respond(dataResponse);
+      });
+    });
+
+    afterEach(function() {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('which is valid function', () => {
+      expect(WorkflowsApiClient.getLatestReport).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      resultIsPromise(
+        $httpBackend,
+        () => WorkflowsApiClient.getLatestReport(id),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      promiseIsResolved($httpBackend, url, dataResponse,
+        () => WorkflowsApiClient.getLatestReport(id),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      promiseIsRejected($httpBackend, mockRequest,
+        () => WorkflowsApiClient.getLatestReport(id),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+  });
+
+  describe('should have getReport method', () => {
+    let $httpBackend;
+    let mockRequest;
+
+    let id = 'report-id';
+    let url = `/${URL_API_VERSION}/reports/${id}`;
+    let dataResponse = {
+      metadata: {
+        type: API_TYPE,
+        apiVersion: API_VERSION
+      },
+      id: id,
+      workflow: {
+        'nodes': [],
+        'connections': []
+      },
+      executionReport: {},
+      thirdPartyData: {}
+    };
+
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend.
+          when('GET', url).
+          respond(dataResponse);
+      });
+    });
+
+    afterEach(() => {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('which is valid function', () => {
+      expect(WorkflowsApiClient.getReport).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      resultIsPromise(
+        $httpBackend,
+        () => WorkflowsApiClient.getReport(id),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      promiseIsResolved($httpBackend, url, dataResponse,
+        () => WorkflowsApiClient.getReport(id),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      promiseIsRejected($httpBackend, mockRequest,
+        () => WorkflowsApiClient.getReport(id),
+        () => { $httpBackend.expectGET(url); }
       );
     });
   });

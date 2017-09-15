@@ -1,9 +1,30 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by: Grzegorz Swatowski
- */
-
 @import "./workflows-editor/workflows-editor.less";
+@import "./workflows-execution-report/workflows-execution-report.less";
 @import "./common-behaviours/common-stick-onscroll.less";
 @import "./common-behaviours/draggable.less";
+@import "./graph-panel/graph-panel.less";
+@import "./workflows-status-bar/workflows-status-bar.less";
+@import "./reports/reports.less";
+
+.c-dynamic-part {
+  height: calc(~'100% - 85px');
+  display: block;
+  margin-top: 10px;
+}
+
+.c-main-header {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  &__nav-bar {
+    width: 100%;
+  }
+}
+
+.workflow-container {
+  display: flex;
+  height: 100%;
+  clear: both;
+}

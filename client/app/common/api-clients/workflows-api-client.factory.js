@@ -4,14 +4,23 @@
 function WorkflowsApiClientFactory(BaseApiClient, config) {
   const API_TYPE = 'batch';
   const PATH_WORKFLOWS = '/workflows';
+  const PATH_REPORTS = '/reports';
 
   class WorkflowsApiClient extends BaseApiClient {
     constructor() {
       super();
     }
 
-    getWorkflow(id) {
-      return this.makeRequest(this.METHOD_GET, this.API_URL + PATH_WORKFLOWS + '/' + id);
+    getWorkflow(workflowId) {
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}`);
+    }
+
+    getLatestReport(workflowId) {
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/report`);
+    }
+
+    getReport(reportId) {
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_REPORTS}/${reportId}`);
     }
 
     createWorkflow(params) {
@@ -43,11 +52,19 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
         workflow: serializedWorkflow.workflow,
         thirdPartyData: serializedWorkflow.thirdPartyData
       };
-      return this.makeRequest(this.METHOD_PUT, this.API_URL + PATH_WORKFLOWS + '/' + serializedWorkflow.id, data);
+      return this.makeRequest(this.METHOD_PUT, `${this.API_URL}${PATH_WORKFLOWS}/${serializedWorkflow.id}`, data);
     }
 
-    getDownloadWorkflowUrl(id) {
-      return this.API_URL + PATH_WORKFLOWS + '/' + id + '/download?format=json';
+    getDownloadWorkflowMethodUrl(workflowId) {
+      return `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/download?format=json`;
+    }
+
+    getUploadWorkflowMethodUrl() {
+      return `${this.API_URL}${PATH_WORKFLOWS}/upload`;
+    }
+
+    getUploadReportMethodUrl() {
+      return `${this.API_URL}${PATH_WORKFLOWS}/report/upload`;
     }
   }
 

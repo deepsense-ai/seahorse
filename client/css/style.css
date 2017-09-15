@@ -2809,9 +2809,9 @@ video {
 .modal-dialog {
   z-index: 1200;
 }
-.modal-body {
+/*.modal-body {
   padding: 20px 30px 30px 30px;
-}
+}*/
 .inmodal .modal-body {
   background: #f8fafb;
 }

@@ -1,15 +1,13 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
 'use strict';
 
 /* @ngInject */
-function WorkflowsController(
+function WorkflowsEditorController(
   workflow,
-  $scope, $timeout, $state,
+  $scope, $state, $stateParams,
   GraphNode, Edge,
   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService
+  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+  RunModalFactory
 ) {
   let that = this;
   let internal = {};
@@ -23,7 +21,7 @@ function WorkflowsController(
     const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
     let getTitle = () => {
       try {
-        return workflow.thirdPartyData.gui.name;
+        return workflow.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
       } catch (e) {
         return DEFAULT_WORKFLOW_NAME;
       }
@@ -34,14 +32,9 @@ function WorkflowsController(
     WorkflowService.createWorkflow(workflow, Operations.getData());
     GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
     GraphPanelRendererService.setZoom(1.0);
+    GraphPanelRendererService.enableAddingEdges();
 
     internal.updateAndRerenderEdges(workflow.knowledge);
-
-    $scope.$on('FlowChartBox.Rendered', () => {
-      $timeout(() => {
-        GraphPanelRendererService.rerender();
-      }, 0, false);
-    });
   };
 
   internal.rerenderEdges = function rerenderEdges() {
@@ -167,6 +160,24 @@ function WorkflowsController(
     ExportModalService.showModal();
   });
 
+  $scope.$on('StatusBar.RUN', () => {
+    RunModalFactory.showModal({
+      message: 'Something here!'
+    });
+  });
+
+  $scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
+    ConfirmationModalService.showModal({
+      message: `The operation redirects to the view that displays the latest report for this workflow.
+      The workflow had to be executed at least once. Make sure you saved the current state of the workflow.`
+    }).
+      then(() => {
+        $state.go('workflows.latest_report', {
+          'id': $stateParams.id
+        });
+      });
+  });
+
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
     if (newValue !== oldValue) {
       $scope.$applyAsync(() => {
@@ -188,8 +199,8 @@ function WorkflowsController(
   return that;
 }
 
-exports.function = WorkflowsController;
+exports.function = WorkflowsEditorController;
 
 exports.inject = function (module) {
-  module.controller('WorkflowsController', WorkflowsController);
+  module.controller('WorkflowsEditorController', WorkflowsEditorController);
 };

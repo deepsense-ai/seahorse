@@ -1,0 +1,106 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ */
+
+.flowchart-node {
+  text-align: center;
+  z-index: 24;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #fff;
+  border: 1px solid @color-default;
+  border-radius: 5px;
+  position: absolute;
+  color: #333;
+  padding: 1px 21px;
+  width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 50px;
+  transition: background-color 200ms;
+}
+
+.flowchart-node .fa {
+  font-size: 125%;
+
+  &.error-icon {
+    position: absolute;
+    right: 2px;
+    top: 19px;
+    color: darkorange;
+  }
+}
+
+.flowchart-node:after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  font-family: FontAwesome;
+  font-weight: normal;
+}
+
+.flowchart-node.status_queued {
+  border-color: #d1dade;
+  box-shadow: inset 0 0 3px #d1dade;
+}
+.flowchart-node.status_queued:after {
+  content: '\f017';
+  color: #d1dade;
+}
+
+.flowchart-node.status_running {
+  border-color: #1ab394;
+  box-shadow: inset 0 0 3px #1ab394;
+}
+.flowchart-node.status_running:after {
+  content: '\f085';
+  color: #1ab394;
+}
+
+.flowchart-node.status_completed {
+  border-color: #1c84c6;
+  box-shadow: inset 0 0 3px #1c84c6;
+}
+.flowchart-node.status_completed:after {
+  content: '\f00c';
+  color: #1c84c6;
+}
+
+.flowchart-node.status_failed {
+  border-color: #ed5565;
+  box-shadow: inset 0 0 3px #ed5565;
+}
+.flowchart-node.status_failed:after {
+  content: '\f06a';
+  color: #ed5565;;
+}
+
+.flowchart-node.status_aborted {
+  border-color: #f8ac59;
+  box-shadow: inset 0 0 3px #f8ac59;
+}
+.flowchart-node.status_aborted:after {
+  content: '\f05c';
+  color: #f8ac59;
+}
+
+.selected-node,
+.selected-node:hover {
+  border-width: 2px !important;
+  padding: 0 20px;
+  background-color: #9fc4e4;
+}
+
+.selected-node:after,
+.selected-node:hover:after {
+  right: 3px;
+}
+
+.flowchart-node {
+  &--active {
+    border: 1px solid @color-active;
+    background-color: lighten(@color-active, 30%);
+  }
+}

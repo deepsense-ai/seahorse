@@ -5,11 +5,13 @@
   <div class="modal-body">
     <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
     <div ng-if="!controller.loading">
-      <div>The downloaded <a href="" target="_blank">workflow file</a> will contain all the steps from your workflow.
-        In order to execute the workflow file on your Spark Cluster please use the <a href="" target="_blank">Workflow Executor</a>.
+      <div>The downloaded
+        <a href="" target="_blank">workflow file</a>
+        will contain all the steps from your workflow.
+        In order to execute the workflow file on your Spark Cluster, please use the
+        <a href="" target="_blank">Workflow Executor</a>.
       </div>
       <br>
-      <div>What do you want to do?</div>
       <button type="button" class="center-block btn btn-primary" ng-click="controller.download()">Download</button>
     </div>
     <span class="pull-right text-danger" ng-if="controller.errorMessage">{{ controller.errorMessage }}</span>

@@ -19,7 +19,8 @@
       "bundle": {
         "app": "app.js",
         "js": "libs.js",
-        "css": "libs.css"
+        "css": "libs.css",
+        "partials": "partials.js"
       }
     },
     "client": {

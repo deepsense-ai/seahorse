@@ -1,19 +1,17 @@
-<div class="workflow-container animated fadeIn">
+<div class="workflow-container">
   <operation-catalogue
     catalog-collection="::workflow.catalog"
-    freeze="false"
-    custom-scroll-bar
-    draggable="false"
-    draggable-type="frame">
+    custom-scroll-bar>
   </operation-catalogue>
 
-  <flow-chart-box></flow-chart-box>
+  <flow-chart-box
+    nodes="workflow.getWorkflow().getNodes()"
+    selected-node="workflow.getSelectedNode()"
+    report-mode="false"></flow-chart-box>
 
   <deepsense-operation-attributes
     node="workflow.getSelectedNode()"
     ng-if="workflow.getSelectedNode()"
-    freeze="false"
-    draggable="true"
-    draggable-type="frame">
+    disabled-mode="false">
   </deepsense-operation-attributes>
 </div>

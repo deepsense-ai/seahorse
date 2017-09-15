@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function UploadWorkflowModalController(config, $state, $modalInstance, Upload) {
+function UploadWorkflowModalController($modalInstance, Upload, WorkflowsApiClient) {
   const STATUS_PREPARING = 'preparing';
   const STATUS_LOADING = 'loading';
   const STATUS_SUCCESS = 'success';
@@ -18,7 +18,7 @@ function UploadWorkflowModalController(config, $state, $modalInstance, Upload) {
       this.status = STATUS_FAILURE;
       Upload.
         upload({
-          url: `${config.apiHost}:${config.apiPort}/${config.urlApiVersion}/workflows/upload`,
+          url: WorkflowsApiClient.getUploadWorkflowMethodUrl(),
           method: 'POST',
           file: file,
           fileFormDataName: 'workflowFile'
@@ -29,8 +29,7 @@ function UploadWorkflowModalController(config, $state, $modalInstance, Upload) {
         }).
         then((response) => {
           this.status = STATUS_SUCCESS;
-          $modalInstance.close();
-          $state.go('workflows_editor', {'id': response.data.id});
+          $modalInstance.close(response.data.id);
         }).
         catch((error = {}) => {
           error.data = error.data || 'Server is not responding';
