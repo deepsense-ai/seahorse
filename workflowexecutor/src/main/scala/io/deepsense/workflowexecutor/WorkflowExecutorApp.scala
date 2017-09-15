@@ -114,6 +114,10 @@ object WorkflowExecutorApp
 
   private def saveWorkflowWithResults(outputDir: String, result: WorkflowWithResults): Unit = {
     val resultsFile = new File(outputDir, outputFile)
+    val parentFile = resultsFile.getParentFile
+    if (parentFile != null) {
+      parentFile.mkdirs()
+    }
     logger.info(s"Writing result to: ${resultsFile.getPath}")
     val writer = new PrintWriter(new FileWriter(resultsFile, false))
     writer.write(result.toJson.prettyPrint)
