@@ -72,6 +72,10 @@
     <level value ="WARN"/>
   </logger>
 
+  <logger name="slick">
+    <level value="INFO"/>
+  </logger>
+
   <root>
     <priority value ="debug" />
     <appender-ref ref="console" />
