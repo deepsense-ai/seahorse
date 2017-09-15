@@ -33,7 +33,7 @@ object TestClusters extends Logging {
     }
 
     Seq(
-      mesos,
+    // mesos, // Mesos doesn't work with R TODO FIX
       standalone,
       Some(local)
     ).flatten

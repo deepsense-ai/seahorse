@@ -15,12 +15,8 @@ fi
 
 PROJECT_PATH=$1
 PROJECT_NAME=$2
-GIT_BRANCH=`git branch | grep '*' | awk '{ print $2 }'`
-if [ ! -z $GIT_TAG ]; then
-  GIT_BRANCH="$GIT_TAG"
-fi
 
-TAG_LATEST="$PROJECT_NAME:$GIT_BRANCH-latest"
+TAG_LATEST="$PROJECT_NAME:local-image-latest"
 
 # Validate input parameters
 if [ ! -d $PROJECT_PATH ]; then
@@ -31,11 +27,6 @@ fi
 if [ ! -f $PROJECT_PATH/Dockerfile ]; then
   echo ">>> No Dockerfile in given location."
   exit 3
-fi
-
-if [ -z $GIT_BRANCH ]; then
-  echo ">>> Cannot get Git branch."
-  exit 4
 fi
 
 cd $PROJECT_PATH

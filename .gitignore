@@ -31,6 +31,9 @@ project/plugins/project/
 private_*.conf
 private_*/
 
+# From publish_docker_compose_internal.sh
+docker-compose-internal.yml
+
 # Vagrant deployment output
 deployment/ansible/vagrant
 
