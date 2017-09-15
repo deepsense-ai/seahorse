@@ -32,6 +32,8 @@ case class NodeState(nodeStatus: NodeStatus, reports: Option[EntitiesMap]) {
     reports.map(_.entities).getOrElse(Map())
   }
 
+  def withoutReports: NodeState = copy(reports = None)
+
   def abort: NodeState = copy(nodeStatus = nodeStatus.abort)
   def enqueue: NodeState = copy(nodeStatus = nodeStatus.enqueue)
   def draft: NodeState = copy(nodeStatus = Draft(nodeStatus.results))

@@ -30,6 +30,8 @@ case class ExecutionReport(
     val combinedEntities = states.valuesIterator.flatMap(_.reportEntities().toSeq).toMap
     EntitiesMap(combinedEntities)
   }
+
+  def statesOnly: ExecutionReport = copy(states = states.map(p => p._1 -> p._2.withoutReports))
 }
 
 object ExecutionReport {

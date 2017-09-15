@@ -79,7 +79,7 @@ class WorkflowExecutorActorSpec
 
               val inferredState = receiver.expectMsgClass(classOf[InferredState])
               inferredState.id shouldBe workflow.id
-              inferredState.states shouldBe workflow.executionReport
+              inferredState.states shouldBe workflow.executionReport.statesOnly
             }
           }
         }

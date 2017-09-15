@@ -20,8 +20,10 @@ import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.commons.models.Id
 import io.deepsense.deeplang.CommonExecutionContext
-import io.deepsense.graph.DeeplangGraph
+import io.deepsense.graph.nodestate.Draft
+import io.deepsense.graph.{DeeplangGraph, Node}
 import io.deepsense.models.workflows._
 
 class StatefulWorkflowSpec extends StandardSpec with MockitoSugar {
@@ -40,9 +42,13 @@ class StatefulWorkflowSpec extends StandardSpec with MockitoSugar {
       WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
       newGraph,
       newThirdPartyData)
+    val nodeId: Id = Node.Id.randomId
+    val executionReport =
+      ExecutionReport(Map(nodeId -> NodeState(Draft(), Some(EntitiesMap()))))
     "updateStruct" when {
       "execution is idle" in {
         val updatedExecution: IdleExecution = mock[IdleExecution]
+        when(updatedExecution.executionReport).thenReturn(executionReport)
         def idleExecutionFactory(graph: StatefulGraph): Execution = {
           val exec = mock[IdleExecution]
           when(exec.updateStructure(newGraph)).thenReturn(updatedExecution)
@@ -55,11 +61,14 @@ class StatefulWorkflowSpec extends StandardSpec with MockitoSugar {
 
         statefulWorkflow.currentExecution shouldBe updatedExecution
         statefulWorkflow.currentAdditionalData shouldBe newThirdPartyData
+        inferredState.states shouldBe
+          ExecutionReport(Map(nodeId -> NodeState(Draft(), None))) // removed reports
       }
     }
     "ignore struct update and only update thirdPartyData when execution is started" in {
       val runningExecution = mock[RunningExecution]
       def runningExecutionFactory(graph: StatefulGraph): Execution = runningExecution
+      when(runningExecution.executionReport).thenReturn(executionReport)
       val statefulWorkflow =
         StatefulWorkflow(mock[CommonExecutionContext], worklfowWithResults, runningExecutionFactory)
 
@@ -67,6 +76,8 @@ class StatefulWorkflowSpec extends StandardSpec with MockitoSugar {
 
       statefulWorkflow.currentExecution shouldBe runningExecution // not changed
       statefulWorkflow.currentAdditionalData shouldBe newThirdPartyData // updated
+      inferredState.states shouldBe
+        ExecutionReport(Map(nodeId -> NodeState(Draft(), None))) // removed reports
     }
   }
 

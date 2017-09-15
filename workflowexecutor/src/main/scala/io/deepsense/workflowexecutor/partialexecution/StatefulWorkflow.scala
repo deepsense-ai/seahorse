@@ -106,7 +106,7 @@ class StatefulWorkflow(
 
   def inferState(): InferredState = {
     val knowledge = execution.inferKnowledge(executionContext.inferContext)
-    InferredState(workflowId, knowledge, executionReport)
+    InferredState(workflowId, knowledge, executionReport.statesOnly)
   }
 
   private def getChangedNodes(startingPointExecution: Execution): Map[Id, NodeState] = {
