@@ -32,13 +32,12 @@ import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph.nodestate.NodeState
 import io.deepsense.graph.{Node, ReadyNode, StatefulGraph, graphstate}
-import io.deepsense.messageprotocol.WorkflowExecutorProtocol.{ExecutionStatus}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
-import io.deepsense.workflowexecutor.communication.Connect
+import io.deepsense.workflowexecutor.communication.{ExecutionStatus, Connect}
 
 class WorkflowExecutorActorSpec
   extends TestKit(ActorSystem("WorkflowExecutorActorSpec"))
@@ -55,21 +54,23 @@ class WorkflowExecutorActorSpec
       "no graph was sent" should {
         "send empty status" in {
           val probe = TestProbe()
+          val publisher = TestProbe()
           val statusListener = TestProbe()
           val wea = TestActorRef(new WorkflowExecutorActor(
             mock[ExecutionContext],
             mock[GraphNodeExecutorFactory],
-            Some(statusListener.ref)))
+            Some(statusListener.ref),
+            Some(system.actorSelection(publisher.ref.path))))
           probe.send(wea, Connect(Workflow.Id.randomId))
-          verifyStatusSent(statusListener)
+          verifyStatusSent(Seq(statusListener, publisher))
         }
       }
       "a graph was sent" should {
         "send graph's status" in {
-          val (probe, wea, graph, _, _, statusListener) = readyNodesFixture()
+          val (probe, wea, graph, _, _, statusListeners) = readyNodesFixture()
           become(wea, graph)
           probe.send(wea, Connect(Workflow.Id.randomId))
-          verifyStatusSent(statusListener)
+          verifyStatusSent(statusListeners)
         }
       }
     }
@@ -89,25 +90,27 @@ class WorkflowExecutorActorSpec
         }
       }
       "launch ready nodes and send status if inference ok" in {
-        val (probe, wea, graph, readyNodes, executors, statusListener) = readyNodesFixture()
+        val (probe, wea, graph, readyNodes, executors, statusListeners) = readyNodesFixture()
         probe.send(wea, Launch(graph))
         verifyNodesStarted(graph, readyNodes, executors)
-        verifyStatusSent(statusListener)
+        verifyStatusSent(statusListeners)
       }
       "infer graph knowledge, fail graph and send status on exception" in {
         val probe = TestProbe()
         val statusListener = TestProbe()
+        val publisher = TestProbe()
         val graph = readyGraphWithThrowingInference()
         val wea = TestActorRef(new WorkflowExecutorActor(
           executionContext,
           nodeExecutorFactory(),
-          Some(statusListener.ref)))
+          Some(statusListener.ref),
+          Some(system.actorSelection(publisher.ref.path))))
         probe.send(wea, Launch(graph))
         eventually {
           verify(graph).inferAndApplyKnowledge(executionContext.inferContext)
         }
 
-        verifyStatus(statusListener){ _.graphState shouldBe 'Failed }
+        verifyStatus(Seq(statusListener, publisher)){ _.graphState shouldBe 'Failed }
       }
     }
     "received NodeCompleted" should {
@@ -122,80 +125,82 @@ class WorkflowExecutorActorSpec
       }
       "launch ready nodes and send status" when {
         "ready nodes exist" in {
-          val (probe, wea, graph, readyNodes, executors, statusListener) = readyNodesFixture()
+          val (probe, wea, graph, readyNodes, executors, statusListeners) = readyNodesFixture()
           become(wea, graph)
           val (_, nodeCompletedMessage, _) = nodeCompleted()
           probe.send(wea, nodeCompletedMessage)
           verifyNodesStarted(graph, readyNodes, executors)
-          verifyStatusSent(statusListener)
+          verifyStatusSent(statusListeners)
         }
       }
       "send graph status" when {
         "there is no ready nodes" in {
-          val (probe, wea, graph, _, _, statusListener) = noReadyNodesFixture()
+          val (probe, wea, graph, _, _, statusListeners) = noReadyNodesFixture()
           become(wea, graph)
           val (_, nodeCompletedMessage, _) = nodeCompleted()
           probe.send(wea, nodeCompletedMessage)
-          verifyStatusSent(statusListener)
+          verifyStatusSent(statusListeners)
         }
       }
       "finish execution, if graph Completed/Failed" in {
-        val (probe, wea, graph, _, _, statusListener) = readyNodesFixture()
+        val (probe, wea, graph, _, _, statusListeners) = readyNodesFixture()
         val completed = completedGraph()
         when(graph.nodeFinished(any(), any())).thenReturn(completed)
         become(wea, graph)
         val (_, nodeCompletedMessage, _) = nodeCompleted()
         probe.send(wea, nodeCompletedMessage)
 
-        verifyStatus(statusListener){ _.graphState shouldBe 'Completed }
+        verifyStatus(statusListeners){ _.graphState shouldBe 'Completed }
       }
     }
     "received NodeFailed" should {
       "tell graph about it" in {
-        val (probe, wea, graph, _, _, statusListener) = readyNodesFixture()
+        val (probe, wea, graph, _, _, statusListeners) = readyNodesFixture()
         become(wea, graph)
         val (completedId, nodeFailedMessage, cause) = nodeFailed()
         probe.send(wea, nodeFailedMessage)
         eventually {
           verify(graph).nodeFailed(completedId, cause)
         }
-        verifyStatusSent(statusListener)
+        verifyStatusSent(statusListeners)
       }
       "launch ready nodes" when {
         "ready nodes exist" in {
-          val (probe, wea, graph, readyNodes, executors, statusListener) = readyNodesFixture()
+          val (probe, wea, graph, readyNodes, executors, statusListeners) = readyNodesFixture()
           become(wea, graph)
           val (_, nodeFailedMessage, _) = nodeFailed()
           probe.send(wea, nodeFailedMessage)
           verifyNodesStarted(graph, readyNodes, executors)
-          verifyStatusSent(statusListener)
+          verifyStatusSent(statusListeners)
         }
       }
       "finish execution and persist its state if graph Completed/Failed" in {
-        val (probe, wea, graph, _, _, statusListener) = readyNodesFixture()
+        val (probe, wea, graph, _, _, statusListeners) = readyNodesFixture()
         val failed = failedGraph()
         when(graph.nodeFailed(any(), any())).thenReturn(failed)
         become(wea, graph)
         val (_, nodeFailedMessage, _) = nodeFailed()
         probe.send(wea, nodeFailedMessage)
 
-        verifyStatus(statusListener){ _.graphState shouldBe 'Failed }
+        verifyStatus(statusListeners){ _.graphState shouldBe 'Failed }
 
         probe.send(wea, Connect(Workflow.Id.randomId)) // Id doesn't matter
         eventually {
-          verifyStatus(statusListener){ _.graphState shouldBe 'Failed }
+          verifyStatus(statusListeners){ _.graphState shouldBe 'Failed }
         }
       }
     }
   }
 
-  def verifyStatusSent(statusListener: TestProbe): Unit = {
-    verifyStatus(statusListener)(_ => ())
+  def verifyStatusSent(receivers: Seq[TestProbe]): Unit = {
+    verifyStatus(receivers)(_ => ())
   }
 
-  def verifyStatus(statusListener: TestProbe)(f: (ExecutionStatus) => Unit): Unit = {
+  def verifyStatus(receivers: Seq[TestProbe])(f: (ExecutionStatus) => Unit): Unit = {
     eventually {
-      f(statusListener.expectMsgClass(classOf[ExecutionStatus]))
+      receivers.foreach { receiver =>
+        f(receiver.expectMsgClass(classOf[ExecutionStatus]))
+      }
     }
   }
 
@@ -333,9 +338,10 @@ class WorkflowExecutorActorSpec
     StatefulGraph,
     Seq[ReadyNode],
     Seq[TestProbe],
-    TestProbe) = {
+    Seq[TestProbe]) = {
     val testProbe = TestProbe()
     val statusListener = TestProbe()
+    val publisher = TestProbe()
     when(graph.nodeFinished(any(), any())).thenReturn(graph)
     when(graph.nodeFailed(any(), any())).thenReturn(graph)
     val executors = Seq(TestProbe(), TestProbe())
@@ -352,9 +358,12 @@ class WorkflowExecutorActorSpec
       })
 
     val testedActor = TestActorRef(new WorkflowExecutorActor(
-      executionContext, factory, Some(statusListener.ref)))
+      executionContext,
+      factory,
+      Some(statusListener.ref),
+      Some(system.actorSelection(publisher.ref.path))))
 
-    (testProbe, testedActor, graph, readyNodes, executors, statusListener)
+    (testProbe, testedActor, graph, readyNodes, executors, Seq(statusListener, publisher))
   }
 
   def readyNodesFixture():
@@ -363,7 +372,7 @@ class WorkflowExecutorActorSpec
         StatefulGraph,
         Seq[ReadyNode],
         Seq[TestProbe],
-        TestProbe) = {
+        Seq[TestProbe]) = {
 
     val (graph, readyNodes) = readyGraphWithOkInference()
     fixture(graph, readyNodes)
@@ -375,7 +384,7 @@ class WorkflowExecutorActorSpec
     StatefulGraph,
     Seq[ReadyNode],
     Seq[TestProbe],
-    TestProbe) = {
+    Seq[TestProbe]) = {
     fixture(noReadyGraphWithOkInference(), Seq.empty)
   }
 }

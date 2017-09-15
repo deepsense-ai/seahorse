@@ -17,12 +17,12 @@
 package io.deepsense.workflowexecutor.rabbitmq
 
 import akka.actor.ActorRef
-import io.deepsense.workflowexecutor.communication.{MessageMQ, MQMessageDeserializer}
+import io.deepsense.workflowexecutor.communication.{ReadMessageMQ, MessageMQ, MQMessageDeserializer}
 
 case class SubscriberActor(subscriber: ActorRef, mQMessageDeserializer: MQMessageDeserializer) {
 
   def processMessage(messageData: Array[Byte]): Unit = {
-    val message: MessageMQ = mQMessageDeserializer.deserializeMessage(messageData)
+    val message: ReadMessageMQ = mQMessageDeserializer.deserializeMessage(messageData)
     subscriber ! message
   }
 }

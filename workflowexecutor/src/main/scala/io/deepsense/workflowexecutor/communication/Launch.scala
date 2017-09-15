@@ -16,19 +16,9 @@
 
 package io.deepsense.workflowexecutor.communication
 
-import spray.json._
-
-import io.deepsense.commons.BuildInfo
-import io.deepsense.commons.utils.Version
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{WorkflowVersionUtil, WorkflowWithVariablesJsonProtocol}
 import io.deepsense.models.workflows.WorkflowWithVariables
 
-case class Launch(workflow: WorkflowWithVariables) extends MessageMQ {
-  override protected def jsMessageType: JsValue = ???
-
-  override protected def jsMessageBody: JsValue = ???
-}
+case class Launch(workflow: WorkflowWithVariables) extends ReadMessageMQ
 
 object Launch {
   val messageType: String = "launch"

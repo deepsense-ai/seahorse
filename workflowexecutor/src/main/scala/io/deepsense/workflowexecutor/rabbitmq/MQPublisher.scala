@@ -23,7 +23,7 @@ import com.rabbitmq.client.Channel
 import com.thenewmotion.akka.rabbitmq.ChannelMessage
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.communication.MessageMQ
+import io.deepsense.workflowexecutor.communication.WriteMessageMQ
 
 /**
   * Class used to publish data to exchange under given topic.
@@ -33,7 +33,7 @@ import io.deepsense.workflowexecutor.communication.MessageMQ
 case class MQPublisher(exchange: String, publisherActor: ActorRef)
   extends Logging {
 
-  def publish(topic: String, message: MessageMQ): Unit = {
+  def publish(topic: String, message: WriteMessageMQ): Unit = {
     val data: Array[Byte] = message.toJsonObject.compactPrint.getBytes(Charset.forName("UTF-8"))
     publisherActor  ! ChannelMessage(publish(topic, data), dropIfNoChannel = false)
   }

@@ -16,7 +16,7 @@
 
 package io.deepsense.workflowexecutor
 
-import akka.actor.{Actor, ActorContext, ActorRef, Props}
+import akka.actor._
 import org.apache.spark.SparkContext
 
 import io.deepsense.commons.utils.Logging
@@ -27,6 +27,7 @@ import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.workflowexecutor.communication.Connect
 import io.deepsense.workflowexecutor.executor.Executor
+import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 
 class ExecutionDispatcherActor(
     sparkContext: SparkContext,
@@ -42,11 +43,12 @@ class ExecutionDispatcherActor(
   // TODO handle child's exceptions
 
   override def receive: Receive = {
-    case msg @ Connect(workflowId) =>
+    case msg @ WorkflowConnect(connect @ Connect(workflowId), publisherPath) =>
       logger.debug(s"Received $msg")
       val existingExecutor: Option[ActorRef] = findExecutor(workflowId)
-      val executor: ActorRef = existingExecutor.getOrElse(createExecutor(workflowId))
-      executor.forward(msg)
+      val publisher = context.actorSelection(publisherPath)
+      val executor: ActorRef = existingExecutor.getOrElse(createExecutor(workflowId, publisher))
+      executor.forward(connect)
   }
 
   private def findExecutor(workflowId: Workflow.Id): Option[ActorRef] = {
@@ -56,7 +58,7 @@ class ExecutionDispatcherActor(
     executor
   }
 
-  def createExecutor(workflowId: Workflow.Id): ActorRef = {
+  def createExecutor(workflowId: Workflow.Id, publisher: ActorSelection): ActorRef = {
     val executor = createExecutor(
       context,
       createExecutionContext(
@@ -64,7 +66,8 @@ class ExecutionDispatcherActor(
         sparkContext = Some(sparkContext),
         dOperableCatalog = Some(dOperableCatalog)),
       workflowId,
-      statusLogger)
+      statusLogger,
+      publisher)
     logger.debug(s"Created an executor: '${executor.path}'")
     executor
   }
@@ -75,17 +78,19 @@ trait WorkflowExecutorsFactory {
     context: ActorContext,
     executionContext: ExecutionContext,
     workflowId: Workflow.Id,
-    statusLogger: ActorRef): ActorRef
+    statusLogger: ActorRef,
+    publisher: ActorSelection): ActorRef
 }
 
-trait ProductionWorkflowExecutorsFactory extends WorkflowExecutorsFactory {
+trait WorkflowExecutorsFactoryImpl extends WorkflowExecutorsFactory {
   override def createExecutor(
       context: ActorContext,
       executionContext: ExecutionContext,
       workflowId: Id,
-      statusLogger: ActorRef): ActorRef = {
+      statusLogger: ActorRef,
+      publisher: ActorSelection): ActorRef = {
     context.actorOf(
-      WorkflowExecutorActor.props(executionContext, Some(statusLogger)),
+      WorkflowExecutorActor.props(executionContext, Some(publisher), Some(statusLogger)),
       workflowId.toString)
   }
 }
@@ -94,7 +99,7 @@ trait WorkflowExecutorFinder {
   def findFor(context: ActorContext, workflowId: Workflow.Id): Option[ActorRef]
 }
 
-trait ProductionExecutorFinder extends WorkflowExecutorFinder {
+trait ExecutorFinderImpl extends WorkflowExecutorFinder {
   def findFor(context: ActorContext, workflowId: Workflow.Id): Option[ActorRef] =
     context.child(workflowId.toString)
 }
@@ -110,6 +115,6 @@ object ExecutionDispatcherActor {
       dOperableCatalog,
       reportLevel,
       statusLogger
-    ) with ProductionWorkflowExecutorsFactory
-      with ProductionExecutorFinder)
+    ) with WorkflowExecutorsFactoryImpl
+      with ExecutorFinderImpl)
 }

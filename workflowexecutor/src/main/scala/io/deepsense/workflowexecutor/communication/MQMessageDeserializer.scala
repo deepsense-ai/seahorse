@@ -23,11 +23,11 @@ import spray.json._
 
 trait MQMessageDeserializer {
 
-  def  deserializeMessage(data: Array[Byte]): MessageMQ = {
+  def  deserializeMessage(data: Array[Byte]): ReadMessageMQ = {
     val json = new String(data, Charset.forName("UTF-8")).parseJson
     val jsObject = json.asJsObject
     deserializeJson(jsObject)
   }
 
-  protected def deserializeJson(jsObject: JsObject): MessageMQ
+  protected def deserializeJson(jsObject: JsObject): ReadMessageMQ
 }

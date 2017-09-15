@@ -34,13 +34,12 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
-import io.deepsense.messageprotocol.WorkflowExecutorProtocol.ExecutionStatus
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
-import io.deepsense.workflowexecutor.communication.Connect
+import io.deepsense.workflowexecutor.communication.{ExecutionStatus, Connect}
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.{ExecutionParams, ReportUploadClient, WorkflowDownloadClient, WorkflowExecutorActor}
 
@@ -62,8 +61,8 @@ case class WorkflowExecutor(
     val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
     val statusReceiverActor =
       actorSystem.actorOf(StatusReceiverActor.props(finishedExecutionStatus))
-    val workflowExecutorActor =
-      actorSystem.actorOf(WorkflowExecutorActor.props(executionContext, Some(statusReceiverActor)))
+    val workflowExecutorActor = actorSystem.actorOf(
+      WorkflowExecutorActor.props(executionContext, None, Some(statusReceiverActor)))
 
     val startedTime = DateTimeConverter.now
     workflowExecutorActor ! Connect(workflow.id)

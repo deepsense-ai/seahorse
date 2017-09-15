@@ -20,17 +20,17 @@ import java.util
 
 import akka.actor.{ActorRef, ActorSystem}
 import com.rabbitmq.client.AMQP.BasicProperties
-import com.rabbitmq.client.{Channel, DefaultConsumer, Envelope}
+import com.rabbitmq.client.{AMQP, Channel, DefaultConsumer, Envelope}
 import com.thenewmotion.akka.rabbitmq.{ChannelActor, CreateChannel, RichConnectionActor}
 
-import io.deepsense.workflowexecutor.communication.MQMessageDeserializer
+import io.deepsense.workflowexecutor.communication.{MQCommunication, MQMessageDeserializer}
 
 case class MQCommunicationFactory(
   system: ActorSystem,
   connection: ActorRef,
   mQMessageDeserializer: MQMessageDeserializer) {
 
-  val exchangeType = "fanout"
+  val exchangeType = "direct"
 
   def createCommunicationChannel(name: String, subscriber: ActorRef): MQPublisher = {
     createSubscriber(name, SubscriberActor(subscriber, mQMessageDeserializer))
@@ -54,6 +54,7 @@ case class MQCommunicationFactory(
       false,
       true,
       new util.HashMap[String, AnyRef]()).getQueue
+    declareExchange(exchangeName, channel)
     channel.queueBind(queue, exchangeName, "to_executor")
     val basicSubscriber = MQSubscriber(subscriberActor)
     val consumer = new DefaultConsumer(channel) {
@@ -81,8 +82,12 @@ case class MQCommunicationFactory(
       false,
       true,
       new util.HashMap[String, AnyRef]()).getQueue
+    declareExchange(exchangeName, channel)
+    channel.queueBind(queue, exchangeName, MQCommunication.editorTopic)
+  }
+
+  private def declareExchange(exchangeName: String, channel: Channel) = {
     channel.exchangeDeclare(exchangeName, exchangeType)
-    channel.queueBind(queue, exchangeName, "to_executor")
   }
 
   private def publishQueueName(exchangeName: String): String = exchangeName + "_to_editor"

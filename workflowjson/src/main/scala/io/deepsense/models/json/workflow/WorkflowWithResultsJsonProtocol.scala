@@ -28,27 +28,12 @@ import io.deepsense.models.json.graph.NodeStateJsonProtocol
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportJsonProtocol
 
-trait WorkflowWithResultsJsonProtocol extends WorkflowJsonProtocol with NodeStateJsonProtocol {
+trait WorkflowWithResultsJsonProtocol
+  extends WorkflowJsonProtocol
+  with NodeStateJsonProtocol
+  with EntitiesMapJsonProtocol{
 
-  import ReportJsonProtocol._
 
-  implicit val entitiesMapEntryFormat = jsonFormat2(EntitiesMap.Entry)
-
-  implicit val entitiesMapFormat = new JsonFormat[EntitiesMap] {
-    override def write(obj: EntitiesMap): JsValue = {
-      obj.entities.toJson
-    }
-
-    override def read(json: JsValue): EntitiesMap = {
-      val jsObject = json.asJsObject
-      val entities = jsObject.fields.map { case (key, value) =>
-        val id = Entity.Id.fromString(key)
-        val entry = value.convertTo[EntitiesMap.Entry]
-        (id, entry)
-      }
-      EntitiesMap(entities)
-    }
-  }
 
   implicit val executionReportFormat = new JsonFormat[ExecutionReport] {
     val executionReportViewFormat = jsonFormat6(ExecutionReportView)

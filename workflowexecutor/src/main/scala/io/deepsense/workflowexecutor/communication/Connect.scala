@@ -21,13 +21,7 @@ import spray.json._
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.models.workflows.Workflow
 
-
-case class Connect(workflowId: Workflow.Id) extends MessageMQ {
-  override protected def jsMessageType: JsValue = JsString(Connect.messageType)
-  override protected def jsMessageBody: JsValue = {
-    this.toJson(ConnectJsonProtocol.connectFormat)
-  }
-}
+case class Connect(workflowId: Workflow.Id) extends ReadMessageMQ
 
 object Connect {
   val messageType: String = "connect"

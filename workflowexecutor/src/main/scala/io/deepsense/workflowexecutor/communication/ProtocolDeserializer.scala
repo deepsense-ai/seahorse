@@ -33,7 +33,7 @@ case class ProtocolDeserializer(
 
   def launchReader: RootJsonFormat[Launch] = jsonFormat1(Launch.apply)
 
-  override protected def deserializeJson(jsObject: JsObject): MessageMQ = {
+  override protected def deserializeJson(jsObject: JsObject): ReadMessageMQ = {
     val fields = jsObject.fields
     val messageType: String = fields(MessageMQ.messageTypeKey).convertTo[String]
     messageType match {

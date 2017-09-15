@@ -21,7 +21,7 @@ import scala.concurrent.Promise
 import akka.actor.{Actor, Props}
 
 import io.deepsense.graph.graphstate._
-import io.deepsense.messageprotocol.WorkflowExecutorProtocol.ExecutionStatus
+import io.deepsense.workflowexecutor.communication.ExecutionStatus
 
 class StatusReceiverActor(finishedExecutionStatus: Promise[ExecutionStatus]) extends Actor {
   override def receive: Receive = {

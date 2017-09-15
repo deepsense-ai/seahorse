@@ -16,7 +16,7 @@
 
 package io.deepsense.workflowexecutor
 
-import akka.actor.{ActorContext, ActorRef, ActorSystem}
+import akka.actor.{ActorSelection, ActorContext, ActorRef, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.apache.spark.SparkContext
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
@@ -30,6 +30,7 @@ import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.Connect
+import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 
 
 class ExecutionDispatcherActorSpec
@@ -46,19 +47,21 @@ class ExecutionDispatcherActorSpec
     "create WorkflowExecutorActor" when {
       "received Connect messages for non existing actor" in {
         val (workflowId, testProbe, dispatcher) = fixtureWithNonExistingExecutor
-        val msg = Connect(workflowId)
+        val connect: Connect = Connect(workflowId)
+        val msg = WorkflowConnect(connect, testProbe.ref.path)
         dispatcher ! msg
         eventually {
-          testProbe.expectMsg(msg)
+          testProbe.expectMsg(connect)
         }
       }
     }
     "pass Connect to WorkflowExecutorActor" in {
       val (workflowId, testProbe, dispatcher) = fixtureWithExistingExecutor
-      val msg = Connect(workflowId)
+      val connect: Connect = Connect(workflowId)
+      val msg = WorkflowConnect(connect, testProbe.ref.path)
       dispatcher ! msg
       eventually {
-        testProbe.expectMsg(msg)
+        testProbe.expectMsg(connect)
       }
     }
   }
@@ -78,7 +81,8 @@ class ExecutionDispatcherActorSpec
           context: ActorContext,
           executionContext: ExecutionContext,
           workflowId: Workflow.Id,
-          statusLogger: ActorRef): ActorRef = {
+          statusLogger: ActorRef,
+          publisher: ActorSelection): ActorRef = {
           fail("Tried to create an executor but it exists!")
         }
 
@@ -103,7 +107,8 @@ class ExecutionDispatcherActorSpec
           context: ActorContext,
           executionContext: ExecutionContext,
           workflowId: Workflow.Id,
-          statusLogger: ActorRef): ActorRef = {
+          statusLogger: ActorRef,
+          publisher: ActorSelection): ActorRef = {
           workflowId shouldBe expectedWorkflowId
           testProbe.ref
         }

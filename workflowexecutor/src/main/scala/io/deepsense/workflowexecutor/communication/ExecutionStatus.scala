@@ -16,27 +16,56 @@
 
 package io.deepsense.workflowexecutor.communication
 
-import spray.json.{JsString, JsValue, _}
+import spray.json._
 
+import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.graph.Node
+import io.deepsense.graph.graphstate._
+import io.deepsense.graph.nodestate.NodeState
+import io.deepsense.models.json.graph.NodeStateJsonProtocol
+import io.deepsense.models.json.workflow.EntitiesMapJsonProtocol
+import io.deepsense.models.workflows.EntitiesMap
 
-case class ExecutionStatus(workflowId: Workflow.Id) extends MessageMQ {
+case class ExecutionStatus(
+    graphState: GraphState,
+    nodes: Map[Node.Id, NodeState],
+    resultEntities: EntitiesMap)
+  extends WriteMessageMQ {
 
   override protected def jsMessageType: JsValue = JsString(ExecutionStatus.messageType)
 
-  override protected def jsMessageBody: JsValue = {
-    this.toJson(ExecutionStatusJsonProtocol.executionStatusFormat)
-  }
+  override protected def jsMessageBody: JsValue = ExecutionStatus.toJsonView(this)
 }
 
-object ExecutionStatus {
+object ExecutionStatus
+  extends DefaultJsonProtocol
+  with FailureDescriptionJsonProtocol
+  with NodeStateJsonProtocol
+  with IdJsonProtocol
+  with EntitiesMapJsonProtocol {
+
   val messageType = "executionStatus"
-}
+  val protocol = jsonFormat4(JsonExecutionStatus.apply)
 
-trait ExecutionStatusJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit def executionStatusFormat: RootJsonFormat[ExecutionStatus] =
-    jsonFormat1(ExecutionStatus.apply)
-}
+  def toJsonView(executionStatus: ExecutionStatus): JsValue = {
+    val failureDescription: Option[FailureDescription] = executionStatus.graphState match {
+      case Failed(fd) => Some(fd)
+      case _ => None
+    }
 
-object ExecutionStatusJsonProtocol extends ExecutionStatusJsonProtocol
+    JsonExecutionStatus(
+      executionStatus.graphState.name,
+      failureDescription,
+      executionStatus.nodes,
+      executionStatus.resultEntities
+    ).toJson(protocol)
+  }
+
+  case class JsonExecutionStatus(
+    state: String, // TODO status?
+    error: Option[FailureDescription],
+    nodes: Map[Node.Id, NodeState],
+    resultEntities: EntitiesMap)
+}

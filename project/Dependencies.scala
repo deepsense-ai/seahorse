@@ -135,6 +135,4 @@ object Dependencies {
     rabbitmq
   ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++
   Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
-
-  val messageProtocol = Seq(mockitoCore, scalatest).map(_ % s"$Test,it")
 }

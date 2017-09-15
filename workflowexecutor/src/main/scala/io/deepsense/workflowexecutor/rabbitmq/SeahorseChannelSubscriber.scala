@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor.rabbitmq
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.{ActorPath, Actor, ActorRef, Props}
 import akka.util.Timeout
 
 import io.deepsense.commons.utils.Logging
@@ -30,7 +30,7 @@ case class SeahorseChannelSubscriber(
   communicationFactory: MQCommunicationFactory) extends Actor with Logging {
 
   implicit val timeout: Timeout = Timeout(3, TimeUnit.SECONDS)
-  var publishers: Map[Workflow.Id, MQPublisher] = Map()
+  var publishers: Map[Workflow.Id, ActorRef] = Map()
 
   override def receive(): Actor.Receive = {
     case c @ Connect(workflowId) =>
@@ -40,13 +40,16 @@ case class SeahorseChannelSubscriber(
           context.actorOf(Props(WorkflowChannelSubscriber(executionDispatcher)), workflowIdString)
         val publisher: MQPublisher =
           communicationFactory.createCommunicationChannel(workflowId.toString, subscriberActor)
-        publishers += (workflowId -> publisher)
-        context.actorOf(Props(new PublisherActor(publisher)), s"publishers/$workflowId")
+        val internalPublisher =
+          context.actorOf(Props(new PublisherActor(publisher)), s"publishers_$workflowId")
+        publishers += (workflowId -> internalPublisher)
       }
-      val publisherPath = publishers(workflowId).publisherActor.path
-      executionDispatcher ! c
+      val publisherPath: ActorPath = publishers(workflowId).path
+      executionDispatcher ! WorkflowConnect(c, publisherPath)
   }
 }
+
+case class WorkflowConnect(connect: Connect, publisherPath: ActorPath)
 
 object SeahorseChannelSubscriber {
   def props(executionDispatcher: ActorRef, communicationFactory: MQCommunicationFactory): Props = {

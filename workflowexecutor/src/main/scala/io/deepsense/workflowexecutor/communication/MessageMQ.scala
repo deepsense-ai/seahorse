@@ -19,7 +19,16 @@ package io.deepsense.workflowexecutor.communication
 import spray.json.{JsObject, JsValue}
 
 
-trait MessageMQ {
+trait MessageMQ
+
+object MessageMQ {
+  val messageTypeKey = "messageType"
+  val messageBodyKey = "messageBody"
+}
+
+trait ReadMessageMQ extends MessageMQ
+
+trait WriteMessageMQ extends MessageMQ {
   def toJsonObject: JsObject = JsObject(
     MessageMQ.messageTypeKey -> jsMessageType,
     MessageMQ.messageBodyKey -> jsMessageBody
@@ -27,9 +36,4 @@ trait MessageMQ {
 
   protected def jsMessageType: JsValue
   protected def jsMessageBody: JsValue
-}
-
-object MessageMQ {
-  val messageTypeKey = "messageType"
-  val messageBodyKey = "messageBody"
 }

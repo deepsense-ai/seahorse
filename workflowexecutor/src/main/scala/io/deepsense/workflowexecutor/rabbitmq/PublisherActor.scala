@@ -18,14 +18,18 @@ package io.deepsense.workflowexecutor.rabbitmq
 
 import akka.actor.Actor
 
-import io.deepsense.workflowexecutor.communication.MessageMQ
+import io.deepsense.commons.utils.Logging
+import io.deepsense.workflowexecutor.communication.{MQCommunication, ExecutionStatus, WriteMessageMQ}
 
-class PublisherActor(publisher: MQPublisher) extends Actor {
+class PublisherActor(publisher: MQPublisher) extends Actor with Logging {
 
   override def receive: Receive = {
     case publishMessage: PublishMessage =>
       publisher.publish(publishMessage.topic, publishMessage.messageMQ)
+    case executionStatus: ExecutionStatus =>
+      logger.info(s"PublisherActor recv status: $executionStatus")
+      publisher.publish(MQCommunication.editorTopic, executionStatus)
   }
 }
 
-case class PublishMessage(topic: String, messageMQ: MessageMQ)
+case class PublishMessage(topic: String, messageMQ: WriteMessageMQ)

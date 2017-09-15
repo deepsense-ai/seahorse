@@ -24,11 +24,10 @@ import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDes
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph._
-import io.deepsense.messageprotocol.WorkflowExecutorProtocol.{Abort, ExecutionStatus}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.communication.Connect
+import io.deepsense.workflowexecutor.communication.{ExecutionStatus, Connect}
 
 /**
  * WorkflowExecutorActor coordinates execution of a workflow by distributing work to
@@ -37,7 +36,8 @@ import io.deepsense.workflowexecutor.communication.Connect
 class WorkflowExecutorActor(
     executionContext: ExecutionContext,
     nodeExecutorFactory: GraphNodeExecutorFactory,
-    statusListener: Option[ActorRef])
+    statusListener: Option[ActorRef],
+    publisher: Option[ActorSelection])
   extends Actor
   with Logging {
 
@@ -58,8 +58,6 @@ class WorkflowExecutorActor(
       nodeFailed(id, failureDescription, graph)
     case Connect(_) =>
       sendWorkflowStatus(Some(graph))
-    case Abort(_, nodes) =>
-      logger.warn("Aborting graph execution is not supported yet.")
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
   }
@@ -118,6 +116,7 @@ class WorkflowExecutorActor(
     }
     logger.debug(s"Status for '$workflowId': $status")
     statusListener.foreach(_ ! status)
+    publisher.foreach(_ ! status)
   }
 
   def launchReadyNodes(graph: StatefulGraph): StatefulGraph = {
@@ -167,10 +166,14 @@ class WorkflowExecutorActor(
 }
 
 object WorkflowExecutorActor {
-  def props(ec: ExecutionContext, statusListener: Option[ActorRef] = None): Props =
+  def props(
+      ec: ExecutionContext,
+      publisher: Option[ActorSelection] = None,
+      statusListener: Option[ActorRef] = None): Props =
     Props(new WorkflowExecutorActor(ec,
       new ProductionGraphNodeExecutorFactory,
-      statusListener))
+      statusListener,
+      publisher))
   type Results = Map[Entity.Id, DOperable]
 
   object Messages {
