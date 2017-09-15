@@ -46,8 +46,8 @@
   sudo: yes
   vars_files:
     - vars/docker.yml
+    - vars/env.yml
   roles:
     - { role: cassandra,
-        cassandra_server_port: 11011,
         data_dir: "{{cassandra_data_dir}}"
       }

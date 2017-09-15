@@ -4,6 +4,7 @@
 - name: Builds documentation docker image
   hosts: localhost
   vars_files:
+    - vars/env.yml
     - vars/documentation.yml
   roles:
     - documentation
@@ -11,6 +12,7 @@
 - name: Exports documentation docker image
   hosts: localhost
   vars_files:
+    - vars/env.yml
     - vars/documentation.yml
   tasks:
     - include: tasks/save_docker_image.yml docker_image={{ds_documentation_docker_image}} download_dir="{{ds_documentation_download_dir}}"
@@ -20,6 +22,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
+    - vars/env.yml
     - vars/documentation.yml
   tasks:
     - name: Assures docker dir exists
@@ -31,6 +34,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
+    - vars/env.yml
     - vars/documentation.yml
   tasks:
     - include: tasks/load_docker_image.yml docker_image={{ds_documentation_docker_image}} docker_dir={{ds_documentation_download_dir}}
@@ -40,6 +44,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
+    - vars/env.yml
     - vars/documentation.yml
   tasks:
     - name: Register running Docker containers
@@ -57,4 +62,4 @@
         state: started
         restart_policy: always
         ports:
-          - "{{documentation_listen_ip}}:{{documentation_listen_port}}:80"
+          - "{{ds_documentation_ip}}:{{ds_documentation_port}}:80"

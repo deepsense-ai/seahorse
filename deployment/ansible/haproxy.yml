@@ -1,0 +1,70 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Builds haproxy docker image
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/haproxy.yml
+  roles:
+    - haproxy
+
+- name: Exports haproxy docker image
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/haproxy.yml
+  tasks:
+    - include: tasks/save_docker_image.yml docker_image={{ds_haproxy_docker_image}} download_dir="{{ds_haproxy_download_dir}}"
+
+- name: Copies haproxy docker image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/haproxy.yml
+  tasks:
+    - name: Assures docker dir exists
+      file: path={{ds_haproxy_download_dir}} state=directory
+    - include: tasks/copy_docker_image.yml docker_tar_image={{ds_haproxy_docker_image}}-docker.tar docker_dir={{ds_haproxy_download_dir}} download_dir="{{ds_haproxy_download_dir}}"
+
+- name: Imports haproxy docker image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/haproxy.yml
+  tasks:
+    - include: tasks/load_docker_image.yml docker_image={{ds_haproxy_docker_image}} docker_dir={{ds_haproxy_download_dir}}
+
+- name: Runs haproxy image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/haproxy.yml
+  tasks:
+    - name: Register running Docker containers
+      register: docker_containers
+      command: docker ps -a
+
+    - name: Remove previous container
+      command: docker rm -f {{ds_haproxy_docker_image}}
+      when: docker_containers.stdout.find(' {{ds_haproxy_docker_image}} ') != -1
+
+    - name: Run haproxy container
+      docker:
+        name: "{{ds_haproxy_docker_image}}"
+        image: "{{ds_haproxy_docker_image}}"
+        state: started
+        restart_policy: always
+        volumes:
+          - "/dev/log:/dev/log:rw"
+        ports:
+          - "{{haproxy_listen_ip}}:80:80"
+          - "{{haproxy_listen_ip}}:443:443"
+          - "{{haproxy_listen_ip}}:8000:8000"
+          - "{{haproxy_listen_ip}}:{{ds_wm_public_port}}:{{ds_wm_public_port}}"

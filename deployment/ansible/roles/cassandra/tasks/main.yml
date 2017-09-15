@@ -11,4 +11,4 @@
     expose:
       - 9042
     ports:
-      - "{{cassandra_server_port}}:9042"
+      - "{{cassandra_server_ip}}:{{cassandra_server_port}}:9042"

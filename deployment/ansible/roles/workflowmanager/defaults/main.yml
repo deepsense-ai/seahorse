@@ -1,7 +1,8 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 ---
-wm_server_port: 9080
+ds_wm_ip: "{{ansible_docker0.ipv4.address}}"
+ds_wm_port: 9081
 
 wm_auth_service_identity: "service:workflow-manager"
 wm_auth_service_password: "fahda0joek3aeBah"
@@ -22,7 +23,8 @@ reports_api_prefix: "v1/reports"
 
 workflows_timeout: 3000
 
-cassandra_host: "{{master_host}}"
+cassandra_host: "{{ansible_docker0.ipv4.address}}"
+cassandra_port: 9042
 cassandra_reconnect_delay: 5000
 cassandra_user: cassandra
 cassandra_pass: cassandra

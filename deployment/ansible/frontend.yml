@@ -4,6 +4,7 @@
 - name: Builds frontend docker images
   hosts: localhost
   vars_files:
+    - vars/env.yml
     - vars/frontend.yml
   vars:
     docker_dir: "/tmp/docker-ansible"
@@ -13,6 +14,7 @@
 - name: Exports frontend-proxy docker image
   hosts: localhost
   vars_files:
+    - vars/env.yml
     - vars/frontend.yml
   tasks:
     - include: tasks/save_docker_image.yml docker_image={{ds_frontend_docker_image}} download_dir="{{ds_frontend_download_dir}}"
@@ -22,6 +24,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
+    - vars/env.yml
     - vars/frontend.yml
   tasks:
     - name: Assures docker dir exists
@@ -33,6 +36,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
+    - vars/env.yml
     - vars/frontend.yml
   tasks:
     - include: tasks/load_docker_image.yml docker_image={{ds_frontend_docker_image}} docker_dir={{ds_frontend_download_dir}}
@@ -42,9 +46,8 @@
   user: ubuntu
   sudo: yes
   vars_files:
+    - vars/env.yml
     - vars/frontend.yml
-  vars:
-    frontend_port: "80"
   tasks:
     - name: Register running Docker containers
       register: docker_containers
@@ -61,8 +64,8 @@
         state: started
         restart_policy: always
         ports:
-          - "{{frontend_port}}:80"
+          - "{{ds_editor_ip}}:{{ds_editor_port}}:80"
         env:
-          PROXY_HOST: "{{proxy_host}}"
-          PROXY_PORT: "{{proxy_port}}"
+          PUBLIC_WM_ADDRESS: "{{ds_wm_public_address}}"
+          PUBLIC_WM_PORT: "{{ds_wm_public_port}}"
           API_VERSION: "{{api_version}}"

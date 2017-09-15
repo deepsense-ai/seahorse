@@ -1,3 +1,4 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 cassandra_server_port: 9042
+cassandra_server_ip: "{{ansible_docker0.ipv4.address}}"

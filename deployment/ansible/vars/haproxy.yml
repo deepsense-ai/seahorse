@@ -1,0 +1,6 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+docker_dir: "/tmp/docker-ansible"
+docker_dir_prefix: "/tmp/docker-ansible"
+ds_haproxy_download_dir: "{{docker_dir_prefix}}/{{ds_haproxy_docker_image}}"
+ds_haproxy_docker_image: "ds_haproxy"

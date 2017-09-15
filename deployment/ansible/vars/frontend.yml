@@ -7,8 +7,5 @@ frontend_artifact_id: deepsense-frontend
 ds_frontend_package_name: "0.2.0-frontend-2015-07-23_18-02-46-209ed4f-SNAPSHOT"
 ds_frontend_artifact_url: "http://10.10.1.77:8081/artifactory/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
 ds_frontend_docker_image: "ds-frontend"
-
-proxy_host: "http://ds-frontend"
-proxy_port: "8001"
 api_version: "0.4.0"
 editor_version: "0.4.0-SNAPSHOT"

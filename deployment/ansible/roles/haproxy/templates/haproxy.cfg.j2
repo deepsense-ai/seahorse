@@ -1,0 +1,57 @@
+global
+  log /dev/log local0
+  chroot /usr/local/etc/haproxy
+  maxconn 4000
+  user nobody
+  group nogroup
+  tune.ssl.default-dh-param 2048
+
+defaults
+  mode http
+  log global
+  option httplog
+  option dontlognull
+  timeout connect 3s
+  timeout client 30s
+  timeout server 30s
+  timeout http-request 10s
+
+frontend seahorse
+  log global
+  bind 0.0.0.0:80
+  bind 0.0.0.0:443 ssl crt /usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem crt /usr/local/etc/haproxy/deepsense.io.pem
+
+  redirect scheme https code 301 if !{ ssl_fc }
+
+  acl acl_editor hdr(Host) -i editor.deepsense.io editor.seahorse.deepsense.io
+  acl acl_documentation hdr(Host) -i seahorse.deepsense.io
+
+  use_backend editor if acl_editor
+  use_backend documentation if acl_documentation
+  default_backend documentation
+
+frontend workflow_manager
+  log global
+  bind 0.0.0.0:{{ds_wm_public_port}} ssl crt /usr/local/etc/haproxy/deepsense.io.pem
+
+  default_backend workflow_manager
+
+backend editor
+  server ds_editor {{ds_editor_ip}}:{{ds_editor_port}} check
+
+backend documentation
+  server ds_documentation {{ds_documentation_ip}}:{{ds_documentation_port}} check
+
+backend workflow_manager
+  server ds_wm {{ds_wm_ip}}:{{ds_wm_port}} check
+
+listen stats
+  bind 0.0.0.0:8000
+  mode http
+
+  acl codi_office src 213.189.47.210/31 10.0.0.0/8 192.168.0.0/16 127.0.0.0/8 172.16.0.0/12
+
+  stats enable
+  stats uri /
+  stats http-request allow if codi_office
+  stats http-request deny

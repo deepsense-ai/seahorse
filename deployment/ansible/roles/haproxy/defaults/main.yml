@@ -1,0 +1,13 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+ds_haproxy_docker_image: "ds_haproxy"
+docker_dir_prefix: "/tmp/docker-ansible"
+ds_haproxy_download_dir: "{{docker_dir_prefix}}/{{ds_haproxy_docker_image}}"
+docker_ip: "{{ansible_docker0.ipv4.address}}"
+ds_documentation_ip: "{{docker_ip}}"
+ds_documentation_port: 8001
+ds_editor_ip: "{{docker_ip}}"
+ds_editor_port: 8002
+ds_wm_ip: "{{docker_ip}}"
+ds_wm_port: 9081
+ds_wm_public_port: 9080

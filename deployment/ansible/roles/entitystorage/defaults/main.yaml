@@ -19,6 +19,8 @@ hdfs_port: 8020
 es_cassandra_table: entities
 es_cassandra_keyspace: entitystorage
 cassandra_reconnect_delay: 5000
+cassandra_host: "{{ansible_docker0.ipv4.address}}"
+cassandra_port: 9042
 
 es_akka_hostname: "{{master_host}}"
 es_akka_port: 2552

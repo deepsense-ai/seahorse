@@ -4,6 +4,7 @@
 - name: Download WorkflowManager package
   hosts: localhost
   vars_files:
+    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
     - vars/supervisor.yml
@@ -17,6 +18,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
+    - vars/env.yml
     - vars/deployment.yml
   roles:
     - { role: cassandra_migration,
@@ -39,6 +41,5 @@
     - supervisor
     - { role: workflowmanager,
         install_dir: "{{wm_install_dir}}",
-        akka_host: "{{master_host}}",
         wm_auth_service_password: "{{wm_service_password}}"
       }

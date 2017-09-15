@@ -1,0 +1,8 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+FROM haproxy
+
+COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+COPY deepsense.io.pem usr/local/etc/haproxy/deepsense.io.pem
+COPY editor.seahorse.deepsense.io.pem usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem
+EXPOSE 80 443 8000 {{ds_wm_public_port}}
