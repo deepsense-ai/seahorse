@@ -11,7 +11,7 @@ import spray.json._
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.graph.DirectedGraph
+import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows._
@@ -23,7 +23,7 @@ class WorkflowRowMapperSpec
   with WorkflowJsonProtocol {
 
   override val graphReader: GraphReader = mock[GraphReader]
-  when(graphReader.read(any())).thenReturn(DirectedGraph())
+  when(graphReader.read(any())).thenReturn(DeeplangGraph())
   val currentVersion = CurrentBuild.version
   val otherVersion = Version(3, 2, 1)
 
@@ -45,7 +45,7 @@ class WorkflowRowMapperSpec
   def withWorkflow(version: Version)(testCode: (Workflow, String, Row) => Any): Unit = {
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, version.humanReadable),
-      DirectedGraph(),
+      DeeplangGraph(),
       ThirdPartyData("{}"))
     val stringWorkflow = workflow.toJson.compactPrint
     val rowWorkflow = mock[Row]

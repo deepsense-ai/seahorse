@@ -105,7 +105,7 @@ class WorkflowsApiSpec
       name: String = workflowAName): Workflow = {
     val node1 = Node(Node.Id.randomId, MockOperation())
     val node2 = Node(Node.Id.randomId, MockOperation())
-    val graph = DirectedGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
+    val graph = DeeplangGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
     val thirdPartyData = ThirdPartyData(JsObject(
       "gui" -> JsObject(
@@ -132,7 +132,7 @@ class WorkflowsApiSpec
   def cyclicWorkflow: Workflow = {
     val node1 = Node(Node.Id.randomId, new FilterColumns)
     val node2 = Node(Node.Id.randomId, new FilterColumns)
-    val graph = DirectedGraph(
+    val graph = DeeplangGraph(
       Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
     val metadata = WorkflowMetadata(
       WorkflowType.Batch, apiVersion = BuildInfo.version)

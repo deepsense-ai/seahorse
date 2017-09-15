@@ -15,6 +15,7 @@ import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
 
@@ -31,8 +32,8 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   when(authorizatorProvider.forContext(any(classOf[Future[UserContext]]))).thenReturn(authorizator)
 
   val inferContext: InferContext = mock[InferContext]
-  val graph = mock[DirectedGraph]
-  when(graph.nodes).thenReturn(Set[Node]())
+  val graph = mock[DeeplangGraph]
+  when(graph.nodes).thenReturn(Set[DeeplangNode]())
   val metadata = mock[WorkflowMetadata]
   val thirdPartyData = mock[ThirdPartyData]
   val storedWorkflow = Workflow(metadata, graph, thirdPartyData)
@@ -50,7 +51,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val workflowWithResults = WorkflowWithResults(
     Workflow.Id.randomId,
     mock[WorkflowMetadata],
-    mock[DirectedGraph],
+    mock[DeeplangGraph],
     mock[ThirdPartyData],
     ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
 

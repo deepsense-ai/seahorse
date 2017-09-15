@@ -49,7 +49,7 @@ class WorkflowDaoCassandraImplIntegSpec
   when(catalog.createDOperation(operation3.id)).thenReturn(operation3)
   when(catalog.createDOperation(operation4.id)).thenReturn(operation4)
 
-  val w1@(workflow1Id, workflow1) = createWorkflow(graph = DirectedGraph())
+  val w1@(workflow1Id, workflow1) = createWorkflow(graph = DeeplangGraph())
   val w2@(workflow2Id, workflow2) = createWorkflow(graph = createGraph())
 
   val storedWorkflows = Set(w1, w2)
@@ -109,7 +109,7 @@ class WorkflowDaoCassandraImplIntegSpec
     }
   }
 
-  def createWorkflow(graph: DirectedGraph): (Workflow.Id, Workflow) = {
+  def createWorkflow(graph: DeeplangGraph): (Workflow.Id, Workflow) = {
     val metadata = WorkflowMetadata(
       apiVersion = CurrentBuild.version.humanReadable,
       workflowType = WorkflowType.Batch)
@@ -117,7 +117,7 @@ class WorkflowDaoCassandraImplIntegSpec
     (Workflow.Id.randomId, Workflow(metadata, graph, thirdPartyData))
   }
 
-  def createGraph() : DirectedGraph = {
+  def createGraph() : DeeplangGraph = {
     val node1 = Node(Node.Id.randomId, operation1)
     val node2 = Node(Node.Id.randomId, operation2)
     val node3 = Node(Node.Id.randomId, operation3)
@@ -129,6 +129,6 @@ class WorkflowDaoCassandraImplIntegSpec
       (node2, node4, 0, 0),
       (node3, node4, 0, 1))
     val edges = edgesList.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
-    DirectedGraph(nodes, edges)
+    DeeplangGraph(nodes, edges)
   }
 }
