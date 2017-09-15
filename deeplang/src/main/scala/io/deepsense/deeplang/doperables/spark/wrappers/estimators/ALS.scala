@@ -20,7 +20,7 @@ import org.apache.spark.ml.recommendation.{ALS => SparkALS, ALSModel => SparkALS
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.spark.wrappers.models.ALSModel
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasItemColumnParam, HasPredictionColumnCreatorParam, HasUserColumnParam}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
@@ -31,7 +31,9 @@ class ALS
   extends SparkEstimatorWrapper[SparkALSModel, SparkALS, ALSModel]
   with HasItemColumnParam
   with HasPredictionColumnCreatorParam
-  with HasUserColumnParam {
+  with HasUserColumnParam
+  with HasMaxIterationsParam
+  with HasSeedParam {
 
   val alpha = new DoubleParamWrapper[SparkALS](
     name = "alpha",
@@ -52,13 +54,6 @@ class ALS
     description = "Whether to use implicit preference",
     sparkParamGetter = _.implicitPrefs)
   setDefault(implicitPrefs, false)
-
-  val maxIterations = new IntParamWrapper[SparkALS](
-    name = "max iterations",
-    description = "Maximum number of iterations (>= 0)",
-    sparkParamGetter = _.maxIter,
-    validator = RangeValidator.positiveIntegers)
-  setDefault(maxIterations, 10.0)
 
   val nonnegative = new BooleanParamWrapper[SparkALS](
     name = "nonnegative",
@@ -100,12 +95,6 @@ class ALS
     sparkParamGetter = _.regParam,
     validator = RangeValidator(begin = 0.0, end = Double.PositiveInfinity))
   setDefault(regularization, 0.1)
-
-  val seed = new LongParamWrapper[SparkALS](
-    name = "seed",
-    description = "Random seed",
-    sparkParamGetter = _.seed)
-  setDefault(seed, 1.0)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
