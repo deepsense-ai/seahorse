@@ -10,5 +10,6 @@ angular.module('deepsense.attributes-panel', [
   'deepsense.spinner',
   'deepsense.node-parameters',
   'NgSwitchery',
-  'ui.bootstrap'
-]);
+  'ui.bootstrap',
+  'xeditable'
+]).run((editableOptions) => editableOptions.theme = 'bs3');

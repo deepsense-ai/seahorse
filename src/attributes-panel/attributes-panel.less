@@ -1,4 +1,5 @@
 @import "../common/variables.less";
+@import (reference) "../common/reusables.less";
 
 .popover {
   z-index: 10000;
@@ -119,6 +120,18 @@
 
     &__name {
       margin: 0;
+      max-height: 8ex;
+      overflow: hidden;
+
+      // new method of clipping by line numbers
+      @supports (display: -webkit-box) {
+        & {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          max-height: none;
+        }
+      }
     }
 
     .popover {
@@ -242,6 +255,45 @@
         max-width: 100%;
         width: 100%;
       }
+    }
+  }
+
+  [editable-text] {
+    border-bottom: 1px dashed gray;
+    line-height: 1.5em;
+    word-wrap: break-word;
+  }
+
+  .editable-hide {
+    display: none;
+
+    ~ a {
+      display: none;
+    }
+  }
+
+  .editable-empty {
+    font-style: italic;
+    text-transform: none;
+  }
+
+  .editable-input {
+    &:extend(.o-custom all);
+
+    box-shadow: none;
+  }
+
+  .editable-controls .btn {
+    margin: 0 @main-space;
+
+    // btn-sm
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+
+    &:last-child {
+      margin: 0;
+      background: @danger;
     }
   }
 }

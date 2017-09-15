@@ -15,6 +15,7 @@ Front-end:
 - INSPINIA Bootstrap theme.
 - switchery
 - ng-switchery
+- angular-xeditable
 
 - deepsense.node-parameters
 - deepsense.loading-spinner

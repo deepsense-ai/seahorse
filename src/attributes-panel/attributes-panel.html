@@ -1,14 +1,25 @@
 <aside class="ibox operation-attributes-panel animated fadeIn">
   <header class="ibox-title ibox-title--main">
     <section class="ibox-title">
-      <h4 class="ibox-title__name"><a ng-href="http://seahorse.deepsense.io/docs/latest/uuid/{{node.operationId}}.html" target="_blank">{{ node.name }}</a></h4>
+      <h4 class="ibox-title__name"
+          tooltip-placement="left"
+          tooltip="{{node.uiName ? 'Click to change name' : ''}}"
+          tooltip-trigger="mouseenter"
+          tooltip-append-to-body="true">
+        <span editable-text="node.uiName">{{node.uiName || 'Create custom name'}}</span>
+      </h4>
       <a class="close-link" aria-label="Close" ng-click="panel.closePanel()">
         <i class="fa fa-times"></i>
       </a>
     </section>
     <section class="operation-attributes-panel__details">
+      <p class="operation-attributes-panel__title m-t-n-xs m-b-xs">{{ node.name }}</p>
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
+      <a ng-href="http://seahorse.deepsense.io/docs/latest/uuid/{{node.operationId}}.html" target="_blank"
+         class="o-read-more block m-t-xs">
+        Read more
+      </a>
     </section>
     <section class="operation-attributes-panel__details o-state" ng-if="node.state">
       <header>

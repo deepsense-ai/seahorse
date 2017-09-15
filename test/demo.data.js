@@ -13,6 +13,7 @@ angular.module('test').
         description: 'Simple sql db reader',
         id: '88f560a9-97e3-4fa2-93ce-edad4cab7ea9',
         name: 'Sql Reader',
+        uiName: 'Sql Reader',
         operationId: '342342-123123-434234-234234',
         parameters: null,
         state: {
@@ -31,6 +32,7 @@ angular.module('test').
         description: 'Simple filters takes dataset based on...',
         id: '210ce781-0a9f-477d-99a7-5be31f7bfc02',
         name: 'Row Filter',
+        uiName: 'Row Filter',
         operationId: '342342-123123-434234-12334',
         parameters: null,
         state: {
@@ -51,6 +53,7 @@ angular.module('test').
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
         id: 'e61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
         name: 'File To DataFrame',
+        uiName: 'File To DataFrame',
         operationId: '11111-111111-33333',
         parameters: null,
         state: {
@@ -74,6 +77,7 @@ angular.module('test').
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
         id: 'a61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
         name: 'Test draft',
+        uiName: 'Test draft',
         operationId: '11111-111111-33333',
         parameters: null,
         state: {
@@ -190,6 +194,7 @@ angular.module('test').
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
         id: 'a61a311f-ffc0-71b8-736c-3fb1e3cf8e77',
         name: 'Test draft',
+        uiName: '',
         operationId: '11111-111111-33333',
         parameters: null,
         state: {
