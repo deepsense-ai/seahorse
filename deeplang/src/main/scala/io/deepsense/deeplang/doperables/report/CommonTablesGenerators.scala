@@ -22,21 +22,28 @@ import org.apache.spark.mllib.linalg.DenseMatrix
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.report.ReportUtils.{formatValues, shortenLongTableValues}
-import io.deepsense.deeplang.params.ParamMap
+import io.deepsense.deeplang.params.{ParamMap, Params}
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.utils.SparkTypeConverter.sparkAnyToString
 import io.deepsense.reportlib.model._
 
 object CommonTablesGenerators {
 
-  private def paramMapToDescriptionLists(params: ParamMap): List[List[Option[String]]] = {
+  private def paramMapToDescriptionLists(
+      params: ParamMap,
+      namePrefix: String = ""): List[List[Option[String]]] = {
     val descriptionList = params.toSeq.flatMap(
       pair => pair.value match {
         case choice: Choice =>
-          Seq(List(Some(pair.param.name), Some(choice), Some(pair.param.description))) ++
-            paramMapToDescriptionLists(choice.extractParamMap())
+          Seq(
+            List(Some(namePrefix + pair.param.name), Some(choice), Some(pair.param.description))) ++
+            paramMapToDescriptionLists(choice.extractParamMap(), namePrefix)
+        case seq: Seq[Params] =>
+          seq.zipWithIndex.flatMap { case (p, i) =>
+            paramMapToDescriptionLists(p.extractParamMap(), s"${pair.param.name} #${i + 1} ")
+          }.toList
         case value =>
-          Seq(List(Some(pair.param.name), Some(value), Some(pair.param.description)))
+          Seq(List(Some(namePrefix + pair.param.name), Some(value), Some(pair.param.description)))
       }
     ).toList
     shortenLongTableValues(formatValues(descriptionList))
