@@ -28,4 +28,5 @@ object ParameterType extends Enumeration {
   val SingleColumnCreator = Value("creator")
   val MultipleColumnCreator = Value("multipleCreator")
   val PrefixBasedColumnCreator = Value("prefixBasedCreator")
+  val Dynamic = Value("dynamic")
 }
