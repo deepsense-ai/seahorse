@@ -23,7 +23,7 @@ connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundled local S
 Seahorse uses
 <img class="img-responsive" style="display: inline-block; width:auto; height:40px; margin-top: -11px;" src="./img/spark_2_0.jpg">
 . To learn about using Seahorse with other Apache Spark versions please
-<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
+<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">
   contact us for details.
 </a>
 

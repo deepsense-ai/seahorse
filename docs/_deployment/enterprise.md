@@ -25,7 +25,7 @@ title: Seahorse Enterprise
 
     <div style="margin-top: 60px; font-size: 20px;">
         <strong>
-            <a target="_blank" style="font-size: 24px;" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
+            <a target="_blank" style="font-size: 24px;" href="http://deepsense.io/about-us/contact/#contact-form">
                 Contact us
             </a>
             <span>
