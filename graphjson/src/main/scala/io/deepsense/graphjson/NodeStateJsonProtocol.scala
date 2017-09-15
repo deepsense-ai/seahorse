@@ -8,8 +8,8 @@ package io.deepsense.graphjson
 
 import spray.json._
 
+import io.deepsense.commons.json.DateTimeJsonProtocol._
 import io.deepsense.graph.{Progress, State}
-import io.deepsense.graphjson.DateTimeJsonProtocol._
 
 trait NodeStateJsonProtocol extends DefaultJsonProtocol{
 

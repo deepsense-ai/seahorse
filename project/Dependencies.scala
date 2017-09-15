@@ -72,7 +72,8 @@ object Dependencies {
     sprayJson,
     sprayRouting,
     guice,
-    guiceMultibindings
+    guiceMultibindings,
+    nscalaTime
   )  ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % "test")
 
   val deeplang = Seq(

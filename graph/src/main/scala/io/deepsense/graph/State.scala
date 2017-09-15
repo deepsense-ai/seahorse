@@ -10,6 +10,8 @@ import java.util.UUID
 
 import org.joda.time.DateTime
 
+import io.deepsense.commons.datetime.DateTimeConverter
+
 /**
  * Represents the state of execution node.
  *
@@ -27,16 +29,16 @@ case class State private[graph](
 
   private[graph] def completed(results: List[UUID]): State = {
     copy(status = Status.Completed,
-      ended = Some(DateTime.now()),
+      ended = Some(DateTimeConverter.now),
       progress = Some(Progress(progress.get.total, progress.get.total)),
       results = Some(results))
   }
 
   private[graph] def failed: State =
-    copy(status = Status.Failed, ended = Some(DateTime.now()))
+    copy(status = Status.Failed, ended = Some(DateTimeConverter.now))
 
   private[graph] def aborted: State =
-    copy(status = Status.Aborted, ended = Some(DateTime.now()))
+    copy(status = Status.Aborted, ended = Some(DateTimeConverter.now))
 
   private[graph] def withProgress(progress: Progress): State = {
     require(status == Status.Running)
@@ -53,7 +55,7 @@ object State {
   private[graph] def queued: State = State(Status.Queued)
 
   private[graph] def running(progress: Progress): State = {
-    val started = DateTime.now() // TODO: is this the way we want to compute the time?
+    val started = DateTimeConverter.now // TODO: is this the way we want to compute the time?
     State(status = Status.Running, started = Some(started), progress = Some(progress))
   }
 }

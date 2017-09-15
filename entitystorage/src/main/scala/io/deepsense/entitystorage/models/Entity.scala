@@ -36,7 +36,7 @@ object Entity {
  * Shorter Entity description used for list presentation
  */
 case class EntityDescriptor(
-  id: String,
+  id: Entity.Id,
   name: String,
   description: String,
   dClass: String,
@@ -45,11 +45,24 @@ case class EntityDescriptor(
   updated: DateTime
 )
 
+object EntityDescriptor {
+
+  def apply(entity: Entity): EntityDescriptor = {
+    EntityDescriptor(entity.id,
+      entity.name,
+      entity.description,
+      entity.dClass,
+      entity.saved,
+      entity.created,
+      entity.updated)
+  }
+}
+
 /**
  * Entity Description that can be provided by user.
  */
 case class UserEntityDescription(
-  id: String,
+  id: Entity.Id,
   name: String,
   description: String,
   saved: Boolean = true
