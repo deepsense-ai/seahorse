@@ -131,10 +131,6 @@ angular.module('deepsense.graph-model').
         that.setStatus(state);
       };
 
-      that.isRunning = function isRunning() {
-        return that.getStatus() === that.STATUS.RUNNING;
-      };
-
       that.addNode = function addNode(node) {
         if (that.getNodeById(node.id)) {
           throw new Error('Node ' + node.id + ' already exists');
@@ -273,6 +269,23 @@ angular.module('deepsense.graph-model').
             edge.state = Edge.STATE_TYPE.MAYBE;
           }
         });
+      };
+
+      that.setPortTypesFromReport = function setPortTypesFromReport(resultEntities) {
+        let nodes = that.getNodes();
+        for (let nodeId in nodes) {
+          let node = nodes[nodeId];
+          if (node.state && node.state.results) {
+            let reportIds = node.state.results;
+            for (let i = 0; i < reportIds.length; ++i) {
+              let reportId = reportIds[i];
+              let resultEntity = resultEntities[reportId];
+              if (resultEntity) {
+                node.output[i].typeQualifier = [ resultEntity.className ];
+              }
+            }
+          }
+        }
       };
     }
 
