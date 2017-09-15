@@ -2,16 +2,16 @@
  * Copyright (c) 2016, CodiLime Inc.
  */
 
-package io.deepsense.seahorse.datasource.db
+package io.deepsense.seahorse.scheduling.db
 
 import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
 
-import io.deepsense.seahorse.datasource.DatasourceManagerConfig
+import io.deepsense.seahorse.scheduling.SchedulingManagerConfig
 
 object Database {
 
-  val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("databaseSlick", DatasourceManagerConfig.config)
+  val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("databaseSlick", SchedulingManagerConfig.config)
 
   val db = dbConfig.db
   val driver: JdbcProfile = dbConfig.driver

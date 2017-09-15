@@ -6,14 +6,14 @@ package io.deepsense.seahorse.datasource.server
 
 import org.scalatest.{FreeSpec, Matchers}
 
-import io.deepsense.seahorse.datasource.api.{ApiException, DefaultApiImpl}
+import io.deepsense.seahorse.datasource.api.{ApiException, DatasourceManagerApi}
 import io.deepsense.seahorse.datasource.db.FlywayMigration
 
 class DatasourcesApiSpec extends FreeSpec with Matchers {
 
   private lazy val api = {
     FlywayMigration.run()
-    new DefaultApiImpl()
+    new DatasourceManagerApi()
   }
 
   "Api consumer" - {

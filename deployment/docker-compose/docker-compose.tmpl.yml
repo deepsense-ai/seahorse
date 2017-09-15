@@ -5,7 +5,7 @@ services:
     restart: always
     network_mode: "host"
     environment:
-      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_WM_PORT\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_LIBRARY_PORT\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_SM_PORT\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_DATASOURCES_MANAGER_PORT\"},\"name\":\"datasource-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_NOTEBOOK_PORT\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_FRONTEND_PORT\"},\"name\":\"frontend\"}]}"
+      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_WM_PORT\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_LIBRARY_PORT\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_SM_PORT\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_DATASOURCES_MANAGER_PORT\"},\"name\":\"datasource-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_SCHEDULING_MANAGER_PORT\"},\"name\":\"scheduling-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_NOTEBOOK_PORT\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_FRONTEND_PORT\"},\"name\":\"frontend\"}]}"
       HOST: "127.0.0.1"
       PORT: "33321"
       DISABLE_OAUTH: "true"
@@ -113,6 +113,16 @@ services:
      - "127.0.0.1:$EXPOSED_DATASOURCES_MANAGER_PORT:8080"
     environment:
       - "JDBC_URL=jdbc:h2:tcp://database:1521/datasourcemanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
+    links:
+      - database
+  schedulingmanager:
+    # TODO Change TO BACKEND_TAG after merging with master
+    image: $DOCKER_REPOSITORY/deepsense-schedulingmanager:dev_scheduling-latest
+    restart: always
+    ports:
+     - "127.0.0.1:$EXPOSED_SCHEDULING_MANAGER_PORT:8080"
+    environment:
+      - "JDBC_URL=jdbc:h2:tcp://database:1521/schedulingmanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
     links:
       - database
   rabbitmq:

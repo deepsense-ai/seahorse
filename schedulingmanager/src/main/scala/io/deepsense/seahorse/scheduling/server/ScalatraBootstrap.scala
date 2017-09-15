@@ -10,13 +10,13 @@ import scala.util.control.NonFatal
 
 import org.scalatra.LifeCycle
 
-import io.deepsense.seahorse.scheduling.api.DefaultApiImpl
+import io.deepsense.seahorse.scheduling.api.SchedulingManagerApi
 
 class ScalatraBootstrap extends LifeCycle {
 
   override def init(context: ServletContext): Unit = {
     try {
-      context mount (new DefaultApiImpl(), "/*")
+      context mount (new SchedulingManagerApi(), "/*")
     } catch {
       case NonFatal(e) => e.printStackTrace()
     }

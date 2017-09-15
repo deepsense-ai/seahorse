@@ -51,6 +51,9 @@ lazy val e2etests = project dependsOn (backendcommons, backendcommons % "test->t
   sessionmanager, workflowmanager, seahorseWorkflowExecutor, seahorseMqProtocol, seahorseWorkflowJson
 )
 
+// Server smoke tests of for services opens up port 8080
+parallelExecution in ThisBuild := false
+
 
 // Sequentially perform integration tests after assembling and deploying GE with dependencies jar.
 // Additionally, check if all input workflows for e2e tests can be parsed - we want to have quick feedback

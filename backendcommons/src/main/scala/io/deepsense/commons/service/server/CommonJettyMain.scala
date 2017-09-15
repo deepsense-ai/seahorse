@@ -2,7 +2,7 @@
  * Copyright (c) 2016, CodiLime Inc.
  */
 
-package io.deepsense.commons.service
+package io.deepsense.commons.service.server
 
 import org.eclipse.jetty.server.handler.gzip.GzipHandler
 import org.eclipse.jetty.server.{HttpConfiguration, HttpConnectionFactory, NetworkTrafficServerConnector, Server}

@@ -4,10 +4,10 @@
 
 package io.deepsense.seahorse.datasource.server
 
-import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.server.Server
 
-import io.deepsense.commons.service.{CommonJettyMain, JettyConfig}
+import io.deepsense.commons.service.server.CommonJettyMain
+import io.deepsense.seahorse.datasource.DatasourceManagerConfig
 import io.deepsense.seahorse.datasource.db.{Database, FlywayMigration}
 
 object JettyMain {
@@ -18,13 +18,11 @@ object JettyMain {
     Database.forceInitialization()
     FlywayMigration.run()
 
-    val jettyConfig = new JettyConfig(ConfigFactory.load("jetty.default.conf").getConfig("jetty"))
-
     CommonJettyMain.startServer(
       contextPath = "/datasourcemanager/v1/",
       scalatraBootstrapClass = classOf[ScalatraBootstrap],
       webAppResourcePath = "scalatra-webapp",
-      jettyConfig
+      DatasourceManagerConfig.jetty
     )
   }
 
