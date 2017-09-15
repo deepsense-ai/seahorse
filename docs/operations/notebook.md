@@ -75,7 +75,7 @@ import matplotlib.pyplot as plt
 df = dataframe().toPandas()
 df['atemp'].plot()
 {% endhighlight %}
-<img class="img-responsive" src="/img/notebook_plot.png" />
+<img class="img-responsive" src="../img/notebook_plot.png" />
 
 ## Input
 

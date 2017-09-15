@@ -7,7 +7,7 @@ description: Seahorse documentation homepage
 ---
 ### Setup Seahorse
 <div class="centered-container" markdown="1">
-  [![Download Seahorse](/img/quickstart/download-button.png){: .centered-image .img-responsive}](http://10.10.1.77:8081/artifactory/seahorse-bundled-image/1451907274/Vagrantfile)
+  [![Download Seahorse](img/quickstart/download-button.png){: .centered-image .img-responsive}](http://10.10.1.77:8081/artifactory/seahorse-bundled-image/1451907274/Vagrantfile)
   _Requires <a target="_blank" href="http://download.virtualbox.org/virtualbox/5.0.10/">VirtualBox 5.0.10</a> and
   <a target="_blank" href="https://releases.hashicorp.com/vagrant/1.8.1/">Vagrant 1.8.1</a>_
 </div>
