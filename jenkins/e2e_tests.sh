@@ -62,8 +62,12 @@ SPARK_VERSION="2.0.0"
 function cleanup {
     $SPARK_STANDALONE_MANAGEMENT down $SPARK_VERSION
     docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
-    deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG logs > docker-compose.log
-    deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
+    # docker-compose.py down only works when called from its dir
+    (
+      cd deployment/docker-compose
+      ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG logs > docker-compose.log
+      ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
+    )
 }
 trap cleanup EXIT
 
