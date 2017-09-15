@@ -69,13 +69,14 @@ class WriteReadDataFrameIntegSpec
   "WriteDataFrame and ReadDataFrame" should {
     "write and read PARQUET file" in {
       val wdf = WriteDataFrame(
+        StorageType.FILE,
         FileFormat.PARQUET,
         absoluteWriteReadDataFrameTestPath + "/parquet")
       wdf.execute(executionContext)(Vector(dataFrame))
 
       val rdf = ReadDataFrame(
-        absoluteWriteReadDataFrameTestPath + "/parquet",
-        FileFormat.PARQUET)
+        FileFormat.PARQUET,
+        absoluteWriteReadDataFrameTestPath + "/parquet")
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
@@ -106,13 +107,14 @@ class WriteReadDataFrameIntegSpec
       val convertedDataFrame = createDataFrame(convertedRows, convertedSchema)
 
       val wdf = WriteDataFrame(
+        StorageType.FILE,
         FileFormat.JSON,
         absoluteWriteReadDataFrameTestPath + "/json")
       wdf.execute(executionContext)(Vector(dataFrame))
 
       val rdf = ReadDataFrame(
-        absoluteWriteReadDataFrameTestPath + "/json",
         FileFormat.JSON,
+        absoluteWriteReadDataFrameTestPath + "/json",
         categoricalColumns = Some(MultipleColumnSelection(
           Vector(NameColumnSelection(Set("categorical")))
         ))

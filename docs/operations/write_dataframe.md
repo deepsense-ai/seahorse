@@ -7,12 +7,16 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Write DataFrame saves a DataFrame on a file system.
-Supports writing files to local file system, Amazon S3 and HDFS.
-Output will be Hadoop-compatible partitioned file.
+Write DataFrame saves a DataFrame to specified data storage type.
 
+Supports writing files (CSV, JSON or PARQUET) to local file system, Amazon S3 and HDFS.
+Output will be Hadoop-compatible partitioned file.
 It is possible to customize the file format (e.g. the values separator in CSV format)
 by setting appropriate parameters.
+
+It also supports writing data to JDBC compatible databases.
+For more detailed information on using JDBC driver, visit:
+[Workflow Executor documentation](../workflowexecutor.html#custom-jdbc-drivers).
 
 
 ## Available file formats
@@ -80,12 +84,35 @@ Write DataFrame operation does not produce any output.
   <tbody>
     <tr>
       <td>
-        <code id="ratio">format</code>
+        <code id="data-storage-type">data storage type</code>
       </td>
       <td>
         <code><a href="../parameters.html#single_choice">Choice</a></code>
       </td>
+      <td>The input data storage type. Possible values are:
+        <code>FILE</code>, <code>JDBC</code>.
+      </td>
+    </tr>
+
+    <tr>
       <td>
+        <code id="output-file">output file</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = FILE</code>.
+        A path where the output file will be saved.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="format">format</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#single_choice">Choice</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = FILE</code>.
         A format of the output file. Possible values:
         <code>CSV</code>, <code>PARQUET</code>, <code>JSON</code>.
       </td>
@@ -93,7 +120,7 @@ Write DataFrame operation does not produce any output.
     </tr>
     <tr>
       <td>
-        <code id="seed">column separator</code>
+        <code id="column-separator">column separator</code>
       </td>
       <td>
         <code><a href="../parameters.html#single_choice">Choice</a></code>
@@ -108,7 +135,7 @@ Write DataFrame operation does not produce any output.
 
     <tr>
       <td>
-        <code id="seed">custom column separator</code>
+        <code id="custom-column-separator">custom column separator</code>
       </td>
       <td>
         <code><a href="../parameters.html#string">String</a></code>
@@ -120,7 +147,7 @@ Write DataFrame operation does not produce any output.
 
     <tr>
       <td>
-        <code id="seed">write header</code>
+        <code id="write-header">write header</code>
       </td>
       <td>
         <code><a href="../parameters.html#boolean">Boolean</a></code>
@@ -133,12 +160,40 @@ Write DataFrame operation does not produce any output.
 
     <tr>
       <td>
-        <code id="seed">output file</code>
+        <code id="url">url</code>
       </td>
       <td>
         <code><a href="../parameters.html#string">String</a></code>
       </td>
-      <td>A path where the output file will be saved.</td>
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC connection URL.
+        Sensitive data (e.g. user, password) could be replaced on the fly during workflow execution,
+        see: <a href="../parameters.html#string">String parameter documentation</a> for more details.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="driver">driver</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC driver ClassName.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="table">table</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC table name.
+        Table with appropriate schema will be created,
+        if table already exists, exception will be thrown.
+      </td>
     </tr>
   </tbody>
 </table>

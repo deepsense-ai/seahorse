@@ -6,9 +6,14 @@ description: Read DataFrame
 includeOperationsMenu: true
 ---
 
-Reads a DataFrame from a file in specified format.
-Supports reading files from local file system, Amazon S3 and HDFS.
-It also supports reading Hadoop-compatible partitioned files.
+Reads a DataFrame from a specified data storage type.
+
+Supports reading files (CSV, JSON or PARQUET) from local file system, Amazon S3 and HDFS
+(it supports reading Hadoop-compatible partitioned files).
+
+It also supports reading data from JDBC compatible databases.
+For more detailed information on using JDBC driver, visit:
+[Workflow Executor documentation](../workflowexecutor.html#custom-jdbc-drivers).
 
 
 ## Available file formats
@@ -110,29 +115,41 @@ Read DataFrame does not take any input.
   <tbody>
     <tr>
       <td>
-        <code id="ratio">source</code>
-      </td>
-      <td>
-        <code><a href="../parameters.html#string">String</a></code>
-      </td>
-      <td>A path to the input file.</td>
-
-    <tr>
-      <td>
-        <code id="seed">format</code>
+        <code id="data-storage-type">data storage type</code>
       </td>
       <td>
         <code><a href="../parameters.html#single_choice">Choice</a></code>
       </td>
-      <td>The input file format. Possible values are:
-        <code>CSV</code>, <code>PARQUET</code>, <code>JSON</code>.
+      <td>The input data storage type. Possible values are:
+        <code>FILE</code>, <code>JDBC</code>.
       </td>
-    </tr>
-
     </tr>
     <tr>
       <td>
-        <code id="seed">separator</code>
+        <code id="source">source</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = FILE</code>.
+        A path to the input file.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="format">format</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#single_choice">Choice</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = FILE</code>.
+        The input file format. Possible values are:
+        <code>CSV</code>, <code>PARQUET</code>, <code>JSON</code>.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="separator">separator</code>
       </td>
       <td>
         <code><a href="../parameters.html#single_choice">Choice</a></code>
@@ -147,7 +164,7 @@ Read DataFrame does not take any input.
 
     <tr>
       <td>
-        <code id="seed">custom column separator</code>
+        <code id="custom-column-separator">custom column separator</code>
       </td>
       <td>
         <code><a href="../parameters.html#string">String</a></code>
@@ -159,7 +176,7 @@ Read DataFrame does not take any input.
 
     <tr>
       <td>
-        <code id="seed">names included</code>
+        <code id="names-included">names included</code>
       </td>
       <td>
         <code><a href="../parameters.html#boolean">Boolean</a></code>
@@ -172,7 +189,7 @@ Read DataFrame does not take any input.
 
     <tr>
       <td>
-        <code id="convert_to_boolean">convert to boolean</code>
+        <code id="convert-to-boolean">convert to boolean</code>
       </td>
       <td>
         <code><a href="../parameters.html#boolean">Boolean</a></code>
@@ -184,19 +201,19 @@ Read DataFrame does not take any input.
 
     <tr>
       <td>
-        <code id="seed">categorical columns</code>
+        <code id="categorical-columns">categorical columns</code>
       </td>
       <td>
         <code><a href="../parameters.html#multiple_column_selector">MultipleColumnSelector</a></code>
       </td>
-      <td>Valid only if <code>format = CSV</code> or <code>format = JSON</code>.
+      <td>Valid only if <code>format = CSV</code>, <code>format = JSON</code> or <code>data storage type = JDBC</code>.
         Selects the columns that should be converted to <code>Categorical</code> type.
       </td>
     </tr>
 
     <tr>
       <td>
-        <code id="seed">line separator</code>
+        <code id="line-separator">line separator</code>
       </td>
       <td>
         <code><a href="../parameters.html#single_choice">Choice</a></code>
@@ -212,13 +229,49 @@ Read DataFrame does not take any input.
     </tr>
     <tr>
       <td>
-        <code id="seed">custom line separator</code>
+        <code id="custom-line-separator">custom line separator</code>
       </td>
       <td>
         <code><a href="../parameters.html#string">String</a></code>
       </td>
       <td>Valid only if <code>line separator = CUSTOM</code>.
         A line separator used in the input file.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <code id="url">url</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC connection URL.
+        Sensitive data (e.g. user, password) could be replaced on the fly during workflow execution,
+        see: <a href="../parameters.html#string">String parameter documentation</a> for more details.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="driver">driver</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC driver ClassName.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="table">table</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC table name.
       </td>
     </tr>
 

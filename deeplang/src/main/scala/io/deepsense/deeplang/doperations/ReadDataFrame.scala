@@ -37,6 +37,7 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
 import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, InvalidFileException}
+import io.deepsense.deeplang.parameters.StorageType.StorageType
 import io.deepsense.deeplang.parameters.FileFormat.FileFormat
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext, FileSystemClient}
@@ -46,53 +47,78 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
 
   override val id: Id = "c48dd54c-6aef-42df-ad7a-42fc59a09f0e"
   override val name = "Read DataFrame"
-  override val parameters = ParametersSchema(
-    "source" -> sourceFileParameter,
-    "format" -> formatParameter,
-    "line separator" -> lineSeparatorParameter)
+  override val parameters = ParametersSchema("data storage type" -> storageTypeParameter)
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
-    val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(sourceFileParameter.value)
-
     try {
-      FileFormat.withName(formatParameter.value) match {
-        case FileFormat.CSV =>
-          val conf = new Configuration(context.sparkContext.hadoopConfiguration)
-          conf.set(
-            ReadDataFrame.recordDelimiterSettingName,
-            determineLineSeparator())
-          val lines = context.sparkContext.newAPIHadoopFile(
-            path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf
-          ).map { case (_, text) => text.toString }
-
-          if (lines.isEmpty()) {
-            throw new InvalidFileException(path, "empty")
-          }
-          dataFrameFromCSV(context, lines, categoricalColumnsParameter.value)
-        case FileFormat.PARQUET =>
-          context.dataFrameBuilder
-            .buildDataFrame(context.sqlContext.read.parquet(path))
-        case FileFormat.JSON =>
-          val dataFrame = context.dataFrameBuilder
-            .buildDataFrame(context.sqlContext.read.json(path))
-          val schema = dataFrame.sparkDataFrame.schema
-
-          val (categoricalColumnIndices, categoricalColumnNames) =
-            getCategoricalColumns(schema, categoricalColumnsParameter.value)
-
-          val convertedSchema = StructType(schema.zipWithIndex.map { case (column, index) =>
-            if (categoricalColumnIndices.contains(index)) {
-              column.copy(dataType = StringType)
-            } else {
-              column
-            }
-          })
-
-          context.dataFrameBuilder
-            .buildDataFrame(convertedSchema, dataFrame.sparkDataFrame.rdd, categoricalColumnNames)
-      }
+       StorageType.withName(storageTypeParameter.value) match {
+         case StorageType.JDBC => readFromJdbc(context)
+         case StorageType.FILE => readFromFile(context)
+       }
     } catch {
       case e: IOException => throw DeepSenseIOException(e)
+    }
+  }
+
+  def readFromJdbc(context: ExecutionContext): DataFrame = {
+    val dataFrame = context.dataFrameBuilder.buildDataFrame(context.sqlContext
+      .read.format("jdbc").options(Map(
+      "driver" -> jdbcDriverClassNameParameter.value,
+      "url" -> jdbcUrlParameter.value,
+      "dbtable" -> jdbcTableNameParameter.value
+    )).load())
+    val schema = dataFrame.sparkDataFrame.schema
+    val (categoricalColumnIndices, categoricalColumnNames) =
+      getCategoricalColumns(schema, categoricalColumnsParameter.value)
+    val convertedSchema = StructType(schema.zipWithIndex.map { case (column, index) =>
+      if (categoricalColumnIndices.contains(index)) {
+        column.copy(dataType = StringType)
+      } else {
+        column
+      }
+    })
+    context.dataFrameBuilder
+      .buildDataFrame(convertedSchema, dataFrame.sparkDataFrame.rdd, categoricalColumnNames)
+  }
+
+  def readFromFile(context: ExecutionContext): DataFrame = {
+    val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(sourceFileParameter.value)
+    FileFormat.withName(fileFormatParameter.value) match {
+      case FileFormat.CSV =>
+        val conf = new Configuration(context.sparkContext.hadoopConfiguration)
+        conf.set(
+          ReadDataFrame.recordDelimiterSettingName,
+          determineLineSeparator())
+        val lines = context.sparkContext.newAPIHadoopFile(
+          path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf
+        ).map { case (_, text) => text.toString}
+
+        if (lines.isEmpty()) {
+          throw new InvalidFileException(path, "empty")
+        }
+        dataFrameFromCSV(context, lines, categoricalColumnsParameter.value)
+      case FileFormat.PARQUET =>
+        context.dataFrameBuilder
+          .buildDataFrame(context.sqlContext.read.parquet(path))
+      case FileFormat.JSON =>
+        val dataFrame = context.dataFrameBuilder
+          .buildDataFrame(context.sqlContext.read.json(path))
+        val schema = dataFrame.sparkDataFrame.schema
+
+        val (categoricalColumnIndices, categoricalColumnNames) =
+          getCategoricalColumns(schema, categoricalColumnsParameter.value)
+
+        val convertedSchema = StructType(schema.zipWithIndex.map { case (column, index) =>
+          if (categoricalColumnIndices.contains(index)) {
+            column.copy(dataType = StringType)
+          } else {
+            column
+          }
+        })
+        context.dataFrameBuilder.buildDataFrame(
+          convertedSchema,
+          dataFrame.sparkDataFrame.rdd,
+          categoricalColumnNames)
     }
   }
 
@@ -163,7 +189,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
-trait ReadDataFrameParameters extends CsvParameters {
+trait ReadDataFrameParameters extends CsvParameters with JdbcParameters {
   import io.deepsense.deeplang.doperations.ReadDataFrame._
 
   val csvShouldConvertToBooleanParameter = BooleanParameter(
@@ -175,7 +201,7 @@ trait ReadDataFrameParameters extends CsvParameters {
     portIndex = 0,
     default = Some(MultipleColumnSelection.emptySelection))
 
-  val formatParameter = ChoiceParameter(
+  lazy val fileFormatParameter = ChoiceParameter(
     "Format of the input file",
     default = Some(FileFormat.CSV.toString),
     options = ListMap(
@@ -183,9 +209,24 @@ trait ReadDataFrameParameters extends CsvParameters {
         "separator" -> csvColumnSeparatorParameter,
         "names included" -> csvNamesIncludedParameter,
         "convert to boolean" -> csvShouldConvertToBooleanParameter,
-        "categorical columns" -> categoricalColumnsParameter),
+        "categorical columns" -> categoricalColumnsParameter,
+        "line separator" -> lineSeparatorParameter),
       FileFormat.PARQUET.toString -> ParametersSchema(),
       FileFormat.JSON.toString -> ParametersSchema(
+        "categorical columns" -> categoricalColumnsParameter)
+    ))
+
+  lazy val storageTypeParameter = ChoiceParameter(
+    "Storage type",
+    default = Some(StorageType.FILE.toString),
+    options = ListMap(
+      StorageType.FILE.toString -> ParametersSchema(
+        "source" -> sourceFileParameter,
+        "format" -> fileFormatParameter),
+      StorageType.JDBC.toString -> ParametersSchema(
+        "url" -> jdbcUrlParameter,
+        "driver" -> jdbcDriverClassNameParameter,
+        "table" -> jdbcTableNameParameter,
         "categorical columns" -> categoricalColumnsParameter)
     ))
 
@@ -220,12 +261,13 @@ object ReadDataFrame {
   }
 
   def apply(
+      fileFormat: FileFormat,
       filePath: String,
-      format: FileFormat,
       categoricalColumns: Option[MultipleColumnSelection] = None): ReadDataFrame = {
     val operation = new ReadDataFrame()
+    operation.storageTypeParameter.value = StorageType.FILE.toString
+    operation.fileFormatParameter.value = fileFormat.toString
     operation.sourceFileParameter.value = filePath
-    operation.formatParameter.value = format.toString
     operation.categoricalColumnsParameter.value = categoricalColumns
     operation
   }
@@ -240,7 +282,8 @@ object ReadDataFrame {
 
     val operation = new ReadDataFrame()
 
-    operation.formatParameter.value = "CSV"
+    operation.storageTypeParameter.value = StorageType.FILE.toString
+    operation.fileFormatParameter.value = FileFormat.CSV.toString
     operation.lineSeparatorParameter.value = lineSeparator._1.toString
     operation.customLineSeparatorParameter.value = lineSeparator._2
     operation.sourceFileParameter.value = filePath

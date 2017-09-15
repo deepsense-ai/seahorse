@@ -101,6 +101,28 @@ Hadoop 2.6.0 package (Seahorse uses Scala 2.10, Spark has to be built with Scala
 
 
 
+## Custom JDBC Drivers
+
+To allow usage of SQL databases for
+[Read DataFrame](operations/read_dataframe.html)
+and
+[Write DataFrame](operations/write_dataframe.html),
+proper JDBC driver has to be accessible during workflow execution.
+This requirement can be satisfied by:
+
+* adding JDBC jar library to cluster deployment,
+
+* specifying JDBC jar during spark-submit command.
+
+To specify JDBC jar during execution, use spark-submit option
+``--jars path/to/jdbc-driver.jar``
+with path to proper version of JDBC driver jar.
+For more information on
+``--jars`` option, please visit
+<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#advanced-dependency-management">Apache Spark documentation</a>.
+
+
+
 ## Workflow Executor Command Line Parameters
 
 Detailed information about command line parameters can be obtained by executing command:
