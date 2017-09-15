@@ -133,5 +133,5 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
 }
 
 object Join {
-  val joinColumnsParamKey = "joinColumns"
+  val joinColumnsParamKey = "join columns"
 }

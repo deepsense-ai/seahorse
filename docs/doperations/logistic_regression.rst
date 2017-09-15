@@ -20,7 +20,7 @@ None
 
 ------
 Output
-------
+------znal
 .. list-table::
    :widths: 15 30 55
    :header-rows: 1
@@ -48,6 +48,6 @@ is vector of features, :math:`y` is label (-1 or 1) and :math:`w` is vector of w
 Params
 ------
 
-1. ``iterationsNumber: Numeric`` - Max number of iterations for algorithm to perform.
+1. ``iterations number: Numeric`` - Max number of iterations for algorithm to perform.
 2. ``tolerance: Numeric`` - The convergence tolerance of iterations for LBFGS.
    Smaller value will lead to higher accuracy with the cost of more iterations.

@@ -48,4 +48,4 @@ Params
 
 1. ``regularization: Numeric`` - regularization parameter used in regression.
     Should be non-negative.
-2. ``iterationsNumber`` - number of iterations for algorithm to perform.
+2. ``iterations number`` - number of iterations for algorithm to perform.

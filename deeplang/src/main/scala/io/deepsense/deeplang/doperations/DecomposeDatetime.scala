@@ -75,8 +75,8 @@ object DecomposeDatetime {
 
   private case class TimestampPart(name: String, start: Int, length: Int)
 
-  private val timestampColumnParamKey = "timestampColumn"
-  private val timestampPartsParamKey = "parts"
+  val timestampColumnParamKey = "timestamp column"
+  val timestampPartsParamKey = "parts"
 
   private val timestampParts = List(
     new TimestampPart("year", 0, 4),

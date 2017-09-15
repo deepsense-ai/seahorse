@@ -46,7 +46,7 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
 
 object CreateRidgeRegression {
   val RegularizationKey = "regularization"
-  val IterationsNumberKey = "iterationsNumber"
+  val IterationsNumberKey = "iterations number"
 
   def apply(regularization: Double, iterationsNumber: Int): CreateRidgeRegression = {
     val createRidgeRegression = CreateRidgeRegression()

@@ -96,7 +96,7 @@ Params
 
   - ``CSV`` - Additional parameters for CSV format.
      - ``separator: String`` - Values separator.
-     - ``namesIncluded: Boolean`` - Whether the first row include column names or not.
+     - ``names included: Boolean`` - Whether the first row include column names or not.
 
-2. ``categoricalColumns: ColumnSelector`` - Columns with Categorical values. Supports selection
+2. ``categorical columns: ColumnSelector`` - Columns with Categorical values. Supports selection
 by index and name (if names of the columns are known).

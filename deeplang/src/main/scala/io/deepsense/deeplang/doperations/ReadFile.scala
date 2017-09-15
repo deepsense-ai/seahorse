@@ -78,8 +78,8 @@ object ReadFile {
   val recordDelimiterSettingName = "textinputformat.record.delimiter"
 
   val pathParam = "path"
-  val lineSeparatorParam = "lineSeparator"
-  val customLineSeparatorParam = "customLineSeparator"
+  val lineSeparatorParam = "line separator"
+  val customLineSeparatorParam = "custom line separator"
 
   val windowsSeparatorLabel = "Windows line separator"
   val unixSeparatorLabel = "Unix line separator"

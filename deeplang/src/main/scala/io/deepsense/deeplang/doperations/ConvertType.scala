@@ -108,8 +108,8 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
 }
 
 object ConvertType {
-  val SelectedColumns = "selectedColumns"
-  val TargetType = "targetType"
+  val SelectedColumns = "selected columns"
+  val TargetType = "target type"
 
   def apply(
       targetType: ColumnType.ColumnType,

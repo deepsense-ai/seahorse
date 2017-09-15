@@ -51,6 +51,6 @@ trait Evaluator extends DOperation1To1[DataFrame, Report] {
 }
 
 object Evaluator {
-  val targetColumnParamKey = "targetColumn"
-  val predictionColumnParamKey = "predictionColumn"
+  val targetColumnParamKey = "target column"
+  val predictionColumnParamKey = "prediction column"
 }

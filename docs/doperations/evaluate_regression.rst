@@ -65,7 +65,7 @@ Output
 Params
 ------
 
-1. ``targetColumn: SingleColumnSelection`` - Column with expected values.
+1. ``target column: SingleColumnSelection`` - Column with expected values.
    Column has to have numeric type.
-2. ``predictionColumn: SingleColumnSelection`` - Column with prediction.
+2. ``prediction column: SingleColumnSelection`` - Column with prediction.
    Column has to have numeric type.

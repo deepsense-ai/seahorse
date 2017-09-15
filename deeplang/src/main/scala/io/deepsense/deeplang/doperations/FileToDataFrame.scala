@@ -198,8 +198,8 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
 object FileToDataFrame {
   val formatParameter = "format"
   val separatorParameter = "separator"
-  val categoricalColumnsParameter = "categoricalColumns"
-  val namesIncludedParameter = "namesIncluded"
+  val categoricalColumnsParameter = "categorical columns"
+  val namesIncludedParameter = "names included"
 
   sealed abstract class FileType(val name: String)
 

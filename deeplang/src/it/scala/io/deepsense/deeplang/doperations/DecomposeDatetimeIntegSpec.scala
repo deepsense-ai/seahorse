@@ -189,9 +189,11 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       columnSelection: SingleColumnSelection,
       selectedParts: Seq[String]): DecomposeDatetime = {
     val operation = new DecomposeDatetime
-    val columnParam = operation.parameters.getSingleColumnSelectorParameter("timestampColumn")
+    val columnParam = operation.parameters.getSingleColumnSelectorParameter(
+      DecomposeDatetime.timestampColumnParamKey)
     columnParam.value = Some(columnSelection)
-    val timeUnitsParam = operation.parameters.getMultipleChoiceParameter("parts")
+    val timeUnitsParam = operation.parameters.getMultipleChoiceParameter(
+      DecomposeDatetime.timestampPartsParamKey)
     timeUnitsParam.value = Some(selectedParts)
     operation
   }

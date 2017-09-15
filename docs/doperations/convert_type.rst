@@ -68,12 +68,12 @@ the operation will fail at runtime with TypeConversionException.
 ------
 Params
 ------
-1. ``selectedColumns: MultipleColumnSelector`` - columns to convert.
+1. ``selected columns: MultipleColumnSelector`` - columns to convert.
 Even if one of the columns is selected more than once (eg. by name and by type)
 it will be included only once. When a column selected by name
 or by index does not exist the operation will fail at runtime with ColumnsDoNotExistException.
 
-2. ``targetType: Choice`` - target type of the conversion
+2. ``target type: Choice`` - target type of the conversion
 
   - ``numeric``
   - ``string``

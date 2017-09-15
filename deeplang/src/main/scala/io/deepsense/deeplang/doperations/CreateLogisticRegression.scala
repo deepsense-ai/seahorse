@@ -46,7 +46,7 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
 }
 
 object CreateLogisticRegression {
-  val IterationsNumberKey = "iterationsNumber"
+  val IterationsNumberKey = "iterations number"
   val Tolerance = "tolerance"
   val EndOfRange = 1000000.0
 

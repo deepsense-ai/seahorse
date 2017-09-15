@@ -50,7 +50,7 @@ Output
      - DataFrame
      - DataFrame containing the columns of the left DataFrame
        and the columns of the right DataFrame but the columns
-       used to LEFT JOIN (in ``joinColumns`` parameter)
+       used to LEFT JOIN (in ``join columns`` parameter)
 
 
 ===========
@@ -58,13 +58,13 @@ Description
 ===========
 Join operation creates a new DataFrame that consists of the values in the columns of the left DataFrame
 and the columns of the right DataFrame but the columns used to LEFT JOIN. Rows match when the values in
-``joinColumns`` do.
+``join columns`` do.
 
 * The values must be equal to match.
 * Order of the columns is preserved (from left to right).
 
-The operation joins two DataFrames by the columns in ``joinColumns`` that must be in both
-DataFrames and of the same type. If ``joinColumns`` are not in either DataFrames or they are
+The operation joins two DataFrames by the columns in ``join columns`` that must be in both
+DataFrames and of the same type. If ``join columns`` are not in either DataFrames or they are
 of different types, ``ColumnsDoNotExistException`` or ``WrongColumnTypeException`` exceptions are thrown,
 respectively.
 
@@ -91,7 +91,7 @@ Output
 ------
 Params
 ------
-1. ``joinColumns: MultipleColumnSelector`` - columns to LEFT JOIN upon.
+1. ``join columns: MultipleColumnSelector`` - columns to LEFT JOIN upon.
    Even if one of the columns is selected more than once (eg. by name and by type)
    it will be included only once.
    Empty selection is not supported and exception ```ColumnsDoNotExistException`` is thrown.

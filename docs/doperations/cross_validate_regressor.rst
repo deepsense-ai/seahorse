@@ -58,7 +58,7 @@ Additionally performs cross-validation and produces report of cross-validation.
 ------
 Params
 ------
-1. ``numOfFolds: Numeric`` - Number of folds (**default: 10**).
+1. ``num of folds: Numeric`` - Number of folds (**default: 10**).
    If number of folds is greater than number of rows in training DataFrame, greatest applicable
    number of folds is used.
    Number of rows equal 0 results in omitting generation of cross-validation report
@@ -85,7 +85,7 @@ Example
 ----------------
 Operation Params
 ----------------
-1. numOfFolds = 3
+1. num of folds = 3
 2. seed = 0
 
 ----------------------

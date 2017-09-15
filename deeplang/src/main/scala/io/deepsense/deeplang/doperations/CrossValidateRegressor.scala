@@ -214,7 +214,7 @@ object CrossValidateRegressor {
   val reportName = "Cross-validate Regressor Report"
   val reportTableName = "Cross-validate report table"
 
-  val numOfFoldsParamKey = "numOfFolds"
+  val numOfFoldsParamKey = "num of folds"
   val seedParamKey = "seed"
 
   val reportColumnNames = List(

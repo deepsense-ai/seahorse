@@ -74,15 +74,13 @@ Output
 ------
 Params
 ------
-1. ``timestampColumn: SingleColumnSelector`` - one of the DataFrame columns.
+1. ``timestamp column: SingleColumnSelector`` - one of the DataFrame columns.
    If column selected by user has type different then Timestamp, ``WrongColumnTypeException``
    will be thrown.
    If selected column does not exist, ``ColumnDoesNotExistException`` will be thrown.
 2. ``parts: MultipleChoice`` - parts of timestamp to extract
    to separate columns.
    Possible values are: ``[year, month, day, hour, minutes, seconds]``.
-3. ``inPlace: Boolean`` - true if newly generated columns should replace original
-   timestamp column.
 
 
 =======
@@ -103,9 +101,8 @@ Jimmi Page    1944-01-09 08:35:10
 ----------------
 Operation Params
 ----------------
-1. column = Name
-2. timestamp parts = [year, month, day]
-3. inplace = false
+1. timestamp column = Name
+2. parts = [year, month, day]
 
 -----------
 Output Data

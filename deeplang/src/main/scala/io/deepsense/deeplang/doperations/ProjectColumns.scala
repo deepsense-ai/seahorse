@@ -13,7 +13,7 @@ case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
 
   override val name: String = "Project Columns"
   override val id: Id = "96b28b7f-d54c-40d7-9076-839411793d20"
-  val selectedColumns = "selectedColumns"
+  val selectedColumns = "selected columns"
 
   override val parameters: ParametersSchema = ParametersSchema(
     selectedColumns -> ColumnSelectorParameter(
