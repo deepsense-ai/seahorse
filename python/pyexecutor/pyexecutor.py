@@ -1,5 +1,6 @@
 # Copyright (c) 2015, CodiLime Inc.
 import argparse
+import os
 import time
 
 from py4j.java_gateway import JavaGateway, GatewayClient, CallbackServerParameters, java_import
@@ -34,13 +35,17 @@ class PyExecutor(object):
             gateway.close()
             return
 
-        # Wait for the end of the world
+        # Wait for the end of the world or being orphaned
         try:
             while True:
+                if os.getppid() == 1:
+                    log_debug("I am an orphan - stopping")
+                    break
                 time.sleep(1)
         except KeyboardInterrupt:
             log_debug('Exiting on user\'s request')
-            gateway.close()
+
+        gateway.close()
 
     @staticmethod
     def _initialize_spark_contexts(gateway):
