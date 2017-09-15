@@ -4,16 +4,12 @@
 
 package io.deepsense.experimentmanager.rest
 
-import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.experimentmanager.rest.metadata.MetadataInference
-
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
-
 import spray.http.StatusCodes
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
@@ -22,10 +18,13 @@ import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.rest.actions.Action
 import io.deepsense.experimentmanager.rest.json.{AbstractMetadataJsonProtocol, ExperimentJsonProtocol, MetadataSeqEnvelopeJsonProtocol}
+import io.deepsense.experimentmanager.rest.metadata.MetadataInference
+import io.deepsense.graph.CyclicGraphException
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.{Experiment, InputExperiment}
 
@@ -164,6 +163,8 @@ class ExperimentsApi @Inject() (
           complete(StatusCodes.NotFound, e.failureDescription)
         case e: ExperimentRunningException =>
           complete(StatusCodes.Conflict, e.failureDescription)
+        case e: CyclicGraphException =>
+          complete(StatusCodes.BadRequest, e.failureDescription)
     }
   }
 }

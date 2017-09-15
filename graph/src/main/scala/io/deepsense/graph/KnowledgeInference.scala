@@ -8,7 +8,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.TypesAccordance.TypesAccordance
 
 trait KnowledgeInference {
@@ -18,7 +18,7 @@ trait KnowledgeInference {
    * @return A graph knowledge with inferred results for every node.
    */
   def inferKnowledge(context: InferContext): GraphKnowledge = {
-    val sorted = topologicallySorted.get
+    val sorted = topologicallySorted.getOrElse(throw new CyclicGraphException())
     sorted
       .foldLeft(GraphKnowledge())((knowledge, node) => inferKnowledge(node, context, knowledge))
   }
