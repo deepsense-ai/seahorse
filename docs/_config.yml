@@ -5,13 +5,22 @@ markdown: kramdown
 # OS/packages wrt encoding. So we hard code this config.
 kramdown:
   entity_output: numeric
-  syntax_highlighter: rouge
 
 include:
   - _static
   - _modules
 
+exclude:
+  - README.md
+
+collections:
+  casestudies:
+    output: true
+
 # These allow the documentation to be updated with newer releases
+WORKFLOW_EXECUTOR_VERSION: 0.4
+DEEPSENSE_VERSION_SHORT: 0.4
+
 WORKFLOW_EXECUTOR_SCALA_VERSION: 2.10.5
 WORKFLOW_EXECUTOR_HADOOP_VERSION: 2.6.0
 WORKFLOW_EXECUTOR_SPARK_VERSION: 1.6.1
@@ -19,10 +28,14 @@ WORKFLOW_EXECUTOR_SPARK_VERSION: 1.6.1
 WORKFLOW_EXECUTOR_GITHUB_URL: https://github.com/deepsense-io/seahorse-workflow-executor
 WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor
 
+# The following 2 config values are duplicated in ds-workflow_executor/docs
 SEAHORSE_EDITOR_ADDRESS: http://localhost:33321
+SEAHORSE_EDITOR_PORT: 33321
 
 PANDAS_LIBRARY_ADDRESS: http://pandas.pydata.org
 
 SPARK_DOCS: https://spark.apache.org/docs/1.6.1
 
 SPARK_ASSEMBLY_PATH: spark-assembly-1.6.1-hadoop2.6.0.jar
+
+SEAHORSE_LATEST_VERSION: 1.2

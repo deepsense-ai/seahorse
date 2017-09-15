@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Seahorse on Data Scientist Workbench
 docTab: dswb_overview
 title: Seahorse on Data Scientist Workbench
