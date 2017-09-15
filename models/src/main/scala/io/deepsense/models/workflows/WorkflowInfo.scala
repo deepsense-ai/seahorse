@@ -23,4 +23,6 @@ case class WorkflowInfo(
   name: String,
   description: String,
   created: DateTime,
-  updated: DateTime)
+  updated: DateTime,
+  ownerId: String,
+  ownerName: String)
