@@ -14,16 +14,21 @@
           <div class="c-export-modal__warning-message__text">{{ controller.warningMessage }}</div>
         </div>
         <div>The downloaded
-          <a href="" target="_blank">workflow file</a>
+          <a href="https://seahorse.deepsense.io/docs/latest/workflowfile.html" target="_blank">workflow file</a>
           will contain all the steps from your workflow.
           In order to execute the workflow file on your Spark Cluster, please
           use the
-          <a href="" target="_blank">Workflow Executor</a>.
+          <a href="https://seahorse.deepsense.io/docs/latest/workflowexecutor.html" target="_blank">Workflow Executor</a>.
         </div>
         <br>
-        <button type="button" class="center-block btn btn-info"
-                ng-click="controller.download()" focused="">Download
-        </button>
+        <footer class="text-center">
+          <a class="btn btn-info"
+             href="https://s3.amazonaws.com/workflowexecutor/releases/0.4.1/workflowexecutor_2.10-0.4.1.jar">Download Workflow Executor
+          </a>
+          <button type="button" class="btn btn-info"
+                  ng-click="controller.download()" focused="">Download Workflow
+          </button>
+        </footer>
       </div>
       <span class="pull-right text-danger" ng-if="controller.errorMessage">{{ controller.errorMessage }}</span>
     </div>
