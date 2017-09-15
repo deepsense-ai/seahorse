@@ -16,14 +16,4 @@
 
 package io.deepsense.workflowexecutor.communication.message.notebook
 
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
-
-import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.workflows.Workflow
-
-case class GetPythonGatewayAddress(workflowId: Workflow.Id)
-
-trait GetPythonGatewayAddressJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val getPythonGatewayAddressFormat: RootJsonFormat[GetPythonGatewayAddress] =
-    jsonFormat1(GetPythonGatewayAddress.apply)
-}
+case class GetPythonGatewayAddress()

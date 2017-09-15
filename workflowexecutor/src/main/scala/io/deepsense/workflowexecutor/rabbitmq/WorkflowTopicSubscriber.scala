@@ -54,7 +54,7 @@ case class WorkflowTopicSubscriber(
   private def getOrCreatePublisher(workflowId: Id): ActorPath = {
     if (!publishers.contains(workflowId)) {
       val publisher: ActorRef = communicationFactory.createPublisher(
-        MQCommunication.Topic.workflow(workflowId),
+        MQCommunication.Topic.workflowPublicationTopic(workflowId),
         MQCommunication.Actor.Publisher.workflow(workflowId))
       publishers += (workflowId -> publisher)
     }

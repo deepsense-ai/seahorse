@@ -35,11 +35,12 @@ case class MQCommunicationFactory(
   val exchangeType = "topic"
 
   def createCommunicationChannel(
-      topic: String,
+      subscriptionTopic: String,
+      publicationTopic: String,
       subscriber: ActorRef,
       publisherActorName: String): ActorRef = {
-    registerSubscriber(topic, subscriber)
-    createPublisher(topic, publisherActorName)
+    registerSubscriber(subscriptionTopic, subscriber)
+    createPublisher(publicationTopic, publisherActorName)
   }
 
   def registerSubscriber(topic: String, subscriber: ActorRef): Unit = {

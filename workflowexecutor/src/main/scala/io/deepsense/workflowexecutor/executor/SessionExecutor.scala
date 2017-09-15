@@ -93,7 +93,8 @@ case class SessionExecutor(
         pythonExecutionCaretaker.gatewayListeningPort _),
       MQCommunication.Actor.Subscriber.notebook)
     communicationFactory.createCommunicationChannel(
-      MQCommunication.Topic.notebook,
+      MQCommunication.Topic.notebookSubscriptionTopic,
+      MQCommunication.Topic.notebookPublicationTopic,
       notebookSubscriberActor,
       MQCommunication.Actor.Publisher.notebook)
 
@@ -101,7 +102,7 @@ case class SessionExecutor(
       WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory),
       MQCommunication.Actor.Subscriber.workflows)
     communicationFactory.registerSubscriber(
-      MQCommunication.Topic.workflows,
+      MQCommunication.Topic.allWorkflowsSubscriptionTopic,
       workflowsSubscriberActor)
 
     system.awaitTermination()

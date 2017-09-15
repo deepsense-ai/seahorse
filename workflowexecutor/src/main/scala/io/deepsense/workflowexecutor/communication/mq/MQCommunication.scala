@@ -31,14 +31,14 @@ object MQCommunication {
       val seahorse = prefixedName("seahorse")
       val notebook = prefixedName("notebook")
       def workflow(id: Workflow.Id): String = prefixedName(id.toString)
-      private[this] def prefixedName = name("publisher") _
+      private def prefixedName = name("publisher") _
     }
 
     object Subscriber {
       val seahorse = prefixedName("seahorse")
       val notebook = prefixedName("notebook")
       val workflows: String = prefixedName("workflows")
-      private[this] def prefixedName = name("subscriber") _
+      private def prefixedName = name("subscriber") _
     }
     private[this] def name(prefix: String)(suffix: String): String = s"${prefix}_$suffix"
   }
@@ -48,10 +48,16 @@ object MQCommunication {
   }
 
   object Topic {
-    private[this] val workflowPrefix = "workflow"
-    val notebook = "notebook"
-    val seahorse = "seahorse"
-    val workflows = s"${workflowPrefix}.*"
-    def workflow(workflowId: Workflow.Id): String = s"${workflowPrefix}.${workflowId.toString}"
+    private val workflowPrefix = "workflow"
+    private val notebook = "notebook"
+    val allWorkflowsSubscriptionTopic = subscriptionTopic(s"$workflowPrefix.*")
+    val notebookSubscriptionTopic = subscriptionTopic(notebook)
+    val notebookPublicationTopic = publicationTopic(notebook)
+    def workflowSubscriptionTopic(id: Workflow.Id): String = subscriptionTopic(workflowTopic(id))
+    def workflowPublicationTopic(id: Workflow.Id): String = publicationTopic(workflowTopic(id))
+    private def workflowTopic(workflowId: Workflow.Id): String =
+      s"$workflowPrefix.${workflowId.toString}"
+    private def subscriptionTopic(topic: String): String = s"$topic.from"
+    private def publicationTopic(topic: String): String = s"$topic.to"
   }
 }
