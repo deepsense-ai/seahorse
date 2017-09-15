@@ -10,7 +10,7 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.{DateTimeJsonProtocol, IdJsonProtocol}
-import io.deepsense.entitystorage.models._
+import io.deepsense.models.entities.{CompactEntityDescriptor, DataObjectReference, Entity, UserEntityDescriptor}
 
 trait EntityJsonProtocol
   extends DefaultJsonProtocol

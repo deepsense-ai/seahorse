@@ -47,6 +47,8 @@ trait HdfsIntegTestSupport
     cli.get.delete(testDir, true)
     cli.get.mkdirs(testDir, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
     copy(geUberJarPath, s"$testDir/$uberJarFilename")
+    copy("src/main/resources/entitystorage-communication.conf",
+      s"$testDir/entitystorage-communication.conf")
   }
 
   override def afterAll(): Unit = {

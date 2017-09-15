@@ -18,9 +18,9 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, InferContext}
-import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.models.experiments.Experiment
 
 class ExperimentJsonProtocolSpec
   extends StandardSpec

@@ -7,10 +7,15 @@ package io.deepsense.graphexecutor
 
 import java.util.UUID
 
-import scala.collection.mutable
+import scala.concurrent.{Await, duration}
+import scala.concurrent.duration.FiniteDuration
+
+import com.typesafe.scalalogging.LazyLogging
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.graph.{Status, Node}
+import io.deepsense.entitystorage.EntityStorageClient
+import io.deepsense.graph.Node
+import io.deepsense.models.entities.{DataObjectReport, InputEntity}
 
 /**
  * GraphNodeExecutor is responsible for execution of single node.
@@ -24,45 +29,34 @@ import io.deepsense.graph.{Status, Node}
 class GraphNodeExecutor(
     executionContext: ExecutionContext,
     graphExecutor: GraphExecutor,
-    node: Node)
-  extends Runnable {
+    node: Node,
+    entityStorageClient: EntityStorageClient)
+  extends Runnable with LazyLogging {
+
+  implicit val entityStorageResponseDelay = new FiniteDuration(5L, duration.SECONDS)
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   override def run(): Unit = {
     try {
       graphExecutor.graphGuard.synchronized {
         require(node.isRunning)
       }
-      println("Execution of node: " + node.id + " time: " + System.currentTimeMillis)
-      println("real node execution")
+      logger.info("Execution of node: " + node.id + " time: " + System.currentTimeMillis)
+      logger.info("real node execution")
       // TODO: pass real vector of DOperable's, not "deceptive mock"
       // (we are assuming that all DOperation's return at most one DOperable)
-      var vector = Vector.empty[DOperable]
-      graphExecutor.graphGuard.synchronized {
-        for (preNodeIds <- graphExecutor.graph.get.predecessors.get(node.id)) {
-          for (preNodeId <- preNodeIds) {
-            println("preNodeId=" + preNodeId.get.nodeId)
-            if (graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.nonEmpty) {
-              vector = vector ++ graphExecutor.dOperableCache.get(
-                graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.get(0))
-            }
-          }
-        }
-      }
-      println("node.operation= " + node.operation.name)
-      println("vector#= " + vector.size)
-      val resultVector = node.operation.execute(executionContext)(vector)
-      println("resultVector#= " + resultVector.size)
 
+      val resultVector = executeOperation(collectOutputs())
 
       graphExecutor.graphGuard.synchronized {
-        graphExecutor.graph =
-          Some(graphExecutor.graph.get.markAsCompleted(
+        graphExecutor.experiment = Some(graphExecutor.experiment.get.copy(graph =
+          graphExecutor.graph.get.markAsCompleted(
             node.id,
             resultVector.map(dOperable => {
-              val uuid = UUID.randomUUID()
+              val uuid = storeAndRegister(dOperable)
               graphExecutor.dOperableCache.put(uuid, dOperable)
               uuid
-            }).toList))
+            }).toList)))
       }
     } catch {
       case e: Exception => {
@@ -72,14 +66,56 @@ class GraphNodeExecutor(
           // TODO: Exception should be relayed to graph
           // TODO: To decision: exception in single node should result in abortion of:
           // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
-          graphExecutor.graph = Some(graphExecutor.graph.get.markAsFailed(node.id))
+          graphExecutor.experiment =
+            Some(graphExecutor.experiment.get
+              .copy(graph = graphExecutor.graph.get.markAsFailed(node.id)))
         }
-        // TODO: proper logging
-        e.printStackTrace()
+        logger.error("Graph execution failes", e)
       }
     } finally {
       // Exception thrown here could result in slightly delayed graph execution
       graphExecutor.graphEventBinarySemaphore.release()
     }
+  }
+
+  private def collectOutputs() = {
+    var collectedOutputs = Vector.empty[DOperable]
+    graphExecutor.graphGuard.synchronized {
+      for (preNodeIds <- graphExecutor.graph.get.predecessors.get(node.id)) {
+        for (preNodeId <- preNodeIds) {
+          if (graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.nonEmpty) {
+            collectedOutputs = collectedOutputs ++ graphExecutor.dOperableCache.get(
+              graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.get.head)
+          }
+        }
+      }
+    }
+    collectedOutputs
+  }
+
+  private def executeOperation(input: Vector[DOperable]): Vector[DOperable] = {
+    // TODO Replace with logging
+    logger.info("node.operation= {}", node.operation.name)
+    logger.info("vector#= {}", input.size.toString)
+    val resultVector = node.operation.execute(executionContext)(input)
+    logger.info("resultVector#= {}", resultVector.size.toString)
+    resultVector
+  }
+
+  private def storeAndRegister(dOperable: DOperable): UUID = {
+    val experiment = graphExecutor.experiment.get
+    val inputEntity = InputEntity(
+      experiment.tenantId,
+      "temporary Entity",
+      "temporary Entity",
+      "?",
+      None,
+      Some(DataObjectReport(dOperable.report)),
+      saved = false
+    )
+
+    Await.result(
+      entityStorageClient.createEntity(inputEntity).map(_.id),
+      entityStorageResponseDelay).value
   }
 }

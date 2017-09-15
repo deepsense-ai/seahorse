@@ -9,8 +9,9 @@ package io.deepsense.experimentmanager
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
-import io.deepsense.experimentmanager.models.{ExperimentsList, Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.ExperimentsList
 import io.deepsense.graph.Node
+import io.deepsense.models.experiments.{Experiment, InputExperiment}
 
 /**
  * Experiment Manager's API

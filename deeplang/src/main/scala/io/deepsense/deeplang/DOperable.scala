@@ -6,7 +6,11 @@
 
 package io.deepsense.deeplang
 
+import io.deepsense.deeplang.doperables.Report
+
 /**
  * Represents objects on which you can perform DOperations.
  */
-trait DOperable
+trait DOperable {
+  def report: Report
+}

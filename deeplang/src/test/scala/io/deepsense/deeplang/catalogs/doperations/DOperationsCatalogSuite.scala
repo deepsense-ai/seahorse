@@ -16,6 +16,7 @@ import org.scalatest.{FunSuite, Matchers}
 import io.deepsense.commons.models
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DOperationCatalogTestResources {
@@ -57,8 +58,12 @@ object DOperationCatalogTestResources {
     override val parameters = parametersSchema
   }
 
-  case class X() extends DOperable
-  case class Y() extends DOperable
+  case class X() extends DOperable {
+    override def report: Report = ???
+  }
+  case class Y() extends DOperable {
+    override def report: Report = ???
+  }
 
   val XTypeTag = typeTag[X]
   val YTypeTag = typeTag[Y]

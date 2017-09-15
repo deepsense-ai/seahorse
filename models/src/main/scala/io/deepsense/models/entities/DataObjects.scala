@@ -4,7 +4,7 @@
  * Owner: Rafal Hryciuk
  */
 
-package io.deepsense.entitystorage.models
+package io.deepsense.models.entities
 
 import io.deepsense.deeplang.doperables.Report
 

@@ -13,8 +13,8 @@ import com.google.inject.name.Named
 
 import io.deepsense.experimentmanager.execution.MockRunningExperimentsActor.Tick
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
-import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.graph.Node
+import io.deepsense.models.experiments.Experiment
 
 class MockRunningExperimentsActor @Inject()(
     @Named("runningexperiments.mock.failureprobability") failureProbability: Double,

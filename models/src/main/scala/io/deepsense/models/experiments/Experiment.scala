@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  *
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager.models
+package io.deepsense.models.experiments
 
 import io.deepsense.commons.auth.Ownable
 import io.deepsense.commons.models
@@ -13,6 +13,7 @@ import io.deepsense.graph.Graph
 /**
  * Experiment model.
  */
+@SerialVersionUID(1)
 case class Experiment(
     id: Experiment.Id,
     tenantId: String,
@@ -20,7 +21,8 @@ case class Experiment(
     graph: Graph,
     description: String = "")
   extends BaseExperiment(name, description, graph)
-  with Ownable {
+  with Ownable
+  with Serializable {
 
   /**
    * Creates an updated version of the experiment using other experiment.
@@ -32,24 +34,14 @@ case class Experiment(
   def updatedWith(other: Experiment): Experiment = {
     Experiment(id, tenantId, other.name, other.graph, other.description)
   }
-
-  /**
-   * Creates an updated version of the experiment using an input experiment.
-   * Updates the name, the description and the graph of the experiment.
-   * @param inputExperiment Input experiment.
-   * @return Updated experiment.
-   */
-  def updatedWith(inputExperiment: InputExperiment): Experiment = {
-    copy(
-      name = inputExperiment.name,
-      description = inputExperiment.description,
-      graph = inputExperiment.graph
-    )
-  }
 }
 
 object Experiment {
   type Id = models.Id
+
+  object Id {
+    def randomId = models.Id.randomId
+  }
 
   object Status extends Enumeration {
     type Status = Value

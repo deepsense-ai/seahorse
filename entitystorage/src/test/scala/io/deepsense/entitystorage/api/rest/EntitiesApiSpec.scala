@@ -24,6 +24,7 @@ import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.json.EntityJsonProtocol
 import io.deepsense.entitystorage.models._
 import io.deepsense.entitystorage.services.EntityService
+import io.deepsense.models.entities.{UserEntityDescriptor, CompactEntityDescriptor, Entity}
 
 class EntitiesApiSpec
   extends StandardSpec

@@ -13,10 +13,13 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DClassesForDOperations {
-  trait A extends DOperable
+  trait A extends DOperable {
+    def report: Report = ???
+  }
   class A1 extends A {
     override def equals(any: Any) = any.isInstanceOf[A1]
   }

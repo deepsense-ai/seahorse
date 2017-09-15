@@ -8,7 +8,7 @@ package io.deepsense.entitystorage.exceptions
 
 import java.util.UUID
 
-import io.deepsense.entitystorage.models.Entity
+import io.deepsense.models.entities.Entity
 
 /**
  * Thrown when the specified entity was not found.

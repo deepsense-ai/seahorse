@@ -16,7 +16,7 @@ import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.entitystorage.CassandraTestSupport
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.entitystorage.models.{DataObjectReference, Entity}
+import io.deepsense.models.entities.{DataObjectReference, Entity}
 
 class EntityDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -121,6 +121,7 @@ class EntityDaoCassandraImplIntegSpec
       updated timestamp,
       url text,
       saved boolean,
+      report text,
       primary key (tenantid, id)
       );
     """

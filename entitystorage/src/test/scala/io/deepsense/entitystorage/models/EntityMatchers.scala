@@ -8,6 +8,8 @@ package io.deepsense.entitystorage.models
 
 import org.scalatest.matchers.{HavePropertyMatchResult, HavePropertyMatcher}
 
+import io.deepsense.models.entities.Entity
+
 trait EntityMatchers {
 
   def tenantId(expectedValue: String) = new HavePropertyMatcher[Entity, String] {

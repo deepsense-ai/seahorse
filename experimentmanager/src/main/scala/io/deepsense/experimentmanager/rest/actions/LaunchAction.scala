@@ -9,8 +9,8 @@ package io.deepsense.experimentmanager.rest.actions
 import scala.concurrent.Future
 import io.deepsense.commons.models.Id
 import io.deepsense.experimentmanager.ExperimentManager
-import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.graph.Node
+import io.deepsense.models.experiments.Experiment
 
 /**
  * Launch experiment action.

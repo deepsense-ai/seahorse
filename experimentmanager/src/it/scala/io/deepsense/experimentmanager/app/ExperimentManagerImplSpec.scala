@@ -23,8 +23,8 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
-import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.experimentmanager.storage.ExperimentStorage
+import io.deepsense.models.experiments.Experiment
 
 class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"

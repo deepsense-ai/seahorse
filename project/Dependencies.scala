@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  val akka          = "2.3.4"
+  val akka          = "2.3.4-spark"
   val apacheCommons = "3.3.+"
   val avro          = "1.7.7"
   val cassandra     = "2.1.5"
@@ -24,7 +24,7 @@ object Version {
 
 object Library {
 
-  val akka    = (name: String) => "com.typesafe.akka"      %% s"akka-$name"       % Version.akka
+  val akka    = (name: String) => "org.spark-project.akka"      %% s"akka-$name"       % Version.akka
   val avro    = (name: String) => "org.apache.avro"         % s"avro$name"        % Version.avro
   val hadoop  = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"     % Version.hadoop
   val jclouds = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"  % Version.jclouds

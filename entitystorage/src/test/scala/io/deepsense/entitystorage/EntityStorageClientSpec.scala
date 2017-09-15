@@ -13,7 +13,7 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.entitystorage.api.akka.EntitiesApiActor.{Create, Get}
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.entitystorage.models.Entity
+import io.deepsense.models.entities.Entity
 
 // FIXME Extract the traits into a single trait
 // it's almost a complete copy-and-paste from EntitiesApiActorSpec
@@ -59,9 +59,10 @@ class EntityStorageClientSpec(actorSystem: ActorSystem)
     import scala.concurrent.duration._
     implicit val timeout = 5.seconds
 
-    val entityF = client.createEntity(testInputEntity)
+    val entityToCreate = testInputEntity
+    val entityF = client.createEntity(entityToCreate)
 
-    serviceProbe.expectMsg(Create(testInputEntity))
+    serviceProbe.expectMsg(Create(entityToCreate))
     serviceProbe.reply(returnTestEntity)
 
     whenReady(entityF) {

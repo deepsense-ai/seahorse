@@ -11,8 +11,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.google.inject.Inject
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.entitystorage.models.{Entity, InputEntity, UserEntityDescriptor}
 import io.deepsense.entitystorage.storage.EntityDao
+import io.deepsense.models.entities.{Entity, InputEntity, UserEntityDescriptor}
 
 class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionContext) {
 

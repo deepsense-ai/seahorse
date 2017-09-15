@@ -8,7 +8,7 @@ package io.deepsense.entitystorage.storage
 
 import scala.concurrent.Future
 
-import io.deepsense.entitystorage.models.Entity
+import io.deepsense.models.entities.Entity
 
 trait EntityDao {
 

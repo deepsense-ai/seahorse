@@ -16,9 +16,9 @@ import akka.pattern.pipe
 import akka.util.Timeout
 
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
-import io.deepsense.experimentmanager.models.Experiment
-import io.deepsense.experimentmanager.models.Experiment.Id
 import io.deepsense.graphexecutor.{Constants, GraphExecutorClient}
+import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.experiments.Experiment.Id
 
 class RunningExperimentsActor @Inject() (
     @Named("runningexperiments.timeout") timeoutMillis: Long,
@@ -75,7 +75,7 @@ class RunningExperimentsActor @Inject() (
     Future({
       gec.spawnOnCluster()
       gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
-      gec.sendGraph(resultExp.graph)
+      gec.sendExperiment(resultExp)
     })
   }
 

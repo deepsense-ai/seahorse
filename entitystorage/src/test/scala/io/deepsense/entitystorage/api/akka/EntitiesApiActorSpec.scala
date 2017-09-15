@@ -22,8 +22,8 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import io.deepsense.commons.models.Id
 import io.deepsense.entitystorage.api.akka.EntitiesApiActor.{Create, Get}
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.entitystorage.models.Entity
 import io.deepsense.entitystorage.services.EntityService
+import io.deepsense.models.entities.Entity
 
 class EntitiesApiActorSpec
   extends FlatSpec

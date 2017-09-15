@@ -21,9 +21,9 @@ import org.scalatest.BeforeAndAfter
 import spray.routing.Route
 
 import io.deepsense.experimentmanager.ExperimentManagerIntegTestSupport
-import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.graph.Graph
+import io.deepsense.models.experiments.Experiment
 
 class ExperimentsApiIntegSpec
   extends ExperimentsApiSpec

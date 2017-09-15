@@ -10,6 +10,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.entitystorage.factories.EntityTestFactory
+import io.deepsense.models.entities.Entity
 
 class EntitySerializationSpec
   extends FlatSpec

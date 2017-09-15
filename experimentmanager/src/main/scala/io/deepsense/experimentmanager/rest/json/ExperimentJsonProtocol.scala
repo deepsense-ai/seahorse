@@ -13,10 +13,11 @@ import spray.json._
 
 import io.deepsense.commons.json.{ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.deeplang.InferContext
-import io.deepsense.experimentmanager.models.{Count, ExperimentsList, Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.graph.Graph
 import io.deepsense.graphjson.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.graphjson._
+import io.deepsense.models.experiments.{Experiment, InputExperiment}
 
 trait ExperimentJsonProtocol
   extends DefaultJsonProtocol

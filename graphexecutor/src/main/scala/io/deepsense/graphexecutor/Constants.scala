@@ -50,6 +50,11 @@ object Constants {
   val GraphExecutorLibraryLocation = "/deepsense-graphexecutor-assembly-0.1.0.jar"
 
   /**
+   * Location of configuration file on cluster HDFS
+   */
+  val GraphExecutorConfigLocation = "/entitystorage-communication.conf"
+
+  /**
    * Hostname of cluster master node
    */
   val MasterHostname = "ds-dev-env-master"

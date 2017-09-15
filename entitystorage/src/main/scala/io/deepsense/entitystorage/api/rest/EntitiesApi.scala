@@ -22,8 +22,8 @@ import io.deepsense.commons.json.ExceptionsJsonProtocol
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.entitystorage.exceptions.EntityNotFoundException
 import io.deepsense.entitystorage.json.EntityJsonProtocol
-import io.deepsense.entitystorage.models.{CompactEntityDescriptor, Entity, UserEntityDescriptor}
 import io.deepsense.entitystorage.services.EntityService
+import io.deepsense.models.entities.{CompactEntityDescriptor, Entity, UserEntityDescriptor}
 
 class EntitiesApi @Inject() (
     val tokenTranslator: TokenTranslator,

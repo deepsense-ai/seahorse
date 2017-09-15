@@ -4,7 +4,7 @@
  * Owner: Rafal Hryciuk
  */
 
-package io.deepsense.entitystorage.models
+package io.deepsense.models.entities
 
 import org.joda.time.DateTime
 
@@ -13,7 +13,8 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models
 
 /**
- * Main concept of the entity storage.
+ * Represents mapping between logical id and report or
+ * reference pointing to hdfs where data is stored.
  */
 case class Entity (
     tenantId: String,

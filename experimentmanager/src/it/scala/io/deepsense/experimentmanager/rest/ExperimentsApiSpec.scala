@@ -17,21 +17,22 @@ import org.mockito.stubbing.Answer
 import spray.http.StatusCodes
 import spray.routing.Route
 
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.commons.auth.usercontext.{Role, TokenTranslator, UserContext}
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
-import io.deepsense.experimentmanager.models.Experiment.Status
-import io.deepsense.experimentmanager.models.{Count, ExperimentsList, Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.models.experiments.Experiment.Status
+import io.deepsense.models.experiments.{Experiment, InputExperiment}
 
 class ExperimentsApiSpec
   extends StandardSpec

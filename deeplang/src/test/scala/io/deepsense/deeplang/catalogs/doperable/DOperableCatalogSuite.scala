@@ -12,6 +12,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.catalogs.doperable.exceptions._
+import io.deepsense.deeplang.doperables.Report
 
 object SampleInheritance {
   trait T1 extends DOperable
@@ -20,36 +21,49 @@ object SampleInheritance {
   trait T extends DOperable
   abstract class A extends T3
   class B extends A with T {
+    override def report: Report = ???
     override def equals(any: Any) = any.isInstanceOf[B]
   }
   class C extends A with T2 {
+    override def report: Report = ???
     override def equals(any: Any) = any.isInstanceOf[C]
   }
 }
 
 object Parametrized {
   trait T[T] extends DOperable
-  abstract class A[T] extends DOperable
+  abstract class A[T] extends DOperable {
+    override def report: Report = ???
+  }
   class B extends A[Int]
 }
 
 object Constructors {
-  class NotParameterLess(val i: Int) extends DOperable
+  class NotParameterLess(val i: Int) extends DOperable {
+    override def report: Report = ???
+  }
   class AuxiliaryParameterless(val i: Int) extends DOperable {
     def this() = this(1)
+    override def report: Report = ???
   }
-  class WithDefault(val i: Int = 1) extends DOperable
+  class WithDefault(val i: Int = 1) extends DOperable {
+    override def report: Report = ???
+  }
 }
 
 object TraitInheritance {
-  class C1 extends DOperable
+  class C1 extends DOperable {
+    override def report: Report = ???
+  }
   trait T1 extends C1
   trait T2 extends T1
   class C2 extends T2
 
   trait S1 extends DOperable
   trait S2 extends DOperable
-  class A1 extends DOperable
+  class A1 extends DOperable {
+    override def report: Report = ???
+  }
   trait S3 extends A1 with S1 with S2
 }
 

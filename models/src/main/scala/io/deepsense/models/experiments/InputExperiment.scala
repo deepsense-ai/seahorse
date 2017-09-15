@@ -4,7 +4,7 @@
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager.models
+package io.deepsense.models.experiments
 
 import java.util.UUID
 

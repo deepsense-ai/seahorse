@@ -5,18 +5,16 @@
  */
 package io.deepsense.entitystorage
 
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.{FiniteDuration, Duration}
 
-import akka.actor.{ActorRef, ActorSelection, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.ConfigFactory
 
-import io.deepsense.entitystorage.api.akka.EntitiesApiActor
-import io.deepsense.entitystorage.api.akka.EntitiesApiActor.{Create, Request, Get}
-import io.deepsense.entitystorage.models.{InputEntity, Entity}
-import io.deepsense.entitystorage.services.EntityService
+import io.deepsense.entitystorage.api.akka.EntitiesApiActor.{Create, Get, Request}
+import io.deepsense.models.entities.{Entity, InputEntity}
 
 trait EntityStorageClient {
   def getEntityData(tenantId: String, id: Entity.Id)
@@ -45,7 +43,8 @@ class ActorBasedEntityStorageClient(entitiesApiActor: ActorRef) extends EntitySt
 object EntityStorageClient {
   def apply(actorSystemName: String, hostname: String, port: Int, actorName: String,
     timeoutSeconds: Int): EntityStorageClient = {
-    val actorSystem = ActorSystem(s"$actorSystemName-client")
+    val actorSystem = ActorSystem(s"$actorSystemName-client",
+      ConfigFactory.load("entitystorage-communication.conf"))
     val path = s"akka.tcp://$actorSystemName@$hostname:$port/user/$actorName"
 
     import scala.concurrent.duration._

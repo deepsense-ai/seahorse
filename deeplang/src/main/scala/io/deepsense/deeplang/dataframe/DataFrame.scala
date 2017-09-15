@@ -9,6 +9,7 @@ package io.deepsense.deeplang.dataframe
 import org.apache.spark.sql
 
 import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.parameters.{IndexSingleColumnSelection, NameSingleColumnSelection, SingleColumnSelection}
 
 /*
@@ -33,4 +34,6 @@ class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame] = None) extends DO
     }
   }
 
+  override def report: Report =
+    Report(s"This a report of DataFrame: $optionalSparkDataFrame")
 }

@@ -7,7 +7,7 @@
 package io.deepsense.entitystorage.factories
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.entitystorage.models.{InputEntity, DataObjectReference, DataObjectReport, Entity}
+import io.deepsense.models.entities._
 
 trait EntityTestFactory extends DataObjectFactory {
 

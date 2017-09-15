@@ -20,14 +20,14 @@ import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.Records
-
 import io.deepsense.graph.Graph
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.Utils
+import io.deepsense.models.experiments.Experiment
 
 /**
  * Starts Graph Executor on remote YARN cluster,
- * allows to send Graph for execution to Graph Execution.
+ * allows to send an Experiment for execution to Graph Executor.
  * NOTE: Only one graph launch per object is allowed.
  */
 class GraphExecutorClient extends Closeable {
@@ -40,17 +40,17 @@ class GraphExecutorClient extends Closeable {
   var rpcProxy: Option[GraphExecutorAvroRpcProtocol] = None
 
   /**
-   * Sends graph of experiment designated to immediate execution by Graph Executor.
+   * Sends and experiment designated to immediate execution by Graph Executor.
    * NOTE: Call method {@link #init(timeout:Int)} before using RPC
-   * @param graph Graph to send
+   * @param experiment Experiment to send
    * @return true on success, false if graph has been received by Graph Executor earlier
    *         (return of false means that this is probably second method call)
    * @throws AvroRuntimeException on any critical problem (i.e. graph deserialization fail)
    */
-  def sendGraph(graph: Graph): Boolean = {
+  def sendExperiment(experiment: Experiment): Boolean = {
     val bytesOut = new ByteArrayOutputStream()
     val oos = new ObjectOutputStream(bytesOut)
-    oos.writeObject(graph)
+    oos.writeObject(experiment)
     oos.flush()
     oos.close()
     val graphByteBuffer = ByteBuffer.wrap(bytesOut.toByteArray)
@@ -123,7 +123,7 @@ class GraphExecutorClient extends Closeable {
    * @throws Exception if RPC client has been successfully prepared before
    */
   def waitForSpawn(timeout: Int): Boolean = {
-    var startOfWaitingForGraphExecutor = System.currentTimeMillis
+    val startOfWaitingForGraphExecutor = System.currentTimeMillis
     while (!isGraphExecutorRunning() && !hasGraphExecutorEndedRunning()
       && System.currentTimeMillis - startOfWaitingForGraphExecutor < timeout) {
       val remainingTimeout = timeout - (System.currentTimeMillis - startOfWaitingForGraphExecutor)
@@ -158,7 +158,9 @@ class GraphExecutorClient extends Closeable {
    * Graph Executor starts with few seconds delay after this method call due to cluster overhead,
    * or even longer delay if cluster is short of resources.
    */
-  def spawnOnCluster(geUberJarLocation: String = Constants.GraphExecutorLibraryLocation): Unit = {
+  def spawnOnCluster(
+      geUberJarLocation: String = Constants.GraphExecutorLibraryLocation,
+      applicationConfLocation: String = Constants.GraphExecutorConfigLocation): Unit = {
     implicit val conf = new YarnConfiguration()
     // TODO: Configuration resource access should follow proper configuration access convention
     // or should be changed to simple configuration string access following proper convention
@@ -183,7 +185,11 @@ class GraphExecutorClient extends Closeable {
     ).asJava)
 
     val appMasterJar = Utils.getConfiguredLocalResource(new Path(geUberJarLocation))
-    amContainer.setLocalResources(Collections.singletonMap("graphexecutor.jar", appMasterJar))
+    val applicationConf = Utils.getConfiguredLocalResource(new Path(applicationConfLocation))
+    amContainer.setLocalResources(Map(
+      "graphexecutor.jar" -> appMasterJar,
+      "application.conf" -> applicationConf
+    ).asJava)
 
     // Setup env to get all yarn and hadoop classes in classpath
     val env = Utils.getConfiguredEnvironmentVariables

@@ -16,9 +16,8 @@ import com.datastax.driver.core.querybuilder.Update.Assignments
 import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
-
-import io.deepsense.entitystorage.models.Entity
 import io.deepsense.entitystorage.storage.EntityDao
+import io.deepsense.models.entities.Entity
 
 class EntityDaoCassandraImpl @Inject() (
     @Named("cassandra.entities.table") table: String,
@@ -72,7 +71,12 @@ class EntityDaoCassandraImpl @Inject() (
 
   private def upsertReport(update: Update.Assignments, entity: Entity): Assignments = {
     // TODO Reimplement when Report gets implemented
-    update
+    entity.report match {
+      case Some(report) =>
+        update.and(set(EntityRowMapper.Report, report.report.message))
+      case None =>
+        update
+    }
   }
 
   private def deleteQuery(tenantId: String, id: Entity.Id) = {

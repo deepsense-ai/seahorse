@@ -11,8 +11,8 @@ import scala.concurrent.Future
 
 import io.deepsense.commons.auth.HasTenantId
 import io.deepsense.commons.models
-import io.deepsense.experimentmanager.models.Experiment
-import io.deepsense.experimentmanager.models.Experiment._
+import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.experiments.Experiment._
 
 /**
  * Thread-safe, in-memory ExperimentStorage.

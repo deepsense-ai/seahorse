@@ -7,10 +7,10 @@ package io.deepsense.graphexecutor
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectOutputStream}
 import java.nio.ByteBuffer
-
 import io.deepsense.graph.{Status, Graph, Node}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.ObjectInputStreamWithCustomClassLoader
+import io.deepsense.models.experiments.Experiment
 
 /**
  * Avro RPC server implementation, allows:
@@ -45,8 +45,8 @@ class GraphExecutorAvroRpcImpl(graphExecutor: GraphExecutor) extends GraphExecut
           var streamIn: Option[ObjectInputStreamWithCustomClassLoader] = None
           try {
             streamIn = Some(new ObjectInputStreamWithCustomClassLoader(bufferIn))
-            val deserializedGraph = streamIn.get.readObject().asInstanceOf[Graph]
-            graphExecutor.graph = Some(deserializedGraph)
+            val deserializedExperiment = streamIn.get.readObject().asInstanceOf[Experiment]
+            graphExecutor.experiment = Some(deserializedExperiment)
           } finally {
             bufferIn.close()
             if (streamIn.nonEmpty) {
@@ -98,7 +98,8 @@ class GraphExecutorAvroRpcImpl(graphExecutor: GraphExecutor) extends GraphExecut
         case Some(graph) =>
           val abortedNodes = graph.nodes
             .map(node => if (node.isQueued) node.markAborted else node)
-          graphExecutor.graph = Some(Graph(abortedNodes, graph.edges))
+          graphExecutor.experiment =
+            Some(graphExecutor.experiment.get.copy(graph = Graph(abortedNodes, graph.edges)))
           graphExecutor.executorsPool.shutdownNow()
           graphExecutor.graphEventBinarySemaphore.release()
           true

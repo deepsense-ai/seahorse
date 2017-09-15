@@ -19,9 +19,9 @@ import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
-import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorClient
+import io.deepsense.models.experiments.Experiment
 
 class RunningExperimentsActorSpec
   extends StandardSpec
@@ -67,7 +67,7 @@ class RunningExperimentsActorSpec
         probe.expectMsg(Status(Some(launched)))
         eventually {
           actor.experiments should contain key experiment.id
-          verify(graphExecutorClient).sendGraph(experiment.graph)
+          verify(graphExecutorClient).sendExperiment(experiment)
         }
       }
     }
@@ -166,7 +166,7 @@ class RunningExperimentsActorSpec
   private def createMockGraphExecutorClient(graph: Graph): GraphExecutorClient = {
     val gec = mock[GraphExecutorClient]
     when(gec.waitForSpawn(any())).thenReturn(true)
-    when(gec.sendGraph(any())).thenReturn(true)
+    when(gec.sendExperiment(any())).thenReturn(true)
     when(gec.getExecutionState()).thenReturn(graph)
     when(gec.terminateExecution()).thenReturn(true)
     gec

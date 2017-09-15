@@ -22,9 +22,10 @@ import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.models.Id
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
-import io.deepsense.experimentmanager.models.{Count, ExperimentsList, Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.graph.Node
+import io.deepsense.models.experiments.{Experiment, InputExperiment}
 
 /**
  * Implementation of Experiment Manager

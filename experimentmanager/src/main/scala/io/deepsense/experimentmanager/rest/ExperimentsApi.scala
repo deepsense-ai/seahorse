@@ -23,10 +23,10 @@ import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
-import io.deepsense.experimentmanager.models.{Experiment, InputExperiment}
 import io.deepsense.experimentmanager.rest.actions.Action
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.models.experiments.{Experiment, InputExperiment}
 
 /**
  * Exposes Experiment Manager through a REST API.

@@ -18,8 +18,9 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.entitystorage.models.{Entity, EntityMatchers, UserEntityDescriptor}
+import io.deepsense.entitystorage.models.EntityMatchers
 import io.deepsense.entitystorage.storage.EntityDao
+import io.deepsense.models.entities.{UserEntityDescriptor, Entity}
 
 class EntityServiceSpec
   extends FlatSpec
@@ -59,7 +60,7 @@ class EntityServiceSpec
   it should "set all fields from inputEntity when create entity" in {
     val inputEntity = testInputEntity
 
-    entityService.createEntity(testInputEntity)
+    entityService.createEntity(inputEntity)
 
     val captor: ArgumentCaptor[Entity] = ArgumentCaptor.forClass(classOf[Entity])
     verify(entityDao).upsert(captor.capture())

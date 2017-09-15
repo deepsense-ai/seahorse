@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  *
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager.models
+package io.deepsense.models.experiments
 
 import io.deepsense.graph.Graph
 
@@ -14,4 +14,5 @@ import io.deepsense.graph.Graph
  * @param description Description of the experiment.
  * @param graph Experiment's graph. Never null but can be empty.
  */
-abstract class BaseExperiment(name: String, description: String, graph: Graph)
+@SerialVersionUID(1)
+abstract class BaseExperiment(name: String, description: String, graph: Graph) extends Serializable

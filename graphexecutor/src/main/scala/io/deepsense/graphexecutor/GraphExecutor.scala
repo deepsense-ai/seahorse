@@ -11,6 +11,8 @@ import java.util.{List, UUID}
 
 import scala.collection.mutable
 
+import com.typesafe.config.{ConfigFactory, Config}
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.ipc.NettyServer
 import org.apache.avro.ipc.specific.SpecificResponder
 import org.apache.avro.specific.SpecificData
@@ -24,9 +26,11 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.deeplang.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
+import io.deepsense.entitystorage.EntityStorageClient
 import io.deepsense.graph.{Graph, Status}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.BinarySemaphore
+import io.deepsense.models.experiments.Experiment
 
 object GraphExecutor {
   def main(args: Array[String]): Unit = {
@@ -40,7 +44,7 @@ object GraphExecutor {
  * Starts Avro RPC server, waits for graph and performs its execution.
  * Only one graph execution per GraphExecutor can be performed.
  */
-class GraphExecutor extends AMRMClientAsync.CallbackHandler {
+class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
   implicit val conf: YarnConfiguration = new YarnConfiguration()
 
   val dOperableCache = mutable.Map[UUID, DOperable]()
@@ -48,14 +52,17 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
   /** graphGuard is used to prevent concurrent graph field modifications/inconsistent reads */
   val graphGuard = new Object()
 
-  /** graph is a graph designated to execution by GraphExecutor containing it */
-  @volatile var graph: Option[Graph] = None
+  @volatile var experiment: Option[Experiment] = None
+
+  def graph: Option[Graph] = experiment.map(_.graph)
 
   /**
    * graphEventBinarySemaphore is used for signaling important changes in graph object
    * (graph sent, finished or aborted node execution)
    */
   val graphEventBinarySemaphore = new BinarySemaphore(0)
+
+  val entityStorageClient = connectToEntityStorage()
 
   /** executorsPool is pool of threads executing GraphNodes */
   val executorsPool = Executors.newFixedThreadPool(Constants.ConcurrentGraphNodeExecutors)
@@ -81,6 +88,7 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
     val appMasterHostname = InetAddress.getLocalHost.getHostName
     resourceManagerClient.registerApplicationMaster(appMasterHostname, rpcServer.getPort, "")
 
+
     // TODO: don't print anything
     println("waitForGraph start " + System.currentTimeMillis)
     // Wait for graph with specified timeout and if graph has been sent, proceed with its execution.
@@ -89,7 +97,8 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
       println("waitForGraph succeeded " + System.currentTimeMillis)
       // All nodes are marked as queued (there is no partial execution).
       graphGuard.synchronized {
-        graph = Some(Graph(graph.get.nodes.map(_.markQueued), graph.get.edges))
+        experiment = Some(experiment.get
+          .copy(graph = Graph(graph.get.nodes.map(_.markQueued), graph.get.edges)))
       }
       val executionContext = new ExecutionContext()
       // Acquire Spark Context
@@ -111,12 +120,17 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
         graphGuard.synchronized {
           for (node <- graph.get.readyNodes) {
             // Synchronization guarantees that this node is still ready for execution
-            graph = Some(graph.get.markAsRunning(node.id))
+            experiment = Some(experiment.get
+              .copy(graph = graph.get.markAsRunning(node.id)))
             // executorPool won't throw RejectedExecutionException thanks to comprehensive
             // synchronization in GraphExecutorAvroRpcImpl.terminateExecution().
             // NOTE: Threads executing graph nodes are created in main thread for thread-safety.
-            executorsPool
-              .execute(new GraphNodeExecutor(executionContext, this, graph.get.node(node.id)))
+            executorsPool.execute(
+              new GraphNodeExecutor(
+                executionContext,
+                this,
+                graph.get.node(node.id),
+                entityStorageClient))
           }
         }
         // Waiting for change in graph (completed or failed nodes).
@@ -137,7 +151,8 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
         val aborted = graph.get.nodes.map(node => {
           if (node.isQueued) node.markAborted else node
         })
-        graph = Some(Graph(aborted, graph.get.edges))
+        experiment = Some(experiment.get
+          .copy(graph = Graph(aborted, graph.get.edges)))
       }
     }
 
@@ -234,4 +249,16 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
   override def onNodesUpdated(updatedNodes: List[NodeReport]): Unit = {}
 
   override def onContainersAllocated(containers: List[Container]): Unit = {}
+
+  private def connectToEntityStorage(): EntityStorageClient = {
+    val config = ConfigFactory.load("entitystorage-communication.conf")
+    val actorSystemName = config.getString("entityStorage.actorSystemName")
+    val hostName = config.getString("entityStorage.hostname")
+    val port = config.getInt("entityStorage.port")
+    val actorName = config.getString("entityStorage.actorName")
+    val timeoutSeconds = config.getInt("entityStorage.timeoutSeconds")
+    logger.info(
+      s"EntityStorageClient($actorSystemName, $hostName, $port, $actorName, $timeoutSeconds)")
+    EntityStorageClient(actorSystemName, hostName, port, actorName, timeoutSeconds)
+  }
 }

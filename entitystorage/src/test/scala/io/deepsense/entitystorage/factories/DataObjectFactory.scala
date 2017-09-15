@@ -6,12 +6,15 @@
 
 package io.deepsense.entitystorage.factories
 
+import java.util.UUID
+
 import io.deepsense.deeplang.doperables.Report
-import io.deepsense.entitystorage.models.{DataObjectReference, DataObjectReport}
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport}
 
 trait DataObjectFactory {
 
-  def testDataObjectReport: DataObjectReport = DataObjectReport(Report())
+  def testDataObjectReport: DataObjectReport =
+    DataObjectReport(Report(UUID.randomUUID().toString))
 
   def testDataObjectReference: DataObjectReference = DataObjectReference("hdfs://whatever")
 }

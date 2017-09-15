@@ -9,7 +9,7 @@ package io.deepsense.experimentmanager.exceptions
 import java.util.UUID
 
 import io.deepsense.commons.models.Id
-import io.deepsense.experimentmanager.models.Experiment
+import io.deepsense.models.experiments.Experiment
 
 /**
  * Thrown when the specified experiment was not found.
