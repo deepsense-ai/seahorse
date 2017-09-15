@@ -16,11 +16,19 @@ description: Seahorse Release Notes
 ### Bundled Software Packages
 
 * Apache Spark, version {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
-* Python, version 2.7.6
-* NumPy, version 1.8.2
 
-### Minimum Hardware Requirements
-* 6 GB of a free disk space
+* Python, version 2.7.12
+* NumPy, version 1.9.3
+* scikit-learn, version 0.16.1
+
+* R, version 3.3.1
+
+### Minimum Hardware Requirements For Docker
+* 10 GB of a free disk space
+* 4 GB of RAM
+
+### Minimum Hardware Requirements For Vagrant
+* 40 GB of a free disk space
 * 4 GB of RAM
 * VirtualBox must be supported
 
