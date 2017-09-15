@@ -83,11 +83,6 @@ object CatalogRecorder {
       "Creates untrained ridge regression model"
     )
 
-    catalog.registerDOperation[EvaluateRegression](
-      DOperationCategories.ML.Regression,
-      "Evaluates regression model"
-    )
-
     catalog.registerDOperation[TrainRegressor](
       DOperationCategories.ML.Regression,
       "Trains regression model"
@@ -121,6 +116,11 @@ object CatalogRecorder {
     catalog.registerDOperation[ScoreClassifier](
       DOperationCategories.ML.Classification,
       "Scores trained classification model"
+    )
+
+    catalog.registerDOperation[EvaluateClassification](
+      DOperationCategories.ML,
+      "Evaluate classification model"
     )
 
     catalog.registerDOperation[ApplyTransformation](

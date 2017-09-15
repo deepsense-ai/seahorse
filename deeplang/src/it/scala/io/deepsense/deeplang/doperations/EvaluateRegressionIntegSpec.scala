@@ -9,7 +9,7 @@ import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructTy
 import org.scalatest.Ignore
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.{Evaluator, Report}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
@@ -134,10 +134,10 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
       predictionColumnName: String): EvaluateRegression = {
     val operation = new EvaluateRegression
     val targetColumnParam =
-      operation.parameters.getSingleColumnSelectorParameter("targetColumn")
+      operation.parameters.getSingleColumnSelectorParameter(Evaluator.targetColumnParamKey)
     targetColumnParam.value = Some(NameSingleColumnSelection(targetColumnName))
     val predictionColumnParam =
-      operation.parameters.getSingleColumnSelectorParameter("predictionColumn")
+      operation.parameters.getSingleColumnSelectorParameter(Evaluator.predictionColumnParamKey)
     predictionColumnParam.value = Some(NameSingleColumnSelection(predictionColumnName))
     operation
   }

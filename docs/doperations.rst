@@ -24,6 +24,7 @@ Contents:
    doperations/logistic_regression
    doperations/train_classifier
    doperations/score_classifier
+   doperations/evaluate_classification
    doperations/one_hot_encoder
    doperations/apply_transformation
    doperations/join
