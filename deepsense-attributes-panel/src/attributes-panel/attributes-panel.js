@@ -1,7 +1,7 @@
 'use strict';
 
 /*@ngInject*/
-function OperationAttributes($rootScope, AttributesPanelService, config) {
+function OperationAttributes($rootScope, AttributesPanelService, config, version) {
   function setCorrectHeight(container) {
     let heightOfOthers = _.reduce(jQuery(
       '> .ibox-title--main, > .c-attributes-tabs',
@@ -69,6 +69,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
         + getDataFrameSource());
 
       this.getDocsHost = () => config.docsHost;
+      this.getDocsVersion = () => version.getDocsVersion();
 
       this.hasCodeEdit = () => $scope.hasCodeEdit;
       this.isInnerWorkflow = () => $scope.isInnerWorkflow;

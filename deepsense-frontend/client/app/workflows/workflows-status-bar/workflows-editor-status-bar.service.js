@@ -1,10 +1,11 @@
 'use strict';
 
 class WorkflowStatusBarService {
-  constructor($rootScope, config) {
+  constructor($rootScope, config, version) {
 
     this.$rootScope = $rootScope;
     this.config = config;
+    this.version = version;
 
     let menuItems = {
       clear: {
@@ -15,7 +16,7 @@ class WorkflowStatusBarService {
       documentation: {
         label: 'Documentation',
         icon: 'fa-book',
-        href: this.config.docsHost + '/docs/' + this.config.apiVersion + '/index.html',
+        href: this.config.docsHost + '/docs/' + this.version.getDocsVersion() + '/index.html',
         target: '_blank'
       },
       export: {

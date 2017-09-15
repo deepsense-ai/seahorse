@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function ExportModalController(config, $uibModalInstance, $stateParams, WorkflowsApiClient, WorkflowService) {
+function ExportModalController(config, version, $uibModalInstance, $stateParams, WorkflowsApiClient, WorkflowService) {
   _.assign(this, {
     errorMessage: '',
     warningMessage: '',
@@ -10,6 +10,7 @@ function ExportModalController(config, $uibModalInstance, $stateParams, Workflow
       $uibModalInstance.dismiss();
     },
     getExecutorLink: () => 'https://s3.amazonaws.com/workflowexecutor/releases/' + config.apiVersion + '/workflowexecutor_2.10-' + config.apiVersion + '.jar',
+    getDocsVersion: () => version.getDocsVersion(),
     download: () => {
       $('body')
         .append(angular.element(`
