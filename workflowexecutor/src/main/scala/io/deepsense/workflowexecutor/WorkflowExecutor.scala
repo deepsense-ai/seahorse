@@ -12,7 +12,7 @@ import org.apache.spark._
 /** Computes an approximation to pi */
 object WorkflowExecutor {
 
-  val ExperimentJsonFilename = "experiment.json"
+  val ExperimentJsonFilename = "workflow.json"
 
   def main(args: Array[String]): Unit = {
     import sys.process._
