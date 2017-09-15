@@ -41,7 +41,7 @@ case class CustomPythonOperation()
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val code = codeParameter.value
 
-    if (!context.pythonCodeExecutor.validate(code)) {
+    if (!context.pythonCodeExecutor.isValid(code)) {
       throw CustomOperationExecutionException("Code validation failed")
     }
 
@@ -51,7 +51,7 @@ case class CustomPythonOperation()
         throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
       case Right(_) =>
-        val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame().getOrElse {
+        val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame.getOrElse {
           throw CustomOperationExecutionException(
             "Operation finished successfully, but did not produce a DataFrame.")
         }

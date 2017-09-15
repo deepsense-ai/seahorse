@@ -16,9 +16,7 @@
 
 package io.deepsense.deeplang
 
-import java.util.concurrent.TimeUnit
-
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 import org.apache.spark.SparkContext
@@ -40,14 +38,9 @@ case class CommonExecutionContext(
     reportLevel: ReportLevel,
     tenantId: String,
     dataFrameStorage: DataFrameStorage,
-    pythonCodeExecutor: Future[PythonCodeExecutor],
-    customOperationExecutor: CustomOperationExecutor) extends Logging {
+    pythonExecutionProvider: PythonExecutionProvider) extends Logging {
 
-  def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext = {
-    logger.debug("Waiting for python code executor")
-    val executor: PythonCodeExecutor =
-      Await.result(pythonCodeExecutor, Duration(5, TimeUnit.SECONDS))
-
+  def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
     ExecutionContext(
       sparkContext,
       sqlContext,
@@ -56,8 +49,11 @@ case class CommonExecutionContext(
       reportLevel,
       tenantId,
       ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
-      ContextualPythonCodeExecutor(executor, customOperationExecutor, workflowId, nodeId))
-  }
+      ContextualPythonCodeExecutor(
+        pythonExecutionProvider.pythonCodeExecutor,
+        pythonExecutionProvider.customOperationExecutor,
+        workflowId,
+        nodeId))
 }
 
 /** Holds information needed by DOperations and DMethods during execution. */
@@ -90,7 +86,7 @@ case class ContextualDataFrameStorage(
   def setInputDataFrame(dataFrame: SparkDataFrame): Unit =
     dataFrameStorage.setInputDataFrame(workflowId, nodeId, dataFrame)
 
-  def getOutputDataFrame(): Option[SparkDataFrame] =
+  def getOutputDataFrame: Option[SparkDataFrame] =
     dataFrameStorage.getOutputDataFrame(workflowId, nodeId)
 }
 
@@ -100,7 +96,7 @@ case class ContextualPythonCodeExecutor(
     workflowId: Id,
     nodeId: Id) extends Logging {
 
-  def validate(code: String): Boolean = pythonCodeExecutor.validate(code)
+  def isValid(code: String): Boolean = pythonCodeExecutor.isValid(code)
 
   def run(code: String): Result = {
     val result = customOperationExecutor.execute(workflowId, nodeId)

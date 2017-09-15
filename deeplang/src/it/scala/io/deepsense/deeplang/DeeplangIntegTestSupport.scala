@@ -23,7 +23,7 @@ import scala.concurrent.Future
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
-import org.apache.spark.{sql, SparkConf, SparkContext}
+import org.apache.spark.{SparkConf, SparkContext, sql}
 import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.models.Id
@@ -74,7 +74,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       ReportLevel.HIGH,
       "testTenantId",
       new MockedDataFrameStorage,
-      Future.successful(new MockedCodeExecutor))
+      mock[PythonExecutionProvider])
   }
 
   protected def prepareExecutionContext(): ExecutionContext = {
@@ -159,7 +159,7 @@ private class MockedCommonExecutionContext(
     override val reportLevel: ReportLevel,
     override val tenantId: String,
     override val dataFrameStorage: DataFrameStorage,
-    override val pythonCodeExecutor: Future[PythonCodeExecutor])
+    override val pythonExecutionProvider: PythonExecutionProvider)
   extends CommonExecutionContext(
     sparkContext,
     sqlContext,
@@ -168,10 +168,9 @@ private class MockedCommonExecutionContext(
     reportLevel,
     tenantId,
     dataFrameStorage,
-    pythonCodeExecutor,
-    new MockedCustomOperationExecutor) {
+    pythonExecutionProvider) {
 
-  override def createExecutionContext(worflowId: Id, nodeId: Id) =
+  override def createExecutionContext(workflowId: Id, nodeId: Id) =
     new MockedExecutionContext(sparkContext,
       sqlContext,
       inferContext,
@@ -234,7 +233,7 @@ private class MockedContextualDataFrameStorage
 
 private class MockedCodeExecutor extends PythonCodeExecutor {
 
-  override def validate(code: String): Boolean = ???
+  override def isValid(code: String): Boolean = ???
 
   override def run(workflowId: String, nodeId: String, code: String): Unit = ???
 }

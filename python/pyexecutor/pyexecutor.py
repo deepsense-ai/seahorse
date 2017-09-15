@@ -1,26 +1,23 @@
 # Copyright (c) 2015, CodiLime Inc.
-
+import argparse
 import time
 
 from py4j.java_gateway import JavaGateway, GatewayClient, java_import
 from py4j.protocol import Py4JError
 
 from code_executor import CodeExecutor
-from gateway_resolver import GatewayResolver
+from simple_logging import log_debug, log_error
 from pyspark import SparkContext, SQLContext, SparkConf
-
-RABBIT_MQ_ADDRESS = ("localhost", 5672)
 
 
 class PyExecutor(object):
-    def __init__(self, mq_address):
-        self.gateway_resolver = GatewayResolver(mq_address)
+    def __init__(self, gateway_address):
+        self.gateway_address = gateway_address
 
     def run(self):
-        gateway = self._initialize_gateway(
-            gateway_address=self.gateway_resolver.get_gateway_address())
+        gateway = self._initialize_gateway(self.gateway_address)
         if not gateway:
-            print 'Failed to initialize java gateway'
+            log_error('Failed to initialize java gateway')
             return
 
         # noinspection PyProtectedMember
@@ -29,10 +26,10 @@ class PyExecutor(object):
         code_executor = CodeExecutor(spark_context, sql_context, gateway.entry_point)
 
         try:
-            gateway.entry_point.reportCallbackServerPort(callback_server_port)
+            gateway.entry_point.registerCallbackServerPort(callback_server_port)
             gateway.entry_point.registerCodeExecutor(code_executor)
-        except Py4JError:
-            print 'Exception while registering codeExecutor, or callback server port'
+        except Py4JError as e:
+            log_error('Exception while registering codeExecutor, or callback server port: {}'.format(e))
             gateway.close()
             return
 
@@ -41,7 +38,7 @@ class PyExecutor(object):
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
-            print 'Exiting on user\'s request'
+            log_debug('Exiting on user\'s request')
             gateway.close()
 
     @staticmethod
@@ -75,8 +72,8 @@ class PyExecutor(object):
             java_import(gateway.jvm, "org.apache.spark.sql.hive.*")
             java_import(gateway.jvm, "scala.Tuple2")
             java_import(gateway.jvm, "scala.collection.immutable.List")
-        except Py4JError:
-            print 'Error while initializing java gateway'
+        except Py4JError as e:
+            log_error('Error while initializing java gateway: {}'.format(e))
             gateway.close()
             return None
 
@@ -84,7 +81,14 @@ class PyExecutor(object):
 
 
 def main():
-    py_executor = PyExecutor(mq_address=RABBIT_MQ_ADDRESS)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--gateway-address', action='store')
+    args = parser.parse_args()
+
+    gateway_address = args.gateway_address.split(':')
+    gateway_address = (gateway_address[0], int(gateway_address[1]))
+
+    py_executor = PyExecutor(gateway_address=gateway_address)
     py_executor.run()
 
 

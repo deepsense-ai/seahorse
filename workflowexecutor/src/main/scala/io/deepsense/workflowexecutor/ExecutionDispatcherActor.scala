@@ -16,8 +16,6 @@
 
 package io.deepsense.workflowexecutor
 
-import scala.concurrent.Future
-
 import akka.actor._
 import org.apache.spark.SparkContext
 
@@ -28,15 +26,14 @@ import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.workflowexecutor.communication.message.global.Connect
-import io.deepsense.workflowexecutor.executor.Executor
+import io.deepsense.workflowexecutor.executor.{PythonExecutionCaretaker, Executor}
 import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 
 class ExecutionDispatcherActor(
     sparkContext: SparkContext,
     dOperableCatalog: DOperableCatalog,
     dataFrameStorage: DataFrameStorage,
-    pythonCodeExecutor: Future[PythonCodeExecutor],
-    customOperationExecutor: CustomOperationExecutor,
+    pythonExecutionCaretaker: PythonExecutionCaretaker,
     reportLevel: ReportLevel,
     statusLogger: ActorRef)
   extends Actor
@@ -69,9 +66,8 @@ class ExecutionDispatcherActor(
       createExecutionContext(
         reportLevel,
         dataFrameStorage,
-        pythonCodeExecutor,
-        customOperationExecutor,
-        sparkContext = Some(sparkContext),
+        pythonExecutionCaretaker,
+        sparkContext,
         dOperableCatalog = Some(dOperableCatalog)),
       workflowId,
       statusLogger,
@@ -117,16 +113,14 @@ object ExecutionDispatcherActor {
       sparkContext: SparkContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
-      codeExecutor: Future[PythonCodeExecutor],
-      customOperationExecutor: CustomOperationExecutor,
+      pythonExecutionCaretaker: PythonExecutionCaretaker,
       reportLevel: ReportLevel,
       statusLogger: ActorRef): Props =
     Props(new ExecutionDispatcherActor(
       sparkContext,
       dOperableCatalog,
       dataFrameStorage,
-      codeExecutor,
-      customOperationExecutor,
+      pythonExecutionCaretaker,
       reportLevel,
       statusLogger
     ) with WorkflowExecutorsFactoryImpl

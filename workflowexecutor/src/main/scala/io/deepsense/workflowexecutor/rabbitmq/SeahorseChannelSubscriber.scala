@@ -31,7 +31,7 @@ case class SeahorseChannelSubscriber(
   executionDispatcher: ActorRef,
   communicationFactory: MQCommunicationFactory,
   publisher: MQPublisher,
-  pythonGateway: PythonGateway) extends Actor with Logging {
+  pythonGatewayListeningPort: () => Option[Int]) extends Actor with Logging {
 
   implicit val timeout: Timeout = Timeout(3, TimeUnit.SECONDS)
   var publishers: Map[Workflow.Id, ActorRef] = Map()
@@ -52,7 +52,7 @@ case class SeahorseChannelSubscriber(
       executionDispatcher ! WorkflowConnect(c, publisherPath)
 
     case get: GetPythonGatewayAddress =>
-      pythonGateway.listeningPort foreach { port =>
+      pythonGatewayListeningPort() foreach { port =>
         publisher.publish(
           MQCommunication.Topic.kernel,
           PythonGatewayAddress(List(Address("localhost", port))))
@@ -67,8 +67,8 @@ object SeahorseChannelSubscriber {
       executionDispatcher: ActorRef,
       communicationFactory: MQCommunicationFactory,
       publisher: MQPublisher,
-      pythonGateway: PythonGateway): Props = {
+      pythonGatewayListeningPort: () => Option[Int]): Props = {
     Props(new SeahorseChannelSubscriber(
-      executionDispatcher, communicationFactory, publisher, pythonGateway))
+      executionDispatcher, communicationFactory, publisher, pythonGatewayListeningPort))
   }
 }

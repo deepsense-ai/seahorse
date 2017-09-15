@@ -59,7 +59,7 @@ class ContextualDataFrameStorageSpec
       when(dataFrameStorage.getOutputDataFrame(workflowId, nodeId))
         .thenReturn(Some(sparkDataFrame))
 
-      storage.getOutputDataFrame() shouldBe Some(sparkDataFrame)
+      storage.getOutputDataFrame shouldBe Some(sparkDataFrame)
     }
   }
 }

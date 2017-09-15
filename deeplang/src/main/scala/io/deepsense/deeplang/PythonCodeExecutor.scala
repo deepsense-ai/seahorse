@@ -23,7 +23,7 @@ trait PythonCodeExecutor {
    * @param code Code to be validated.
    * @return True if validation passed, False otherwise.
    */
-  def validate(code: String): Boolean
+  def isValid(code: String): Boolean
 
   /**
    * Executes custom operation's source code

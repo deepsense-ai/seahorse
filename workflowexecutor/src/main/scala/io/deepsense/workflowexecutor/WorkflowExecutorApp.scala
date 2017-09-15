@@ -87,28 +87,46 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(messageQueueHost = Some(x))
     } text "message queue host"
 
+    opt[String]('p', "python-executor-path") valueName "PATH" action {
+      (x, c) => c.copy(pyExecutorPath = Some(x))
+    } text "python executor path"
+
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("")
     note("Visit https://seahorse.deepsense.io for more details")
 
-    checkConfig { c =>
-      if (c.noninteractiveMode) {
-        if (c.workflowFilename.isEmpty && c.workflowId.isEmpty) {
-          failure(
-            "one of --workflow-filename or --download-workflow is required in noninteractive mode")
-        } else if (c.outputDirectoryPath.isEmpty && !c.uploadReport) {
-          failure(
-            "one of --output-directory or --upload-report is required in noninteractive mode")
-        } else {
-          success
+    checkConfig { config =>
+      type FailureCondition = Boolean
+      type ErrorMsg = String
+      type Requirements = Seq[(FailureCondition, ErrorMsg)]
+
+      val interactiveRequirements: Requirements = Seq(
+        (config.messageQueueHost.isEmpty,
+          "--message-queue-host is required in interactive mode"))
+
+      val nonInteractiveRequirements: Requirements = Seq(
+        (config.workflowFilename.isEmpty && config.workflowId.isEmpty,
+          "one of --workflow-filename or --download-workflow is required in noninteractive mode"),
+        (config.outputDirectoryPath.isEmpty && !config.uploadReport,
+          "one of --output-directory or --upload-report is required in noninteractive mode"))
+
+      val commonRequirements: Requirements = Seq(
+        (config.pyExecutorPath.isEmpty,
+          "--python-executor-path executor path is required"))
+
+      def check(requirements: Requirements) = {
+        requirements.foldLeft(success) {
+          case (f@Left(_), _) => f
+          case (_, (true, msg)) => failure(msg)
+          case (_, (false, _)) => success
         }
+      }
+
+      if (config.noninteractiveMode) {
+        check(nonInteractiveRequirements ++ commonRequirements)
       } else {
-        if (c.messageQueueHost.isEmpty) {
-          failure("--message-queue-host is required")
-        } else {
-          success
-        }
+        check(interactiveRequirements ++ commonRequirements)
       }
     }
   }
@@ -132,7 +150,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       // Interactive mode (SessionExecutor)
       logger.info("Starting SessionExecutor.")
       logger.debug("Starting SessionExecutor.")
-      SessionExecutor(params.reportLevel, params.messageQueueHost.get).execute()
+      SessionExecutor(
+        params.reportLevel, params.messageQueueHost.get, params.pyExecutorPath.get).execute()
     }
   }
 

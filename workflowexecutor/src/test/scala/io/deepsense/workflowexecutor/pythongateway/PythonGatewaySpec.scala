@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException
 import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
 import scala.io.BufferedSource
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 import org.apache.spark.SparkContext
 import org.scalatest.concurrent.Timeouts
@@ -63,19 +63,26 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       gateway.stop()
     }
 
-    "close listening port when stopped" in {
+    "return None when stopped and asked for its listening port" in {
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
         mock[ReadOnlyDataFrameStorage],
         mock[CustomOperationDataFrameStorage])
       gateway.start()
-      Thread.sleep(500)
       gateway.stop()
       Thread.sleep(500)
+      gateway.listeningPort shouldBe None
+    }
 
-      val connectionAttempt = attemptConnection(gateway.listeningPort)
-      connectionAttempt shouldBe a [Failure[_]]
+    "return None when not started and asked for its listening port" in {
+      val gateway = PythonGateway(
+        gatewayConfig,
+        mock[SparkContext],
+        mock[ReadOnlyDataFrameStorage],
+        mock[CustomOperationDataFrameStorage])
+
+      gateway.listeningPort shouldBe None
     }
 
     "throw on uninitialized callback client" in {
@@ -123,7 +130,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       callbackServer.setDaemon(true)
       callbackServer.start()
 
-      gateway.entryPoint.reportCallbackServerPort(callbackServerSocket.getLocalPort)
+      gateway.entryPoint.registerCallbackServerPort(callbackServerSocket.getLocalPort)
 
       // This is run inside a separate thread, because failAfter doesn't seem to work otherwise
       var serverResponse: String = ""

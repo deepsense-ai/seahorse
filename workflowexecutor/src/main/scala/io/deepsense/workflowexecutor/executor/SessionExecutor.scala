@@ -36,7 +36,8 @@ import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingAct
  */
 case class SessionExecutor(
     reportLevel: ReportLevel,
-    messageQueueHost: String)
+    messageQueueHost: String,
+    pythonExecutorPath: String)
   extends Executor {
 
   val graphReader = new GraphReader(createDOperationsCatalog())
@@ -53,16 +54,15 @@ case class SessionExecutor(
     implicit val system = ActorSystem()
     val statusLogger = system.actorOf(Props[StatusLoggingActor], "status-logger")
 
-    val pythonGateway = PythonGateway(
-      PythonGateway.GatewayConfig(), sparkContext, dataFrameStorage, dataFrameStorage)
-    pythonGateway.start()
+    val pythonExecutionCaretaker =
+      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
+    pythonExecutionCaretaker.start()
 
     val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
       sparkContext,
       dOperableCatalog,
       dataFrameStorage,
-      pythonGateway.codeExecutor,
-      pythonGateway.customOperationExecutor,
+      pythonExecutionCaretaker,
       ReportLevel.HIGH,
       statusLogger), "workflows")
 
@@ -81,20 +81,25 @@ case class SessionExecutor(
     def createSeahorseSubscriber(publisher: MQPublisher): ActorRef =
       system.actorOf(
         SeahorseChannelSubscriber.props(
-          executionDispatcher, communicationFactory, publisher, pythonGateway),
+          executionDispatcher,
+          communicationFactory,
+          publisher,
+          pythonExecutionCaretaker.gatewayListeningPort _),
         "communication")
 
     communicationFactory.createCommunicationChannel(
       MQCommunication.Exchange.seahorse, createSeahorseSubscriber _)
 
     system.awaitTermination()
-    cleanup(sparkContext, pythonGateway)
+    cleanup(sparkContext, pythonExecutionCaretaker)
     logger.debug("SessionExecutor ends")
   }
 
-  private def cleanup(sparkContext: SparkContext, gateway: PythonGateway): Unit = {
+  private def cleanup(
+      sparkContext: SparkContext,
+      pythonExecutionCaretaker: PythonExecutionCaretaker): Unit = {
     logger.debug("Cleaning up...")
-    gateway.stop()
+    pythonExecutionCaretaker.stop()
     sparkContext.stop()
     logger.debug("Spark terminated!")
   }

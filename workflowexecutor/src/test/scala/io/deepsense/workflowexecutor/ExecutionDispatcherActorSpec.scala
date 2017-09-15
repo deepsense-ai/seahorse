@@ -16,8 +16,6 @@
 
 package io.deepsense.workflowexecutor
 
-import scala.concurrent.Future
-
 import akka.actor.{ActorContext, ActorRef, ActorSelection, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.apache.spark.SparkContext
@@ -30,6 +28,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowexecutor.executor.PythonExecutionCaretaker
 import io.deepsense.workflowexecutor.communication.message.global.Connect
 import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 
@@ -76,8 +75,7 @@ class ExecutionDispatcherActorSpec
         mock[SparkContext],
         mock[DOperableCatalog],
         mock[DataFrameStorage],
-        Future.successful(mock[PythonCodeExecutor]),
-        mock[CustomOperationExecutor],
+        mock[PythonExecutionCaretaker],
         mock[ReportLevel],
         TestProbe().ref
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
@@ -106,8 +104,7 @@ class ExecutionDispatcherActorSpec
         mock[SparkContext],
         mock[DOperableCatalog],
         mock[DataFrameStorage],
-        Future.successful(mock[PythonCodeExecutor]),
-        mock[CustomOperationExecutor],
+        mock[PythonExecutionCaretaker],
         mock[ReportLevel]
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
@@ -131,11 +128,10 @@ class ExecutionDispatcherActorSpec
       sparkContext: SparkContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
-      pythonCodeExecutor: Future[PythonCodeExecutor],
-      customOperationExecutor: CustomOperationExecutor,
+      pythonExecutionCaretaker: PythonExecutionCaretaker,
       reportLevel: ReportLevel)
     extends ExecutionDispatcherActor(
-      sparkContext, dOperableCatalog, dataFrameStorage, pythonCodeExecutor, customOperationExecutor,
+      sparkContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
       reportLevel, TestProbe().ref) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
@@ -143,9 +139,8 @@ class ExecutionDispatcherActorSpec
     override def createExecutionContext(
         reportLevel: ReportLevel.ReportLevel,
         dataFrameStorage: DataFrameStorage,
-        pythonCodeExecutor: Future[PythonCodeExecutor],
-        customOperationExecutor: CustomOperationExecutor,
-        sparkContext: Option[SparkContext],
+        pythonExecutionCaretaker: PythonExecutionCaretaker,
+        sparkContext: SparkContext,
         dOperableCatalog: Option[DOperableCatalog]): CommonExecutionContext = {
       mock[CommonExecutionContext]
     }
