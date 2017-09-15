@@ -1,0 +1,67 @@
+/**
+ * Copyright (c) 2016, CodiLime Inc.
+ */
+
+package io.deepsense.commons.rest.client
+
+import java.net.URL
+
+import scala.concurrent.Future
+
+import akka.io.IO
+import akka.pattern.ask
+import spray.client.pipelining._
+import spray.can.Http
+import spray.can.Http.HostConnectorInfo
+import spray.http.{HttpCredentials, HttpRequest, HttpResponse}
+import spray.httpx.unmarshalling.FromResponseUnmarshaller
+
+import io.deepsense.commons.auth.directives.AuthDirectives._
+
+trait RestClient extends RestClientImplicits {
+  def apiUrl: URL
+  def userId: Option[String]
+  def userName: Option[String]
+  def credentials: Option[HttpCredentials]
+
+  private def hostConnectorFut(): Future[HostConnectorInfo] = {
+    (IO(Http) ? Http.HostConnectorSetup(apiUrl.getHost, port = apiUrl.getPort)).mapTo[HostConnectorInfo]
+  }
+
+  private def sendReceivePipeline() : Future[HttpRequest => Future[HttpResponse]] = {
+    for {
+      HostConnectorInfo(hostConnector, _) <- hostConnectorFut()
+    } yield {
+      credentials.map(addCredentials).getOrElse[RequestTransformer](identity) ~>
+      userId.map(addHeader(UserIdHeader, _)).getOrElse[RequestTransformer](identity) ~>
+      userName.map(addHeader(UserNameHeader, _)).getOrElse[RequestTransformer](identity) ~>
+        sendReceive(hostConnector)
+    }
+  }
+
+  private def unmarshalPipeline[U: FromResponseUnmarshaller](): Future[HttpRequest => Future[U]] = {
+    for {
+      sr <- sendReceivePipeline()
+    } yield {
+      sr ~> unmarshal[U]
+    }
+  }
+
+  def fetchResponse[U : FromResponseUnmarshaller](
+      req: HttpRequest
+  ): Future[U] = {
+    unmarshalPipeline().flatMap(pip => {
+      pip(req)
+    })
+  }
+
+  def fetchHttpResponse(req: HttpRequest) : Future[HttpResponse] = {
+    sendReceivePipeline().flatMap{ pip =>
+      pip(req)
+    }
+  }
+
+  def endpointPath(endpoint: String): String = {
+    new URL(apiUrl, endpoint).toString
+  }
+}

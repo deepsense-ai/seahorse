@@ -137,6 +137,7 @@ object Dependencies {
     nscalaTime,
     slick,
     sprayCan,
+    sprayClient,
     sprayJson,
     sprayRouting
   ) ++ scalatraAndJetty ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)

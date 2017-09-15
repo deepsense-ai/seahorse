@@ -65,7 +65,10 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
   override val graphReader = new GraphReader(operationsCatalog)
 
   val client = new WorkflowManagerClient(
-    workflowsUrl
+    workflowsUrl,
+    None,
+    None,
+    None
   )
 
   protected val httpClient = NingWSClient()
