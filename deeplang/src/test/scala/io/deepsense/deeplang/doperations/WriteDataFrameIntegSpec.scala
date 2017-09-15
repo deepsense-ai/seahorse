@@ -6,15 +6,15 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.dataframe.{DataFrameBuilder, DataFrame}
-import io.deepsense.deeplang.{ExecutionContext, DOperable, SparkIntegTestSupport}
+import scala.reflect.io.Path
+
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import scala.reflect.io.Path
+import io.deepsense.deeplang.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
 class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
   val localDataFrameWritePath = "target/test/resources/localDataFrameWrite"
@@ -38,7 +38,7 @@ class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter 
   }
 
   def testSimpleDataFrameSchemaWithRowsSeq(rowsSeq: Seq[Row]): Unit = {
-    val context = new ExecutionContext
+    val context = executionContext
     val operation = new WriteDataFrame
     val pathParameter = operation.parameters.getStringParameter("path")
     pathParameter.value = Some(localDataFrameWritePath)

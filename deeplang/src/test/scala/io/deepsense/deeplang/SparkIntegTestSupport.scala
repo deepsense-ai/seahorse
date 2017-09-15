@@ -6,9 +6,11 @@
 
 package io.deepsense.deeplang
 
-import org.apache.spark.sql.{Row, SQLContext}
-import org.apache.spark.{SparkContext, SparkConf}
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
+
+import io.deepsense.deeplang.dataframe.DataFrameBuilder
 
 /**
  * Adds features to aid integration testing using spark
@@ -26,5 +28,12 @@ trait SparkIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   override def afterAll: Unit = {
     sparkContext.stop()
+  }
+
+  protected def executionContext: ExecutionContext = {
+    val context = new ExecutionContext
+    context.sqlContext = sqlContext
+    context.dataFrameBuilder = DataFrameBuilder(sqlContext)
+    context
   }
 }

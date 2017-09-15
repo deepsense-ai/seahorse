@@ -6,20 +6,19 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.dataframe.{DataFrameBuilder, DataFrame}
-import io.deepsense.deeplang.{SparkIntegTestSupport, DOperable, ExecutionContext}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
+
+import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
 class ReadDataFrameIntegSpec extends SparkIntegTestSupport {
   "ReadDataFrame" should "read locally saved DataFrame" in {
     val localDataFramePath = "src/test/resources/localDataFrameSample"
 
     // read DataFrame using operation
-    val context = new ExecutionContext
-    context.sqlContext = sqlContext
-    context.dataFrameBuilder = DataFrameBuilder(sqlContext)
+    val context = executionContext
 
     val operation = new ReadDataFrame
     val pathParameter = operation.parameters.getStringParameter("path")

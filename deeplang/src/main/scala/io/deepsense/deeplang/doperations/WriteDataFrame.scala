@@ -6,9 +6,9 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.{ExecutionContext, DOperation1To0}
 import io.deepsense.deeplang.dataframe.DataFrame
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter, ParametersSchema}
+import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
+import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
 /**
  * Operation which is able to serialize DataFrame and write it.

@@ -7,8 +7,8 @@
 package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang.dataframe.DataFrame
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter, ParametersSchema}
-import io.deepsense.deeplang.{ExecutionContext, DOperation0To1}
+import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
+import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
 /**
  * Operation which is able to read DataFrame and deserialize it.
