@@ -19,13 +19,13 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 
-import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
 
 class UnionIntegSpec extends DeeplangIntegTestSupport {
 
-  /** TODO no categoricals
   val schema1 = StructType(List(
     StructField("column1", DoubleType),
     StructField("column2", DoubleType)))
@@ -51,64 +51,6 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
 
       assertDataFramesEqual(
         merged, createDataFrame(rows1_1 ++ rows1_2, schema1))
-    }
-
-    "return a union of two DataFrames containing categorical columns" in {
-      val schema = StructType(List(
-        StructField("column1", DoubleType),
-        StructField("column2", StringType),
-        StructField("column3", DoubleType)))
-
-      val rows2_1 = Seq(
-        Row(33.1, "a", 2.0),
-        Row(99.1, "b", 3.0)
-      )
-
-      val rows2_2 = Seq(
-        Row(21.1, "a", 7.0),
-        Row(99.1, "c", 9.0)
-      )
-
-      val df1 = createDataFrame(rows2_1, schema, Seq("column1", "column2"))
-      val df2 = createDataFrame(rows2_2, schema, Seq("column1", "column2"))
-
-      val merged = Union()
-        .execute(executionContext)(Vector(df1, df2))
-        .head.asInstanceOf[DataFrame]
-
-      val column1FinalMapping =
-        CategoricalMetadata(df1).mapping("column1").mergeWith(
-          CategoricalMetadata(df2).mapping("column1")
-        ).finalMapping
-
-      val column2FinalMapping =
-        CategoricalMetadata(df1).mapping("column2").mergeWith(
-          CategoricalMetadata(df2).mapping("column2")
-        ).finalMapping
-
-      val mergedRows = merged.sparkDataFrame.rdd.collect()
-      mergedRows shouldBe Array(
-        Row(column1FinalMapping.valueToId("33.1"), column2FinalMapping.valueToId("a"), 2.0),
-        Row(column1FinalMapping.valueToId("99.1"), column2FinalMapping.valueToId("b"), 3.0),
-        Row(column1FinalMapping.valueToId("21.1"), column2FinalMapping.valueToId("a"), 7.0),
-        Row(column1FinalMapping.valueToId("99.1"), column2FinalMapping.valueToId("c"), 9.0))
-
-      CategoricalMetadata(merged).mapping("column1") shouldBe column1FinalMapping
-      CategoricalMetadata(merged).mapping("column2") shouldBe column2FinalMapping
-    }
-
-    "throw for identical schemas and one DF having a categorical column" in {
-      val rows2_1 = Seq(
-        Row(1.1, 1.0),
-        Row(1.1, 1.0)
-      )
-
-      val df1 = createDataFrame(rows1_1, schema1, Seq("column1"))
-      val df2 = createDataFrame(rows2_1, schema1)
-
-      a [SchemaMismatchException] should be thrownBy {
-        Union().execute(executionContext)(Vector(df1, df2))
-      }
     }
 
     "throw for mismatching types in DataFrames" in {
@@ -146,5 +88,27 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
         Union().execute(executionContext)(Vector(df1, df2))
       }
     }
-  }*/
+  }
+
+  it should {
+    "propagate schema when both schemas match" in {
+      val structType = StructType(Seq(
+        StructField("x", DoubleType),
+        StructField("y", DoubleType)))
+      val knowledgeDF1 = DKnowledge(DataFrame.forInference(structType))
+      val knowledgeDF2 = DKnowledge(DataFrame.forInference(structType))
+      Union().inferKnowledge(mock[InferContext])(Vector(knowledgeDF1, knowledgeDF2)) shouldBe
+        (Vector(knowledgeDF1), InferenceWarnings())
+    }
+    "generate error when schemas don't match" in {
+      val structType1 = StructType(Seq(
+        StructField("x", DoubleType)))
+      val structType2 = StructType(Seq(
+        StructField("y", DoubleType)))
+      val knowledgeDF1 = DKnowledge(DataFrame.forInference(structType1))
+      val knowledgeDF2 = DKnowledge(DataFrame.forInference(structType2))
+      an [SchemaMismatchException] shouldBe thrownBy(
+        Union().inferKnowledge(mock[InferContext])(Vector(knowledgeDF1, knowledgeDF2)))
+    }
+  }
 }

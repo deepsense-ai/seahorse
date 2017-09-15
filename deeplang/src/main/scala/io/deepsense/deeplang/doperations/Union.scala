@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-/** TODO without categoricals
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{Metadata, StructField, StructType}
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMetadata, MappingMetadataConverter}
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameMetadata}
-import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
-import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.params.{Param, Params}
-import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.exceptions.{InvalidDataFrameException, SchemaMismatchException}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 
 case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with Params {
@@ -42,104 +38,36 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
   override protected def _execute(
       context: ExecutionContext)(first: DataFrame, second: DataFrame): DataFrame = {
 
-    assertSchemaSimilarity(first, second)
-
-    val equalSchemas =
-      first.sparkDataFrame.schema == second.sparkDataFrame.schema
-
-    val secondRemapped = equalSchemas match {
-      case true => second
-      case false => remapCategoricalValues(context, second, CategoricalMetadata(first))
-    }
-
-    // build a union based on metadata from the remapped second DF
-    buildUnion(context, first, secondRemapped, secondRemapped.metadata.get)
-  }
-
-  /**
-   * Basic schema comparison: column names and types
-   */
-  private def assertSchemaSimilarity(first: DataFrame, second: DataFrame): Unit = {
-    val firstSchema = first.sparkDataFrame.schema
-    val secondSchema = second.sparkDataFrame.schema
-
-    def withNoMeta(f: StructField): StructField =
-      f.copy(metadata = Metadata.empty)
-
-    def columnTypes(schema: StructType): Seq[Option[ColumnType]] =
-      DataFrameMetadata.fromSchema(schema).orderedColumns.map(_.columnType)
-
-    val similar =
-      (firstSchema.fields.map(withNoMeta) sameElements secondSchema.fields.map(withNoMeta)) &&
-      columnTypes(firstSchema) == columnTypes(secondSchema)
-
-    if (!similar) {
-      throw new SchemaMismatchException(
-        "SchemaMismatch. Expected schema " +
-        s"${first.sparkDataFrame.schema.treeString}" +
-          s" differs from ${second.sparkDataFrame.schema.treeString}")
-    }
-  }
-
-  private def buildUnion(
-      context: ExecutionContext,
-      first: DataFrame,
-      second: DataFrame,
-      metadata: DataFrameMetadata): DataFrame = {
+    checkSchemaMismatch(first.schema.get, second.schema.get)
 
     context.dataFrameBuilder.buildDataFrame(
-      metadata,
+      first.schema.get,
       first.sparkDataFrame.unionAll(second.sparkDataFrame).rdd)
   }
 
-  /**
-   * Takes a DataFrame and a categorical mapping of another DataFrame
-   * and returns a new DataFrame that has each of its categorical columns
-   * remapped to a new set of values, that extends the respective set of values
-   * in externalMetadata
-   *
-   * @param dataFrame A DataFrame to base the result on
-   * @param externalMetadata Metadata of another DataFrame
-   *                         to be the base of new categorical mappings
-   * @return A remapped DataFrame
-   */
-  private def remapCategoricalValues(
-      context: ExecutionContext,
-      dataFrame: DataFrame,
-      externalMetadata: CategoricalMetadata): DataFrame = {
+  override protected def _inferTypeKnowledge
+      (context: InferContext)
+      (df1Knowledge: DKnowledge[DataFrame],
+        df2Knowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
 
-    val metadata = CategoricalMetadata(dataFrame)
+    val df1Schema = df1Knowledge.types.head.schema
+    val df2Schema = df2Knowledge.types.head.schema
 
-    val mergedMappingsByColumnIdx = externalMetadata.mappingByIndex.map {
-      case (i: Int, extMapping) =>
-        i -> extMapping.mergeWith(metadata.mapping(i))
+    if (df1Schema.isDefined && df2Schema.isDefined) {
+      checkSchemaMismatch(df1Schema.get, df2Schema.get)
+      (df1Knowledge, InferenceWarnings())
+    } else {
+      (DKnowledge(DataFrame.forInference()), InferenceWarnings())
     }
+  }
 
-    def convertSingleColumn(value: Int, columnIndex: Int): Int = {
-      mergedMappingsByColumnIdx(columnIndex).otherToFinal.mapId(value)
+  private def checkSchemaMismatch(first: StructType, second: StructType): Unit = {
+    if (first != second) {
+      throw new SchemaMismatchException(
+        "SchemaMismatch. Expected schema " +
+          s"${first.treeString}" +
+          s" differs from ${second.treeString}")
     }
-
-    val newRows = dataFrame.sparkDataFrame.map { row =>
-      val newColumnValues = row.toSeq.zipWithIndex.map {
-        case (value: Int, index: Int) if metadata.isCategorical(index) =>
-          convertSingleColumn(value, index)
-
-        case (v, i: Int) => v
-      }
-
-      Row(newColumnValues: _*)
-    }
-
-    val newStructFields = dataFrame.sparkDataFrame.schema.zipWithIndex.map {
-      case (field, index: Int) if metadata.isCategorical(index) =>
-        val newMetadata = MappingMetadataConverter.mappingToMetadata(
-          mergedMappingsByColumnIdx(index).finalMapping)
-        field.copy(metadata = newMetadata)
-
-      case (field, _) => field
-    }
-
-    context.dataFrameBuilder.buildDataFrame(StructType(newStructFields), newRows)
   }
 
   @transient
@@ -149,4 +77,3 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
-*/
