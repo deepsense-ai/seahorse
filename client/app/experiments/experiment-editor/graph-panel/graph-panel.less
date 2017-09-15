@@ -21,13 +21,13 @@ path,
 }
 
 .flowchart-box {
-  position: absolute;
   width: 100%;
   background-color: #efefef;
-  overflow: auto;
-  margin: 30px auto 10px auto;
-  height: 1000px;
-  margin-left: 210px;
+  overflow: hidden;
+  margin: 0 auto 10px auto;
+  height: 800px; // TODO change on dynamic one
+  position: relative;
+  border: 3px solid white;
 }
 
 .flowchart-box .active {
@@ -40,4 +40,8 @@ path,
 
 .flowchart-box ._jsPlumb_connector {
   z-index: 4;
+}
+
+.flowchart-paint-area {
+
 }

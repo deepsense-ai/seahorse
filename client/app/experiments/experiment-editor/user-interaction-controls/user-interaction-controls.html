@@ -1,0 +1,37 @@
+<ul class="interaction-controls">
+  <ds-move  text="Move"
+            classSet="move"
+            icon="move"
+
+            element-to-move=".flowchart-paint-area"
+            width="5000"
+            height="5000"
+            top="-1000"
+            left="-1000">
+  </ds-move>
+  <ds-zoom  text="Zoom"
+            classSet="zoom"
+            icon=""
+
+            element-to-zoom=".flowchart-paint-area"
+            max="2.3"
+            step="0.1"
+            initialValue="1">
+  </ds-zoom>
+  <ds-default-zoom
+            text="DefaultZoom"
+            classSet="default-zoom"
+            icon="resize-small"
+
+            related-to=".flowchart-paint-area">
+  </ds-default-zoom>
+  <ds-fit   text="Fit"
+            classSet="default-fit"
+            icon="fullscreen"
+
+            related-to=".flowchart-paint-area"
+            run="true"
+            padding="50"
+            >
+  </ds-fit>
+</ul>

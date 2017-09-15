@@ -50,6 +50,7 @@
     "gulp-less": "^3.0.0",
     "gulp-minify-css": "^0.4.6",
     "gulp-nodemon": "^1.0.5",
+    "gulp-shell": "^0.4.1",
     "gulp-size": "^1.2.0",
     "gulp-uglify": "^1.1.0",
     "gulp-util": "^3.0.3",

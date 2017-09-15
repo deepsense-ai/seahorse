@@ -29,5 +29,10 @@ require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(e
 require('./experiment-editor/attributes-panel/attributes-panel.module.js').inject(experiments);
 require('./utils/uuid-generator.js').inject(experiments);
 require('./common-behaviours/common-context-menu-blocker.js').inject(experiments);
+require('./experiment-editor/user-interaction-controls/user-interaction-controls.js').inject(experiments);
+require('./experiment-editor/user-interaction-controls/zoom/zoom.js').inject(experiments);
+require('./experiment-editor/user-interaction-controls/move/move.js').inject(experiments);
+require('./experiment-editor/user-interaction-controls/defaultZoom/defaultZoom.js').inject(experiments);
+require('./experiment-editor/user-interaction-controls/fit/fit.js').inject(experiments);
 
 module.exports = experiments;

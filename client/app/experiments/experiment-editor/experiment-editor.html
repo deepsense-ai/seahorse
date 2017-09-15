@@ -1,9 +1,7 @@
-<div>
-  <div ng-if="experiment.getExperiment()" class="animated fadeIn">
-    <operation-catalogue></operation-catalogue>
-    <flow-chart-box></flow-chart-box>
-    <operation-attributes-view ng-if="experiment.getSelectedNode()"></operation-attributes-view>
-    <status-bar status="experiment.getExperiment().getStatus()"></status-bar>
-  </div>
-  <loading-spinner ng-if="!experiment.getExperiment()"></loading-spinner>
+<status-bar status="experiment.getExperiment().getStatus()"></status-bar>
+<div ng-if="experiment.getExperiment()" class="experiment animated fadeIn">
+  <operation-catalogue></operation-catalogue>
+  <flow-chart-box></flow-chart-box>
+  <operation-attributes-view ng-if="experiment.getSelectedNode()"></operation-attributes-view>
 </div>
+<loading-spinner ng-if="!experiment.getExperiment()"></loading-spinner>

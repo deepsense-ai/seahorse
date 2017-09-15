@@ -1,4 +1,14 @@
-<div drop-target context-menu-blocker class="flowchart-box">
+<div context-menu-blocker class="flowchart-box">
+  <div class="flowchart-paint-area" drop-target>
+    <graph-node on-render-finish
+                jsplumb-draggable
+                keyboard
+                node="node"
+                ng-class="{'selected-node': experiment.getSelectedNode().id === nodeId }"
+                ng-repeat="(nodeId, node) in experiment.getExperiment().getNodes()">
+    </graph-node>
+  </div>
+
   <div>
     <context-menu ng-controller="ReportOptionsController as reportOptionsController"
                   elements="reportOptionsController.getReportOptions()"
@@ -8,6 +18,7 @@
                   position-y="flowChartBoxController.getContextMenuPositionY()"
                   state="flowChartBoxController.getContextMenuState()">
     </context-menu>
+    <user-interaction-controls interactTo=".flowchart-paint-area"></user-interaction-controls>
   </div>
 
   <div ng-controller="PortStatusesTooltipController as portStatusesTooltipController">
@@ -21,12 +32,4 @@
       </span>
     </sticky-window>
   </div>
-
-  <graph-node on-render-finish
-              jsplumb-draggable
-              keyboard
-              node="node"
-              ng-class="{'selected-node': experiment.getSelectedNode().id === nodeId }"
-              ng-repeat="(nodeId, node) in experiment.getExperiment().getNodes()">
-  </graph-node>
 </div>

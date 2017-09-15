@@ -23,7 +23,8 @@ var gulp = require('gulp'),
     less = require('gulp-less'),
     minifyCSS = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
-    exit = require('gulp-exit');
+    exit = require('gulp-exit'),
+    shell = require('gulp-shell');
 require('jshint-stylish');
 
 var config = require('./package.json'),
@@ -179,9 +180,16 @@ gulp.task('browserify', function () {
     .pipe(gulp.dest(build.path));
 });
 
+gulp.task('killAllNode',
+  shell.task(['killall -9 node'], {
+    ignoreErrors: true
+  })
+);
+
 
 gulp.task('build', function (callback) {
   runSequence(
+    'killAllNode',
     'clean',
     ['fonts', 'images', 'html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
     callback

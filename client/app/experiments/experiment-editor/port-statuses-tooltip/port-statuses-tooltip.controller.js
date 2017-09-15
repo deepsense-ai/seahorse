@@ -18,21 +18,19 @@ function PortStatusesTooltipController($scope, $element) {
     flowchartBoxContainer: $($element).closest('.flowchart-box')
   });
 
-  _.assign(internal, {
-    TOOLTIP_OFFSET_X: 25,
-    mouseoverHandler: (portEl, portObject) => {
-      that.portElement = portEl;
-      that.portObject = portObject;
-      that.tooltipIsVisible = true;
-      $scope.$digest();
-    },
-    mouseoutHandler: () => {
-      that.portElement = null;
-      that.portObject = null;
-      that.tooltipIsVisible = false;
-      $scope.$digest();
-    }
-  });
+  internal.mouseoverHandler = (portEl, portObject) => {
+    that.portElement = portEl;
+    that.portObject = portObject;
+    that.tooltipIsVisible = true;
+    $scope.$digest();
+  };
+
+  internal.mouseoutHandler = () => {
+    that.portElement = null;
+    that.portObject = null;
+    that.tooltipIsVisible = false;
+    $scope.$digest();
+  };
 
   $scope.$on('InputPoint.MOUSEOVER', (event, data) => { internal.mouseoverHandler(data.portElement, data.portObject); });
   $scope.$on('InputPoint.MOUSEOUT', internal.mouseoutHandler);
@@ -48,7 +46,7 @@ function PortStatusesTooltipController($scope, $element) {
     return Math.round(
       that.portElement.getBoundingClientRect().left -
       that.flowchartBoxContainer[0].getBoundingClientRect().left +
-      internal.TOOLTIP_OFFSET_X +
+      that.portElement.getBoundingClientRect().width +
       (that.portObject.type === 'output' ? 3 : 0) // a slight adjustment for output ports
     );
   };

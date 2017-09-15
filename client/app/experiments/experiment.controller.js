@@ -118,6 +118,8 @@ function ExperimentController(
     GraphPanelRendererService.repaintEverything();
 
     that.checkExperimentState();
+
+    $scope.$broadcast('Experiment.RENDER_FINISHED');
   };
 
   /**

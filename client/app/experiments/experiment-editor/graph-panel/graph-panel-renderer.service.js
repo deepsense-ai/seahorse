@@ -62,7 +62,7 @@ var inputStyle = {
 };
 
 /* @ngInject */
-function GraphPanelRendererService($rootScope) {
+function GraphPanelRendererService($rootScope, $document) {
 
   const nodeIdPrefix = 'node-';
   const nodeIdPrefixLength = nodeIdPrefix.length;
@@ -70,9 +70,117 @@ function GraphPanelRendererService($rootScope) {
   var that = this;
   var internal = {};
 
+  that.getAllInternalElementsPosition = function getAllInternalElementsPosition () {
+    var elementsToFit = jsPlumb.getContainer().children;
+    var elementsToFitPositions = _.map(elementsToFit, function (el) {
+      var elementDimensions = el.getBoundingClientRect();
+
+      return {
+        top:    el.offsetTop,
+        left:   el.offsetLeft,
+        right:  el.offsetLeft  + elementDimensions.width,
+        bottom: el.offsetTop   + elementDimensions.height
+      };
+    });
+
+    return elementsToFitPositions;
+  };
+
+  that.getPseudoPosition = function getPseudoPosition () {
+    var elementsToFitPositions = that.getAllInternalElementsPosition();
+
+    return {
+      topmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.top;     })),
+      leftmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.left;    })),
+      rightmost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.right;   })),
+      bottommost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.bottom;  }))
+    };
+  };
+
+  that.getZoom = function getZoom () {
+    return jsPlumb.getZoom();
+  };
+
+  that.setZoom = function setZoom (zoom, transformOrigin) {
+    transformOrigin = transformOrigin || [0.5, 0.5];
+    var instance = jsPlumb;
+    var el = instance.getContainer();
+    var p = ['webkit', 'moz', 'ms', 'o'],
+      s = 'scale(' + zoom + ')',
+      oString = (transformOrigin[0] * 100) + '% ' + (transformOrigin[1] * 100) + '%';
+
+    for (var i = 0; i < p.length; i++) {
+      el.style[p[i] + 'Transform'] = s;
+      el.style[p[i] + 'TransformOrigin'] = oString;
+    }
+
+    el.style.transform = s;
+    el.style.transformOrigin = oString;
+
+    instance.setZoom(zoom, true);
+    instance.repaintEverything();
+
+    $rootScope.$broadcast('Zoom');
+  };
+
+  that.getDifferenceAfterZoom = function getDifferenceAfterZoom (container, property) {
+    return (
+      container.getBoundingClientRect()[property] -
+      container['client' + (property.slice(0, 1).toUpperCase() + property.slice(1))]
+    ) / 2;
+  };
+
+  // TODO do not move beyond borders
+  internal.moveElement = function moveElement (element, movement) {
+    console.log(movement.x, that.getDifferenceAfterZoom(jsPlumb.getContainer(), 'width'));
+
+    $(element).animate({
+      top: movement.y,
+      left: movement.x
+    }, 0);
+  };
+
+  that.setZero = function setZero () {
+    var container         = jsPlumb.getContainer();
+
+    container.style.left  = 0;
+    container.style.top   = 0;
+
+    if (that.getZoom() !== 1) {
+      container.style.left  = that.getDifferenceAfterZoom(container, 'width') + 'px';
+      container.style.top   = that.getDifferenceAfterZoom(container, 'height') + 'px';
+    }
+
+    $rootScope.$broadcast('GraphPanel.ZERO');
+  };
+
+  that.setCenter = function setCenter (pseudoContainer) {
+    var container                 = jsPlumb.getContainer();
+    var containerParent           = container.parentNode;
+
+    var centerOfMask              = {
+      y: containerParent.clientHeight / 2,
+      x: containerParent.clientWidth / 2
+    };
+
+    var centerOfPseudoContainer   = {
+      y: pseudoContainer.topmost  + ((pseudoContainer.bottommost - pseudoContainer.topmost) / 2),
+      x: pseudoContainer.leftmost + ((pseudoContainer.rightmost - pseudoContainer.leftmost) / 2)
+    };
+
+    var movement = {
+      y: centerOfMask.y - centerOfPseudoContainer.y,
+      x: centerOfMask.x - centerOfPseudoContainer.x
+    };
+
+    internal.moveElement(container, movement);
+
+    $rootScope.$broadcast('GraphPanel.CENTERED');
+  };
+
   that.init = function init() {
-    jsPlumb.reset();
-    jsPlumb.setContainer('flowchart-box');
+    // jsPlumb.reset();
+    jsPlumb.setContainer($document[0].querySelector('.flowchart-paint-area'));
     jsPlumb.importDefaults({
       DragOptions: {
         cursor: 'pointer',
@@ -95,6 +203,12 @@ function GraphPanelRendererService($rootScope) {
   };
 
   that.clearExperiment = function clearExperiment() {
+    jsPlumb.deleteEveryEndpoint();
+    jsPlumb.unbind('connection');
+    jsPlumb.unbind('connectionDetached');
+    jsPlumb.unbind('connectionMoved');
+    jsPlumb.unbind('connectionDrag');
+    jsPlumb.setZoom(1, true);
     internal.experiment = null;
   };
 
@@ -256,7 +370,6 @@ function GraphPanelRendererService($rootScope) {
   };
 
   return that;
-
 }
 
 exports.function = GraphPanelRendererService;
