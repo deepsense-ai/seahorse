@@ -83,7 +83,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       "name or value can be surrounded by quotation marks " +
       "if it contains special characters (e.g. space)"
 
-    opt[String]('m', "--message-queue-host") valueName "HOST" action {
+    opt[String]('m', "message-queue-host") valueName "HOST" action {
       (x, c) => c.copy(messageQueueHost = Some(x))
     } text "message queue host"
 
