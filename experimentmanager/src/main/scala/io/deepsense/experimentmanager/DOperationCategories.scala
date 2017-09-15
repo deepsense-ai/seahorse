@@ -33,6 +33,4 @@ object DOperationCategories {
 
     object FeatureSelection extends DOperationCategory(UUID.randomUUID(), "Feature selection", ML)
   }
-
-  object Utils extends DOperationCategory(UUID.randomUUID(), "Utilities", None)
 }

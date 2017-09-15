@@ -56,27 +56,27 @@ object CatalogRecorder {
     )
 
     catalog.registerDOperation[DataFrameSplitter](
-      DOperationCategories.Utils,
+      DOperationCategories.DataManipulation,
       "Splits DataFrame into two DataFrames"
     )
 
     catalog.registerDOperation[Join](
-      DOperationCategories.Utils,
+      DOperationCategories.DataManipulation,
       "Joins two DataFrames to a DataFrame"
     )
 
     catalog.registerDOperation[OneHotEncoder](
-      DOperationCategories.Utils,
+      DOperationCategories.DataManipulation,
       "One-hot encodes categorical columns"
     )
 
     catalog.registerDOperation[ProjectColumns](
-      DOperationCategories.Utils,
+      DOperationCategories.DataManipulation,
       "Projects columns of dataframe"
     )
 
     catalog.registerDOperation[TimestampDecomposer](
-      DOperationCategories.Utils,
+      DOperationCategories.DataManipulation,
       "Decomposes selected columns from timestamp to numeric"
     )
 
@@ -106,7 +106,7 @@ object CatalogRecorder {
     )
 
     catalog.registerDOperation[CreateLogisticRegression](
-      DOperationCategories.ML.Regression,
+      DOperationCategories.ML.Classification,
       "Creates untrained logistic regression model"
     )
 
@@ -126,7 +126,7 @@ object CatalogRecorder {
     )
 
     catalog.registerDOperation[ApplyTransformation](
-      DOperationCategories.Utils,
+      DOperationCategories.Transformation,
       "Apply Transformation"
     )
 
