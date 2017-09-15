@@ -53,8 +53,6 @@ abstract class StringIndexingEstimatorWrapper
    val stringIndexingWrapperModelTag: TypeTag[SIWP])
   extends Estimator[SIWP] with ParamsWithSparkWrappers  {
 
-  setDefaultsFrom(wrappedEstimator)
-
   final override def params: Array[Param[_]] = wrappedEstimator.params
   final override def report: Report = wrappedEstimator.report
 
@@ -123,4 +121,8 @@ abstract class StringIndexingEstimatorWrapper
       .setParent(wrappedEstimator.replicate(extractParamMap()))
     TypeUtils.instanceOfType(stringIndexingWrapperModelTag).setWrappedModel(model)
   }
+
+  private[deeplang] override def paramMap: ParamMap = wrappedEstimator.paramMap
+
+  private[deeplang] override def defaultParamMap: ParamMap = wrappedEstimator.defaultParamMap
 }

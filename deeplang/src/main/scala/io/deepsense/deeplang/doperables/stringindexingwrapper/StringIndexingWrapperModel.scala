@@ -92,4 +92,9 @@ abstract class StringIndexingWrapperModel[M <: ml.Model[M], E <: ml.Estimator[M]
     pipelinedModel.save(pipelineModelPath)
     wrappedModel.save(ctx, wrappedModelPath)
   }
+
+  private[deeplang] override def paramMap: ParamMap = wrappedModel.paramMap
+
+  private[deeplang] override def defaultParamMap: ParamMap = wrappedModel.defaultParamMap
+
 }

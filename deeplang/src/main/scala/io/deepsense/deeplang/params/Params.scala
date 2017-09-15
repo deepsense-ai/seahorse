@@ -326,12 +326,10 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
   private def objectExpectedException(jsValue: JsValue): DeserializationException =
     new DeserializationException(s"Cannot fill parameters schema with $jsValue object expected.")
 
-  private val paramMap: ParamMap = ParamMap.empty
+  private[deeplang] def paramMap: ParamMap = _paramMap
+  private val _paramMap: ParamMap = ParamMap.empty
 
-  private val defaultParamMap: ParamMap = ParamMap.empty
-
-  protected def setDefaultsFrom(params: Params): Unit = {
-    this.defaultParamMap ++= params.defaultParamMap
-  }
+  private[deeplang] def defaultParamMap: ParamMap = _defaultParamMap
+  private val _defaultParamMap: ParamMap = ParamMap.empty
 
 }
