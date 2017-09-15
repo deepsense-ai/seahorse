@@ -35,6 +35,10 @@ function ExperimentService(OperationsHierarchyService, Workflow) {
     internal.experiment = experiment;
   };
 
+  that.clearGraph = function clearGraph() {
+    internal.experiment.clearGraph();
+  };
+
   that.clearExperiment = function clearExperiment() {
     internal.experiment = null;
   };

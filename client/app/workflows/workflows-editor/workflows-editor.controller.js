@@ -4,14 +4,12 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentController(
-  experiment,
-  $timeout, $scope,
-  GraphNode, Edge,
-  PageService, Operations, GraphPanelRendererService, ExperimentService,
-  WorkflowsApiClient, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, FreezeService
-) {
+function ExperimentController(experiment,
+                              $timeout, $scope,
+                              GraphNode, Edge,
+                              PageService, Operations, GraphPanelRendererService, ExperimentService,
+                              WorkflowsApiClient, UUIDGenerator, MouseEvent,
+                              DeepsenseNodeParameters, FreezeService) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
   let that = this;
@@ -131,6 +129,12 @@ function ExperimentController(
     internal.saveExperiment();
   });
 
+  $scope.$on('StatusBar.CLEAR_CLICK',() => {
+    ExperimentService.clearGraph();
+    that.onRenderFinish();
+    internal.saveExperiment();
+  });
+
   $scope.$on(Edge.CREATE, (data, args)  => {
     ExperimentService.getExperiment().addEdge(args.edge);
     internal.rerenderEdges();
@@ -165,11 +169,11 @@ function ExperimentController(
     let elementOffsetX = 100;
     let elementOffsetY = 30;
     let node = ExperimentService.getExperiment().createNode({
-        'id': UUIDGenerator.generateUUID(),
-        'operation': operation,
-        'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-        'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
-      });
+      'id': UUIDGenerator.generateUUID(),
+      'operation': operation,
+      'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+      'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
+    });
 
     ExperimentService.getExperiment().addNode(node);
     GraphPanelRendererService.repaintEverything();

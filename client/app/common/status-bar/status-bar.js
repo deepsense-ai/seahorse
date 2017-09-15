@@ -3,23 +3,25 @@
  */
 'use strict';
 
-function ExperimentEditorStatusBar() {
+/* @ngInject */
+function ExperimentEditorStatusBar($rootScope) {
   return {
     restrict: 'E',
     templateUrl: 'app/common/status-bar/status-bar.html',
     replace: true,
     scope: {},
     link: function (scope) {
-      scope.runExperiment = function runExperiment () {
-        scope.$emit('Experiment.RUN');
-      };
 
-      scope.abortExperiment = function abortExperiment () {
-        scope.$emit('Experiment.ABORT');
+      scope.exportExperiment = function exportExperiment () {
+        $rootScope.$broadcast('Experiment.EXPORT');
       };
 
       scope.saveExperiment = function saveExperiment () {
-        scope.$emit('Experiment.SAVE');
+        $rootScope.$broadcast('Experiment.SAVE');
+      };
+
+      scope.clearExperiment = function clearExperiment () {
+        $rootScope.$broadcast('StatusBar.CLEAR_CLICK');
       };
     }
   };
