@@ -8,9 +8,12 @@ includeOperationsMenu: true
 ---
 
 Executes a Python function provided by the user on a [DataFrame](../classes/dataframe.html) connected to its input port.
-Returns result of the Python function as a `DataFrame`.
+Returns the results of the execution as a `DataFrame`.
 
-The function that will be executed must:
+Also returns a [Transformer](../classes/transformer.html) that can be later applied
+to another `DataFrame` with a [Transform](transform.html) operation.
+
+The Python function that will be executed must:
 
 * be named <code>transform</code>,
 
@@ -62,6 +65,12 @@ def transform(dataframe):
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
 <td>The return value of <code>transform</code> function.</td>
+</tr>
+<tr>
+<td><code>1</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td><code>Transformer</code> that allows to apply the operation on another <code>DataFrames</code> using
+<a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>
