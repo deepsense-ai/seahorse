@@ -7,21 +7,24 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Performs a left join. Creates a new DataFrame that consists of the values in
-the columns of the left and right DataFrames, without the columns used to perform the left join.
-Rows match when the values in ``join columns`` do. The values must be equal to match.
-Order of the columns is preserved.
+Joins two [DataFrames](../classes/dataframe.html).
+Creates a new DataFrame that consists of the values from all the columns of the left DataFrame
+and the columns not used in the join conditions from the right DataFrame.
+Two rows match when the all of equality conditions created by ``join columns`` are satisfied.
+That is, the values are in the rows are equal. The order of the columns is preserved.
 
 The operation joins two DataFrames by the column pairs given in ``join columns`` parameter.
 For each given pair, both columns must be of the same type. If column pairs in ``join columns``
 are not present in their DataFrames (left DataFrame and right DataFrame, respectively),
-``ColumnDoesNotExistException`` is thrown. If columns from one pair are of different types,
+``ColumnDoesNotExistException`` is thrown. If columns from one pair have different types,
 ``WrongColumnTypeException`` is thrown.
 
-The join operation skips ``null`` values in left join, i.e. ``null`` s do not match and yield rows.
+If values of ``left prefix`` and/or ``right prefix`` are provided,
+the columns in the output DataFrame are renamed by prepending the prefix
+(followed by underscore) proper for the table, which they come from.
 
-If values of ``left prefix`` and/or ``right prefix`` are provided, columns in the output table
-are renamed by prepending prefix proper for the table, which they come from.
+If the columns' names in the resulting DataFrame are not to be unique,
+random strings will be appended to them.
 
 **Since**: Seahorse 0.4.0
 
@@ -63,9 +66,8 @@ are renamed by prepending prefix proper for the table, which they come from.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>DataFrame containing the columns of the left DataFrame
-       and the columns of the right DataFrame but the columns
-       used to LEFT JOIN (in <code>join columns</code> parameter).</td>
+<td>A DataFrame containing all the columns of the left DataFrame and the columns
+   of the right DataFrame not used in join condition (in <code>join columns</code> parameter).</td>
 </tr>
 </tbody>
 </table>
@@ -82,25 +84,33 @@ are renamed by prepending prefix proper for the table, which they come from.
 </thead>
 <tbody>
 <tr>
-<td><code>join columns</code></td>
+<td><code id="join-type">join type</code></td>
+<td><code><a href="../parameter_types.html#single_choice">Single Choice</a></code></td>
+<td>A type of the join to perform. Possible values are:
+   <code>Inner</code>, <code>Outer</code>, <code>Left outer</code>, <code>Right outer</code>.
+   Default value: <code>Inner</code>.</td>
+</tr>
+
+<tr>
+<td><code id="join-columns">join columns</code></td>
 <td><code><a href="../parameter_types.html#parameters-sequence">Parameters Sequence</a></code></td>
 <td>Sequence of pairs (<code>left column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>,
    <code>right column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>) defining condition for the JOIN operation.
    Empty join condition is not supported and exception <code>ColumnDoesNotExistException</code> is thrown.
    When a column selected by name or by index does not exist, <code>ColumnDoesNotExistException</code> is thrown.
-   When the type of columns to LEFT JOIN upon in two DataFrames do not match,
+   When the type of columns to JOIN upon in two DataFrames do not match,
    <code>WrongColumnTypeException</code> is thrown.</td>
 </tr>
 <tr>
-<td><code>left prefix</code></td>
+<td><code id="left-prefix">left prefix</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Optional prefix, which can be prepended
+<td>An optional prefix, which can be prepended
    to these columns in the output table, which come from the left input table.</td>
 </tr>
 <tr>
-<td><code>right prefix</code></td>
+<td><code id="right-prefix">right prefix</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Optional prefix, which can be prepended
+<td>An optional prefix, which can be prepended
    to these columns in the output table, which come from the right input table.</td>
 </tr>
 </tbody>
