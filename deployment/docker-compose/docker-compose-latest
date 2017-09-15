@@ -13,4 +13,4 @@ fi
 DOCKER_TAG="dev_sdk-latest"
 
 echo "Starting docker-compose script with DOCKER_TAG=$DOCKER_TAG"
-./docker-compose $DOCKER_TAG "$@"
+./docker-compose $DOCKER_TAG $DOCKER_TAG "$@"

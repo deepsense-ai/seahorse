@@ -1,5 +1,0 @@
-# Copyright (c) 2015, CodiLime Inc.
-
----
-- include: ../../../tasks/create_download_dir.yml
-- include: ../../../tasks/download_supervisor.yml

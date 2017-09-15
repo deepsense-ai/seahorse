@@ -31,8 +31,8 @@ project/plugins/project/
 private_*.conf
 private_*/
 
-# Vagrant deployment output
-deployment/ansible/vagrant
+# From publish_docker_compose_internal.sh
+docker-compose-internal.yml
 
 # H2 database files if project is run from InteliJ IDEA
 sessionmanager.mv.db

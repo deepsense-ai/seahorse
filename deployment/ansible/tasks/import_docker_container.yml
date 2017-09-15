@@ -1,4 +1,0 @@
-# Copyright (c) 2015, CodiLime Inc.
-
-- name: "Import \"{{docker_image}}\" Docker image"
-  shell: "gzip -dc {{docker_dir}}/{{docker_image}}-docker.tgz | docker load"

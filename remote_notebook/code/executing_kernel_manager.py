@@ -78,6 +78,9 @@ class ExecutingKernelManager(Logging):
 
         # Without the timeout, this is un-interruptable.
         while not self._shutdown_event.is_set():
+            if os.getppid() == 1:
+                self.logger.debug("I'm an orphan - stopping")
+                self.stop()
             self._shutdown_event.wait(1)
 
         self.logger.debug('Shutting down kernels.')

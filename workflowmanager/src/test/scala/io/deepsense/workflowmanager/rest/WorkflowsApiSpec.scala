@@ -103,8 +103,8 @@ class WorkflowsApiSpec
   def newWorkflow(
       apiVersion: String = BuildInfo.version,
       name: String = workflowAName): Workflow = {
-    val node1 = Node(nodeAId, new MockOperation())
-    val node2 = Node(Node.Id.randomId, new MockOperation())
+    val node1 = Node(nodeAId, MockOperation())
+    val node2 = Node(Node.Id.randomId, MockOperation())
     val graph = DeeplangGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
     val thirdPartyData = JsObject(

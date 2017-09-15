@@ -1,9 +1,0 @@
-# Copyright (c) 2016, CodiLime Inc.
-
----
-
-- name: Copy config file
-  copy: src="default.conf" dest="/etc/nginx/conf.d/default.conf"
-
-- name: Restart nginx
-  service: name=nginx state=restarted

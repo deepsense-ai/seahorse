@@ -2,6 +2,7 @@
 
 // scalastyle:off println
 
+import com.typesafe.sbt.SbtGit
 import com.typesafe.sbt.packager.docker._
 
 name := "deepsense-sessionmanager"
@@ -56,14 +57,22 @@ mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
 dockerBaseImage := {
   // Require environment variable SEAHORSE_BUILD_TAG to be set
   // This variable indicates tag of base image for sessionmanager image
-  val seahorseBuildTag = scala.util.Properties.envOrElse("SEAHORSE_BUILD_TAG", "")
-  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:${seahorseBuildTag}"
+  val seahorseBuildTag = scala.util.Properties.envOrElse("SEAHORSE_BUILD_TAG", {
+    println("SEAHORSE_BUILD_TAG is not defined. Trying to use $GITBRANCH-latest")
+    s"${SbtGit.GitKeys.gitCurrentBranch.value}-latest"
+  })
+  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$seahorseBuildTag"
 }
 
 dockerCommands ++= Seq(
+// Add Tini - so the python zombies can be collected
+  Cmd("ENV", "TINI_VERSION", "v0.10.0"),
+  Cmd("ADD", "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini", "/bin/tini"),
+  Cmd("RUN", "chmod", "+x", "/bin/tini"),
   Cmd("USER", "root"),
   Cmd("RUN", "/opt/conda/bin/pip install pika==0.10.0"),
-  ExecCmd("ENTRYPOINT", "bin/deepsense-sessionmanager")
+  ExecCmd("ENTRYPOINT", "/bin/tini", "--"),
+  ExecCmd("CMD", "bin/deepsense-sessionmanager")
 )
 dockerUpdateLatest := true
 

@@ -1,7 +1,0 @@
-# Copyright (c) 2016, CodiLime Inc.
-
-h2_groupid: "h2"
-h2_artifactid: "h2"
-h2_version: "1.4.191"
-h2_filename: "{{h2_artifactid}}-{{h2_version}}.jar"
-h2_directory_name: "{{h2_artifactid}}-{{h2_version}}"

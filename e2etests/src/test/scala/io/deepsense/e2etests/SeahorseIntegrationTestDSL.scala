@@ -15,7 +15,7 @@ import scalaz._
 import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig
 import com.ning.http.client.ws.WebSocketListener
 import com.ning.http.client.{AsyncHttpClient, AsyncHttpClientConfig, Response => AHCResponse}
-import org.jfarcand.wcs.{Options, TextListener, WebSocket}
+import org.jfarcand.wcs.{Options, WebSocket}
 import org.scalactic.source.Position
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
@@ -25,7 +25,8 @@ import play.api.libs.ws.ning.NingWSClient
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
-import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
+import io.deepsense.e2etests.stompoverws.StompListener
+import io.deepsense.models.workflows.{ExecutionReport, Workflow, WorkflowInfo}
 import io.deepsense.sessionmanager.rest._
 import io.deepsense.sessionmanager.rest.requests._
 import io.deepsense.sessionmanager.service.{Status => SessionStatus}
@@ -62,7 +63,11 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     }
   }
 
-  case class ExecutorContext(wsClient: WebSocket, websocketMessages: mutable.MutableList[String])
+  case class ExecutorContext(
+    wsClient: WebSocket,
+    websocketMessages: mutable.MutableList[String],
+    executionReports: mutable.MutableList[ExecutionReport]
+  )
 
   // TODO Extract SessionManagerClient and move SM-related logic in there.
   // TODO Use SM-module classes to achieve type-safety
@@ -83,14 +88,10 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     ensureExecutorIsRunning(workflowId)
     logger.info(s"Executor for workflow $workflowId started")
 
-    val websocketMessages = mutable.MutableList[String]()
-    val wsClient = MyWebSocket().open(ws).listener(new TextListener {
-      override def onMessage(message: String): Unit = {
-        websocketMessages += message
-      }
-    })
+    val stompListener = new StompListener()
+    val wsClient = MyWebSocket().open(ws).listener(stompListener)
 
-    implicit val ctx = ExecutorContext(wsClient, websocketMessages)
+    implicit val ctx = ExecutorContext(wsClient, stompListener.websocketMessages, stompListener.executionReports)
 
     wsClient.send(
       s"""["CONNECT\nlogin:$mqUser\npasscode:$mqPass\naccept-version:1.1,1.0\n
@@ -125,7 +126,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
   }
 
   private def ensureConnectedReceived()(implicit ctx: ExecutorContext): Unit = {
-    withClue(ctx.websocketMessages) {
+    withClue(ctx.executionReports) {
       eventually {
         ctx.websocketMessages.find { msg =>
           msg.contains("CONNECTED")
@@ -157,17 +158,13 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     val numberOfNodes = calculateNumberOfNodes(workflow.id)
 
     val nodesResult = eventually {
-      val failedNodes = ctx.websocketMessages.filter { msg =>
-        msg.contains("executionStatus") && msg.contains("FAILED")
-      }
+      val nodesStatuses = ctx.executionReports.flatMap(_.nodesStatuses.values).toSet
+      val errorsNodesStatuses = nodesStatuses.filter(_.isFailed)
 
-      if (failedNodes.nonEmpty) {
-        s"Failed nodes: ${failedNodes.toString()} for workflow id: ${workflow.id}. name: ${workflow.name}".failure
+      if (errorsNodesStatuses.nonEmpty) {
+        s"Errors: $errorsNodesStatuses for workflow id: ${workflow.id}. name: ${workflow.name}".failure
       } else {
-        // TODO Parse messages instead
-        val completedNodeMessages = ctx.websocketMessages.filter { msg =>
-          msg.contains("executionStatus") && !msg.contains("FAILED") && msg.contains("COMPLETED")
-        }
+        val completedNodeMessages = nodesStatuses.filter(_.isCompleted)
 
         logger.info(s"${completedNodeMessages.length} nodes completed." +
           s" Need all $numberOfNodes nodes completed for workflow id: ${workflow.id}. name: ${workflow.name}")

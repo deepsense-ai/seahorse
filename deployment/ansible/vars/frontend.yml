@@ -1,8 +1,0 @@
-# Copyright (c) 2015, CodiLime Inc.
-
-frontend_dir: "/tmp/frontend"
-
-ds_frontend_package_name: "frontend-latest"
-ds_frontend_docs_address: "https://seahorse.deepsense.io"
-api_version: "1.0.0"
-editor_version: "1.0.0"
