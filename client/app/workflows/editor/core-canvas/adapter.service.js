@@ -101,7 +101,8 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionAborted', (connection, originalEvent) => {
-      if ($(originalEvent.target).closest('core-canvas').length === 0) {
+      if ($(originalEvent.target).closest('core-canvas').length === 0 ||
+          originalEvent.target.classList.contains('output')) {
         return;
       }
       this.onConnectionAbort({newNodeData: {
