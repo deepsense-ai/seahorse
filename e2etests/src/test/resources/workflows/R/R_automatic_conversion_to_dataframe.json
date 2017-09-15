@@ -1,0 +1,73 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "470369ce-9fca-5c17-0639-6b31ca599481",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv"
+          }
+        }
+      }
+    }, {
+      "id": "55fd7826-492a-5cd7-abda-766b4015a3dc",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "transform <- function(dataframe) {\n    return(c(\"automatic\", \"conversion\", \"to\", \"spark\", \"dataframe\"))\n}\n    "
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "470369ce-9fca-5c17-0639-6b31ca599481",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "55fd7826-492a-5cd7-abda-766b4015a3dc",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "R_automatic_conversion_to_dataframe",
+      "description": "R Transformation, automatic conversion to Spark DataFrame",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "470369ce-9fca-5c17-0639-6b31ca599481": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5417,
+            "y": 5008
+          }
+        },
+        "55fd7826-492a-5cd7-abda-766b4015a3dc": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5414,
+            "y": 5113
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "10b91c9c-aead-4808-8f8b-ae65958981fe",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.3.1"
+  }
+}

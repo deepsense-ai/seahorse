@@ -1,0 +1,163 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "c236d23b-e289-62ef-dfc2-cb047d46e01c",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "use.library <- function(package) {\n    if(!require(package, character.only=TRUE)) {\n        install.packages(package, repos='http://cran.us.r-project.org')\n    }\n    library(package, character.only=TRUE)\n}\n\nmyfun <- function(olddf) {\n    use.library(\"e1071\")\n    cbind(olddf, sigmoid((olddf$price - 400000) / 1000000))\n}\n\nschema <- structType(structField(\"city\", \"string\"), structField(\"price\", \"double\"), structField(\"newcol\", \"double\")) \n\ntransform <- function(dataframe) {\n    newDF <- select(dataframe, dataframe$city, dataframe$price)\n    newerDF <- dapply(newDF, myfun, schema)\n    return(newerDF)\n}\n    "
+      }
+    }, {
+      "id": "5b0fc7c9-7ae5-a4e4-63bc-0018a11995d8",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "use.library <- function(package) {\n    if(!require(package, character.only=TRUE)) {\n        install.packages(package, repos='http://cran.us.r-project.org')\n    }\n    library(package, character.only=TRUE)\n}\n\ntransform <- function(dataframe) {\n    use.library('e1071')\n    return(withColumn(dataframe, \"new_column\", lit(sigmoid(0.2))))\n}\n"
+      }
+    }, {
+      "id": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true,
+                "convert to boolean": false
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "384cbd6c-8f68-22b8-cda4-cc37cce4342a",
+      "operation": {
+        "id": "06374446-3138-4cf7-9682-f884990f3a60",
+        "name": "Join"
+      },
+      "parameters": {
+        "join columns": [{
+          "left column": {
+            "type": "column",
+            "value": "city"
+          },
+          "right column": {
+            "type": "column",
+            "value": "city"
+          }
+        }, {
+          "left column": {
+            "type": "column",
+            "value": "price"
+          },
+          "right column": {
+            "type": "column",
+            "value": "price"
+          }
+        }]
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "c236d23b-e289-62ef-dfc2-cb047d46e01c",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "c236d23b-e289-62ef-dfc2-cb047d46e01c",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "384cbd6c-8f68-22b8-cda4-cc37cce4342a",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "5b0fc7c9-7ae5-a4e4-63bc-0018a11995d8",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "384cbd6c-8f68-22b8-cda4-cc37cce4342a",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "5b0fc7c9-7ae5-a4e4-63bc-0018a11995d8",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "R_parallel_package_installation_and_dapply",
+      "description": "R package installation, dapply, adding column, R Transformation",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "c236d23b-e289-62ef-dfc2-cb047d46e01c": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4979,
+            "y": 5056
+          }
+        },
+        "5b0fc7c9-7ae5-a4e4-63bc-0018a11995d8": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5264,
+            "y": 5055
+          }
+        },
+        "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5121,
+            "y": 4949
+          }
+        },
+        "384cbd6c-8f68-22b8-cda4-cc37cce4342a": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5115,
+            "y": 5161
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "5811807b-c1f8-406f-a2e1-f253b79eda2d",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.3.0"
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "95a5d7a1-5181-19be-1c7b-37ebe1a86a69",
+      "operation": {
+        "id": "291cdd16-b57a-4613-abbe-3fd73011e579",
+        "name": "Compose Datetime"
+      },
+      "parameters": {
+        "parts": {
+          "year": {
+            "year column": {
+              "type": "column",
+              "value": "sq_ft"
+            }
+          },
+          "month": {
+            "month column": {
+              "type": "column",
+              "value": "beds"
+            }
+          },
+          "day": {
+            "day column": {
+              "type": "column",
+              "value": "baths"
+            }
+          }
+        },
+        "output column": "Datetime"
+      }
+    }, {
+      "id": "de7881a1-9216-6877-f2c3-f453ba133a8f",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "transform <- function(dataframe) {\n  return(withColumn(dataframe, \"infix\", substr(dataframe$DateTime, 3, 11)))\n}\n    "
+      }
+    }, {
+      "id": "64d89bbf-efb6-b058-c693-ab77ac7602df",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "transform <- function(dataframe) {\n  return(histogram(dataframe, \"beds\"))\n}\n    "
+      }
+    }, {
+      "id": "55fd7826-492a-5cd7-abda-766b4015a3dc",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "transform <- function(dataframe) {\n    return(withColumn(dataframe, \"new_column\", quarter(dataframe$datetime)))\n}"
+      }
+    }, {
+      "id": "1c16f285-083b-0731-60cc-10aa3a6197e7",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "transform <- function(dataframe) {\n    return(withColumn(dataframe, \"new_column\", last_day(dataframe$datetime)))\n}\n    "
+      }
+    }, {
+      "id": "470369ce-9fca-5c17-0639-6b31ca599481",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv"
+          }
+        }
+      }
+    }, {
+      "id": "114e0ad5-e414-f7fb-fda5-74bb47b07e46",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "transform <- function(dataframe) {\n  dataframe$beds <- dataframe$beds * 3\n  return(dataframe)\n}\n    "
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "470369ce-9fca-5c17-0639-6b31ca599481",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "114e0ad5-e414-f7fb-fda5-74bb47b07e46",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "95a5d7a1-5181-19be-1c7b-37ebe1a86a69",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "55fd7826-492a-5cd7-abda-766b4015a3dc",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "470369ce-9fca-5c17-0639-6b31ca599481",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "64d89bbf-efb6-b058-c693-ab77ac7602df",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "114e0ad5-e414-f7fb-fda5-74bb47b07e46",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "95a5d7a1-5181-19be-1c7b-37ebe1a86a69",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "95a5d7a1-5181-19be-1c7b-37ebe1a86a69",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "de7881a1-9216-6877-f2c3-f453ba133a8f",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "95a5d7a1-5181-19be-1c7b-37ebe1a86a69",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "1c16f285-083b-0731-60cc-10aa3a6197e7",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "R_random_sparkR_functions",
+      "description": "Random functions from Spark R API",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "95a5d7a1-5181-19be-1c7b-37ebe1a86a69": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5166,
+            "y": 5111
+          }
+        },
+        "64d89bbf-efb6-b058-c693-ab77ac7602df": {
+          "uiName": "histogram",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5623,
+            "y": 5015
+          }
+        },
+        "470369ce-9fca-5c17-0639-6b31ca599481": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5388,
+            "y": 4903
+          }
+        },
+        "114e0ad5-e414-f7fb-fda5-74bb47b07e46": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5165,
+            "y": 5013
+          }
+        },
+        "55fd7826-492a-5cd7-abda-766b4015a3dc": {
+          "uiName": "quarter",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5042,
+            "y": 5201
+          }
+        },
+        "de7881a1-9216-6877-f2c3-f453ba133a8f": {
+          "uiName": "substr",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5169,
+            "y": 5332
+          }
+        },
+        "1c16f285-083b-0731-60cc-10aa3a6197e7": {
+          "uiName": "last_day",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5286,
+            "y": 5201
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "e2b49478-62c9-4c86-af45-745d5c8796fc",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.3.1"
+  }
+}

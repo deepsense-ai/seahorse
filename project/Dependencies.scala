@@ -11,7 +11,7 @@ object Version {
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
   val scala = "2.11.8"
-  val scalatest = "3.0.0-SNAP4"
+  val scalatest = "3.0.0"
   val scalatra = "2.4.0"
   val scoverage = "1.0.4"
   val slick = "3.1.1"
@@ -169,6 +169,8 @@ object Dependencies {
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
     "org.jfarcand" % "wcs" % "1.5",
-    scalaz
+    scalaz,
+    seahorseCommons,
+    seahorseWorkflowJson
   ) ++ Seq(scalatest).map(_ % s"$Test,it")
 }
