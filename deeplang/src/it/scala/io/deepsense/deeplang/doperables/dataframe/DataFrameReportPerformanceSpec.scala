@@ -11,13 +11,14 @@ import java.util.TimeZone
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType, TimestampType}
-import org.scalatest.BeforeAndAfter
+import org.scalatest.{Ignore, BeforeAndAfter}
 
 import io.deepsense.commons.utils.{DoubleUtils, Logging}
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.DOperationsFactory
+
+// It's ignored because it does not have got assertions, it only prints report generation time.
 @Ignore
-//It's ignored because it doesn't have got assertions, it only prints report generation time.
 class DataFrameReportPerformanceSpec
     extends DeeplangIntegTestSupport
     with BeforeAndAfter
