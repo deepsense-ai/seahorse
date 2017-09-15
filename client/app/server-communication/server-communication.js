@@ -80,7 +80,6 @@ class ServerCommunication {
       messageType: 'launch',
       messageBody: {
         workflowId: this.workflowId,
-        workflow: {}, // TODO: remove this when the backend doesn't need it any more. SOON.
         nodesToExecute: nodesToExecute
       }
     }));
