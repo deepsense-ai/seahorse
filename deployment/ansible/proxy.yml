@@ -1,0 +1,10 @@
+# Copyright (c) 2016, CodiLime Inc.
+
+---
+- name: Installs proxy
+  hosts: proxy
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+  roles:
+    - proxy

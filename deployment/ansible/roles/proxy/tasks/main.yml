@@ -1,0 +1,18 @@
+# Copyright (c) 2016, CodiLime Inc.
+
+---
+
+- name: Add nginx APT repository key
+  apt_key: url=http://nginx.org/keys/nginx_signing.key
+
+- name: Add nginx APT repository
+  apt_repository: repo='deb http://nginx.org/packages/ubuntu/ trusty nginx'
+
+- name: Install nginx
+  apt: package=nginx
+
+- name: Copy config file
+  copy: src="default.conf" dest="/etc/nginx/conf.d/default.conf"
+
+- name: Restart nginx
+  service: name=nginx state=restarted

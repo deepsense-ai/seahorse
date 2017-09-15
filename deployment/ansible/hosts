@@ -35,3 +35,6 @@ ds-system-test-env-master
 
 [rabbitmq]
 ds-frontend
+
+[proxy]
+ds-frontend

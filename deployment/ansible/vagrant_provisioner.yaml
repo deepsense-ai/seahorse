@@ -21,6 +21,7 @@
 - include: h2_migration.yml
 - include: remove_examples.yml
 
+- include: proxy.yml
 - include: workflowmanager.yaml
 - include: frontend.yml
 - include: rabbitmq.yml
