@@ -19,12 +19,11 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.Transformation
 import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
-case class MathematicalOperation() extends DOperation0To1[Transformation] {
+case class MathematicalOperation() extends DOperation0To1[MathematicalTransformation] {
 
   override val name : String = "Mathematical Operation"
 
@@ -32,7 +31,7 @@ case class MathematicalOperation() extends DOperation0To1[Transformation] {
 
   // TODO: DS-635 This operation will fail if user provide column name with '.'
 
-  override protected def _execute(context: ExecutionContext)(): Transformation = {
+  override protected def _execute(context: ExecutionContext)(): MathematicalTransformation = {
     val formula = formulaParam.value.get
     MathematicalTransformation(Some(formula))
   }
@@ -44,7 +43,8 @@ case class MathematicalOperation() extends DOperation0To1[Transformation] {
 
   override val parameters = ParametersSchema("formula" -> formulaParam)
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[Transformation] = ru.typeTag[Transformation]
+  override lazy val tTagTO_0: ru.TypeTag[MathematicalTransformation] =
+    ru.typeTag[MathematicalTransformation]
 }
 
 object MathematicalOperation {
