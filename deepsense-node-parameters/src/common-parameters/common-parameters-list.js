@@ -6,7 +6,8 @@ function ParametersList(options) {
 
 ParametersList.prototype.serialize = function () {
   return _.reduce(this.parameters, (acc, parameter) => {
-    acc[parameter.name] = parameter.serialize();
+    let serializedParameter = parameter.serialize();
+    acc[parameter.name] = serializedParameter;
     return acc;
   }, {});
 };

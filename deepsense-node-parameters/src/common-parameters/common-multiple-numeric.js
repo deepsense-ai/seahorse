@@ -5,7 +5,7 @@ let MultipleNumericGeneralValidator = require('./common-validators/common-multip
 
 function MultipleNumericParameter(options) {
     this.name = options.name;
-    this.value = this.initValue(options.value, options.schema);
+    this.initValue(options.value, options.schema);
     this.schema = options.schema;
     this.validator = new MultipleNumericGeneralValidator(this.schema.validator);
 }
@@ -14,11 +14,16 @@ MultipleNumericParameter.prototype = new GenericParameter();
 MultipleNumericParameter.prototype.constructor = GenericParameter;
 
 MultipleNumericParameter.prototype.rawValue = function() {
-    if(_.isUndefined(this.value) || _.isNull(this.value) || _.isEmpty(this.value)) {
-        return '';
-    } else {
-        return this.value.values[0].value.sequence.join(', ');
-    }
+    return this.convertToRawValue(this.value);
+};
+
+MultipleNumericParameter.prototype.convertToRawValue = function(val) {
+  if(_.isUndefined(val) || _.isNull(val) || _.isEmpty(val)) {
+    return '';
+  } else {
+    let str = val.values[0].value.sequence.join(', ');
+    return str;
+  }
 };
 
 MultipleNumericParameter.prototype.parseRawValue = function(rawValue) {
@@ -50,7 +55,15 @@ MultipleNumericParameter.prototype.serialize = function () {
 };
 
 MultipleNumericParameter.prototype.validate = function () {
-    return this.validateValue(this.value);
+    return this.validateValue(this.getValueOrDefault());
+};
+
+MultipleNumericParameter.prototype.validateRawValue = function (rawValue) {
+    if (_.isNull(rawValue) || rawValue === '') {
+        return this.validateValue(this.defaultValue);
+    } else {
+        return this.validateValue(this.parseRawValue(rawValue));
+    }
 };
 
 MultipleNumericParameter.prototype.validateValue = function (value) {

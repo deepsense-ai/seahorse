@@ -4,7 +4,7 @@ let GenericParameter = require('./common-generic-parameter.js');
 
 function GridSearchParameter({name, value, schema}, node, paramsFactory) {
     this.name = name;
-    this.value = this.initValue(value, schema);
+    this.initValue(value, schema);
     this.schema = schema;
     this.paramsFactory = paramsFactory;
 
@@ -22,25 +22,33 @@ GridSearchParameter.prototype.setInternalParams = function (node) {
     let inputPort = this.schema.inputPort;
     let incomingKnowledge = node.getIncomingKnowledge(inputPort);
     let inferredResultDetails = incomingKnowledge && incomingKnowledge.result;
-    if (inferredResultDetails) {
+    this.internalParamsAvailable = inferredResultDetails ? true : false;
+
+    if (this.internalParamsAvailable) {
         // We assume that if dynamic params is declared, inferred result details have 'params' field.
         let inferredParams = inferredResultDetails.params;
 
-        let inferredValues = this._deepConvertValuesToGrid(inferredParams.values, inferredParams.schema);
+        // Here we pass inferred parameter values as defaults to dynamic parameters.
+        let dynamicParamsSchema = inferredParams.schema.slice(0);
+        _.forEach(inferredParams.values, function (value, key) {
+          let schemaEntry = _.find(dynamicParamsSchema, function (item) {
+            return item.name === key;
+          });
+          schemaEntry.default = value;
+        });
+
         let gridParamsSchema = this._gridParamsSchema(inferredParams.schema);
 
         // Here we overwrite inferred values with values specified by user.
         // If at any point we wish to present information which values were overwritten,
         // here is the place to get this information.
-        let gridParamsValues = _.assign({}, inferredValues, this.value, this.serialize());
+        let gridParamsValues = _.assign({}, this.value, this.serialize());
 
         this.internalParams = this.paramsFactory.createParametersList(
             gridParamsValues,
             gridParamsSchema,
             node
         );
-    } else {
-        this.internalParams = undefined;
     }
 };
 
@@ -87,24 +95,6 @@ GridSearchParameter.prototype._convertSchemaToGrid = function (paramDescription)
         isGriddable: false,
         isGrid: true
     });
-};
-
-/**
- * Recursively updates parameter values, converting underlying values to grid
- */
-GridSearchParameter.prototype._deepConvertValuesToGrid = function (originalValues, originalSchema) {
-    return _.reduce(originalValues, (acc, value, key) => {
-        let paramValue = {};
-        let paramDescription = this._findParamByName(originalSchema, key);
-        if (this._isGriddable(paramDescription)) {
-            paramValue[key] = this._gridWrapValue(value, paramDescription);
-        } else if (_.isObject(value) && !_.isUndefined(paramDescription.values)) {
-            paramValue[key] = this._deepConvertValuesToGrid(value, paramDescription.values);
-        } else {
-            paramValue[key] = value;
-        }
-        return _.assign({}, acc, paramValue);
-    }, {});
 };
 
 GridSearchParameter.prototype._findParamByName = function (schema, paramName) {

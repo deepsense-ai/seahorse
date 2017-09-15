@@ -60,11 +60,23 @@ let ParameterFactory = {
             _.forEach(options.schema.values, (choiceObject) => {
               let choiceName = choiceObject.name;
               let choiceParamValues = (options.value || {})[choiceName] || {};
-              let choiceParamSchema = choiceObject.schema;
+
+              let innerParamDefaults = (options.schema.default || {})[choiceName];
+              let choiceParamSchemaWithDefaults = choiceObject.schema.slice(0);
+
+              // If there is no user-defined value supported, we set param default values to inferred default values.
+              if (_.isUndefined(options.value) || _.isNull(options.value)) {
+                _.forEach(innerParamDefaults, function (value, key) {
+                  let schemaEntry = _.find(choiceParamSchemaWithDefaults, function (item) {
+                    return item.name == key;
+                  });
+                  schemaEntry.default = value;
+                });
+              }
 
               options.possibleChoicesList[choiceName] = ParameterFactory.createParametersList(
                 choiceParamValues,
-                choiceParamSchema,
+                choiceParamSchemaWithDefaults,
                 node
               );
             });

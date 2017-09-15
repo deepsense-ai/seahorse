@@ -1,3 +1,6 @@
-<input type="checkbox" ng-model="parameter.value"
-       ui-switch="{color: '#1ab394', secondaryColor: '#E43B11', size: 'small'}"
-       input-checkbox-change-listener>
+<div ng-style="parameter.value === null ? { opacity: 0.5 } : { opacity: 1 }">
+  <input type="checkbox"
+         ng-model="valueBuffer"
+         ui-switch="{color: '#1ab394', secondaryColor: '#E43B11', size: 'small'}"
+         input-checkbox-change-listener>
+</div>

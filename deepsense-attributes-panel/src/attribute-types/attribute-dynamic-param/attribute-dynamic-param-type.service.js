@@ -1,9 +1,4 @@
 class DynamicParamTypeService {
-  /*@ngInject*/
-  constructor () {
-
-  }
-
   /**
    * These watches perform equality-wise two-way binding.
    * When parameter.internalParams is changed, bufferedInternalParams is changed only

@@ -12,6 +12,8 @@ function AttributeMultipleNumericType() {
                 let value = scope.parameter.parseRawValue(newValue);
                 if (scope.parameter.validateValue(value)) {
                   scope.parameter.value = value;
+                } else {
+                  scope.parameter.value = null;
                 }
             });
         }

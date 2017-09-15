@@ -4,7 +4,7 @@ let GenericParameter = require('./common-generic-parameter.js');
 
 function CodeSnippetParameter(options) {
   this.name = options.name;
-  this.value = this.initValue(options.value, options.schema);
+  this.initValue(options.value, options.schema, true);
   this.schema = options.schema;
 }
 

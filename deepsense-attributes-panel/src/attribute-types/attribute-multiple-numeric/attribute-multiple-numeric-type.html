@@ -1,4 +1,5 @@
 <input type="text" class="form-control"
-       ng-class="{ 'invalid-param-value': !parameter.validateValue(parameter.parseRawValue(rawValue)) }"
+       ng-class="{ 'invalid-param-value': !parameter.validateRawValue(rawValue) }"
        ng-model="rawValue"
+       placeholder="{{ parameter.convertToRawValue(parameter.defaultValue) }}"
        input-text-change-listener>

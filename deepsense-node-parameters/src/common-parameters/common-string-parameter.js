@@ -11,7 +11,7 @@ let ValidatorFactory = require('./common-validators/common-validator-factory.js'
 
 function StringParameter(options) {
   this.name = options.name;
-  this.value = this.initValue(options.value, options.schema);
+  this.initValue(options.value, options.schema);
   this.schema = options.schema;
   this.validator = ValidatorFactory.createValidator(this.schema.type, this.schema.validator);
 }
@@ -24,7 +24,7 @@ StringParameter.prototype.serialize = function () {
 };
 
 StringParameter.prototype.validate = function () {
-  return this.validator.validate(this.value);
+  return this.validator.validate(this.getValueOrDefault());
 };
 
 module.exports = StringParameter;

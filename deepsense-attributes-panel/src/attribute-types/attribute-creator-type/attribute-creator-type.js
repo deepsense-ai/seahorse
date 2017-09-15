@@ -7,11 +7,14 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeCreatorType() {
+function AttributeCreatorType(StringParamTypeService) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-creator-type/attribute-creator-type.html',
-    replace: true
+    replace: true,
+    link: function (scope) {
+      StringParamTypeService.setupStringValueBuffer(scope);
+    }
   };
 }
 

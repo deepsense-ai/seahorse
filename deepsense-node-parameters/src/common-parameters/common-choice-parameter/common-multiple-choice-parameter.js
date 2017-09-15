@@ -19,12 +19,11 @@ MultipleChoiceParameter.prototype.constructor = ChoiceParameter;
 
 MultipleChoiceParameter.prototype.initChoices = function (options) {
   if (options.value) {
+    this.isDefault = false;
     return Object.keys(options.value);
   } else {
-    let defaultValue = options.schema.default;
-    return defaultValue ?
-      defaultValue.slice() :
-      [];
+    this.isDefault = true;
+    return [];
   }
 };
 

@@ -7,11 +7,14 @@
 'use strict';
 
 /*@ngInject*/
-function AttributePrefixBasedCreatorType() {
+function AttributePrefixBasedCreatorType(StringParamTypeService) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-prefix-based-creator-type/attribute-prefix-based-creator-type.html',
-    replace: true
+    replace: true,
+    link: function (scope) {
+      StringParamTypeService.setupStringValueBuffer(scope);
+    }
   };
 }
 

@@ -1,16 +1,16 @@
-<ul class="list-unstyled" ng-if="parameter.excluding || parameter.items.length">
+<ul class="list-unstyled" ng-if="parameter.excluding || parameter.items.length || parameter.defaultItems.length">
   <li class="text-warning" ng-if="!selectorIsSingle()">
     <span class="font-bold">Mode:</span>
-    <span class="badge badge-sm badge-info"
-           ng-show="!parameter.excluding"
+    <span ng-class="['badge', 'badge-sm', { 'badge-info': !isValueEmpty(), 'badge-default': isValueEmpty() }]"
+           ng-show="isIncluding()"
            tooltip-placement="bottom"
            uib-tooltip="Selects the following columns"
            tooltip-trigger="mouseenter"
            tooltip-append-to-body="true">
       Including
     </span>
-    <span class="badge badge-sm badge-info"
-           ng-show="parameter.excluding"
+    <span ng-class="['badge', 'badge-sm', { 'badge-info': !isValueEmpty(), 'badge-default': isValueEmpty() }]"
+           ng-show="isExcluding()"
            tooltip-placement="bottom"
            uib-tooltip="Select all columns, excluding the following ones"
            tooltip-trigger="mouseenter"
@@ -24,13 +24,13 @@
   <li ng-if="getNamesList()">
     <p class="m-b-none">Names list:</p>
     <span ng-repeat="listItem in getNamesList()"
-          class="label label-info u-inline-block u-inline-block--spaced">
+          ng-class="['label', 'u-inline-block', 'u-inline-block--spaced', { 'label-info': !isValueEmpty(), 'label-default': isValueEmpty() }]">
       {{listItem.name || "&nbsp;" }}
     </span>
   </li>
   <li ng-if="getIndexList().length">
     <p class="m-b-none">Index range:</p>
-    <span class="label u-inline-block u-inline-block--spaced"
+    <span ng-class="['label', 'u-inline-block', 'u-inline-block--spaced', { 'label-info': !isValueEmpty(), 'label-default': isValueEmpty() }]"
           ng-repeat="indexRangeItem in getIndexList()">
       {{indexRangeItem.firstNum >= 0 && indexRangeItem.firstNum !== null ? indexRangeItem.firstNum : "&nbsp;" }}
       <span ng-if="indexRangeItem.firstNum >= 0 && indexRangeItem.firstNum !== null &&
@@ -41,18 +41,18 @@
     <p class="m-b-none">Types list:</p>
     <span class="label u-inline-block u-inline-block--spaced"
           ng-repeat="(type, value) in getTypesList()"
-          ng-class="{'label-primary': value, 'label-danger': !value}"
+          ng-class="{'label-primary': !isValueEmpty() && value, 'label-danger': !isValueEmpty() && !value, 'label-default': isValueEmpty()}"
           ng-if="value">
       {{type}}
     </span>
   </li>
   <li ng-if="selectorIsSingle() && getName()" class="u-flex u-flex__wrap">
-    <p class="m-b-none u-flex__1 u-flex__25">{{parameter.items[0].type.verbose}}:</p>
-    <span class="badge label-info u-normal-words">{{getName()}}</span>
+    <p class="m-b-none u-flex__1 u-flex__25">{{getSingleValueOrDefault().type.verbose}}:</p>
+    <span ng-class="['badge', 'u-normal-words', { 'label-info': !isValueEmpty(), 'label-default': isValueEmpty() }]">{{getName()}}</span>
   </li>
   <li ng-if="selectorIsSingle() && (getIndex() >= 0 && getIndex() !== null)"
       class="u-flex u-flex__wrap">
-    <p class="m-b-none u-flex__1">{{parameter.items[0].type.verbose}}:</p>
-    <span class="badge label-info u-white-space--normal">{{getIndex()}}</span>
+    <p class="m-b-none u-flex__1">{{getSingleValueOrDefault().type.verbose}}:</p>
+    <span ng-class="['badge', 'u-white-space--normal', { 'label-info': !isValueEmpty(), 'label-default': isValueEmpty() }]">{{getIndex()}}</span>
   </li>
 </ul>

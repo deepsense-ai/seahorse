@@ -16,6 +16,25 @@ function AttributeMultipleChoiceType($compile) {
     link: function (scope, element, attrs) {
       let internal = {};
 
+      internal.initChoices = function() {
+        if (scope.parameter.isDefault) {
+          scope.choices = {};
+          for (let choiceName in scope.parameter.possibleChoicesList) {
+            scope.choices[choiceName] = false;
+          }
+          let defaultValue = scope.parameter.schema.default;
+          if (_.isObject(defaultValue)) {
+            for (let choiceName in scope.parameter.possibleChoicesList) {
+              scope.choices[choiceName] = choiceName in defaultValue;
+            }
+          } else if (defaultValue !== null) {
+            scope.choices[defaultValue] = true;
+          }
+        } else {
+          scope.choices = _.assign({}, scope.parameter.choices);
+        }
+      };
+
       internal.renderParametersList = function renderParametersList() {
         scope.$applyAsync(() => {
           for (let choiceName in scope.parameter.possibleChoicesList) {
@@ -31,7 +50,15 @@ function AttributeMultipleChoiceType($compile) {
         });
       };
 
+      internal.initChoices();
       internal.renderParametersList();
+
+      scope.$watch('choices', function (newVal, oldVal) {
+        if (newVal != oldVal) {
+          scope.parameter.choices = newVal;
+          scope.parameter.isDefault = false;
+        }
+      }, true);
     }
   };
 }

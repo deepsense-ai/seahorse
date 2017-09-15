@@ -62,6 +62,13 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
         getItemsThisType(id) {
           return _.filter(scope.parameter.items, (lists) => lists.type.id === id);
         },
+        getItemsThisTypeOrDefault(id) {
+          if ((this.selectorIsSingle() || !scope.parameter.excluding) && _.isEmpty(scope.parameter.items)) {
+            return _.filter(scope.parameter.defaultItems, (lists) => lists.type.id === id);
+          } else {
+            return this.getItemsThisType(id);
+          }
+        },
         getCurrentItemIndex(item) {
           return scope.parameter.items.indexOf(item);
         },

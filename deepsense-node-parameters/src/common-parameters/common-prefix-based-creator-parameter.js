@@ -12,7 +12,7 @@ class PrefixBasedCreatorParameter extends GenericParameter {
   constructor(options) {
     super();
     this.name = options.name;
-    this.value = this.initValue(options.value, options.schema);
+    this.initValue(options.value, options.schema);
     this.schema = options.schema;
   }
 

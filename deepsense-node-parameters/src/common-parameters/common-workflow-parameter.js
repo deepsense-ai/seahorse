@@ -5,7 +5,7 @@ let ValidatorFactory = require('./common-validators/common-validator-factory.js'
 
 function WorkflowParameter(options) {
   this.name = options.name;
-  this.value = this.initValue(options.value, options.schema);
+  this.initValue(options.value, options.schema, true);
   this.schema = options.schema;
   this.validator = ValidatorFactory.createValidator(this.schema.type, this.schema.validator);
 }

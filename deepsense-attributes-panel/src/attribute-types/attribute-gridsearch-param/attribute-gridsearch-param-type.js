@@ -18,9 +18,9 @@ function AttributeGridSearchParamType($compile, DynamicParamTypeService) {
           let template = `
             <attributes-list
               parameters-list="bufferedInternalParams"
-              ng-if="bufferedInternalParams"
+              ng-if="parameter.internalParamsAvailable"
             ></attributes-list>
-            <p ng-if="!bufferedInternalParams">
+            <p ng-if="!parameter.internalParamsAvailable">
               Parameters can not be inferred in current state
             </p>`;
           let $renderedParametersList = $compile(template)(containerScope);

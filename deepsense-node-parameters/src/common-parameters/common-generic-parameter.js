@@ -8,11 +8,22 @@
 
 function GenericParameter() {}
 
-GenericParameter.prototype.initValue = function(paramValue, paramSchema) {
-  if (_.isUndefined(paramValue)) {
-    return paramSchema.default;
+GenericParameter.prototype.initValue = function(paramValue, paramSchema, replaceEmptyWithDefault) {
+  this.defaultValue = paramSchema.default;
+  if (!_.isUndefined(paramValue)) {
+    this.value = paramValue;
+  } else if (replaceEmptyWithDefault) {
+    this.value = this.defaultValue;
   } else {
-    return paramValue;
+    this.value = null;
+  }
+};
+
+GenericParameter.prototype.getValueOrDefault = function() {
+  if (_.isUndefined(this.value) || _.isNull(this.value)) {
+    return this.defaultValue;
+  } else {
+    return this.value;
   }
 };
 

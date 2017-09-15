@@ -1,5 +1,6 @@
 <div>
   <select class="form-control"
+          ng-style="isValueSelectedByUser() ?  { opacity: 1 } : { opacity: 0.5 }"
           ng-model="choice"
           ng-options="choiceName as choiceName for (choiceName, parametersList) in ::parameter.possibleChoicesList"
           select-change-listener></select>

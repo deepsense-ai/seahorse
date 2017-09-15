@@ -7,11 +7,14 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeStringType() {
+function AttributeStringType(StringParamTypeService) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-string/attribute-string-type.html',
-    replace: true
+    replace: true,
+    link: function (scope) {
+      StringParamTypeService.setupStringValueBuffer(scope);
+    }
   };
 }
 

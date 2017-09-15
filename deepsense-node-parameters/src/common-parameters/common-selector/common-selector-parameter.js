@@ -6,15 +6,23 @@ let SelectorItemFactory = require('./common-selector-items/common-selector-item-
 function SelectorParameter(options, node) {
   this.factoryItem = SelectorItemFactory;
   this.name = options.name;
-  let value = this.initValue(options.value, options.schema);
-  this.items = this.initItems(value, options.schema);
+  let value = _.isUndefined(options.value) ? null : options.value;
+  let defaultValue = options.schema.default;
+  this.initItems(value, defaultValue, options.schema);
   this.schema = options.schema;
   this.dataFrameSchema = options.dataFrameSchema;
 
   if (!this.schema.isSingle) {
-    this.excluding = options.hasOwnProperty('excluding') ?
-      options.excluding :
-      false;
+    if (options.hasOwnProperty('excluding')) {
+      this.excluding = options.excluding;
+    } else {
+      this.excluding = false;
+    }
+    if (options.schema.default && options.schema.default.hasOwnProperty('excluding')) {
+      this.defaultExcluding = options.schema.default.excluding;
+    } else {
+      this.defaultExcluding = false;
+    }
   }
 
   this.setDataFrameSchema(node);
@@ -23,24 +31,38 @@ function SelectorParameter(options, node) {
 SelectorParameter.prototype = new GenericParameter();
 SelectorParameter.prototype.constructor = GenericParameter;
 
-SelectorParameter.prototype.initItems = function(value, schema) {
-  let isSingle = schema.isSingle;
-  let result = [];
+SelectorParameter.prototype.initItems = function(value, defaultValue, schema) {
+  if (value) {
+    this.items = schema.isSingle ?
+      this._createSingleSelectorItems(value) :
+      this._createMultiSelectorItems(value);
+  } else {
+    this.items = [];
+  }
+  if (defaultValue) {
+    this.defaultItems = schema.isSingle ?
+      this._createSingleSelectorItems(defaultValue) :
+      this._createMultiSelectorItems(defaultValue.selections);
+  }
+};
 
-  if (isSingle) {
-    let selectorItem = this.factoryItem.createItem(value);
+SelectorParameter.prototype._createSingleSelectorItems = function(value) {
+  let result = [];
+  let selectorItem = this.factoryItem.createItem(value);
+  if (selectorItem) {
+    result.push(selectorItem);
+  }
+  return result;
+};
+
+SelectorParameter.prototype._createMultiSelectorItems = function(value) {
+  let result = [];
+  for (let i = 0; i < value.length; ++i) {
+    let selectorItem = this.factoryItem.createItem(value[i]);
     if (selectorItem) {
       result.push(selectorItem);
     }
-  } else if (value) {
-    for (let i = 0; i < value.length; ++i) {
-      let selectorItem = this.factoryItem.createItem(value[i]);
-      if (selectorItem) {
-        result.push(selectorItem);
-      }
-    }
   }
-
   return result;
 };
 

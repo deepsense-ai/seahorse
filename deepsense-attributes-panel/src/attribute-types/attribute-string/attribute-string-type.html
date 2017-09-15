@@ -1,4 +1,5 @@
 <input type="text" class="form-control"
        ng-class="{ 'invalid-param-value': !parameter.validate() }"
-       ng-model="parameter.value"
+       ng-model="valueBuffer"
+       placeholder="{{ parameter.defaultValue }}"
        input-text-change-listener>
