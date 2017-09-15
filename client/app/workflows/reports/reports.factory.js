@@ -36,8 +36,20 @@ function ReportsFactory($q, $rootScope) {
     return deferred.promise;
   };
 
+  let openReport = () => {
+    $rootScope.$broadcast('Resizable.CHANGE', {
+      selector: '.c-workflow-container__content',
+      amount: '250px'
+    });
+
+    $rootScope.$broadcast('Resizable.FIT', {
+      name: 'height',
+      amount: '250px'
+    });
+  };
+
   return {
-    createReportEntities, getReportEntity, hasReportEntity, getReport
+    createReportEntities, getReportEntity, hasReportEntity, getReport, openReport
   };
 }
 

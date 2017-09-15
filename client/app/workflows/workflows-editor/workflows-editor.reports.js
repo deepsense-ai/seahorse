@@ -1,9 +1,10 @@
 'use strict';
 
 class WorkflowsEditorReports {
-  constructor($scope, Report, PageService, Operations,
+  constructor($scope, $rootScope, Report, PageService, Operations,
     GraphPanelRendererService, WorkflowService) {
     this.$scope = $scope;
+    this.$rootScope = $rootScope;
     this.Report = Report;
     this.PageService = PageService;
     this.Operations = Operations;
@@ -31,6 +32,7 @@ class WorkflowsEditorReports {
         if (this.Report.hasReportEntity(reportEntityId)) {
           this.Report.getReport(reportEntityId).then(report => {
             this.report = report;
+            this.Report.openReport();
           });
         }
       });

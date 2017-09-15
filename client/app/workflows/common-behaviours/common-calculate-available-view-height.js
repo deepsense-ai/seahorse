@@ -15,8 +15,10 @@ function CalculateAvailableViewHeight() {
           .outerHeight(true)), (current, next) => current + next);
       };
 
-      element.css('height',
-        `calc(100% - ${allSiblingsHeight(siblings(element[0]))}px)`);
+      scope.$applyAsync(() => {
+        element.css('height',
+          `calc(100% - ${allSiblingsHeight(siblings(element[0]))}px)`);
+      });
     }
   };
 }

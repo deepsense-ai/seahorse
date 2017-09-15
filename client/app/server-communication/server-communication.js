@@ -150,7 +150,7 @@ class ServerCommunication {
 
   init(workflowId) {
     this.workflowId = workflowId;
-    this.connectToWebSocket();
+    //this.connectToWebSocket();
   }
 }
 

@@ -40,17 +40,18 @@
   .panelsMinWidth();
   .spaceBetween(left);
 
+  width: 100%;
   position: static;
   border-right: 0;
   border-bottom: 0;
   border-top: 0;
-  width: @panel-main-width;
   background: white;
 }
 
 .o-general-data-panel {
   &:extend(.operation-attributes-panel);
 
+  width: auto;
   margin-left: 0;
   background: white;
 
@@ -191,4 +192,8 @@
       background-color: white;
     }
   }
+}
+
+deepsense-operation-attributes {
+  min-width: 250px;
 }

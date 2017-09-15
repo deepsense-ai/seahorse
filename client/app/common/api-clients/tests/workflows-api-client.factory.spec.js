@@ -149,7 +149,7 @@ describe('WorkflowsApiClient', () => {
       });
     });
 
-    afterEach(function () {
+    afterEach(function() {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
     });
@@ -277,7 +277,7 @@ describe('WorkflowsApiClient', () => {
       });
     });
 
-    afterEach(function () {
+    afterEach(function() {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
     });

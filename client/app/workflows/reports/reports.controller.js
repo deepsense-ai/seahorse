@@ -6,7 +6,7 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function ReportCtrl($scope, $uibModal, PageService) {
+function ReportCtrl($scope, $rootScope, $uibModal, PageService) {
   let that = this;
   let internal = {};
   let obj = {};
@@ -58,7 +58,19 @@ function ReportCtrl($scope, $uibModal, PageService) {
     return that.currentReport && that.currentReport.name;
   };
 
-  that.close = () => that.currentReport = null;
+  that.close = () => {
+    that.currentReport = null;
+
+    $rootScope.$broadcast('Resizable.CHANGE', {
+      selector: '.c-workflow-container__content',
+      amount: '25px'
+    });
+
+    $rootScope.$broadcast('Resizable.FIT', {
+      name: 'height',
+      amount: '25px'
+    });
+  };
 
   $scope.$on(EVENTS.SELECT_COLUMN, function(event, data) {
     let distObject = that.getDistributionObject(data.colName);

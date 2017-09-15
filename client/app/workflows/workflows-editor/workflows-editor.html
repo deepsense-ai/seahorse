@@ -1,8 +1,7 @@
 <div class="c-workflow-container">
+  <section class="c-workflow-container__content" resizable-listener="height">
+    <side-bar></side-bar>
 
-  <side-bar></side-bar>
-
-  <section class="c-workflow-container__content" resizable-listener>
     <operation-catalogue
       ng-style="{'display' : workflow.data.operationCatalogue ? 'block' : 'none'}"
       catalog-collection="::workflow.catalog"
@@ -27,7 +26,11 @@
       ng-if="workflow.getSelectedNode()"
       disabled-mode="workflow.isReportMode"
       predef-colors="workflow.getPredefColors()"
-      class="o-panel o-panel--scroll-right animated fadeInRight">
+      class="o-panel o-panel--scroll-right animated fadeInRight"
+      panel-name="deepsenseOperationAttributes"
+      resizable
+      resizable-position="left"
+    >
     </deepsense-operation-attributes>
 
     <general-data-panel
@@ -38,15 +41,30 @@
       toggle-on="StatusBar.ABORT"
       toggle-off="StatusBar.RUN"
       toggle-animate-in="fadeOutRight o-panel--absolute"
-      toggle-animate-out="fadeInRight o-general-panel">
+      toggle-animate-out="fadeInRight o-general-panel"
+      panel-name="generalDataPanel"
+      resizable
+      resizable-position="left"
+      resizable-add-shift="-10">
     </general-data-panel>
   </section>
 
-  <section class="c-bottom-tabs">
+  <section
+    class="c-bottom-tabs"
+    panel-name="bottomTab"
+    resizable
+    resizable-via-listener=".c-workflow-container__content"
+    resizable-invisible="true"
+    resizable-position="top"
+    resizable-min-start="25"
+  >
     <tabify-tab label="Report">
       <p class="o-tabify-tab__label"
          ng-class="{'o-tabify-tab__label--active': workflow.report}">Report</p>
-      <report report="workflow.report" ng-if="workflow.report"></report>
+      <report
+        report="workflow.report"
+        ng-if="workflow.report"
+      ></report>
     </tabify-tab>
   </section>
 </div>

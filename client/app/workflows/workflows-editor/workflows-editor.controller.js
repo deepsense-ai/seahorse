@@ -16,7 +16,7 @@ class WorkflowsEditorController extends WorkflowReports {
     DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
     NotificationService, ServerCommunication, CopyPasteService, SideBarService) {
 
-    super($scope, Report, PageService, Operations, GraphPanelRendererService,
+    super($scope, $rootScope, Report, PageService, Operations, GraphPanelRendererService,
       WorkflowService);
 
     this.ServerCommunication = ServerCommunication;
@@ -224,7 +224,6 @@ class WorkflowsEditorController extends WorkflowReports {
       this.$scope.$on('$destroy', () => {
         this.WorkflowService.clearWorkflow();
         this.GraphPanelRendererService.clearWorkflow();
-        this.LastExecutionReportService.clearTimeout();
         this.NotificationService.clearToasts();
       })
     ];
