@@ -6,6 +6,8 @@ package io.deepsense.deeplang.doperations
 
 import java.sql.Timestamp
 
+import scala.util.Try
+
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
@@ -114,7 +116,8 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
   private def generateName(i: Int) = s"column_$i"
 
   val categories = Map("CAT1" -> 0, "CAT2" -> 1, "CAT3" -> 2)
-  val doubleCategories = Map("1.2" -> 1, "1.1" -> 0, "1.5" -> 4, "1.4" -> 2, "1.0" -> 3)
+  val doubleCategories =
+    Map("1.2" -> 1, "1.1" -> 0, "1.6" -> 5, "1.5" -> 4, "1.4" -> 2, "1.0" -> 3)
 
   val namesFromFile =
     Seq("Id", "Msg", "Val", categoricalName, "Enabled", "NullOnly", "SomeDate", "Mixed")
@@ -122,12 +125,12 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
   val namesGenerated = columnsIndices.map(generateName)
 
   val rows = Seq(
-    Row(Seq(null, "This is a testA", 1.1,  "CAT1", false, null, generateTimestamp, 1)),
-    Row(Seq(2,    null,              1.2,  "CAT2", true,  null, generateTimestamp, 2.2)),
-    Row(Seq(3,    "This is a testB", null, "CAT3", false, null, null, generateTimestamp)),
-    Row(Seq(4,    "This is a testC", 1.4,  null,   true,  null, generateTimestamp, null)),
-    Row(Seq(5,    "This is a testD", 1  ,  "CAT2", null,  null, generateTimestamp, "4.5")),
-    Row(Seq(6,    "This is a testE", 1.6,  "CAT3", true,  null, generateTimestamp, true))
+    Row(null, "This is a testA", 1.1,  "CAT1", false, null, generateTimestamp, 1),
+    Row(2,    null,              1.2,  "CAT2", true,  null, generateTimestamp, 2.2),
+    Row(3,    "This is a testB", null, "CAT3", false, null, null, generateTimestamp),
+    Row(4,    "This is a testC", 1.4,  null,   true,  null, generateTimestamp, null),
+    Row(5,    "This is a testD", 1  ,  "CAT2", null,  null, generateTimestamp, "4.5"),
+    Row(6,    "This is a testE", 1.6,  "CAT3", true,  null, generateTimestamp, true)
   )
   val namedRows = Seq(Row(namesFromFile)) ++ rows
   val typesWithoutCategorical = Seq(
@@ -153,8 +156,13 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
     val category = r.getString(categoricalId)
     val categoryMapped = if (category == null) null else categories(category)
 
-    val value = r.getDouble(categoricalDoubleId).toString
-    val valueMapped = if (value == null) null else doubleCategories(value)
+    val valueMapped = if (r.isNullAt(categoricalDoubleId)) {
+      null
+    } else {
+      val value = Try(r.getDouble(categoricalDoubleId))
+        .orElse(Try(r.getInt(categoricalDoubleId).toDouble)).get
+      doubleCategories(value.toString)
+    }
 
     val rowValues = r.toSeq
       .updated(categoricalId, categoryMapped)
