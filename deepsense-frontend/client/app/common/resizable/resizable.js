@@ -28,14 +28,14 @@ class Resizable {
 
       switch (attrs.resizablePosition) {
         case 'left':
-          diff.x = diff.x - diff.x * 2;
+          diff.x *= -1;
           amount = width + diff.x;
           element[0].style.width = `${amount}px`;
           triggerEvent(amount);
           break;
 
         case 'top':
-          diff.y = diff.y - diff.y * 2;
+          diff.y *= -1;
           amount = height + diff.y;
           if (amount < minAndStart) {
             amount = minAndStart;
