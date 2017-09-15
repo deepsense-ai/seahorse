@@ -56,6 +56,7 @@ function ExperimentController(
   };
 
   that.onRenderFinish = function onRenderFinish() {
+    DrawingService.init();
     DrawingService.renderPorts();
     DrawingService.renderEdges();
     DrawingService.repaintEverything();

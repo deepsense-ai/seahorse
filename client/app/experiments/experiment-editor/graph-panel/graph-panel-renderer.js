@@ -59,15 +59,15 @@ function DrawingService($rootScope) {
   var that = this;
   var internal = {};
 
-  internal.init = function init() {
-    jsPlumb.getInstance({
+  that.init = function init() {
+    jsPlumb.reset();
+    jsPlumb.setContainer('flowchart-box');
+    jsPlumb.importDefaults({
       DragOptions: {
         cursor: 'pointer',
         zIndex: 2000
-      },
-      Container: 'flowchart-box'
+      }
     });
-
     that.bindEdgeEvent();
   };
 
@@ -159,11 +159,6 @@ function DrawingService($rootScope) {
   };
 
   that.bindEdgeEvent = function bindEdgeEvents() {
-    if (that.connectionEventsBinded) {
-      return;
-    }
-    that.connectionEventsBinded = true;
-
     jsPlumb.bind('connection', (info, originalEvent) => {
       if (!originalEvent) {
         return;
@@ -196,8 +191,6 @@ function DrawingService($rootScope) {
       $rootScope.$emit(Edge.REMOVE, {edge: edge});
     });
   };
-
-  internal.init();
 
   return that;
 
