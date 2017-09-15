@@ -5,13 +5,12 @@
  */
 package io.deepsense.entitystorage
 
+import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.{Await, Future}
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import com.typesafe.config.ConfigFactory
 
 import io.deepsense.models.entities.{Entity, InputEntity}
 import io.deepsense.models.protocols.EntitiesApiActorProtocol.{Create, Get, Request}
@@ -37,20 +36,4 @@ class ActorBasedEntityStorageClient(entitiesApiActor: ActorRef) extends EntitySt
   }
 
   private def send(r: Request)(implicit timeout: Timeout): Future[Any] = entitiesApiActor.ask(r)
-}
-
-object EntityStorageClient {
-  def apply(actorSystemName: String, hostname: String, port: Int, actorName: String,
-            timeoutSeconds: Int): EntityStorageClient = {
-    val actorSystem = ActorSystem(s"$actorSystemName-client",
-      ConfigFactory.load("entitystorage-communication.conf"))
-    val path = s"akka.tcp://$actorSystemName@$hostname:$port/user/$actorName"
-
-    import scala.concurrent.duration._
-    implicit val timeout = Timeout(timeoutSeconds.seconds)
-
-    val actorRef =
-      Await.result(actorSystem.actorSelection(path).resolveOne(), timeoutSeconds.seconds)
-    new ActorBasedEntityStorageClient(actorRef)
-  }
 }

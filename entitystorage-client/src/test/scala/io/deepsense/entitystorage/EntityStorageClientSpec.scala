@@ -27,7 +27,7 @@ class EntityStorageClientSpec(actorSystem: ActorSystem)
 
   val serviceProbe = TestProbe()
   val returnTestEntity = mock[Entity]
-  val client = TestEntityStorageClientFactory.create(serviceProbe.ref)
+  val client = TestActorBasedEntityStorageClientFactory.create(serviceProbe.ref)
 
   def this() = this(ActorSystem("EntityStorageClientSpec"))
 

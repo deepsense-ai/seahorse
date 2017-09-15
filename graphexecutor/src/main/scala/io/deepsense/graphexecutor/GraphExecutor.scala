@@ -11,7 +11,7 @@ import java.util.{List, UUID}
 
 import scala.collection.mutable
 
-import com.typesafe.config.{ConfigFactory, Config}
+import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.ipc.NettyServer
 import org.apache.avro.ipc.specific.SpecificResponder
@@ -26,7 +26,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.deeplang.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.entitystorage.EntityStorageClient
+import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory, EntityStorageClientFactoryImpl}
 import io.deepsense.graph.{Graph, Status}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.BinarySemaphore
@@ -62,7 +62,9 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
    */
   val graphEventBinarySemaphore = new BinarySemaphore(0)
 
-  val entityStorageClient = connectToEntityStorage()
+  // TODO: inject factory
+  val entityStorageClientFactory = EntityStorageClientFactoryImpl()
+  val entityStorageClient = createEntityStorageClient(entityStorageClientFactory)
 
   /** executorsPool is pool of threads executing GraphNodes */
   val executorsPool = Executors.newFixedThreadPool(Constants.ConcurrentGraphNodeExecutors)
@@ -156,7 +158,7 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
       }
     }
 
-    cleanup(resourceManagerClient, rpcServer)
+    cleanup(resourceManagerClient, rpcServer, entityStorageClientFactory)
   }
 
   /**
@@ -189,7 +191,8 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
    */
   private def cleanup(
       rmClient: AMRMClientAsyncImpl[ContainerRequest],
-      rpcServer: NettyServer): Unit = {
+      rpcServer: NettyServer,
+      entityStorageClientFactory: EntityStorageClientFactory): Unit = {
     // TODO: don't print anything
     println("cleanup start" + System.currentTimeMillis)
     rmClient.unregisterApplicationMaster(FinalApplicationStatus.SUCCEEDED, "", "")
@@ -212,6 +215,7 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
     rpcServer.close()
     executorsPool.shutdown()
     // TODO: don't print anything
+    entityStorageClientFactory.close()
     println("cleanup end" + System.currentTimeMillis)
   }
 
@@ -250,7 +254,8 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
 
   override def onContainersAllocated(containers: List[Container]): Unit = {}
 
-  private def connectToEntityStorage(): EntityStorageClient = {
+  private def createEntityStorageClient(entityStorageClientFactory: EntityStorageClientFactory)
+      : EntityStorageClient = {
     val config = ConfigFactory.load("entitystorage-communication.conf")
     val actorSystemName = config.getString("entityStorage.actorSystemName")
     val hostName = config.getString("entityStorage.hostname")
@@ -259,6 +264,6 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
     val timeoutSeconds = config.getInt("entityStorage.timeoutSeconds")
     logger.info(
       s"EntityStorageClient($actorSystemName, $hostName, $port, $actorName, $timeoutSeconds)")
-    EntityStorageClient(actorSystemName, hostName, port, actorName, timeoutSeconds)
+    entityStorageClientFactory.create(actorSystemName, hostName, port, actorName, timeoutSeconds)
   }
 }
