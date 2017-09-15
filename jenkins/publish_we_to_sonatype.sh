@@ -47,7 +47,6 @@ publish () {
       cp credentials/secring.asc ~/.sbt/gpg/deepsense-secring.asc
       cp credentials/sonatype.sbt ~/.sbt/0.13
       cp credentials/deepsensePgp.sbt ~/.sbt/0.13
-      cp credentials/pgpPlugin.sbt ~/.sbt/0.13/plugins/pgp.sbt
   fi
 
   cd ./seahorse-workflow-executor/
