@@ -7,6 +7,10 @@ set -ex
 # `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
 
+# set cluster id and network name for standalone docker setup
+export CLUSTER_ID="E2E_CLUSTER_ID"
+export NETWORK_NAME="sbt-test-$CLUSTER_ID"
+
 BACKEND_TAG=`git rev-parse HEAD`
 
 FRONTEND_TAG="${FRONTEND_TAG:-$SEAHORSE_BUILD_TAG}" # If FRONTEND_TAG not defined try to use SEAHORSE_BUILD_TAG
@@ -47,6 +51,10 @@ deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG dow
 ## Start Spark Standalone cluster dockers
 
 $SPARK_STANDALONE_MANAGEMENT up $SPARK_VERSION
+
+## Get and export Spark Standalone cluster IP
+INSPECT_FORMAT="{{(index (index .NetworkSettings.Networks \"$NETWORK_NAME\").IPAddress )}}"
+export SPARK_STANDALONE_MASTER_IP=$(docker inspect --format "$INSPECT_FORMAT" sparkMaster-$CLUSTER_ID)
 
 ## Start Mesos Spark cluster dockers
 
