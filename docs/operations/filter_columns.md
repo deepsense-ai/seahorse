@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Project Columns
-title: Project Columns
-description: Project Columns
+displayTitle: Filter Columns
+title: Filter Columns
+description: Filter Columns
 usesMathJax: true
 includeOperationsMenu: true
 ---
