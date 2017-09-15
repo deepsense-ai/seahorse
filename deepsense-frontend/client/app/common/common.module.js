@@ -14,5 +14,6 @@ require('./dots/dots.js').inject(common);
 require('./toggle/toggle.js').inject(common);
 require('./resizable/resizable.js').inject(common);
 require('./resizable/resizable-listener.js').inject(common);
+require('./filters/cut-words.js').inject(common);
 
 module.exports = common;

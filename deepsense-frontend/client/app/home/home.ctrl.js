@@ -7,6 +7,30 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
     PageService.setTitle('Home');
     this.$state = $state;
     $rootScope.stateData.dataIsLoaded = true;
+    this.sort = {
+      column: 'updated',
+      descending: true
+    };
+  };
+
+  this.canShowPopover = (description) => {
+    return description.length > 100;
+  };
+
+  this.sortBy = (columnName) => {
+    if (this.sort.column === columnName) {
+      this.sort.descending = !this.sort.descending;
+    } else {
+      this.sort.column = columnName;
+      this.sort.descending = false;
+    }
+  };
+
+  this.getClass = (columnName) => {
+    if (this.sort.column === columnName) {
+      let icon = 'glyphicon glyphicon-chevron';
+      return this.sort.descending ? icon + '-up' : icon + '-down';
+    }
   };
 
   this.getVersion = () => {
