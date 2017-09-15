@@ -33,7 +33,8 @@ module.exports = function(req, res, next) {
     res.end();
   });
 
-  readStream.on('error', function(err) {
+  readStream.on('error', function(error) {
+    console.error('error:', 'missing mock data', error);
     res.writeHead(404, {'Content-Type': 'text/plain; charset=UTF-8'});
     res.end('404 - missing (mock data)');
   });

@@ -3,7 +3,6 @@
  *
  * Owner: Piotr Zarówny
  */
-/*global console*/
 'use strict';
 
 
@@ -79,7 +78,7 @@ module.exports = function experimentHandler(config) {
     }
 
     if (!id && request.method === 'POST') {
-      console.log('create experiment');
+      console.log('log:', 'create experiment');
       experimentModel.create({id: data.experiment.id}).then((result) => {
         deferred.resolve(data);
       }).catch((error) => {
@@ -90,10 +89,10 @@ module.exports = function experimentHandler(config) {
       switch (request.method) {
 
         case 'GET':
-          console.log('get experiment', id);
+          console.log('log:', 'get experiment', id);
           experimentModel.findOne().where({id: id}).then((result) => {
             if (!result) {
-              console.log('missing local data - recovering');
+              console.log('log:', 'missing local data - recovering');
               experimentModel.create({id: id}).then(() => {});
             }
             deferred.resolve(mergeData(data, result));
@@ -103,10 +102,9 @@ module.exports = function experimentHandler(config) {
           break;
 
         case 'PUT':
-          console.log('update experient', id);
+          console.log('log:', 'update experient', id);
           experimentModel.update().where({id: id}).set(getInputData(request.body))
           .then((result) => {
-            console.log(result);
             deferred.resolve(mergeData(data, result[0]));
           }).catch((error) => {
             deferred.reject(error);
@@ -114,7 +112,7 @@ module.exports = function experimentHandler(config) {
           break;
 
         case 'DELETE':
-          console.log('delete experiment', id);
+          console.log('log:', 'delete experiment', id);
           experimentModel.destroy().where({id: id}).then((result) => {
             deferred.resolve(data);
           }).catch((error) => {

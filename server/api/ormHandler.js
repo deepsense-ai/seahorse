@@ -30,7 +30,7 @@ module.exports = function ormHandler(callback) {
   orm.loadCollection(require('./experimentModel.js'));
   orm.initialize(config, function(error) {
     if (error) {
-      console.error(error);
+      console.error('error:', 'orm', error);
     }
     callback(orm);
   });

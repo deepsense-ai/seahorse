@@ -3,7 +3,6 @@
  *
  * Owner: Piotr Zarówny
  */
-/*global console*/
 'use strict';
 
 
@@ -17,69 +16,71 @@ module.exports = function apiProxy(config) {
 
 
   /**
-   * Handles errors.
+   * Handles proxy errors.
    */
   proxy.on('error', (error, request, response) => {
     response.writeHead(502, {
       'Content-Type': 'text/plain; charset=UTF-8'
     });
-    response.end('502');
+    console.error('error:', '502', request.method, request.url, error);
+    response.end('502 - proxy source error');
   });
-
 
   /**
    * Handles response data processing.
    */
   proxy.on('proxyRes', (proxyResponse, request, response) => {
-    if (request.customHandler) {
-      let responseWrite = response.write,
-          responseWriteHead = response.writeHead,
-          responseEnd = response.end,
-          responseData = '',
-          doResponse = (data, status, contetType) => {
-            responseWriteHead.call(response, status, {
-              'Content-Type': contetType + '; charset=UTF-8',
-              'Content-Length': data.length
-            });
-            responseWrite.call(response, data);
-            responseEnd.call(response);
-          };
-
-      proxyResponse.on('data', (source) => {
-        responseData += source;
-      });
-
-      response.write = () => {};
-      response.writeHead = () => {};
-      response.end = () => {
-        if (proxyResponse.statusCode >= 400) {
-          doResponse(responseData, proxyResponse.statusCode, 'text/plain');
-          return;
-        } else {
-          request.customHandler(JSON.parse(responseData), request).then((data) => {
-            doResponse(JSON.stringify(data, null, 2), 200, 'application/json');
-          }).fail((error) => {
-            console.error(error);
-            doResponse('500', 500, 'text/plain');
+    let responseWrite = response.write,
+        responseWriteHead = response.writeHead,
+        responseEnd = response.end,
+        responseData = '',
+        doResponse = (data, status, contetType) => {
+          responseWriteHead.call(response, status, {
+            'Content-Type': contetType || 'application/json; charset=UTF-8',
+            'Content-Length': data.length || 0
           });
+          responseWrite.call(response, data);
+          responseEnd.call(response);
+        };
+
+    proxyResponse.on('data', (source) => {
+      responseData += source;
+    });
+
+    response.write = () => {};
+    response.writeHead = () => {};
+    response.end = () => {
+      if (proxyResponse.statusCode >= 400) {
+        console.error('error:', proxyResponse.statusCode, request.method, request.url, responseData);
+        doResponse('502 - proxy source error', 502, 'text/plain; charset=UTF-8');
+      } else {
+        if (request.customHandler) {
+          request.customHandler(JSON.parse(responseData), request).then((data) => {
+            doResponse(JSON.stringify(data, null, 2), 200, 'application/json; charset=UTF-8');
+          }).fail((error) => {
+            console.error('error:', '500', request.method, request.url, error);
+            doResponse('500 - proxy internal error', 500, 'text/plain; charset=UTF-8');
+          });
+        } else {
+          doResponse(responseData, proxyResponse.statusCode, proxyResponse.headers['content-type']);
         }
-      };
-    } else {
-      response.header('Content-Type', 'application/json; charset=UTF-8');
-    }
+      }
+    };
   });
 
-
-  // TODO: remove after full login implementation
+  /**
+   * Handles proxy request.
+   */
   proxy.on('proxyReq', (proxyRequest, request, response, options) => {
-    if (config.token) {
-      proxyRequest.setHeader('X-Auth-Token', config.token);
-    }
-
-    if (request.customHandler && (request.method === 'PUT' || request.method === 'POST')) {
+    if (request.method === 'PUT' || request.method === 'POST') {
       request.on('data', (source) => {
         request.body = JSON.parse(source.toString());
       });
+    }
+
+    // TODO: remove after full login implementation
+    if (config.token) {
+      proxyRequest.setHeader('X-Auth-Token', config.token);
     }
   });
 
@@ -103,6 +104,7 @@ module.exports = function apiProxy(config) {
       response.writeHead(404, {
         'Content-Type': 'text/plain; charset=UTF-8'
       });
+      console.error('error:', '404', request.method, '/api' + request.url);
       response.end('404 - unknown resource');
     }
   });

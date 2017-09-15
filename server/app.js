@@ -18,7 +18,7 @@ let args = require('minimist')(process.argv.slice(2));
 if (args.host && args.token) {
   apiConfig.url = args.host;
   apiConfig.token = args.token;
-  console.log('using custom api host (' + apiConfig.url + ')');
+  console.log('log:', 'using custom api host (' + apiConfig.url + ')');
 }
 
 // TODO: remove after removing deploy mock
