@@ -20,7 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
+import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, CodeSnippetLanguage, CodeSnippetParameter, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] {
@@ -37,10 +37,10 @@ case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] {
     _value = None
   )
 
-  val expressionParameter = StringParameter(
+  val expressionParameter = CodeSnippetParameter(
     "SQL Expression to be executed on the DataFrame",
     None,
-    new AcceptAllRegexValidator(),
+    CodeSnippetLanguage(CodeSnippetLanguage.SparkSql),
     _value = None)
 
   override val parameters: ParametersSchema = ParametersSchema(
@@ -80,4 +80,3 @@ object SqlExpression {
     operation
   }
 }
-
