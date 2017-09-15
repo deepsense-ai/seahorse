@@ -38,7 +38,7 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
     description = "Column operation source code",
     language = CodeSnippetLanguage(CodeSnippetLanguage.Python)
   )
-  setDefault(codeParameter -> "def transform_value(value, column_name):\n  return value")
+  setDefault(codeParameter -> "def transform_value(value, column_name):\n    return value")
 
   override def getSpecificParams: Array[Param[_]] =
     Array(codeParameter, targetType)
@@ -51,8 +51,8 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
     userCode + s"\n" +
       s"from pyspark.sql.types import Row\n" +
       s"def transform(dataframe):\n" +
-      s"  return sqlContext.createDataFrame(dataframe.map(lambda row: " +
-      s"row + (transform_value(row.$inputColumn, '$inputColumn'),)))"
+      s"    return sqlContext.createDataFrame(dataframe.map(lambda row: " +
+      s"row + (transform_value(row['$inputColumn'], '$inputColumn'),)))"
   }
 
   private def executePythonCode(
