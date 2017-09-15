@@ -11,10 +11,11 @@ from './graph-panel-styler.js';
 
 class ConnectionHinterService extends GraphPanelRendererBase {
 
-  constructor($rootScope, WorkflowService, OperationsHierarchyService, Operations) {
+  constructor($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report) {
     super();
     this.$rootScope = $rootScope;
     this.WorkflowService = WorkflowService;
+    this.Report = Report;
     this.OperationsHierarchyService = OperationsHierarchyService;
     this.Operations = Operations;
   }
@@ -23,7 +24,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
    * Highlights such ports that match to the given port
    * and colours ports that don't match.
    */
-  showHints(sourceEndpoint, renderMode) {
+  showHints(sourceEndpoint, renderMode, hasReport) {
     const workflow = this.WorkflowService.getWorkflow();
     const nodes = workflow.getNodes();
 
@@ -45,9 +46,9 @@ class ConnectionHinterService extends GraphPanelRendererBase {
         endpoint.connections.length === 0 && // there cannot be any edge attached
         port.nodeId !== sourceNodeId) // attaching an edge to the same node is forbidden
       {
-        GraphPanelStyler.styleInputEndpointTypeMatch(endpoint, renderMode);
+        GraphPanelStyler.styleInputEndpointTypeMatch(endpoint, renderMode, hasReport);
       } else {
-        GraphPanelStyler.styleInputEndpointTypeDismatch(endpoint, renderMode);
+        GraphPanelStyler.styleInputEndpointTypeDismatch(endpoint, renderMode, hasReport);
       }
     };
 
@@ -55,12 +56,15 @@ class ConnectionHinterService extends GraphPanelRendererBase {
       const nodeEl = this.getNodeById(node.id);
       const endpoints = jsPlumb.getEndpoints(nodeEl);
 
-      _.forEach(endpoints, (endpoint) => {
+      _.forEach(endpoints, (endpoint, i) => {
+        let reportEntityId = node.getResult(i);
+        let hasReport = this.Report.hasReportEntity(reportEntityId);
+
         if (endpoint.isTarget) { // is an input port
           highlightInputPort(endpoint, node);
         }
         if (endpoint.isSource) { // is an output port
-          GraphPanelStyler.styleOutputEndpointDefault(endpoint, renderMode);
+          GraphPanelStyler.styleOutputEndpointDefault(endpoint, renderMode, hasReport);
         }
       });
     });
@@ -74,11 +78,15 @@ class ConnectionHinterService extends GraphPanelRendererBase {
   setDefaultPortColors(renderMode) {
     const nodes = this.WorkflowService.getWorkflow()
       .getNodes();
+
     _.forEach(nodes, (node) => {
       const nodeEl = this.getNodeById(node.id);
       const endpoints = jsPlumb.getEndpoints(nodeEl);
-      _.forEach(endpoints, (endpoint) => {
-        if (endpoint.isSource) {
+      _.forEach(endpoints, (endpoint, i) => {
+        let reportEntityId = node.getResult(i);
+        let hasReport = this.Report.hasReportEntity(reportEntityId);
+
+        if (endpoint.isSource && !hasReport) {
           GraphPanelStyler.styleInputEndpointDefault(endpoint, renderMode);
         }
         if (endpoint.isTarget) {
@@ -91,7 +99,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
   /*
    * Highlight the operation on the left side panel.
    */
-  highlightOperations(sourceEndpoint) {
+  highlightOperations(sourceEndpoint, hasReport) {
     const workflow = this.WorkflowService.getWorkflow();
     const sourceNodeId = sourceEndpoint.getParameter('nodeId');
     const sourceNode = workflow.getNodeById(sourceNodeId);
@@ -124,7 +132,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
 }
 
 exports.inject = function(module) {
-  module.factory('ConnectionHinterService', /* @ngInject */ ($rootScope, WorkflowService, OperationsHierarchyService, Operations) => {
-    return new ConnectionHinterService($rootScope, WorkflowService, OperationsHierarchyService, Operations);
+  module.factory('ConnectionHinterService', /* @ngInject */ ($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report) => {
+    return new ConnectionHinterService($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report);
   });
 };

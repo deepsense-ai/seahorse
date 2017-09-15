@@ -2,26 +2,26 @@
   <div class="panel panel-default">
     <div class="row">
       <div class="col-sm-6">
-        <report-table-header table-data="::reportEvaluateClassification.data.summary"></report-table-header>
-        <report-table-body table-data="::reportEvaluateClassification.data.summary"
+        <report-table-header table-data="reportEvaluateClassification.data.summary"></report-table-header>
+        <report-table-body table-data="reportEvaluateClassification.data.summary"
                            selection-column-enabled="::false"></report-table-body>
       </div>
       <div class="col-sm-6">
-        <report-table-header table-data="::reportEvaluateClassification.data.accuracy"></report-table-header>
-        <report-table-body table-data="::reportEvaluateClassification.data.accuracy"
+        <report-table-header table-data="reportEvaluateClassification.data.accuracy"></report-table-header>
+        <report-table-body table-data="reportEvaluateClassification.data.accuracy"
                            selection-column-enabled="::false"></report-table-body>
       </div>
     </div>
     <div class="row">
       <div class="col-sm-6">
-        <report-table-header table-data="::reportEvaluateClassification.data.fMeasureByThreshold"></report-table-header>
-        <report-table-body table-data="::reportEvaluateClassification.data.fMeasureByThreshold"
+        <report-table-header table-data="reportEvaluateClassification.data.fMeasureByThreshold"></report-table-header>
+        <report-table-body table-data="reportEvaluateClassification.data.fMeasureByThreshold"
                            selection-column-enabled="::false"></report-table-body>
       </div>
       <div class="col-sm-6">
         <h2>{{ reportEvaluateClassification.data.roc.description }}</h2>
-        <basic-line-plot data="::reportEvaluateClassification.data.roc.values"></basic-line-plot>
-        <report-table-body table-data="::reportEvaluateClassification.data.roc"
+        <basic-line-plot data="reportEvaluateClassification.data.roc.values"></basic-line-plot>
+        <report-table-body table-data="reportEvaluateClassification.data.roc"
                            selection-column-enabled="::false"></report-table-body>
       </div>
     </div>

@@ -1,7 +1,7 @@
 @import "../../css/variables";
 
-.heightWithNavOffset(@marginTop: 0) {
-  @bar-height: @navigation-bar-height + @marginTop;
+.heightWithNavOffset(@additionalDecrease: 0) {
+  @bar-height: @navigation-bar-height + @additionalDecrease;
   //noinspection CssInvalidPropertyValue
   height: ~"calc(100% - @{bar-height})";
 }

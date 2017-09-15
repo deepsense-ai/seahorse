@@ -6,50 +6,59 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function ReportCtrl(report, $scope, $state, $uibModal, PageService) {
-  PageService.setTitle(`Report: ${report.name}`);
-
+function ReportCtrl($scope, $uibModal, PageService) {
   let that = this;
   let internal = {};
+  let obj = {};
 
-  internal.name = report.name;
-  internal.tables = report.tables;
-  internal.distributions = report.distributions || {};
-  internal.reportId = report.reportId;
-  internal.distributionsTypes = _.reduce(
-    internal.distributions,
-    function(acc, distObj, name) {
-      let re = /[a-zA-Z0-9_]+/.exec(name);
-      if (re) {
-        acc[re[0]] = distObj.subtype;
-      }
-      return acc;
-    }, {}
-  );
+  PageService.setTitle(`Report: ${this.currentReport.name}`);
 
-  that.back = () => {
-    $state.go('workflows.report', {
-      'reportId': internal.reportId
-    });
+  internal.name = this.currentReport.name;
+  internal.tables = this.currentReport.tables;
+  internal.distributions = this.currentReport.distributions || {};
+  internal.reportId = this.currentReport.reportId;
+  internal.checkHeight = () => {
+    if (!this.currentReport) {
+      return false;
+    }
+
+    let values = 0;
+
+    _.each(this.currentReport.tables, dataObject =>
+      values += dataObject.values.length);
+
+    this.autoHeight = values < 10;
   };
 
-  that.getTables = function getTables() {
-    return internal.tables;
+  that.getTables = () => {
+    internal.checkHeight();
+    return that.currentReport && that.currentReport.tables;
   };
 
-  that.getDistributionObject = function getDistributionObject(colName) {
-    if (internal.distributions) {
-      return internal.distributions[colName];
+  that.getDistributionObject = colName => {
+    if (that.currentReport.distributions) {
+      return that.currentReport.distributions[colName];
     }
   };
 
-  that.getDistributionsTypes = function getDistributionsTypes() {
-    return internal.distributionsTypes;
+  that.getDistributionsTypes = () => {
+    return that.currentReport && _.reduce(
+      that.currentReport.distributions,
+      function(acc, distObj, name) {
+        let re = /[a-zA-Z0-9_]+/.exec(name);
+        if (re) {
+          acc[re[0]] = distObj.subtype;
+        }
+        return acc;
+      }, obj
+    );
   };
 
-  that.getReportName = function getReportName() {
-    return internal.name;
+  that.getReportName = () => {
+    return that.currentReport && that.currentReport.name;
   };
+
+  that.close = () => that.currentReport = null;
 
   $scope.$on(EVENTS.SELECT_COLUMN, function(event, data) {
     let distObject = that.getDistributionObject(data.colName);
@@ -65,7 +74,7 @@ function ReportCtrl(report, $scope, $state, $uibModal, PageService) {
               $uibModalInstance.close();
             },
             distObject: distObject,
-            columnNames: _.keys(internal.distributions),
+            columnNames: _.keys(that.currentReport.distributions),
             selectedColumn: distObject.name
           });
 

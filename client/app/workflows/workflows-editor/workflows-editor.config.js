@@ -15,24 +15,46 @@ function WorkflowsConfig($stateProvider) {
     },
     resolve: {
       workflow: /* @ngInject */ ($q, $state, $rootScope, $stateParams,
-        WorkflowsApiClient, Operations, OperationsHierarchyService, ErrorService) => {
-        let deferred = $q.defer();
-        Operations.load()
-          .then(OperationsHierarchyService.load)
-          .then(() => WorkflowsApiClient.getWorkflow($stateParams.id))
-          .then((data) => {
-            $rootScope.stateData.dataIsLoaded = true;
-            deferred.resolve(data);
-          })
-          .catch((error) => {
-            $state.go(ErrorService.getErrorState(error.status), {
-              id: $stateParams.reportId,
-              type: 'workflow'
+          WorkflowsApiClient, Operations, OperationsHierarchyService, ErrorService) => {
+          let deferred = $q.defer();
+          Operations.load()
+            .then(OperationsHierarchyService.load)
+            .then(() => WorkflowsApiClient.getWorkflow($stateParams.id))
+            .then((data) => {
+              $rootScope.stateData.dataIsLoaded = true;
+              deferred.resolve(data);
+            })
+            .catch((error) => {
+              $state.go(ErrorService.getErrorState(error.status), {
+                id: $stateParams.reportId,
+                type: 'workflow'
+              });
+              deferred.reject();
             });
-            deferred.reject();
-          });
-        return deferred.promise;
-      }
+          return deferred.promise;
+        }
+        /*,
+
+              report: /!* @ngInject *!/ ($q, $state, $rootScope, $stateParams, WorkflowsApiClient,
+                Operations, OperationsHierarchyService, ErrorService) => {
+                let reportId = $stateParams.reportId;
+                let deferred = $q.defer();
+                Operations.load()
+                  .then(OperationsHierarchyService.load)
+                  .then(() => WorkflowsApiClient.getReport(reportId))
+                  .then((data) => {
+                    $rootScope.stateData.dataIsLoaded = true;
+                    deferred.resolve(data);
+                  })
+                  .catch((error) => {
+                    $state.go(ErrorService.getErrorState(error.status), {
+                      id: $stateParams.reportId,
+                      type: 'report'
+                    });
+                    deferred.reject();
+                  });
+                return deferred.promise;
+              }*/
     }
   });
 }

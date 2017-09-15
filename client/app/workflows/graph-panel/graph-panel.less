@@ -22,7 +22,7 @@ path,
   margin: 0;
   height: 100%;
   position: relative;
-  flex: 5.5;
+  flex: 1;
 
   &:after {
     content: "";
@@ -38,6 +38,10 @@ path,
 
   &.active-drag-target {
     border: 3px dashed @color-action;
+  }
+
+  &--is-running {
+    flex-basis: 50%;
   }
 
   .hover {

@@ -213,7 +213,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
       port.canvas.addEventListener('mousedown', (event) => {
         if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
-          ConnectionHinterService.showHints(port, internal.renderMode);
+          ConnectionHinterService.showHints(port, internal.renderMode, hasReport);
           ConnectionHinterService.highlightOperations(port);
 
           event.stopPropagation();

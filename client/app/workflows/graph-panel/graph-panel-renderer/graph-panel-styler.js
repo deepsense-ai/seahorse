@@ -19,21 +19,27 @@ export class GraphPanelStyler {
   }
 
   static styleSelectedOutputEndpoint(endpoint) {
-    endpoint.setPaintStyle({
+    let paintStyles = endpoint.getPaintStyle();
+
+    endpoint.setPaintStyle(_.assign(paintStyles, {
       fillStyle: '#216477'
-    });
+    }));
   }
 
-  static styleInputEndpointTypeMatch(endpoint) {
-    endpoint.setPaintStyle({
+  static styleInputEndpointTypeMatch(endpoint, hasReport) {
+    let paintStyles = endpoint.getPaintStyle();
+
+    endpoint.setPaintStyle(_.assign(paintStyles, {
       fillStyle: '#1ab394'
-    });
+    }));
   }
 
-  static styleInputEndpointTypeDismatch(endpoint) {
-    endpoint.setPaintStyle({
+  static styleInputEndpointTypeDismatch(endpoint, hasReport) {
+    let paintStyles = endpoint.getPaintStyle();
+
+    endpoint.setPaintStyle(_.assign(paintStyles, {
       fillStyle: '#ed5565'
-    });
+    }));
   }
 
   static getInputEndpointDefaultPaintStyle(renderMode) {
@@ -73,7 +79,7 @@ export class GraphPanelStyler {
   }
 
   static getOutputEndpointDefaultPaintStyle(renderMode, hasReport) {
-    if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+    if (!hasReport) {
       return {
         fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
         radius: 10,
@@ -82,37 +88,37 @@ export class GraphPanelStyler {
     } else {
       return {
         fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-        radius: hasReport ? 15 : 10,
+        radius: 15,
         lineWidth: 2
       };
     }
   }
 
   static getOutputEndpointDefaultCssClass(renderMode, hasReport) {
-    if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+    if (hasReport) {
+      return 'output-endpoint-default-style-report-mode fa fa-bar-chart';
+    } else if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
       return 'output-endpoint-default-style-editor-mode';
-    } else {
-      return 'output-endpoint-default-style-report-mode' + (hasReport ? ' fa fa-bar-chart' : '');
     }
   }
 
   static getOutputEndpointDefaultHoverPaintStyle(renderMode, hasReport) {
-    return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? {
+    return !hasReport ? {
       fillStyle: '#216477',
       radius: 10,
       lineWidth: 2
     } : {
       fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-      radius: hasReport ? 20 : 10,
+      radius: 20,
       lineWidth: 2
     };
   }
 
   static getOutputEndpointDefaultHoverCssClass(renderMode, hasReport) {
-    if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+    if (hasReport) {
+      return 'output-endpoint-default-hover-style-report-mode';
+    } else if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
       return 'output-endpoint-default-hover-style-editor-mode';
-    } else {
-      return hasReport ? 'output-endpoint-default-hover-style-report-mode' : '';
     }
   }
 }

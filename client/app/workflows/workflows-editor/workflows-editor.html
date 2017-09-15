@@ -2,40 +2,51 @@
 
   <side-bar></side-bar>
 
-  <operation-catalogue
-    ng-style="{'display' : workflow.data.operationCatalogue ? 'block' : 'none'}"
-    catalog-collection="::workflow.catalog"
-    custom-scroll-bar
-    toggle
-    toggle-on="StatusBar.ABORT"
-    toggle-off="StatusBar.RUN"
-    toggle-animate-in="animated fadeOutLeft o-panel--absolute"
-    toggle-animate-out="animated fadeInLeft">
-  </operation-catalogue>
+  <section class="c-workflow-container__content" resizable-listener>
+    <operation-catalogue
+      ng-style="{'display' : workflow.data.operationCatalogue ? 'block' : 'none'}"
+      catalog-collection="::workflow.catalog"
+      custom-scroll-bar
+      toggle
+      toggle-on="StatusBar.ABORT"
+      toggle-off="StatusBar.RUN"
+      toggle-animate-in="animated fadeOutLeft o-panel--absolute"
+      toggle-animate-out="animated fadeInLeft">
+    </operation-catalogue>
 
-  <flow-chart-box
-    nodes="workflow.getWorkflow().getNodes()"
-    selected-node="workflow.getSelectedNode()"
-    report-mode="false"
-    zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
+    <flow-chart-box
+      ng-class="{'flowchart-box--is-running': workflow.isRunning}"
+      nodes="workflow.getWorkflow().getNodes()"
+      selected-node="workflow.getSelectedNode()"
+      report-mode="false"
+      zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
-  <deepsense-operation-attributes
-    workflow="workflow.WorkflowService.getWorkflow().id"
-    node="workflow.getSelectedNode()"
-    ng-if="workflow.getSelectedNode()"
-    disabled-mode="workflow.isReportMode"
-    predef-colors="workflow.getPredefColors()"
-    class="o-panel o-panel--scroll-right animated fadeInRight">
-  </deepsense-operation-attributes>
+    <deepsense-operation-attributes
+      workflow="workflow.WorkflowService.getWorkflow().id"
+      node="workflow.getSelectedNode()"
+      ng-if="workflow.getSelectedNode()"
+      disabled-mode="workflow.isReportMode"
+      predef-colors="workflow.getPredefColors()"
+      class="o-panel o-panel--scroll-right animated fadeInRight">
+    </deepsense-operation-attributes>
 
-  <general-data-panel
-    name="workflow.getWorkflow().name"
-    description="workflow.getWorkflow().description"
-    ng-if="!workflow.getSelectedNode()"
-    toggle
-    toggle-on="StatusBar.ABORT"
-    toggle-off="StatusBar.RUN"
-    toggle-animate-in="fadeOutRight o-panel--absolute"
-    toggle-animate-out="fadeInRight o-general-panel">
-  </general-data-panel>
+    <general-data-panel
+      name="workflow.getWorkflow().name"
+      description="workflow.getWorkflow().description"
+      ng-if="!workflow.getSelectedNode()"
+      toggle
+      toggle-on="StatusBar.ABORT"
+      toggle-off="StatusBar.RUN"
+      toggle-animate-in="fadeOutRight o-panel--absolute"
+      toggle-animate-out="fadeInRight o-general-panel">
+    </general-data-panel>
+  </section>
+
+  <section class="c-bottom-tabs">
+    <tabify-tab label="Report">
+      <p class="o-tabify-tab__label"
+         ng-class="{'o-tabify-tab__label--active': workflow.report}">Report</p>
+      <report report="workflow.report" ng-if="workflow.report"></report>
+    </tabify-tab>
+  </section>
 </div>

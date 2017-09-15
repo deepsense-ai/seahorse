@@ -38,7 +38,7 @@ class ServerCommunication {
 
   onWebSocketConnect() {
     this.status = 'ws_connected';
-    this.connectToRabbit(this.workflowId);
+    this.connectToRabbit();
   }
 
   onWebSocketConnectError(error) {

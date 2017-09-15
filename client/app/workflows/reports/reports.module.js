@@ -7,6 +7,7 @@ var reports = angular.module('ds.reports', []);
 require('./reports.controller.js').inject(reports);
 require('./reports.factory.js').inject(reports);
 require('./reports.config.js').inject(reports);
+require('./report.directive.js').inject(reports);
 
 require('./report-dataframe/report-dataframe.js').inject(reports);
 require('./report-cross-validate-regressor/report-cross-validate-regressor.js').inject(reports);

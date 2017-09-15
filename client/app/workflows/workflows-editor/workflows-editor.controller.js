@@ -2,18 +2,23 @@
 
 /* beautify preserve:start */
 import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+import WorkflowReports from './workflows-editor.reports.js';
 /* beautify preserve:end */
 import internal from './workflows-editor.internal.js';
 
-class WorkflowsEditorController {
+class WorkflowsEditorController extends WorkflowReports {
 
   /* @ngInject */
-  constructor(workflow, config, MultiSelectionService,
+  constructor(workflow, config, Report, MultiSelectionService,
     $scope, $state, $stateParams, $q, $rootScope,
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
     DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
     NotificationService, ServerCommunication, CopyPasteService, SideBarService) {
+
+    super($scope, Report, PageService, Operations, GraphPanelRendererService,
+      WorkflowService);
+
     this.ServerCommunication = ServerCommunication;
     this.PageService = PageService;
     this.WorkflowService = WorkflowService;
@@ -79,6 +84,12 @@ class WorkflowsEditorController {
   initListeners() {
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
       this.WorkflowService.getWorkflow().updateState(data);
+
+      if (!jQuery.isEmptyObject(data.resultEntities)) {
+        super.init(data.resultEntities);
+        super.initListeners(data.resultEntities);
+        this.GraphPanelRendererService.rerender();
+      }
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.knowledge', (event, data) => {
@@ -92,8 +103,6 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('StatusBar.RUN', () => {
-      this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.REPORT_RENDER_MODE);
-      this.GraphPanelRendererService.rerender();
       this.unbindListeners();
       this.isReportMode = true;
       this.isRunning = true;
@@ -108,8 +117,6 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('StatusBar.ABORT', () => {
-      this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
-      this.GraphPanelRendererService.rerender();
       this.initUnbindableListeners();
       this.isReportMode = false;
       this.isRunning = false;

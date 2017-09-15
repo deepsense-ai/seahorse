@@ -1,10 +1,10 @@
 'use strict';
 
 /* @ngInject */
-function ReportsFactory() {
+function ReportsFactory($q, $rootScope) {
   let reportsStorage = new Map();
 
-  let createReportEntities = (reportId, resultEntities) => {
+  let createReportEntities = (reportId, resultEntities, workflow) => {
     for (let reportEntityId in resultEntities) {
       let resultEntity = resultEntities[reportEntityId];
       if (resultEntity.report) {
@@ -22,10 +22,22 @@ function ReportsFactory() {
     return !!getReportEntity(reportEntityId);
   };
 
+  let getReport = reportEntityId => {
+    let deferred = $q.defer();
+
+    try {
+      let reportEntity = getReportEntity(reportEntityId);
+      $rootScope.stateData.dataIsLoaded = true;
+      deferred.resolve(reportEntity.report);
+    } catch (e) {
+      $rootScope.stateData.errorMessage = 'Could not load the report';
+      deferred.reject();
+    }
+    return deferred.promise;
+  };
+
   return {
-    createReportEntities: createReportEntities,
-    getReportEntity: getReportEntity,
-    hasReportEntity: hasReportEntity
+    createReportEntities, getReportEntity, hasReportEntity, getReport
   };
 }
 

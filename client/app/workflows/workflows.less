@@ -1,7 +1,6 @@
 @import "../../css/variables";
 @import "./mixins.less";
 @import "./workflows-editor/workflows-editor.less";
-@import "./workflows-execution-report/workflows-execution-report.less";
 @import "./common-behaviours/common-stick-onscroll.less";
 @import "./common-behaviours/draggable.less";
 @import "./graph-panel/graph-panel.less";
@@ -39,6 +38,21 @@
   display: flex;
   height: 100%;
   clear: both;
+  overflow: hidden;
+  flex-direction: column;
+
+  &__content {
+    display: flex;
+    height: ~"calc(100% - 25px)";
+  }
+}
+
+.c-bottom-tabs {
+  height: 100%;
+  flex: 1 1 100%;
+  background: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid lightgray;
+  overflow-y: scroll;
 }
 
 .c-navigation-bar {

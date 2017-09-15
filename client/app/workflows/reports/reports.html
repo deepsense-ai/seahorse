@@ -1,27 +1,31 @@
-<div class="c-report">
-  <button class="btn btn-info c-report__back-btn" ng-click="report.back()">Back</button>
-  <div ng-if="::report.getTables()" ng-switch="::report.getReportName()">
+<div class="c-report"
+     ng-style="{'height': report.autoHeight ? 'auto' : ''}">
+  <div ng-switch="report.getReportName()">
     <report-dataframe
       ng-switch-when="DataFrame Report"
-      data="::report.getTables()"
-      distributions-types="::report.getDistributionsTypes()">
+      data="report.getTables()"
+      distributions-types="report.getDistributionsTypes()">
     </report-dataframe>
     <report-cross-validate-regressor
       ng-switch-when="Cross-validate Regression Report"
-      data="::report.getTables()">
+      data="report.getTables()">
     </report-cross-validate-regressor>
     <report-evaluate-scoring
       ng-switch-when="Evaluate Regression Report"
-      data="::report.getTables()">
+      data="report.getTables()">
     </report-evaluate-scoring>
     <report-evaluate-classification
       ng-switch-when="Evaluate Classification Report"
-      data="::report.getTables()">
+      data="report.getTables()">
     </report-evaluate-classification>
     <report-default
       ng-switch-default
-      data="::report.getTables()">
+      data="report.getTables()">
     </report-default>
   </div>
-  <button class="btn btn-info c-report__back-btn" ng-click="report.back()">Back</button>
+  <button class="c-report__close close u-flex u-flex--center-center"
+          ng-click="report.close()">
+    <span class="c-report__close-text">Close report</span>
+    <i class="c-report__close-icon fa fa-close"></i>
+  </button>
 </div>
