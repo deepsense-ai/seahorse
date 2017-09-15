@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.choice
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import spray.json.DefaultJsonProtocol.StringJsonFormat
+import spray.json._
 
-import io.deepsense.deeplang.parameters.{ParameterType, Validator}
+import io.deepsense.deeplang.params.Params
 
-case class NumericParam(
-    val name: String,
-    val description: String,
-    val validator: Validator[Double],
-    override val index: Int = 0)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
+abstract class Choice extends Params {
+  val name: String
+  val index: Int = 0
 
-  override val parameterType = ParameterType.Numeric
+  def toJson: JsValue = JsObject("name" -> name.toJson, "schema" -> paramsToJson)
 }

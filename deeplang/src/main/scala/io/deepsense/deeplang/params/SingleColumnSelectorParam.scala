@@ -16,17 +16,21 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import spray.httpx.SprayJsonSupport
+import spray.json.{JsValue, RootJsonFormat, DefaultJsonProtocol}
 
-import io.deepsense.deeplang.parameters.{ParameterType, Validator}
+import io.deepsense.deeplang.parameters.{SingleColumnSelectionProtocol, ParameterType, SingleColumnSelection}
 
-case class NumericParam(
-    val name: String,
-    val description: String,
-    val validator: Validator[Double],
+import SingleColumnSelectionProtocol._
+
+case class SingleColumnSelectorParam(
+    name: String,
+    description: String,
+    portIndex: Int,
     override val index: Int = 0)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
+  extends AbstractColumnSelectorParam[SingleColumnSelection]
+  with SingleColumnSelectionProtocol {
 
-  override val parameterType = ParameterType.Numeric
+  override val parameterType = ParameterType.ColumnSelector
+  override val isSingle = true
 }

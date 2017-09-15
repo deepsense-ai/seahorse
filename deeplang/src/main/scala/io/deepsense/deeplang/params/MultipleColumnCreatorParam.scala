@@ -16,17 +16,15 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import io.deepsense.deeplang.parameters.ParameterType
 
-import io.deepsense.deeplang.parameters.{ParameterType, Validator}
+import spray.json.DefaultJsonProtocol._
 
-case class NumericParam(
-    val name: String,
-    val description: String,
-    val validator: Validator[Double],
+case class MultipleColumnCreatorParam(
+    name: String,
+    description: String,
     override val index: Int = 0)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
+  extends ParamWithJsFormat[Vector[String]] {
 
-  override val parameterType = ParameterType.Numeric
+  val parameterType = ParameterType.MultipleColumnCreator
 }

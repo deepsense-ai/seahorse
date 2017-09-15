@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.exceptions
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import io.deepsense.deeplang.exceptions.DeepLangException
 
-import io.deepsense.deeplang.parameters.{ParameterType, Validator}
-
-case class NumericParam(
-    val name: String,
-    val description: String,
-    val validator: Validator[Double],
-    override val index: Int = 0)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
-
-  override val parameterType = ParameterType.Numeric
-}
+case class NoArgumentConstructorRequiredException(val className: String)
+  extends DeepLangException(className)

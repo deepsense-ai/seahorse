@@ -16,17 +16,23 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import spray.json.{JsString, JsObject, JsBoolean, JsValue}
 
-import io.deepsense.deeplang.parameters.{ParameterType, Validator}
+class BooleanParamSpec extends AbstractParamSpec[Boolean, BooleanParam] {
 
-case class NumericParam(
-    val name: String,
-    val description: String,
-    val validator: Validator[Double],
-    override val index: Int = 0)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
+  override def className: String = "BooleanParam"
 
-  override val parameterType = ParameterType.Numeric
+  override def paramFixture: (BooleanParam, JsValue) = {
+    val param = BooleanParam(
+      name = "Boolean param name",
+      description = "Boolean param description")
+    val json = JsObject(
+      "type" -> JsString("boolean"),
+      "name" -> JsString(param.name),
+      "description" -> JsString(param.description)
+    )
+    (param, json)
+  }
+
+  override def valueFixture: (Boolean, JsValue) = (true, JsBoolean(true))
 }

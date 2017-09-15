@@ -16,17 +16,15 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import spray.json.DefaultJsonProtocol.BooleanJsonFormat
 
-import io.deepsense.deeplang.parameters.{ParameterType, Validator}
+import io.deepsense.deeplang.parameters.ParameterType
 
-case class NumericParam(
+case class BooleanParam(
     val name: String,
     val description: String,
-    val validator: Validator[Double],
     override val index: Int = 0)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
+  extends ParamWithJsFormat[Boolean] {
 
-  override val parameterType = ParameterType.Numeric
+  override val parameterType = ParameterType.Boolean
 }

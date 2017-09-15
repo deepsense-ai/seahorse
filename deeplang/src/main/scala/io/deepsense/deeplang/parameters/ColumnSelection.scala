@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
@@ -68,6 +69,15 @@ object ColumnSelection {
       s"Cannot create column selection with $jsValue: object expected.")
   }
 }
+
+trait ColumnSelectionJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit object ColumnSelectionFormat extends RootJsonFormat[ColumnSelection] {
+    def write(selection: ColumnSelection): JsValue = selection.toJson
+    def read(value: JsValue): ColumnSelection = ColumnSelection.fromJson(value)
+  }
+}
+
+object ColumnSelectionJsonProtocol extends ColumnSelectionJsonProtocol
 
 /**
  * Represents selecting subset of columns which have one of given names.

@@ -16,10 +16,13 @@
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.DefaultJsonProtocol._
+import spray.httpx.SprayJsonSupport
+import spray.json.DefaultJsonProtocol.{IntJsonFormat, StringJsonFormat}
 import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
+
+import ColumnSelectionJsonProtocol._
 
 /**
  * Represents selecting one of variety of options.
@@ -72,6 +75,15 @@ object SingleColumnSelection {
         s"object expected.")
   }
 }
+
+trait SingleColumnSelectionProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit object SingleColumnSelectionFormat extends RootJsonFormat[SingleColumnSelection] {
+    def write(selection: SingleColumnSelection): JsValue = selection.toJson
+    def read(value: JsValue): SingleColumnSelection = SingleColumnSelection.fromJson(value)
+  }
+}
+
+object SingleColumnSelectionProtocol extends SingleColumnSelectionProtocol
 
 /**
  * Points to column of dataframe with given index.
@@ -141,3 +153,15 @@ object MultipleColumnSelection {
       s"from $jsValue.")
   }
 }
+
+trait MultipleColumnSelectionProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  val multipleColumnSelectionJsonFormat = jsonFormat2(MultipleColumnSelection.apply)
+  implicit object MultipleColumnSelectionFormat extends RootJsonFormat[MultipleColumnSelection] {
+    def write(selection: MultipleColumnSelection): JsValue =
+      multipleColumnSelectionJsonFormat.write(selection)
+    def read(value: JsValue): MultipleColumnSelection =
+      MultipleColumnSelection.fromJson(value)
+  }
+}
+
+object MultipleColumnSelectionProtocol extends MultipleColumnSelectionProtocol

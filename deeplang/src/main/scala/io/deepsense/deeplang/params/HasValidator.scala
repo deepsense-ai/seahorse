@@ -16,17 +16,17 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
+import spray.json.JsValue
 
-import io.deepsense.deeplang.parameters.{ParameterType, Validator}
+import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.parameters.Validator
 
-case class NumericParam(
-    val name: String,
-    val description: String,
-    val validator: Validator[Double],
-    override val index: Int = 0)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
+trait HasValidator[T] extends Param[T] {
 
-  override val parameterType = ParameterType.Numeric
+  val validator: Validator[T]
+
+  override def validate(value: T): Vector[DeepLangException] = validator.validate(value)
+
+  override protected def extraJsFields: Map[String, JsValue] =
+    super.extraJsFields ++ Map("validator" -> validator.toJson)
 }
