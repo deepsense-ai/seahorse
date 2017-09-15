@@ -4,6 +4,7 @@
 
 package io.deepsense.workflowmanager.rest
 
+import scala.collection.immutable.ListMap
 import scala.concurrent._
 
 import org.mockito.Mockito._
@@ -57,7 +58,7 @@ class OperationsApiSpec
   when(dOperationsCatalog.operations) thenReturn operationsMapMock
   val operationsResponse = Map("operations" -> operationsMapMock)
 
-  val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), Map.empty, Set.empty)
+  val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), ListMap.empty, List.empty)
   when(dOperationsCatalog.categoryTree) thenReturn categoryTreeMock
 
   override def createRestComponent(tokenTranslator: TokenTranslator): Route = {
