@@ -7,7 +7,7 @@
       catalog-collection="::workflow.catalog"
       custom-scroll-bar
       toggle
-      toggle-init="!workflow.isRunning"
+      toggle-init="workflow.WorkflowService.getCurrentWorkflow().workflowStatus === 'editor'"
       toggle-on="WorkflowEditor.EDITOR_MODE_SET"
       toggle-off="WorkflowEditor.RUNNING_MODE_SET"
       toggle-animate-in="animated fadeOutLeft o-panel--absolute"
@@ -17,13 +17,13 @@
     <flow-chart-box
       workflow="workflow.getWorkflow()"
       selected-node="workflow.getSelectedNode()"
-      is-running="workflow.isRunning"
+      is-running="workflow.WorkflowService.getCurrentWorkflow().workflowStatus !== 'editor'"
       zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
     <deepsense-operation-attributes
       workflow="workflow.WorkflowService.getCurrentWorkflow().id"
       public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
-      is-inner-workflow="workflow.WorkflowService.getCurrentWorkflow().workflowType == 'inner'"
+      is-inner-workflow="workflow.WorkflowService.getCurrentWorkflow().workflowType === 'inner'"
       node="workflow.getSelectedNode()"
       ng-if="workflow.getSelectedNode()"
       disabled-mode="workflow.isReportMode"

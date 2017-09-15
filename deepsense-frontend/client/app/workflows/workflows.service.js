@@ -38,7 +38,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
     initRootWorkflow(workflowData) {
       let workflow = this._deserializeWorkflow(workflowData);
       workflow.workflowType = 'root';
-      workflow.isRunning = false;
+      workflow.workflowStatus = 'editor';
 
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
@@ -54,10 +54,12 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       this._workflowsStack.push(workflow);
     }
 
+    // TODO Add enums for workflowType, workflowStatus
     initInnerWorkflow(node) {
       let innerWorkflowData = node.parametersValues[INNER_WORKFLOW_PARAM_NAME];
       let innerWorkflow = this._deserializeInnerWorkflow(innerWorkflowData);
       innerWorkflow.workflowType = 'inner';
+      innerWorkflow.workflowStatus = 'editor';
       innerWorkflow.publicParams = innerWorkflow.publicParams || [];
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
 

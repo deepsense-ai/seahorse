@@ -12,7 +12,8 @@ function MenuItem() {
       callFunction: '&',
       href: '@',
       target: '@',
-      color: '@'
+      color: '@',
+      additionalClass: '@'
     },
     controller: 'MenuItemController as miCtrl',
     bindToController: true

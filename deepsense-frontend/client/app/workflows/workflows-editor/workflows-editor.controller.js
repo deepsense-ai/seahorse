@@ -146,6 +146,7 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('StatusBar.ABORT', () => {
+      this.WorkflowService.getCurrentWorkflow().workflowStatus = 'aborting';
       this.ServerCommunication.sendAbortToWorkflowExchange();
     });
 
@@ -267,9 +268,8 @@ class WorkflowsEditorController {
   _setRunningMode() {
     this._unbindEditorListeners();
     this.isReportMode = true;
-    this.WorkflowService.getCurrentWorkflow().isRunning = true;
+    this.WorkflowService.getCurrentWorkflow().workflowStatus = 'running';
     this.CopyPasteService.setEnabled(false);
-    this.isRunning = true;
     // This event and WorkflowEditor.EDITOR_MODE_SET are used here ONLY for toggle directive, because its
     // driven by events. toggle directive should probably accept boolean argument. In that case we would
     // simply pass isRunning property there and would get rid of those two events.
@@ -279,9 +279,8 @@ class WorkflowsEditorController {
   _setEditableMode() {
     this._reinitEditableModeListeners();
     this.isReportMode = false;
-    this.WorkflowService.getCurrentWorkflow().isRunning = false;
+    this.WorkflowService.getCurrentWorkflow().workflowStatus = 'editor';
     this.CopyPasteService.setEnabled(true);
-    this.isRunning = false;
     this.$rootScope.$broadcast('WorkflowEditor.EDITOR_MODE_SET');
   }
 

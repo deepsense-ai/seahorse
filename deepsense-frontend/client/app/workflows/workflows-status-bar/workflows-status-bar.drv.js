@@ -8,7 +8,7 @@ function WorkflowEditorStatusBar() {
     replace: true,
     scope: {
       workflowType: '=',
-      isRunning: '='
+      workflowStatus: '='
     },
     controllerAs: 'controller',
     controller: 'WorkflowStatusBarController'

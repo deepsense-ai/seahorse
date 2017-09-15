@@ -237,7 +237,7 @@ gulp.task('browserify:external', function () {
 
 gulp.task('build', function (callback) {
   runSequence(
-    'clean', 'style', 'copy:fonts',
+    'clean', 'copy:fonts',
     [
       'fonts', 'images', 'html:index', 'html:partials', 'config', 'copy:images', 'copy:scripts', 'favicon', 'assets', 'less',
       'libs:css'
