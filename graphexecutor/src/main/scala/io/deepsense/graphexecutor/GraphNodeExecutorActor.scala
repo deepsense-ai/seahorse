@@ -14,7 +14,7 @@ import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
 import io.deepsense.graphexecutor.GraphExecutorActor.Results
-import io.deepsense.models.entities.{DataObjectReference, Entity, EntityCreate}
+import io.deepsense.models.entities.{DataObjectReference, Entity, CreateEntityRequest}
 import io.deepsense.models.experiments.Experiment
 
 /**
@@ -114,7 +114,7 @@ class GraphNodeExecutorActor(
   private def storeAndRegister(dOperable: DOperable): Entity.Id = {
     logger.debug("storeAndRegister started for {}", nodeDescription)
 
-    val inputEntity = EntityCreate(
+    val inputEntity = CreateEntityRequest(
       tenantId = experiment.tenantId,
       name = dOperable.getClass.toString,
       description = s"Output from Operation: $nodeDescription",

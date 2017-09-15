@@ -16,7 +16,7 @@ import io.deepsense.commons.rest.RestServer
 import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.storage.EntityDao
-import io.deepsense.models.entities.Entity
+import io.deepsense.models.entities.{EntityInfo, Entity}
 
 class EntityStorageClientIntegSpec
   extends StandardSpec
@@ -49,13 +49,13 @@ class EntityStorageClientIntegSpec
 
   "EntityStorageClient.createEntity(...)" should {
     "create an entity" in {
-      val inputEntity = testEntityCreate()
+      val inputEntity = testCreateEntityRequest()
       val eventualEntityId = client.createEntity(inputEntity)
       whenReady(eventualEntityId) { entityId =>
         whenReady(entityDao.getWithReport(inputEntity.tenantId, entityId)) { maybeEntity =>
           val entity = maybeEntity.get
           entity.info should have(
-            'id (entityId),
+            'entityId (entityId),
             'tenantId (inputEntity.tenantId),
             'name (inputEntity.name),
             'description (inputEntity.description),
@@ -75,14 +75,14 @@ class EntityStorageClientIntegSpec
   }
   "EntityStorageClient.getEntityData()" should {
     "return an entity if it exists" in {
-      val existingEntity = testEntityCreate()
+      val existingEntity = testCreateEntityRequest()
       val id = Entity.Id.randomId
       val created = DateTimeConverter.now
       whenReady(entityDao.create(id, existingEntity, created)) { _ =>
         whenReady(client.getEntityData(
           existingEntity.tenantId, id)) { maybeEntity =>
             val entity = maybeEntity.get
-            entity.info shouldBe existingEntity.toEntityInfo(id, created, created)
+            entity.info shouldBe EntityInfo(existingEntity, id, created, created)
             entity.dataReference shouldBe existingEntity.dataReference.get
         }
       }

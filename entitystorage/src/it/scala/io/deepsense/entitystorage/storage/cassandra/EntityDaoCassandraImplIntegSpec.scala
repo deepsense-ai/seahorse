@@ -47,9 +47,9 @@ class EntityDaoCassandraImplIntegSpec
     testEntityInfo(tenantId, 14),
     testEntityInfo(tenantId + "otherTenant"))
   val entityCreates = List(
-    EntityCreate(entityInfos(0), Some(dataObjectReference), dataObjectReport),
-    EntityCreate(entityInfos(1), None, dataObjectReport),
-    EntityCreate(entityInfos(2), None, dataObjectReport))
+    CreateEntityRequest(entityInfos(0), Some(dataObjectReference), dataObjectReport),
+    CreateEntityRequest(entityInfos(1), None, dataObjectReport),
+    CreateEntityRequest(entityInfos(2), None, dataObjectReport))
 
   val inDb = entityInfos.zip(entityCreates)
 
@@ -63,18 +63,18 @@ class EntityDaoCassandraImplIntegSpec
       val tenantId = "save_get_tenantId"
       "has a report" in {
         val entity = testEntityWithReport(tenantId, 0, dataObjectReport)
-        val entityCreate = EntityCreate(entity)
-        whenReady(entityDao.create(entity.info.id, entityCreate, entity.info.created)) { _ =>
-          whenReady(entityDao.getWithReport(tenantId, entity.info.id)) { getEntity =>
+        val entityCreate = CreateEntityRequest(entity)
+        whenReady(entityDao.create(entity.info.entityId, entityCreate, entity.info.created)) { _ =>
+          whenReady(entityDao.getWithReport(tenantId, entity.info.entityId)) { getEntity =>
             getEntity shouldBe Some(entity)
           }
         }
       }
       "has data" in {
         val entity = testEntityWithData(tenantId, 0, dataObjectReference)
-        val entityCreate = EntityCreate(entity.info, Some(entity.dataReference), dataObjectReport)
-        whenReady(entityDao.create(entity.info.id, entityCreate, entity.info.created)) { _ =>
-          whenReady(entityDao.getWithData(tenantId, entity.info.id)) { getEntity =>
+        val entityCreate = CreateEntityRequest(entity.info, Some(entity.dataReference), dataObjectReport)
+        whenReady(entityDao.create(entity.info.entityId, entityCreate, entity.info.created)) { _ =>
+          whenReady(entityDao.getWithData(tenantId, entity.info.entityId)) { getEntity =>
             getEntity shouldBe Some(entity)
           }
         }
@@ -82,16 +82,16 @@ class EntityDaoCassandraImplIntegSpec
     }
     "update an entity" in withStoredEntities(inDb) {
       val (info, create) = inDb(1)
-      val modifiedEntity = modifyEntity(EntityUpdate(create))
+      val modifiedEntity = modifyEntity(UpdateEntityRequest(create))
       val now = DateTimeConverter.now
-      whenReady(entityDao.update(info.tenantId, info.id, modifiedEntity, now)) { _ =>
-        whenReady(entityDao.getWithReport(tenantId, info.id)) { getEntity =>
-          EntityUpdate(getEntity.get) shouldBe modifiedEntity
+      whenReady(entityDao.update(info.tenantId, info.entityId, modifiedEntity, now)) { _ =>
+        whenReady(entityDao.getWithReport(tenantId, info.entityId)) { getEntity =>
+          UpdateEntityRequest(getEntity.get) shouldBe modifiedEntity
         }
       }
     }
     "delete an entity" in {
-      val idToDelete = entityInfos(1).id
+      val idToDelete = entityInfos(1).entityId
       whenReady(entityDao.delete(tenantId, idToDelete)) { _ =>
         whenReady(entityDao.getWithReport(tenantId, idToDelete)) { getEntity =>
           getEntity shouldBe None
@@ -101,9 +101,9 @@ class EntityDaoCassandraImplIntegSpec
   }
 
   private def withStoredEntities(
-      storedEntities: List[(EntityInfo, EntityCreate)])(testCode: => Any): Unit = {
+      storedEntities: List[(EntityInfo, CreateEntityRequest)])(testCode: => Any): Unit = {
     val s = Future.sequence(storedEntities.map {
-      case (info, entity) => entityDao.create(info.id, entity, info.created)
+      case (info, entity) => entityDao.create(info.entityId, entity, info.created)
     })
     Await.ready(s, operationDuration)
     try {

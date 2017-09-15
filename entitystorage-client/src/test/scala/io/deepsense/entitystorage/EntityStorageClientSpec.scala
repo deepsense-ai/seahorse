@@ -10,7 +10,7 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.models.entities.{EntityWithData, EntityCreate, Entity}
+import io.deepsense.models.entities.{EntityWithData, CreateEntityRequest, Entity}
 import io.deepsense.models.protocols.EntitiesApiActorProtocol.{Create, Get}
 
 // FIXME Extract the traits into a single trait
@@ -55,7 +55,7 @@ class EntityStorageClientSpec(actorSystem: ActorSystem)
     import scala.concurrent.duration._
     implicit val timeout = 5.seconds
 
-    val entityToCreate = mock[EntityCreate]
+    val entityToCreate = mock[CreateEntityRequest]
     val createdId = mock[Entity.Id]
     val entityF = client.createEntity(entityToCreate)
 

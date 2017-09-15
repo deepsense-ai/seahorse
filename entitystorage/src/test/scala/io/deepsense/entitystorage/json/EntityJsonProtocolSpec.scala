@@ -40,28 +40,28 @@ class EntityJsonProtocolSpec
   }
 
   "EntityUpdate" should "be correctly serialized to Json" in {
-    val entityUpdate = testEntityUpdate()
+    val entityUpdate = testUpdateEntityRequest()
     entityUpdate.toJson shouldBe jsonEntityUpdate(entityUpdate)
   }
 
   it should "be correctly deserialized from Json" in {
-    val entityUpdate = testEntityUpdate()
+    val entityUpdate = testUpdateEntityRequest()
     val json = jsonEntityUpdate(entityUpdate)
-    json.convertTo[EntityUpdate] shouldBe entityUpdate
+    json.convertTo[UpdateEntityRequest] shouldBe entityUpdate
   }
 
   private def jsonEntity(entity: EntityWithReport): JsObject = JsObject(entityMap(entity))
 
   private def jsonEntityInfo(entity: EntityInfo): JsObject = JsObject(entityInfoMap(entity))
 
-  private def jsonEntityUpdate(entity: EntityUpdate): JsObject =
+  private def jsonEntityUpdate(entity: UpdateEntityRequest): JsObject =
     JsObject(entityUpdateMap(entity))
 
   private def entityMap(entity: EntityWithReport): Map[String, JsValue] =
     Map("info" -> jsonEntityInfo(entity.info), "report" -> jsonReport(entity.report))
 
   private def entityInfoMap(entityInfo: EntityInfo): Map[String, JsValue] = Map(
-    "id" -> JsString(entityInfo.id.value.toString),
+    "entityId" -> JsString(entityInfo.entityId.value.toString),
     "name" -> JsString(entityInfo.name),
     "description" -> JsString(entityInfo.description),
     "saved" -> JsBoolean(entityInfo.saved),
@@ -70,7 +70,7 @@ class EntityJsonProtocolSpec
     "created" -> JsString(DateTimeConverter.toString(entityInfo.created)),
     "updated" -> JsString(DateTimeConverter.toString(entityInfo.updated)))
 
-  private def entityUpdateMap(entityUpdate: EntityUpdate): Map[String, JsValue] = Map(
+  private def entityUpdateMap(entityUpdate: UpdateEntityRequest): Map[String, JsValue] = Map(
     "name" -> JsString(entityUpdate.name),
     "description" -> JsString(entityUpdate.description),
     "saved" -> JsBoolean(entityUpdate.saved))

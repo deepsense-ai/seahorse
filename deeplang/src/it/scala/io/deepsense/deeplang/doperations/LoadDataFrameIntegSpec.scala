@@ -16,7 +16,7 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, ExecutionContext}
-import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity, EntityCreate}
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity, CreateEntityRequest}
 
 class LoadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
@@ -52,7 +52,7 @@ class LoadDataFrameIntegSpec
   def registerDataFrame(context: ExecutionContext): Entity.Id = {
     import scala.concurrent.duration._
     implicit val timeout = 5.seconds
-    val future = context.entityStorageClient.createEntity(EntityCreate(
+    val future = context.entityStorageClient.createEntity(CreateEntityRequest(
       context.tenantId,
       "testEntity name",
       "testEntity description",

@@ -33,19 +33,20 @@ trait EntityTestFactory extends DataObjectTestFactory {
       indexedValue(testDescription, index), testDClass, now, now)
   }
 
-  def testEntityCreate(
+  def testCreateEntityRequest(
       tenantId: String = testTenantId,
       index: Int = 0,
       data: Option[DataObjectReference] = Some(testDataObjectReference),
-      report: DataObjectReport = testDataObjectReport): EntityCreate =
-    EntityCreate(info = testEntityInfo(tenantId, index), data, report)
+      report: DataObjectReport = testDataObjectReport): CreateEntityRequest =
+    CreateEntityRequest(info = testEntityInfo(tenantId, index), data, report)
 
-  def testEntityUpdate(): EntityUpdate = EntityUpdate(testEntityCreate())
+  def testUpdateEntityRequest(): UpdateEntityRequest =
+    UpdateEntityRequest(testCreateEntityRequest())
 
   private def indexedValue(value: String, index: Int): String =
     if (index == 0) value else s"${value}_$index"
 
-  def modifyEntity(entity: EntityUpdate): EntityUpdate = {
+  def modifyEntity(entity: UpdateEntityRequest): UpdateEntityRequest = {
     val s = "_modified"
     entity.copy(
       name = entity.name + s,

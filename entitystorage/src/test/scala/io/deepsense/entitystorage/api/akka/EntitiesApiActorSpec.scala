@@ -40,8 +40,8 @@ class EntitiesApiActorSpec
   val tenantId = "tenantId"
   val notExistingEntityId = Entity.Id.randomId
   val entity = testEntityWithData()
-  val inputEntity = testEntityCreate()
-  val existingEntityId = entity.info.id
+  val inputEntity = testCreateEntityRequest()
+  val existingEntityId = entity.info.entityId
 
   "EntityApiActor" should "send entity if exists" in {
     testProbe.send(actorRef, Get(tenantId, existingEntityId))
@@ -59,7 +59,7 @@ class EntitiesApiActorSpec
     testProbe.send(actorRef, Create(inputEntity))
 
     verify(entityService, times(1)).createEntity(inputEntity)
-    testProbe.expectMsgType[Entity.Id] shouldBe entity.info.id
+    testProbe.expectMsgType[Entity.Id] shouldBe entity.info.entityId
   }
 
   override def beforeAll(): Unit = {
@@ -79,7 +79,8 @@ class EntitiesApiActorSpec
       .thenReturn(Future.successful(None))
     when(entityService.getEntityData(tenantId, existingEntityId))
       .thenReturn(Future.successful(Some(entity)))
-    when(entityService.createEntity(inputEntity)).thenReturn(Future.successful(entity.info.id))
+    when(entityService.createEntity(inputEntity))
+      .thenReturn(Future.successful(entity.info.entityId))
     entityService
   }
 }

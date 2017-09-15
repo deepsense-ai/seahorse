@@ -60,7 +60,7 @@ class SaveLoadDataFrameIntegSpec
     val entities =
       context.entityStorageClient.asInstanceOf[EntityStorageClientTestInMemoryImpl].getAllEntities
     assert(entities.length == 1, "For this test one entity should be created.")
-    entities.head.info.id.toString
+    entities.head.info.entityId.toString
   }
 
   private def loadDataFrame(context: ExecutionContext, entityId: String): DataFrame = {

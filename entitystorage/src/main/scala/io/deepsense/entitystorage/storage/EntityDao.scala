@@ -18,9 +18,13 @@ trait EntityDao {
 
   def getAll(tenantId: String): Future[List[EntityInfo]]
 
-  def create(id: Entity.Id, entity: EntityCreate, created: DateTime): Future[Unit]
+  def create(id: Entity.Id, entity: CreateEntityRequest, created: DateTime): Future[Unit]
 
-  def update(tenantId: String, id: Entity.Id, entity: EntityUpdate, updated: DateTime): Future[Unit]
+  def update(
+      tenantId: String,
+      id: Entity.Id,
+      entity: UpdateEntityRequest,
+      updated: DateTime): Future[Unit]
 
   def delete(tenantId: String, id: Entity.Id): Future[Unit]
 }

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 package io.deepsense.experimentmanager.rest.json
 
 import io.deepsense.deeplang.DOperable.AbstractMetadata

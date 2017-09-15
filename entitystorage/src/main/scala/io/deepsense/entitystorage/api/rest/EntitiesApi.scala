@@ -20,7 +20,7 @@ import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.entitystorage.exceptions.EntityNotFoundException
 import io.deepsense.entitystorage.json.EntityJsonProtocol
 import io.deepsense.entitystorage.services.EntityService
-import io.deepsense.models.entities.{Entity, EntityUpdate}
+import io.deepsense.models.entities.{Entity, UpdateEntityRequest}
 
 class EntitiesApi @Inject() (
     val tokenTranslator: TokenTranslator,
@@ -58,7 +58,7 @@ class EntitiesApi @Inject() (
           val entityId: Entity.Id = idParameter
           put {
             withUserContext { userContext =>
-              entity(as[EntityUpdate]) { entityUpdate =>
+              entity(as[UpdateEntityRequest]) { entityUpdate =>
                 complete(
                   authorizatorProvider.forContext(userContext).withRole(roleUpdate) {
                     userContext =>
@@ -87,7 +87,9 @@ class EntitiesApi @Inject() (
             withUserContext { userContext =>
               complete(
                 authorizatorProvider.forContext(userContext).withRole(roleGet) { userContext =>
-                  entityService.getAll(userContext.tenantId).map { list => Map("entities" -> list) }
+                  entityService.getAll(userContext.tenantId).map {
+                    entities => Map("entities" -> entities)
+                  }
                 }
               )
             }

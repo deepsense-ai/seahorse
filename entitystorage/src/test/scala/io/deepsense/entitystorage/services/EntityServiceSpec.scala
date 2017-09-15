@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 import org.joda.time.{DateTime, DateTimeComparator}
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, isNotNull, eq => mockEq}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.concurrent.ScalaFutures
@@ -17,7 +17,7 @@ import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.storage.EntityDao
-import io.deepsense.models.entities.{EntityInfo, EntityCreate, Entity, EntityUpdate}
+import io.deepsense.models.entities.{Entity, UpdateEntityRequest}
 
 class EntityServiceSpec
   extends FlatSpec
@@ -38,12 +38,12 @@ class EntityServiceSpec
   before {
     Mockito.reset(entityDao)
 
-    when(entityDao.getWithReport(entityWithReport.info.tenantId, entityWithReport.info.id))
+    when(entityDao.getWithReport(entityWithReport.info.tenantId, entityWithReport.info.entityId))
       .thenReturn(Future.successful(Some(entityWithReport)))
     when(entityDao.getWithReport(entityWithReport.info.tenantId, nonExistingEntityId))
       .thenReturn(Future.successful(None))
 
-    when(entityDao.getWithData(entityWithData.info.tenantId, entityWithData.info.id))
+    when(entityDao.getWithData(entityWithData.info.tenantId, entityWithData.info.entityId))
       .thenReturn(Future.successful(Some(entityWithData)))
     when(entityDao.getWithData(entityWithData.info.tenantId, nonExistingEntityId))
       .thenReturn(Future.successful(None))
@@ -58,21 +58,16 @@ class EntityServiceSpec
   }
 
   "EntityService" should "set id and create time and create entity using Dao" in {
-    val createdEntity = testEntityCreate()
+    val createdEntity = testCreateEntityRequest()
     whenReady(entityService.createEntity(createdEntity)) { id =>
-      val idCaptor = ArgumentCaptor.forClass(classOf[Entity.Id])
-      val entityCaptor = ArgumentCaptor.forClass(classOf[EntityCreate])
-      val createdCaptor = ArgumentCaptor.forClass(classOf[DateTime])
-      verify(entityDao).create(idCaptor.capture(), entityCaptor.capture(), createdCaptor.capture())
-      idCaptor.getValue shouldBe id
-      createdCaptor.getValue should not be null
-      entityCaptor.getValue shouldBe createdEntity
+      verify(entityDao).create(mockEq(id), mockEq(createdEntity), isNotNull(classOf[DateTime]))
     }
+    ()
   }
 
   it should "return entity with report" in {
     whenReady(entityService.getEntityReport(
-        entityWithReport.info.tenantId, entityWithReport.info.id)) {
+        entityWithReport.info.tenantId, entityWithReport.info.entityId)) {
       retrievedEntity => retrievedEntity shouldBe Some(entityWithReport)
     }
   }
@@ -86,7 +81,7 @@ class EntityServiceSpec
 
   it should "return entity with data" in {
     whenReady(entityService.getEntityData(
-        entityWithData.info.tenantId, entityWithData.info.id)) {
+        entityWithData.info.tenantId, entityWithData.info.entityId)) {
       retrievedEntity => retrievedEntity shouldBe Some(entityWithData)
     }
   }
@@ -107,35 +102,31 @@ class EntityServiceSpec
       }
     }
 
-    val entityToUpdate = EntityUpdate(entityWithReport)
+    val entityToUpdate = UpdateEntityRequest(entityWithReport)
     val updatedEntity = modifyEntity(entityToUpdate)
 
-    val tenantIdCaptor = ArgumentCaptor.forClass(classOf[String])
-    val idCaptor = ArgumentCaptor.forClass(classOf[Entity.Id])
-    val entityCaptor = ArgumentCaptor.forClass(classOf[EntityUpdate])
     val updatedCaptor = ArgumentCaptor.forClass(classOf[DateTime])
 
     whenReady(entityService.updateEntity(
-        entityWithReport.info.tenantId, entityWithReport.info.id, updatedEntity)) {
+        entityWithReport.info.tenantId, entityWithReport.info.entityId, updatedEntity)) {
       retrievedEntityOption =>
         val retrievedEntity = retrievedEntityOption.get
         retrievedEntity shouldBe entityWithReport
-        // that's what returned by dao on getEntityWithReport
+        // that's what's returned by dao on getEntityWithReport
 
         verify(entityDao).update(
-          tenantIdCaptor.capture(), idCaptor.capture(),
-          entityCaptor.capture(), updatedCaptor.capture())
+          mockEq(entityWithReport.info.tenantId),
+          mockEq(entityWithReport.info.entityId),
+          mockEq(updatedEntity),
+          updatedCaptor.capture())
 
-        tenantIdCaptor.getValue shouldBe entityWithReport.info.tenantId
-        idCaptor.getValue shouldBe entityWithReport.info.id
-        entityCaptor.getValue shouldBe updatedEntity
         updatedCaptor.getValue should be > entity.info.updated
     }
     ()
   }
 
   it should "return None when asked for updating non-existing entity" in {
-    val updatedEntity = EntityUpdate(entityWithReport)
+    val updatedEntity = UpdateEntityRequest(entityWithReport)
     whenReady(entityService.updateEntity(
         entity.info.tenantId, nonExistingEntityId, updatedEntity)) {
       retrievedEntity => retrievedEntity shouldBe None
@@ -149,8 +140,8 @@ class EntityServiceSpec
   }
 
   it should "delete entity" in {
-    whenReady(entityService.deleteEntity(entity.info.tenantId, entity.info.id)) { _ =>
-        verify(entityDao).delete(entity.info.tenantId, entity.info.id)
+    whenReady(entityService.deleteEntity(entity.info.tenantId, entity.info.entityId)) { _ =>
+        verify(entityDao).delete(entity.info.tenantId, entity.info.entityId)
       ()
     }
   }

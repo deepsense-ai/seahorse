@@ -30,7 +30,7 @@ object EntityRowMapper {
   lazy val EntityWithReportFields: Seq[String] = EntityInfoFields :+ Report
 
   def toEntityInfo(row: Row): EntityInfo = EntityInfo(
-    id = Entity.Id(row.getUUID(Id)),
+    entityId = Entity.Id(row.getUUID(Id)),
     tenantId = row.getString(TenantId),
     name = row.getString(Name),
     description = row.getString(Description),

@@ -9,14 +9,14 @@ import com.google.inject.{AbstractModule, Provides, Singleton}
 import org.joda.time.DateTime
 
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory, EntityStorageClientTestInMemoryImpl}
-import io.deepsense.models.entities.{EntityCreate, DataObjectReference, DataObjectReport, Entity}
+import io.deepsense.models.entities._
 
 class GraphExecutorTestModule extends AbstractModule {
   override def configure(): Unit = {
   }
 
   class EntityStorageClientFactoryMock(
-      initialState: Map[(String, Entity.Id), EntityCreate] = Map())
+      initialState: Map[(String, Entity.Id), Entity] = Map())
     extends EntityStorageClientFactory {
 
     override def create(
@@ -77,14 +77,18 @@ object SimpleGraphExecutionIntegSuiteEntities {
   val entityId = Entity.Id.fromString("87cced7a-2c47-4210-9243-245284f74d72")
   val dataFrameLocation = GraphExecutorTest.TestDir + "/" + entityId
 
-  val entity = EntityCreate(
-    entityTenantId,
-    "testEntity name",
-    "testEntity description",
-    "DataFrame",
+  val entity = Entity(
+    EntityInfo(
+      entityId,
+      entityTenantId,
+      "testEntity name",
+      "testEntity description",
+      "DataFrame",
+      DateTime.now,
+      DateTime.now,
+      saved = true),
     Some(DataObjectReference(dataFrameLocation)),
-    DataObjectReport("testEntity Report"),
-    saved = true)
+    DataObjectReport("testEntity Report"))
 }
 
 object BikesIntegSuiteEntities {
@@ -95,24 +99,32 @@ object BikesIntegSuiteEntities {
   val demandId: Entity.Id = Entity.Id.fromString("52df8588-b192-4446-a418-2c95f8a94d85")
   val demandLocation = GraphExecutorTest.TestDir + "/" + demandId
 
-  val demand = EntityCreate(
-    bikesTenantId,
-    "demandEntity name",
-    "demandEntity description",
-    "DataFrame",
+  val demand = Entity(
+    EntityInfo(
+      demandId,
+      bikesTenantId,
+      "demandEntity name",
+      "demandEntity description",
+      "DataFrame",
+      DateTime.now,
+      DateTime.now,
+      saved = true),
     Some(DataObjectReference(demandLocation)),
-    DataObjectReport("demandEntity Report"),
-    saved = true)
+    DataObjectReport("demandEntity Report"))
 
   val weatherId: Entity.Id = Entity.Id.fromString("7ff0e089-8059-491c-9a7e-557349633312")
   val weatherLocation = GraphExecutorTest.TestDir + "/" + weatherId
 
-  val weather = EntityCreate(
-    bikesTenantId,
-    "weatherEntity name",
-    "weatherEntity description",
-    "DataFrame",
+  val weather = Entity(
+    EntityInfo(
+      weatherId,
+      bikesTenantId,
+      "weatherEntity name",
+      "weatherEntity description",
+      "DataFrame",
+      DateTime.now,
+      DateTime.now,
+      saved = true),
     Some(DataObjectReference(weatherLocation)),
-    DataObjectReport("weatherEntity Report"),
-    saved = true)
+    DataObjectReport("weatherEntity Report"))
 }

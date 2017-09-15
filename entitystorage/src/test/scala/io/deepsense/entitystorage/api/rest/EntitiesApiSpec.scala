@@ -41,10 +41,10 @@ class EntitiesApiSpec
     testEntityWithReport(correctTenantA, 2))
 
   val addedEntity = entities.head
-  val addedEntityUpdate = EntityUpdate(addedEntity)
+  val addedEntityUpdate = UpdateEntityRequest(addedEntity)
 
   val notAddedEntity = testEntityWithReport(correctTenantA, 3)
-  val notAddedEntityUpdate = EntityUpdate(notAddedEntity)
+  val notAddedEntityUpdate = UpdateEntityRequest(notAddedEntity)
 
   val entityService = createMockEntityService
 
@@ -63,7 +63,7 @@ class EntitiesApiSpec
 
   "GET /entities/:id/report" should {
     "return entities" in {
-      Get(s"/$apiPrefix/${addedEntity.info.id}/report") ~>
+      Get(s"/$apiPrefix/${addedEntity.info.entityId}/report") ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
 
@@ -76,7 +76,7 @@ class EntitiesApiSpec
     }
     "return NotFound" when {
       "entity does not exists" in {
-        Get(s"/$apiPrefix/${notAddedEntity.info.id}/report") ~>
+        Get(s"/$apiPrefix/${notAddedEntity.info.entityId}/report") ~>
           addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -88,7 +88,7 @@ class EntitiesApiSpec
   "PUT /entities/:id" should {
     "return NotFound" when {
       "entity does not exists" in {
-        Put(s"/$apiPrefix/${notAddedEntity.info.id}", notAddedEntityUpdate) ~>
+        Put(s"/$apiPrefix/${notAddedEntity.info.entityId}", notAddedEntityUpdate) ~>
           addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -96,11 +96,12 @@ class EntitiesApiSpec
       }
     }
     "update entity and return it's report" in {
-      Put(s"/$apiPrefix/${addedEntity.info.id}", addedEntityUpdate) ~>
+      Put(s"/$apiPrefix/${addedEntity.info.entityId}", addedEntityUpdate) ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
         responseAs[Map[String, EntityWithReport]] shouldBe Map("entity" -> addedEntity)
-        verify(entityService).updateEntity(correctTenantA, addedEntity.info.id, addedEntityUpdate)
+        verify(entityService).updateEntity(
+          correctTenantA, addedEntity.info.entityId, addedEntityUpdate)
       }
       ()
     }
@@ -108,10 +109,10 @@ class EntitiesApiSpec
 
   "DELETE /entities/:id" should {
     "return Status OK and delete entity" in {
-      Delete(s"/$apiPrefix/${addedEntity.info.id}") ~>
+      Delete(s"/$apiPrefix/${addedEntity.info.entityId}") ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
-        verify(entityService).deleteEntity(correctTenantA, addedEntity.info.id)
+        verify(entityService).deleteEntity(correctTenantA, addedEntity.info.entityId)
       }
       ()
     }
@@ -142,7 +143,7 @@ class EntitiesApiSpec
       new Answer[Future[Option[EntityWithReport]]] {
         override def answer(
             invocationOnMock: InvocationOnMock): Future[Option[EntityWithReport]] = {
-          val entity = invocationOnMock.getArgumentAt(2, classOf[EntityUpdate])
+          val entity = invocationOnMock.getArgumentAt(2, classOf[UpdateEntityRequest])
           val result = if (entity == notAddedEntityUpdate) None else Some(addedEntity)
           Future.successful(result)
         }
@@ -152,7 +153,7 @@ class EntitiesApiSpec
         override def answer(
             invocationOnMock: InvocationOnMock): Future[Option[EntityWithReport]] = {
           val entityId = invocationOnMock.getArgumentAt(1, classOf[Entity.Id])
-          val result = if (entityId == notAddedEntity.info.id) None else Some(addedEntity)
+          val result = if (entityId == notAddedEntity.info.entityId) None else Some(addedEntity)
           Future.successful(result)
         }
       })

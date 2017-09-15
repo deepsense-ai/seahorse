@@ -44,7 +44,7 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
   /**
    * Creates new entity using input params.
    */
-  def createEntity(entity: EntityCreate): Future[Entity.Id] = {
+  def createEntity(entity: CreateEntityRequest): Future[Entity.Id] = {
     val entityId = Entity.Id.randomId
     logger.debug("CreateEntity - generated id: {}, inputEntity.name: {},  input.description: {}",
       entityId, entity.name, entity.description)
@@ -59,7 +59,7 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
   def updateEntity(
       tenantId: String,
       entityId: Entity.Id,
-      entity: EntityUpdate): Future[Option[EntityWithReport]] = {
+      entity: UpdateEntityRequest): Future[Option[EntityWithReport]] = {
 
     logger.debug("UpdateEntity for tenantId: {}, userEntity.name: {}, userEntity.description {}",
       tenantId, entity.name, entity.description)

@@ -34,10 +34,7 @@ class EntityDaoCassandraImpl @Inject() (
   override def getWithData(tenantId: String, id: Entity.Id): Future[Option[EntityWithData]] = {
     Future(session.execute(
       getQuery(tenantId, id, selectedFields = EntityRowMapper.EntityWithDataFields))
-    ).map(rs => {
-      println(rs)
-      Option(rs.one()).map(EntityRowMapper.toEntityWithData)
-    })
+    ).map(rs => Option(rs.one()).map(EntityRowMapper.toEntityWithData))
   }
 
   override def getWithReport(tenantId: String, id: Entity.Id): Future[Option[EntityWithReport]] = {
@@ -46,14 +43,17 @@ class EntityDaoCassandraImpl @Inject() (
     ).map(rs => Option(rs.one()).map(EntityRowMapper.toEntityWithReport))
   }
 
-  override def create(id: Entity.Id, entity: EntityCreate, created: DateTime): Future[Unit] = {
+  override def create(
+      id: Entity.Id,
+      entity: CreateEntityRequest,
+      created: DateTime): Future[Unit] = {
     Future(session.execute(createQuery(id, entity, created)))
   }
 
   def update(
       tenantId: String,
       id: Entity.Id,
-      entity: EntityUpdate,
+      entity: UpdateEntityRequest,
       updated: DateTime): Future[Unit] = {
     Future(session.execute(updateEntityQuery(tenantId, id, entity, updated)))
   }
@@ -77,7 +77,7 @@ class EntityDaoCassandraImpl @Inject() (
 
   private def createQuery(
       id: Entity.Id,
-      entity: EntityCreate,
+      entity: CreateEntityRequest,
       created: DateTime): Update.Where = {
     inputQuery(entity)
       .and(set(EntityRowMapper.DClass, entity.dClass))
@@ -92,7 +92,7 @@ class EntityDaoCassandraImpl @Inject() (
   private def updateEntityQuery(
       tenantId: String,
       id: Entity.Id,
-      entity: EntityUpdate,
+      entity: UpdateEntityRequest,
       updated: DateTime): Update.Where = {
 
     inputQuery(entity)

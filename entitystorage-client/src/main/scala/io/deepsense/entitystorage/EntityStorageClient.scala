@@ -11,14 +11,14 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 
-import io.deepsense.models.entities.{EntityWithData, Entity, EntityCreate}
+import io.deepsense.models.entities.{EntityWithData, Entity, CreateEntityRequest}
 import io.deepsense.models.protocols.EntitiesApiActorProtocol.{Create, Get, Request}
 
 trait EntityStorageClient {
   def getEntityData(tenantId: String, id: Entity.Id)
                    (implicit duration: FiniteDuration): Future[Option[EntityWithData]]
 
-  def createEntity(inputEntity: EntityCreate)
+  def createEntity(inputEntity: CreateEntityRequest)
                   (implicit duration: FiniteDuration): Future[Entity.Id]
 }
 
@@ -29,7 +29,7 @@ class ActorBasedEntityStorageClient(entitiesApiActor: ActorRef) extends EntitySt
     send(Get(tenantId, id))(duration).mapTo[Option[EntityWithData]]
   }
 
-  def createEntity(inputEntity: EntityCreate)
+  def createEntity(inputEntity: CreateEntityRequest)
                   (implicit duration: FiniteDuration): Future[Entity.Id] = {
     send(Create(inputEntity))(duration).mapTo[Entity.Id]
   }

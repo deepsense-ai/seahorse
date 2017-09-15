@@ -18,9 +18,9 @@ trait EntityJsonProtocol
   with DataObjectReportJsonProtocol {
 
   implicit val dataObjectReferenceFormat = jsonFormat1(DataObjectReference)
-  implicit val entityInfoFormat = jsonFormat8(EntityInfo)
-  implicit val entityWithReportFormat = jsonFormat2(EntityWithReport)
-  implicit val entityUpdateFormat = jsonFormat3(EntityUpdate.apply)
+  implicit val entityInfoFormat = jsonFormat8(EntityInfo.apply)
+  implicit val entityWithReportFormat = jsonFormat2(EntityWithReport.apply)
+  implicit val entityUpdateFormat = jsonFormat3(UpdateEntityRequest.apply)
 }
 
 object EntityJsonProtocol extends EntityJsonProtocol

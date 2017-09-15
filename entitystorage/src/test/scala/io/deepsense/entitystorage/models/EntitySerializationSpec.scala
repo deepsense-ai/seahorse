@@ -8,7 +8,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.models.entities.{EntityWithReport, Entity}
+import io.deepsense.models.entities.{EntityWithData, EntityWithReport, Entity}
 
 class EntitySerializationSpec
   extends FlatSpec
@@ -21,6 +21,15 @@ class EntitySerializationSpec
 
     val serialized = serialize(entity)
     val deserialized = deserialize[EntityWithReport](serialized)
+
+    deserialized shouldBe entity
+  }
+
+  "EntityWithData" should "serialize and deserialize correctly" in  {
+    val entity = testEntityWithData()
+
+    val serialized = serialize(entity)
+    val deserialized = deserialize[EntityWithData](serialized)
 
     deserialized shouldBe entity
   }

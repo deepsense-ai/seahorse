@@ -12,7 +12,7 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.factories.TrainedRidgeRegressionTestFactory
 import io.deepsense.deploymodelservice.{CreateModelResponse, Model}
-import io.deepsense.models.entities.{DataObjectReport, DataObjectReference, Entity, EntityCreate}
+import io.deepsense.models.entities.{DataObjectReport, DataObjectReference, Entity, CreateEntityRequest}
 
 
 class ModelDeploymentIntegSpec
@@ -26,7 +26,7 @@ class ModelDeploymentIntegSpec
     rawHdfsClient.delete(testFilePath, true)
   }
 
-  private def inputEntity = EntityCreate(
+  private def inputEntity = CreateEntityRequest(
     executionContext.tenantId,
     "name",
     "desc",
