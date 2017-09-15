@@ -30,33 +30,27 @@ import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
-case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
+case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with JoinParams {
 
   override val name = "Join"
 
   override val id: Id = "06374446-3138-4cf7-9682-f884990f3a60"
 
-  import Join._
-
-  val joinColumnsSequence = Join.parametersSequenceParam
-
-  val leftTablePrefixParam = Join.leftTablePrefixParam
-
-  val rightTablePrefixParam = Join.rightTablePrefixParam
-
   override val parameters: ParametersSchema = ParametersSchema(
-    "join columns" -> joinColumnsSequence,
+    "join columns" -> joinColumnsParam,
     "left prefix" -> leftTablePrefixParam,
     "right prefix" -> rightTablePrefixParam
   )
+
+  import io.deepsense.deeplang.doperations.Join._
 
   override protected def _execute(context: ExecutionContext)
                                  (ldf: DataFrame, rdf: DataFrame): DataFrame = {
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 
-    val leftJoinColumnNames = joinColumnsSequence.value.get.map(
+    val leftJoinColumnNames = joinColumnsParam.value.get.map(
       schema => ldf.getColumnName(schema.getSingleColumnSelection(leftColumnParamKey).get))
-    val rightJoinColumnNames = joinColumnsSequence.value.get.map(
+    val rightJoinColumnNames = joinColumnsParam.value.get.map(
       schema => rdf.getColumnName(schema.getSingleColumnSelection(rightColumnParamKey).get))
 
     var lsdf = ldf.sparkDataFrame
@@ -195,12 +189,11 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
   override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
-object Join {
+trait JoinParams {
 
-  val leftColumnParamKey = "left column"
-  val rightColumnParamKey = "right column"
+  import io.deepsense.deeplang.doperations.Join._
 
-  val parametersSequenceParam = ParametersSequence(
+  val joinColumnsParam = ParametersSequence(
     "Pairs of columns to join upon",
     required = true,
     predefinedSchema = ParametersSchema(
@@ -220,28 +213,20 @@ object Join {
     "Prefix for columns of right table",
     default = None,
     required = false)
+}
+
+object Join {
 
   def apply(joinColumns: Vector[ParametersSchema],
             prefixLeft: Option[String],
             prefixRight: Option[String]): Join = {
     val join = new Join
-    join.joinColumnsSequence.value = Some(joinColumns)
+    join.joinColumnsParam.value = Some(joinColumns)
     join.leftTablePrefixParam.value = prefixLeft
     join.rightTablePrefixParam.value = prefixRight
     join
   }
 
-  def joinColumnsParameter(joinSequence: Seq[(String, String)]): Vector[ParametersSchema] = {
-    joinSequence.toVector.map(_ match {
-      case (leftColumn, rightColumn) => {
-        val schema = parametersSequenceParam.replicateSchema
-        schema.getSingleColumnSelectorParameter(leftColumnParamKey).value =
-          Some(NameSingleColumnSelection(leftColumn))
-        schema.getSingleColumnSelectorParameter(rightColumnParamKey).value =
-          Some(NameSingleColumnSelection(rightColumn))
-        schema
-      }
-    })
-  }
-
+  val leftColumnParamKey = "left column"
+  val rightColumnParamKey = "right column"
 }

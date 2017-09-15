@@ -836,25 +836,25 @@ class JoinSpec extends DeeplangIntegTestSupport {
       rightPrefix: Option[String]): Join = {
     val operation = new Join
 
-    val paramsByName = namesLeft.zip(namesRight).map({ case (leftColName, rightColName) => {
-      val replicatedSchema = operation.joinColumnsSequence.replicateSchema
+    val paramsByName = namesLeft.zip(namesRight).map({ case (leftColName, rightColName) =>
+      val replicatedSchema = operation.joinColumnsParam.replicateSchema
       replicatedSchema.getSingleColumnSelectorParameter(Join.leftColumnParamKey).value =
         Some(NameSingleColumnSelection(leftColName))
       replicatedSchema.getSingleColumnSelectorParameter(Join.rightColumnParamKey).value =
         Some(NameSingleColumnSelection(rightColName))
       replicatedSchema
-    }})
+    })
 
-    val paramsById = idsLeft.zip(idsRight).map({ case (leftColId, rightColId) => {
-      val replicatedSchema = operation.joinColumnsSequence.replicateSchema
+    val paramsById = idsLeft.zip(idsRight).map({ case (leftColId, rightColId) =>
+      val replicatedSchema = operation.joinColumnsParam.replicateSchema
       replicatedSchema.getSingleColumnSelectorParameter(Join.leftColumnParamKey).value =
         Some(IndexSingleColumnSelection(leftColId))
       replicatedSchema.getSingleColumnSelectorParameter(Join.rightColumnParamKey).value =
         Some(IndexSingleColumnSelection(rightColId))
       replicatedSchema
-    }})
+    })
 
-    operation.joinColumnsSequence.value = Some(paramsByName ++ paramsById)
+    operation.joinColumnsParam.value = Some(paramsByName ++ paramsById)
     operation.leftTablePrefixParam.value = leftPrefix
     operation.rightTablePrefixParam.value = rightPrefix
 
