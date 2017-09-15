@@ -38,7 +38,7 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
   val transformerParams = new DynamicParam(
     name = "Parameters of input Transformer",
     description = "These parameters are rendered dynamically, depending on type of Transformer",
-    inputPort = 0)
+    inputPort = 1)
   setDefault(transformerParams, JsNull)
 
   def getTransformerParams: JsValue = $(transformerParams)
