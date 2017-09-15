@@ -63,7 +63,7 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
   }
 
   private def checkSchemaMismatch(first: StructType, second: StructType): Unit = {
-    if (first != second) {
+    if (first.treeString != second.treeString) {
       throw new SchemaMismatchException(
         "SchemaMismatch. Expected schema " +
           s"${first.treeString}" +
