@@ -1,19 +1,22 @@
 'use strict';
 
 /* @ngInject */
-class RunningExecutorPopoverCtrl {
-  constructor() {
-    this.isRunningExecutorPopoverVisible = true
+function RunningExecutorPopoverCtrl($rootScope) {
+  const vm = this;
+
+  vm.isRunningExecutorPopoverVisible = true;
+
+  vm.isPopoverVisible = isPopoverVisible;
+  vm.abort = abort;
+
+  function isPopoverVisible() {
+    return vm.isRunningExecutorPopoverVisible;
   }
 
-  isPopoverVisible() {
-    return this.isRunningExecutorPopoverVisible;
+  function abort() {
+    $rootScope.$emit('StatusBar.STOP_EDITING', true);
+    vm.isRunningExecutorPopoverVisible = false;
   }
-
-  closePopover() {
-    this.isRunningExecutorPopoverVisible = false;
-  }
-
 }
 
 exports.inject = function (module) {

@@ -56,13 +56,14 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
         SessionManagerApi.startSession(config);
       });
 
-      $rootScope.$on('StatusBar.STOP_EDITING', () => {
-        ConfirmationModalService.showModal({
-          message: 'Are you sure you want to stop executor? Cached reports will disappear.'
-        }).then(() => {
-          const workflow = this.getRootWorkflow();
-          SessionManagerApi.deleteSessionById(workflow.id);
-        });
+      $rootScope.$on('StatusBar.STOP_EDITING', (event, force = false) => {
+        if (force) {
+          this.stopEditing();
+        } else {
+          ConfirmationModalService.showModal({
+            message: 'Are you sure you want to stop executor? Cached reports will disappear.'
+          }).then(() => this.stopEditing());
+        }
       });
 
       $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
@@ -234,6 +235,11 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
         this._workflowsData = workflows; // TODO There should be no state here. Get rid of it
         return workflows;
       });
+    }
+
+    stopEditing() {
+      const workflow = this.getRootWorkflow();
+      SessionManagerApi.deleteSessionById(workflow.id);
     }
   }
 
