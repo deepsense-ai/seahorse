@@ -9,6 +9,7 @@ Every component is an unpublished NPM package.
 #How-to
 
  * Install [Node.js](http://nodejs.org/).
+ * Install [bower](https://www.npmjs.com/package/bower).
  * Install [Gulp.js](https://www.npmjs.com/package/gulp).
  * Run `./clean_all.sh && ./install_all.sh && build_all.sh`.
  * Go to particular component directory and follow their README.md
