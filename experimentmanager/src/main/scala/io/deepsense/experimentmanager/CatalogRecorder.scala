@@ -34,6 +34,11 @@ object CatalogRecorder {
       "Converts a file to a DataFrame"
     )
 
+    catalog.registerDOperation[MathematicalOperation](
+      DOperationCategories.Transformation,
+      "Creates a Transformation that creates a new column based on a mathematical formula."
+    )
+
     catalog.registerDOperation[ReadFile](
       DOperationCategories.IO,
       "Reads file from HDFS")

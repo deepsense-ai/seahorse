@@ -16,6 +16,8 @@ object DOperationCategories {
 
   object IO extends DOperationCategory(UUID.randomUUID(), "Input/Output")
 
+  object Transformation extends DOperationCategory(UUID.randomUUID(), "Transformation")
+
   object DataManipulation
     extends DOperationCategory(UUID.randomUUID(), "Data manipulation")
 
