@@ -29,6 +29,7 @@ class ContextualDataFrameStorageSpec
 
   val workflowId = Id.randomId
   val nodeId = Id.randomId
+  val portNumber = 332
 
   val dataFrame = mock[DataFrame]
   val sparkDataFrame = mock[SparkDataFrame]
@@ -42,24 +43,23 @@ class ContextualDataFrameStorageSpec
   }
 
   "ContextualDataFrameStorage" should {
+    "store input dataFrame" in {
+      storage.setInputDataFrame(portNumber, sparkDataFrame)
 
-    "store dataframe for specified workflow and node" in {
-      storage.store(dataFrame)
-
-      verify(dataFrameStorage).put(workflowId, nodeId.toString, dataFrame)
+      verify(dataFrameStorage).setInputDataFrame(workflowId, nodeId, portNumber, sparkDataFrame)
     }
 
-    "store input dataframe" in {
-      storage.setInputDataFrame(sparkDataFrame)
+    "store output dataFrame" in {
+      storage.setOutputDataFrame(portNumber, sparkDataFrame)
 
-      verify(dataFrameStorage).setInputDataFrame(workflowId, nodeId, sparkDataFrame)
+      verify(dataFrameStorage).setOutputDataFrame(workflowId, nodeId, portNumber, sparkDataFrame)
     }
 
-    "get output dataframe" in {
-      when(dataFrameStorage.getOutputDataFrame(workflowId, nodeId))
+    "get output dataFrame" in {
+      when(dataFrameStorage.getOutputDataFrame(workflowId, nodeId, portNumber))
         .thenReturn(Some(sparkDataFrame))
 
-      storage.getOutputDataFrame shouldBe Some(sparkDataFrame)
+      storage.getOutputDataFrame(portNumber) shouldBe Some(sparkDataFrame)
     }
   }
 }

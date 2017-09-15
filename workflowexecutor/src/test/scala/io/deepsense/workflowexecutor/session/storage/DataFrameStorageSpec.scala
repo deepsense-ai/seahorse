@@ -46,6 +46,7 @@ class DataFrameStorageSpec
 
   val sparkDataFrame1 = mock[SparkDataFrame]
   val sparkDataFrame2 = mock[SparkDataFrame]
+  val sparkDataFrame3 = mock[SparkDataFrame]
 
   var storage: DataFrameStorage = _
 
@@ -54,54 +55,28 @@ class DataFrameStorageSpec
   }
 
   "DataFrameStorage" should {
+    "register input dataFrames" in {
+      storage.setInputDataFrame(workflow1Id, node1Id, 0, sparkDataFrame1)
+      storage.setInputDataFrame(workflow1Id, node2Id, 0, sparkDataFrame2)
+      storage.setInputDataFrame(workflow1Id, node2Id, 1, sparkDataFrame3)
 
-    "register dataframe" in {
-      storage.put(workflow1Id, dataframe1Id, dataframe1)
-      storage.get(workflow1Id, dataframe1Id) shouldBe Some(dataframe1)
+      storage.getInputDataFrame(workflow1Id, node1Id, 0) shouldBe Some(sparkDataFrame1)
+      storage.getInputDataFrame(workflow1Id, node1Id, 1) shouldBe None
+      storage.getInputDataFrame(workflow1Id, node2Id, 0) shouldBe Some(sparkDataFrame2)
+      storage.getInputDataFrame(workflow1Id, node2Id, 1) shouldBe Some(sparkDataFrame3)
+      storage.getInputDataFrame(workflow2Id, node2Id, 2) shouldBe None
     }
 
-    "list dataframes" in {
-      storage.put(workflow1Id, dataframe1Id, dataframe1)
-      storage.put(workflow1Id, dataframe2Id, dataframe2)
-      storage.put(workflow2Id, dataframe3Id, dataframe3)
+    "register output dataFrames" in {
+      storage.setOutputDataFrame(workflow1Id, node1Id, 0, sparkDataFrame1)
+      storage.setOutputDataFrame(workflow1Id, node2Id, 0, sparkDataFrame2)
+      storage.setOutputDataFrame(workflow1Id, node2Id, 1, sparkDataFrame3)
 
-      val storedIds = storage.listDataFrameNames(workflow1Id)
-      storedIds should contain theSameElementsAs Seq(dataframe1Id, dataframe2Id)
-    }
-
-    "return None" when {
-
-      "dataframe was not registered" in {
-        storage.get(workflow1Id, dataframe1Id) shouldBe None
-      }
-
-      "different workflow id was passed" in {
-        storage.put(workflow1Id, dataframe1Id, dataframe1)
-        storage.get(workflow2Id, dataframe1Id) shouldBe None
-      }
-
-      "different dataframe id was passed" in {
-        storage.put(workflow1Id, dataframe1Id, dataframe1)
-        storage.get(workflow1Id, dataframe2Id) shouldBe None
-      }
-    }
-
-    "register input dataframes" in {
-      storage.setInputDataFrame(workflow1Id, node1Id, sparkDataFrame1)
-      storage.setInputDataFrame(workflow1Id, node2Id, sparkDataFrame2)
-
-      storage.getInputDataFrame(workflow1Id, node1Id) shouldBe Some(sparkDataFrame1)
-      storage.getInputDataFrame(workflow1Id, node2Id) shouldBe Some(sparkDataFrame2)
-      storage.getInputDataFrame(workflow2Id, node1Id) shouldBe None
-    }
-
-    "register output dataframes" in {
-      storage.setOutputDataFrame(workflow1Id, node1Id, sparkDataFrame1)
-      storage.setOutputDataFrame(workflow1Id, node2Id, sparkDataFrame2)
-
-      storage.getOutputDataFrame(workflow1Id, node1Id) shouldBe Some(sparkDataFrame1)
-      storage.getOutputDataFrame(workflow1Id, node2Id) shouldBe Some(sparkDataFrame2)
-      storage.getOutputDataFrame(workflow2Id, node1Id) shouldBe None
+      storage.getOutputDataFrame(workflow1Id, node1Id, 0) shouldBe Some(sparkDataFrame1)
+      storage.getOutputDataFrame(workflow1Id, node1Id, 1) shouldBe None
+      storage.getOutputDataFrame(workflow1Id, node2Id, 0) shouldBe Some(sparkDataFrame2)
+      storage.getOutputDataFrame(workflow1Id, node2Id, 1) shouldBe Some(sparkDataFrame3)
+      storage.getOutputDataFrame(workflow2Id, node2Id, 2) shouldBe None
     }
   }
 }

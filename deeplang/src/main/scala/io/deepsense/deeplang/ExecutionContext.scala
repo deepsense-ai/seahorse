@@ -25,7 +25,7 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame, SQLContext}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
 
 case class CommonExecutionContext(
@@ -97,14 +97,14 @@ case class ContextualDataFrameStorage(
     workflowId: Id,
     nodeId: Id) {
 
-  def store(dataFrame: DataFrame): Unit =
-    dataFrameStorage.put(workflowId, nodeId.toString, dataFrame)
+  def setInputDataFrame(portNumber: Int, dataFrame: SparkDataFrame): Unit =
+    dataFrameStorage.setInputDataFrame(workflowId, nodeId, portNumber, dataFrame)
 
-  def setInputDataFrame(dataFrame: SparkDataFrame): Unit =
-    dataFrameStorage.setInputDataFrame(workflowId, nodeId, dataFrame)
+  def getOutputDataFrame(portNumber: Int): Option[SparkDataFrame] =
+    dataFrameStorage.getOutputDataFrame(workflowId, nodeId, portNumber)
 
-  def getOutputDataFrame: Option[SparkDataFrame] =
-    dataFrameStorage.getOutputDataFrame(workflowId, nodeId)
+  def setOutputDataFrame(portNumber: Int, dataFrame: SparkDataFrame): Unit =
+    dataFrameStorage.setOutputDataFrame(workflowId, nodeId, portNumber, dataFrame)
 }
 
 case class ContextualPythonCodeExecutor(

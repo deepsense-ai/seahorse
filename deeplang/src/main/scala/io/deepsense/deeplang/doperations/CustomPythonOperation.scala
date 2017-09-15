@@ -21,11 +21,13 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
-import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, StringParam}
+import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class CustomPythonOperation()
   extends DOperation1To1[DataFrame, DataFrame] {
+
+  import CustomPythonOperation._
 
   override val id: Id = "a721fe2a-5d7f-44b3-a1e7-aade16252ead"
   override val name: String = "Custom Python Operation"
@@ -47,16 +49,17 @@ case class CustomPythonOperation()
       throw CustomOperationExecutionException("Code validation failed")
     }
 
-    context.dataFrameStorage.setInputDataFrame(dataFrame.sparkDataFrame)
+    context.dataFrameStorage.setInputDataFrame(InputPortNumber, dataFrame.sparkDataFrame)
     context.pythonCodeExecutor.run(code) match {
       case Left(error) =>
         throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
       case Right(_) =>
-        val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame.getOrElse {
-          throw CustomOperationExecutionException(
-            "Operation finished successfully, but did not produce a DataFrame.")
-        }
+        val sparkDataFrame =
+          context.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
+            throw CustomOperationExecutionException(
+              "Operation finished successfully, but did not produce a DataFrame.")
+          }
 
         DataFrame.fromSparkDataFrame(sparkDataFrame)
     }
@@ -67,4 +70,9 @@ case class CustomPythonOperation()
 
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+}
+
+object CustomPythonOperation {
+  val InputPortNumber: Int = 0
+  val OutputPortNumber: Int = 0
 }

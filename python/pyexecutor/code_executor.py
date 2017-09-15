@@ -16,6 +16,9 @@ class CodeExecutor(object):
     TRANSFORM_FUNCTION_NAME = 'transform'
     TRANSFORM_FUNCTION_ARITIES = [1]
 
+    INPUT_PORT_NUMBER = 0
+    OUTPUT_PORT_NUMBER = 0
+
     def __init__(self, spark_context, sql_context, entry_point):
         self.entry_point = entry_point
         self.spark_context = spark_context
@@ -55,7 +58,9 @@ class CodeExecutor(object):
         assert self.isValid(custom_operation_code)
 
         input_data_frame = DataFrame(
-            jdf=self.entry_point.retrieveInputDataFrame(workflow_id, node_id),
+            jdf=self.entry_point.retrieveInputDataFrame(workflow_id,
+                                                        node_id,
+                                                        CodeExecutor.INPUT_PORT_NUMBER),
             sql_ctx=self.sql_context)
 
         context = {
@@ -69,8 +74,10 @@ class CodeExecutor(object):
 
         if isinstance(output_data_frame, DataFrame):
             # noinspection PyProtectedMember
-            self.entry_point.registerOutputDataFrame(workflow_id, node_id, output_data_frame._jdf)
-
+            self.entry_point.registerOutputDataFrame(workflow_id,
+                                                     node_id,
+                                                     CodeExecutor.OUTPUT_PORT_NUMBER,
+                                                     output_data_frame._jdf)
     # noinspection PyPep8Naming
     def isValid(self, custom_operation_code):
         def is_transform_function(field):

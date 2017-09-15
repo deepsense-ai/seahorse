@@ -34,8 +34,7 @@ case class PythonGateway(
     gatewayConfig: GatewayConfig,
     sparkContext: SparkContext,
     sqlContext: SQLContext,
-    dataFrameStorage: ReadOnlyDataFrameStorage,
-    customOperationDataFrameStorage: CustomOperationDataFrameStorage) extends Logging {
+    dataFrameStorage: DataFrameStorage) extends Logging {
   import PythonGateway._
 
   private val operationExecutionDispatcher = new OperationExecutionDispatcher
@@ -45,7 +44,6 @@ case class PythonGateway(
     sparkContext,
     sqlContext,
     dataFrameStorage,
-    customOperationDataFrameStorage,
     operationExecutionDispatcher)
 
   private val gatewayStateListener = new GatewayEventListener

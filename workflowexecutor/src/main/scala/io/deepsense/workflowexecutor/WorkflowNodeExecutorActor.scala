@@ -23,6 +23,7 @@ import akka.actor.{Actor, PoisonPill}
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
@@ -113,6 +114,13 @@ class WorkflowNodeExecutorActor(
     // if inference throws, we do not perform execution
     node.value.inferKnowledge(executionContext.inferContext)(inputKnowledge)
     val resultVector = node.value.execute(executionContext)(input)
+
+    resultVector.zipWithIndex.foreach {
+      case (dataFrame: DataFrame, portNumber: Int) =>
+        executionContext.dataFrameStorage.setOutputDataFrame(portNumber, dataFrame.sparkDataFrame)
+      case (_, _) => ()
+    }
+
     logger.debug(s"$nodeDescription executed (without reports): $resultVector")
     resultVector
   }

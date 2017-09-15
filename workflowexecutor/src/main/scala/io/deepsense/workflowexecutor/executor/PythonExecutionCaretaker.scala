@@ -86,7 +86,7 @@ class PythonExecutionCaretaker(
   def gatewayListeningPort: Option[Int] = pythonGateway.listeningPort
 
   private val pythonGateway =
-    PythonGateway(GatewayConfig(), sparkContext, sqlContext, dataFrameStorage, dataFrameStorage)
+    PythonGateway(GatewayConfig(), sparkContext, sqlContext, dataFrameStorage)
 
   private val pyExecutorProcess = new AtomicReference[Option[Process]](None)
 

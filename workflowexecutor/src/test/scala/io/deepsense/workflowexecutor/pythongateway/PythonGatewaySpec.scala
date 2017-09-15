@@ -32,7 +32,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 
-import io.deepsense.deeplang.{CustomOperationDataFrameStorage, ReadOnlyDataFrameStorage}
+import io.deepsense.deeplang.DataFrameStorage
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 
@@ -55,8 +55,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[ReadOnlyDataFrameStorage],
-        mock[CustomOperationDataFrameStorage])
+        mock[DataFrameStorage])
       gateway.start()
 
       val connectionAttempt = attemptConnection(gateway.listeningPort)
@@ -70,11 +69,10 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[ReadOnlyDataFrameStorage],
-        mock[CustomOperationDataFrameStorage])
+        mock[DataFrameStorage])
       gateway.start()
       gateway.stop()
-      Thread.sleep(500)
+      Thread.sleep(1000)
       gateway.listeningPort shouldBe None
     }
 
@@ -83,8 +81,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[ReadOnlyDataFrameStorage],
-        mock[CustomOperationDataFrameStorage])
+        mock[DataFrameStorage])
 
       gateway.listeningPort shouldBe None
     }
@@ -94,8 +91,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[ReadOnlyDataFrameStorage],
-        mock[CustomOperationDataFrameStorage])
+        mock[DataFrameStorage])
       gateway.start()
 
       a[TimeoutException] should be thrownBy {
@@ -110,8 +106,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[ReadOnlyDataFrameStorage],
-        mock[CustomOperationDataFrameStorage])
+        mock[DataFrameStorage])
       gateway.start()
 
       val command = "Hello!"

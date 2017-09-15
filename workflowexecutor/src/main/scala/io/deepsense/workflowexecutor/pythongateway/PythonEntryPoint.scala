@@ -38,8 +38,7 @@ class PythonEntryPoint(
     val pythonEntryPointConfig: PythonEntryPointConfig,
     val sparkContext: SparkContext,
     val sqlContext: SQLContext,
-    val dataFrameStorage: ReadOnlyDataFrameStorage,
-    val customOperationDataFrameStorage: CustomOperationDataFrameStorage,
+    val dataFrameStorage: DataFrameStorage,
     val operationExecutionDispatcher: OperationExecutionDispatcher)
   extends Logging {
 
@@ -50,9 +49,6 @@ class PythonEntryPoint(
   def getSqlContext: SQLContext = sqlContext
 
   def getSparkConf: SparkConf = sparkContext.getConf
-
-  def getDataFrame(workflowId: String, dataFrameName: String): DataFrame =
-    dataFrameStorage.get(workflowId, dataFrameName).get.sparkDataFrame
 
   private val codeExecutor: AtomicReference[Promise[PythonCodeExecutor]] =
     new AtomicReference(Promise())
@@ -72,11 +68,15 @@ class PythonEntryPoint(
   def registerCallbackServerPort(newPort: Int): Unit =
     replacePromise(pythonPort, newPort)
 
-  def retrieveInputDataFrame(workflowId: String, nodeId: String): DataFrame =
-    customOperationDataFrameStorage.getInputDataFrame(workflowId, nodeId).get
+  def retrieveInputDataFrame(workflowId: String, nodeId: String, portNumber: Int): DataFrame =
+    dataFrameStorage.getInputDataFrame(workflowId, nodeId, portNumber).get
 
-  def registerOutputDataFrame(workflowId: String, nodeId: String, dataFrame: DataFrame): Unit =
-    customOperationDataFrameStorage.setOutputDataFrame(workflowId, nodeId, dataFrame)
+  def retrieveOutputDataFrame(workflowId: String, nodeId: String, portNumber: Int): DataFrame =
+    dataFrameStorage.getOutputDataFrame(workflowId, nodeId, portNumber).get
+
+  def registerOutputDataFrame(
+      workflowId: String, nodeId: String, portNumber: Int, dataFrame: DataFrame): Unit =
+    dataFrameStorage.setOutputDataFrame(workflowId, nodeId, portNumber, dataFrame)
 
   def executionCompleted(workflowId: String, nodeId: String): Unit =
     operationExecutionDispatcher.executionEnded(workflowId, nodeId, Right())

@@ -19,32 +19,8 @@ package io.deepsense.deeplang
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.models.Id
-import io.deepsense.deeplang.DataFrameStorage._
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
-trait ReadOnlyDataFrameStorage {
-
-  /**
-   * Returns stored dataframe.
-   *
-   * @param workflowId workflow id.
-   * @param dataFrameName dataframe name.
-   * @return stored dataframe.
-   */
-  def get(
-      workflowId: Id,
-      dataFrameName: DataFrameName): Option[DataFrame]
-
-  /**
-   * Lists dataframes stored for workflow with specified id.
-   *
-   * @param workflowId workflow id.
-   * @return names of stored dataframes.
-   */
-  def listDataFrameNames(workflowId: Id): Iterable[DataFrameName]
-}
-
-trait CustomOperationDataFrameStorage {
+trait DataFrameStorage {
 
   /**
    * Returns custom operation's input dataframe.
@@ -52,32 +28,7 @@ trait CustomOperationDataFrameStorage {
    * @param nodeId node id.
    * @return input dataframe of the operation.
    */
-  def getInputDataFrame(workflowId: Id, nodeId: Id): Option[SparkDataFrame]
-
-  /**
-   * Sets custom operation's output dataframe.
-   * @param workflowId workflow id.
-   * @param nodeId node id.
-   * @param dataFrame output dataframe of the operation.
-   */
-  def setOutputDataFrame(workflowId: Id, nodeId: Id, dataFrame: SparkDataFrame): Unit
-}
-
-trait DataFrameStorage
-  extends ReadOnlyDataFrameStorage
-  with CustomOperationDataFrameStorage {
-
-  /**
-   * Stores dataframe under specified name.
-   *
-   * @param workflowId workflow id.
-   * @param dataFrameName dataframe name.
-   * @param dataFrame dataframe.
-   */
-  def put(
-      workflowId: Id,
-      dataFrameName: DataFrameName,
-      dataFrame: DataFrame): Unit
+  def getInputDataFrame(workflowId: Id, nodeId: Id, portNumber: Int): Option[SparkDataFrame]
 
   /**
    * Sets custom operation's input dataframe.
@@ -85,7 +36,8 @@ trait DataFrameStorage
    * @param nodeId node id.
    * @param dataFrame input dataframe of the operation.
    */
-  def setInputDataFrame(workflowId: Id, nodeId: Id, dataFrame: SparkDataFrame): Unit
+  def setInputDataFrame(
+      workflowId: Id, nodeId: Id, portNumber: Int, dataFrame: SparkDataFrame): Unit
 
   /**
    * Returns custom operation's output dataframe.
@@ -93,10 +45,17 @@ trait DataFrameStorage
    * @param nodeId node id.
    * @return output dataframe of the operation.
    */
-  def getOutputDataFrame(workflowId: Id, nodeId: Id): Option[SparkDataFrame]
+  def getOutputDataFrame(workflowId: Id, nodeId: Id, portNumber: Int): Option[SparkDataFrame]
+
+  /**
+   * Sets custom operation's output dataframe.
+   * @param workflowId workflow id.
+   * @param nodeId node id.
+   * @param dataFrame output dataframe of the operation.
+   */
+  def setOutputDataFrame(
+    workflowId: Id, nodeId: Id, portNumber: Int, dataFrame: SparkDataFrame): Unit
 }
-
-
 
 object DataFrameStorage {
   type DataFrameName = String

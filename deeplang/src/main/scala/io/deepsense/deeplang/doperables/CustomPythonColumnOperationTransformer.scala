@@ -21,10 +21,12 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
-import io.deepsense.deeplang.params.{StringParam, CodeSnippetLanguage, CodeSnippetParam, Param}
+import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 
 case class CustomPythonColumnOperationTransformer() extends MultiColumnTransformer {
+
+  import CustomPythonColumnOperationTransformer._
 
   val targetType = ChoiceParam[TargetTypeChoice](
     name = "target type",
@@ -66,10 +68,11 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
         throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
       case Right(_) =>
-        val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame.getOrElse {
-          throw CustomOperationExecutionException(
-            "Operation finished successfully, but did not produce a DataFrame.")
-        }
+        val sparkDataFrame =
+          context.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
+            throw CustomOperationExecutionException(
+              "Operation finished successfully, but did not produce a DataFrame.")
+          }
 
         val newSparkDataFrame = context.sqlContext.createDataFrame(
           sparkDataFrame.rdd,
@@ -92,7 +95,7 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
       throw CustomOperationExecutionException("Code validation failed")
     }
 
-    context.dataFrameStorage.setInputDataFrame(dataFrame.sparkDataFrame)
+    context.dataFrameStorage.setInputDataFrame(InputPortNumber, dataFrame.sparkDataFrame)
 
     executePythonCode(code, inputColumn, outputColumn, context, dataFrame)
   }
@@ -105,4 +108,9 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
     MultiColumnTransformer.assertColumnDoesNotExist(outputColumn, schema)
     Some(schema.add(StructField(outputColumn, getTargetType.columnType, nullable = true)))
   }
+}
+
+object CustomPythonColumnOperationTransformer {
+  val InputPortNumber: Int = 0
+  val OutputPortNumber: Int = 0
 }

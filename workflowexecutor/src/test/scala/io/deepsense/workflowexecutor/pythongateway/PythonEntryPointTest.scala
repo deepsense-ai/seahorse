@@ -25,7 +25,7 @@ import org.apache.spark.sql.SQLContext
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang.{PythonCodeExecutor, CustomOperationDataFrameStorage, ReadOnlyDataFrameStorage}
+import io.deepsense.deeplang.{PythonCodeExecutor, DataFrameStorage}
 import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint.PythonEntryPointConfig
 
 class PythonEntryPointTest extends WordSpec with MockitoSugar with Matchers {
@@ -78,7 +78,6 @@ class PythonEntryPointTest extends WordSpec with MockitoSugar with Matchers {
       PythonEntryPointConfig(timeout),
       mock[SparkContext],
       mock[SQLContext],
-      mock[ReadOnlyDataFrameStorage],
-      mock[CustomOperationDataFrameStorage],
+      mock[DataFrameStorage],
       mock[OperationExecutionDispatcher])
 }

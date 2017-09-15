@@ -34,6 +34,8 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
 
+import org.scalatest.mock.MockitoSugar._
+
 /**
  * Adds features to facilitate integration testing using Spark
  */
@@ -75,7 +77,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       fileSystemClient,
       "testTenantId",
       mock[InnerWorkflowExecutor],
-      new MockedDataFrameStorage,
+      mock[DataFrameStorage],
       mock[PythonExecutionProvider])
   }
 
@@ -93,7 +95,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       fileSystemClient,
       "testTenantId",
       mock[InnerWorkflowExecutor],
-      new MockedContextualDataFrameStorage,
+      mock[ContextualDataFrameStorage],
       new MockedContextualCodeExecutor)
   }
 
@@ -194,7 +196,7 @@ private class MockedCommonExecutionContext(
       fsClient,
       tenantId,
       innerWorkflowExecutor,
-      new MockedContextualDataFrameStorage,
+      mock[ContextualDataFrameStorage],
       new MockedContextualCodeExecutor)
 }
 
@@ -216,33 +218,6 @@ private class MockedExecutionContext(
     innerWorkflowExecutor,
     dataFrameStorage,
     pythonCodeExecutor)
-
-private class MockedDataFrameStorage extends DataFrameStorage {
-
-  var inputDataFrame: Option[sql.DataFrame] = None
-  var outputDataFrame: Option[sql.DataFrame] = None
-
-  override def put(workflowId: Id, dataFrameName: DataFrameName, dataFrame: DataFrame): Unit = ()
-
-  override def get(workflowId: Id, dataFrameName: DataFrameName): Option[DataFrame] = ???
-
-  override def listDataFrameNames(workflowId: Id): Iterable[DataFrameName] = ???
-
-  override def getInputDataFrame(workflowId: Id, nodeId: Id): Option[sql.DataFrame] =
-    inputDataFrame
-
-  override def setInputDataFrame(workflowId: Id, nodeId: Id, dataFrame: sql.DataFrame): Unit =
-    inputDataFrame = Some(dataFrame)
-
-  override def getOutputDataFrame(workflowId: Id, nodeId: Id): Option[sql.DataFrame] =
-    outputDataFrame
-
-  override def setOutputDataFrame(workflowId: Id, nodeId: Id, dataFrame: sql.DataFrame): Unit =
-    outputDataFrame = Some(dataFrame)
-}
-
-private class MockedContextualDataFrameStorage
-  extends ContextualDataFrameStorage(new MockedDataFrameStorage, Id.randomId, Id.randomId)
 
 private class MockedCodeExecutor extends PythonCodeExecutor {
 
