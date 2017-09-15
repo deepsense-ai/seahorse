@@ -215,11 +215,8 @@ object WorkflowExecutorApp extends Logging {
   def main(args: Array[String]): Unit = {
     configureLogging()
 
-    val cmdParams = parser.parse(args, ExecutionParams())
-    if (cmdParams.isEmpty) {
-      System.exit(1)
-    }
-    val params = cmdParams.get
+    val paramsOpt = parser.parse(args, ExecutionParams())
+    val params = paramsOpt.getOrElse(sys.exit(1))
 
     if (params.interactiveMode) {
       // Interactive mode (SessionExecutor)
