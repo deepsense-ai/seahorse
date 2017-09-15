@@ -93,18 +93,22 @@ class WorkflowExecutorActor(
   }
 
   def checkExecutionState(graph: StatefulGraph): Unit = {
-    graph.state match {
-      case graphstate.Draft => logger.error("Graph in state 'Draft'! This should not happen!")
+    val updatedGraph = graph.state match {
+      case graphstate.Draft =>
+        logger.error("Graph in state 'Draft'! This should not happen!")
+        graph
       case graphstate.Running =>
         val launchedGraph = launchReadyNodes(graph)
         context.unbecome()
         context.become(launched(launchedGraph))
+        launchedGraph
       case _ =>
         logger.debug(s"End of execution, state=${graph.state}")
         context.unbecome()
         context.become(finished(graph))
+        graph
     }
-    sendWorkflowStatus(Some(graph))
+    sendWorkflowStatus(Some(updatedGraph))
   }
 
   def sendWorkflowStatus(graph: Option[StatefulGraph]): Unit = {
