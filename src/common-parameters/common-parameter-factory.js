@@ -4,7 +4,7 @@ let ParametersListConstructor = require('./common-parameters-list.js');
 let NumericParameterConstructor = require('./common-numeric-parameter.js');
 let StringParameterConstructor = require('./common-string-parameter.js');
 let BooleanParameterConstructor = require('./common-boolean-parameter.js');
-let SnippetParameterConstructor = require('./common-snippet-parameter.js');
+let CodeSnippetParameterConstructor = require('./common-code-snippet-parameter.js');
 let SingleChoiceParameterConstructor = require('./common-choice-parameter/common-single-choice-parameter.js');
 let MultipleChoiceParameterConstructor = require('./common-choice-parameter/common-multiple-choice-parameter.js');
 let SelectorParameterConstructor = require('./common-selector/common-selector-parameter.js');
@@ -19,7 +19,7 @@ let parameterConstructors = {
   'numeric': NumericParameterConstructor,
   'string': StringParameterConstructor,
   'boolean': BooleanParameterConstructor,
-  'snippet': SnippetParameterConstructor,
+  'codeSnippet': CodeSnippetParameterConstructor,
   'choice': SingleChoiceParameterConstructor,
   'multipleChoice': MultipleChoiceParameterConstructor,
   'selector': SelectorParameterConstructor,
