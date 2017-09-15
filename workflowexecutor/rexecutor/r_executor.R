@@ -13,7 +13,7 @@ print(code)
 
 rm(args)
 
-.libPaths(c(file.path("/opt/spark-1.6.1/R/lib/"), .libPaths()))
+.libPaths(c(file.path("/opt/spark-2.0.0/R/lib/"), .libPaths()))
 library(SparkR)
 
 SparkR:::connectBackend("localhost", backendPort)
@@ -22,19 +22,17 @@ assign(".scStartTime", as.integer(Sys.time()), envir = SparkR:::.sparkREnv)
 
 entryPoint <- SparkR:::getJobj(entryPointId)
 
-assign(".sc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = SparkR:::.sparkREnv)
-assign("sc", get(".sc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
-assign(".sqlc", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
-assign("sparkSession", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+assign("sc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = .GlobalEnv)
+assign("spark", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = .GlobalEnv)
+
 sdf <- SparkR:::callJMethod(entryPoint, "retrieveInputDataFrame", workflowId, nodeId, as.integer(0))
 df <- SparkR:::dataFrame(sdf, isCached = FALSE)
-
 
 tryCatch({
   eval(parse(text = code))
   transformedDF <- transform(df)
-  if (class(transformedDF) != "DataFrame") {
-    transformedDF <- createDataFrame(sparkSession, data.frame(transformedDF))
+  if (class(transformedDF) != "SparkDataFrame") {
+    transformedDF <- createDataFrame(spark, data.frame(transformedDF))
   }
 
   SparkR:::callJMethod(entryPoint, "registerOutputDataFrame", workflowId, nodeId, as.integer(0), transformedDF@sdf)

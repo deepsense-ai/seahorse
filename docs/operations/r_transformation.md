@@ -19,7 +19,7 @@ The R function that will be executed must:
 
 * take exactly one argument of type `DataFrame`,
 
-* return a SparkR `DataFrame`, an R `data.frame`, or data that can be converted to R `data.frame` using `data.frame()` function (single value, vector etc).
+* return a SparkR `SparkDataFrame`, an R `data.frame`, or data that can be converted to R `data.frame` using `data.frame()` function (single value, vector etc).
 
 #### Example R code:
 {% highlight r %}
