@@ -25,7 +25,7 @@ libraryDependencies ++= {
   val sprayV = "1.3.2"
   val scalaTestV = "2.2.+"
   Seq(
-    "net.codingwell"      %% "scala-guice"   % "4.0.0-beta5",
+    "net.codingwell"      %% "scala-guice"   % "3.0.2",
     "io.spray"            %% "spray-can"     % sprayV,
     "io.spray"            %% "spray-routing" % sprayV,
     "io.spray"            %% "spray-json"    % "1.3.1",
