@@ -1,3 +1,4 @@
+# Copyright (c) 2015, CodiLime Inc.
 
 - hosts: deepsense-vm
   gather_facts: false
@@ -8,6 +9,14 @@
 
 - include: cassandra.yml
 
+- hosts: deepsense-vm
+  gather_facts: false
+  vars_files:
+    - vars/env.yml
+  tasks:
+    - name: Wait for Cassandra to come up
+      wait_for: host={{cassandra_server_ip}} port={{cassandra_server_port}}
+
 - hosts: localhost
   gather_facts: false
   vars_files:
@@ -16,7 +25,6 @@
     - include: tasks/get_frontend_artifact_path.yml
     - include: tasks/get_wm_artifact_path.yml
     - include: tasks/get_workflowexecutor_artifact_path.yml
-    - pause: seconds=60 prompt="Waiting for Cassandra server start-up..."
 
 - include: cassandra_migration.yml
 - include: workflowmanager.yaml
