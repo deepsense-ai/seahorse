@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="demo">
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Demo app</title>
+
+    <script src="./../node_modules/angular/angular.min.js" type="text/javascript"></script>
+    <link href="./../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <script src="./../dist/deepsense-loading-spinner.js" type="text/javascript"></script>
+    <link href="./../dist/deepsense-loading-spinner.css" rel="stylesheet" type="text/css">
+
+    <script src="./demo.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row well">
+            <deepsense-loading-spinner-lg></deepsense-loading-spinner-lg>
+        </div>
+
+        <div class="row well">
+            <deepsense-loading-spinner-sm></deepsense-loading-spinner-sm>
+        </div>
+
+        <div class="row well" style="position: relative; height: 350px;">
+            <deepsense-loading-spinner-processing bg="true">Processing</deepsense-loading-spinner-processing>
+        </div>
+    </div>
+</body>
+</html>
