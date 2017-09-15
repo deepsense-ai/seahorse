@@ -5,7 +5,7 @@ object Version {
   val avro        = "1.7.7"
   val guice       = "3.0"
   val hadoop      = "2.6.0"
-  val jclouds     = "1.8.1"
+  val jclouds     = "1.9.0"
   val jsr305      = "3.0.0"
   val mockito     = "1.10.19"
   val nsscalaTime = "1.8.0"
@@ -18,11 +18,12 @@ object Version {
 
 object Library {
 
-  val akka   = (name: String) => "com.typesafe.akka" %% s"akka-$name"   % Version.akka
-  val avro   = (name: String) => "org.apache.avro"    % s"avro$name"    % Version.avro
-  val hadoop = (name: String) => "org.apache.hadoop"  % s"hadoop-$name" % Version.hadoop
-  val spark  = (name: String) => "org.apache.spark"  %% s"spark-$name"  % Version.spark
-  val spray  = (name: String) => "io.spray"          %% s"spray-$name"  % Version.spray
+  val akka    = (name: String) => "com.typesafe.akka"      %% s"akka-$name"       % Version.akka
+  val avro    = (name: String) => "org.apache.avro"         % s"avro$name"        % Version.avro
+  val hadoop  = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"     % Version.hadoop
+  val jclouds = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"  % Version.jclouds
+  val spark   = (name: String) => "org.apache.spark"       %% s"spark-$name"      % Version.spark
+  val spray   = (name: String) => "io.spray"               %% s"spray-$name"      % Version.spray
 
   val akkaActor          = akka("actor")
   val apacheCommons      = "org.apache.commons"           %  "commons-lang3"      % "3.3.+"
@@ -38,7 +39,9 @@ object Library {
   val hadoopYarnApi      = hadoop("yarn-api")
   val hadoopYarnClient   = hadoop("yarn-client")
   val hadoopYarnCommon   = hadoop("yarn-common")
-  val jclouds            = "org.apache.jclouds"           % "jclouds-all"         % Version.jclouds
+  val jcloudsKeystone    = jclouds("keystone")
+  val jcloudsCompute     = "org.apache.jclouds"           % "jclouds-compute"     % Version.jclouds
+  val jcloudsNova        = jclouds("nova")
   val mockitoCore        = "org.mockito"                  % "mockito-core"        % Version.mockito
   val nscalaTime         = "com.github.nscala-time"      %% "nscala-time"         % Version.nsscalaTime
   val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
@@ -67,7 +70,9 @@ object Dependencies {
 
   val commons = Seq(
     akkaActor,
-    jclouds,
+    jcloudsKeystone,
+    jcloudsCompute,
+    jcloudsNova,
     sprayCan,
     sprayJson,
     sprayRouting,
@@ -84,7 +89,6 @@ object Dependencies {
   ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
 
   val experimentmanager = Seq(
-    jclouds,
     guice,
     guiceMultibindings,
     sprayCan,
