@@ -24,13 +24,13 @@ class CodeSnippetParamSpec extends AbstractParamSpec[String, CodeSnippetParam] {
 
   override def paramFixture: (CodeSnippetParam, JsValue) = {
     val param = CodeSnippetParam(
-      "myName", "myDescription", CodeSnippetLanguage(CodeSnippetLanguage.Python)
+      "myName", "myDescription", CodeSnippetLanguage(CodeSnippetLanguage.python)
     )
     val js = JsObject(
       "type" -> "codeSnippet".toJson,
       "name" -> param.name.toJson,
       "description" -> param.description.toJson,
-      "language" -> JsObject("name" -> "Python".toJson),
+      "language" -> JsObject("name" -> "python".toJson),
       "isGriddable" -> JsFalse,
       "default" -> JsNull
     )

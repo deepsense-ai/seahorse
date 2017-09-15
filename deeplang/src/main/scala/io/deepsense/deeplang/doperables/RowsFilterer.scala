@@ -26,7 +26,7 @@ class RowsFilterer extends Transformer {
     name = "condition",
     description = "Condition used to filter rows. " +
       "Only rows that satisfy condition will remain in DataFrame. Use SQL syntax.",
-    language = CodeSnippetLanguage(CodeSnippetLanguage.SparkSql)
+    language = CodeSnippetLanguage(CodeSnippetLanguage.sql)
   )
 
   def getCondition: String = $(condition)

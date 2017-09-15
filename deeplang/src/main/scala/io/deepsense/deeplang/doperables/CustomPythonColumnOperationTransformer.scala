@@ -36,7 +36,7 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
   val codeParameter = CodeSnippetParam(
     name = "code",
     description = "Column operation source code",
-    language = CodeSnippetLanguage(CodeSnippetLanguage.Python)
+    language = CodeSnippetLanguage(CodeSnippetLanguage.python)
   )
   setDefault(codeParameter -> "def transform_value(value, column_name):\n    return value")
 

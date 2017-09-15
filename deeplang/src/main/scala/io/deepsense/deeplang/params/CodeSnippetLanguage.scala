@@ -33,6 +33,6 @@ case class CodeSnippetLanguage(language: CodeSnippetLanguage.CodeSnippetLanguage
 
 object CodeSnippetLanguage extends Enumeration {
   type CodeSnippetLanguage = Value
-  val Python = Value("Python")
-  val SparkSql = Value("SparkSql")
+  val python = Value("python")
+  val sql = Value("sql")
 }

@@ -32,7 +32,7 @@ class SqlExpression extends Transformer {
   val expression = CodeSnippetParam(
     name = "expression",
     description = "SQL Expression to be executed on the DataFrame.",
-    language = CodeSnippetLanguage(CodeSnippetLanguage.SparkSql)
+    language = CodeSnippetLanguage(CodeSnippetLanguage.sql)
   )
 
   def getExpression: String = $(expression)
