@@ -103,7 +103,9 @@ angular.module('deepsense.graph-model').
     };
 
     GraphNode.prototype.refreshParameters = function refreshParameters() {
-      this.parameters.refresh(this);
+      if(this.parameters) {
+        this.parameters.refresh(this);
+      }
     };
 
     GraphNode.prototype.hasParameters = function hasParameters() {

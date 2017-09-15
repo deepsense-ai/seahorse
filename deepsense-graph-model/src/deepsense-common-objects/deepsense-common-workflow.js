@@ -254,13 +254,8 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     };
 
     that.removeNode = function removeNode(nodeId) {
-      try {
-        that.removeEdges(nodeId);
-        delete internal.nodes[nodeId];
-      }
-      catch (error) {
-        throw new Error('Cannot remove node. Node id: ' + nodeId + ' doesn\'t exist.');
-      }
+      that.removeEdges(nodeId);
+      delete internal.nodes[nodeId];
     };
 
     that.createEdge = function createEdge(data) {
