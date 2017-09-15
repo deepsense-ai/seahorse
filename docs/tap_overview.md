@@ -59,7 +59,7 @@ but you can only edit and run the workflows that you own.
 
 If you found an interesting workflow, but you are not the owner,
 you can clone it by clicking the
-![clone button](/img/clone_button.png) button.
+![clone button](img/clone_button.png) button.
 Once the workflow is cloned you can edit and run it.
 You can also create new workflows from scratch by pressing the
 **NEW WORKFLOW** button.

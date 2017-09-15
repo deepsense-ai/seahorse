@@ -47,7 +47,7 @@ Click the **START EDITING** button in the top panel to start editing the workflo
     <em>Empty canvas of Seahorse workflow editor</em>
 </p>
 
-In Seahorse, an application is represented as a graph of connected [operations](operations.html).
+In Seahorse, an application is represented as a graph of connected [operations](../operations.html).
 Operations represent various stages of data processing - from data ingestion and clean-up,
 through a broad range of transformations, up to predictive modelling and reporting.
 
@@ -58,7 +58,7 @@ First thing that we want to do in our quick start example is to read some data.
 
 <img class="img-responsive" style="display: inline-block; float:right; width:35%; height:auto" src="./img/quickstart/warning_read_dataframe.png" />
 
-* From the left panel called the **Operation Catalogue**, drag a [Read DataFrame](operations/read_dataframe.html) operation
+* From the left panel called the **Operation Catalogue**, drag a [Read DataFrame](../operations/read_dataframe.html) operation
   onto your canvas.
 * As you can see, the operation yields a warning. You can read it by moving the cursor over the exclamation mark.
 * Click on the `Read DataFrame` node on the canvas to unfold the parameters panel.
@@ -67,7 +67,7 @@ First thing that we want to do in our quick start example is to read some data.
 * Press **RUN**. The node will change its state to **RUNNING** and after a while to **COMPLETED**.
 Execution time statistics are provided in the right panel.
 * You can see reports for every executed operation by clicking on output ports (little blue icons on the bottom edge of operation nodes) of the operation.
-For the `Read DataFrame` the report contains a data sample of the read [DataFrame](classes/dataframe.html).
+For the `Read DataFrame` the report contains a data sample of the read [DataFrame](../classes/dataframe.html).
 
 
 #### Query It!
@@ -84,7 +84,7 @@ city, number of bedrooms, number of bathrooms, size of the apartment (in square 
 
 Let's calculate the average apartment price for each city:
 
-* From the **Operation Catalogue**, drag a [SQL Transformation](operations/sql_transformation.html)
+* From the **Operation Catalogue**, drag a [SQL Transformation](../operations/sql_transformation.html)
 operation onto your canvas.
 * Drag the `Read DataFrame` output to the `SQL Transformation` input to make a connection.
 * Fill the `SQL Transformation` operation's parameters:

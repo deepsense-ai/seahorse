@@ -61,7 +61,7 @@ description: Income Prediction
 ### Reading Data
 
 The data is provided in form of CSV file, with the names of columns described in the first row.
-In order to pull the data we will use [Read Data Frame](../internal/operations/read_dataframe.html) operation.
+In order to pull the data we will use [Read Data Frame](../operations/read_dataframe.html) operation.
 
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/income_predicting/parameters_image_0.png">
 
@@ -75,7 +75,7 @@ while others are strings. In order to train our algorithm, we need to convert al
 
 #### Mapping Strings to Numerical Values
 
-First we need to map categorical values to numbers. To achieve this, we are using the [String Indexer](../internal/operations/string_indexer.html) operation.
+First we need to map categorical values to numbers. To achieve this, we are using the [String Indexer](../operations/string_indexer.html) operation.
 Conveniently, in our case we can select our columns by type.
 
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/income_predicting/parameters_image_1.png">
@@ -87,7 +87,7 @@ After executing this operation, we can see that for example in **sex** column al
 Although all of our features are now numeric, passing them directly to our algorithm would be a mistake.
 This is because logistic regression could come up with erroneous conclusions while depending on their numerical properties.
 
-This issue can be solved using [One Hot Encoder](../internal/operations/one_hot_encoder.html) operation.
+This issue can be solved using [One Hot Encoder](../operations/one_hot_encoder.html) operation.
 It receives a categorical value as a number from a fixed range, and produces a vector in which each column corresponds to one possible value of the feature.
 For instance, **race** column has five possible values. One Hot Encoder will encode the second category as `[0,1,0,0,0]` and the fourth category as `[0,0,0,1,0]`.
 
@@ -95,7 +95,7 @@ For instance, **race** column has five possible values. One Hot Encoder will enc
 
 #### Assembling a Feature Vector
 
-We use [Assemble Vector](../internal/operations/assemble_vector.html) operation to group all relevant columns together
+We use [Assemble Vector](../operations/assemble_vector.html) operation to group all relevant columns together
 and form a column with a single vector of all the features.
 
 In our case **is-over** column represents the prediction target. All the other columns are features.
@@ -107,17 +107,17 @@ but the prediction target column.
 ### Training Model
 
 First we will split the data into a training set and a validation set.
-Then we will use [Fit](../internal/operations/fit.html) and [Logistic Regression](../internal/operations/logistic_regression.html) operations to train the model.
+Then we will use [Fit](../operations/fit.html) and [Logistic Regression](../operations/logistic_regression.html) operations to train the model.
 
 <img class="centered-image img-responsive spacer" src="../img/usecases/income_predicting/image_2.png">
 
-In this step, we're using the [Split](../internal/operations/split.html) operation to split the data into a training set and a validation set.
+In this step, we're using the [Split](../operations/split.html) operation to split the data into a training set and a validation set.
 Training set's purpose is to train the model. Validation set will later be used to evaluate the model's accuracy.
 We will use a `0.7` `split ratio`, so that 70% of the data is used for training.
 
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/income_predicting/parameters_image_4.png">
 
-To train the model, we will need [Logistic Regression](../internal/operations/logistic_regression.html) and [Fit](../internal/operations/fit.html) operations.
+To train the model, we will need [Logistic Regression](../operations/logistic_regression.html) and [Fit](../operations/fit.html) operations.
 Note that inside Fit operation's parameters, we need to change `label column` parameter to `is-over`.
 We leave feature column parameter at its current value (`features`), because this is how we named the vector in Vector Assembler.
 We will leave the default values in all of the remaining parameters as well.
@@ -127,13 +127,13 @@ We will leave the default values in all of the remaining parameters as well.
 ### Verifying Model Effectiveness
 
 Now that we have our model trained, we can use it to predict the income for our hold-out validation set.
-In order to do so, we'll add a [Transform](../internal/operations/transform.html) operation.
+In order to do so, we'll add a [Transform](../operations/transform.html) operation.
 We'll connect the validation set to the first port, and the model to the second one.
 This will produce a dataset with predictions.
 
 <img class="centered-image img-responsive spacer" width="50%" src="../img/usecases/income_predicting/image_6.png">
 
-To evaluate the model, we will use the [SQL Transformation](../internal/operations/sql_transformation.html)
+To evaluate the model, we will use the [SQL Transformation](../operations/sql_transformation.html)
 operation to check for each prediction whether it is correct, and whether it is a *true positive*, *false positive*, *true negative* or *false negative*.
 
 <div class="spacer centered-container">
@@ -169,7 +169,7 @@ We can reapply our model and make predictions once again, on our validation set,
 
 Next, we want to use the same SQL Transformation, but on a different DataFrame.
 SQL Transformation operation outputs a `SQLTransformer` that can be reused using a Transform operation.
-For details about Transformers please refer to the [documentation](../internal/classes/transformer.html).
+For details about Transformers please refer to the [documentation](../classes/transformer.html).
 
 <img class="centered-image img-responsive spacer" src="../img/usecases/income_predicting/image_3.png">
 

@@ -24,7 +24,7 @@ Released Under CC0: <a target="_blank" href="https://creativecommons.org/publicd
 
 ### Reading the Data
 
-The first thing we need to do is load the data into Seahorse. This is done by placing a [Read DataFrame](../internal/operations/read_dataframe.html) operation on the canvas and modifying its parameters:
+The first thing we need to do is load the data into Seahorse. This is done by placing a [Read DataFrame](../operations/read_dataframe.html) operation on the canvas and modifying its parameters:
 
 **SOURCE**: [https://s3.amazonaws.com/workflowexecutor/examples/data/StateNames.csv](https://s3.amazonaws.com/workflowexecutor/examples/data/StateNames.csv)
 
@@ -63,17 +63,17 @@ The pie chart for the **Gender** column illustrates that there is more data for 
 
 <img class="img-responsive" style="display: inline-block; float:right;" src="../img/usecases/us_baby_names/image_4.png"/>
 
-Let’s take a closer look at the female names (an analysis of male names would be analogous; if you feel confident, you can explore male names while following this tutorial). We can use a [Filter Rows](../internal/operations/filter_rows.html) operation to select only female names.
+Let’s take a closer look at the female names (an analysis of male names would be analogous; if you feel confident, you can explore male names while following this tutorial). We can use a [Filter Rows](../operations/filter_rows.html) operation to select only female names.
 
-The [Filter Rows](../internal/operations/filter_rows.html) operation is parameterized by an expression which will be used to select the desired rows. To select female names, we can use the expression below:
+The [Filter Rows](../operations/filter_rows.html) operation is parameterized by an expression which will be used to select the desired rows. To select female names, we can use the expression below:
 
 **CONDITION**: `Gender = 'F'`
 
-![image alt text](/img/usecases/us_baby_names/image_5.png)
+![image alt text](img/usecases/us_baby_names/image_5.png)
 
 ### Finding the Most Popular Names
 
-The first question we will explore is:  what names were the most popular. We need to sum the **Count** column for every name, disregarding the year and the state in which the  child was born. To achieve this, we will use a [SQL Transformation](../internal/operations/sql_transformation.html) operation. Let’s leave **dataframe id** set to `df` and just modify the **expression** parameter:
+The first question we will explore is:  what names were the most popular. We need to sum the **Count** column for every name, disregarding the year and the state in which the  child was born. To achieve this, we will use a [SQL Transformation](../operations/sql_transformation.html) operation. Let’s leave **dataframe id** set to `df` and just modify the **expression** parameter:
 
 **EXPRESSION**:
 {% highlight sql %}
@@ -98,7 +98,7 @@ We have found the most popular names in the U.S., but we can also narrow our res
 
 To find the most popular names in a certain state we need to execute a sequence of operations. It is a good practice to enclose such a sequence within a “procedure” which can be reused later.
 
-To do that we need to use a [Create Custom Transformer](../internal/operations/create_custom_transformer.html) operation. Please drag and drop Create Custom Transformer to the canvas and click the **Edit workflow** button on the operation parameters panel. This takes us to a new canvas where we can create a custom [Transformer](../internal/classes/transformer.html). A Transformer is a function which takes a DataFrame as an input and returns another DataFrame as the output. We want to create a Transformer that calculates the most popular names in a given state.
+To do that we need to use a [Create Custom Transformer](../operations/create_custom_transformer.html) operation. Please drag and drop Create Custom Transformer to the canvas and click the **Edit workflow** button on the operation parameters panel. This takes us to a new canvas where we can create a custom [Transformer](../classes/transformer.html). A Transformer is a function which takes a DataFrame as an input and returns another DataFrame as the output. We want to create a Transformer that calculates the most popular names in a given state.
 
 To do that, we need to:
 
@@ -131,7 +131,7 @@ select State, max(AllTimeCount) as MaxCount from df group by State
 {% endhighlight %}
 
 
-3\. Now, we will use a [Join](../internal/operations/join.html) operation to filter out only the most popular names for each state. We will join name occurrences (from step 1) with counts of the most popular names in every state (step 2).
+3\. Now, we will use a [Join](../operations/join.html) operation to filter out only the most popular names for each state. We will join name occurrences (from step 1) with counts of the most popular names in every state (step 2).
 
 <img class="img-responsive" style="display: inline-block; float:right; width:20%" src="../img/usecases/us_baby_names/image_11.png"/>
 
@@ -144,7 +144,7 @@ We need to add a Join operation to the canvas and set two equality constraints a
 
 Close the inner workflow by clicking the **CLOSE INNER WORKFLOW** button at top of the screen.
 
-Add a [Transform](../internal/operations/transform.html) operation to the canvas and connect it with nodes, as shown below:
+Add a [Transform](../operations/transform.html) operation to the canvas and connect it with nodes, as shown below:
 
 <div class="centered-container spacer" markdown="1">
   <img src="../img/usecases/us_baby_names/image_12.png"

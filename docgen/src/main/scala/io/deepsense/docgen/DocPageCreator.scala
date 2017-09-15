@@ -294,6 +294,6 @@ trait DocPageCreator {
   }
 
   private def examples(operation: DOperation): String = {
-    "{% markdown internal/operations/examples/" + operation.getClass.getSimpleName + ".md %}"
+    "{% markdown operations/examples/" + operation.getClass.getSimpleName + ".md %}"
   }
 }

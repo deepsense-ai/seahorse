@@ -44,20 +44,7 @@
             <li class="{% if page.includeTechnicalOverviewMenu %}active{% endif %} dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Components<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li class="{% if page.docTab == 'seahorse_editor_overview' %}active{% endif %}"><a href="{{base}}/internal/seahorse_editor_overview.html">Seahorse Editor</a></li>
                 <li class="{% if page.docTab == 'batch_workflow_executor_overview' %}active{% endif %}"><a href="{{base}}/internal/batch_workflow_executor_overview.html">Seahorse Batch Workflow Executor</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="{% if page.docTab == 'workflowfile' %}active{% endif %}"><a href="{{base}}/internal/workflowfile.html">Workflow Files</a></li>
-              </ul>
-            </li>
-            <li class="{% if page.includeDeeplangMenu or page.includeOperationsMenu or page.includeClassesMenu %}active{% endif %} dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Deeplang<span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li class="{% if page.docTab == 'deeplang_overview' %}active{% endif %}"><a href="{{base}}/internal/deeplang_overview.html">Overview</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="{% if page.docTab == 'parameter_types' %}active{% endif %}"><a href="{{base}}/internal/parameter_types.html">Parameter Types</a></li>
-                <li class="{% if page.docTab == 'operations' or page.includeOperationsMenu %}active{% endif %}"><a href="{{base}}/internal/operations.html">Operations</a></li>
-                <li class="{% if page.docTab == 'classes' or page.includeClassesMenu %}active{% endif %}"><a href="{{base}}/internal/classes.html">Classes</a></li>
               </ul>
             </li>
           </ul>

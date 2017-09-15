@@ -17,9 +17,9 @@ it is to work with Seahorse. This is why it's a self-contained virtualized envir
 quickly set up and get started.
 
 Seahorse Desktop works on multiple platforms, including
-<img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows,
-<img src="../img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X and
-<img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux.
+<img src="img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows,
+<img src="img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X and
+<img src="img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux.
 It comes in two flavours, functionally identical, but differing in terms of
 requirements imposed on your operating system. Presented below are the two options.
 

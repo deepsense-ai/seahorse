@@ -55,7 +55,7 @@ description: Mushrooms
 
 The data is provided in a form of a 23-column, comma-separated CSV-like file with column names in the first line.
 To work with the dataset, it has to be loaded into Seahorse. This can be done by a
-[Read DataFrame](../internal/operations/read_dataframe.html) operation.
+[Read DataFrame](../operations/read_dataframe.html) operation.
 Let’s place it on the canvas using drag-and-drop from the operations palette.
 To load the data, we need to provide the correct path to the file.
 
@@ -86,7 +86,7 @@ It contains information about data loaded by the Read DataFrame operation.
 The DataFrame is too wide (more than 20 columns) to allow viewing the data sample in the report,
 so we are able to explore here only the column types and names.
 If you want to explore the data a bit more, you can use
-a [Notebook](../internal/operations/notebook.html) operation
+a [Notebook](../operations/notebook.html) operation
 (it allows interactive data exploration). Just place it on the canvas (use drag-and-drop technique)
 and connect its input port with the Read DataFrame output port
 (click on the output port and drag it to an input port of the other operation).
@@ -107,9 +107,9 @@ We have discovered that all columns have string values.
 To perform classification, Seahorse needs a numeric label column and a vector of numerics as features column.
 We need to map string values to numbers and assembly features into a single vector column.
 This can be done by combining multiple operations
- – [String Indexer](../internal/operations/string_indexer.html)
-with [One Hot Encoder](../internal/operations/one_hot_encoder.html)
-and [Assemble Vector](../internal/operations/assemble_vector.html)
+ – [String Indexer](../operations/string_indexer.html)
+with [One Hot Encoder](../operations/one_hot_encoder.html)
+and [Assemble Vector](../operations/assemble_vector.html)
  – as shown in the workflow overview image.
 
 The String Indexer operation translates string values to numeric ordinal values.
@@ -151,7 +151,7 @@ Assemble Vector merges columns with numerics and vectors of numerics into a sing
 ### Remove Unnecessary Columns
 
 We will use the
-[SQL Transformation](../internal/operations/sql_transformation.html)
+[SQL Transformation](../operations/sql_transformation.html)
 operation to remove unnecessary columns from the dataset and give more meaningful names to columns
 that are essential for our experiment.
 It will make the dataset reports smaller and facilitate exploring data.
@@ -173,7 +173,7 @@ FROM df
 
 To perform a fair evaluation of our model, we need to split our data into two parts:
 a testing dataset and a training dataset. That task could be accomplished by using
-a [Split](../internal/operations/split.html) operation.
+a [Split](../operations/split.html) operation.
 To divide the dataset in ratio 1 to 3, we do need to modify its default parameters:
 
 **SPLIT RATIO**: 0.25
@@ -185,11 +185,11 @@ To divide the dataset in ratio 1 to 3, we do need to modify its default paramete
 ### Model Training
 
 To train a model, we need to use
-the [Fit](../internal/operations/fit.html) operation,
+the [Fit](../operations/fit.html) operation,
 which can be used to fit
-an [Estimator](../internal/classes/estimator.html).
+an [Estimator](../classes/estimator.html).
 We want to use logistic regression classification, so we will put
-the [Logistic Regression](../internal/operations/logistic_regression.html)
+the [Logistic Regression](../operations/logistic_regression.html)
 operation on the canvas and connect it to the Fit operation.
 
 We will leave almost all default values of Logistic Regression parameters unchanged,
@@ -206,7 +206,7 @@ By using Split operation, we had generated a training dataset and a test dataset
 We have trained our model on the training dataset.
 Now it is time to use the test dataset to verify the effectiveness of our classification model.
 To generate predictions using the trained model, we need to use
-a [Transform](../internal/operations/transform.html) operation.
+a [Transform](../operations/transform.html) operation.
 To assess effectiveness of our model we will count “Falsely Poisonous” (waste of edible mushrooms)
 and “Falsely Edible“ (very dangerous!) entries in the test dataset. To perform the calculations,
 we will use the SQL Transformation operation.
