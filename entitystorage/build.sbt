@@ -15,3 +15,5 @@ Revolver.settings
 Seq(filterSettings: _*)
 CommonSettingsPlugin.setUpFiltersPlugin
 
+enablePlugins(JavaAppPackaging)
+

@@ -18,3 +18,5 @@ test in IntegrationTest <<= (test in IntegrationTest) dependsOn (assembly in Loc
 
 Seq(filterSettings: _*)
 CommonSettingsPlugin.setUpFiltersPlugin
+
+enablePlugins(JavaAppPackaging)
