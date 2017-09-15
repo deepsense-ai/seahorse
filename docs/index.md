@@ -35,16 +35,11 @@ Let's start with a single one.
 
 #### Read some data
 
+<img class="img-responsive" style="display: inline-block; float:right; width:35%; height:auto" src="./img/quickstart/warning_read_dataframe.png" />
+
 * From left panel called **Operation catalogue**, drag [Read DataFrame](operations/read_dataframe.html) operation
   to your canvas.
 * As you can see operation yields a warning. You can read it by moving cursor over exclamation mark.
-
-
-  <div class="centered-container" markdown="1">
-    ![Read DataFrame](./img/quickstart/warning_read_dataframe.png){: .centered-image .img-responsive}
-  </div>
-
-
 * Click on **Read DataFrame** node on canvas to unfold parameters panel.
 * Fill missing **SOURCE** with example data set
 `https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv`
@@ -63,9 +58,9 @@ Each row provides information about the apartment:
 city, number of bedrooms, number of bathrooms, size of the apartment (in square feets) and its price.
 
 
-<img class="img-responsive" style="display: block; margin-left: auto; margin-right: auto; width:60%; height:auto" src="./img/quickstart/transactions_sample.png" />
+<img class="img-responsive" style="margin: 0 auto; width:60%; height:auto" src="./img/quickstart/transactions_sample.png" />
 
-<img class="img-responsive" style="float:right" src="./img/quickstart/workflow.png" />
+<img class="img-responsive" style="float:right; width:18%; height:auto" src="./img/quickstart/workflow.png" />
 
 Let's calculate average apartment price for each city:
 
@@ -79,7 +74,7 @@ Let's calculate average apartment price for each city:
 * Click run to execute workflow and you will see two completed nodes.
 * To view results, click on the first output port of **Execute SQL Expression**.
 
-<img class="img-responsive" style="display: block; margin-left: auto; margin-right: auto; width:60%; height:auto" src="./img/quickstart/report.png" />
+<img class="img-responsive" style="margin: 0 auto; width:60%; height:auto" src="./img/quickstart/report.png" />
 
 
 Congratulations! You have successfully made your first Seahorse application.
