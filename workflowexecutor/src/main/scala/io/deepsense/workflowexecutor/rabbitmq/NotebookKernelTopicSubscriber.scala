@@ -29,6 +29,7 @@ case class NotebookKernelTopicSubscriber(
 
   override def receive(): Actor.Receive = {
     case get: GetPythonGatewayAddress =>
+      logger.debug("Received GetPythonGatewayAddress")
       pythonGatewayListeningPort() foreach { port =>
         publisherActor(publisherActorName) ! PythonGatewayAddress(List(Address("localhost", port)))
       }

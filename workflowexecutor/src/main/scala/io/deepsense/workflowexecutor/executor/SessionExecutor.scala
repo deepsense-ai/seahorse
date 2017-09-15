@@ -94,7 +94,7 @@ case class SessionExecutor(
 
     val notebookSubscriberActor = system.actorOf(
       NotebookKernelTopicSubscriber.props(
-        MQCommunication.Actor.Publisher.notebook,
+        "user/" + MQCommunication.Actor.Publisher.notebook,
         pythonExecutionCaretaker.gatewayListeningPort _),
       MQCommunication.Actor.Subscriber.notebook)
     communicationFactory.createCommunicationChannel(
