@@ -39,4 +39,7 @@ Edge.prototype.serialize = function serialize() {
   return data;
 };
 
+Edge.CREATE = 'Edge.CREATE';
+Edge.REMOVE = 'Edge.REMOVE';
+
 module.exports = Edge;

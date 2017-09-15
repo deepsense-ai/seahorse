@@ -3,7 +3,8 @@
  */
 'use strict';
 
-var jsPlumb = require('jsPlumb');
+var jsPlumb = require('jsPlumb'),
+    Edge = require('../../common-objects/common-edge.js');
 
 var connectorPaintStyle = {
   lineWidth: 2,
@@ -50,7 +51,8 @@ var inputStyle = {
 };
 
 
-function DrawingService() {
+/* @ngInject */
+function DrawingService($rootScope) {
 
   var that = this;
   var internal = {};
@@ -63,6 +65,8 @@ function DrawingService() {
       },
       Container: 'flowchart-box'
     });
+
+    that.bindConnectionEvents();
   };
 
   internal.getNodeById = function getNodeById(id) {
@@ -100,7 +104,7 @@ function DrawingService() {
           });
       connection.setParameter('edgeId', edge.id);
     }
-    that.bindConnectionEvents();
+
   };
 
   that.addOutputPoint = function addOutputPoint(node, ports) {
@@ -151,7 +155,11 @@ function DrawingService() {
     }
     that.connectionEventsBinded = true;
 
-    jsPlumb.bind('connection', (info) => {
+    jsPlumb.bind('connection', (info, originalEvent) => {
+      if (!originalEvent) {
+        return;
+      }
+
       let data = {
           'from': {
             'node': info.sourceId,
@@ -164,16 +172,19 @@ function DrawingService() {
         },
         edge = internal.experiment.createConnection(data);
       info.connection.setParameter('edgeId', edge.id);
+      $rootScope.$emit(Edge.CREATE, {});
     });
 
-    jsPlumb.bind('connectionDetached', (info) => {
-      if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource) {
+    jsPlumb.bind('connectionDetached', (info, originalEvent) => {
+      if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
         internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
+        $rootScope.$emit(Edge.REMOVE, {});
       }
     });
 
     jsPlumb.bind('connectionMoved', function(info) {
        internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
+       $rootScope.$emit(Edge.REMOVE, {});
     });
   };
 

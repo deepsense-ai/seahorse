@@ -9,7 +9,8 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
   var that = this;
   var internal = {};
 
-  var GraphNode = require('./common-objects/common-graph-node.js');
+  var GraphNode = require('./common-objects/common-graph-node.js'),
+      Edge = require('./common-objects/common-edge.js');
 
   internal.operations = null;
   internal.experiment = null;
@@ -68,9 +69,9 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     $rootScope.$apply();
   });
 
-  $rootScope.$on(GraphNode.MOVE, function() {
-    that.saveData();
-  });
+  $rootScope.$on(GraphNode.MOVE, ()  => that.saveData());
+  $rootScope.$on(Edge.CREATE, ()  => that.saveData());
+  $rootScope.$on(Edge.REMOVE, ()  => that.saveData());
 
   internal.init();
   return that;
