@@ -35,6 +35,7 @@ object CatalogRecorder {
   def registerDOperables(catalog: DOperableCatalog): Unit = {
     catalog.registerDOperable[DataFrame]()
     catalog.registerDOperable[Report]()
+    catalog.registerDOperable[MetricValue]()
     catalog.registerDOperable[ColumnsFilterer]()
     catalog.registerDOperable[DatetimeDecomposer]()
     catalog.registerDOperable[MathematicalTransformation]()
@@ -99,6 +100,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[Union](
       DOperationCategories.DataManipulation)
+
+    catalog.registerDOperation[Evaluate](
+      DOperationCategories.ML.Evaluation)
 
     // operations generated from Spark estimators
     catalog.registerDOperation[CreateLogisticRegression](

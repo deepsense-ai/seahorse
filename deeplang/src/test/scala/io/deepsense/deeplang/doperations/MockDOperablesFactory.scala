@@ -21,7 +21,7 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Estimator, Report, Transformer}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{NumericParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}
@@ -57,6 +57,12 @@ object MockDOperablesFactory extends UnitSpec {
   val transformerKnowledge1 = DKnowledge(transformer1)
   val transformerKnowledge2 = DKnowledge(transformer2)
 
+  val metricValue1 = MetricValue("name1", 0.1)
+  val metricValue2 = MetricValue("name2", 0.2)
+
+  val metricValueKnowledge1 = DKnowledge(MetricValue.forInference("name1"))
+  val metricValueKnowledge2 = DKnowledge(MetricValue.forInference("name2"))
+
   class MockEstimator extends Estimator {
     val paramA = NumericParam("b", "desc")
     setDefault(paramA -> DefaultForA)
@@ -89,5 +95,37 @@ object MockDOperablesFactory extends UnitSpec {
     // Not used in tests.
     override private[deeplang] def _fit(df: DataFrame): Transformer = ???
     override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer = ???
+  }
+
+  class MockEvaluator extends Evaluator {
+    val paramA = NumericParam("b", "desc")
+    setDefault(paramA -> DefaultForA)
+    override val params: Array[Param[_]] = declareParams(paramA)
+    override def report(executionContext: ExecutionContext): Report = ???
+
+    override def evaluate: DMethod1To1[Unit, DataFrame, MetricValue] = {
+      new DMethod1To1[Unit, DataFrame, MetricValue] {
+        override def apply(ctx: ExecutionContext)(p: Unit)(dataFrame: DataFrame): MetricValue = {
+          $(paramA) match {
+            case 1 => metricValue1
+            case 2 => metricValue2
+          }
+        }
+
+        override def infer(ctx: InferContext)(p: Unit)(k: DKnowledge[DataFrame])
+        : (DKnowledge[MetricValue], InferenceWarnings) = {
+          $(paramA) match {
+            case 1 => (metricValueKnowledge1, InferenceWarnings.empty)
+            case 2 => (metricValueKnowledge2, InferenceWarnings.empty)
+          }
+        }
+      }
+    }
+
+    // Not used in tests.
+    private[deeplang] def _evaluate(context: ExecutionContext, dataFrame: DataFrame): MetricValue =
+      ???
+    private[deeplang] def _infer(k: DKnowledge[DataFrame]): MetricValue =
+      ???
   }
 }

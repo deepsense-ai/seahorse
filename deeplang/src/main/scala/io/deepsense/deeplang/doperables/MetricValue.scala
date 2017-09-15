@@ -29,6 +29,8 @@ import io.deepsense.reportlib.model.{Table, ReportContent}
   */
 case class MetricValue(name: String, value: Double) extends DOperable {
 
+  def this() = this(null, Double.NaN)
+
   override def report(executionContext: ExecutionContext): Report =
     Report(ReportContent("Report for Metric Value", List(Table(
       name = "Metric Value",
