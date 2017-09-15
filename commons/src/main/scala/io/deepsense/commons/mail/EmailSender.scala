@@ -47,6 +47,8 @@ class EmailSender private (emailSenderConfig: EmailSenderConfig) extends Logging
     val toAddresses = to.flatMap(InternetAddress.parse(_, false).asInstanceOf[Array[Address]])
     msg.setRecipients(RecipientType.TO, toAddresses.toArray)
 
+    msg.setFrom(InternetAddress.parse(emailSenderConfig.from).head)
+
     msg
   }
 
