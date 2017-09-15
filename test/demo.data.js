@@ -199,7 +199,7 @@ angular.module('test').
         },
         {
           "name": "sample_choice",
-          "type": "choice",
+          "type": "multipleChoice",
           "description": "sample choice description",
           "default": "choice1",
           "required": true,
@@ -291,17 +291,7 @@ angular.module('test').
           },
           "choice2-some-example-text": {
             "name_002": "2-2=0"
-          },
-          "sample-multiplier": [
-            {
-              "ftp-field": "ftp://www.test.tete/",
-              "http-field": "http://test.te/"
-            },
-            {
-              "ftp-field": "ftp://www.test210.tete/",
-              "http-field": "http://test_2222.test/"
-            }
-          ]
+          }
         },
         "sample-multiplier": [
           {
@@ -321,7 +311,7 @@ angular.module('test').
             "values": ["column1", "column2", "...", "column42"]
           },
           {
-            "type": "indexList",
+            "type": "indexRange",
             "values": [0, 42]
           },
           {

@@ -22,6 +22,10 @@
                 <select ng-model="currentNode" class="form-control" ng-options="node.id as node.name for node in testData"></select>
             </div>
         </div>
+
+        <pre class="row well default-spacing">
+            {{ getNode().parameters.serialize() | json }}
+        </pre>
     </div>
 
     <deepsense-operation-attributes
