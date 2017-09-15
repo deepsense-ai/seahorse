@@ -65,7 +65,7 @@
         </div>
 
         <div class="dataframe-upload-progress" ng-if="controller.uploadingFiles.length > 0">
-          <div ng-repeat="uploadingFile in controller.uploadingFiles track by uploadingFile.name">
+          <div ng-repeat="uploadingFile in controller.uploadingFiles track by uploadingFile.path">
             <div class="title"><b>{{uploadingFile.path}}</b></div>
             <div class="uploading-section">
               <div class="information">uploading...</div>
@@ -82,7 +82,7 @@
         </div>
 
         <div class="list-wrapper uploaded-list-wrapper" ng-if="controller.uploadedFiles">
-          <div class="dataframe" ng-repeat="dataframe in controller.uploadedFiles track by dataframe.name">
+          <div class="dataframe" ng-repeat="dataframe in controller.uploadedFiles track by dataframe.path">
             <div class="dataframe-name"
                  ng-click="controller.selectDataframe(dataframe)"
                  ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
