@@ -8,6 +8,7 @@ name := "deepsense-backend"
 
 lazy val shWeRepoDir = file("./seahorse-workflow-executor")
 
+lazy val seahorseApi = ProjectRef(shWeRepoDir, "api")
 lazy val seahorseCommons = ProjectRef(shWeRepoDir, "commons")
 lazy val seahorseMqProtocol = ProjectRef(shWeRepoDir, "workflowexecutormqprotocol")
 lazy val seahorseDeeplang = ProjectRef(shWeRepoDir, "deeplang")
@@ -22,7 +23,7 @@ lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseG
 lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, backendcommons, backendcommons % "test->test",
   seahorseWorkflowJson)
 lazy val libraryservice         = project dependsOn (backendcommons, backendcommons % "test->test")
-lazy val datasourcemanager      = project dependsOn (backendcommons)
+lazy val datasourcemanager      = project dependsOn (backendcommons, seahorseApi)
 lazy val schedulingmanager      = project dependsOn (backendcommons, workflowmanager, sessionmanager)
 
 lazy val seahorseWorkflowExecutorProjects = Seq(
