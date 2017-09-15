@@ -211,6 +211,46 @@ class WorkflowExecutorActorSpec
             resultGraph shouldBe failedGraphWithAbortedNodes
         }
       };()}
+      "graph contains a cycle" in { new TestCase {
+        when(graph.inferKnowledge(any())) thenThrow classOf[CyclicGraphException]
+        val failedState = GraphState.failed(mock[FailureDescription])
+        val failedGraph = mock[Graph]
+        val failedGraphWithAbortedNodes = mock[Graph]
+        when(graph.markFailed(any())) thenReturn failedGraph
+        when(failedGraph.state) thenReturn failedState
+        when(failedGraph.abortNodes) thenReturn failedGraphWithAbortedNodes
+        when(failedGraphWithAbortedNodes.state) thenReturn failedState
+        when(failedGraphWithAbortedNodes.updateState()) thenCallRealMethod()
+
+        val result = launchGraph(shouldStartExecutors = false)
+
+        verifySystemShutDown()
+        result shouldBe 'completed
+        whenReady(result) {
+          case GraphFinished(resultGraph, _) =>
+            resultGraph shouldBe failedGraphWithAbortedNodes
+        }
+      };()}
+      "knowledge inference throws" in { new TestCase {
+        when(graph.inferKnowledge(any())) thenThrow classOf[Exception]
+        val failedState = GraphState.failed(mock[FailureDescription])
+        val failedGraph = mock[Graph]
+        val failedGraphWithAbortedNodes = mock[Graph]
+        when(graph.markFailed(any())) thenReturn failedGraph
+        when(failedGraph.state) thenReturn failedState
+        when(failedGraph.abortNodes) thenReturn failedGraphWithAbortedNodes
+        when(failedGraphWithAbortedNodes.state) thenReturn failedState
+        when(failedGraphWithAbortedNodes.updateState()) thenCallRealMethod()
+
+        val result = launchGraph(shouldStartExecutors = false)
+
+        verifySystemShutDown()
+        result shouldBe 'completed
+        whenReady(result) {
+          case GraphFinished(resultGraph, _) =>
+            resultGraph shouldBe failedGraphWithAbortedNodes
+        }
+      };()}
     }
   }
 }

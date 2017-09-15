@@ -37,7 +37,7 @@ trait KnowledgeInference {
    * @return A graph knowledge with inferred results for every node.
    */
   def inferKnowledge(context: InferContext): GraphKnowledge = {
-    val sorted = topologicallySorted.getOrElse(throw new CyclicGraphException())
+    val sorted = topologicallySorted.getOrElse(throw CyclicGraphException())
     sorted
       .foldLeft(GraphKnowledge())((knowledge, node) => inferKnowledge(node, context, knowledge))
   }

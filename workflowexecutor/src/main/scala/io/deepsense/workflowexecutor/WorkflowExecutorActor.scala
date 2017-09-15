@@ -17,13 +17,14 @@
 package io.deepsense.workflowexecutor
 
 import scala.concurrent.Promise
+import scala.util.{Failure, Success, Try}
 
 import akka.actor._
 
 import io.deepsense.commons.exception.{FailureCode, DeepSenseFailure, FailureDescription}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.graph.{GraphKnowledge, Graph, Node}
+import io.deepsense.graph.{CyclicGraphException, GraphKnowledge, Graph, Node}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
@@ -58,11 +59,20 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
     this.generateReports = generateReports
     this.result = result
     graph = g
-    val knowledge = graph.inferKnowledge(executionContext)
-    if (knowledge.errors.nonEmpty) {
-      val failureDescription = WorkflowExecutorActor.inferenceErrorsFailureDescription(knowledge)
-      logger.error("Workflow is incorrect - cannot launch. Errors: {}", failureDescription)
-      graph = graph.markFailed(failureDescription)
+
+    val errors = Try(graph.inferKnowledge(executionContext)) match {
+      case Success(knowledge) =>
+        knowledge.errors.headOption.map(_ =>
+          WorkflowExecutorActor.inferenceErrorsFailureDescription(knowledge))
+      case Failure(ex: CyclicGraphException) =>
+        Some(WorkflowExecutorActor.cyclicGraphFailureDescription)
+      case Failure(ex) =>
+        Some(WorkflowExecutorActor.genericFailureDescription(ex))
+    }
+
+    if (errors.isDefined) {
+      logger.error("Workflow is incorrect - cannot launch. Errors: {}", errors.get)
+      graph = graph.markFailed(errors.get)
       graph = graph.abortNodes
       endExecution()
     } else {
@@ -167,6 +177,21 @@ object WorkflowExecutorActor {
       details = graphKnowledge.errors.map {
         case (id, errors) => (id.toString, errors.map(_.toString).mkString("\n"))
       }
+    )
+  }
+
+  def cyclicGraphFailureDescription: FailureDescription = {
+    FailureDescription(DeepSenseFailure.Id.randomId,
+      FailureCode.IncorrectWorkflow, "Cyclic workflow",
+      Some("Provided workflow cannot be launched, because it contains a cycle")
+    )
+  }
+
+  def genericFailureDescription(e: Throwable): FailureDescription = {
+    FailureDescription(DeepSenseFailure.Id.randomId,
+      FailureCode.LaunchingFailure, "Launching failure",
+      Some(s"Error while launching workflow: ${e.getMessage}"),
+      FailureDescription.stacktraceDetails(e.getStackTrace)
     )
   }
 }

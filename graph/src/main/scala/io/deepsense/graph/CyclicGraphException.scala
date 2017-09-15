@@ -18,7 +18,7 @@ package io.deepsense.graph
 
 import io.deepsense.commons.exception.{FailureCode, DeepSenseException}
 
-class CyclicGraphException
+case class CyclicGraphException()
   extends DeepSenseException(
     FailureCode.IllegalArgumentException,
     "Cyclic graph",
