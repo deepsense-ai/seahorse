@@ -164,6 +164,8 @@ case class SessionExecutor(
       tempPath,
       hostAddress.getHostAddress,
       pythonExecutionCaretaker.gatewayListeningPort.get,
+      hostAddress.getHostAddress,
+      rExecutionCaretaker.backendListeningPort,
       messageQueueHost,
       messageQueuePort,
       messageQueueUser,

@@ -132,7 +132,10 @@ object CatalogRecorder {
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
-    catalog.registerDOperation[Notebook](
+    catalog.registerDOperation[PythonNotebook](
+      DOperationCategories.IO)
+
+    catalog.registerDOperation[RNotebook](
       DOperationCategories.IO)
 
     catalog.registerDOperation[ReadDataFrame](

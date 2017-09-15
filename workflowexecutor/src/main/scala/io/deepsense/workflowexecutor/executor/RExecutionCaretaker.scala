@@ -28,11 +28,12 @@ class RExecutionCaretaker(rExecutorPath: String,
 
   private val backend = new SparkRBackend()
 
+  def backendListeningPort: Int = backend.port
+
   def rCodeExecutor: CustomCodeExecutor = new RExecutor(
     backend.port, backend.entryPointId, customCodeEntryPoint, extractRExecutor())
 
   def start(): Unit = backend.start(customCodeEntryPoint)
-
 
   private def extractRExecutor(): String = {
     if (rExecutorPath.endsWith(".jar")) {

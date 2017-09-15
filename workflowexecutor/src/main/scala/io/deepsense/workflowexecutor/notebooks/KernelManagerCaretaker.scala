@@ -40,6 +40,8 @@ class KernelManagerCaretaker(
   private val kernelManagerPath: String,
   private val gatewayHost: String,
   private val gatewayPort: Int,
+  private val rBackendHost: String,
+  private val rBackendPort: Int,
   private val mqHost: String,
   private val mqPort: Int,
   private val mqUser: String,
@@ -106,6 +108,8 @@ class KernelManagerCaretaker(
       s" --additional-python-path ${pythonPathGenerator.pythonPath()}" +
       s" --gateway-host $gatewayHost" +
       s" --gateway-port $gatewayPort" +
+      s" --r-backend-host $rBackendHost" +
+      s" --r-backend-port $rBackendPort" +
       s" --mq-host $mqHost" +
       s" --mq-port $mqPort" +
       s" --mq-user $mqUser" +

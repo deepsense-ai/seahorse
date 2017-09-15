@@ -23,12 +23,12 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
-case class Notebook()
+case class PythonNotebook()
   extends DOperation1To0[DataFrame] {
 
   override val id: Id = "e76ca616-0322-47a5-b390-70c9668265dd"
-  override val name: String = "Notebook"
-  override val description: String = "Creates a notebook with access to the DataFrame"
+  override val name: String = "Python Notebook"
+  override val description: String = "Creates a Python notebook with access to the DataFrame"
 
   override val since: Version = Version(1, 0, 0)
 
