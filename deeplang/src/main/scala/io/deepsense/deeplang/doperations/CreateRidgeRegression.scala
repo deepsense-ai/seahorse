@@ -28,7 +28,8 @@ import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Ran
 
 case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegression] {
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[UntrainedRidgeRegression] = ru.typeTag[UntrainedRidgeRegression]
+  override lazy val tTagTO_0: ru.TypeTag[UntrainedRidgeRegression] =
+    ru.typeTag[UntrainedRidgeRegression]
 
   override val name = "Ridge Regression"
 

@@ -26,9 +26,11 @@ case class TrainClassifier() extends Trainer[Classifier with Trainable, Classifi
   override val id: DOperation.Id = "892cf942-fe24-11e4-a322-1697f925ec7b"
   override val name = "Train Classifier"
   @transient
-  override lazy val tTagTI_0: ru.TypeTag[Classifier with Trainable] = ru.typeTag[Classifier with Trainable]
+  override lazy val tTagTI_0: ru.TypeTag[Classifier with Trainable] =
+    ru.typeTag[Classifier with Trainable]
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[Classifier with Scorable] = ru.typeTag[Classifier with Scorable]
+  override lazy val tTagTO_0: ru.TypeTag[Classifier with Scorable] =
+    ru.typeTag[Classifier with Scorable]
   @transient
   override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

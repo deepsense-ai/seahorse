@@ -27,9 +27,11 @@ case class TrainRegressor() extends Trainer[Regressor with Trainable, Regressor 
   override val id: DOperation.Id = "c526714c-e7fb-11e4-b02c-1681e6b88ec1"
   override val name = "Train Regressor"
   @transient
-  override lazy val tTagTI_0: ru.TypeTag[Regressor with Trainable] = ru.typeTag[Regressor with Trainable]
+  override lazy val tTagTI_0: ru.TypeTag[Regressor with Trainable] =
+    ru.typeTag[Regressor with Trainable]
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[Regressor with Scorable] = ru.typeTag[Regressor with Scorable]
+  override lazy val tTagTO_0: ru.TypeTag[Regressor with Scorable] =
+    ru.typeTag[Regressor with Scorable]
   @transient
   override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

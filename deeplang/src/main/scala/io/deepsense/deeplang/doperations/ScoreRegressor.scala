@@ -26,7 +26,8 @@ case class ScoreRegressor() extends Scorer[Regressor with Scorable] {
   override val id: DOperation.Id = "6cf6867c-e7fd-11e4-b02c-1681e6b88ec1"
   override val name = "Score regressor"
   @transient
-  override lazy val tTagTI_0: ru.TypeTag[Regressor with Scorable] = ru.typeTag[Regressor with Scorable]
+  override lazy val tTagTI_0: ru.TypeTag[Regressor with Scorable] =
+    ru.typeTag[Regressor with Scorable]
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
   @transient

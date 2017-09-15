@@ -39,9 +39,11 @@ case class CrossValidateRegressor()
   with WithTrainParameters {
 
   @transient
-  override lazy val tTagTI_0: ru.TypeTag[Regressor with Trainable] = ru.typeTag[Regressor with Trainable]
+  override lazy val tTagTI_0: ru.TypeTag[Regressor with Trainable] =
+    ru.typeTag[Regressor with Trainable]
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[Regressor with Scorable] = ru.typeTag[Regressor with Scorable]
+  override lazy val tTagTO_0: ru.TypeTag[Regressor with Scorable] =
+    ru.typeTag[Regressor with Scorable]
   @transient
   override lazy val tTagTO_1: ru.TypeTag[Report] = ru.typeTag[Report]
   @transient

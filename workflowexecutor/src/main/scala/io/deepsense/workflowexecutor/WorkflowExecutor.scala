@@ -124,7 +124,7 @@ private case class FileSystemClientStub() extends FileSystemClient {
   override def fileExists(path: String): Boolean = throw new UnsupportedOperationException
 
   override def saveInputStreamToFile(
-    inputStream: InputStream,destinationPath: String): Unit = ()
+    inputStream: InputStream, destinationPath: String): Unit = ()
 
   override def getFileInfo(path: String): Option[FileInfo] = throw new UnsupportedOperationException
 
