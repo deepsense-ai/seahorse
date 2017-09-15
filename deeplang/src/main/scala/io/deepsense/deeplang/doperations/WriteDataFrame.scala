@@ -21,11 +21,9 @@ import java.sql.Timestamp
 import java.util.Properties
 
 import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.SparkException
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{Row, SaveMode}
 import org.apache.spark.sql.types._
-
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
@@ -94,7 +92,7 @@ case class WriteDataFrame()
       FileSystemClient.replaceLeadingTildeWithHomeDirectory(fileChoice.getOutputFile)
 
     try {
-      fileChoice.getFileFormat match {
+      val writer = fileChoice.getFileFormat match {
         case (csvChoice: OutputFileFormatChoice.Csv) =>
           requireNoComplexTypes(dataFrame)
           val namesIncluded = csvChoice.getCsvNamesIncluded
@@ -104,15 +102,14 @@ case class WriteDataFrame()
             .write.format("com.databricks.spark.csv")
             .option("header", if (namesIncluded) "true" else "false")
             .option("delimiter", columnSeparator)
-            .save(path)
-
         case OutputFileFormatChoice.Parquet() =>
           // TODO: DS-1480 Writing DF in parquet format when column names contain forbidden chars
-          dataFrame.sparkDataFrame.write.parquet(path)
+          dataFrame.sparkDataFrame.write.format("parquet")
 
         case OutputFileFormatChoice.Json() =>
-          dataFrame.sparkDataFrame.write.json(path)
+          dataFrame.sparkDataFrame.write.format("json")
       }
+      writer.mode(SaveMode.Overwrite).save(path)
     } catch {
       case e: SparkException =>
         logger.error(s"WriteDataFrame error: Spark problem. Unable to write file to $path", e)

@@ -235,6 +235,32 @@ class WriteDataFrameIntegSpec
       an [UnsupportedColumnTypeException] shouldBe thrownBy(
         wdf.execute(executionContext)(Vector(arrayDataFrame)))
     }
+
+    "overwrite file when it already exists" in {
+      val outputName = "/some-name"
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteDataFrameTestPath + outputName)
+              .setFileFormat(
+                OutputFileFormatChoice.Csv()
+                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
+                  .setCsvNamesIncluded(false)))
+      wdf.execute(executionContext)(Vector(dataframe))
+
+      val wdf1 =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteDataFrameTestPath + outputName)
+              .setFileFormat(
+                OutputFileFormatChoice.Csv()
+                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
+                  .setCsvNamesIncluded(true)))
+      wdf1.execute(executionContext)(Vector(dataframe))
+      verifySavedDataFrame(outputName, rows, withHeader = true, ",")
+    }
   }
 
   private def verifySavedDataFrame(
