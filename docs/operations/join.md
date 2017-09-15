@@ -26,7 +26,7 @@ the columns in the output `DataFrame` are renamed by prepending the prefix
 proper for the table they come from.
 
 If the columns' names in the resulting `DataFrame` are not to be unique,
-random strings will be appended to them.
+a ``DuplicatedColumnsException`` is thrown.
 
 **Since**: Seahorse 0.4.0
 

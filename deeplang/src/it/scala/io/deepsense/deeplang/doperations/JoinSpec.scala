@@ -21,7 +21,7 @@ import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
+import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, DuplicatedColumnsException, WrongColumnTypeException}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection}
 
@@ -152,17 +152,15 @@ class JoinSpec extends DeeplangIntegTestSupport {
     }
     "throw an exception" when {
       "with columns of the same name in both and no join on them" in {
-        an[Exception] should be thrownBy {
-          val (ldf, rdf, expected, joinColumns) = sameColumnNamesFixture()
+        a[DuplicatedColumnsException] should be thrownBy {
+          val (ldf, rdf, joinColumns) = sameColumnNamesFixture()
 
-          val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
-          val joinDF = executeOperation(join, ldf, rdf)
-
-          assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
+          val join = joinWithMultipleColumnSelection(joinColumns, Set.empty, None, None)
+          executeOperation(join, ldf, rdf)
         }
       }
       "the columns selected by name does not exist" in {
-        an[ColumnDoesNotExistException] should be thrownBy {
+        a[ColumnDoesNotExistException] should be thrownBy {
           val nonExistingColumnName = "thisColumnDoesNotExist"
           val join = joinWithMultipleColumnSelection(
             Set(nonExistingColumnName),
@@ -173,7 +171,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         }
       }
       "the columns selected by index does not exist" in {
-        an[ColumnDoesNotExistException] should be thrownBy {
+        a[ColumnDoesNotExistException] should be thrownBy {
           val nonExistingColumnIndex = 1000
           val join = joinWithMultipleColumnSelection(
             Set.empty,
@@ -184,7 +182,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         }
       }
       "the columns selected by name are of different types" in {
-        an[WrongColumnTypeException] should be thrownBy {
+        a[WrongColumnTypeException] should be thrownBy {
           val (ldf, rdf, _, wrongTypeColumnNames) = differentTypesFixture()
           val join = joinWithMultipleColumnSelection(
             wrongTypeColumnNames,
@@ -194,7 +192,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         }
       }
       "the joinColumns MultipleColumnSelector is empty" in {
-        an[ColumnsDoNotExistException] should be thrownBy {
+        a[ColumnsDoNotExistException] should be thrownBy {
           val (ldf, rdf, _, wrongTypeColumnNames) = joinColumnsIsEmptyFixture()
           val join = joinWithMultipleColumnSelection(
             wrongTypeColumnNames,
@@ -325,17 +323,15 @@ class JoinSpec extends DeeplangIntegTestSupport {
     }
     "throw an exception during inference" when {
       "with columns of the same name in both and no join on them" in {
-        an[Exception] should be thrownBy {
-          val (ldf, rdf, expected, joinColumns) = sameColumnNamesFixture()
+        a[DuplicatedColumnsException] should be thrownBy {
+          val (ldf, rdf, joinColumns) = sameColumnNamesFixture()
 
-          val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
-          val joinDF = inferSchema(join, ldf, rdf)
-
-          joinDF shouldBe expected.sparkDataFrame.schema
+          val join = joinWithMultipleColumnSelection(joinColumns, Set.empty, None, None)
+          inferSchema(join, ldf, rdf)
         }
       }
       "the columns selected by name does not exist" in {
-        an[ColumnDoesNotExistException] should be thrownBy {
+        a[ColumnDoesNotExistException] should be thrownBy {
           val nonExistingColumnName = "thisColumnDoesNotExist"
           val join = joinWithMultipleColumnSelection(
             Set(nonExistingColumnName),
@@ -346,7 +342,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         }
       }
       "the columns selected by index does not exist" in {
-        an[ColumnDoesNotExistException] should be thrownBy {
+        a[ColumnDoesNotExistException] should be thrownBy {
           val nonExistingColumnIndex = 1000
           val join = joinWithMultipleColumnSelection(
             Set.empty,
@@ -357,7 +353,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         }
       }
       "the columns selected by name are of different types" in {
-        an[WrongColumnTypeException] should be thrownBy {
+        a[WrongColumnTypeException] should be thrownBy {
           val (ldf, rdf, _, wrongTypeColumnNames) = differentTypesFixture()
           val join = joinWithMultipleColumnSelection(
             wrongTypeColumnNames,
@@ -367,7 +363,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         }
       }
       "the joinColumns MultipleColumnSelector is empty" in {
-        an[ColumnsDoNotExistException] should be thrownBy {
+        a[ColumnsDoNotExistException] should be thrownBy {
           val (ldf, rdf, _, wrongTypeColumnNames) = joinColumnsIsEmptyFixture()
           val join = joinWithMultipleColumnSelection(
             wrongTypeColumnNames,
@@ -884,7 +880,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
     (ldf, rdf, edf, joinColumns)
   }
 
-  private def sameColumnNamesFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
+  private def sameColumnNamesFixture(): (DataFrame, DataFrame, Set[String]) = {
     val column1 = "nulls"
     val joinColumns = Set(column1)
 
@@ -924,14 +920,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
     ).map(Row.fromSeq)
     val rdf = createDataFrame(rowsR, schemaR)
 
-    // join dataframe
-    val joinRows = Seq(
-      (null, "s", 1, null, null, null)
-    ).map(Row.fromTuple)
-    val joinSchema = StructType(schemaL.fields ++ schemaR.fields)
-    val edf = createDataFrame(joinRows, joinSchema)
-
-    (ldf, rdf, edf, joinColumns)
+    (ldf, rdf, joinColumns)
   }
 
   private def joinWithMultipleColumnSelection(
