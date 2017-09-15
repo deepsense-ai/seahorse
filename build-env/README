@@ -1,0 +1,35 @@
+Seahorse build environment
+==========================
+
+0. Overview
+
+    Scripts for building all Seahorse docker images from source.
+    In order to avoid problems with build dependencies, the build process is performed inside
+    a Docker container.
+    The script will clone required repositories from GitHub, build all projects, create Dockerfiles
+    and build docker images.
+
+1. Requirements
+
+    1.1 docker (https://docs.docker.com/engine/installation/)
+    1.2 git access to Codilime repos:
+        - https://github.com/codilime/deepsense-backend-tap.git
+        - https://github.com/codilime/deepsense-frontend-tap.git
+
+2. Usage
+
+    2.1 To build the dockers execute:
+        $ ./run.sh
+
+3. Files
+
+    3.1 README
+        This file.
+    3.2 run.sh
+        Main script building all components.
+    3.3 Dockerfile
+        Build env docker image.
+    3.4 build.sh
+        Script for building the components inside the docker container.
+
+# Copyright (c) 2016, CodiLime Inc.
