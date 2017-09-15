@@ -18,23 +18,20 @@ function ExportModalController($modalInstance, $stateParams, WorkflowsApiClient,
   });
 
   WorkflowService.saveWorkflow()
-    .
-  catch(() => {
+    .catch(() => {
       this.errorMessage = 'Could not save the workflow';
     })
-    .
-  then(() => {
-    this.loading = false;
+    .then(() => {
+      this.loading = false;
+      let workflow = WorkflowService.getWorkflow();
+      let nodes = workflow.getNodes();
+      let errorsExist = _.any(_.map(nodes, node => node.knowledgeErrors && node.knowledgeErrors.length > 0));
 
-    let workflow = WorkflowService.getWorkflow();
-    let nodes = workflow.getNodes();
-    let errorsExist = _.any(_.map(nodes, node => node.knowledgeErrors && node.knowledgeErrors.length > 0));
-
-    if (errorsExist) {
-      this.warningMessage = `You are trying to export a workflow which still contains at least one flawed node.
+      if (errorsExist) {
+        this.warningMessage = `You are trying to export a workflow which still contains at least one flawed node.
           Check if there is any node with the exclamation mark icon on it in order to see all errors related to the node.`;
-    }
-  });
+      }
+    });
 }
 
 exports.inject = function(module) {

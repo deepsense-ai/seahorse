@@ -6,10 +6,8 @@ import {
 from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 
 /* @ngInject */
-function WorkflowsReportController(
-  $state, $scope, report, Report,
-  GraphNode, PageService, Operations, GraphPanelRendererService, WorkflowService, DeepsenseNodeParameters
-) {
+function WorkflowsReportController($state, $scope, report, Report,
+  GraphNode, PageService, Operations, GraphPanelRendererService, WorkflowService, DeepsenseNodeParameters) {
   let that = this;
   let internal = {};
 

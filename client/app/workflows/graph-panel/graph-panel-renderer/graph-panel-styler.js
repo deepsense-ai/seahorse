@@ -1,13 +1,13 @@
 'use strict';
 
-import {
-  GraphPanelRendererBase
-}
-from './graph-panel-renderer-base.js';
+/* beautify preserve:start */
+import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
+/* beautify preserve:end */
 
 const ENDPOINT_DEFAULT_BACKGROUND_COLOR = '#00b1eb';
 
 export class GraphPanelStyler {
+
   static styleInputEndpointDefault(endpoint, renderMode) {
     endpoint.setPaintStyle(GraphPanelStyler.getInputEndpointDefaultPaintStyle(renderMode));
     endpoint.setHoverPaintStyle(GraphPanelStyler.getInputEndpointDefaultHoverPaintStyle(renderMode));

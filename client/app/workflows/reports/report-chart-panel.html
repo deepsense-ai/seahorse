@@ -3,21 +3,25 @@
     <i class="fa fa-area-chart modal-icon"></i>
     <h4 class="modal-title">{{ graphModal.distObject.name }}</h4>
     <small class="font-bold">{{ graphModal.distObject.description }}</small>
-    <button type="button" class="close pull-right" data-dismiss="alert" aria-label="Close" ng-click="graphModal.close()">
+    <button type="button" class="close pull-right" data-dismiss="alert" aria-label="Close"
+            ng-click="graphModal.close()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <div class="row">
-      <select class="form-control" ng-options="columnName for columnName in ::graphModal.columnNames" ng-model="graphModal.selectedColumn"></select>
+      <select class="form-control" ng-options="columnName for columnName in ::graphModal.columnNames"
+              ng-model="graphModal.selectedColumn"></select>
       <dl class="dl-horizontal">
         <dt>Missing values</dt>
         <dd>{{ graphModal.distObject.missingValues }}</dd>
       </dl>
     </div>
     <div ng-switch="graphModal.distObject.subtype" class="row">
-      <distribution-categorical-chart ng-switch-when="categorical" data="graphModal.distObject"></distribution-categorical-chart>
-      <distribution-continuous-chart ng-switch-when="continuous" data="graphModal.distObject"></distribution-continuous-chart>
+      <distribution-categorical-chart ng-switch-when="categorical"
+                                      data="graphModal.distObject"></distribution-categorical-chart>
+      <distribution-continuous-chart ng-switch-when="continuous"
+                                     data="graphModal.distObject"></distribution-continuous-chart>
     </div>
   </div>
   <div class="modal-footer">

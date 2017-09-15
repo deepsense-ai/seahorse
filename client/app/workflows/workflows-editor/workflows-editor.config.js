@@ -2,8 +2,7 @@
 
 /* @ngInject */
 function WorkflowsConfig($stateProvider) {
-  $stateProvider.
-  state('workflows.editor', {
+  $stateProvider.state('workflows.editor', {
     url: '/:id/editor',
     views: {
       'navBar': {
@@ -21,21 +20,16 @@ function WorkflowsConfig($stateProvider) {
         let deferred = $q.defer();
 
         Operations.load()
-          .
-        then(OperationsHierarchyService.load)
-          .
-        then(() => WorkflowsApiClient.getWorkflow(workflowId))
-          .
-        then((data) => {
+          .then(OperationsHierarchyService.load)
+          .then(() => WorkflowsApiClient.getWorkflow(workflowId))
+          .then((data) => {
             $rootScope.stateData.dataIsLoaded = true;
             deferred.resolve(data);
           })
-          .
-        catch((error) => {
-          $rootScope.stateData.errorMessage = `Could not load the workflow \n ${error.statusText}`;
-          deferred.reject();
-        });
-
+          .catch((error) => {
+            $rootScope.stateData.errorMessage = `Could not load the workflow \n ${error.statusText}`;
+            deferred.reject();
+          });
         return deferred.promise;
       }
     }

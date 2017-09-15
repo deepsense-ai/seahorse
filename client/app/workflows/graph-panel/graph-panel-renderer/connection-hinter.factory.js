@@ -10,6 +10,7 @@ import {
 from './graph-panel-styler.js';
 
 class ConnectionHinterService extends GraphPanelRendererBase {
+
   constructor($rootScope, WorkflowService, OperationsHierarchyService, Operations) {
     super();
     this.$rootScope = $rootScope;

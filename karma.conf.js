@@ -1,10 +1,4 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Piotr Zarówny
- */
 'use strict';
-
 
 module.exports = function(config) {
   var settings = require('./config.json');
@@ -21,7 +15,8 @@ module.exports = function(config) {
         settings.files.tests.client
       ],
 
-      autoWatch: true,
+      autoWatch: false,
+      singleRun: true,
 
       frameworks: ['browserify', 'jasmine'],
 

@@ -5,7 +5,7 @@ let browser = require('detect-browser');
 let unsupported = require('./unsupported.js');
 let version = parseInt(browser.version.substring(0, 2));
 
-if (browser.name === 'chrome' &&  version >= 40) {
+if (browser.name === 'chrome' && version >= 40) {
   let lab = angular.module('ds.lab', [
     'ui.router',
     'ui.bootstrap',

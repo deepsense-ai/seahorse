@@ -218,7 +218,7 @@ gulp.task('browserify', function () {
 
 gulp.task('build', function (callback) {
   runSequence(
-    'clean','style',
+    'clean', 'style',
     [
       'fonts', 'images', 'html:index', 'html:partials', 'config', 'copy:images', 'copy:scripts', 'favicon', 'assets', 'less',
       'libs:css', 'libs:js', 'jshint', 'browserify'
@@ -226,7 +226,7 @@ gulp.task('build', function (callback) {
     'version', 'replace', callback);
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', function () {
   if (devMode) {
     gulp.watch(client.path + client.html, ['html:index', 'html:partials', browserSync.reload]);
     gulp.watch(client.path + client.images, ['images', browserSync.reload]);

@@ -9,9 +9,11 @@
               ng-if="controller.status === 'preparing' || controller.status === 'failure'" ngf-select
               ngf-change="controller.upload($file)" focused>Choose a file
       </button>
-      <div class="text-center c-upload-execution-report-modal__upload-progress" ng-if="controller.status === 'loading'">{{controller.progress + ' %' }}
+      <div class="text-center c-upload-execution-report-modal__upload-progress" ng-if="controller.status === 'loading'">
+        {{controller.progress + ' %' }}
       </div>
-      <img class="center-block c-upload-execution-report-modal__img" ng-if="controller.status === 'success'" src="/img/success.png"/>
+      <img class="center-block c-upload-execution-report-modal__img" ng-if="controller.status === 'success'"
+           src="/img/success.png"/>
 
       <div class="text-center text-danger pull-right" ng-if="controller.status === 'failure'">
         {{ controller.errorMessage }}

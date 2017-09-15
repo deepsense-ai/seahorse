@@ -1,26 +1,22 @@
 'use strict';
 
-function UUIDGenerator() {
+class UUIDGenerator {
 
-  var that = this;
-
-  that.generateUUIDPart = function generateUUIDPart() {
+  generateUUIDPart() {
     return Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
       .substring(1);
-  };
+  }
 
-  that.generateUUID = function generateGUID() {
+  generateUUID() {
     return (
-      that.generateUUIDPart() + that.generateUUIDPart() + '-' +
-      that.generateUUIDPart() + '-' +
-      that.generateUUIDPart() + '-' +
-      that.generateUUIDPart() + '-' +
-      that.generateUUIDPart() + that.generateUUIDPart() + that.generateUUIDPart()
+      this.generateUUIDPart() + this.generateUUIDPart() + '-' +
+      this.generateUUIDPart() + '-' +
+      this.generateUUIDPart() + '-' +
+      this.generateUUIDPart() + '-' +
+      this.generateUUIDPart() + this.generateUUIDPart() + this.generateUUIDPart()
     );
-  };
-
-  return that;
+  }
 }
 
 exports.inject = function(module) {

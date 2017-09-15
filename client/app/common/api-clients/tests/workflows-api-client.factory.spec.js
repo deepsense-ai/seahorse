@@ -15,10 +15,8 @@ describe('WorkflowsApiClient', () => {
   beforeEach(() => {
     module = angular.module('test', []);
 
-    require('./../base-api-client.factory.js')
-      .inject(module);
-    require('./../workflows-api-client.factory.js')
-      .inject(module);
+    require('./../base-api-client.factory.js').inject(module);
+    require('./../workflows-api-client.factory.js').inject(module);
 
     angular.mock.module('test');
     angular.mock.module(($provide) => {

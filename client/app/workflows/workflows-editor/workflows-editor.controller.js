@@ -4,208 +4,226 @@
 import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 /* beautify preserve:end */
 
-/* @ngInject */
-function WorkflowsEditorController(workflow, MultiSelectionService,
-  $scope, $state, $stateParams,
-  GraphNode, Edge,
-  PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-  RunModalFactory, LastExecutionReportService, NotificationService) {
+class WorkflowsEditorController {
 
-  let that = this;
-  let internal = {};
+  /* @ngInject */
+  constructor(workflow, MultiSelectionService,
+    $scope, $state, $stateParams,
+    GraphNode, Edge,
+    PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
+    DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+    RunModalFactory, LastExecutionReportService, NotificationService) {
 
-  _.assign(that, {
-    selectedNode: null,
-    catalog: Operations.getCatalog()
-  });
+    this.PageService = PageService;
+    this.WorkflowService = WorkflowService;
+    this.RunModalFactory = RunModalFactory;
+    this.DeepsenseNodeParameters = DeepsenseNodeParameters;
+    this.Edge = Edge;
+    this.workflow = workflow;
+    this.MultiSelectionService = MultiSelectionService;
+    this.$scope = $scope;
+    this.$state = $state;
+    this.$stateParams = $stateParams;
+    this.NotificationService = NotificationService;
+    this.GraphPanelRendererService = GraphPanelRendererService;
+    this.ConfirmationModalService = ConfirmationModalService;
+    this.LastExecutionReportService = LastExecutionReportService;
+    this.ExportModalService = ExportModalService;
+    this.MouseEvent = MouseEvent;
+    this.UUIDGenerator = UUIDGenerator;
+    this.GraphNode = GraphNode;
+    this.selectedNode = null;
+    this.Operations = Operations;
+    this.catalog = Operations.getCatalog();
+    this.init();
+  }
 
-  internal.init = function init() {
-    PageService.setTitle('Workflow editor');
-    WorkflowService.createWorkflow(workflow, Operations.getData());
-    GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
-    GraphPanelRendererService.setZoom(1.0);
-    LastExecutionReportService.setTimeout();
-    internal.updateAndRerenderEdges(workflow);
-  };
+  init() {
+    this.PageService.setTitle('Workflow editor');
+    this.WorkflowService.createWorkflow(this.workflow, this.Operations.getData());
+    this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
+    this.GraphPanelRendererService.setZoom(1.0);
+    this.LastExecutionReportService.setTimeout();
+    this.updateAndRerenderEdges(this.workflow);
+    this.initListeners();
+  }
 
-  internal.rerenderEdges = function rerenderEdges() {
-    WorkflowService.updateEdgesStates();
-    GraphPanelRendererService.changeEdgesPaintStyles();
-  };
+  initListeners() {
 
-  internal.updateAndRerenderEdges = function updateAndRerenderEdges(data) {
-    if (data && data.knowledge) {
-      WorkflowService.updateTypeKnowledge(data.knowledge);
-      internal.rerenderEdges();
-    }
-  };
+    this.$scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
+      this.updateAndRerenderEdges(data);
+    });
 
-  that.getWorkflow = WorkflowService.getWorkflow;
-
-  that.getPredefColors = WorkflowService.getPredefColors;
-
-  that.getSelectedNode = function getSelectedNode() {
-    return internal.selectedNode;
-  };
-
-  that.unselectNode = function unselectNode() {
-    internal.selectedNode = null;
-  };
-
-  $scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
-    internal.updateAndRerenderEdges(data);
-  });
-
-  $scope.$on('GraphNode.CLICK', (event, data) => {
-    let node = data.selectedNode;
-    internal.selectedNode = node;
-    if (!_.includes(MultiSelectionService.getSelectedNodes(),node.id)) {
-      MultiSelectionService.setSelectedNodes([node.id]);
-    }
-    if (node.hasParameters()) {
-      $scope.$digest();
-    } else {
-      Operations.getWithParams(node.operationId)
-        .then((operationData) => {
-          $scope.$applyAsync(() => {
-            node.setParameters(operationData.parameters, DeepsenseNodeParameters);
+    this.$scope.$on('GraphNode.CLICK', (event, data) => {
+      let node = data.selectedNode;
+      this.selectedNode = node;
+      if (!_.includes(this.MultiSelectionService.getSelectedNodes(), node.id)) {
+        this.MultiSelectionService.setSelectedNodes([node.id]);
+      }
+      if (node.hasParameters()) {
+        this.$scope.$digest();
+      } else {
+        this.Operations.getWithParams(node.operationId)
+          .then((operationData) => {
+            this.$scope.$applyAsync(() => {
+              node.setParameters(operationData.parameters, this.DeepsenseNodeParameters);
+            });
+          }, (error) => {
+            console.error('operation fetch error', error);
           });
-        }, (error) => {
-          console.error('operation fetch error', error);
+      }
+    });
+
+    this.$scope.$on(this.GraphNode.MOVE, () => {
+      this.WorkflowService.saveWorkflow();
+    });
+
+    this.$scope.$on(this.Edge.CREATE, (data, args) => {
+      this.WorkflowService.getWorkflow().addEdge(args.edge);
+    });
+
+    this.$scope.$on(this.Edge.REMOVE, (data, args) => {
+      this.WorkflowService.getWorkflow().removeEdge(args.edge);
+    });
+
+    this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
+      this.WorkflowService.getWorkflow().removeNodes(this.MultiSelectionService.getSelectedNodes());
+      this.GraphPanelRendererService.removeNodes(this.MultiSelectionService.getSelectedNodes());
+      this.MultiSelectionService.clearSelection();
+      this.unselectNode();
+      this.$scope.$apply();
+      this.WorkflowService.saveWorkflow();
+    });
+
+    this.$scope.$on('FlowChartBox.ELEMENT_DROPPED', (event, args) => {
+      let dropElementOffset = this.MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
+      let operation = this.Operations.get(args.elementId);
+      let offsetX = dropElementOffset.x;
+      let offsetY = dropElementOffset.y;
+      let positionX = offsetX || 0;
+      let positionY = offsetY || 0;
+      let elementOffsetX = 100;
+      let elementOffsetY = 30;
+      let node = this.WorkflowService.getWorkflow()
+        .createNode({
+          'id': this.UUIDGenerator.generateUUID(),
+          'operation': operation,
+          'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+          'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
         });
-    }
-  });
 
-  $scope.$on(GraphNode.MOVE, () => {
-    WorkflowService.saveWorkflow();
-  });
+      this.WorkflowService.getWorkflow().addNode(node);
 
-  $scope.$on(Edge.CREATE, (data, args) => {
-    WorkflowService.getWorkflow()
-      .addEdge(args.edge);
-  });
+      if (this.Operations.hasWithParams(operation.id)) {
+        this.WorkflowService.saveWorkflow();
+      } else {
+        this.Operations.getWithParams(operation.id)
+          .then((operationData) => {
+            node.setParameters(operationData.parameters, this.DeepsenseNodeParameters);
+            this.WorkflowService.saveWorkflow();
+          }, (error) => {
+            console.error('operation fetch error', error);
+          });
+      }
+    });
 
-  $scope.$on(Edge.REMOVE, (data, args) => {
-    WorkflowService.getWorkflow()
-      .removeEdge(args.edge);
-  });
+    this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
+      this.unselectNode();
+      this.$scope.$digest();
+    });
 
-  $scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
-    WorkflowService.getWorkflow().removeNodes(MultiSelectionService.getSelectedNodes());
-    GraphPanelRendererService.removeNodes(MultiSelectionService.getSelectedNodes());
-    MultiSelectionService.clearSelection();
-    that.unselectNode();
-    $scope.$apply();
-    WorkflowService.saveWorkflow();
-  });
+    this.$scope.$on('$destroy', () => {
+      this.WorkflowService.clearWorkflow();
+      this.GraphPanelRendererService.clearWorkflow();
+      this.LastExecutionReportService.clearTimeout();
+      this.NotificationService.clearToasts();
+    });
 
-  $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    let dropElementOffset = MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
-    let operation = Operations.get(args.elementId);
-    let offsetX = dropElementOffset.x;
-    let offsetY = dropElementOffset.y;
-    let positionX = offsetX || 0;
-    let positionY = offsetY || 0;
-    let elementOffsetX = 100;
-    let elementOffsetY = 30;
-    let node = WorkflowService.getWorkflow()
-      .createNode({
-        'id': UUIDGenerator.generateUUID(),
-        'operation': operation,
-        'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-        'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
+    this.$scope.$on('AttributesPanel.UPDATED', () => {
+      this.WorkflowService.saveWorkflow();
+    });
+
+    this.$scope.$on('StatusBar.HOME_CLICK', () => {
+      let url = this.$state.href('home');
+      window.open(url, '_blank');
+    });
+
+    this.$scope.$on('StatusBar.SAVE_CLICK', () => {
+      this.WorkflowService.saveWorkflow();
+    });
+
+    this.$scope.$on('StatusBar.CLEAR_CLICK', () => {
+      this.ConfirmationModalService.showModal({
+        message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
+      }).
+      then(() => {
+        this.WorkflowService.clearGraph();
+        this.GraphPanelRendererService.rerender();
+        this.WorkflowService.saveWorkflow();
       });
+    });
 
-    WorkflowService.getWorkflow()
-      .addNode(node);
+    this.$scope.$on('StatusBar.EXPORT_CLICK', () => {
+      this.ExportModalService.showModal();
+    });
 
-    /* Checks if parameters schema has been already fetched */
-    if (Operations.hasWithParams(operation.id)) {
-      WorkflowService.saveWorkflow();
-    } else {
-      Operations.getWithParams(operation.id)
-        .then((operationData) => {
-          node.setParameters(operationData.parameters, DeepsenseNodeParameters);
-          WorkflowService.saveWorkflow();
-        }, (error) => {
-          console.error('operation fetch error', error);
+    this.$scope.$on('StatusBar.RUN', () => {
+      this.RunModalFactory.showModal({
+        message: `Discovery Peak Apache Spark cluster`
+      });
+    });
+
+    this.$scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
+      let url = this.$state.href('workflows.latest_report', {
+        'id': this.$stateParams.id
+      });
+      window.open(url, '_blank');
+    });
+
+    this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        this.$scope.$applyAsync(() => {
+          this.GraphPanelRendererService.rerender();
         });
-    }
-  });
-
-  $scope.$on('AttributePanel.UNSELECT_NODE', () => {
-    that.unselectNode();
-    $scope.$digest();
-  });
-
-  $scope.$on('$destroy', () => {
-    WorkflowService.clearWorkflow();
-    GraphPanelRendererService.clearWorkflow();
-    LastExecutionReportService.clearTimeout();
-    NotificationService.clearToasts();
-  });
-
-  $scope.$on('AttributesPanel.UPDATED', () => {
-    WorkflowService.saveWorkflow();
-  });
-
-  $scope.$on('StatusBar.HOME_CLICK', () => {
-    let url = $state.href('home');
-    window.open(url, '_blank');
-  });
-
-  $scope.$on('StatusBar.SAVE_CLICK', () => {
-    WorkflowService.saveWorkflow();
-  });
-
-  $scope.$on('StatusBar.CLEAR_CLICK', () => {
-    ConfirmationModalService.showModal({
-      message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
-    }).
-    then(() => {
-      WorkflowService.clearGraph();
-      GraphPanelRendererService.rerender();
-      WorkflowService.saveWorkflow();
+      }
     });
-  });
 
-  $scope.$on('StatusBar.EXPORT_CLICK', () => {
-    ExportModalService.showModal();
-  });
-
-  $scope.$on('StatusBar.RUN', () => {
-    RunModalFactory.showModal({
-      message: `Discovery Peak Apache Spark cluster`
+    this.$scope.$watchCollection('workflow.getWorkflow().getEdgesIds()', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        this.$scope.$applyAsync(() => {
+          this.rerenderEdges();
+        });
+      }
     });
-  });
+  }
 
-  $scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
-    let url = $state.href('workflows.latest_report', {
-      'id': $stateParams.id
-    });
-    window.open(url, '_blank');
-  });
+  rerenderEdges() {
+    this.WorkflowService.updateEdgesStates();
+    this.GraphPanelRendererService.changeEdgesPaintStyles();
+  }
 
-  $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-      $scope.$applyAsync(() => {
-        GraphPanelRendererService.rerender();
-      });
+  updateAndRerenderEdges(data) {
+    if (data && data.knowledge) {
+      this.WorkflowService.updateTypeKnowledge(data.knowledge);
+      this.rerenderEdges();
     }
-  });
+  }
 
-  $scope.$watchCollection('workflow.getWorkflow().getEdgesIds()', (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-      $scope.$applyAsync(() => {
-        internal.rerenderEdges();
-      });
-    }
-  });
+  getWorkflow() {
+    return this.WorkflowService.getWorkflow();
+  }
 
-  internal.init();
+  getPredefColors() {
+    return this.WorkflowService.getPredefColors();
+  }
 
-  return that;
+  getSelectedNode() {
+    return this.selectedNode;
+  }
+
+  unselectNode() {
+    this.selectedNode = null;
+  }
 }
 
 exports.inject = function(module) {

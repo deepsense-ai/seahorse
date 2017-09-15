@@ -8,24 +8,24 @@
   <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 <body>
-  <ui-view id="wrapper"
-           class="animated fadeIn"
-           ng-class="{
+<ui-view id="wrapper"
+         class="animated fadeIn"
+         ng-class="{
              'c-home': home.$state.includes('home')
            }"
-           ng-show="stateData.showView"
-           droppable
-           droppable-type="frame">
-  </ui-view>
-  <deepsense-loading-spinner-processing ng-if="!stateData.dataIsLoaded">
-    Loading
-  </deepsense-loading-spinner-processing>
-  <script type="text/javascript" src="js/app.fe.js"></script>
-  <script type="text/javascript" src="js/app.ga.js"></script>
-  <script type="text/javascript" src="js/libs.js"></script>
-  <script type="text/javascript" src="js/partials.js"></script>
-  <script type="text/javascript" src="js/app.js"></script>
-  <script type="text/javascript" src="config.js"></script>
-  <!-- build:version --><!-- endbuild -->
+         ng-show="stateData.showView"
+         droppable
+         droppable-type="frame">
+</ui-view>
+<deepsense-loading-spinner-processing ng-if="!stateData.dataIsLoaded">
+  Loading
+</deepsense-loading-spinner-processing>
+<script type="text/javascript" src="js/app.fe.js"></script>
+<script type="text/javascript" src="js/app.ga.js"></script>
+<script type="text/javascript" src="js/libs.js"></script>
+<script type="text/javascript" src="js/partials.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript" src="config.js"></script>
+<!-- build:version --><!-- endbuild -->
 </body>
 </html>
