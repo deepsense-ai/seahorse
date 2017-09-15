@@ -13,7 +13,7 @@
             "value": "rawPrediction"
           },
           "binary metric": {
-            "areaUnderPR": {
+            "Area under PR": {
 
             }
           },
@@ -221,7 +221,7 @@
       },
       "parameters": {
         "binary metric": {
-          "areaUnderPR": {
+          "Area under PR": {
 
           }
         },
