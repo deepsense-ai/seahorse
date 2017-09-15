@@ -41,6 +41,8 @@ class KernelManagerCaretaker(
   private val gatewayPort: Int,
   private val mqHost: String,
   private val mqPort: Int,
+  private val mqUser: String,
+  private val mqPass: String,
   private val sessionId: String,
   private val workflowId: Workflow.Id
 ) extends Logging {
@@ -104,6 +106,8 @@ class KernelManagerCaretaker(
       s" --gateway-port $gatewayPort" +
       s" --mq-host $mqHost" +
       s" --mq-port $mqPort" +
+      s" --mq-user $mqUser" +
+      s" --mq-pass $mqPass" +
       s" --workflow-id $workflowId" +
       s" --session-id $sessionId"
     logger.info(s"Starting a new Kernel Manager process: $command")

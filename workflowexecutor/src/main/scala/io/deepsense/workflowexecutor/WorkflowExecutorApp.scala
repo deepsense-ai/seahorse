@@ -77,6 +77,16 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     } text "message queue port"
 
     // Hidden option:
+    opt[String]('m', "message-queue-user") hidden() valueName "USER" action {
+      (x, c) => c.copy(messageQueueUser = Some(x))
+    } text "message queue user"
+
+    // Hidden option:
+    opt[String]("message-queue-pass") hidden() valueName "PASS" action {
+      (x, c) => c.copy(messageQueuePass = Some(x))
+    } text "message queue pass"
+
+    // Hidden option:
     opt[String]("workflow-id") hidden() valueName "JOB" action {
       (x, c) => c.copy(workflowId = Some(x))
     } text "job id"
@@ -123,6 +133,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       val interactiveRequirements: Requirements = Seq(
         (config.messageQueueHost.isEmpty, "--message-queue-host is required in interactive mode"),
         (config.messageQueuePort.isEmpty, "--message-queue-port is required in interactive mode"),
+        (config.messageQueueUser.isEmpty, "--message-queue-user is required in interactive mode"),
+        (config.messageQueuePass.isEmpty, "--message-queue-pass is required in interactive mode"),
         (config.workflowId.isEmpty, "--workflow-id is required in interactive mode"),
         (config.wmAddress.isEmpty, "--wm-address is required in interactive mode"),
         (config.depsZip.isEmpty, "--deps-zip is required in interactive mode"),
@@ -171,6 +183,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       SessionExecutor(
         params.messageQueueHost.get,
         params.messageQueuePort.get,
+        params.messageQueueUser.get,
+        params.messageQueuePass.get,
         params.workflowId.get,
         params.wmAddress.get,
         params.wmUsername.get,

@@ -50,6 +50,8 @@ import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 case class SessionExecutor(
     messageQueueHost: String,
     messageQueuePort: Int,
+    messageQueueUser: String,
+    messageQueuePass: String,
     workflowId: String,
     wmAddress: String,
     wmUsername: String,
@@ -137,6 +139,8 @@ case class SessionExecutor(
       pythonExecutionCaretaker.gatewayListeningPort.get,
       messageQueueHost,
       messageQueuePort,
+      messageQueueUser,
+      messageQueuePass,
       // TODO: Currently sessionId == workflowId
       workflowId,
       workflowIdObject
@@ -245,6 +249,8 @@ case class SessionExecutor(
     val factory = new ConnectionFactory()
     factory.setHost(messageQueueHost)
     factory.setPort(messageQueuePort)
+    factory.setUsername(messageQueueUser)
+    factory.setPassword(messageQueuePass)
     system.actorOf(
       ConnectionActor.props(factory),
       MQCommunication.mqActorSystemName)

@@ -23,6 +23,8 @@ case class ExecutionParams(
   interactiveMode: Boolean = false,
   messageQueueHost: Option[String] = None,
   messageQueuePort: Option[Int] = None,
+  messageQueueUser: Option[String] = None,
+  messageQueuePass: Option[String] = None,
   pyExecutorPath: Option[String] = None,
   workflowId: Option[String] = None,
   wmAddress: Option[String] = None,
