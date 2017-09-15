@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperations
 import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.api.datasourcemanager.model._
 import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.commons.utils.Version

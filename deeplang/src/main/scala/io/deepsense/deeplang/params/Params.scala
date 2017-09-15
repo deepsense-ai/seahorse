@@ -78,7 +78,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
             // Currently frontend might occasionally send invalid params
             // (like removing public param from custom transformer or DS-2671)
             // In that case we are doing nothing.
-            logger.info(s"Field $label is not defined in schema. Ignoring...")
+            logger.warn(s"Field $label is not defined in schema. Ignoring...")
             None
           }
         }

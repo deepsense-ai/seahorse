@@ -82,6 +82,14 @@ class ParamsSpec extends UnitSpec {
         p.get1 shouldBe defaultForParam1
         p.get2 shouldBe 6
       }
+      "value of some param that doesn't have default is JsNull" in {
+        val p = WithParams()
+        p.set2(17)
+        p.setParamsFromJson(JsObject(
+          p.param2.name -> JsNull
+        ))
+        p.is2Defined shouldBe false
+      }
       "ignoreNulls is set" in {
         val p = WithParams()
         p.set1(4)
