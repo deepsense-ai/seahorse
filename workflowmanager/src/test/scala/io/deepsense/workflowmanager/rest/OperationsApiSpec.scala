@@ -51,7 +51,7 @@ class OperationsApiSpec
 
   val existingOperationDescriptor = DOperationDescriptor(
     existingOperationId, "operation name", "operation description",
-    mockCategory, JsNull, Nil, Nil)
+    mockCategory, JsNull, Nil, Vector.empty, Nil, Vector.empty)
   val envelopedExistingOperationDescription = Map("operation" -> existingOperationDescriptor)
 
   val operationsMapMock = Map(existingOperationId -> existingOperationDescriptor)
