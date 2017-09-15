@@ -1205,6 +1205,10 @@ button.dim:active:before {
   color: #8B91A0;
 }
 
+.semi-transparent {
+  opacity: 0.5;
+}
+
 /* TOOGLE SWICH */
 .onoffswitch {
   position: relative;
