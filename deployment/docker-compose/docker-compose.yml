@@ -3,21 +3,21 @@ services:
   workflowmanager:
     ports:
      - "9080:9080"
-    image: docker-registry.intra.codilime.com/tap/deepsense-workflowmanager:seahorse_on_tap-latest
+    image: quay.io/deepsense_io/deepsense-workflowmanager:seahorse_on_bdu-latest
     environment:
-      - WM_AUTH_USER=Some_User
-      - WM_AUTH_PASS=Some_Password
+      - WM_AUTH_USER=oJkTZ8BV
+      - WM_AUTH_PASS=8Ep9GqRr
   sessionmanager:
     ports:
       - "9082:9082"
-    image: docker-registry.intra.codilime.com/tap/deepsense-sessionmanager:seahorse_on_tap-latest
+    image: quay.io/deepsense_io/deepsense-sessionmanager:seahorse_on_bdu-latest
     environment:
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
       - WM_HOST=workflowmanager
       - WM_PORT=9080
-      - WM_AUTH_USER=Some_User
-      - WM_AUTH_PASS=Some_Password
+      - WM_AUTH_USER=oJkTZ8BV
+      - WM_AUTH_PASS=8Ep9GqRr
       - SESSION_EXECUTOR_PATH=/opt/docker/we.jar
       - SESSION_EXECUTOR_DEPS_PATH=/opt/docker/we-deps.zip
       - HADOOP_CONF_DIR=/opt/docker/yarn-remote-client
@@ -30,7 +30,7 @@ services:
     depends_on:
       - rabbitmq
   frontend:
-    image: docker-registry.intra.codilime.com/tap/deepsense-frontend:seahorse_on_tap-latest
+    image: quay.io/deepsense_io/deepsense-frontend:seahorse_on_bdu-latest
     environment:
       - API_HOST=http://localhost
       - API_PORT=8080
@@ -47,7 +47,7 @@ services:
       - sessionmanager
       - notebooks
   rabbitmq:
-    image: docker-registry.intra.codilime.com/tap/deepsense-rabbitmq:seahorse_on_tap-latest
+    image: quay.io/deepsense_io/deepsense-rabbitmq:seahorse_on_bdu-latest
     ports:
      - "15674:15674"
      - "15672:15672"
@@ -56,7 +56,7 @@ services:
      - RABBITMQ_USER=guest
      - RABBITMQ_PASS=guest
   notebooks:
-    image: docker-registry.intra.codilime.com/tap/deepsense-notebooks:seahorse_on_tap-latest
+    image: quay.io/deepsense_io/deepsense-notebooks:seahorse_on_bdu-latest
     links:
       - workflowmanager
       - rabbitmq
@@ -64,14 +64,14 @@ services:
       - "9999:8888"
     environment:
       - WM_URL=http://workflowmanager:9080
-      - WM_AUTH_USER=Some_User
-      - WM_AUTH_PASS=Some_Password
+      - WM_AUTH_USER=oJkTZ8BV
+      - WM_AUTH_PASS=8Ep9GqRr
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
       - HEARTBEAT_INTERVAL=2.0
       - MISSED_HEARTBEAT_LIMIT=60
   sandbox: # Yarn and yarn clients rely on name 'sandbox'
-    image: deepsense-spark
+    image: quay.io/deepsense_io/deepsense-spark:seahorse_on_bdu-latest
     hostname: sandbox
     links:
       - workflowmanager
@@ -85,11 +85,12 @@ services:
       - sandbox:9000:9000
       - sandbox:8042:8042
   proxy:
-    image: docker-registry.intra.codilime.com/tap/deepsense-proxy:seahorse_on_tap-latest
+    image: quay.io/deepsense_io/deepsense-proxy:seahorse_on_bdu-latest
     ports:
       - "8080:8080"
     environment:
-      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"authorizationUri\":\"http://login.seahorse.gotapaas.eu/oauth/authorize\",\"logoutUri\":\"http://login.seahorse.gotapaas.eu/logout.do\",\"tokenUri\":\"http://uaa.seahorse.gotapaas.eu/oauth/token\",\"clientId\":\"seahorse_client_2\",\"clientSecret\":\"seahorse01\",\"userInfoUri\":\"http://login.seahorse.gotapaas.eu/userinfo\"},\"name\":\"sso\"},{\"credentials\":{\"host\":\"http://workflowmanager:9080\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://sessionmanager:9082\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://notebooks:8888\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://rabbitmq:15674\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://frontend:80\"},\"name\":\"frontend\"}]}"
-      WM_AUTH_USER: "Some_User"
-      WM_AUTH_PASS: "Some_Password"
+      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://workflowmanager:9080\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://sessionmanager:9082\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://notebooks:8888\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://rabbitmq:15674\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://frontend:80\"},\"name\":\"frontend\"}]}"
+      DISABLE_OAUTH: "true"
+      WM_AUTH_USER: "oJkTZ8BV"
+      WM_AUTH_PASS: "8Ep9GqRr"
 
