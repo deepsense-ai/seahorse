@@ -10,7 +10,7 @@ class WorkflowsEditorController extends WorkflowReports {
 
   /* @ngInject */
   constructor(workflowWithResults, config, Report, MultiSelectionService,
-    $scope, $state, $stateParams, $q, $rootScope,
+    $scope, $state, $stateParams, $q, $rootScope, $log,
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
     DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
@@ -31,6 +31,7 @@ class WorkflowsEditorController extends WorkflowReports {
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$q = $q;
+    this.$log = $log;
     this.NotificationService = NotificationService;
     this.GraphPanelRendererService = GraphPanelRendererService;
     this.ConfirmationModalService = ConfirmationModalService;
