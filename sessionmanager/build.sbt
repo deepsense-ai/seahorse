@@ -53,8 +53,10 @@ preparePythonDeps <<= preparePythonDeps dependsOn downloadWeJar
 mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
 
 dockerBaseImage := "docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark"
+
 dockerCommands ++= Seq(
   Cmd("USER", "root"),
+  Cmd("RUN", "/opt/conda/bin/pip install pika==0.10.0"),
   ExecCmd("ENTRYPOINT", "bin/deepsense-sessionmanager")
 )
 dockerUpdateLatest := true
