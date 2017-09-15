@@ -8,5 +8,5 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DMethod1To1, DOperable}
 
 trait Scorable extends DOperable {
-  val score: DMethod1To1[Unit, DataFrame, DataFrame]
+  def score: DMethod1To1[Unit, DataFrame, DataFrame]
 }

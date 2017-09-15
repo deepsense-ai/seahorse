@@ -57,7 +57,7 @@ object EvaluateRegression {
   def apply(
       targetColumnName: String,
       predictionColumnName: String): EvaluateRegression = {
-    val operation = new EvaluateRegression
+    val operation = EvaluateRegression()
     val targetColumnParam =
       operation.parameters.getSingleColumnSelectorParameter(Evaluator.targetColumnParamKey)
     targetColumnParam.value = Some(NameSingleColumnSelection(targetColumnName))

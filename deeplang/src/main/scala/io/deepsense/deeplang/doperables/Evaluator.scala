@@ -32,13 +32,12 @@ trait Evaluator extends DOperation1To1[DataFrame, Report] {
 
   protected def getPredictionsAndLabels(
       dataFrame: DataFrame): RDD[(Double, Double)] = {
-    val schema: StructType = dataFrame.sparkDataFrame.schema
-    val targetColumnName: String = columnName(dataFrame, Evaluator.targetColumnParamKey)
     val predictionColumnName: String =
       columnName(dataFrame, Evaluator.predictionColumnParamKey)
-    val labels = dataFrame.sparkDataFrame.select(targetColumnName).rdd.map(_.getDouble(0))
-    val predictions = dataFrame.sparkDataFrame.select(predictionColumnName).rdd.map(_.getDouble(0))
-    predictions zip labels
+    val targetColumnName: String = columnName(dataFrame, Evaluator.targetColumnParamKey)
+    dataFrame.sparkDataFrame.select(predictionColumnName, targetColumnName).rdd.map { r =>
+      (r.getDouble(0), r.getDouble(1))
+    }
   }
 
   private def columnName(
