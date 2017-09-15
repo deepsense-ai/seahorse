@@ -6,7 +6,14 @@ import WorkflowReports from './workflows-editor.reports.js';
 /* beautify preserve:end */
 import internal from './workflows-editor.internal.js';
 
+import NodeCopyPasteVisitor from './node-copy-paste-visitor.js';
+
 class WorkflowsEditorController extends WorkflowReports {
+
+  // TODO Wywalic selectedNode. Niech wszystko operuje na multi select. Logika typu length == 1
+
+  // TODO Try to use this instead of long constructors with boilerplate?
+  // http://stackoverflow.com/questions/27529518/automatically-set-arguments-as-instance-properties-in-es6
 
   /* @ngInject */
   constructor(workflowWithResults, config, Report, MultiSelectionService,
@@ -48,25 +55,8 @@ class WorkflowsEditorController extends WorkflowReports {
     this.CopyPasteService = CopyPasteService;
     this.data = SideBarService.data;
     this.WorkflowStatusBarService = WorkflowStatusBarService;
-    this.multipleCopyParams = {
-      type: 'nodes',
-      filter: () => MultiSelectionService.getSelectedNodes().length,
-      paste: (event, nodes) => {
-        let nodeParametersPromises = _.map(nodes, node => {
-          return internal.getNodeParameters.call(this, node);
-        });
 
-        return $q.all(nodeParametersPromises).then(
-          nodes => internal.cloneNodes.call(this, nodes)
-        ).then(
-          () => $scope.$broadcast('INTERACTION-PANEL.FIT', {
-            zoomId: this.zoomId
-          })
-        );
-      },
-      getEntityToCopy: () => MultiSelectionService.getSelectedNodes()
-        .map(WorkflowService.getWorkflow().getNodeById)
-    };
+    this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q, $scope, WorkflowService, this);
 
     this.init(workflowWithResults[0]);
   }
@@ -86,7 +76,7 @@ class WorkflowsEditorController extends WorkflowReports {
     this.WorkflowService.createWorkflow(workflowWithResults, this.Operations.getData());
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
-    this.CopyPasteService.add(this.multipleCopyParams);
+    this.CopyPasteService.registerCopyPasteVisitor(this.nodeCopyPasteVisitor);
     this.WorkflowService.getWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
     this.loadReports(workflowWithResults.executionReport);
@@ -143,7 +133,7 @@ class WorkflowsEditorController extends WorkflowReports {
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
       if (!data.originalEvent.ctrlKey) {
         this.selectedNode = data.selectedNode;
-        internal.getNodeParameters.call(this, this.selectedNode).then((node, mode) => {
+        this.getNodeParameters(this.selectedNode).then((node, mode) => {
           if (mode === 'sync') {
             this.$scope.$digest();
           }
@@ -154,6 +144,55 @@ class WorkflowsEditorController extends WorkflowReports {
     });
 
     this.initUnbindableListeners();
+  }
+
+  getNodeParameters(node) {
+    let deferred = this.$q.defer();
+
+    if (node.hasParameters()) {
+      node.refreshParameters(this.DeepsenseNodeParameters);
+      this.$scope.$apply();
+      deferred.resolve(node, 'sync');
+    } else {
+      this.Operations.getWithParams(node.operationId)
+        .then(operationData => {
+          this.$scope.$applyAsync(() => {
+            node.setParameters(operationData.parameters, this.DeepsenseNodeParameters);
+            deferred.resolve(node, 'async');
+          });
+        }, (error) => {
+          console.error('operation fetch error', error);
+          deferred.reject(error);
+        });
+    }
+    return deferred.promise;
+  }
+
+  cloneNodes(nodes) {
+    let cloningNodeIds = nodes.map(node => node.id);
+    let clones = [];
+
+    // create new nodes
+    _.forEach(nodes, node => clones.push(this.WorkflowService.cloneNode(node)));
+
+    // clone connections with saving hierarchy
+    _.forEach(nodes, (node, index) => {
+      internal.setEdgeConnectionFromClone(
+        node, clones, cloningNodeIds
+      );
+      this.WorkflowService.getWorkflow().cloneEdges(node, clones[index]);
+    });
+
+    // mark clones as selected after they are created
+    this.$scope.$applyAsync(() => {
+      let nodesId = clones.map(node => node.id);
+      this.unselectNode();
+      this.MultiSelectionService.clearSelection();
+      this.MultiSelectionService.addNodesToSelection(nodesId);
+      this.$rootScope.$broadcast('MultiSelection.ADD', nodesId);
+    });
+
+    this.WorkflowService.saveWorkflow();
   }
 
   initUnbindableListeners() {
@@ -186,7 +225,7 @@ class WorkflowsEditorController extends WorkflowReports {
           y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
         });
 
-        internal.getNodeParameters.call(this, node).then(() => this.WorkflowService.saveWorkflow());
+        this.getNodeParameters(node).then(() => this.WorkflowService.saveWorkflow());
       }),
 
       this.$scope.$on('AttributesPanel.UPDATED', () => {
@@ -264,7 +303,7 @@ class WorkflowsEditorController extends WorkflowReports {
   updateAndRerenderEdges(data) {
     this.WorkflowService.updateTypeKnowledge(data.knowledge);
     if (this.selectedNode) {
-      internal.getNodeParameters.call(this, this.selectedNode).then((node, mode) => {
+      this.getNodeParameters(this.selectedNode).then((node, mode) => {
         if (mode === 'sync') {
           this.$scope.$digest();
         }

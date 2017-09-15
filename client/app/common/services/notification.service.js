@@ -1,15 +1,5 @@
 'use strict';
 
-class LogHandlingService {
-  constructor($log) {
-    this.$log = $log;
-  }
-
-  error(message, error) {
-    this.$log.error(message, error);
-  }
-}
-
 /**
  * `staticMessages` is map of "Global event name": params
  * is used in order to add dynamic notification messages.
@@ -29,9 +19,8 @@ class LogHandlingService {
  * }
  */
 
-class NotificationService extends LogHandlingService {
-  constructor($rootScope, $log, toastr) {
-    super($log);
+class NotificationService {
+  constructor($rootScope, toastr) {
 
     _.assign(this, {
       'toastr': toastr,
@@ -55,11 +44,7 @@ class NotificationService extends LogHandlingService {
 
           notificationType: 'info'
         });
-      },
-      'CopyPaste.COPY.nodes': (event, copyObject) =>
-        this.showNodeCopyPaste('copy', copyObject),
-      'CopyPaste.PASTE.nodes': (event, pasteObject) =>
-        this.showNodeCopyPaste('paste', pasteObject)
+      }
     };
 
     this.initEventListeners();
@@ -74,30 +59,6 @@ class NotificationService extends LogHandlingService {
 
     this.handleSameMessages(params.message, toast);
     this.replaceInfoMessagesWithSuccess(params.message, toast);
-  }
-
-  showNodeCopyPaste(type, copyObject) {
-    let isMultiple = copyObject.entityToCopy.length > 1;
-    let node = isMultiple ? copyObject.entityToCopy : copyObject.entityToCopy[0];
-    let templateData = {
-      entity: 'node',
-      multiple: isMultiple,
-      eventInThePastText: type === 'copy' ? 'copied' : 'pasted',
-      name: isMultiple ?
-        `${node.length} nodes` : `
-            "${node.uiName || node.name}"
-            <span class="o-color-picker o-color-picker--inline"
-                  style="background-color: ${node.color}"></span>
-          `
-    };
-    let messageObject = NotificationService.commonMessages(
-      type,
-      templateData
-    );
-
-    messageObject.notificationType = type === 'copy' ? 'info' : 'success';
-
-    this.showWithParams(messageObject);
   }
 
   showError(data, error) {
@@ -169,51 +130,15 @@ class NotificationService extends LogHandlingService {
     }
   }
 
-  // Statics
-  static getCommonErrorMessage(label, error) {
-    return NotificationService.commonMessages(
-      'error', {
-        errorType: label
-      },
-      error
-    );
-  }
-
-  static commonMessages(key, templateData, dynamicPart = {}) {
-    let data = {
-      copy: {
-        message: `
-          ${templateData.multiple? templateData.name : 'The <%= entity %>' + templateData.name + '<br />'}
-          ${templateData.multiple? 'are' : 'is'}\
-          <strong>${templateData.eventInThePastText}</strong>
-        `,
-        title: 'Copy/Paste event'
-      },
-      error: {
-        message: `
-          <%= errorType %> <b>error</b> <br />
-          ${dynamicPart.data} <br />
-          ${dynamicPart.statusText}
-        `,
-        title: 'Workflow event'
-      }
-    };
-    data.paste = data.copy;
-
-    data[key].message = _.template(data[key].message)(templateData);
-
-    return data[key];
-  }
-
-  /* @ngInject */
-  static factory($rootScope, $log, toastr) {
-    NotificationService.instance = new NotificationService($rootScope, $log, toastr);
-    return NotificationService.instance;
-  }
 }
 
+/* @ngInject */
+let createNotificationService = function($rootScope, toastr) {
+  NotificationService.instance = new NotificationService($rootScope, toastr);
+  return NotificationService.instance;
+};
 exports.function = NotificationService;
 
 exports.inject = function(module) {
-  module.service('NotificationService', NotificationService.factory);
+  module.service('NotificationService', createNotificationService);
 };

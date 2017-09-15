@@ -4,7 +4,6 @@ describe('NotificationService', function() {
   var NotificationService;
   var $rootScope;
   var toastr;
-  var $log;
 
   beforeEach(function() {
     var testModule = angular.module('test', ['ui.router', 'toastr']);
@@ -41,20 +40,12 @@ describe('NotificationService', function() {
       NotificationService = _NotificationService_;
       $rootScope = $injector.get('$rootScope');
       toastr = $injector.get('toastr');
-      $log = $injector.get('$log');
     });
   });
 
   it('should be defined', function() {
     expect(NotificationService).toBeDefined();
     expect(NotificationService).toEqual(jasmine.any(Object));
-  });
-
-  it('should be extended with console log service', function() {
-    expect(NotificationService.$log).toBeDefined();
-    expect(NotificationService.$log).toEqual($log);
-    expect(NotificationService.error).toBeDefined();
-    expect(NotificationService.error).toEqual(jasmine.any(Function));
   });
 
   it('should have constructed with necessary properties', function() {

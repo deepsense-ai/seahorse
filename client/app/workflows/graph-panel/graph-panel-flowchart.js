@@ -64,6 +64,12 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
       scope.$applyAsync(() => {
         GraphPanelRendererService.rerender();
       });
+
+      // Focus is not working properly on elements inside flowchart box.
+      // It might be caused by some libraries taking over mouse event and calling preventDefault
+      // This click handler manually sets focus on flowchard if anything inside it is clicked.
+      $('.flowchart-box').click(function(){ $('.flowchart-box').focus() });
+
     }
   };
 }
