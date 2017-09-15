@@ -76,7 +76,8 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
-      }
+      },
+      "parameters": {}
     },
     "11111-111111-33333": {
       "id": "11111-111111-33333",
@@ -100,7 +101,8 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
-      }
+      },
+      "parameters": {}
     },
     "11111-111111-33322": {
       "id": "11111-111111-33322",
@@ -124,7 +126,8 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
-      }
+      },
+      "parameters": {}
     },
     "342342-123123-434234-12334": {
       "id": "342342-123123-434234-12334",
@@ -196,7 +199,8 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
-      }
+      },
+      "parameters": {}
     },
     "11111-111111-22222": {
       "id": "11111-111111-22222",
@@ -220,7 +224,8 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
-      }
+      },
+      "parameters": {}
     },
     "237956-23426-49857": {
       "id": "237956-23426-49857",
@@ -244,7 +249,8 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
-      }
+      },
+      "parameters": {}
     },
     "11111-111111-44444": {
       "id": "11111-111111-44444",
@@ -358,15 +364,19 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
-      }
-    }
-  },
-  "entities": {
+      },
+      "parameters": {}
+    },
     "43241264-6318434-f34d234": {
       "id": "43241264-6318434-f34d234",
       "name": "ScientificDatasetA",
       "category": "982345-23943-85923",
-      "description": "Dataframe description and other stuff"
+      "description": "Dataframe description and other stuff",
+      "parameters": {},
+      "ports": {
+        "input": [],
+        "output": []
+      }
     }
   }
 }

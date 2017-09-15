@@ -27,6 +27,35 @@ function Experiment() {
     return internal.edges;
   };
 
+  that.addNode = function addNode(node) {
+    internal.nodes[node.id] = node;
+  };
+
+  that.createNode = function createNode(nodeID, operation, paramValues = {}, x = 0, y = 0) {
+    let paramSchemas = operation.parameters || {};
+
+    return new GraphNode({
+      id: nodeID,
+      name: operation.name,
+      operationId: operation.id,
+      version: operation.version,
+      parameters: internal.assignParamDefaults({}, paramValues, paramSchemas),
+      description: operation.description,
+      input: operation.ports.input,
+      output: operation.ports.output,
+      x: x,
+      y: y
+    });
+  };
+
+  that.createNodes = function createNodes(nodes, operations) {
+    for (var i = 0; i < nodes.length; i++) {
+      var operation = operations[nodes[i].operation.id];
+      var node = that.createNode(nodes[i].id, operation, nodes[i].parameters, nodes[i].ui.x, nodes[i].ui.y);
+      that.addNode(node);
+    }
+  };
+
   that.getParametersSchema = function getParametersSchema() {
     return internal.parameters;
   };
@@ -60,6 +89,22 @@ function Experiment() {
     internal.description = data.description;
   };
 
+  that.getParametersSchemaById = function getParametersSchemaById(id) {
+    return internal.experiment.getParametersSchema()[id];
+  };
+
+  that.getParametersSchema = function getParametersSchema() {
+    return internal.parameters;
+  };
+
+  that.saveParametersSchema = function saveParametersSchema(operations) {
+    for (let operationId in operations) {
+      if (operations.hasOwnProperty(operationId)) {
+        internal.parameters[operationId] = operations[operationId].parameters;
+      }
+    }
+  };
+
   internal.assignParamDefaults = function(result, paramValues, paramSchemas) {
     for (let paramName in paramSchemas) {
       if (paramName in paramValues) {
@@ -89,30 +134,6 @@ function Experiment() {
 
     return result;
   };
-
-  that.createNodes = function createNodes(nodes, operations) {
-    for (var i = 0; i < nodes.length; i++) {
-      var operation = operations[nodes[i].operation.id],
-        paramValues = nodes[i].parameters || {},
-        paramSchemas = operations[nodes[i].operation.id].parameters || {};
-
-      var node = new GraphNode({
-        id: nodes[i].id,
-        name: operation.name,
-        operationId: operation.id,
-        version: operation.version,
-        description: operation.description,
-        x: nodes[i].ui.x,
-        y: nodes[i].ui.y,
-        input: operation.ports.input,
-        output: operation.ports.output,
-        parameters: internal.assignParamDefaults({}, paramValues, paramSchemas)
-      });
-
-      internal.nodes[nodes[i].id] = node;
-    }
-  };
-
 
   /**
    * Create connection.

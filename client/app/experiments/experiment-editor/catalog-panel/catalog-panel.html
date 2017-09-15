@@ -9,13 +9,13 @@
           ng-include="'catalog-panel'"></li>
       <li class="operations-items"
           ng-repeat="item in ::category.items">
-          <operation-item id="{{::item.id}}" icon="{{::category.icon}}" name="{{::item.name}}"/>
+          <operation-item droppable id="{{::item.id}}" icon="{{::category.icon}}" name="{{::item.name}}"/>
       </li>
     </ul>
   </script>
   <ul>
     <li class="operations-category"
-        ng-repeat="category in ::experiment.operationsCatalog"
+        ng-repeat="category in ::experiment.getCatalog()"
         ng-include="'catalog-panel'"></li>
   </ul>
 </div>

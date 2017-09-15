@@ -8,11 +8,6 @@ function OperationItemView() {
       id:'@',
       name:'@',
       icon:'@'
-    },
-    link: function (scope, element, attrs) {
-      element.on('click', function () {
-        console.log(element);
-      });
     }
   };
 }

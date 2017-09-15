@@ -1,9 +1,9 @@
-<div class="flowchart-box">
+<div drop-target class="flowchart-box">
   <graph-node
     on-render-finish
     jsplumb-draggable
     node="node"
-    ng-class="{ 'selected-node': experiment.getSelectedNode().id === nodeId }"
+    ng-class="{'selected-node': experiment.getSelectedNode().id === nodeId }"
     ng-repeat="(nodeId, node) in experiment.getExperiment().getNodes()">
   </graph-node>
 </div>

@@ -13,6 +13,8 @@ require('./experiments.config.js').inject(experiments);
 require('./experiment.factory.js').inject(experiments);
 require('./experiment-browser/experiment-browser.js').inject(experiments);
 require('./common-behaviours/common-draggable.js').inject(experiments);
+require('./common-behaviours/common-droppable.js').inject(experiments);
+require('./common-behaviours/common-drop-target.js').inject(experiments);
 require('./common-behaviours/common-render-finish.js').inject(experiments);
 require('./experiment-editor/graph-panel/graph-panel-flowchart.js').inject(experiments);
 require('./experiment-editor/graph-panel/graph-panel-node.js').inject(experiments);

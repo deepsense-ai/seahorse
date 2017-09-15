@@ -12,8 +12,8 @@ function OperationAttributesView() {
     scope: false,
     templateUrl: 'app/experiments/experiment-editor/attributes-panel/attributes-panel.html',
     replace: true,
-    link: function (scope, element, attrs) {
-      scope.closePanel = function() {
+    link: (scope, element, attrs) => {
+      scope.closePanel = function () {
         scope.experiment.unselectNode();
       };
 

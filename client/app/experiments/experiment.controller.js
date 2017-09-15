@@ -17,26 +17,44 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
   internal.selectedNode = null;
 
   internal.init = function init() {
-    Operations.getCatalog().then((data) => {
-      that.operationsCatalog = data;
-  });
+    console.log('Initiating experiment');
 
-  Operations.getAll()
-    .then(function (data) {
-      internal.operations = data;
-    })
-    .then(function () {
-      ExperimentAPIClient.getData($stateParams.id).then(function (data) {
-        $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
-        internal.experiment = ExperimentFactory.createExperiment(data, internal.operations);
-        DrawingService.renderExperiment(internal.experiment);
-      });
+    Operations.getCatalog().then((data) => {
+      console.log('Catalog downloaded successfully');
+      that.operationsCatalog = data;
     });
+
+    Operations.getAll()
+      .then((data) => {
+        console.log('Operations downloaded successfully');
+        internal.operations = data;
+      })
+      .then(()=> {
+        ExperimentAPIClient.getData($stateParams.id).then((data) => {
+          console.log('Experiment downloaded successfully');
+          $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
+          internal.experiment = ExperimentFactory.createExperiment(data, internal.operations);
+          DrawingService.renderExperiment(internal.experiment);
+        });
+      });
   };
 
   that.onRenderFinish = function onRenderFinish() {
+    console.log('Nodes rendering finished');
     DrawingService.renderPorts();
     DrawingService.renderConnections();
+  };
+
+  that.getCatalog = function getCatalog() {
+    return that.operationsCatalog;
+  };
+
+  that.getOperations = function getOperations() {
+    return internal.operations;
+  };
+
+  that.getOperationById = function getOperationById(id) {
+    return internal.operations[id];
   };
 
   that.getExperiment = function getExperiment() {
@@ -64,7 +82,7 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     });
   };
 
-  $rootScope.$on(GraphNode.CLICK, function(event, data) {
+  $rootScope.$on(GraphNode.CLICK, (event, data) => {
     internal.selectedNode = data.selectedNode;
     $rootScope.$apply();
   });
@@ -72,6 +90,15 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
   $rootScope.$on(GraphNode.MOVE, ()  => that.saveData());
   $rootScope.$on(Edge.CREATE, ()  => that.saveData());
   $rootScope.$on(Edge.REMOVE, ()  => that.saveData());
+
+  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, data) {
+    var operation = that.getOperationById(data.classId);
+    var node = internal.experiment.createNode(new Date().getTime().toString(),operation, {});
+    internal.experiment.addNode(node);
+    $rootScope.$apply();
+    that.onRenderFinish();
+    that.saveData();
+  });
 
   internal.init();
   return that;
