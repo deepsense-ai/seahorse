@@ -31,7 +31,7 @@
     "deepsense-catalogue-panel": "0.0.4",
     "deepsense-context-menu": "0.0.1",
     "deepsense-loading-spinner": "^1.0.2",
-    "deepsense-navigation-panel": "0.0.3",
+    "deepsense-navigation-panel": "0.0.4",
     "deepsense-node-parameters": "0.0.9",
     "express": "^4.12.4",
     "ng-debounce": "^1.0.1",
