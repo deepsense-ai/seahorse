@@ -14,6 +14,7 @@ object Version {
   val scalatest = "3.0.0-SNAP4"
   val scoverage = "1.0.4"
   val slick = "3.1.1"
+  val spark = "1.6.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
   val seahorse = "1.1.0-SNAPSHOT"
@@ -28,6 +29,7 @@ object Library {
     Version.seahorse exclude("com.datastax.cassandra", "cassandra-driver-core") exclude(
     "com.datastax.spark", "spark-cassandra-connector") exclude(
     "org.cassandraunit", "cassandra-unit")
+  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
 
   val akkaActor = akka("actor")
@@ -51,6 +53,8 @@ object Library {
   val seahorseWorkflowJson = seahorse("workflow-json")
   val seahorseReportlib = seahorse("reportlib")
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
+  val sparkCore = spark("core")
+  val sparkMLLib = spark("mllib")
   val sprayCan = spray("can")
   val sprayRouting = spray("routing")
   val sprayTestkit = spray("testkit")
@@ -73,6 +77,15 @@ object Dependencies {
     "seahorse.snapshot"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-snapshot"
   )
 
+  object Spark {
+    val components = Seq(
+      sparkCore,
+      sparkMLLib)
+    val provided = components.map(_ % Provided)
+    val test = components.map(_ % s"$Test,it")
+    val onlyInTests = provided ++ test
+  }
+
   val commons = Seq(
     akkaActor,
     apacheCommons,
@@ -89,7 +102,7 @@ object Dependencies {
     sprayRouting
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
 
-  val workflowmanager = Seq(
+  val workflowmanager = Spark.onlyInTests ++ Seq(
     akkaActor,
     apacheCommons,
     guice,
