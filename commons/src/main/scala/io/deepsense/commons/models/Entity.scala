@@ -14,32 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.workflows
+package io.deepsense.commons.models
 
-import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models
-import io.deepsense.graph.Node
-import io.deepsense.graph.nodestate.NodeStatus
 
-@Deprecated
-case class ExecutionReportWithId(
-    id: ExecutionReportWithId.Id,
-    nodes: Map[Node.Id, NodeStatus],
-    resultEntities: EntitiesMap,
-    error: Option[FailureDescription] = None)
-
-@Deprecated
-object ExecutionReportWithId {
+object Entity {
   type Id = models.Id
   val Id = models.Id
-
-  def apply(
-      id: ExecutionReportWithId.Id,
-      executionReport: ExecutionReport): ExecutionReportWithId = {
-    new ExecutionReportWithId(
-      id,
-      executionReport.nodesStatuses,
-      executionReport.resultEntities,
-      executionReport.error)
-  }
 }

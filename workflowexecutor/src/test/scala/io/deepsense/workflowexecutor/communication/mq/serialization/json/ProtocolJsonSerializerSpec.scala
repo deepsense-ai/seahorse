@@ -22,14 +22,12 @@ import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.doperables.ColumnsFilterer
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.Fit
-import io.deepsense.graph.{DirectedGraph, Node}
-import io.deepsense.models.entities.Entity
+import io.deepsense.graph.{GraphKnowledge, DirectedGraph, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{WorkflowWithResultsJsonProtocol, ExecutionReportJsonProtocol}
+import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol, ExecutionReportJsonProtocol}
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.communication.message.global.{PythonGatewayAddressJsonProtocol, Address, PythonGatewayAddress}
@@ -40,7 +38,8 @@ class ProtocolJsonSerializerSpec
   with MockitoSugar
   with ExecutionReportJsonProtocol
   with PythonGatewayAddressJsonProtocol
-  with WorkflowWithResultsJsonProtocol {
+  with WorkflowWithResultsJsonProtocol
+  with InferredStateJsonProtocol {
 
   override val graphReader: GraphReader = mock[GraphReader]
 
@@ -49,7 +48,7 @@ class ProtocolJsonSerializerSpec
 
     "serialize ExecutionStatus" in {
       val executionStatus = ExecutionStatus(
-        Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft),
+        Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft()),
         EntitiesMap(
           Map[Entity.Id, DOperable](
             Entity.Id.randomId -> new ColumnsFilterer),
@@ -78,6 +77,13 @@ class ProtocolJsonSerializerSpec
 
       protocolJsonSerializer.serializeMessage(workflowWithResults) shouldBe
       expectedSerializationResult("workflowWithResults", workflowWithResults.toJson)
+    }
+
+    "serialize InferredState" in {
+      val inferredState =
+        InferredState(Workflow.Id.randomId, GraphKnowledge(), ExecutionReport(Map()))
+      protocolJsonSerializer.serializeMessage(inferredState) shouldBe
+      expectedSerializationResult("inferredState", inferredState.toJson)
     }
   }
 

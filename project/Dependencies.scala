@@ -33,6 +33,7 @@ object Version {
   val spark = "1.5.2"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
+  val wireMock = "1.57"
 }
 
 object Library {
@@ -72,7 +73,7 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
-  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.0"
+  val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock
 }
 
 object Dependencies {
@@ -111,13 +112,8 @@ object Dependencies {
     hadoopClient,
     hadoopCommon,
     cassandraConnector,
-    sparkCSV,
-    scalaz
+    sparkCSV
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage, cassandra, cassandraUnit).map(_ % Test)
-
-  val entitystorageClient = Seq(
-    akkaActor
-  ) ++ Seq(scalatest, mockitoCore, akkaTestkit).map(_ % Test)
 
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
@@ -133,9 +129,10 @@ object Dependencies {
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val workflowexecutor = Seq(
+    akkaActor,
     scopt,
     sprayClient,
     rabbitmq
   ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++
-  Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
+  Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
 }

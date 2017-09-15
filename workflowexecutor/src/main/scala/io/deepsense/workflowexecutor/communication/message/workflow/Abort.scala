@@ -18,15 +18,13 @@ package io.deepsense.workflowexecutor.communication.message.workflow
 
 import spray.json.RootJsonFormat
 
+import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.utils.Logging
-import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows.Workflow
 
 case class Abort(workflowId: Workflow.Id)
 
-trait AbortJsonProtocol
-  extends Logging {
-  self: WorkflowJsonProtocol =>
+trait AbortJsonProtocol extends IdJsonProtocol with Logging {
 
   implicit val abortFormat: RootJsonFormat[Abort] = jsonFormat1(Abort.apply)
 }

@@ -16,8 +16,6 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import scala.concurrent.Future
-
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -39,34 +37,36 @@ trait Executor extends Logging {
   def createExecutionContext(
       reportLevel: ReportLevel,
       dataFrameStorage: DataFrameStorage,
-      pythonCodeExecutor: Future[PythonCodeExecutor],
-      customOperationExecutor: CustomOperationExecutor,
-      sparkContext: Option[SparkContext] = None,
+      pythonExecutionCaretaker: PythonExecutionCaretaker,
+      sparkContext: SparkContext,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
-    val sContext = sparkContext.getOrElse(createSparkContext())
-    val sqlContext = createSqlContext(sContext)
+    val sqlContext = createSqlContext(sparkContext)
     val catalog = dOperableCatalog.getOrElse(createDOperableCatalog())
 
     val tenantId = ""
 
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
-      entityStorageClient = null,  // temporarily not used
       tenantId,
       catalog,
       fullInference = true)
 
     CommonExecutionContext(
-      sContext,
+      sparkContext,
       sqlContext,
       inferContext,
       FileSystemClientStub(), // temporarily mocked
       reportLevel,
       tenantId,
       dataFrameStorage,
-      pythonCodeExecutor,
-      customOperationExecutor)
+      new PythonExecutionProvider {
+        override def pythonCodeExecutor: PythonCodeExecutor =
+          pythonExecutionCaretaker.pythonCodeExecutor
+
+        override def customOperationExecutor: CustomOperationExecutor =
+          pythonExecutionCaretaker.customOperationExecutor
+      })
   }
 
   def createSparkContext(): SparkContext = {
@@ -96,3 +96,5 @@ trait Executor extends Logging {
     catalog
   }
 }
+
+object Executor extends Executor

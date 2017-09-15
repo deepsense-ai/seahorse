@@ -23,9 +23,7 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.models.Id
 
-class ContextualPythonCodeExecutorSpec
-    extends UnitSpec
-    with BeforeAndAfter {
+class ContextualPythonCodeExecutorSpec extends UnitSpec with BeforeAndAfter {
 
   val workflowId = Id.randomId
   val nodeId = Id.randomId
@@ -45,9 +43,9 @@ class ContextualPythonCodeExecutorSpec
   "ContextualPythonCodeExecutor" should {
 
     "validate code" in {
-      when(pythonCodeExecutor.validate(code)).thenReturn(true)
+      when(pythonCodeExecutor.isValid(code)).thenReturn(true)
 
-      executor.validate(code) shouldBe true
+      executor.isValid(code) shouldBe true
     }
 
     "execute code" in {

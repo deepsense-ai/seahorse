@@ -30,8 +30,8 @@ trait ExecutionReportJsonProtocol
   extends NodeStatusJsonProtocol
   with EntitiesMapJsonProtocol{
 
-  implicit val executionReportJsonFormat: JsonFormat[ExecutionReport] =
-      new JsonFormat[ExecutionReport] {
+  implicit val executionReportJsonFormat: RootJsonFormat[ExecutionReport] =
+      new RootJsonFormat[ExecutionReport] {
     override def write(executionReport: ExecutionReport): JsValue = JsObject(
       "resultEntities" -> executionReport.resultEntities.toJson,
       "nodes" -> executionReport.nodesStatuses.toJson,

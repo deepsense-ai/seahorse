@@ -16,15 +16,17 @@
 
 package io.deepsense.workflowexecutor.pythongateway
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import java.util.concurrent.atomic.AtomicReference
+
+import scala.annotation.tailrec
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
 
 import org.apache.spark.SparkContext
-import py4j.{CallbackClient, GatewayServer}
+import py4j.{DefaultGatewayServerListener, CallbackClient, GatewayServer}
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
+import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint.PythonEntryPointConfig
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 case class PythonGateway(
@@ -36,31 +38,35 @@ case class PythonGateway(
 
   private val operationExecutionDispatcher = new OperationExecutionDispatcher
 
-  val entryPoint = new PythonEntryPoint(
-    sparkContext, dataFrameStorage, customOperationDataFrameStorage, operationExecutionDispatcher)
+  private[pythongateway] val entryPoint = new PythonEntryPoint(
+    PythonEntryPointConfig(gatewayConfig.pyExecutorSetupTimeout),
+    sparkContext,
+    dataFrameStorage,
+    customOperationDataFrameStorage,
+    operationExecutionDispatcher)
 
-  private[pythongateway] val gatewayServer = createGatewayServer(entryPoint)
+  private val gatewayStateListener = new GatewayEventListener
+  private[pythongateway] val gatewayServer = createGatewayServer(entryPoint, gatewayStateListener)
 
   def start(): Unit = gatewayServer.start()
   def stop(): Unit = gatewayServer.shutdown()
 
-  def codeExecutor: Future[PythonCodeExecutor] =
-    entryPoint.codeExecutorPromise.future
+  def codeExecutor: PythonCodeExecutor = entryPoint.getCodeExecutor
 
   def customOperationExecutor: CustomOperationExecutor =
     operationExecutionDispatcher.customOperationExecutor
 
   def listeningPort: Option[Int] =
-    gatewayServer.getListeningPort match {
-      case -1 => None
-      case p => Some(p)
+    (gatewayServer.getListeningPort, gatewayStateListener.running) match {
+      case (-1, _) => None
+      case (_, false) => None
+      case (p, true) => Some(p)
     }
 
-  private def createGatewayServer(entryPoint: PythonEntryPoint): GatewayServer = {
-    val callbackClient =
-      new LazyCallbackClient(
-        entryPoint.pythonPortPromise.future,
-        gatewayConfig.callbackClientSetupTimeout)
+  private def createGatewayServer(
+      entryPoint: PythonEntryPoint, listener: GatewayEventListener): GatewayServer = {
+
+    val callbackClient = new LazyCallbackClient(entryPoint.getPythonPort _)
 
     // It is quite important that these values are 0,
     // which translates to infinite timeout.
@@ -69,13 +75,17 @@ case class PythonGateway(
     val readTimeout = 0
     val port = 0 // Use a random available port.
 
-    new GatewayServer(
+    val gateway = new GatewayServer(
       entryPoint,
       port,
       connectTimeout,
       readTimeout,
       null, // no custom commands
       callbackClient)
+
+    gateway.addListener(listener)
+
+    gateway
   }
 }
 
@@ -83,32 +93,54 @@ object PythonGateway {
 
   /**
    * A wrapper around Py4j's CallbackClient
-   * that instantiates the actual CallbackClient lazily.
+   * that instantiates the actual CallbackClient lazily,
+   * and re-instantiates it every time the callback port changes.
    *
    * This way we don't have to know Python's listening port
-   * at the time of Gateway instantiation.
+   * at the time of Gateway instantiation and are prepared
+   * for restarting the callback server.
    */
-  class LazyCallbackClient(val port: Future[Int], val startupTimeout: Duration)
-      extends CallbackClient(0)
-      with Logging {
+  class LazyCallbackClient(val getCallbackPort: () => Int) extends CallbackClient(0) {
 
-    private val clientImpl: Future[CallbackClient] =
-      port map {
-        case p: Int =>
-          logger.debug("Creating callback client")
-          new CallbackClient(p)
-      }
-
-    private def getClientImpl: CallbackClient = {
-      logger.debug("Callback client requested")
-      Await.result(clientImpl, startupTimeout)
-    }
+    private val clientRef = new AtomicReference(new CallbackClient(0))
 
     override def sendCommand(command: String): String = {
-      getClientImpl.sendCommand(command)
+      @tailrec
+      def updateAndGet(): CallbackClient = {
+        val port = getCallbackPort()
+        val currentClient = clientRef.get()
+
+        if (currentClient.getPort == port) {
+          currentClient
+        } else {
+          val newClient = new CallbackClient(port)
+          if (clientRef.compareAndSet(currentClient, newClient)) {
+            currentClient.shutdown()
+            newClient
+          } else {
+            updateAndGet()
+          }
+        }
+      }
+
+      updateAndGet().sendCommand(command)
+    }
+
+    override def shutdown(): Unit = {
+      clientRef.get.shutdown()
+      super.shutdown()
+    }
+  }
+
+  class GatewayEventListener extends DefaultGatewayServerListener with Logging {
+    var running: Boolean = true
+
+    override def serverStopped(): Unit = {
+      logger.info("Gateway server stopped")
+      running = false
     }
   }
 
   case class GatewayConfig(
-      callbackClientSetupTimeout: Duration = 5000.millis)
+    pyExecutorSetupTimeout: Duration = 5.seconds)
 }

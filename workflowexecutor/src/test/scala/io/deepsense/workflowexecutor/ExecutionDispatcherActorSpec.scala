@@ -16,8 +16,6 @@
 
 package io.deepsense.workflowexecutor
 
-import scala.concurrent.Future
-
 import akka.actor.{ActorContext, ActorRef, ActorSelection, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.apache.spark.SparkContext
@@ -30,6 +28,8 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowexecutor.executor.PythonExecutionCaretaker
+import io.deepsense.models.workflows.Workflow._
 import io.deepsense.workflowexecutor.communication.message.global.Connect
 import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 
@@ -76,17 +76,20 @@ class ExecutionDispatcherActorSpec
         mock[SparkContext],
         mock[DOperableCatalog],
         mock[DataFrameStorage],
-        Future.successful(mock[PythonCodeExecutor]),
-        mock[CustomOperationExecutor],
+        mock[PythonExecutionCaretaker],
         mock[ReportLevel],
-        TestProbe().ref
+        TestProbe().ref,
+        TestProbe().ref,
+        5
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
-          context: ActorContext,
-          executionContext: CommonExecutionContext,
-          workflowId: Workflow.Id,
-          statusLogger: ActorRef,
-          publisher: ActorSelection): ActorRef = {
+            context: ActorContext,
+            executionContext: CommonExecutionContext,
+            workflowId: Id,
+            workflowManagerClientActor: ActorRef,
+            statusLogger: ActorRef,
+            publisher: ActorSelection,
+            wmTimeout: Int): ActorRef = {
           fail("Tried to create an executor but it exists!")
         }
 
@@ -106,16 +109,17 @@ class ExecutionDispatcherActorSpec
         mock[SparkContext],
         mock[DOperableCatalog],
         mock[DataFrameStorage],
-        Future.successful(mock[PythonCodeExecutor]),
-        mock[CustomOperationExecutor],
+        mock[PythonExecutionCaretaker],
         mock[ReportLevel]
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
-          context: ActorContext,
-          executionContext: CommonExecutionContext,
-          workflowId: Workflow.Id,
-          statusLogger: ActorRef,
-          publisher: ActorSelection): ActorRef = {
+            context: ActorContext,
+            executionContext: CommonExecutionContext,
+            workflowId: Id,
+            workflowManagerClientActor: ActorRef,
+            statusLogger: ActorRef,
+            publisher: ActorSelection,
+            wmTimeout: Int): ActorRef = {
           workflowId shouldBe expectedWorkflowId
           testProbe.ref
         }
@@ -131,21 +135,19 @@ class ExecutionDispatcherActorSpec
       sparkContext: SparkContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
-      pythonCodeExecutor: Future[PythonCodeExecutor],
-      customOperationExecutor: CustomOperationExecutor,
+      pythonExecutionCaretaker: PythonExecutionCaretaker,
       reportLevel: ReportLevel)
     extends ExecutionDispatcherActor(
-      sparkContext, dOperableCatalog, dataFrameStorage, pythonCodeExecutor, customOperationExecutor,
-      reportLevel, TestProbe().ref) {
+      sparkContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
+      reportLevel, TestProbe().ref, TestProbe().ref, 5) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
 
     override def createExecutionContext(
         reportLevel: ReportLevel.ReportLevel,
         dataFrameStorage: DataFrameStorage,
-        pythonCodeExecutor: Future[PythonCodeExecutor],
-        customOperationExecutor: CustomOperationExecutor,
-        sparkContext: Option[SparkContext],
+        pythonExecutionCaretaker: PythonExecutionCaretaker,
+        sparkContext: SparkContext,
         dOperableCatalog: Option[DOperableCatalog]): CommonExecutionContext = {
       mock[CommonExecutionContext]
     }

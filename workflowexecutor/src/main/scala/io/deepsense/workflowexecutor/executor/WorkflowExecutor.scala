@@ -31,12 +31,11 @@ import com.typesafe.config.ConfigFactory
 import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.models.Id
+import io.deepsense.commons.models.{Entity, Id}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
-import io.deepsense.models.entities.Entity
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
@@ -45,37 +44,55 @@ import io.deepsense.workflowexecutor.communication.message.global.Connect
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
-import io.deepsense.workflowexecutor.{ExecutionParams, ReportUploadClient, WorkflowDownloadClient, WorkflowExecutorActor}
+import io.deepsense.workflowexecutor.{ExecutionParams, WorkflowDownloadClient, WorkflowExecutorActor}
+import io.deepsense.workflowexecutor._
 
 /**
  * WorkflowExecutor creates an execution context and then executes a workflow on Spark.
  */
 case class WorkflowExecutor(
     workflow: WorkflowWithVariables,
-    reportLevel: ReportLevel)
+    reportLevel: ReportLevel,
+    pythonExecutorPath: String)
   extends Executor {
 
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
   private val actorSystemName = "WorkflowExecutor"
 
   def execute(): Try[ExecutionReport] = {
+
+    val dataFrameStorage = new DataFrameStorageImpl
+
+    val sparkContext = createSparkContext()
+
+    val pythonExecutionCaretaker =
+      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
+
+    pythonExecutionCaretaker.start()
+
     val executionContext = createExecutionContext(
       reportLevel,
-      new DataFrameStorageImpl,
-      Future.successful(PythonCodeExecutorStub()),
-      CustomOperationExecutorStub())
+      dataFrameStorage,
+      pythonExecutionCaretaker,
+      sparkContext)
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
     val statusReceiverActor =
       actorSystem.actorOf(TerminationListenerActor.props(finishedExecutionStatus))
+
+    val workflowWithResults = WorkflowWithResults(
+      workflow.id,
+      workflow.metadata,
+      workflow.graph,
+      workflow.thirdPartyData,
+      ExecutionReport(Map(), None))
     val workflowExecutorActor = actorSystem.actorOf(
-      WorkflowExecutorActor.props(executionContext, None, Some(statusReceiverActor)),
+      BatchWorkflowExecutorActor.props(executionContext, statusReceiverActor, workflowWithResults),
       workflow.id.toString)
 
-    val startedTime = DateTimeConverter.now
     workflowExecutorActor ! Connect(workflow.id)
-    workflowExecutorActor ! Launch(workflow.graph)
+    workflowExecutorActor ! Launch(workflow.graph.nodes.map(_.id))
 
     logger.debug("Awaiting execution end...")
     actorSystem.awaitTermination()
@@ -89,12 +106,17 @@ case class WorkflowExecutor(
         Try(executionReport)
     }
 
-    cleanup(actorSystem, executionContext)
+    cleanup(actorSystem, executionContext, pythonExecutionCaretaker)
     report
   }
 
-  private def cleanup(actorSystem: ActorSystem, executionContext: CommonExecutionContext): Unit = {
+  private def cleanup(
+      actorSystem: ActorSystem,
+      executionContext: CommonExecutionContext,
+      pythonExecutionCaretaker: PythonExecutionCaretaker): Unit = {
     logger.debug("Cleaning up...")
+    pythonExecutionCaretaker.stop()
+    logger.debug("PythonExecutionCaretaker terminated!")
     actorSystem.shutdown()
     logger.debug("Akka terminated!")
     executionContext.sparkContext.stop()
@@ -108,7 +130,7 @@ object WorkflowExecutor extends Logging {
 
   private val workflowManagerConfig = WorkflowManagerConfig(
     defaultAddress = config.getString("workflow-manager.address"),
-    path = config.getString("workflow-manager.path"),
+    path = config.getString("workflow-manager.workflows.path"),
     timeout = config.getInt("workflow-manager.timeout")
   )
 
@@ -124,7 +146,7 @@ object WorkflowExecutor extends Logging {
     val workflow = loadWorkflow(params)
 
     val executionReport = workflow.map(w => {
-      executeWorkflow(w, params.reportLevel).get
+      executeWorkflow(w, params.reportLevel, params.pyExecutorPath.get).get
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -142,42 +164,28 @@ object WorkflowExecutor extends Logging {
         case e: WorkflowExecutionException => logger.error(e.getMessage, e)
         case e: Exception => logger.error("Unexpected workflow execution exception", e)
       }
-      // Workflow excecution succeeded
-      case Success(workflowWithResults) => {
+      // Workflow execution succeeded
+      case Success(workflowWithResults) =>
         logger.info("Handling execution report")
-        // Uploading execution report
-        val reportUrlFuture: Future[Option[String]] = params.uploadReport match {
-          case false => Future.successful(None)
-          case true =>
-            val reportUploadAddress = workflowManagerConfig.address(params.apiAddress)
-            val reportPreviewAddress = reportPreviewConfig.defaultAddress
-            uploadExecutionReport(reportUploadAddress, reportPreviewAddress, workflowWithResults)
-              .map(Some(_))
-        }
         // Saving execution report to file
         val reportPathFuture: Future[Option[String]] = params.outputDirectoryPath match {
           case None => Future.successful(None)
           case Some(path) => saveWorkflowToFile(path, workflowWithResults)
         }
 
-        val reportUrlTry = Await.ready(reportUrlFuture, 1.minute).value.get
-        val reportPathTry = Await.ready(reportPathFuture, 1.minute).value.get
-
-        if (reportUrlTry.isFailure || reportPathTry.isFailure) {
-          logger.error("Execution report dump: \n" + workflowWithResults.toJson.prettyPrint)
-        }
-
-        reportUrlTry match {
-          case Success(None) => // Uploading execution report was not requested
-          case Success(Some(url)) =>
-            logger.info(s"Exceution report successfully uploaded to: $url")
-          case Failure(exception) => exception match {
-            case e: WorkflowVersionException => handleVersionException(e)
-            case e: DeserializationException => handleDeserializationException(e)
-            case e: UnexpectedHttpResponseException => logger.error(e.getMessage)
-            case e: Exception => logger.error("Uploading exceution report failed", e)
+        val reportPathTry: Try[Option[String]] =
+          try {
+            Await.ready(reportPathFuture, 1.minute).value.get
+          } catch {
+            case e =>
+              executionReportDump(workflowWithResults)
+              throw e
           }
+
+        if (reportPathTry.isFailure) {
+          executionReportDump(workflowWithResults)
         }
+
         reportPathTry match {
           case Success(None) => // Saving execution report to file was not requested
           case Success(Some(path)) =>
@@ -189,13 +197,12 @@ object WorkflowExecutor extends Logging {
             case e: Exception => logger.error("Saving execution report to file failed", e)
           }
         }
-      }
     }
   }
 
-
-  private def reportUrl(reportId: String): String =
-    s"${reportPreviewConfig.defaultAddress}/${reportPreviewConfig.path}/$reportId"
+  private def executionReportDump(workflowWithResults: WorkflowWithResults): Unit = {
+    logger.error("Execution report dump: \n" + workflowWithResults.toJson.prettyPrint)
+  }
 
   private def handleVersionException(versionException: WorkflowVersionException): Unit = {
     versionException match {
@@ -217,12 +224,13 @@ object WorkflowExecutor extends Logging {
 
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
-      reportLevel: ReportLevel): Try[ExecutionReport] = {
+      reportLevel: ReportLevel,
+      pythonExecutorPath: String): Try[ExecutionReport] = {
 
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, reportLevel).execute()
+    WorkflowExecutor(workflow, reportLevel, pythonExecutorPath).execute()
   }
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {
@@ -243,18 +251,6 @@ object WorkflowExecutor extends Logging {
       workflowManagerConfig.path,
       workflowManagerConfig.timeout
     ).downloadWorkflow(workflowId)
-  }
-
-  private def uploadExecutionReport(
-      reportUploadAddress: String,
-      reportPreviewAddress: String,
-      result: WorkflowWithResults): Future[String] = {
-    new ReportUploadClient(
-      reportUploadAddress,
-      workflowManagerConfig.path,
-      workflowManagerConfig.timeout,
-      graphReader
-    ).uploadReport(result)
   }
 
   private def saveWorkflowToFile(
@@ -322,7 +318,7 @@ private case class FileSystemClientStub() extends FileSystemClient {
 
 private case class PythonCodeExecutorStub() extends PythonCodeExecutor {
 
-  override def validate(code: String): Boolean = ???
+  override def isValid(code: String): Boolean = ???
 
   override def run(workflowId: String, nodeId: String, code: String): Unit = ???
 }

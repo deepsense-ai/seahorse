@@ -28,7 +28,7 @@ case class CustomPythonOperation()
   extends DOperation1To1[DataFrame, DataFrame] {
 
   override val id: Id = "a721fe2a-5d7f-44b3-a1e7-aade16252ead"
-  override val name: String = "Custom Python operation"
+  override val name: String = "Custom Python Operation"
   override val description: String = "Creates a custom Python operation"
 
   val codeParameter = CodeSnippetParam(
@@ -43,7 +43,7 @@ case class CustomPythonOperation()
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val code = $(codeParameter)
 
-    if (!context.pythonCodeExecutor.validate(code)) {
+    if (!context.pythonCodeExecutor.isValid(code)) {
       throw CustomOperationExecutionException("Code validation failed")
     }
 
@@ -53,7 +53,7 @@ case class CustomPythonOperation()
         throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
       case Right(_) =>
-        val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame().getOrElse {
+        val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame.getOrElse {
           throw CustomOperationExecutionException(
             "Operation finished successfully, but did not produce a DataFrame.")
         }

@@ -18,7 +18,6 @@ package io.deepsense.deeplang.inference
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.entitystorage.EntityStorageClient
 
 /**
  * Holds information needed by DOperations and DMethods during knowledge inference.
@@ -27,7 +26,6 @@ import io.deepsense.entitystorage.EntityStorageClient
  */
 case class InferContext(
     dataFrameBuilder: DataFrameBuilder,
-    entityStorageClient: EntityStorageClient,
     tenantId: String,
     dOperableCatalog: DOperableCatalog,
     fullInference: Boolean)
@@ -35,5 +33,5 @@ case class InferContext(
 object InferContext {
   // This is a temporary solution. See DS-1924.
   def forTypeInference(dOperableCatalog: DOperableCatalog): InferContext =
-    InferContext(null, null, "", dOperableCatalog, fullInference = false)
+    InferContext(null, "", dOperableCatalog, fullInference = false)
 }

@@ -21,23 +21,28 @@ import akka.actor.{Actor, ActorRef, ActorSelection}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.WorkflowExecutorActor
-import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch}
+import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.UpdateStruct
+import io.deepsense.workflowexecutor.communication.message.workflow.{UpdateWorkflow, Abort, Init, Launch}
 
 case class WorkflowChannelSubscriber(
+  workflowId: Workflow.Id,
   executionDispatcher: ActorRef) extends Actor with Logging {
 
   override def receive: Receive = {
-    case request @ Init(workflowId) =>
+    case request @ Init(id) =>
       logger.debug(s"INIT! '$workflowId'")
-      actorsForWorkflow(workflowId) ! request
-    case Launch(id, directedGraph, nodesToExecute) =>
-      logger.debug(s"LAUNCH! '$id' -> $directedGraph")
-      actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Launch(directedGraph, nodesToExecute)
+      actorsForWorkflow ! WorkflowExecutorActor.Messages.Init()
+    case Launch(id, nodesToExecute) =>
+      logger.debug(s"LAUNCH! '$id'")
+      actorsForWorkflow ! WorkflowExecutorActor.Messages.Launch(nodesToExecute)
     case Abort(id) =>
       logger.debug(s"ABORT! '$id'")
-      actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Abort()
+      actorsForWorkflow ! WorkflowExecutorActor.Messages.Abort()
+    case UpdateWorkflow(workflow) =>
+      logger.debug(s"UPDATE STRUCT '$workflowId'")
+      actorsForWorkflow ! UpdateStruct(workflow)
   }
 
-  private def actorsForWorkflow(workflowId: Workflow.Id): ActorSelection =
+  private val actorsForWorkflow: ActorSelection =
     context.actorSelection(executionDispatcher.path./(workflowId.toString))
 }

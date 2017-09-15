@@ -26,7 +26,6 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.NumericParam
 import io.deepsense.deeplang.params.validators.RangeValidator
 
-
 object DClassesForDOperations {
   trait A extends DOperableMock
   case class A1() extends A

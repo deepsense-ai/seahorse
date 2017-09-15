@@ -19,7 +19,6 @@ package io.deepsense.deeplang.doperables
 import spray.json._
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.models.entities.DataObjectReport
 import io.deepsense.reportlib.model.{ReportJsonProtocol, ReportContent}
 
 case class Report(content: ReportContent = ReportContent("empty report"))
@@ -29,8 +28,6 @@ case class Report(content: ReportContent = ReportContent("empty report"))
 
   import ReportJsonProtocol._
   override def report(executionContext: ExecutionContext): Report = this
-
-  def toDataObjectReport: DataObjectReport = DataObjectReport(content.toJson.prettyPrint)
 }
 
 /**

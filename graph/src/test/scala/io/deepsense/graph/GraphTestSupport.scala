@@ -21,8 +21,8 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang._
-import io.deepsense.models.entities.Entity
 
 trait GraphTestSupport {
   self: MockitoSugar =>
@@ -113,7 +113,7 @@ trait GraphTestSupport {
     nodestate.Completed(date, date.plusMinutes(1), Seq())
   }
 
-  protected def nodeCompletedId(nodeId: Node.Id): nodestate.Completed = {
+  protected def nodeCompletedId(nodeId: Entity.Id): nodestate.Completed = {
     val date = DateTimeConverter.now
     nodestate.Completed(date, date.plusMinutes(1), results(nodeId))
   }

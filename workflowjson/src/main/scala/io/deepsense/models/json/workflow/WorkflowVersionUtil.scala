@@ -27,7 +27,7 @@ import io.deepsense.models.workflows._
 
 
 trait WorkflowVersionUtil
-  extends WorkflowWithSavedResultsJsonProtocol
+  extends WorkflowWithResultsJsonProtocol
   with WorkflowWithVariablesJsonProtocol {
 
   this: Logging =>
@@ -48,12 +48,7 @@ trait WorkflowVersionUtil
 
   val versionedWorkflowReader = new VersionedJsonReader[Workflow]
   val versionedWorkflowWithResultsReader = new VersionedJsonReader[WorkflowWithResults]
-  val versionedWorkflowWithSavedResultsReader = new VersionedJsonReader[WorkflowWithSavedResults]
   val versionedWorkflowWithVariablesReader = new VersionedJsonReader[WorkflowWithVariables]
-
-  def workflowWithSavedResultsOrString(
-      stringJson: String): Either[String, WorkflowWithSavedResults] =
-    parsedOrString(versionedWorkflowWithSavedResultsReader, stringJson)
 
   def workflowOrString(stringJson: String): Either[String, Workflow] =
     parsedOrString(versionedWorkflowReader, stringJson)
@@ -89,4 +84,3 @@ trait WorkflowVersionUtil
     }
   }
 }
-

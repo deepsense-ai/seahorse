@@ -14,4 +14,8 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-entitystorage-model"
+package io.deepsense.workflowexecutor.communication.message.workflow
+
+import io.deepsense.models.workflows.Workflow
+
+case class UpdateWorkflow(workflow: Workflow)

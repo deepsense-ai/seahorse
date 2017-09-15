@@ -22,8 +22,8 @@ import spray.json._
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.DateTimeJsonProtocol._
+import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate._
-import io.deepsense.models.entities.Entity
 
 trait NodeStatusJsonProtocol
   extends DefaultJsonProtocol
@@ -36,15 +36,21 @@ trait NodeStatusJsonProtocol
     with NullOptions {
 
     val viewFormat = jsonFormat5(NodeStatusView)
-    val runningFormat = jsonFormat1(Running)
-    val completedFormat = jsonFormat3(Completed)
-    val failedFormat = jsonFormat3(Failed)
+    val abortedFormat = jsonFormat(Aborted, "results")
+    val runningFormat = jsonFormat(Running, "started", "results")
+    val queuedFormat = jsonFormat(Queued, "results")
+    val draftFormat = jsonFormat(Draft, "results")
+    val completedFormat = jsonFormat(Completed, "started", "ended", "results")
+    val failedFormat = jsonFormat(Failed, "started", "ended", "error")
 
     override def write(state: NodeStatus): JsValue = {
 
       val view = state match {
-
-        case Running(started) => NodeStatusView(state.name, started = Some(started))
+        case Running(started, results) =>
+          NodeStatusView(state.name, started = Some(started), results = Some(results))
+        case Aborted(results) => NodeStatusView(state.name, results = Some(results))
+        case Draft(results) => NodeStatusView(state.name, results = Some(results))
+        case Queued(results) => NodeStatusView(state.name, results = Some(results))
         case Completed(started, ended, results) =>
           NodeStatusView(state.name,
             started = Some(started),
@@ -70,12 +76,12 @@ trait NodeStatusJsonProtocol
       }
 
       status.get.convertTo[String] match {
-        case "DRAFT" => Draft
-        case "QUEUED" => Queued
+        case "DRAFT" => jsObject.convertTo[Draft](draftFormat)
+        case "QUEUED" => jsObject.convertTo[Queued](queuedFormat)
         case "RUNNING" => jsObject.convertTo[Running](runningFormat)
         case "COMPLETED" => jsObject.convertTo[Completed](completedFormat)
         case "FAILED" => jsObject.convertTo[Failed](failedFormat)
-        case "ABORTED" => Aborted
+        case "ABORTED" => jsObject.convertTo[Aborted](abortedFormat)
       }
     }
 

@@ -52,7 +52,7 @@ class CodeExecutor(object):
         """
 
         # This should've been checked before running
-        assert self.validate(custom_operation_code)
+        assert self.isValid(custom_operation_code)
 
         input_data_frame = DataFrame(
             jdf=self.entry_point.retrieveInputDataFrame(workflow_id, node_id),
@@ -71,7 +71,8 @@ class CodeExecutor(object):
             # noinspection PyProtectedMember
             self.entry_point.registerOutputDataFrame(workflow_id, node_id, output_data_frame._jdf)
 
-    def validate(self, custom_operation_code):
+    # noinspection PyPep8Naming
+    def isValid(self, custom_operation_code):
         def is_transform_function(field):
             return (isinstance(field, ast.FunctionDef) and
                     field.name == self.TRANSFORM_FUNCTION_NAME and

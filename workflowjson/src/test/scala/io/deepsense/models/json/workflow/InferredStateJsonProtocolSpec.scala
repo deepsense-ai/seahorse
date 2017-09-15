@@ -20,12 +20,12 @@ import org.joda.time.DateTime
 import org.mockito.Mockito._
 import spray.json._
 
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DOperable}
 import io.deepsense.graph.{GraphKnowledge, NodeInferenceResult}
-import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows._
 
 class InferredStateJsonProtocolSpec

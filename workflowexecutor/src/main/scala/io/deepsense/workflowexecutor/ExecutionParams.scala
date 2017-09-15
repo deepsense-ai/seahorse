@@ -23,9 +23,9 @@ case class ExecutionParams(
   workflowFilename: Option[String] = None,
   workflowId: Option[String] = None,
   outputDirectoryPath: Option[String] = None,
-  uploadReport: Boolean = false,
   reportLevel: ReportLevel = ReportLevel.MEDIUM,
   apiAddress: Option[String] = None,
   extraVars: Map[String, String] = Map.empty,
   noninteractiveMode: Boolean = false,
-  messageQueueHost: Option[String] = None)
+  messageQueueHost: Option[String] = None,
+  pyExecutorPath: Option[String] = None)

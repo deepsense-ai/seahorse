@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.json.workflow
+package io.deepsense.deeplang
 
-import io.deepsense.models.workflows._
-
-trait WorkflowWithSavedResultsJsonProtocol extends WorkflowWithResultsJsonProtocol {
-
-  implicit val executionReportWithIdFormat = jsonFormat4(ExecutionReportWithId.apply)
-
-  implicit val workflowWithSavedResultsFormat =
-    jsonFormat(WorkflowWithSavedResults.apply,
-      "id", "metadata", "workflow", "thirdPartyData", "executionReport")
-
+trait PythonExecutionProvider {
+  def pythonCodeExecutor: PythonCodeExecutor
+  def customOperationExecutor: CustomOperationExecutor
 }

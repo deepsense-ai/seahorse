@@ -21,11 +21,7 @@ import org.scalatest.FunSuite
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
 
-import org.scalatest.mock.MockitoSugar
-
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.entitystorage.EntityStorageClient
 
 object DClassesForDMethods {
   class S extends DOperableMock

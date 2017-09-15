@@ -25,13 +25,12 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
-import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 
 case class SeahorseChannelSubscriber(
   executionDispatcher: ActorRef,
   communicationFactory: MQCommunicationFactory,
   publisher: MQPublisher,
-  pythonGateway: PythonGateway) extends Actor with Logging {
+  pythonGatewayListeningPort: () => Option[Int]) extends Actor with Logging {
 
   implicit val timeout: Timeout = Timeout(3, TimeUnit.SECONDS)
   var publishers: Map[Workflow.Id, ActorRef] = Map()
@@ -40,8 +39,8 @@ case class SeahorseChannelSubscriber(
     case c @ Connect(workflowId) =>
       val workflowIdString = workflowId.toString
       if (!publishers.contains(workflowId)) {
-        val subscriberActor =
-          context.actorOf(Props(WorkflowChannelSubscriber(executionDispatcher)), workflowIdString)
+        val subscriberActor = context.actorOf(
+          Props(WorkflowChannelSubscriber(workflowId, executionDispatcher)), workflowIdString)
         val publisher: MQPublisher =
           communicationFactory.createCommunicationChannel(workflowIdString, subscriberActor)
         val internalPublisher =
@@ -52,7 +51,7 @@ case class SeahorseChannelSubscriber(
       executionDispatcher ! WorkflowConnect(c, publisherPath)
 
     case get: GetPythonGatewayAddress =>
-      pythonGateway.listeningPort foreach { port =>
+      pythonGatewayListeningPort() foreach { port =>
         publisher.publish(
           MQCommunication.Topic.kernel,
           PythonGatewayAddress(List(Address("localhost", port))))
@@ -67,8 +66,8 @@ object SeahorseChannelSubscriber {
       executionDispatcher: ActorRef,
       communicationFactory: MQCommunicationFactory,
       publisher: MQPublisher,
-      pythonGateway: PythonGateway): Props = {
+      pythonGatewayListeningPort: () => Option[Int]): Props = {
     Props(new SeahorseChannelSubscriber(
-      executionDispatcher, communicationFactory, publisher, pythonGateway))
+      executionDispatcher, communicationFactory, publisher, pythonGatewayListeningPort))
   }
 }

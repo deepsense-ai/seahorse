@@ -20,30 +20,34 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
-import io.deepsense.models.entities.Entity
-import io.deepsense.models.entities.Entity.Id
+import io.deepsense.commons.models.Entity
+import Entity.Id
 
-sealed abstract class NodeStatus(val name: String) extends Serializable {
+sealed abstract class NodeStatus(
+    val name: String,
+    val results: Seq[Entity.Id])
+  extends Serializable {
+
   def start: Running
   def finish(results: Seq[Id]): Completed
   def fail(error: FailureDescription): Failed
-  def abort: Aborted.type
-  def enqueue: Queued.type
+  def abort: Aborted
+  def enqueue: Queued
 
   // Sugar.
 
   def isDraft: Boolean = this match {
-    case Draft => true
+    case Draft(_) => true
     case _ => false
   }
 
   def isQueued: Boolean = this match {
-    case Queued => true
+    case Queued(_) => true
     case _ => false
   }
 
   def isRunning: Boolean = this match {
-    case Running(_) => true
+    case Running(_, _) => true
     case _ => false
   }
 
@@ -53,7 +57,7 @@ sealed abstract class NodeStatus(val name: String) extends Serializable {
   }
 
   def isAborted: Boolean = this match {
-    case Aborted => true
+    case Aborted(_) => true
     case _ => false
   }
 
@@ -66,47 +70,54 @@ sealed abstract class NodeStatus(val name: String) extends Serializable {
     new IllegalStateException(s"State ${this.getClass.getSimpleName} cannot $what()")
 }
 
-case object Draft extends NodeStatus("DRAFT") {
+final case class Draft(override val results: Seq[Entity.Id] = Seq.empty)
+  extends NodeStatus("DRAFT", results) {
+
   override def start: Running = throw stateCannot("start")
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
-  override def abort: Aborted.type = Aborted
+  override def abort: Aborted = Aborted(results)
   override def fail(error: FailureDescription): Failed = throw stateCannot("fail")
-  override def enqueue: Queued.type = Queued
+  override def enqueue: Queued = Queued(results)
 }
 
-case object Queued extends NodeStatus("QUEUED") {
-  override def start: Running = Running(DateTimeConverter.now)
+final case class Queued(override val results: Seq[Entity.Id] = Seq.empty)
+  extends NodeStatus("QUEUED", results) {
+
+  override def start: Running = Running(DateTimeConverter.now, results)
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
-  override def abort: Aborted.type = Aborted
+  override def abort: Aborted = Aborted(results)
   override def fail(error: FailureDescription): Failed = {
     val now = DateTimeConverter.now
     Failed(now, now, error)
   }
-  override def enqueue: Queued.type = throw stateCannot("enqueue")
+  override def enqueue: Queued = throw stateCannot("enqueue")
 }
 
-final case class Running(started: DateTime) extends NodeStatus("RUNNING") {
+final case class Running(started: DateTime, override val results: Seq[Entity.Id] = Seq.empty)
+    extends NodeStatus("RUNNING", results) {
   override def start: Running = throw stateCannot("start")
-  override def abort: Aborted.type = Aborted
+  override def abort: Aborted = Aborted(results)
   override def fail(error: FailureDescription): Failed =
     Failed(started, DateTimeConverter.now, error)
   override def finish(results: Seq[Id]): Completed =
     Completed(started, DateTimeConverter.now, results)
-  override def enqueue: Queued.type = throw stateCannot("enqueue")
+  override def enqueue: Queued = throw stateCannot("enqueue")
 }
 
 sealed trait FinalState {
   self: NodeStatus =>
   override def start: Running = throw stateCannot("start")
   override def finish(results: Seq[Id]): Completed = throw stateCannot("finish")
-  override def abort: Aborted.type = throw stateCannot("abort")
+  override def abort: Aborted = throw stateCannot("abort")
   override def fail(error: FailureDescription): Failed = throw stateCannot("fail")
-  override def enqueue: Queued.type = throw stateCannot("enqueue")
+  override def enqueue: Queued = throw stateCannot("enqueue")
 }
 
-final case class Completed(started: DateTime, ended: DateTime, results: Seq[Id])
-  extends NodeStatus("COMPLETED") with FinalState
+final case class Completed(started: DateTime, ended: DateTime, override val results: Seq[Id])
+  extends NodeStatus("COMPLETED", results) with FinalState
 final case class Failed(started: DateTime, ended: DateTime, error: FailureDescription)
-  extends NodeStatus("FAILED") with FinalState
-case object Aborted extends NodeStatus("ABORTED") with FinalState
+  extends NodeStatus("FAILED", results = Seq.empty) with FinalState
+final case class Aborted(override val results: Seq[Entity.Id] = Seq.empty)
+  extends NodeStatus("ABORTED", results)
+  with FinalState
 

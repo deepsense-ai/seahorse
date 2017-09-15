@@ -19,7 +19,7 @@ package io.deepsense.models.json.workflow
 import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.entities.Entity
+import io.deepsense.commons.models.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportJsonProtocol
 

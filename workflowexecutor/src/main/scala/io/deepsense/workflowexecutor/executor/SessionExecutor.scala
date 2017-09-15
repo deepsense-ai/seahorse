@@ -19,26 +19,28 @@ package io.deepsense.workflowexecutor.executor
 import akka.actor.{ActorRef, ActorSystem, Props}
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq.ConnectionActor
+import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
-import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonSerializer, ProtocolJsonDeserializer}
-import io.deepsense.workflowexecutor.pythongateway.PythonGateway
+import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
-import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingActor}
+import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingActor, WorkflowManagerClientActor}
 
 /**
  * SessionExecutor waits for user instructions in an infinite loop.
  */
 case class SessionExecutor(
     reportLevel: ReportLevel,
-    messageQueueHost: String)
+    messageQueueHost: String,
+    pythonExecutorPath: String)
   extends Executor {
 
+  private val config = ConfigFactory.load
   val graphReader = new GraphReader(createDOperationsCatalog())
 
   /**
@@ -52,19 +54,26 @@ case class SessionExecutor(
 
     implicit val system = ActorSystem()
     val statusLogger = system.actorOf(Props[StatusLoggingActor], "status-logger")
+    val workflowManagerClientActor = system.actorOf(
+      WorkflowManagerClientActor.props(
+        config.getString("workflow-manager.local.address"),
+        config.getString("workflow-manager.workflows.path"),
+        config.getString("workflow-manager.reports.path"),
+        graphReader))
 
-    val pythonGateway = PythonGateway(
-      PythonGateway.GatewayConfig(), sparkContext, dataFrameStorage, dataFrameStorage)
-    pythonGateway.start()
+    val pythonExecutionCaretaker =
+      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
+    pythonExecutionCaretaker.start()
 
     val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
       sparkContext,
       dOperableCatalog,
       dataFrameStorage,
-      pythonGateway.codeExecutor,
-      pythonGateway.customOperationExecutor,
+      pythonExecutionCaretaker,
       ReportLevel.HIGH,
-      statusLogger), "workflows")
+      statusLogger,
+      workflowManagerClientActor,
+      config.getInt("workflow-manager.timeout")), "workflows")
 
     val factory = new ConnectionFactory()
     factory.setHost(messageQueueHost)
@@ -81,20 +90,25 @@ case class SessionExecutor(
     def createSeahorseSubscriber(publisher: MQPublisher): ActorRef =
       system.actorOf(
         SeahorseChannelSubscriber.props(
-          executionDispatcher, communicationFactory, publisher, pythonGateway),
+          executionDispatcher,
+          communicationFactory,
+          publisher,
+          pythonExecutionCaretaker.gatewayListeningPort _),
         "communication")
 
     communicationFactory.createCommunicationChannel(
       MQCommunication.Exchange.seahorse, createSeahorseSubscriber _)
 
     system.awaitTermination()
-    cleanup(sparkContext, pythonGateway)
+    cleanup(sparkContext, pythonExecutionCaretaker)
     logger.debug("SessionExecutor ends")
   }
 
-  private def cleanup(sparkContext: SparkContext, gateway: PythonGateway): Unit = {
+  private def cleanup(
+      sparkContext: SparkContext,
+      pythonExecutionCaretaker: PythonExecutionCaretaker): Unit = {
     logger.debug("Cleaning up...")
-    gateway.stop()
+    pythonExecutionCaretaker.stop()
     sparkContext.stop()
     logger.debug("Spark terminated!")
   }

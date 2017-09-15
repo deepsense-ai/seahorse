@@ -153,7 +153,6 @@ Detailed information about command line parameters can be obtained by executing 
 | ``-w FILE``<BR/>``--workflow-filename FILE``                    | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
 | ``-d ID``<BR/>``--download-workflow ID``                        | Download workflow. If specified, workflow with passed ID will be downloaded from Seahorse Editor. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
-| ``-u``<BR/>``--upload-report``                                  | Upload execution report. If specified, POST request with execution report will be sent after completing workflow execution. |
 | ``-r LEVEL``<BR/>``--report-level LEVEL``                       | Level of details for DataFrame report generation; LEVEL is 'high', 'medium', or 'low' (default: 'medium'). |
 | ``-a ADDRESS``<BR/>``--api-address ADDRESS``                    | Address of Seahorse Editor API. If not specified, the default of ``https://editor.seahorse.deepsense.io`` will be used.  |
 | ``-e NAME=VALUE``<BR/>``--extra-var NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |

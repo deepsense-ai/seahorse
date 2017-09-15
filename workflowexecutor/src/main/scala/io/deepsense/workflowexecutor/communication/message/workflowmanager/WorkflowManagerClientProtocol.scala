@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.entitystorage
+package io.deepsense.workflowexecutor.communication.message.workflowmanager
 
-import akka.actor.ActorRef
+import io.deepsense.models.workflows.Workflow
 
-object TestActorBasedEntityStorageClientFactory extends ActorBasedEntityStorageClientFactory {
-  override def create(actorRef: ActorRef): EntityStorageClient = {
-    new ActorBasedEntityStorageClient(actorRef)
-  }
+object WorkflowManagerClientProtocol {
+
+  case class GetWorkflow(workflowId: Workflow.Id)
 }
