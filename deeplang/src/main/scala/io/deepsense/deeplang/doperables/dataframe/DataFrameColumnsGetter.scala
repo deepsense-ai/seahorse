@@ -21,7 +21,8 @@ import java.util.UUID
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.types.ColumnType.ColumnType
-import io.deepsense.commons.types.SparkConversions
+import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.commons.types.{ColumnType, SparkConversions}
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
 import io.deepsense.deeplang.params.selections._
 
@@ -79,6 +80,20 @@ object DataFrameColumnsGetter {
           None
         }
     }
+
+  /**
+   * Throws [[WrongColumnTypeException]] if column has type different than one of expected.
+   */
+  def assertExpectedColumnType(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection,
+      expectedTypes: ColumnType*): Unit = {
+    val columnName = DataFrameColumnsGetter.getColumnName(schema, singleColumnSelection)
+    DataFrame.assertExpectedColumnType(
+      schema.fields.filter(_.name == columnName).head,
+      expectedTypes: _*)
+  }
+
 
   /**
    * Names of columns selected by provided selections.

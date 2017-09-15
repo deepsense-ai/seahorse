@@ -98,21 +98,19 @@ class BinaryClassificationEvaluator
     // check rawPredictionCol vector length = 2.
     k.single.schema.foreach {
       schema =>
-        val labelColumnName = DataFrameColumnsGetter.getColumnName(schema, $(labelColumn))
-        DataFrame.assertExpectedColumnType(
-          schema.fields.filter(_.name == labelColumnName).head,
-          ColumnType.numeric)
-        val (columnName, columnExpectedType) = $(metricName) match {
+        DataFrameColumnsGetter.assertExpectedColumnType(schema, $(labelColumn), ColumnType.numeric)
+        $(metricName) match {
           case rawChoice: RawPredictionMetric =>
-            (DataFrameColumnsGetter.getColumnName(schema, rawChoice.getRawPredictionColumnParam),
+            DataFrameColumnsGetter.assertExpectedColumnType(
+              schema,
+              rawChoice.getRawPredictionColumnParam,
               ColumnType.vector)
           case predChoice: PredictionMetric =>
-            (DataFrameColumnsGetter.getColumnName(schema, predChoice.getPredictionColumnParam),
+            DataFrameColumnsGetter.assertExpectedColumnType(
+              schema,
+              predChoice.getPredictionColumnParam,
               ColumnType.numeric)
         }
-        DataFrame.assertExpectedColumnType(
-          schema.fields.filter(_.name == columnName).head,
-          columnExpectedType)
     }
 
     MetricValue.forInference(getMetricName)
