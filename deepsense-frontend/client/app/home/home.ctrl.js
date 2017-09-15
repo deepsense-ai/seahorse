@@ -21,7 +21,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
         this.canShowWorkflows = true;
       }
     }, () => {
-      this.setWarning('fa-exclamation-circle', 'Could not connect to database. Try realoading.');
+      this.setWarning('fa-exclamation-circle', 'Could not connect to the database. Try to reload the page.');
     });
   };
 
