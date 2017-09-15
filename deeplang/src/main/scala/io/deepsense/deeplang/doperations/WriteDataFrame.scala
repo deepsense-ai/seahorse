@@ -55,9 +55,7 @@ class WriteDataFrame extends DOperation1To0[DataFrame] {
   private def getUniqueFileName(context: ExecutionContext): String = {
     UniqueFilenameUtil.getUniqueHdfsFilename(
       context.tenantId,
-      UniqueFilenameUtil.DataFrameEntityCategory,
-      // TODO: use deepsense app deployment directory
-      "tests/WriteDataFrameTest")
+      UniqueFilenameUtil.DataFrameEntityCategory)
   }
 }
 

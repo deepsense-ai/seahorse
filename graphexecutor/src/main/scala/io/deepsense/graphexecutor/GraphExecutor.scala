@@ -11,6 +11,8 @@ import java.util.{List, UUID}
 
 import scala.collection.mutable
 
+import com.google.inject.name.Names
+import com.google.inject.{Guice, Key}
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.ipc.NettyServer
@@ -26,15 +28,20 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.deeplang.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory, EntityStorageClientFactoryImpl}
+import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
 import io.deepsense.graph.{Graph, Status}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.BinarySemaphore
 import io.deepsense.models.experiments.Experiment
 
 object GraphExecutor {
+  var entityStorageClientFactory: EntityStorageClientFactory = _
+
   def main(args: Array[String]): Unit = {
-    val graphExecutor = new GraphExecutor()
+    val injector = Guice.createInjector(new GraphExecutorModule, new GraphExecutorTestModule)
+    var entityStorageClientFactory = injector.getInstance(
+      Key.get(classOf[EntityStorageClientFactory], Names.named(args(0))))
+    val graphExecutor = new GraphExecutor(entityStorageClientFactory)
     graphExecutor.mainLoop()
   }
 }
@@ -44,10 +51,15 @@ object GraphExecutor {
  * Starts Avro RPC server, waits for graph and performs its execution.
  * Only one graph execution per GraphExecutor can be performed.
  */
-class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
+class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
+  extends AMRMClientAsync.CallbackHandler
+  with LazyLogging {
+
   implicit val conf: YarnConfiguration = new YarnConfiguration()
 
   val dOperableCache = mutable.Map[UUID, DOperable]()
+
+  val entityStorageClient = createEntityStorageClient(entityStorageClientFactory)
 
   /** graphGuard is used to prevent concurrent graph field modifications/inconsistent reads */
   val graphGuard = new Object()
@@ -61,10 +73,6 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler with LazyLogging {
    * (graph sent, finished or aborted node execution)
    */
   val graphEventBinarySemaphore = new BinarySemaphore(0)
-
-  // TODO: inject factory
-  val entityStorageClientFactory = EntityStorageClientFactoryImpl()
-  val entityStorageClient = createEntityStorageClient(entityStorageClientFactory)
 
   /** executorsPool is pool of threads executing GraphNodes */
   val executorsPool = Executors.newFixedThreadPool(Constants.ConcurrentGraphNodeExecutors)

@@ -15,7 +15,8 @@ import org.apache.hadoop.hdfs.DFSClient
 import org.scalatest._
 
 /**
- * Adds features to aid integration testing using HDFS
+ * Adds features to aid integration testing using HDFS.
+ * NOTE: beforeAll method deploys current deepsense build on HDFS cluster.
  */
 trait HdfsIntegTestSupport
   extends FlatSpec
@@ -27,11 +28,9 @@ trait HdfsIntegTestSupport
 
   val uberJarFilename = BuildInfo.name + "-assembly-" + BuildInfo.version + ".jar"
 
-  val geUberJarPath = s"target/scala-2.11/$uberJarFilename"
+  val geUberJarPath = s"../graphexecutor/target/scala-2.11/$uberJarFilename"
 
   private val config = new Configuration()
-
-  val testDir = "/tests/GeIntegrationTest"
 
   var cli: Option[DFSClient] = None
 
@@ -44,11 +43,15 @@ trait HdfsIntegTestSupport
       new URI("hdfs://" + Constants.MasterHostname + ":" + Constants.HdfsNameNodePort),
       config))
 
-    cli.get.delete(testDir, true)
-    cli.get.mkdirs(testDir, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
-    copy(geUberJarPath, s"$testDir/$uberJarFilename")
-    copy("src/main/resources/entitystorage-communication.conf",
-      s"$testDir/entitystorage-communication.conf")
+    cli.get.delete(s"/$uberJarFilename", true)
+    cli.get.delete(s"/entitystorage-communication.conf", true)
+    cli.get
+      .mkdirs(Constants.TestDir, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
+    // NOTE: We assume here that uber-jar has been assembled immediately before test task
+    copyFromLocal(geUberJarPath, s"/$uberJarFilename")
+    copyFromLocal(
+      "../graphexecutor/src/main/resources/entitystorage-communication.conf",
+      "/entitystorage-communication.conf")
   }
 
   override def afterAll(): Unit = {
@@ -66,11 +69,11 @@ trait HdfsIntegTestSupport
    * @param localFrom local file path to copy from
    * @param remoteTo remote file path to copy to
    */
-  def copy(localFrom: String, remoteTo: String): Unit = {
+  def copyFromLocal(localFrom: String, remoteTo: String): Unit = {
     val localFromFile = new File(localFrom)
     if (localFromFile.isDirectory) {
       cli.get.mkdirs(remoteTo, null, true)
-      localFromFile.listFiles.foreach(f => copy(f.getPath, remoteTo + "/" + f.getName))
+      localFromFile.listFiles.foreach(f => copyFromLocal(f.getPath, remoteTo + "/" + f.getName))
     } else {
       val inputStream = new BufferedInputStream(new FileInputStream(localFrom))
       try {

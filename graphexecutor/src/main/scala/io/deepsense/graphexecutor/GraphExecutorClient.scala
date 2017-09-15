@@ -159,6 +159,7 @@ class GraphExecutorClient extends Closeable {
    * or even longer delay if cluster is short of resources.
    */
   def spawnOnCluster(
+      esFactoryName: String = "default",
       geUberJarLocation: String = Constants.GraphExecutorLibraryLocation,
       applicationConfLocation: String = Constants.GraphExecutorConfigLocation): Unit = {
     implicit val conf = new YarnConfiguration()
@@ -180,8 +181,7 @@ class GraphExecutorClient extends Closeable {
       // TODO: Move spark-master string to configuration file
       "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
         " --master spark://" + Constants.MasterHostname + ":7077  --executor-memory 512m " +
-        " ./graphexecutor.jar " +
-        Utils.logRedirection
+        s" ./graphexecutor.jar $esFactoryName " + Utils.logRedirection
     ).asJava)
 
     val appMasterJar = Utils.getConfiguredLocalResource(new Path(geUberJarLocation))

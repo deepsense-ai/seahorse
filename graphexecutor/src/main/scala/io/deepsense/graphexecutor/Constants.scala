@@ -45,6 +45,16 @@ object Constants {
   val EMGraphExecutorClientInitInterval = 100
 
   /**
+   * Directory on HDFS used for testing purposes
+   */
+  val TestDir = "/tests"
+
+  /**
+   * Tenant id used for testing purposes
+   */
+  val TestTenantId = "TestTenantId"
+
+  /**
    * Location of Graph Executor library on cluster HDFS
    */
   val GraphExecutorLibraryLocation = "/deepsense-graphexecutor-assembly-0.1.0.jar"
