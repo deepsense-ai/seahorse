@@ -1,17 +1,30 @@
 deepsense-frontend
 ==================
 
-DeepSense.io LAB application
+# Setup
 
-#How-to
+Prerequisites:
+- Node
+- NPM
 
- * Install [Node.js](http://nodejs.org/).
- * Run `npm install`.
- * Go to [http://localhost:3000/](http://localhost:3000/).
+In order to setup frontend you need to download all needed npm dependencies
 
-#Developer mode
+1. Inside deepsense-frontend run command below:
+  `npm install`
 
-Running `npm start` creates a background process that rebuilds whole project whenever any of the source files has been changed, site available at [localhost:3000](http://localhost:3000/) will be automatically reloaded.
+2. To run frontend on debug server run:
+  `npm start`(which is also an equivalent to`npm run serve`)
+
+3. To build frontend for production run:
+  `npm run dist`
+4. Built app can be found in `dist` catalogue
+
+# UT
+
+There is no dedicated folder for unit tests. Unit tests are located inside feature folders next to tested components.
+Unit tests have .spec.js suffix in their name.
+To run tests & linting of the code run command (inside deepsense-frontend)
+  `npm test`
 
 # List all licences
 
