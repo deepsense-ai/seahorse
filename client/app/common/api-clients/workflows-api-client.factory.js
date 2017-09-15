@@ -1,13 +1,9 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Piotr Zarówny
- */
-
 'use strict';
 
 /* @ngInject */
-function WorkflowsApiClientFactory(BaseApiClient) {
+function WorkflowsApiClientFactory(BaseApiClient, config) {
+
+  const API_TYPE = 'batch';
   const PATH_EXPERIMENTS = '/experiments';
   const PATH_WORKFLOWS = '/workflows';
 
@@ -63,23 +59,29 @@ function WorkflowsApiClientFactory(BaseApiClient) {
       );
     }
 
-    // TODO
     getWorkflow(id) {
       return this.makeRequest(this.METHOD_GET, this.API_URL + PATH_WORKFLOWS + '/' + id);
     }
 
-    // TODO
-    createWorkflow() {
-      return this.makeRequest(this.METHOD_POST, this.API_URL + PATH_WORKFLOWS);
+    createWorkflow(params) {
+      let data = {
+        metadata: {
+          type: API_TYPE,
+          apiVersion: config.apiVersion
+        },
+        workflow: {},
+        thirdPartyData: {
+          gui:{
+            name: params.name,
+            description: params.description
+          }
+        }
+      };
+      return this.makeRequest(this.METHOD_POST, this.API_URL + PATH_WORKFLOWS, data);
     }
 
     // TODO
     updateWorkflow() {
-
-    }
-
-    // TODO
-    uploadWorkflow() {
 
     }
 

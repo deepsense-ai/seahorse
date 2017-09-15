@@ -14,7 +14,7 @@ function Focused($timeout) {
     link: function (scope, element, attrs) {
       $timeout(() => {
         element[0].focus();
-      }, false);
+      }, 50, false);
     }
   };
 }
