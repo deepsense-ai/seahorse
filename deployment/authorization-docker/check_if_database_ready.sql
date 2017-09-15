@@ -6,4 +6,4 @@
 select 1/(select nvl2(
   (select 1 from schema_version where version = '3.5.1' AND success = TRUE),
   1,
-  0) from schema_version limit 1) from schema_version;
+  0) limit 1);
