@@ -16,12 +16,12 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.EventStore.Event
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor._
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
-import io.deepsense.sessionmanager.service.livy.Livy
+import io.deepsense.sessionmanager.service.sessionspawner.SessionSpawner
 import io.deepsense.sessionmanager.service.{EventStore, Session, StatusInferencer}
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
 
 class SessionServiceActor @Inject()(
-  private val livyClient: Livy,
+  private val sessionSpawner: SessionSpawner,
   private val eventStore: EventStore,
   private val statusInferencer: StatusInferencer,
   private val sessionExecutorClients: SessionExecutorClients
@@ -85,7 +85,7 @@ class SessionServiceActor @Inject()(
         Future.successful(id)
       case Right(_) =>
         logger.info(s"Session '$id' does not exist. Creating!")
-        livyClient.createSession(id, userId).map(_ => id)
+        sessionSpawner.createSession(id, userId).map(_ => id)
     }
   }
 

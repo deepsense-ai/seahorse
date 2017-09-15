@@ -33,7 +33,9 @@ object Library {
     Version.seahorse exclude("com.datastax.cassandra", "cassandra-driver-core") exclude(
     "com.datastax.spark", "spark-cassandra-connector") exclude(
     "org.cassandraunit", "cassandra-unit")
+
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
+
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
   val akkaActor = akka("actor")
@@ -61,6 +63,7 @@ object Library {
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
+  val sparkLauncher = spark("launcher")
   val sprayCan = spray("can")
   val sprayRouting = spray("routing")
   val sprayTestkit = spray("testkit")
@@ -134,7 +137,8 @@ object Dependencies {
     sprayCan,
     sprayClient,
     sprayJson,
-    sprayRouting
+    sprayRouting,
+    sparkLauncher
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit, wiremock)
     .map(_ % s"$Test,it")
 }

@@ -72,11 +72,11 @@ cd $WORKING_DIR
 
 echo "INSTALLING DEPENDENCIES"
 
-export PATH=/opt/cloudera/parcels/Anaconda-4.0.0/bin:$PATH
+export PATH=/opt/conda/bin:$PATH
 export LOCAL_PATH=$(pwd)/local-packages
 pip install --root $LOCAL_PATH pika-0.10.0.tar.gz
 
-export PYTHONPATH="$LOCAL_PATH/opt/cloudera/parcels/Anaconda-4.0.0/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
+export PYTHONPATH="$LOCAL_PATH/opt/conda/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
 echo "PYTHONPATH=$PYTHONPATH"
 
 echo "start executing_kernel_manager"

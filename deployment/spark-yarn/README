@@ -1,0 +1,21 @@
+Seahorse Spark docker image
+===========================
+
+The image contains Hadoop, Spark, python libraries and Session Executor - all requirements for
+running SX inside a docker container.
+
+Full image name - docker-repo.deepsense.codilime.com/tap/deepsense-spark-yarn:seahorse_on_tap-latest
+
+1. Building the image
+
+   $ docker build -t deepsense-spark-yarn .
+
+2) Publish the image
+
+   $ docker tag deepsense-spark-yarn docker-repo.deepsense.codilime.com/tap/deepsense-spark-yarn:seahorse_on_tap-latest
+   $ docker push docker-repo.deepsense.codilime.com/tap/deepsense-spark-yarn:seahorse_on_tap-latest
+
+3. Running the image
+
+   $ docker run -h sandbox -d deepsense-spark-yarn
+   $ docker run -it -p 8088:8088 -p 8042:8042 -p 4040:4040 -h sandbox deepsense-spark-yarn bash
