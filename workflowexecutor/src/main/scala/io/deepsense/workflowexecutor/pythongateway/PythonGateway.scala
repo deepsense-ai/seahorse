@@ -24,7 +24,7 @@ import scala.concurrent.duration._
 
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
-import py4j.{DefaultGatewayServerListener, CallbackClient, GatewayServer}
+import py4j._
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
@@ -78,12 +78,11 @@ case class PythonGateway(
     val readTimeout = 0
     val port = 0 // Use a random available port.
 
-    val gateway = new GatewayServer(
+    val gateway = GatewayServerFactory.create(
       entryPoint,
       port,
       connectTimeout,
       readTimeout,
-      null, // no custom commands
       callbackClient,
       hostAddress)
 

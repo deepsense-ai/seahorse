@@ -137,7 +137,7 @@ object StatefulWorkflow extends Logging {
         .getOrElse(node.id -> NodeStateWithResults.draft)
     }.toMap
     val graph = StatefulGraph(workflow.graph, noMissingStates, workflow.executionReport.error)
-    val execution = executionFactory.apply(graph)
+    val execution = executionFactory(graph)
     new StatefulWorkflow(
       executionContext,
       workflow.id,
