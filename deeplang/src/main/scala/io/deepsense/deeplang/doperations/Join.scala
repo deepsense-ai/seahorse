@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperations
 
-import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql
@@ -69,60 +68,57 @@ case class Join()
   val params = declareParams(leftPrefix, rightPrefix, joinColumns)
 
   override protected def _execute(context: ExecutionContext)
-                                 (ldf: DataFrame, rdf: DataFrame): DataFrame = {
+      (ldf: DataFrame, rdf: DataFrame): DataFrame = {
+
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 
-    val (leftJoinColumnNames, rightJoinColumnNames) = validateSchemas(
-      ldf.sparkDataFrame.schema, rdf.sparkDataFrame.schema)
+    validateSchemas(ldf.sparkDataFrame.schema, rdf.sparkDataFrame.schema)
 
-    var lsdf = ldf.sparkDataFrame
-    var rsdf = rdf.sparkDataFrame
+    val columnNames = RenamedColumnNames(ldf.sparkDataFrame.columns, rdf.sparkDataFrame.columns)
+    val leftColumnNames = getSelectedJoinColumsNames(
+        ldf.sparkDataFrame.schema, _.getLeftColumn)
+    val rightColumnNames = getSelectedJoinColumsNames(
+        rdf.sparkDataFrame.schema, _.getRightColumn)
+    val joinColumnsPairs = leftColumnNames.zip(rightColumnNames)
 
-    logger.debug("Append prefixes to columns from left table")
-    val (newLsdf, renamedLeftColumns) = appendPrefixes(lsdf, getLeftPrefix)
-    lsdf = newLsdf
-
-    logger.debug("Append prefixes to columns from right table")
-    val (newRsdf, renamedRightColumns) = appendPrefixes(rsdf, getRightPrefix)
-    rsdf = newRsdf
-
-    logger.debug("Rename join columns in right DataFrame if they are present in left DataFrame")
-    rsdf.columns.foreach { col =>
-      if (renamedLeftColumns.valuesIterator.contains(col)) {
-        val newCol = DataFrameColumnsGetter.uniqueSuffixedColumnName(col)
-        renamedRightColumns.put(col, newCol)
-        rsdf = rsdf.withColumnRenamed(col, newCol)
+    val renamedJoinColumnsPairs =
+      joinColumnsPairs.map {
+        case (leftColumn, rightColumn) =>
+          val renamedLeft = columnNames.left.originalToRenamed(leftColumn)
+          val renamedRight = columnNames.right.originalToRenamed(rightColumn)
+          (renamedLeft, renamedRight)
       }
-    }
 
-    val prefixedLeftJoinColumnNames = leftJoinColumnNames.map(renamedLeftColumns(_))
-    val prefixedRightJoinColumnNames = rightJoinColumnNames.map(renamedRightColumns(_))
+    val lsdf = sparkDFWithColumnsRenamed(
+      ldf.sparkDataFrame,
+      columnNames.left.original,
+      columnNames.left.renamed)
+
+    val rsdf = sparkDFWithColumnsRenamed(
+      rdf.sparkDataFrame,
+      columnNames.right.original,
+      columnNames.right.renamed)
 
     logger.debug("Prepare joining condition")
-
-    val joinCondition: Column = prepareJoiningCondition(
-      leftJoinColumnNames, rightJoinColumnNames,
-      lsdf, rsdf, renamedLeftColumns, renamedRightColumns)
+    val joinCondition = prepareJoiningCondition(renamedJoinColumnsPairs, lsdf, rsdf)
 
     logger.debug("Joining two DataFrames")
-    val joinedDataFrame = lsdf.join(rsdf, joinCondition, "left_outer")
+    val joinedDataFrame = lsdf.join(rsdf, joinCondition, Type.leftOuter)
 
     logger.debug("Removing additional columns in right DataFrame")
-    val columns = lsdf.columns ++
-      rsdf.columns.filter(col => !prefixedRightJoinColumnNames.contains(col))
-    assert(columns.nonEmpty)
-    val duplicateColumnsRemoved = joinedDataFrame.select(columns.head, columns.tail: _*)
+    val noDuplicatesSparkDF = sparkDFWithRemovedDuplicatedColumns(
+      joinedDataFrame,
+      renamedJoinColumnsPairs,
+      lsdf.columns,
+      rsdf.columns)
 
-    val resultDataFrame = DataFrame.fromSparkDataFrame(duplicateColumnsRemoved)
-    logger.debug("Execution of " + this.getClass.getSimpleName + " ends")
-    resultDataFrame
+    DataFrame.fromSparkDataFrame(noDuplicatesSparkDF)
   }
 
-  override protected def _inferKnowledge(
-      context: InferContext)(
-      leftDataFrameKnowledge: DKnowledge[DataFrame],
-      rightDataFrameKnowledge: DKnowledge[DataFrame])
-    : (DKnowledge[DataFrame], InferenceWarnings) = {
+  override protected def _inferKnowledge(context: InferContext)
+      (leftDataFrameKnowledge: DKnowledge[DataFrame],
+        rightDataFrameKnowledge: DKnowledge[DataFrame])
+  : (DKnowledge[DataFrame], InferenceWarnings) = {
 
     val leftSchema = leftDataFrameKnowledge.single.schema
     val rightSchema = rightDataFrameKnowledge.single.schema
@@ -135,77 +131,69 @@ case class Join()
     }
   }
 
-  private def inferSchema(leftSchema: StructType, rightSchema: StructType): StructType = {
+  private def inferSchema(
+      leftSchema: StructType,
+      rightSchema: StructType): StructType = {
 
-    val (leftJoinColumnNames, rightJoinColumnNames) = validateSchemas(leftSchema, rightSchema)
+    validateSchemas(leftSchema, rightSchema)
+    val columnNames = RenamedColumnNames(leftSchema.fieldNames, rightSchema.fieldNames)
 
-    val renamedLeftColumns = appendPrefixes(leftSchema, getLeftPrefix)
-    val renamedRightColumns = appendPrefixes(rightSchema, getRightPrefix)
-
-    var prefixedLeftSchema = StructType(
-      leftSchema.map(field => field.copy(name = renamedLeftColumns(field.name))))
-    var prefixedRightSchema = StructType(
-      rightSchema.map(field => field.copy(name = renamedRightColumns(field.name))))
-
-    prefixedRightSchema.foreach { col =>
-      if (renamedLeftColumns.valuesIterator.contains(col.name)) {
-        val newCol = DataFrameColumnsGetter.uniqueSuffixedColumnName(col.name)
-        renamedRightColumns.put(col.name, newCol)
-
-        prefixedRightSchema = StructType(prefixedRightSchema.updated(
-          prefixedRightSchema.fieldIndex(col.name),
-          prefixedRightSchema.apply(col.name).copy(name = newCol)))
-      }
-    }
-
-    val prefixedLeftJoinColumnNames = leftJoinColumnNames.map(renamedLeftColumns(_))
-    val prefixedRightJoinColumnNames = rightJoinColumnNames.map(renamedRightColumns(_))
+    val prefixedLeftSchema = StructType(
+      leftSchema.map(
+        field => field.copy(name = columnNames.left.originalToRenamed(field.name))))
+    val prefixedRightSchema = StructType(
+      rightSchema.map(
+        field => field.copy(name = columnNames.right.originalToRenamed(field.name))))
+    val rightJoinColumnNames = getSelectedJoinColumsNames(
+        rightSchema, _.getRightColumn)
+    val renamedRightJoinColumnNames =
+      rightJoinColumnNames.map(columnNames.right.originalToRenamed(_))
 
     val columns = prefixedLeftSchema ++
-      prefixedRightSchema.filter(col => !prefixedRightJoinColumnNames.contains(col.name))
+      prefixedRightSchema.filter(col => !renamedRightJoinColumnNames.contains(col.name))
+
     StructType(columns)
   }
 
-  private def prepareJoiningCondition(
-      leftJoinColumnNames: Seq[String],
-      rightJoinColumnNames: Seq[String],
-      lsdf: sql.DataFrame,
-      rsdf: sql.DataFrame,
-      renamedLeftColumns: mutable.HashMap[String, String],
-      renamedRightColumns: mutable.HashMap[String, String]): Column = {
-    val zippedJoinColumns = leftJoinColumnNames.zip(rightJoinColumnNames).toList
 
-    def prepareCondition(leftColumn: String, rightColumn: String): Column = {
-      columnEqualityCondition(
-        renamedLeftColumns(leftColumn),
-        lsdf,
-        renamedRightColumns(rightColumn),
-        rsdf)
+  private def sparkDFWithColumnsRenamed(
+      initSdf: sql.DataFrame,
+      colFrom: Seq[String],
+      colTo: Seq[String]): sql.DataFrame = {
+    val zipped = colFrom zip colTo
+    zipped.foldLeft(initSdf){
+      (sdf, pair) =>
+        val (from, to) = pair
+        sdf.withColumnRenamed(from, to)
     }
-
-    val initialCondition = zippedJoinColumns.head match {
-      case (firstLeftColumnName, firstRightColumnName) =>
-        prepareCondition(firstLeftColumnName, firstRightColumnName)
-    }
-
-    val joinCondition = zippedJoinColumns.tail.foldLeft(initialCondition) {
-      (acc, col) => col match {
-        case (leftColumnName, rightColumnName) =>
-          acc && prepareCondition(leftColumnName, rightColumnName)
-      }
-    }
-
-    joinCondition
   }
 
+  private def sparkDFWithRemovedDuplicatedColumns(
+      joinedDataFrame: sql.DataFrame,
+      renamedJoinColumnsPairs: Seq[(String, String)],
+      renamedLeftColumns: Seq[String],
+      renamedRightColumns: Seq[String]): sql.DataFrame = {
+    val (_, rightJoinColumnNames) = renamedJoinColumnsPairs.unzip
+    val columns = renamedLeftColumns ++ renamedRightColumns.filter(
+      col => !rightJoinColumnNames.contains(col))
+    assert(columns.nonEmpty)
+    joinedDataFrame.select(columns.head, columns.tail: _*)
+  }
+
+  private def getSelectedJoinColumsNames(
+      schema: StructType,
+      selector: ColumnPair => SingleColumnSelection): Seq[String] = {
+    getJoinColumns.map(columnPair =>
+      DataFrameColumnsGetter.getColumnName(schema, selector(columnPair)))
+  }
   private def validateSchemas(
       leftSchema: StructType,
-      rightSchema: StructType): (Seq[String], Seq[String]) = {
+      rightSchema: StructType): Unit = {
 
-    val leftJoinColumnNames = getJoinColumns.map(columnPair =>
-      DataFrameColumnsGetter.getColumnName(leftSchema, columnPair.getLeftColumn))
-    val rightJoinColumnNames = getJoinColumns.map(columnPair =>
-      DataFrameColumnsGetter.getColumnName(rightSchema, columnPair.getRightColumn))
+    val leftJoinColumnNames = getSelectedJoinColumsNames(
+        leftSchema, _.getLeftColumn)
+    val rightJoinColumnNames = getSelectedJoinColumsNames(
+        rightSchema, _.getRightColumn)
 
     logger.debug("Validate that columns used for joining is not empty")
     if (leftJoinColumnNames.isEmpty) {
@@ -221,48 +209,28 @@ case class Join()
         leftSchema.apply(leftCol),
         SparkConversions.sparkColumnTypeToColumnType(rightSchema.apply(rightCol).dataType))
     }
-
-    (leftJoinColumnNames, rightJoinColumnNames)
   }
 
-  private def columnEqualityCondition(
-      leftColumnName: String,
-      leftSparkDataFrame: sql.DataFrame,
-      rightColumnName: String,
-      rightSparkDataFrame: sql.DataFrame): Column = {
-    leftSparkDataFrame(leftColumnName) === rightSparkDataFrame(rightColumnName)
+  private def prepareJoiningCondition(
+      joinColumns: Seq[(String, String)],
+      lsdf: sql.DataFrame,
+      rsdf: sql.DataFrame): Column = {
+    require(joinColumns.nonEmpty)
+    val initialCondition = joinColumns.head match {
+      case (leftHead, rightHead) =>
+        lsdf(leftHead) === rsdf(rightHead)
+    }
+    val joinCondition = joinColumns.foldLeft(initialCondition) {
+      case (acc, (leftColumnName, rightColumnName)) =>
+        acc && (lsdf(leftColumnName) === rsdf(rightColumnName))
+    }
+    joinCondition
   }
 
   private def namesToSelections(columnNames: Traversable[String]): Vector[ColumnSelection] = {
     columnNames.map((name: String) => new NameColumnSelection(Set(name))).toVector
   }
 
-  private def appendPrefixes(dataFrame: sql.DataFrame, prefixParam: String)
-    : (sql.DataFrame, mutable.HashMap[String, String]) = {
-
-    val columnNamesMap = new mutable.HashMap[String, String]()
-
-    val renamedColumns = dataFrame.schema.fieldNames.map(col => {
-      val newCol = prefixParam + col
-      columnNamesMap.put(col, newCol)
-      newCol
-    })
-
-    (dataFrame.toDF(renamedColumns: _*), columnNamesMap)
-  }
-
-  private def appendPrefixes(
-      schema: StructType, prefixParam: String): mutable.HashMap[String, String] = {
-    val columnNamesMap = new mutable.HashMap[String, String]()
-
-    val renamedColumns = schema.fieldNames.map(col => {
-      val newCol = prefixParam + col
-      columnNamesMap.put(col, newCol)
-      newCol
-    })
-
-    columnNamesMap
-  }
 
   @transient
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
@@ -270,9 +238,53 @@ case class Join()
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
   @transient
   override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+
+  private case class RenamedColumnNames(
+      originalLeftColumns: Seq[String],
+      originalRightColumns: Seq[String]) {
+
+    val left = LeftColumnNames(originalLeftColumns, getLeftPrefix)
+    val right = RightColumnNames(originalRightColumns, getRightPrefix, left.prefixed)
+
+    abstract class ColumnNames(original: Seq[String], prefix: String) {
+      val prefixed = original.map(col => prefix + col)
+      val renamed: Seq[String]
+      lazy val originalToRenamed: Map[String, String] = original.zip(renamed).toMap
+      lazy val renamedToOriginal: Map[String, String] = renamed.zip(original).toMap
+    }
+
+    case class LeftColumnNames(
+        original: Seq[String],
+        prefix: String)
+      extends ColumnNames(original, prefix) {
+      override val renamed = prefixed
+    }
+
+    case class RightColumnNames(
+        original: Seq[String],
+        prefix: String,
+        leftPrefixed: Seq[String])
+      extends ColumnNames(original, prefix) {
+
+      val duplicatedPrefixedColumns = prefixed.toSet intersect leftPrefixed.toSet
+      val renamed = prefixed.map(
+        col => {
+          if (duplicatedPrefixedColumns contains col) {
+            DataFrameColumnsGetter.uniqueSuffixedColumnName(col)
+          } else {
+            col
+          }
+        }
+      )
+    }
+  }
 }
 
 object Join {
+  object Type {
+    val (inner, outer, leftOuter, rightOuter, leftSemi) =
+      ("inner", "outer", "left_outer", "right_outer", "leftsemi")
+  }
 
   case class ColumnPair() extends Params {
 
