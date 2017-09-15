@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO combine this const with special-operations and remove not necessary IDs
 export const nodeTypes = {
   PYTHON_NOTEBOOK: 'e76ca616-0322-47a5-b390-70c9668265dd',
   R_NOTEBOOK: '89198bfd-6c86-40de-8238-68f7e0a0b50e',

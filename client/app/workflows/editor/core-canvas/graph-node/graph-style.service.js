@@ -10,9 +10,9 @@ const RECTANGLE_ENDPOINT = 'Rectangle';
 
 // colors
 const SEAHORSE_SEA_GREEN = '#34b5ba';
-const SEAHORSE_BLUE = '#00b1eb';
-const SEAHORSE_MADISON = '#2f4050';
-const SEAHORSE_ALLPORTS = '#1e6c71';
+const SEAHORSE_BLUE = '#0197c8';
+const SEAHORSE_MADISON = '#021f4e';
+const SEAHORSE_ALLPORTS = '#1e6d71';
 
 // paint styles
 const DEFAULT_PAINT_STYLE = {
@@ -105,11 +105,9 @@ class GraphStyleService {
   }
 
   getPortEndingTypeForQualifier(typeQualifier) {
-    const isDataFrame = typeQualifier.substr(
-        typeQualifier.lastIndexOf('.') + 1, typeQualifier.length
-      ).toLowerCase() === 'dataframe';
+    const type = this.getOutputTypeFromQualifier(typeQualifier);
 
-    if (isDataFrame) {
+    if (type === 'default') {
       return DOT_ENDPOINT;
     } else {
       return RECTANGLE_ENDPOINT;
@@ -133,39 +131,69 @@ class GraphStyleService {
     }
   }
 
+  // TODO this method will need refactor because some of its logic is repeated in controller
   enablePortHighlighting(nodes, sourceEndpoint) {
     const sourceNodeId = sourceEndpoint.getParameter('nodeId');
     const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
     const sourcePort = nodes[sourceNodeId].output[sourcePortIndex];
 
-    _.forEach(nodes, (node) => {
-      const nodeEl = this.getNodeElementById(node.id);
-      const endpointsInputs = jsPlumb.getEndpoints(nodeEl).filter(endpoint => endpoint.isTarget);
+    const outputType = this.getOutputTypeFromQualifier(sourcePort.typeQualifier[0]);
+    const cssClass = `matching-port-${outputType}`;
 
-      _.forEach(endpointsInputs, (endpoint) => {
-        const portIndex = endpoint.getParameter('portIndex');
-        const port = node.input[portIndex];
+    const endpointTargets =
+      _.chain(nodes)
+        .values()
+        .map((node) => {
+          const nodeElement = this.getNodeElementById(node.id);
 
-        const typesMatch = sourcePort.typeQualifier
-          .map(typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier))
-          .filter(typeQualifierMatch => typeQualifierMatch === true)
-          .length !== 0;
+          return {
+            nodeInput: node.input,
+            nodeEndpoints: jsPlumb.getEndpoints(nodeElement).filter(endpoint => endpoint.isTarget)
+          };
+        })
+        .map(nodesInfo => {
+          const {nodeInput, nodeEndpoints} = nodesInfo;
 
-        // types match && there cannot be any edge attached && attaching an edge to the same node is forbidden
-        if (typesMatch && endpoint.connections.length === 0 && port.nodeId !== sourceNodeId) {
-          endpoint.addType('matched');
-        }
-      });
+          return nodeEndpoints.map((endpoint) => {
+            const portIndex = endpoint.getParameter('portIndex');
+            const port = nodeInput[portIndex];
+
+            return {
+              endpoint,
+              port
+            };
+          });
+        })
+        .flatMap()
+        .filter(endpointInfo => {
+          const {port, endpoint} = endpointInfo;
+          const typesMatch = sourcePort
+            .typeQualifier
+            .some(typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier));
+
+          // types match && there cannot be any edge attached && attaching an edge to the same node is forbidden
+          return typesMatch && endpoint.connections.length === 0 && port.nodeId !== sourceNodeId;
+        })
+        .map(endpointInfo => endpointInfo.endpoint)
+        .value();
+
+    endpointTargets.forEach((endpoint) => {
+      endpoint.addClass(cssClass);
     });
   }
 
   disablePortHighlighting(nodes) {
-    _.forEach(nodes, (node) => {
-      let nodeEl = this.getNodeElementById(node.id);
-      let endpoints = jsPlumb.getEndpoints(nodeEl);
-      _.forEach(endpoints, (endpoint) => {
-        endpoint.removeType('matched');
-      });
+    const endpointTargets = _.chain(nodes)
+      .map((node) => {
+        let nodeEl = this.getNodeElementById(node.id);
+        return jsPlumb.getEndpoints(nodeEl);
+      })
+      .values()
+      .flatMap()
+      .value();
+
+    endpointTargets.forEach((endpoint) => {
+      endpoint.removeClass('matching-port-default matching-port-estimator matching-port-evaluator matching-port-transformer');
     });
   }
 

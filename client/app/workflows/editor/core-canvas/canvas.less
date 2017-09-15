@@ -1,3 +1,10 @@
+@import "../../../../css/variables.less";
+
+@seahorse-shining-data: #53d1fb;
+@seahorse-shining-transformer: #0968b5;
+@seahorse-shining-evaluator: #57aaae;
+@seahorse-shining-estimator: #28e8ef;
+
 .disabled {
   filter: grayscale(100%);
 }
@@ -30,5 +37,73 @@
 
 .jsplumb-endpoint {
   z-index: 2;
+}
+
+.dataframe-output-port {
+  z-index: 100;
+}
+
+.matching-port-default svg circle {
+  animation: svg-fill-animation-default 1s linear infinite;
+}
+
+.matching-port-transformer svg rect {
+  animation: svg-fill-animation-transformer 1s linear infinite;
+}
+
+.matching-port-evaluator svg rect {
+  animation: svg-fill-animation-evaluator 1s linear infinite;
+}
+
+.matching-port-estimator svg rect {
+  animation: svg-fill-animation-estimator 1s linear infinite;
+}
+
+@keyframes svg-fill-animation-default {
+  0% {
+    fill: @seahorse-blue
+  }
+  50% {
+    fill: @seahorse-shining-data
+  }
+  100% {
+    fill: @seahorse-blue
+  }
+}
+
+@keyframes svg-fill-animation-transformer {
+  0% {
+    fill: @seahorse-madison
+  }
+  50% {
+    fill: @seahorse-shining-transformer
+  }
+  100% {
+    fill: @seahorse-madison
+  }
+}
+
+@keyframes svg-fill-animation-evaluator {
+  0% {
+    fill: @seahorse-allports
+  }
+  50% {
+    fill: @seahorse-shining-evaluator
+  }
+  100% {
+    fill: @seahorse-allports
+  }
+}
+
+@keyframes svg-fill-animation-estimator {
+  0% {
+    fill: @seahorse-light-sea-green
+  }
+  50% {
+    fill: @seahorse-shining-estimator
+  }
+  100% {
+    fill: @seahorse-light-sea-green
+  }
 }
 

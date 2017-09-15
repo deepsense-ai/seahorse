@@ -1,5 +1,4 @@
 import jsPlumb from 'jsplumb';
-import {GraphTypesStyle} from './graph-node/graph-types-styles.const.js';
 
 const POSITION_MAP = {
   OUTPUT: {
@@ -38,8 +37,6 @@ class AdapterService {
 
     this.WorkflowService = WorkflowService;
     this.GraphStyleService = GraphStyleService;
-
-    jsPlumb.registerEndpointTypes(GraphTypesStyle);
   }
 
   initialize(container) {
@@ -202,6 +199,13 @@ class AdapterService {
       jsPlumbPort.bind('mouseout', () => {
         this.onMouseOut();
       });
+
+      const portType = this.GraphStyleService.getOutputTypeFromQualifier(port.typeQualifier[0]);
+      const isDataOutput = portType === 'default';
+
+      if (isDataOutput) {
+        jsPlumbPort.addClass('dataframe-output-port');
+      }
 
       jsPlumbPort.setParameter('portIndex', port.index);
       jsPlumbPort.setParameter('nodeId', node.id);
