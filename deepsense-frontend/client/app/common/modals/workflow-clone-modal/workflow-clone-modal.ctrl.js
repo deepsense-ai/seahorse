@@ -3,17 +3,22 @@
 /* @ngInject */
 function WorkflowCloneModalCtrl($uibModalInstance, originalWorkflow) {
 
-  this.workflowCopy = angular.copy(originalWorkflow);
-  this.workflowCopy.name = 'Copy of: "' + this.workflowCopy.name + '"';
+  const vm = this;
 
-  _.assign(this, {
-    save: () => {
-      $uibModalInstance.close(this.workflowCopy);
-    },
-    dismiss: () => {
-      $uibModalInstance.dismiss();
-    }
-  });
+  vm.originalWorkflow = originalWorkflow;
+  vm.workflowCopy = angular.copy(originalWorkflow);
+  vm.workflowCopy.name = `Copy of ${vm.workflowCopy.name}`;
+
+  vm.save = save;
+  vm.dismiss = dismiss;
+
+  function save() {
+    $uibModalInstance.close(vm.workflowCopy);
+  }
+
+  function dismiss() {
+    $uibModalInstance.dismiss();
+  }
 }
 
 exports.inject = function (module) {

@@ -7,7 +7,8 @@ function WorkflowCloneService($uibModal, WorkflowsApiClient, NotificationService
     const modal = $uibModal.open({
       animation: true,
       templateUrl: 'app/common/modals/workflow-clone-modal/workflow-clone-modal.html',
-      controller: 'WorkflowCloneModalCtrl as controller',
+      controller: 'WorkflowCloneModalCtrl',
+      controllerAs: 'controller',
       backdrop: 'static',
       keyboard: true,
       resolve: {
