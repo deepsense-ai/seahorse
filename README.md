@@ -5,13 +5,21 @@
 git submodule init
 git submodule update
 
-# Setting up gerrit
+# Setting up gerrit for seahorse-workflow-executor
 cd seahorse-workflow-executor
 git remote remove origin
 git remote add origin ssh://USER.NAME@gerrit.codilime.com:29418/ds-workflow_executor  # (copy link from gerrit)
 cd ..
 cp .git/hooks/commit-msg .git/modules/seahorse-workflow-executor/hooks/commit-msg
+
+# Setting up gerrit for seahorse-sdk-example
+cd seahorse-sdk-example
+git remote remove origin
+git remote add origin ssh://USER.NAME@gerrit.codilime.com:29418/seahorse-sdk-example  # (copy link from gerrit)
+cd ..
+cp .git/hooks/commit-msg .git/modules/seahorse-sdk-example/hooks/commit-msg
 ```
+
 
 # START SEAHORSE LATEST DEV VERSION
 

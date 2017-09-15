@@ -4,6 +4,9 @@
 FROM ubuntu:14.04
 MAINTAINER DeepSense.io
 
+ARG SPARK_VERSION
+ARG HADOOP_VERSION
+
 # To suppress some warnings
 ENV TERM=xterm
 
@@ -27,11 +30,11 @@ rm -rf /var/lib/apt/lists/*
 ENV MESOS_WORK_DIR /tmp/mesos
 
 # Download spark executor
-RUN mkdir /spark-2.0.0 && \
-    wget -q -O /spark-2.0.0/packed.tgz \
-    http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz && \
-    tar -xzf /spark-2.0.0/packed.tgz -C /spark-2.0.0 && \
-    rm /spark-2.0.0/packed.tgz
+RUN mkdir /spark-$SPARK_VERSION && \
+    wget -q -O /spark-$SPARK_VERSION/packed.tgz \
+    http://d3kbcqa49mib13.cloudfront.net/spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION.tgz && \
+    tar -xzf /spark-$SPARK_VERSION/packed.tgz -C /spark-$SPARK_VERSION && \
+    rm /spark-$SPARK_VERSION/packed.tgz
 
 # Install conda
 RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \

@@ -60,7 +60,8 @@ FRONTEND_TAG="${FRONTEND_TAG:-master-latest}" # If it's still undefined fallback
 SPARK_STANDALONE_MANAGEMENT="./seahorse-workflow-executor/docker/spark-standalone-cluster-manage.sh"
 MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
 
-SPARK_VERSION="2.0.0"
+SPARK_VERSION="2.0.2"
+HADOOP_VERSION="2.7"
 
 ## Make sure that when job is aborted/killed all dockers will be turned off
 function cleanup {
@@ -101,7 +102,7 @@ export SPARK_STANDALONE_MASTER_IP=$(docker inspect --format "$INSPECT_FORMAT" sp
 
 ## Start Mesos Spark cluster dockers
 
-testing/mesos-spark-cluster/build-cluster-node-docker.sh
+testing/mesos-spark-cluster/build-cluster-node-docker.sh $SPARK_VERSION $HADOOP_VERSION
 docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE up -d
 
 export MESOS_MASTER_IP=10.254.0.2

@@ -16,13 +16,16 @@ assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 sparkSQLSession <- SparkR:::callJMethod(entryPoint, "getNewSparkSQLSession")
 
 sparkVersion <- SparkR:::callJMethod(sc, "version")
-if (sparkVersion == "2.0.0") {
+if (sparkVersion %in% c("2.0.0", "2.0.1", "2.0.2")) {
   assign(".sparkRsession", SparkR:::callJMethod(sparkSQLSession, "getSparkSession"), envir = SparkR:::.sparkREnv)
   assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
-} else {
+} else if (sparkVersion == "1.6.1") {
   assign(".sqlc", SparkR:::callJMethod(sparkSQLSession, "getSQLContext"), envir = SparkR:::.sparkREnv)
   assign("sqlContext", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
   assign("spark", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+} else {
+  msg <- paste("Unhandled Spark Version:", sparkVersion)
+  stop(msg)
 }
 
 dataframe <- function() {

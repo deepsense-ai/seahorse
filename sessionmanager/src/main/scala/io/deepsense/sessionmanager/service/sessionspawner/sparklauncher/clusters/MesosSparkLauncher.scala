@@ -4,19 +4,19 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
-import scalaz.Validation
-
-import org.apache.spark.launcher.SparkLauncher
-
+import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.models.ClusterDetails
-import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher.RichSparkLauncher
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, SessionExecutorArgs}
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser.{SparkOptionsMultiMap, UnknownOption}
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.CommonEnv
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser.SparkOptionsMultiMap
+import org.apache.spark.launcher.SparkLauncher
 
 private [clusters] object MesosSparkLauncher {
   import scala.collection.JavaConversions._
+
+  val sparkVersion = BuildInfo.sparkVersion
+  val hadoopVersion = BuildInfo.hadoopVersion
 
   def apply(applicationArgs: Seq[String],
             config: SparkLauncherConfig,
@@ -34,7 +34,7 @@ private [clusters] object MesosSparkLauncher {
       .addAppArgs(applicationArgs: _*)
       .addFile(config.weDepsPath)
       .setConf("spark.executor.uri",
-        "http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz")
+        s"http://d3kbcqa49mib13.cloudfront.net/spark-$sparkVersion-bin-hadoop$hadoopVersion.tgz")
   }
 
   private def env(

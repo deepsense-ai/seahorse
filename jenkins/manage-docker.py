@@ -17,6 +17,11 @@ SbtDockerConfig = collections.namedtuple('SbtDockerConfig', 'docker_image_name t
 simple_command_type = 'simple_command'
 sbt_type = 'sbt'
 
+
+spark_version = "2.0.2"
+hadoop_version = "2.7"
+
+
 # This is added here since sbt clean doesn't clean everything; in particular, it doesn't clean
 # project/target, so we delete all "target". For discussion, see
 # http://stackoverflow.com/questions/4483230/an-easy-way-to-get-rid-of-everything-generated-by-sbt
@@ -28,6 +33,16 @@ sbt_clean_more_cmd = "(find . -name target -type d -exec rm -rf {} \; || true) &
 def simple_docker(docker_image_name, docker_file_path):
     tag = "{}:{}".format(docker_image_name, git_sha())
     command = "(cd {}; docker build -t {} .)".format(docker_file_path, tag)
+    return SimpleCommandConfig(docker_image_name, simple_command_type, command)
+
+
+# Currently passing --build-arg undefined in dockerfile fails the build.
+# https://github.com/docker/docker/issues/26249
+# Pass it everytime once issue is resolved
+def simple_docker_with_spark_version(docker_image_name, docker_file_path):
+    tag = "{}:{}".format(docker_image_name, git_sha())
+    command = "(cd {}; docker build --build-arg SPARK_VERSION={} --build-arg HADOOP_VERSION={} -t {} .)".format(
+        docker_file_path, spark_version, hadoop_version, tag)
     return SimpleCommandConfig(docker_image_name, simple_command_type, command)
 
 
@@ -48,7 +63,7 @@ image_confs = [
     simple_docker("deepsense-proxy", "proxy"),
     simple_docker("deepsense-rabbitmq", "deployment/rabbitmq"),
     simple_docker("deepsense-h2", "deployment/h2-docker"),
-    simple_docker("deepsense-spark", "deployment/spark-docker"),
+    simple_docker_with_spark_version("deepsense-spark", "deployment/spark-docker"),
     simple_command_docker("deepsense-mesos-spark", "./jenkins/build_spark_docker_mesos.sh"),
     sbt_docker("deepsense-schedulingmanager", "schedulingmanager"),
     sbt_docker('deepsense-sessionmanager', "sessionmanager"),
@@ -126,7 +141,7 @@ def build_dockers(docker_configurations):
     if sbt_confs:
         sbt_commands = [conf.sbt_task for conf in sbt_confs]
         batched_sbt_tasks = ' '.join(sbt_commands)
-        final_sbt_command = sbt_clean_more_cmd + "sbt {}".format(batched_sbt_tasks)
+        final_sbt_command = sbt_clean_more_cmd + "sbt -DSPARK_VERSION={} {}".format(spark_version, batched_sbt_tasks)
         print(final_sbt_command)
         subprocess.call(final_sbt_command, shell=True, cwd=cwd)
         for conf in sbt_confs:

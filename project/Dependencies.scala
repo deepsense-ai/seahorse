@@ -1,7 +1,6 @@
 import sbt._
 
 object Version {
-  val akka = "2.4.9"
   val apacheCommons = "3.3.2"
   val avro = "1.7.7"
   val guice = "3.0"
@@ -11,12 +10,17 @@ object Version {
   val metricsScala = "3.5.4_a2.3"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
-  val scala = "2.11.8"
   val scalatest = "3.0.0"
   val scalatra = "2.4.0"
   val scoverage = "1.0.4"
   val slick = "3.1.1"
-  val spark = "2.0.0"
+
+  val spark = sys.props.getOrElse("SPARK_VERSION", "2.0.2")
+  val (scala, hadoop, akka) = spark match {
+    case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "2.7", "2.4.9")
+    case "1.6.1" => ("2.10.5", "2.6", "2.3.11")
+  }
+
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
   val wiremock = "1.57"

@@ -2,6 +2,9 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
+import sbtbuildinfo.BuildInfoKey.Entry
+import sbtbuildinfo.{BuildInfoKey, BuildInfoPlugin}
+
 // scalastyle:off
 
 name := "deepsense-commons"
@@ -80,7 +83,9 @@ buildInfoKeys ++= {
     },
     BuildInfoKey.action("apiVersionPatch") {
       versionSplit(2)
-    }
+    },
+    BuildInfoKey.constant("sparkVersion" -> Version.spark),
+    BuildInfoKey.constant("hadoopVersion" -> Version.hadoop)
   )
 }
 

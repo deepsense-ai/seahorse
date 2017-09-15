@@ -7,10 +7,13 @@ lazy val assembly = taskKey[File]("Copied from sbt-assembly's keys.")
 lazy val weJar = taskKey[File]("Workflow executor runnable jar")
 weJar := (assembly in workflowExecutorProject).value
 
-lazy val weSparkVersion = DeepsenseUniversalSettingsPlugin.weSparkVersion
 lazy val pythonAndRDeps = taskKey[File]("Generates we_deps.zip file with python and R dependencies")
 pythonAndRDeps := {
-  Seq("sessionmanager/prepare-deps.sh", weSparkVersion).!!
+  val weDepsConstsVersion = Version.spark match {
+    case "1.6.1" => "1.6.1"
+    case "2.0.0" | "2.0.1" | "2.0.2" => "2.0.x"
+  }
+  Seq("sessionmanager/prepare-deps.sh", weDepsConstsVersion).!!
   target.value / "we-deps.zip"
 }
 pythonAndRDeps := (pythonAndRDeps dependsOn weJar.toTask).value

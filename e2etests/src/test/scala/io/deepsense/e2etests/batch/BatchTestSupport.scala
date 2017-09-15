@@ -5,22 +5,21 @@
 package io.deepsense.e2etests.batch
 
 import java.io.File
-
 import java.net.URL
 
+import io.deepsense.commons.buildinfo.BuildInfo
 import spray.json._
 
 import scala.io.Source
 import scalaz.{Failure, Success}
-
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.e2etests.{SeahorseIntegrationTestDSL, TestDatasourcesInserter}
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
 import io.deepsense.models.workflows.WorkflowWithResults
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.ClusterType
+
 import scala.io.Source
 import scalaz.{Failure, Success}
-
 import spray.json._
 
 trait BatchTestSupport
@@ -28,8 +27,11 @@ trait BatchTestSupport
   with TestDatasourcesInserter
   with WorkflowWithResultsJsonProtocol {
 
+  val sparkVersion = BuildInfo.sparkVersion
+  val hadoopVersion = BuildInfo.hadoopVersion
+
   val mesosSparkExecutorConf =
-    "spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz"
+    s"spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-$sparkVersion-bin-hadoop$hadoopVersion.tgz"
 
   def prepareSubmitCommand(
       sparkSubmitPath: String,
@@ -93,7 +95,7 @@ trait BatchTestSupport
   // assuming SPARK_HOME is set
   private def getEnvSettings(cluster: ClusterDetails): Map[String, String] = {
     val commonSettings = Map(
-      "PYTHONPATH" -> "$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PYTHONPATH"
+      "PYTHONPATH" -> "$SPARK_HOME/python:$PYTHONPATH"
     )
     cluster.clusterType match {
       case ClusterType.local => commonSettings

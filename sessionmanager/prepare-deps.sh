@@ -2,7 +2,7 @@
 
 echo 'This script assumes its run from root of deepsense backend project'
 
-WE_SPARK_VERSION=$1
+WE_DEPS_CONSTS_VERSION=$1
 
 SM_DIR=sessionmanager
 
@@ -26,7 +26,7 @@ unzip remote_notebook/notebook_executing_kernel.zip -d $WE_DEPS_CONTENT
 
 # Pyspark and Py4j from we-deps-consts
 # TODO: We should not include this files, but take Pyspark and Py4j from Spark installed on cluster
-WE_DEPS_CONSTS=we-deps-consts/$WE_SPARK_VERSION
+WE_DEPS_CONSTS=we-deps-consts/$WE_DEPS_CONSTS_VERSION
 echo "Copying files from $WE_DEPS_CONSTS files"
 cp -R $SM_DIR/$WE_DEPS_CONSTS/* $WE_DEPS_CONTENT
 

@@ -2,8 +2,8 @@
 
 FROM ubuntu:16.04
 
-ARG SPARK_VERSION=2.0.0
-ARG HADOOP_VERSION=2.7
+ARG SPARK_VERSION
+ARG HADOOP_VERSION
 
 # Install packages
 # libcurl4-openssl-dev and libssl-dev are needed for IRkernel dependencies
