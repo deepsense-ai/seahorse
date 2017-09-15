@@ -8,7 +8,7 @@
 
 var module = angular.module('test', ['deepsense.attributes-panel']);
 
-module.controller('TestCtrl', ['$scope', 'Model', function ($scope, Model) {
+module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, $element, Model) {
   var nodes = Model.getNodes();
 
   _.assign($scope, {
@@ -20,6 +20,10 @@ module.controller('TestCtrl', ['$scope', 'Model', function ($scope, Model) {
       });
     }
   });
+
+  $scope.togglePre = function togglePre (preID) {
+    $('#' + preID).toggle();
+  };
 
   $scope.$on('AttributePanel.UNSELECT_NODE', function () {
     $scope.currentNode = null;

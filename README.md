@@ -11,6 +11,10 @@ Front-end:
 - bootstrap
 - font-awesome
 - animate.css
+- jQuery
+- INSPINIA Bootstrap theme.
+- switchery
+- ng-switchery
 
 - deepsense.node-parameters
 - deepsense.loading-spinner

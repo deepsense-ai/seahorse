@@ -17,16 +17,16 @@ function AttributeMultiplierType($compile, DeepsenseNodeParameters) {
 
       internal.renderParametersLists = function renderParametersLists () {
         let template = `
-        <div class="panel panel-default multiplier-item"
+        <div class="ibox multiplier-item"
           ng-repeat="parametersList in parameter.parametersLists"
         >
-          <div class="panel-heading">
-            Multiplier #{{ $index + 1 }}
-            <button type="button" class="close pull-right" data-dismiss="alert" aria-label="Close" ng-click="removeItem($index)">
-              <span aria-hidden="true">&times;</span>
-            </button>
+          <div class="ibox-title">
+            <span class="ibox-title--multiplier">Multiplier #{{ $index + 1 }}</span>
+            <a class="close-link" aria-label="Close" ng-click="removeItem($index)">
+              <i class="fa fa-times"></i>
+            </a>
           </div>
-          <div class="panel-body">
+          <div class="ibox-content">
             <attributes-list parameters-list="parametersList"></attributes-list>
           </div>
         </div>`;

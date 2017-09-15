@@ -1,7 +1,7 @@
 <div id="attributes-list-{{ :: $id }}">
-  <div class="panel panel-default parameter-item" ng-repeat="parameter in parametersList.parameters">
-    <div class="panel-heading"><label>{{ ::parameter.name }}</label></div>
-    <div class="panel-body">
+  <div class="ibox parameter-item" ng-repeat="parameter in parametersList.parameters">
+    <div class="ibox-title" label-to-first-unlabeled><label>{{ ::parameter.name }}</label></div>
+    <div class="ibox-content">
       <div class="attributes-value-view" ng-switch="::parameter.schema.type">
         <attribute-boolean-type ng-switch-when="boolean"></attribute-boolean-type>
 

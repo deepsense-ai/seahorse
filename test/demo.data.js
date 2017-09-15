@@ -24,7 +24,7 @@ angular.module('test').
         parameters: null
       },
       {
-        description: 'Neural networks inspired by biological...',
+        description: 'Neural networks inspired by biological STARTS test of description length message, hey hey hey this is a test so please welcome',
         id: 'edc02822-b8ee-4225-b070-f892a87dbf11',
         name: 'Neural Network',
         operationId: '11111-111111-44444',

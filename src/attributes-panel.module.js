@@ -7,6 +7,7 @@
 'use strict';
 
 angular.module('deepsense.attributes-panel', [
-    'deepsense.spinner',
-    'deepsense.node-parameters'
+  'deepsense.spinner',
+  'deepsense.node-parameters',
+  'NgSwitchery'
 ]);

@@ -6,14 +6,18 @@
       </div>
     </div>
     <div ng-if="!selectorIsSingle()">
-      <div class="text-right">
-        <a ng-click="addColumn()" class="action-text">Add column</a>
-      </div>
-      <div ng-repeat="_ in item.columns" class="column-list-value">
-        <input ng-model="item.columns[$index].name" type="text" class="form-control">
-        <button type="button" class="close pull-right" data-dismiss="alert" aria-label="Close" ng-click="removeColumn($index)">
-          <span aria-hidden="true">&times;</span>
+      <div class="action-button-wrapper action-button-wrapper--spaced">
+        <button class="btn btn-primary btn-xs action-text" type="button"
+            ng-click="addColumn()">
+          <i class="fa fa-plus"></i>
+          <span>Add column</span>
         </button>
+      </div>
+      <div ng-repeat="_ in item.columns" class="spaced-around flex-content flex-content--spaced-first">
+        <input ng-model="item.columns[$index].name" type="text" class="form-control">
+        <a class="close-link" aria-label="Close" ng-click="removeColumn($index)">
+          <i class="fa fa-times"></i>
+        </a>
       </div>
     </div>
   </div>

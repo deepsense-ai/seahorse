@@ -1,7 +1,9 @@
-<div class="index-list-selector-item">
+<div class="types-list-selector">
   <div ng-repeat="(typeName, _) in ::item.types">
-    <label>
-      <input type="checkbox" ng-model="item.types[typeName]"> {{ typeName }}
+    <label class="flex-content spaced-around">
+      <input type="checkbox" ng-model="item.types[typeName]"
+        ui-switch="{color: '#1ab394', secondaryColor: '#E43B11', size: 'small'}">
+      <span>{{ typeName }}</span>
     </label>
   </div>
 </div>
