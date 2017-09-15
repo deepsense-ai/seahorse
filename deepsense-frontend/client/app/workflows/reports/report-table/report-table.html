@@ -6,15 +6,15 @@
         <div>
           <p class="break-mid-words">
             <span class="has-distribution" ng-switch="getDistributionType(columnName).subtype"
-                  ng-click="controller.showDistribution(columnName)" >
+                  ng-click="controller.showDistribution(columnName)"
+                  uib-popover="Open {{getDistributionType(columnName).subtype}} distibution"
+                  popover-trigger="mouseenter"
+                  popover-placement="{{($first) ? 'top-left' : 'top'}}"
+                  popover-popup-delay="50" >
               <i ng-switch-when="discrete"
-                 popover-trigger="mouseenter"
-                 uib-popover="Open discrete distibution"
                  class="fa fa-pie-chart">
               </i>
               <i ng-switch-when="continuous"
-                 popover-trigger="mouseenter"
-                 uib-popover="Open continuous distibution"
                  class="fa fa-bar-chart-o">
               </i>
             </span>
