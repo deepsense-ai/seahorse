@@ -46,6 +46,15 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
+  def download(id: Id): Future[Option[WorkflowWithVariables]] = {
+    logger.debug("Download workflow id: {}", id)
+    authorizator.withRole(roleGet) { userContext =>
+      storage.get(id).map(_.map {
+        workflow => withVariables(id, workflow)
+      })
+    }
+  }
+
   def update(workflowId: Id, workflow: Workflow): Future[WorkflowWithKnowledge] = {
     logger.debug(s"Update workflow id: $workflowId, workflow: $workflow")
     if (workflow.graph.containsCycle) {
@@ -89,5 +98,10 @@ class WorkflowManagerImpl @Inject()(
   private def withKnowledge(id: Workflow.Id, workflow: Workflow): WorkflowWithKnowledge = {
     val knowledge = workflow.graph.inferKnowledge(inferContext)
     WorkflowWithKnowledge(id, workflow.metadata, workflow.graph, workflow.additionalData, knowledge)
+  }
+
+  private def withVariables(id: Workflow.Id, workflow: Workflow): WorkflowWithVariables = {
+    WorkflowWithVariables(
+      id, workflow.metadata, workflow.graph, workflow.additionalData, Variables())
   }
 }

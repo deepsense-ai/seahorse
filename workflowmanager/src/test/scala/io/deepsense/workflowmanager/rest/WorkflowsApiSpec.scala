@@ -25,7 +25,7 @@ import io.deepsense.deeplang.doperations.FileToDataFrame
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{WorkflowJsonProtocol, WorkflowWithKnowledgeJsonProtocol}
+import io.deepsense.models.json.workflow.{WorkflowJsonProtocol, WorkflowWithKnowledgeJsonProtocol, WorkflowWithVariablesJsonProtocol}
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.storage.WorkflowStorage
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
@@ -35,7 +35,8 @@ class WorkflowsApiSpec
   with UnitTestSupport
   with ApiSpecSupport
   with WorkflowJsonProtocol
-  with WorkflowWithKnowledgeJsonProtocol {
+  with WorkflowWithKnowledgeJsonProtocol
+  with WorkflowWithVariablesJsonProtocol {
 
   val catalog = DOperationsCatalog()
   catalog.registerDOperation[FileToDataFrame](
@@ -213,6 +214,57 @@ class WorkflowsApiSpec
         Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
+      }
+    }
+  }
+
+  s"GET /workflows/:id/download" should {
+    "return Unauthorized" when {
+      "invalid auth token was send (when InvalidTokenException occurs)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
+          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "the user does not have the requested role (on NoRoleException)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+    }
+    "return Not found" when {
+      "asked for non existing Workflow" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+    "return an workflow" when {
+      "auth token is correct, user has roles" in {
+        Get(s"/$apiPrefix/$workflowAId/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+
+          responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
+            workflowAId,
+            workflowA.metadata,
+            workflowA.graph,
+            workflowA.additionalData,
+            Variables()
+          )
+        }
+        ()
       }
     }
   }

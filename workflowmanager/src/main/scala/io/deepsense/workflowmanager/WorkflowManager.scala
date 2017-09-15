@@ -7,7 +7,7 @@ package io.deepsense.workflowmanager
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
-import io.deepsense.models.workflows.{Workflow, WorkflowWithKnowledge}
+import io.deepsense.models.workflows.{Workflow, WorkflowWithKnowledge, WorkflowWithVariables}
 
 /**
  * Workflow Manager's API
@@ -20,6 +20,13 @@ trait WorkflowManager {
    * @return A workflow with knowledge with the specified Id.
    */
   def get(id: Id): Future[Option[WorkflowWithKnowledge]]
+
+  /**
+   * Returns a workflow with an empty variables section and specified Id.
+   * @param id An identifier of the workflow.
+   * @return A workflow with an empty variables section and specified Id.
+   */
+  def download(id: Id): Future[Option[WorkflowWithVariables]]
 
   /**
    * Updates an workflow.

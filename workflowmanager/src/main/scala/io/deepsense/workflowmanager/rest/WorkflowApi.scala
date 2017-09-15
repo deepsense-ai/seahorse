@@ -20,7 +20,7 @@ import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{MetadataInferenceResultJsonProtocol, WorkflowJsonProtocol, WorkflowWithKnowledgeJsonProtocol}
+import io.deepsense.models.json.workflow.{MetadataInferenceResultJsonProtocol, WorkflowJsonProtocol, WorkflowWithKnowledgeJsonProtocol, WorkflowWithVariablesJsonProtocol}
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
@@ -39,6 +39,7 @@ class WorkflowApi @Inject() (
   with RestComponent
   with WorkflowJsonProtocol
   with WorkflowWithKnowledgeJsonProtocol
+  with WorkflowWithVariablesJsonProtocol
   with MetadataInferenceResultJsonProtocol {
 
   assert(StringUtils.isNoneBlank(apiPrefix))
@@ -86,6 +87,18 @@ class WorkflowApi @Inject() (
                     case false => complete(StatusCodes.NotFound)
                   }
                   case Failure(exception) => failWith(exception)
+                }
+              }
+            }
+          } ~
+          path(JavaUUID / "download") { idParameter =>
+            val workflowId = Id(idParameter)
+            get {
+              withUserContext { userContext =>
+                complete {
+                  workflowManagerProvider
+                    .forContext(userContext)
+                    .download(workflowId)
                 }
               }
             }
