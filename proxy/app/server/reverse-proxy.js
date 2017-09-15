@@ -56,20 +56,20 @@ function getTargetHost(req, res) {
 function forwardRequest(req, res) {
   var service = getServiceName(req.url);
   if (service.auth === 'basic') {
-    req.headers['Authorization'] = 'basic ' + basicAuthCredentials;
+    req.headers['authorization'] = 'basic ' + basicAuthCredentials;
   }
   if (service.auth === 'token') {
     if(req.user && req.user.accessToken) {
-      req.headers['Authorization'] = 'bearer ' + req.user.accessToken;
+      req.headers['authorization'] = 'bearer ' + req.user.accessToken;
     }
   }
 
   if(req.user && req.user.user_id) {
-    req.headers['X-Seahorse-UserId'] = req.user.user_id;
-    req.headers['X-Seahorse-UserName'] = req.user.user_name;
+    req.headers['x-seahorse-userid'] = req.user.user_id;
+    req.headers['x-seahorse-username'] = req.user.user_name;
   } else {
-    delete req.headers['X-Seahorse-UserId'];
-    delete req.headers['X-Seahorse-UserName'];
+    delete req.headers['x-seahorse-userid'];
+    delete req.headers['x-seahorse-username'];
   }
 
   req.headers['x-forwarded-host'] = req.headers['host'];
