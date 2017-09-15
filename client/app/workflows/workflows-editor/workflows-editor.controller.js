@@ -97,7 +97,7 @@ class WorkflowsEditorController {
       this.initUnbindableListeners();
       this.isReportMode = false;
       this.isRunning = false;
-      this.ServerCommunication.unSubscribeRabbit(this.workflow.id);
+      this.ServerCommunication.abort(this.workflow.id);
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {

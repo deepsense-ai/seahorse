@@ -19,7 +19,6 @@ class ServerCommunication {
     // idle => Nothing happens
     // ws_pending => WebSocket pending connection
     // ws_connected => WebSocket has been connected
-    // rb_pending => RabbitMQ pending connection
     // rb_connected => RabbitMQ has been connected
     // active => Subscription has been done properly
     // reconnecting => In reconnection phase
@@ -81,11 +80,6 @@ class ServerCommunication {
     );
   }
 
-  unSubscribeRabbit(workflowId) {
-    this.status = 'rb_pending';
-    this.abort(workflowId);
-  }
-
   send(exchangePath = this.config.queueRoutes.connect, headers = {}, message = {}) {
     return this.client && this.client.send.apply(this.client, arguments);
   }
@@ -93,15 +87,13 @@ class ServerCommunication {
   connectToRabbit() {
     let workflowId = this.WorkflowService.getWorkflow().id;
 
-    this.status = 'rb_pending';
+    this.subscribeToRabbit(workflowId);
     this.send(this.config.queueRoutes.connect, {}, JSON.stringify({
       messageType: 'connect',
       messageBody: {
         workflowId
       }
     }));
-
-    this.subscribeToRabbit(workflowId);
   }
 
   launch(workflowId, workflow, nodesToExecute) {
@@ -116,10 +108,6 @@ class ServerCommunication {
         }
       })
     );
-
-    if (this.status === 'rb_pending') {
-      this.subscribeToRabbit(workflowId);
-    }
   }
 
   abort(workflowId) {
@@ -140,6 +128,11 @@ class ServerCommunication {
     this.status = 'ws_pending';
     this.socket = new SockJS(`${this.config.socketConnectionHost}stomp`);
     this.client = Stomp.over(this.socket);
+
+    this.client.heartbeat = {
+      incoming: 0,
+      outgoing: 0
+    };
 
     this.client.connect(
       user,
