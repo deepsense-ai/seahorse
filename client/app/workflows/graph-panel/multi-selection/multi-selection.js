@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function MultiSelection(GraphNode, MouseEvent, WorkflowService,
+function MultiSelection(GraphNode, MouseEvent, WorkflowService, MultiSelectionService,
   $document, $timeout, $rootScope,
   debounce) {
   return {
@@ -60,10 +60,8 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
           height: element[0].clientHeight
         };
         nodeDimensions = nodeDimensions || {
-          width: $(element[0].querySelector('[id^="node-"]'))
-            .outerWidth(true),
-          height: $(element[0].querySelector('[id^="node-"]'))
-            .outerHeight(true)
+          width: $(element[0].querySelector('[id^="node-"]')).outerWidth(true),
+          height: $(element[0].querySelector('[id^="node-"]')).outerHeight(true)
         };
 
         unselectNodes();
@@ -75,15 +73,19 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
           'left': startPoint.x
         });
 
-        $selectionElement.stop()
-          .fadeIn(200);
+        $selectionElement.stop().fadeIn(200);
 
         $document.on('mousemove', paint);
 
         event.preventDefault();
       };
 
-      var endPainting = function endPainting(event) {
+      let endPainting = function endPainting(event) {
+
+        MultiSelectionService.setSelectedNodes(_.map(inSelection, (node) => {
+          return (node.id).slice(5);
+        }));
+
         element.removeClass('has-cursor-crosshair');
 
         $selectionElement.fadeOut(100, () => {
@@ -95,7 +97,6 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
           });
         });
 
-        // TODO is it leak of memory?
         workflowNodes = null;
 
         $document.off('mousemove', paint);

@@ -20,14 +20,10 @@ const inputStyle = {
   maxConnections: 1
 };
 
-import {
-  GraphPanelRendererBase
-}
-from './graph-panel-renderer-base.js';
-import {
-  GraphPanelStyler
-}
-from './graph-panel-styler.js';
+/* beautify preserve:start */
+import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
+import { GraphPanelStyler} from './graph-panel-styler.js';
+/* beautify preserve:end */
 
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
@@ -123,6 +119,12 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     jsPlumb.remove(node);
   };
 
+  that.removeNodes = (nodes) => {
+    _.each(nodes, (node) => {
+      that.removeNode(node);
+    });
+  };
+
   that.renderPorts = function renderPorts() {
     let nodes = WorkflowService.getWorkflow()
       .getNodes();
@@ -185,9 +187,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         hoverClass: GraphPanelStyler.getOutputEndpointDefaultHoverCssClass(internal.renderMode, hasReport)
       });
 
-      /*
-       * The editor render mode enables users to add edges, whereas the report mode forbids them from adding new edges.
-       */
       if (internal.renderMode === GraphPanelRendererBase.REPORT_RENDER_MODE) {
         outputStyle.isSource = false;
       }
