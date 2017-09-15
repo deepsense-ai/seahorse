@@ -66,7 +66,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
           this.stopEditing();
         } else {
           ConfirmationModalService.showModal({
-            message: 'Are you sure you want to stop executor? Cached reports will disappear.'
+            message: 'Are you sure you want to stop executor? Cached results will disappear.'
           }).then(() => this.stopEditing());
         }
       });
