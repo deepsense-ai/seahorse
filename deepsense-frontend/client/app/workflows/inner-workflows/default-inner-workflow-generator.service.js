@@ -59,10 +59,10 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
           }
         },
         'variables': {}
-      }
+      };
     }
 
-  }
+  };
 
 }
 

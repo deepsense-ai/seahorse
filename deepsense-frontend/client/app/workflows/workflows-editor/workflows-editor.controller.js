@@ -103,7 +103,7 @@ class WorkflowsEditorController {
         this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
           zoomId: this.zoomId
         });
-      }, 10)
+      }, 10);
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
@@ -190,7 +190,7 @@ class WorkflowsEditorController {
         let positionY = offsetY || 0;
         let elementOffsetX = 100;
         let elementOffsetY = 30;
-        let node = this.GraphNodesService.createNodeAndAdd(this.getWorkflow(), {
+        this.GraphNodesService.createNodeAndAdd(this.getWorkflow(), {
           operation: operation,
           // TODO check if we reached right and bottom end of flowchart box,
           x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
@@ -221,12 +221,12 @@ class WorkflowsEditorController {
         let selectedNodeIds = this.MultiSelectionService.getSelectedNodeIds();
         let sinkOrSourceNodeIds = _.filter(selectedNodeIds, (nodeId) => {
           let node = this.getWorkflow().getNodeById(nodeId);
-          return this._isSinkOrSource(node)
+          return this._isSinkOrSource(node);
         });
         if (sinkOrSourceNodeIds.length > 0) {
-          let msg = "Cannot delete source nor sink nodes"
+          let msg = 'Cannot delete source nor sink nodes';
           this.NotificationService.showError({
-            title: "Illegal node deletion",
+            title: 'Illegal node deletion',
             message: msg
           }, msg);
         }

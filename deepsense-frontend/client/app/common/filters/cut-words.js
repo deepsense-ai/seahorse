@@ -2,7 +2,9 @@
 
 function cut() {
   return function(value, wordwise, max, tail) {
-    if (!value) return '';
+    if (!value) {
+      return '';
+    }
 
     max = parseInt(max, 10);
     if (!max || value.length <= max) {
@@ -12,7 +14,7 @@ function cut() {
     value = value.substr(0, max);
     if (wordwise) {
       var lastspace = value.lastIndexOf(' ');
-      if (lastspace != -1) {
+      if (lastspace !== -1) {
         value = value.substr(0, lastspace);
       }
     }

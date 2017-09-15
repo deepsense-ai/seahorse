@@ -1,5 +1,8 @@
 'use strict';
 
+// TODO Remove jshint ignore and refactor code.
+/* jshint ignore:start */
+
 const connectorPaintStyleDefault = {
   lineWidth: 2,
   outlineColor: 'white',
@@ -358,3 +361,5 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 exports.inject = function(module) {
   module.service('GraphPanelRendererService', GraphPanelRendererService);
 };
+
+/* jshint ignore:end */

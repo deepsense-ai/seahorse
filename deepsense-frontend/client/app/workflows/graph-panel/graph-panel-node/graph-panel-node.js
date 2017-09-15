@@ -22,7 +22,7 @@ function GraphNodeView($rootScope, GraphNode) {
         let sourceId = 'f94b04d7-ec34-42f7-8100-93fe235c89f8';
         let sinkId = 'e652238f-7415-4da6-95c6-ee33808561b2';
         return $scope.node.operationId === sourceId || $scope.node.operationId === sinkId;
-      }
+      };
 
     },
     link: function(scope, element) {
