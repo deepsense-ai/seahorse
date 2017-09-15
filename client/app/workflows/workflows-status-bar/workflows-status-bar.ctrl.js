@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowStatusBarController($scope, UserService, ClusterModalService, DataframeLibraryModalService, SessionStatus,
+function WorkflowStatusBarController($scope, UserService, ClusterModalService, LibraryModalService, SessionStatus,
                                      SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService) {
 
   const vm = this;
@@ -76,7 +76,7 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
   }
 
   function openLibrary() {
-    DataframeLibraryModalService.openLibraryModal();
+    LibraryModalService.openLibraryModal();
   }
 
 }

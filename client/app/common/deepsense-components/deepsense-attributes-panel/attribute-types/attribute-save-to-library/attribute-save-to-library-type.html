@@ -1,11 +1,11 @@
 <div class="save-to-library">
-  <label class="custom-checkbox">
-    <input type="checkbox" ng-model="placeInLibrary">
+  <div class="link" ng-click="openLibrary()">
+    <i class="fa fa-list icon"></i>
     <span>Place in library</span>
-  </label>
+  </div>
   <input type="text" class="form-control"
          ng-class="{ 'invalid-param-value': !parameter.validate() }"
-         ng-model="file.name"
+         ng-model="parameter.value"
          placeholder="{{ parameter.defaultValue }}"
   />
 </div>
