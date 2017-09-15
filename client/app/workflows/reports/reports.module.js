@@ -16,6 +16,7 @@ require('./report-dataframe/report-dataframe.js').inject(reports);
 require('./report-cross-validate-regressor/report-cross-validate-regressor.js').inject(reports);
 require('./report-evaluate-scoring/report-evaluate-scoring.js').inject(reports);
 require('./report-evaluate-classification/report-evaluate-classification.js').inject(reports);
+require('./report-default/report-default.js').inject(reports);
 
 require('./report-table/report-table-header/report-table-header.js').inject(reports);
 require('./report-table/report-table-body/report-table-body.js').inject(reports);
