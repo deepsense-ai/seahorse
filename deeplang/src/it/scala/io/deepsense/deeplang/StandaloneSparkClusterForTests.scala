@@ -42,6 +42,9 @@ object StandaloneSparkClusterForTests {
       ))
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
+      .set("spark.executor.cores", "1")
+      .set("spark.cores.max", "2")
+      .set("spark.executor.memory", "512m")
 
     val sparkContext = new SparkContext(sparkConf)
     val sparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
