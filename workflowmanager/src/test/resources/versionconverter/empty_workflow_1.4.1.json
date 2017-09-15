@@ -1,0 +1,23 @@
+{
+  "workflow": {
+    "nodes": [],
+    "connections": []
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Empty workflow 1.4.1-SNAPSHOT",
+      "description": ""
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "7a5e126e-d980-4803-8598-11bc82cd2f8c",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.4.1"
+  }
+}

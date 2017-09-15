@@ -12,6 +12,7 @@ import org.scalatest.{Matchers, WordSpec}
 import spray.json._
 
 import io.deepsense.api.datasourcemanager.model.{Datasource, DatasourceParams}
+import io.deepsense.commons.utils.Version
 
 class VersionConverterSpec extends WordSpec with Matchers {
 
@@ -122,6 +123,19 @@ class VersionConverterSpec extends WordSpec with Matchers {
 
         workflowDatasourceIds should contain theSameElementsAs datasourceIds
 
+      }
+    }
+
+  }
+
+
+  "WorkflowMetadataConverter" should {
+    "convert 1.4 workflow to 1.5" in {
+      new Setup {
+        override val workflowResourceName = "versionconverter/empty_workflow_1.4.1.json"
+        val convertedWorkflow = WorkflowMetadataConverter.setWorkflowVersion(workflowJson, Version(1, 5, 0))
+        val metadata = convertedWorkflow.asJsObject.fields("metadata").asJsObject
+        metadata.fields("apiVersion").asInstanceOf[JsString].value shouldBe "1.5.0"
       }
     }
   }

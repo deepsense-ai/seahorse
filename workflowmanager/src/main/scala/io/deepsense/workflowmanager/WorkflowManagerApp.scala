@@ -6,8 +6,8 @@ package io.deepsense.workflowmanager
 
 import java.net.URL
 
-import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 import akka.actor.ActorSystem
 import com.google.inject.name.Names
@@ -16,7 +16,7 @@ import com.google.inject.{Guice, Key, Stage}
 import io.deepsense.commons.rest.RestServer
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sparkutils.AkkaUtils
-import io.deepsense.workflowmanager.migration.Migration1_3To1_4
+import io.deepsense.workflowmanager.migration.{Migration1_3To1_4, Migration1_4To1_5, SeahorseDbMigration}
 import io.deepsense.workflowmanager.storage.WorkflowStorage
 
 /**
@@ -33,16 +33,18 @@ object WorkflowManagerApp extends App with Logging {
     val actorSystem = injector.getInstance(classOf[ActorSystem])
     implicit val ec: ExecutionContext = actorSystem.dispatcher
 
-    val migration = Migration1_3To1_4(new URL(
-      injector.getInstance(Key.get(classOf[String], Names.named("datasource-server.address")))),
-      injector.getInstance(classOf[WorkflowStorage]),
-      actorSystem
-    )
+    val datasourceUrl = new URL(injector.getInstance(Key.get(classOf[String],
+      Names.named("datasource-server.address"))))
 
-    val migrationFut = for {
-      _ <- migration.waitForDatasourceManager()
-      _ <- migration.migrate()
-    } yield {}
+
+    val migrationFut =
+    for {
+      _ <- SeahorseDbMigration.waitForDatasourceManager(datasourceUrl, actorSystem)
+      _ <- SeahorseDbMigration.migrate(
+        datasourceUrl,
+        injector.getInstance(classOf[WorkflowStorage]),
+        actorSystem)
+    } yield ()
 
     migrationFut.onFailure {
       case t => logger.error("Migration 1.3 to 1.4 failed", t)
@@ -57,4 +59,5 @@ object WorkflowManagerApp extends App with Logging {
       logger.error("Application context creation failed", e)
       System.exit(1)
   }
+
 }
