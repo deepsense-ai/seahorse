@@ -100,3 +100,8 @@ case class RegexValidator(
  * Validator which accepts all strings.
  */
 class AcceptAllRegexValidator() extends RegexValidator(".*".r)
+
+/**
+ * Validator which accepts a single character.
+ */
+class SingleCharRegexValidator() extends RegexValidator(".".r)

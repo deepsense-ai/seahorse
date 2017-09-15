@@ -43,10 +43,10 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
   override val name: String = "Write DataFrame"
 
   val columnSeparatorParameter = StringParameter(
-    description = "String separating fields in a row",
+    description = "Character separating fields in a row",
     default = Some(","),
     required = true,
-    validator = RegexValidator(".".r)
+    validator = new SingleCharRegexValidator
   )
 
   val writeHeaderParameter = BooleanParameter(

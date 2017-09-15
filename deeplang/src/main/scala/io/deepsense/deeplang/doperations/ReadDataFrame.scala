@@ -24,6 +24,7 @@ import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
 import scala.reflect.runtime.{universe => ru}
 
+import au.com.bytecode.opencsv.CSVParser
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.io.{LongWritable, Text}
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat
@@ -173,7 +174,7 @@ trait ReadDataFrameParameters {
     "Column separator",
     default = Some(","),
     required = true,
-    validator = new AcceptAllRegexValidator)
+    validator = new SingleCharRegexValidator)
 
   val csvNamesIncludedParameter = BooleanParameter(
     "Does the first row include column names?",
@@ -343,7 +344,10 @@ object ReadDataFrame {
    * For example, line "a,b,\"x,y,z\"" will be split into ["a","b","\"x,y,z\""].
    */
   private def splitLinesIntoColumns(lines: RDD[String], separator: String) = {
-    lines.map{ line => line.split(separator + """(?=([^"]*"[^"]*")*[^"]*$)""".r, -1).toSeq }
+    lines.map(
+      new CSVParser(separator(0), CSVParser.NULL_CHARACTER, CSVParser.NULL_CHARACTER)
+        .parseLine(_).toSeq
+    )
   }
 
   private def skipFirstLine[T : ClassTag](rdd: RDD[T]): RDD[T] =
