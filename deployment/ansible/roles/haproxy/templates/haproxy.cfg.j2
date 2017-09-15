@@ -25,6 +25,8 @@ frontend seahorse
   acl acl_editor hdr(Host) -i editor.deepsense.io editor.seahorse.deepsense.io
   acl acl_documentation hdr(Host) -i seahorse.deepsense.io
   acl acl_aws_health_check hdr_beg(User-Agent) -i Amazon\ Route\ 53\ Health\ Check\ Service
+  acl acl_workflow_manager path_beg /v1/
+  acl acl_workflow_manager path /version
   acl too_fast sc0_http_req_rate() gt {{static_allowed_http_req_rate_per_second_per_ip}}
   acl block_ip sc0_inc_gpc0 gt 0
   acl blocked_ip sc0_get_gpc0 gt 0
@@ -33,34 +35,16 @@ frontend seahorse
 
   tcp-request connection track-sc0 src
   tcp-request connection reject if blocked_ip
-  http-request tarpit if too_fast block_ip
+  http-request tarpit if !acl_workflow_manager too_fast block_ip
 
   http-request set-header User-Agent Amazon\ Route\ 53\ Health\ Check\ Service if acl_aws_health_check
 
   redirect scheme https code 301 if !{ ssl_fc }
 
+  use_backend workflow_manager if acl_workflow_manager
   use_backend editor if acl_editor
   use_backend documentation if acl_documentation
   default_backend documentation
-
-frontend workflow_manager
-  log global
-  bind 0.0.0.0:{{ds_wm_public_port}} ssl crt /usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem crt /usr/local/etc/haproxy/deepsense.io.pem
-
-  acl acl_aws_health_check hdr_beg(User-Agent) -i Amazon\ Route\ 53\ Health\ Check\ Service
-  acl too_fast sc0_http_req_rate() gt {{wm_allowed_http_req_rate_per_second_per_ip}}
-  acl block_ip sc0_inc_gpc0 gt 0
-  acl blocked_ip sc0_get_gpc0 gt 0
-
-  stick-table type ip size 1m expire {{wm_ip_block_period_in_seconds}}s store gpc0,http_req_rate(1s)
-
-  tcp-request connection track-sc0 src
-  tcp-request connection reject if blocked_ip
-  http-request tarpit if too_fast block_ip
-
-  http-request set-header User-Agent Amazon\ Route\ 53\ Health\ Check\ Service if acl_aws_health_check
-
-  default_backend workflow_manager
 
 backend editor
   server ds_editor {{ds_editor_ip}}:{{ds_editor_port}} check
@@ -71,6 +55,16 @@ backend documentation
 backend workflow_manager
   option httpchk GET / HTTP/1.1\r\nHost:\ editor.seahorse.deepsense.io
   http-check expect string Workflow\ Manager
+  acl too_fast sc1_http_req_rate() gt {{wm_allowed_http_req_rate_per_second_per_ip}}
+  acl block_ip sc1_inc_gpc0 gt 0
+  acl blocked_ip sc1_get_gpc0 gt 0
+
+  stick-table type ip size 1m expire 60s store gpc0,http_req_rate(1s)
+
+  tcp-request content track-sc1 src
+  tcp-request content reject if blocked_ip
+  http-request tarpit if too_fast block_ip
+
   server ds_wm {{ds_wm_ip}}:{{ds_wm_port}} check
 
 listen stats
