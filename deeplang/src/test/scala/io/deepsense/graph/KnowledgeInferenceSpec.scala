@@ -61,7 +61,7 @@ class KnowledgeInferenceSpec
             nodeInferenceMockShouldInferResultForNode(node, result)
         }
 
-        val graphKnowledge = graph.inferKnowledge(mock[InferContext])
+        val graphKnowledge = graph.inferKnowledge(mock[InferContext], GraphKnowledge())
         val graphKnowledgeExpected = topologicallySortedNodes.map(_.id)
           .zip(nodeInferenceResultForNodes).toMap
         graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
@@ -112,7 +112,7 @@ class KnowledgeInferenceSpec
             topologicallySortedMock,
             nodeInferenceMock
           )
-          graph.inferKnowledge(mock[InferContext])
+          graph.inferKnowledge(mock[InferContext], GraphKnowledge())
         }
         ()
       }

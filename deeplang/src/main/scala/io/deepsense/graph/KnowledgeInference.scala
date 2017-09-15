@@ -33,7 +33,7 @@ trait KnowledgeInference {
    */
   def inferKnowledge(
       context: InferContext,
-      initialKnowledge: GraphKnowledge = GraphKnowledge()): GraphKnowledge = {
+      initialKnowledge: GraphKnowledge): GraphKnowledge = {
 
     val sorted = topologicallySorted.getOrElse(throw CyclicGraphException())
     sorted

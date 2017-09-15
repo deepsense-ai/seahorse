@@ -160,7 +160,8 @@ class DefaultStateInferrer(
   extends StateInferrer {
 
   override def inferState(execution: Execution): InferredState = {
-    val knowledge = execution.graph.inferKnowledge(executionContext.inferContext)
+    val knowledge = execution.graph.inferKnowledge(
+      executionContext.inferContext, execution.graph.memorizedKnowledge)
     InferredState(workflowId, knowledge, execution.executionReport.statesOnly)
   }
 }
