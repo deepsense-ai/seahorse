@@ -264,13 +264,13 @@ p.footer-text span {
     width: 100%;
   }
 }
-@media (max-width: 900px) {
+@media (max-width: 920px) {
   .nav>li>a {
     padding: 15px 9px !important;
     font-size: 12px;
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   div#navbar {
     margin-top: 19px;
     background-color: #fff;
@@ -558,4 +558,60 @@ a code {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
+}
+
+/* select version */
+
+.select-version {
+  position: relative;
+  display: inline-block;
+  font-size: 11px;
+}
+
+.select-version::after {
+  content: " ";
+  top: calc(50% - 3px);
+  right: 5px;
+  position: absolute;
+  pointer-events: none;
+  display: none;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 7px solid #fff;
+}
+
+select {
+  border: 1px solid #ccc;
+  background-color: #01bbf2;
+  color: #fff;
+  outline: none;
+  cursor: pointer;
+  display: block;
+  padding: 0px 2px;
+}
+
+select option {
+  background-color: #f2f2f2;
+  color: #4d4d4d;
+  outline: none;
+  cursor: pointer;
+}
+
+select option:checked {
+  color: #0197c8;
+}
+
+@supports ( -webkit-appearance: none) or ( appearance: none) or ( ( -moz-appearance: none) and ( mask-type: alpha)) {
+  .select-version::after {
+    display: block;
+  }
+  select {
+    padding-right: 16px;
+    border: 1px solid transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
 }
