@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-/* TODO remove categoricals
 package io.deepsense.deeplang.doperables.dataframe.types
 
-import java.lang.{Boolean => JavaBoolean, Double => JavaDouble, Integer => JavaInteger}
+import java.lang.{Boolean => JavaBoolean, Double => JavaDouble}
 import java.sql.Timestamp
 
 import org.apache.spark.sql.UserDefinedFunction
@@ -25,28 +24,14 @@ import org.apache.spark.sql.functions._
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType._
 import io.deepsense.commons.utils.DoubleUtils
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
 import io.deepsense.deeplang.doperations.exceptions.TypeConversionException
-import ColumnType._
 
 object Conversions {
 
   def nullOr[A <: AnyRef, B](f: A => B)(value: A): B =
     if (value == null) null.asInstanceOf[B] else f(value)
-
-  def generateCategoricalConversion(
-      mapping: CategoriesMapping,
-      targetType: ColumnType.ColumnType): UserDefinedFunction = {
-    val mapToString = categoricalToString(mapping) _
-    if (targetType == ColumnType.numeric) {
-      udf[java.lang.Double, java.lang.Integer](nullOr(mapToString.andThen(stringToDouble)))
-    } else if (targetType == ColumnType.string) {
-      udf[String, java.lang.Integer](nullOr(mapToString))
-    } else {
-      ???
-    }
-  }
 
   // (from, to) -> UDF
   val UdfConverters: Map[(ColumnType, ColumnType), UserDefinedFunction] = Map(
@@ -75,9 +60,6 @@ object Conversions {
       DateTimeConverter.toString(DateTimeConverter.fromMillis(x.getTime))
     }(t)
 
-  def categoricalToString(mapping: CategoriesMapping)(c: JavaInteger): String =
-    nullOr[JavaInteger, String](mapping.idToValue(_))(c)
-
   def booleanToDouble(b: JavaBoolean): JavaDouble =
     nullOr[JavaBoolean, JavaDouble](x => if (x) 1.0 else 0.0)(b)
 
@@ -100,4 +82,3 @@ object Conversions {
     case b: JavaBoolean => booleanToString(b)
   }
 }
-*/
