@@ -7,7 +7,7 @@ package io.deepsense.commons.json
 import spray.json._
 
 /**
- * Utility class that produces JsonFormat for enumeration
+ * Utility that produces JsonFormat for enumeration.
  */
 object EnumerationSerializer {
   def jsonEnumFormat[T <: Enumeration](enumeration: T): JsonFormat[T#Value] = {

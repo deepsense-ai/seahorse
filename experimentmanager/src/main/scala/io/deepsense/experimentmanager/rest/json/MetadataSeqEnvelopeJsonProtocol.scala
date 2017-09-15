@@ -11,8 +11,10 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 import AbstractMetadataJsonProtocol._
 
-trait MetadataSeqEnvelopeJsonProtocol extends DefaultJsonProtocol
-    with SprayJsonSupport {
+trait MetadataSeqEnvelopeJsonProtocol
+  extends DefaultJsonProtocol
+  with SprayJsonSupport {
+
   val metadataEnvelopeLabel = "metadata"
   implicit val operationsEnvelopeWriter =
     new EnvelopeJsonWriter[Seq[Option[AbstractMetadata]]](metadataEnvelopeLabel)

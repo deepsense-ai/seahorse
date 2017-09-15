@@ -4,45 +4,73 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import io.deepsense.commons.json.EnumerationSerializer
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
-import io.deepsense.deeplang.parameters.ColumnType
 import spray.httpx.SprayJsonSupport
 import spray.json._
-import spray.json.DefaultJsonProtocol._
 
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
+import io.deepsense.deeplang.parameters.ColumnType
+import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import io.deepsense.commons.json.EnumerationSerializer
+
+trait ColumnTypeJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+
+}
+
+trait CategoriesMappingJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit object CategoriesMappingFormat extends JsonFormat[CategoriesMapping] {
+    override def write(cm: CategoriesMapping): JsValue = cm.valueToId.keys.toVector.toJson
+
+    override def read(value: JsValue): CategoriesMapping =
+      CategoriesMapping(value.convertTo[Seq[String]])
+  }
+}
 
 trait ColumnMetadataJsonProtocol
   extends DefaultJsonProtocol
   with SprayJsonSupport
+  with CategoriesMappingJsonProtocol
   with NullOptions {
-  implicit val columnTypeFormat = EnumerationSerializer.jsonEnumFormat(ColumnType)
-  implicit val columnMetadataFormat = jsonFormat3(ColumnMetadata.apply)
-}
 
-trait CategoriesMappingJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit object CategoriesMappingFormat extends RootJsonFormat[CategoriesMapping] {
-    override def write(cm: CategoriesMapping): JsValue =
-      JsArray(cm.valueToId.keys.map(JsString(_)).toVector)
-    override def read(value: JsValue): CategoriesMapping = {
-      value match {
-        case jsArray: JsArray => CategoriesMapping(jsArray.convertTo[List[String]])
-        case _ => throw new DeserializationException("JsArray expected")
+  private val ColumnTypeField = "columnType"
+
+  implicit val columnTypeFormat = EnumerationSerializer.jsonEnumFormat(ColumnType)
+
+  implicit val commonColumnMetadataFormat = jsonFormat3(CommonColumnMetadata.apply)
+
+
+  implicit object CategoricalColumnMetadataFormat extends JsonFormat[CategoricalColumnMetadata] {
+    private val defaultFormat = jsonFormat3(CategoricalColumnMetadata.apply)
+    override def write(cm: CategoricalColumnMetadata): JsValue = JsObject(
+      cm.toJson(defaultFormat).asJsObject.fields + (ColumnTypeField -> cm.columnType.toJson))
+
+    override def read(json: JsValue): CategoricalColumnMetadata =
+      json.convertTo[CategoricalColumnMetadata](defaultFormat)
+  }
+
+  implicit object ColumnMetadataFormat extends JsonFormat[ColumnMetadata] {
+    override def write(cm: ColumnMetadata): JsValue = cm match {
+      case commonCm: CommonColumnMetadata => commonCm.toJson
+      case categoricalCm: CategoricalColumnMetadata => categoricalCm.toJson
+    }
+
+    override def read(json: JsValue): ColumnMetadata = {
+      val categoricalType = ColumnType.categorical.toString
+      json.asJsObject.fields(ColumnTypeField) match {
+        case JsNull => json.convertTo[CommonColumnMetadata]
+        case notNullJson => notNullJson.convertTo[String] match {
+          case `categoricalType` => json.convertTo[CategoricalColumnMetadata]
+          case _ => json.convertTo[CommonColumnMetadata]
+        }
       }
     }
   }
 }
 
-/**
- * Serialization protocol for metadata inference.
- * Does not support read.
- */
 trait DataFrameMetadataJsonProtocol
     extends DefaultJsonProtocol
     with SprayJsonSupport
-    with ColumnMetadataJsonProtocol
-    with CategoriesMappingJsonProtocol {
-  implicit val dataFrameMetadataFormat = jsonFormat4(DataFrameMetadata.apply)
+    with ColumnMetadataJsonProtocol {
+  implicit val dataFrameMetadataFormat = jsonFormat3(DataFrameMetadata.apply)
 }
 
 object DataFrameMetadataJsonProtocol extends DataFrameMetadataJsonProtocol

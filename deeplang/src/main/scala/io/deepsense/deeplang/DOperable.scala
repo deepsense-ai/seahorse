@@ -58,12 +58,21 @@ object DOperable {
     final def serializeToJson: JsValue = wrap(getClass.getSimpleName, _serializeToJson)
 
     /**
-     * This method should be overriden by this.toJson in subclasses.
+     * This method should be overridden by this.toJson in subclasses.
      * The exact format of subclass' JSON should be defined in a separate JsonProtocol class.
      */
     protected def _serializeToJson: JsValue
 
-    private def wrap(metadataType: String, content: JsValue): JsValue =
-      JsObject("type" -> JsString(metadataType), "content" -> content)
+    private def wrap(metadataType: String, content: JsValue): JsValue = {
+      import AbstractMetadata._
+      JsObject(TypeField -> JsString(metadataType), ContentField -> content)
+    }
+  }
+
+  object AbstractMetadata {
+    val TypeField = "type"
+    val ContentField = "content"
+
+    def unwrap(json: JsValue): JsValue = json.asJsObject.fields(ContentField)
   }
 }
