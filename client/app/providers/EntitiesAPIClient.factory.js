@@ -9,7 +9,7 @@
 /* @ngInject */
 function EntitiesAPIClientFactory(BaseAPIClient) {
   const PATH_ENTITIES = '/entities';
-  const PATH_RAPORT = '/raport';
+  const PATH_REPORT = '/report';
 
   function EntitiesAPIClient() {
     BaseAPIClient.call(this);
@@ -25,7 +25,7 @@ function EntitiesAPIClientFactory(BaseAPIClient) {
    * @return {Promise}
    */
   EntitiesAPIClient.prototype.getReport = function getReport(id) {
-    return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_ENTITIES + '/' + id + PATH_RAPORT);
+    return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_ENTITIES + '/' + id + PATH_REPORT);
   };
 
   return new EntitiesAPIClient();

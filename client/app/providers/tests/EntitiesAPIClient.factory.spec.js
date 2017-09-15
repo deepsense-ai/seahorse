@@ -34,7 +34,7 @@ describe('EntitiesAPIClient', () => {
         mockRequest;
 
     var id = 'test-01',
-        url = '/api/entities/' + id + '/raport',
+        url = '/api/entities/' + id + '/report',
         response = {'test': true};
 
     beforeEach(() => {
