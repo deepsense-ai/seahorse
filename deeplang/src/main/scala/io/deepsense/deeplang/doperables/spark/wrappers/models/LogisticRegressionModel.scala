@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression, LogisticRegressionModel => SparkLogisticRegressionModel}
 
 import io.deepsense.deeplang.doperables.SparkModelWrapper
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasThreshold, ProbabilisticClassifierParams}
 import io.deepsense.deeplang.params.Param
@@ -40,20 +40,20 @@ class LogisticRegressionModel
 
   override def report: Report = {
     val coefficients =
-      SummaryEntry(
+      SparkSummaryEntry(
         name = "coefficients",
-        value = model.coefficients.toString,
+        value = model.coefficients,
         description = "Model coefficients.")
 
     val summary = if (model.hasSummary) {
       List(
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "objective history",
-          value = model.summary.objectiveHistory.mkString("[", ", ", "]"),
+          value = model.summary.objectiveHistory,
           description = "objective function (scaled loss + regularization) at each iteration."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "total iterations",
-          value = model.summary.totalIterations.toString,
+          value = model.summary.totalIterations,
           description = "Number of training iterations until termination."))
     } else {
       Nil

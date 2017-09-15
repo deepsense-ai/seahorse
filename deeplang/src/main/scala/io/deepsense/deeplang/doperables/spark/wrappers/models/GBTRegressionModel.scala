@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.regression.{GBTRegressionModel => SparkGBTRegressionModel, GBTRegressor => SparkGBTRegressor}
 
 import io.deepsense.deeplang.doperables.SparkModelWrapper
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
 import io.deepsense.deeplang.params.Param
@@ -32,9 +32,9 @@ class GBTRegressionModel extends SparkModelWrapper[SparkGBTRegressionModel, Spar
   override def report: Report = {
     val summary =
       List(
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "number of features",
-          value = model.numFeatures.toString,
+          value = model.numFeatures,
           description = "Number of features."))
 
     super.report

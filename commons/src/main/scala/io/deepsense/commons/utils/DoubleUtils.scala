@@ -17,7 +17,7 @@
 package io.deepsense.commons.utils
 
 import java.math.RoundingMode
-import java.text.{DecimalFormatSymbols, DecimalFormat}
+import java.text.{DecimalFormat, DecimalFormatSymbols}
 import java.util.Locale
 
 object DoubleUtils {

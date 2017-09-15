@@ -19,10 +19,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.clustering.{KMeans => SparkKMeans, KMeansModel => SparkKMeansModel}
 
 import io.deepsense.deeplang.doperables.SparkModelWrapper
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.params.Param
-
 class KMeansModel extends SparkModelWrapper[SparkKMeansModel, SparkKMeans] {
 
   override val params: Array[Param[_]] = declareParams()
@@ -30,9 +29,9 @@ class KMeansModel extends SparkModelWrapper[SparkKMeansModel, SparkKMeans] {
   override def report: Report = {
     val summary =
       List(
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "cluster centers",
-          value = model.clusterCenters.mkString("[", ", ", "]"),
+          value = model.clusterCenters,
           description = "Cluster centers."))
 
     super.report

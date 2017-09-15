@@ -34,6 +34,7 @@ object CollectionExtensions {
         "Function f must be injective, otherwise we would override some key")
       mapEntries.toMap
     }
-  }
 
+    def humanReadable: String = seq.mkString("[", ", ", "]")
+  }
 }

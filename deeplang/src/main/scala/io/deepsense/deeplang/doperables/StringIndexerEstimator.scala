@@ -21,7 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.params.Param
 
@@ -55,9 +55,9 @@ class SingleStringIndexerModel
   override def report: Report = {
     val summary =
       List(
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "labels",
-          value = model.labels.mkString("[", ", ", "]"),
+          value = model.labels,
           description = "Ordered list of labels, corresponding to indices to be assigned."))
 
     super.report

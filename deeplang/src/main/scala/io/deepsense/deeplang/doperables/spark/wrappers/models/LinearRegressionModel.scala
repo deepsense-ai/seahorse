@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.regression.{LinearRegression => SparkLinearRegression, LinearRegressionModel => SparkLinearRegressionModel}
 
 import io.deepsense.deeplang.doperables.SparkModelWrapper
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.LinearRegressionParams
 import io.deepsense.deeplang.params.Param
@@ -44,64 +44,64 @@ class LinearRegressionModel
 
   override def report: Report = {
     val coefficients =
-      SummaryEntry(
+      SparkSummaryEntry(
         name = "coefficients",
-        value = model.coefficients.toString,
+        value = model.coefficients,
         description = "Model coefficients.")
 
     val summary = if (model.hasSummary) {
       List(
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "explained variance",
-          value = model.summary.explainedVariance.toString,
+          value = model.summary.explainedVariance,
           description = "Explained variance regression score."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "mean absolute error",
-          value = model.summary.meanAbsoluteError.toString,
+          value = model.summary.meanAbsoluteError,
           description = "Mean absolute error is a risk function corresponding to the " +
             "expected value of the absolute error loss or l1-norm loss."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "mean squared error",
-          value = model.summary.meanSquaredError.toString,
+          value = model.summary.meanSquaredError,
           description = "Mean squared error is a risk function corresponding to the " +
             "expected value of the squared error loss or quadratic loss."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "root mean squared error",
-          value = model.summary.rootMeanSquaredError.toString,
+          value = model.summary.rootMeanSquaredError,
           description = "Root mean squared error is defined as the square root " +
             "of the mean squared error."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "R^2^",
-          value = model.summary.r2.toString,
+          value = model.summary.r2,
           description = "R^2^ is the coefficient of determination."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "objective history",
-          value = model.summary.objectiveHistory.mkString("[", ", ", "]"),
+          value = model.summary.objectiveHistory,
           description = "objective function (scaled loss + regularization) at each iteration."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "total iterations",
-          value = model.summary.totalIterations.toString,
+          value = model.summary.totalIterations,
           description = "Number of training iterations until termination."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "number of instances",
-          value = model.summary.numInstances.toString,
+          value = model.summary.numInstances,
           description = "Number of instances in DataFrame predictions."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "deviance residuals",
-          value = model.summary.devianceResiduals.mkString("[", ", ", "]"),
+          value = model.summary.devianceResiduals,
           description = "The weighted residuals, the usual residuals " +
             "rescaled by the square root of the instance weights."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "coefficient standard errors",
-          value = model.summary.coefficientStandardErrors.mkString("[", ", ", "]"),
+          value = model.summary.coefficientStandardErrors,
           description = "Standard error of estimated coefficients and intercept."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "t-values",
-          value = model.summary.tValues.mkString("[", ", ", "]"),
+          value = model.summary.tValues,
           description = "T-statistic of estimated coefficients and intercept."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "p-values",
-          value = model.summary.pValues.mkString("[", ", ", "]"),
+          value = model.summary.pValues,
           description = "Two-sided p-value of estimated coefficients and intercept.")
       )
     } else {

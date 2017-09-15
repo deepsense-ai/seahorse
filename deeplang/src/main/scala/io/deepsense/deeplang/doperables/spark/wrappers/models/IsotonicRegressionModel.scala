@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.regression.{IsotonicRegression => SparkIsotonicRegression, IsotonicRegressionModel => SparkIsotonicRegressionModel}
 
 import io.deepsense.deeplang.doperables.SparkModelWrapper
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeatureIndexParam, PredictorParams}
 
@@ -36,13 +36,13 @@ class IsotonicRegressionModel
   override def report: Report = {
     val summary =
       List(
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "boundaries",
-          value = model.boundaries.toString,
+          value = model.boundaries,
           description = "Boundaries in increasing order for which predictions are known."),
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "predictions",
-          value = model.predictions.toString,
+          value = model.predictions,
           description = "Predictions associated with the boundaries at the same index, " +
             "monotone because of isotonic regression."))
     super.report

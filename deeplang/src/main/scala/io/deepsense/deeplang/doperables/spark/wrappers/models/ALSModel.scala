@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.recommendation.{ALS => SparkALS, ALSModel => SparkALSModel}
 
 import io.deepsense.deeplang.doperables.SparkModelWrapper
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasItemColumnParam, HasPredictionColumnCreatorParam, HasUserColumnParam}
 import io.deepsense.deeplang.params.Param
@@ -38,9 +38,9 @@ class ALSModel
   override def report: Report = {
     val summary =
       List(
-        SummaryEntry(
+        SparkSummaryEntry(
           name = "rank",
-          value = model.rank.toString,
+          value = model.rank,
           description = "Rank of the matrix factorization model."))
 
     super.report

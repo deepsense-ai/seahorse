@@ -20,8 +20,8 @@ import org.apache.spark.mllib.linalg.DenseMatrix
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.params.ParamMap
+import io.deepsense.deeplang.utils.SparkTypeConverter.sparkAnyToString
 import io.deepsense.reportlib.model._
-
 object CommonTablesGenerators {
 
   def params(params: ParamMap): Table = {
@@ -94,7 +94,7 @@ object CommonTablesGenerators {
     val values =
       (for (r <- Range(0, numRows)) yield
         (for (c <- Range(0, numCols)) yield {
-          val index = if (!matrix.isTransposed) r + numRows*c else c + numCols*r
+          val index = if (!matrix.isTransposed) r + numRows * c else c + numCols * r
           Some(matrix.values(index).toString)
         }).toList).toList
 
@@ -107,5 +107,18 @@ object CommonTablesGenerators {
       values = ReportUtils.shortenLongTableValues(values))
   }
 
-  case class SummaryEntry(name: String, value: String, description: String)
+  trait SummaryEntry {
+    def name: String
+    def value: String
+    def description: String
+  }
+
+  case class SparkSummaryEntry(name: String, value: String, description: String)
+    extends SummaryEntry
+
+  object SparkSummaryEntry {
+    def apply(name: String, value: Any, description: String = ""): SummaryEntry = {
+      SparkSummaryEntry(name, sparkAnyToString(value), description)
+    }
+  }
 }

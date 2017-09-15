@@ -21,7 +21,9 @@ import org.apache.spark.sql.Row
 import org.joda.time.{DateTime, LocalDate}
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.utils.CollectionExtensions.RichSeq
 import io.deepsense.commons.utils.DoubleUtils
+
 
 /**
  * Provides converters from java types returned by Spark.
@@ -75,6 +77,9 @@ object SparkTypeConverter {
 
   def sparkAnyToString(value: Any): String = {
     value match {
+      case vector: Vector => sparkAnyToString(vector.toArray)
+      case array: Array[_] => sparkAnyToString(array.toSeq)
+      case seq: Seq[_] => seq.map(sparkAnyToString).humanReadable
       case float: java.lang.Float => DoubleUtils.double2String(float.toDouble)
       case double: java.lang.Double => DoubleUtils.double2String(double)
       case decimal: java.math.BigDecimal => decimal.toPlainString
@@ -82,6 +87,7 @@ object SparkTypeConverter {
         DateTimeConverter.fromMillis(timestamp.getTime))
       case date: java.sql.Date => DateTimeConverter.toString(
         DateTimeConverter.fromMillis(date.getTime))
+      case string: String => string
       case other => other.toString
     }
   }
