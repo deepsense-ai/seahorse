@@ -90,7 +90,7 @@ trait DataFrameReportGenerator {
       List(List(Some(schema.fieldNames.length.toString), Some(dataFrameSize.toString))))
 
   /**
-   * Assumption that DataFrame is already projected to the interesting subset of columns
+   * Assumption that DataFrame is already filtered to the interesting subset of columns
    * (up to 100 columns).
    */
   private def columnsDistributions(

@@ -30,7 +30,7 @@ import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
-class ProjectColumnIntegSpec
+class FilterColumnsIntegSpec
   extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
   with Matchers {
@@ -50,22 +50,22 @@ class ProjectColumnIntegSpec
   val row3 = Seq(3, "str3", 30.0, new Timestamp(DateTime.now.getMillis), false)
   val data = Seq(row1, row2, row3)
 
-  "ProjectColumn" should {
+  "FilterColumns" should {
     "select correct columns based on the column selection" in {
-      val projected = projectColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.numeric))
+      val filtered = filterColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.numeric))
       val selectedIndices = Set(0, 1, 2, 4) // c b a z
       val expectedColumns = selectWithIndices[StructField](selectedIndices, columns)
       val expectedSchema = StructType(expectedColumns)
       val expectedData = data.map(r => selectWithIndices[Any](selectedIndices, r.toList))
       val expectedDataFrame = createDataFrame(expectedData.map(Row.fromSeq), expectedSchema)
-      assertDataFramesEqual(projected, expectedDataFrame)
+      assertDataFramesEqual(filtered, expectedDataFrame)
     }
 
     "throw an exception" when {
       "the columns selected by name does not exist" in {
         intercept[ColumnsDoNotExistException] {
           val nonExistingColumnName = "thisColumnDoesNotExist"
-          projectColumns(
+          filterColumns(
             Set(nonExistingColumnName),
             Set.empty,
             Set.empty)
@@ -75,7 +75,7 @@ class ProjectColumnIntegSpec
       "the columns selected by index does not exist" in {
         intercept[ColumnsDoNotExistException] {
           val nonExistingColumnIndex = 1000
-          projectColumns(
+          filterColumns(
             Set.empty,
             Set(nonExistingColumnIndex),
             Set.empty)
@@ -86,7 +86,7 @@ class ProjectColumnIntegSpec
 
     "produce an empty set" when {
       "selecting a type that does not exist" in {
-        val emptyDataFrame = projectColumns(
+        val emptyDataFrame = filterColumns(
           Set.empty,
           Set.empty,
           Set(ColumnType.categorical)
@@ -94,7 +94,7 @@ class ProjectColumnIntegSpec
         emptyDataFrame.sparkDataFrame.collectAsList() shouldBe empty
       }
       "selection is empty" in {
-        val emptyDataFrame = projectColumns(
+        val emptyDataFrame = filterColumns(
           Set.empty,
           Set.empty,
           Set.empty
@@ -104,7 +104,7 @@ class ProjectColumnIntegSpec
     }
   }
 
-  private def projectColumns(
+  private def filterColumns(
       names: Set[String],
       ids: Set[Int],
       types: Set[ColumnType]): DataFrame = {
@@ -115,8 +115,8 @@ class ProjectColumnIntegSpec
   private def operation(
       names: Set[String],
       ids: Set[Int],
-      types: Set[ColumnType]): ProjectColumns = {
-    val operation = new ProjectColumns
+      types: Set[ColumnType]): FilterColumns = {
+    val operation = new FilterColumns
     val valueParam = operation.parameters.getColumnSelectorParameter(operation.selectedColumns)
     valueParam.value = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(names),

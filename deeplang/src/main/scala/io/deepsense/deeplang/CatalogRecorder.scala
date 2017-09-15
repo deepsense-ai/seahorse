@@ -89,9 +89,9 @@ object CatalogRecorder {
       "One-hot encodes categorical columns of a DataFrame"
     )
 
-    catalog.registerDOperation[ProjectColumns](
+    catalog.registerDOperation[FilterColumns](
       DOperationCategories.DataManipulation,
-      "Projects selected columns of a DataFrame"
+      "Creates a DataFrame containing only selected columns"
     )
 
     catalog.registerDOperation[DecomposeDatetime](

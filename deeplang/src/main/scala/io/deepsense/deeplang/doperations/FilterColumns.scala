@@ -23,9 +23,9 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
+case class FilterColumns() extends DOperation1To1[DataFrame, DataFrame] {
 
-  override val name: String = "Project Columns"
+  override val name: String = "Filter Columns"
   override val id: Id = "96b28b7f-d54c-40d7-9076-839411793d20"
   val selectedColumns = "selected columns"
 
@@ -40,8 +40,8 @@ case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val columns = dataFrame.getColumnNames(parameters.getColumnSelection(selectedColumns).get)
     if (columns.nonEmpty) {
-      val projected = dataFrame.sparkDataFrame.select(columns.head, columns.tail: _*)
-      context.dataFrameBuilder.buildDataFrame(projected)
+      val filtered = dataFrame.sparkDataFrame.select(columns.head, columns.tail: _*)
+      context.dataFrameBuilder.buildDataFrame(filtered)
     } else {
       DataFrame.empty(context)
     }
@@ -53,15 +53,15 @@ case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
-object ProjectColumns extends ProjectColumns {
+object FilterColumns extends FilterColumns {
 
-  def apply(retainedColumns: Seq[String]): ProjectColumns = {
-    val projectColumnsOp = ProjectColumns()
-    projectColumnsOp.parameters.getColumnSelectorParameter(selectedColumns).value =
+  def apply(retainedColumns: Seq[String]): FilterColumns = {
+    val filterColumnsOp = FilterColumns()
+    filterColumnsOp.parameters.getColumnSelectorParameter(selectedColumns).value =
       Some(MultipleColumnSelection(
         Vector(NameColumnSelection(retainedColumns.toSet)),
         excluding = false
       ))
-    projectColumnsOp
+    filterColumnsOp
   }
 }

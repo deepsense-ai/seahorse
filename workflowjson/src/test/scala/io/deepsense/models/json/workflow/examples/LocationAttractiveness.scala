@@ -88,7 +88,7 @@ object LocationAttractiveness extends WorkflowCreator {
     "log_review_count1",
     "dist_SF_LA")
 
-  val selectImportantFeatures = ProjectColumns(importantColumns)
+  val selectImportantFeatures = FilterColumns(importantColumns)
   val writeDataFrame: WriteDataFrame = WriteDataFrame(
     (ColumnSeparator.COMMA, None),
     true,
