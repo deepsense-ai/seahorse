@@ -30,6 +30,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.communication.message.global.{ReadyJsonProtocol, Ready}
 import io.deepsense.workflowexecutor.communication.message.notebook.{Address, PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
@@ -54,7 +55,7 @@ class ProtocolJsonSerializerSpec
         EntitiesMap(
           Map[Entity.Id, DOperable](
             Entity.Id.randomId -> new ColumnsFilterer),
-          Map(Entity.Id.randomId -> ReportContent("whatever", List.empty))),
+          Map(Entity.Id.randomId -> ReportContentTestFactory.someReport)),
         None)
 
       protocolJsonSerializer.serializeMessage(executionStatus) shouldBe
@@ -101,4 +102,5 @@ class ProtocolJsonSerializerSpec
       "messageBody" -> jsonObject
     ).compactPrint.getBytes(Charset.forName("UTF-8"))
   }
+
 }

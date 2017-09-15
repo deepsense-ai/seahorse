@@ -31,6 +31,7 @@ import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Completed, NodeStatus, Queued}
 import io.deepsense.models.workflows.{EntitiesMap, NodeState, NodeStateWithResults}
 import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 
 class ExecutionSpec
   extends StandardSpec
@@ -198,7 +199,7 @@ class ExecutionSpec
       val idCResults = results(idC)
       val idEResults = results(idE)
       def reports(ids: Seq[Entity.Id]): Map[Entity.Id, ReportContent] =
-        ids.map(_ -> ReportContent("{}")).toMap
+        ids.map(_ -> ReportContentTestFactory.someReport).toMap
       def dOperables(ids: Seq[Entity.Id]): Map[Entity.Id, DOperable] =
         ids.map(_ -> mock[DOperable]).toMap
       val finished = eStarted
@@ -388,7 +389,8 @@ class ExecutionSpec
 
   private def nodeCompletedIdState(entityId: Entity.Id): NodeStateWithResults = {
     val dOperables: Map[Entity.Id, DataFrame] = Map(entityId -> mock[DataFrame])
-    val reports: Map[Entity.Id, ReportContent] = Map(entityId -> ReportContent("whatever"))
+    val reports: Map[Entity.Id, ReportContent] = Map(
+      entityId -> ReportContentTestFactory.someReport)
     NodeStateWithResults(
       NodeState(
         nodeCompleted.copy(results = Seq(entityId)),

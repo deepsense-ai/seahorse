@@ -41,6 +41,7 @@ import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Aborted, NodeStatus, Queued, Running}
 import io.deepsense.models.workflows.{EntitiesMap, Workflow, _}
 import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWorkflow, SaveState, SaveWorkflow}
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
@@ -337,7 +338,7 @@ class WorkflowExecutorActorSpec
 
   def createNodeCompletedMessage(nodeId: Id): (NodeCompleted, EntitiesMap) = {
     val eId: Entity.Id = Entity.Id.randomId
-    val reports: Map[Entity.Id, ReportContent] = Map(eId -> ReportContent("t", List()))
+    val reports: Map[Entity.Id, ReportContent] = Map(eId -> ReportContentTestFactory.someReport)
     val dOperables: Map[Entity.Id, DOperable] = Map(eId -> mock[DOperable])
     val nodeCompletedMessage = NodeCompleted(
       nodeId,
@@ -617,13 +618,6 @@ class WorkflowExecutorActorSpec
     statefulGraph
   }
 
-  private def simpleRunningExecution(
-    nodesIds: IndexedSeq[Node.Id],
-    runningNode: Option[Node.Id]): (DeeplangGraph, RunningExecution) = {
-    val statefulGraph: StatefulGraph = linearGraph(nodesIds, runningNode)
-    (statefulGraph.directedGraph, RunningExecution(statefulGraph, statefulGraph, nodesIds.toSet))
-  }
-
   private def mockDOperation(): DOperation = {
     val operation = mock[DOperation]
     when(operation.inArity).thenReturn(1)
@@ -638,7 +632,7 @@ class WorkflowExecutorActorSpec
     NodeStateWithResults(
       NodeState(
         nodestate.Completed(now.minusHours(1), now, Seq(entityId)),
-        Some(EntitiesMap(dOperables, Map(entityId -> ReportContent("test"))))),
+        Some(EntitiesMap(dOperables, Map(entityId -> ReportContentTestFactory.someReport)))),
       dOperables,
     None)
   }

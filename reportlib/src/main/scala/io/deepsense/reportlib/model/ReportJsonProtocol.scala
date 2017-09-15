@@ -18,6 +18,7 @@ package io.deepsense.reportlib.model
 
 import spray.json._
 
+import io.deepsense.commons.json.EnumerationSerializer
 import io.deepsense.commons.types.ColumnType
 
 trait ReportJsonProtocol
@@ -29,6 +30,7 @@ trait ReportJsonProtocol
   type maybeStats = Option[String]
   val statisticsConstructor: ((maybeStats, maybeStats, maybeStats) => Statistics) = Statistics.apply
   implicit val statisticsFormat = jsonFormat3(statisticsConstructor)
+  implicit val reportTypeFormat = EnumerationSerializer.jsonEnumFormat(ReportType)
 
   implicit object DistributionJsonFormat extends JsonFormat[Distribution] {
 
@@ -56,8 +58,6 @@ trait ReportJsonProtocol
 
     override def read(json: JsValue): Distribution = {
       val fields: Map[String, JsValue] = json.asJsObject.fields
-      require(fields.get(DistributionJsonProtocol.typeKey) ==
-      Some(JsString(DistributionJsonProtocol.typeName)))
       val subtype: String = fields.get(DistributionJsonProtocol.subtypeKey).get.convertTo[String]
       subtype match {
         case DiscreteDistribution.subtype => json.convertTo(categoricalDistributionFormat)
@@ -68,7 +68,6 @@ trait ReportJsonProtocol
     override def write(distribution: Distribution): JsValue = {
       val basicFields = Map(
         DistributionJsonProtocol.nameKey -> JsString(distribution.name),
-        DistributionJsonProtocol.typeKey -> JsString(DistributionJsonProtocol.typeName),
         DistributionJsonProtocol.subtypeKey -> JsString(distribution.subtype),
         DistributionJsonProtocol.descriptionKey -> JsString(distribution.description),
         DistributionJsonProtocol.missingValuesKey -> JsNumber(distribution.missingValues)
@@ -99,8 +98,8 @@ trait ReportJsonProtocol
     }
   }
 
-  implicit val tableFormat = jsonFormat7(Table.apply)
-  implicit val reportFormat = jsonFormat4(ReportContent.apply)
+  implicit val tableFormat = jsonFormat6(Table.apply)
+  implicit val reportFormat = jsonFormat5(ReportContent.apply)
 }
 
 object ReportJsonProtocol extends ReportJsonProtocol
@@ -108,7 +107,7 @@ object ReportJsonProtocol extends ReportJsonProtocol
 object DistributionJsonProtocol {
   val typeName = "distribution"
   val nameKey = "name"
-  val typeKey = "blockType"
+  val reportTypeKey = "reportType"
   val subtypeKey = "subtype"
   val missingValuesKey = "missingValues"
   val descriptionKey = "description"

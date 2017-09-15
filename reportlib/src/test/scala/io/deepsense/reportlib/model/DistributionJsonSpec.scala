@@ -36,7 +36,6 @@ class DistributionJsonSpec
     )
     val jsonNoDistribution: JsObject = JsObject(
       "name" -> JsString(DistributionTestFactory.distributionName),
-      "blockType" -> JsString("distribution"),
       "subtype" -> JsString("no_distribution"),
       "description" -> JsString(DistributionTestFactory.distributionDescription),
       "missingValues" -> JsNumber(0)
@@ -54,7 +53,6 @@ class DistributionJsonSpec
   "DiscreteDistribution" should {
     val jsonCategoricalDistribution: JsObject = JsObject(
       "name" -> JsString(DistributionTestFactory.distributionName),
-      "blockType" -> JsString("distribution"),
       "subtype" -> JsString("discrete"),
       "description" -> JsString(DistributionTestFactory.distributionDescription),
       "missingValues" -> JsNumber(0),
@@ -75,7 +73,6 @@ class DistributionJsonSpec
     val statistics = testStatistics
     val jsonContinuousDistribution: JsObject = JsObject(
       "name" -> JsString(DistributionTestFactory.distributionName),
-      "blockType" -> JsString("distribution"),
       "subtype" -> JsString("continuous"),
       "description" -> JsString(DistributionTestFactory.distributionDescription),
       "missingValues" -> JsNumber(0),

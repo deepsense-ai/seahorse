@@ -26,11 +26,13 @@ class ReportContentJsonSpec
   with ReportContentTestFactory
   with ReportJsonProtocol {
 
+  import ReportContentTestFactory._
+
   "ReportContent" should {
 
-    val reportName = ReportContentTestFactory.reportContentName
     val emptyReportJson: JsObject = JsObject(
       "name" -> JsString(reportName),
+      "reportType" -> JsString(reportType.toString),
       "tables" -> JsObject(),
       "distributions" -> JsObject(),
       "schema" -> JsNull
@@ -38,6 +40,7 @@ class ReportContentJsonSpec
     val report = testReport
     val reportJson: JsObject = JsObject(
       "name" -> JsString(reportName),
+      "reportType" -> JsString(reportType.toString),
       "tables" -> JsObject(report.tables.mapValues(_.toJson)),
       "distributions" -> JsObject(report.distributions.mapValues(_.toJson)),
       "schema" -> JsObject(
@@ -60,7 +63,7 @@ class ReportContentJsonSpec
 
     "serialize" when {
       "empty" in {
-        val report = ReportContent(reportName, Map(), Map())
+        val report = ReportContent(reportName, reportType, Map(), Map())
         report.toJson shouldBe emptyReportJson
       }
       "filled report" in {
@@ -70,7 +73,8 @@ class ReportContentJsonSpec
     }
     "deserialize" when {
       "empty report" in {
-        emptyReportJson.convertTo[ReportContent] shouldBe ReportContent(reportName, Map(), Map())
+        emptyReportJson.convertTo[ReportContent] shouldBe ReportContent(
+          reportName, reportType, Map(), Map())
       }
       "full report" when {
         reportJson.convertTo[ReportContent] shouldBe report

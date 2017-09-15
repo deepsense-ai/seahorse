@@ -74,7 +74,6 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
     rowsNames: Option[List[String]],
     values: List[List[Option[String]]]): JsObject = JsObject(Map[String, JsValue](
     "name" -> JsString(TableTestFactory.tableName),
-    "blockType" -> JsString("table"),
     "description" -> JsString(TableTestFactory.tableDescription),
     "columnNames" -> toJsValue(columnsNames),
     "columnTypes" -> toJsValue(Some(columnTypes.map(_.toString))),

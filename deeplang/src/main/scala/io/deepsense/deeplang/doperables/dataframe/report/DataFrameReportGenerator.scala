@@ -65,6 +65,7 @@ object DataFrameReportGenerator {
     }
     Report(ReportContent(
       ReportContentName,
+      ReportType.DataFrameFull,
       tableByName,
       distributions,
       Some(sparkDataFrame.schema)))
@@ -83,6 +84,7 @@ object DataFrameReportGenerator {
     val tablesMap = tables.lookupBy(_.name)
     Report(ReportContent(
       ReportContentName,
+      ReportType.DataFrameSimplified,
       tablesMap,
       noDistributionsForSimplifiedReport(sparkDataFrame.schema),
       Some(sparkDataFrame.schema)))

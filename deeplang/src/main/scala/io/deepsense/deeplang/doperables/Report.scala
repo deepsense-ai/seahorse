@@ -19,12 +19,12 @@ package io.deepsense.deeplang.doperables
 import spray.json._
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.{ReportJsonProtocol, ReportContent}
+import io.deepsense.reportlib.model.{ReportType, ReportJsonProtocol, ReportContent}
 
-case class Report(content: ReportContent = ReportContent("empty report"))
+case class Report(content: ReportContent = ReportContent("empty report", ReportType.Empty))
   extends DOperable {
 
-  def this() = this(ReportContent("empty report"))
+  def this() = this(ReportContent("empty report", ReportType.Empty))
 
   import ReportJsonProtocol._
   override def report(executionContext: ExecutionContext): Report = this

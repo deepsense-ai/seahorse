@@ -16,13 +16,16 @@
 
 package io.deepsense.reportlib.model.factory
 
-import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.{ReportType, ReportContent}
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructType}
 
 trait ReportContentTestFactory {
 
+  import ReportContentTestFactory._
+
   def testReport: ReportContent = ReportContent(
-    ReportContentTestFactory.reportContentName,
+    reportName,
+    reportType,
     Map(TableTestFactory.tableName -> TableTestFactory.testEmptyTable),
     Map(ReportContentTestFactory.categoricalDistName ->
       DistributionTestFactory.testCategoricalDistribution(
@@ -36,10 +39,14 @@ trait ReportContentTestFactory {
       StructField("y", DoubleType, nullable = false)
     )))
   )
+
 }
 
 object ReportContentTestFactory extends ReportContentTestFactory {
   val continuousDistName = "continuousDistributionName"
   val categoricalDistName = "categoricalDistributionName"
-  val reportContentName = "TestReportContentName"
+  val reportName = "TestReportContentName"
+  val reportType = ReportType.Empty
+
+  val someReport: ReportContent = ReportContent("empty", ReportType.Empty)
 }

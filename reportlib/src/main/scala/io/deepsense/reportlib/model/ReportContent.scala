@@ -18,17 +18,21 @@ package io.deepsense.reportlib.model
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.reportlib.model.ReportType.ReportType
+
 case class ReportContent(
     name: String,
+    reportType: ReportType,
     tables: Map[String, Table] = Map(),
     distributions: Map[String, Distribution] = Map(),
     schema: Option[StructType] = None)
 
 object ReportContent {
 
-  def apply(name: String, tables: List[Table]): ReportContent =
+  def apply(name: String, reportType: ReportType, tables: List[Table]): ReportContent =
     ReportContent(
       name,
+      reportType,
       tables.map(t => t.name -> t).toMap,
       Map())
 }

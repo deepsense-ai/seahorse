@@ -32,6 +32,7 @@ import io.deepsense.graph.nodestate.NodeStatus
 import io.deepsense.graph._
 import io.deepsense.models.workflows.{EntitiesMap, NodeState, NodeStateWithResults}
 import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 
 class StatefulGraphSpec
   extends StandardSpec
@@ -129,13 +130,13 @@ class StatefulGraphSpec
           .nodeFinished(
             idA,
             results(idA),
-            Map(results(idA).head -> ReportContent("blah")),
+            Map(results(idA).head -> ReportContentTestFactory.someReport),
             Map(results(idA).head -> mock[DOperable]))
           .nodeStarted(idB)
           .nodeFinished(
             idB,
             results(idB),
-            Map(results(idB).head -> ReportContent("foo")),
+            Map(results(idB).head -> ReportContentTestFactory.someReport),
             Map(results(idB).head -> mock[DOperable]))
 
         g.readyNodes should have size 2
@@ -164,7 +165,7 @@ class StatefulGraphSpec
       val running2 = running1.nodeFinished(
         idA,
         results(idA),
-        Map(results(idA).head -> ReportContent("foo")),
+        Map(results(idA).head -> ReportContentTestFactory.someReport),
         Map(results(idA).head -> mock[DOperable]))
       running2.readyNodes should have size 1
       verifyNodeReady(idB, 1, running2)
@@ -172,7 +173,7 @@ class StatefulGraphSpec
       val running3 = running2.nodeStarted(idB).nodeFinished(
         idB,
         results(idB),
-        Map(results(idB).head -> ReportContent("test")),
+        Map(results(idB).head -> ReportContentTestFactory.someReport),
         Map(results(idB).head -> mock[DOperable]))
       running3.readyNodes should have size 2
       verifyNodeReady(idC, 1, running3)

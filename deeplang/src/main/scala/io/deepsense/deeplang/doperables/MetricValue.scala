@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.{ExecutionContext, DOperable}
-import io.deepsense.reportlib.model.{Table, ReportContent}
+import io.deepsense.reportlib.model.{ReportType, Table, ReportContent}
 
 /**
   * Metric value.
@@ -32,7 +32,7 @@ case class MetricValue(name: String, value: Double) extends DOperable {
   def this() = this(null, Double.NaN)
 
   override def report(executionContext: ExecutionContext): Report =
-    Report(ReportContent("Report for Metric Value", List(Table(
+    Report(ReportContent("Report for Metric Value", ReportType.MetricValue, List(Table(
       name = "Metric Value",
       description = "",
       columnNames = Some(List(name)),
