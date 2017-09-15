@@ -29,9 +29,6 @@ description: Income Prediction
             <a target="_blank" href="http://archive.ics.uci.edu/ml">http://archive.ics.uci.edu/ml</a>.
             Irvine, CA: University of California, School of Information and Computer Science.
         </p>
-        <p>
-            <a target="_blank" href="workflows/07_income_prediction.json" download>Download workflow</a>
-        </p>
 
         <h2 style="margin-top: 0; padding-top: 0">Workflow Overview</h2>
         <p>

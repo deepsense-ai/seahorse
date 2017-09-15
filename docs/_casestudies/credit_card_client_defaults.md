@@ -23,8 +23,6 @@ Department of Civil Engineering, Tamkang University, Taiwan.
 
 UCI Machine Learning Repository <http://archive.ics.uci.edu/ml>. Irvine, CA: University of California, School of Information and Computer Science.
 
-<a target="_blank" href="workflows/09_credit_card_client_defaults.json" download>Download Workflow</a>
-
 ## Step-by-step Workflow Creation
 
 ### Reading Data
@@ -119,4 +117,4 @@ and are equal about 67% and 37%, respectively.
 We presented analysis of prediction of defaults of a bank’s customers. Throughout the way, we used SparkR for custom operations
 and exploratory data analysis. We trained the model, optimized and evaluated it. Based on costs associated with customers’ defaults,
 we can tweak precision and recall by, for example, adjusting the threshold level for probability of the default prediction and the
-final label (no default vs default) produced by the model. We encourage you to try out your own ideas - the complete workflow is available for download [here](workflows/09_credit_card_client_defaults.json).
+final label (no default vs default) produced by the model. We encourage you to try out your own ideas - the complete workflow is included in Seahorse.

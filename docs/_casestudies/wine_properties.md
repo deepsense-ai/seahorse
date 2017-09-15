@@ -21,8 +21,6 @@ Lichman, M. (2013).
 
 UCI Machine Learning Repository <http://archive.ics.uci.edu/ml>. Irvine, CA: University of California, School of Information and Computer Science.
 
-<a target="_blank" href="workflows/06_wine_properties.json" download>Download Workflow</a>
-
 ## Step-by-step Workflow Creation
 
 ### Reading the Data

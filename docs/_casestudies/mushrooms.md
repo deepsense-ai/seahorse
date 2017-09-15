@@ -30,9 +30,6 @@ description: Mushrooms
       <a target="_blank" href="http://archive.ics.uci.edu/ml">http://archive.ics.uci.edu/ml</a>.
       Irvine, CA: University of California, School of Information and Computer Science.
     </p>
-    <p>
-      <a target="_blank" href="workflows/08_mushrooms.json" download>Download workflow</a>
-    </p>
   </div>
 </div>
 
@@ -43,8 +40,7 @@ description: Mushrooms
   </div>
   <p>
     This is a complete experiment that generates a mushroom classification model.
-    It can be downloaded from
-    <a target="_blank" href="workflows/08_mushrooms.json" download>here</a>,
+    The workflow file is included in Seahorse,
     but we will also show you how to create that experiment step-by-step.
   </p>
 </div>

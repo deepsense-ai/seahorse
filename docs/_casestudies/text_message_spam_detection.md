@@ -20,8 +20,6 @@ categorization (spam or ham). Strongly biased toward the ham class (~87%).
 <http://archive.ics.uci.edu/ml>. Irvine, CA: University of California, School of Information and
 Computer Science.
 
-<a target="_blank" href="workflows/05_text_message_spam_detection.json" download>Download workflow</a>
-
 ## Step-by-step Workflow Creation
 
 ### Reading the Data
