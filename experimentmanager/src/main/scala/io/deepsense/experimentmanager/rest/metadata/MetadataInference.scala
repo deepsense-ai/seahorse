@@ -4,14 +4,14 @@
 
 package io.deepsense.experimentmanager.rest.metadata
 
-import io.deepsense.deeplang.DOperable.{MetadataVisitor, AbstractMetadata}
-import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadata
+import io.deepsense.deeplang.DOperable.AbstractMetadata
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadataJsonProtocol, DataFrameMetadata}
 import io.deepsense.deeplang.{DOperable, DKnowledge, InferContext}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.graph.Node
 import io.deepsense.models.experiments.Experiment
 import spray.json._
-import io.deepsense.experimentmanager.rest.json.DataFrameMetadataJsonProtocol._
+import DataFrameMetadataJsonProtocol._
 
 object MetadataInference {
   def run(
@@ -19,10 +19,8 @@ object MetadataInference {
       nodeId: Node.Id,
       portIndex: Int,
       baseContext: InferContext): Seq[Option[AbstractMetadata]] = {
-    experiment.graph.inferKnowledge(
-      nodeId,
-      portIndex,
-      new InferContext(baseContext.dOperableCatalog, true)).types.toList.map(
-        (operable: DOperable) => operable.inferredMetadata)
+    val inferContext = InferContext(baseContext, true)
+    experiment.graph.inferKnowledge(nodeId, portIndex, inferContext).types.toList.map(
+      (operable: DOperable) => operable.inferredMetadata)
   }
 }

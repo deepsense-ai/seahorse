@@ -28,7 +28,7 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
-import io.deepsense.experimentmanager.rest.json.{ExperimentJsonProtocol, DataFrameMetadataJsonProtocol}
+import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -492,7 +492,7 @@ class ExperimentsApiSpec
           val expectedJson = JsObject(
             "metadata" -> JsArray()
           )
-          response.entity.asString(HttpCharsets.`UTF-8`).parseJson shouldBe expectedJson
+          responseAs[JsObject] shouldBe expectedJson
         }
       }
     }
@@ -525,7 +525,8 @@ class ExperimentsApiSpec
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" + metadataParamsString) ~> testRoute ~> check {
+        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" +
+            metadataParamsString) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }

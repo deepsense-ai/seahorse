@@ -11,6 +11,8 @@ import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper.CategoricalMappingsMap
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import spray.json._
+import DataFrameMetadataJsonProtocol._
 
 /**
  * Metadata of DataFrame.
@@ -47,6 +49,8 @@ case class DataFrameMetadata(
     val categorizedSchema = CategoricalMapper.categorizedSchema(schema, categoricalMappings)
     categorizedSchema
   }
+
+  override protected def _serializeToJson = this.toJson
 }
 
 object DataFrameMetadata {

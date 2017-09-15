@@ -8,7 +8,7 @@ import io.deepsense.commons.json.envelope.EnvelopeJsonWriter
 import io.deepsense.deeplang.DOperable.AbstractMetadata
 import spray.httpx.SprayJsonSupport
 import spray.json._
-import io.deepsense.experimentmanager.rest.json.AbstractMetadataJsonProtocol._
+import AbstractMetadataJsonProtocol._
 
 trait MetadataSeqEnvelopeJsonProtocol extends DefaultJsonProtocol
     with SprayJsonSupport {

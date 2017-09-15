@@ -5,6 +5,8 @@
 package io.deepsense.deeplang
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.entitystorage.EntityStorageClient
 
 /**
  * Holds information needed by DOperations and DMethods during knowledge inference.
@@ -15,3 +17,17 @@ class InferContext(
     val dOperableCatalog: DOperableCatalog,
     val fullInference: Boolean = false)
   extends CommonContext
+
+object InferContext {
+
+  def apply(dOperableCatalog: DOperableCatalog, fullInference: Boolean = false): InferContext =
+    new InferContext(dOperableCatalog, fullInference)
+
+  def apply(baseContext: InferContext, fullInference: Boolean): InferContext = {
+    val context = new InferContext(baseContext.dOperableCatalog, fullInference)
+    context.dataFrameBuilder = baseContext.dataFrameBuilder
+    context.entityStorageClient = baseContext.entityStorageClient
+    context.tenantId = baseContext.tenantId
+    context
+  }
+}

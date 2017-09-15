@@ -3,6 +3,7 @@
  */
 package io.deepsense.experimentmanager.rest.json
 
+import io.deepsense.deeplang.DOperable.AbstractMetadata
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
 import io.deepsense.deeplang.doperables.dataframe.{ColumnMetadata, DataFrameMetadata}
 import io.deepsense.deeplang.parameters.ColumnType
@@ -13,10 +14,9 @@ import spray.json._
 class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with MockitoSugar {
 
   "DataFrameMetadata with full knowledge" should "be correctly serialized to json" in {
-    val metadata = DataFrameMetadata(true, true,
+    val metadata: AbstractMetadata = DataFrameMetadata(true, true,
       Map("x" -> ColumnMetadata("x", Some(0), Some(ColumnType.categorical))),
       Map("x" -> CategoriesMapping(Seq("a", "b", "c"))))
-    val serializingVisitor = new MetadataJsonSerializingVisitor
 
     val expectedJson = JsObject(
       "type" -> JsString("DataFrameMetadata"),
@@ -34,14 +34,13 @@ class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with Mock
       )
     )
 
-    serializingVisitor.visit(metadata) shouldBe expectedJson
+    metadata.serializeToJson shouldBe expectedJson
   }
 
   "DataFrameMetadata with partial knowledge" should "be correctly serialized to json" in {
-    val metadata = DataFrameMetadata(false, false,
+    val metadata: AbstractMetadata = DataFrameMetadata(false, false,
       Map("x" -> ColumnMetadata("x", None, None)),
       Map("x" -> CategoriesMapping(Seq("a", "b", "c"))))
-    val serializingVisitor = new MetadataJsonSerializingVisitor
 
     val expectedJson = JsObject(
       "type" -> JsString("DataFrameMetadata"),
@@ -59,7 +58,7 @@ class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with Mock
       )
     )
 
-    serializingVisitor.visit(metadata) shouldBe expectedJson
+    metadata.serializeToJson shouldBe expectedJson
   }
 
 }
