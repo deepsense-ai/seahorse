@@ -229,7 +229,7 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService, MultiSelectionSe
         $document.off('mousemove', paint);
       });
 
-      scope.$on('ZOOM-PANEL.MOVE-GRAB', (e, data) => {
+      scope.$on('INTERACTION-PANEL.MOVE-GRAB', (e, data) => {
         disabled = data.active;
       });
 

@@ -2,7 +2,22 @@
 
 /* @ngInject */
 function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
+  let nodeDimensions = {};
+
+  this.getNodeDimensions = function getNodeDimensions () {
+    let $node = $('[id^="node-"]:first', $element);
+
+    nodeDimensions.width = $node.outerWidth(true);
+    nodeDimensions.height = $node.outerHeight(true);
+
+    return nodeDimensions;
+  };
+
   $scope.$on('ZOOM.ZOOM_PERFORMED', (_, data) => {
+    GraphPanelRendererService.setZoom(data.zoomRatio);
+  });
+
+  $scope.$on('FIT.FIT_PERFORMED', (_, data) => {
     GraphPanelRendererService.setZoom(data.zoomRatio);
   });
 

@@ -3,6 +3,8 @@
     <div class="flowchart-paint-area"
          multi-selection
          deepsense-interactive
+         collection="flowChartBoxCtrl.nodes"
+         collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
          zoom-id="flowchart-box"
          max-zoom-ratio="1.5"
          droppable
@@ -20,6 +22,8 @@
   <div ng-if="flowChartBoxCtrl.reportMode" class="flowchart-mask">
     <div class="flowchart-paint-area"
          deepsense-interactive
+         collection="flowChartBoxCtrl.nodes"
+         collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
          zoom-id="flowchart-box"
          max-zoom-ratio="1.5">
       <graph-node ng-class="{'selected-node': flowChartBoxCtrl.selectedNode.id === nodeId }"
