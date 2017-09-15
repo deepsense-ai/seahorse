@@ -16,7 +16,7 @@
   copy:
     src="{{package_path}}"
     dest="{{install_dir}}"
-    force=true directory_mode
+    force=true
 
 - name: Extract zip package
   unarchive:

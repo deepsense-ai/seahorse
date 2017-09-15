@@ -30,3 +30,6 @@ project/plugins/project/
 # Developers' private configuration files
 private_*.conf
 private_*/
+
+# Vagrant deployment output
+deployment/ansible/vagrant

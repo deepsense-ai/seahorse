@@ -64,20 +64,6 @@
 - name: Create startup script
   template: src=start-notebook.sh.j2 dest={{jupyter_workdir}}/start-notebook.sh mode=755
 
-- { include: ../../supervisedprogram/tasks/main.yaml,
-    program: {
-      name: 'Jupyter',
-      environment: 'HOME="/home/ubuntu", USER="ubuntu"',
-      command: '{{jupyter_workdir}}/start-notebook.sh',
-      directory: "{{jupyter_workdir}}",
-      autostart: true,
-      autorestart: true,
-      startretries: 3,
-      stdout_logfile: "{{jupyter_workdir}}/std.out",
-      stdout_logfile_maxbytes: 0,
-      stderr_logfile: "{{jupyter_workdir}}/std.err",
-      stderr_logfile_maxbytes: 0,
-      user: ubuntu,
-    }
-  }
-
+- name: Force supervisor restart
+  command: /bin/true
+  notify: restart supervisor
