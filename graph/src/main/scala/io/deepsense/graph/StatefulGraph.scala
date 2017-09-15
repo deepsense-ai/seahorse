@@ -227,7 +227,7 @@ case class StatefulGraph(
 
   protected def genericNodeFailureDescription(exception: Exception): FailureDescription = {
     FailureDescription(DeepSenseFailure.Id.randomId,
-      FailureCode.NodeFailure, "Execution of a node failed",
+      FailureCode.UnexpectedError, "Execution of a node failed",
       Some(s"Error while executing a node: ${exception.getMessage}"),
       FailureDescription.stacktraceDetails(exception.getStackTrace)
     )
@@ -263,6 +263,7 @@ case class StatefulGraph(
     unfinished.mapValues {
       case r: Running => r.abort
       case nodestate.Queued => nodestate.Queued.abort
+      case nodestate.Draft => nodestate.Draft.abort
       case x => x
     }
   }

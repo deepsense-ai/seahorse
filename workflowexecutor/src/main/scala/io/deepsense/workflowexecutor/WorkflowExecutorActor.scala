@@ -56,11 +56,17 @@ class WorkflowExecutorActor(executionContext: ExecutionContext,
   }
 
   override def receive: Receive = {
-    case Launch(g, resultPromise) => launch(g.enqueue, resultPromise)
+    case Launch(g, resultPromise) => launch(g, resultPromise)
   }
 
   def launch(graph: StatefulGraph, result: Promise[GraphFinished]): Unit = {
-    checkExecutionState(graph.inferAndApplyKnowledge(executionContext), result)
+    val inferred = graph.inferAndApplyKnowledge(executionContext)
+    val enqueued = if (inferred.state.isFailed) {
+      inferred
+    } else {
+      inferred.enqueue
+    }
+    checkExecutionState(enqueued, result)
   }
 
   def shutdownSystem(): Unit = systemShutdowner.shutdownSystem(context.system)

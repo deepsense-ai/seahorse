@@ -71,7 +71,7 @@ sealed abstract class NodeState(val name: String) extends Serializable {
 case object Draft extends NodeState("DRAFT") {
   override def start: Running = throw stateCannot("start")
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
-  override def abort: Aborted.type = throw stateCannot("abort")
+  override def abort: Aborted.type = Aborted
   override def fail(error: FailureDescription): Failed = throw stateCannot("fail")
   override def enqueue: Queued.type = Queued
 }
