@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.deeplang.doperations.readwritedataframe.validators
 
-import io.deepsense.deeplang.doperations.{WriteDataFrame, ReadDataFrame}
-import io.deepsense.deeplang.doperations.inout.{OutputStorageTypeChoice, OutputFileFormatChoice, InputFileFormatChoice, InputStorageTypeChoice}
+import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, InputStorageTypeChoice, OutputFileFormatChoice, OutputStorageTypeChoice}
+import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme, ParquetNotSupported}
+import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 
 object ParquetSupportedOnClusterOnly {
 
@@ -32,7 +33,7 @@ object ParquetSupportedOnClusterOnly {
             val path = file.getOutputFile()
             val filePath = FilePath(path)
             val fileScheme = filePath.fileScheme
-            if (fileScheme == FileScheme.File) {
+            if(!FileScheme.supportedByParquet.contains(fileScheme)) {
               throw ParquetNotSupported
             }
           case _ =>
@@ -52,7 +53,7 @@ object ParquetSupportedOnClusterOnly {
             val path = file.getSourceFile()
             val filePath = FilePath(path)
             val fileScheme = filePath.fileScheme
-            if (fileScheme == FileScheme.File) {
+            if(!FileScheme.supportedByParquet.contains(fileScheme)) {
               throw ParquetNotSupported
             }
           case _ =>

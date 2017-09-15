@@ -23,9 +23,9 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
-import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, InputStorageTypeChoice, CsvParameters}
-import io.deepsense.deeplang.doperations.readwritedataframe.{ParquetNotSupported, FileScheme}
-import io.deepsense.deeplang.{TestFiles, DOperable, DeeplangIntegTestSupport}
+import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, InputStorageTypeChoice}
+import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, ParquetNotSupported, UnknownFileSchemaForPath}
+import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, TestFiles}
 
 class ReadDataFrameWithDriverFilesIntegSpec
   extends DeeplangIntegTestSupport with BeforeAndAfter with TestFiles {
@@ -184,13 +184,27 @@ class ReadDataFrameWithDriverFilesIntegSpec
     }
 
     "throw exception at inference time when using parquet with local driver files" in {
-      val rdf = new ReadDataFrame()
+      val rdf = ReadDataFrame()
         .setStorageType(
           InputStorageTypeChoice.File()
             .setSourceFile(FileScheme.File.pathPrefix + "/some_path/some_file.parquet")
             .setFileFormat(InputFileFormatChoice.Parquet()))
 
       an [ParquetNotSupported.type] shouldBe thrownBy {
+        rdf.inferKnowledge(
+          executionContext.inferContext
+        )(Vector())
+      }
+    }
+
+    "throw exception at inference time when using invalid file scheme" in {
+      val rdf = ReadDataFrame()
+        .setStorageType(
+          InputStorageTypeChoice.File()
+            .setSourceFile("invalidscheme://some_path/some_file.json")
+            .setFileFormat(InputFileFormatChoice.Json()))
+
+      an [UnknownFileSchemaForPath] shouldBe thrownBy {
         rdf.inferKnowledge(
           executionContext.inferContext
         )(Vector())

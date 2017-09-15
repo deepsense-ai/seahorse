@@ -35,10 +35,11 @@ import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe._
 import io.deepsense.deeplang.doperations.readwritedataframe.csv.{CsvSchemaInferencerAfterReading, CsvSchemaStringifierBeforeCsvWriting}
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 
 case class WriteDataFrame()
   extends DOperation1To0[DataFrame]
@@ -76,6 +77,7 @@ case class WriteDataFrame()
 
   override protected def _inferKnowledge(
       context: InferContext)(k0: DKnowledge[DataFrame]): (Unit, InferenceWarnings) = {
+    FilePathHasValidFileScheme.validate(this)
     ParquetSupportedOnClusterOnly.validate(this)
     super._inferKnowledge(context)(k0)
   }

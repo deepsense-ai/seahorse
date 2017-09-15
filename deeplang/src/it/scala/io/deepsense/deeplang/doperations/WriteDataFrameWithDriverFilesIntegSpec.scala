@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperations.exceptions.UnsupportedColumnTypeException
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, ParquetNotSupported}
+import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, ParquetNotSupported, UnknownFileSchemaForPath}
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport, TestFiles}
 
 class WriteDataFrameWithDriverFilesIntegSpec
@@ -212,7 +212,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
     }
 
     "throw exception at inference time when using parquet with local driver files" in {
-      val wdf = new WriteDataFrame()
+      val wdf = WriteDataFrame()
         .setStorageType(
           OutputStorageTypeChoice.File()
             .setOutputFile(FileScheme.File.pathPrefix + "/some_path/some_file.parquet")
@@ -221,6 +221,19 @@ class WriteDataFrameWithDriverFilesIntegSpec
       an [ParquetNotSupported.type] shouldBe thrownBy {
         wdf.inferKnowledge(executionContext.inferContext)(
             Vector(DKnowledge(dataframe)))
+      }
+    }
+
+    "throw exception at inference time when using invalid file scheme" in {
+      val wdf = WriteDataFrame()
+        .setStorageType(
+          OutputStorageTypeChoice.File()
+            .setOutputFile("invalidscheme://some_path/some_file.json")
+            .setFileFormat(OutputFileFormatChoice.Parquet()))
+
+      an [UnknownFileSchemaForPath] shouldBe thrownBy {
+        wdf.inferKnowledge(executionContext.inferContext)(
+          Vector(DKnowledge(dataframe)))
       }
     }
 

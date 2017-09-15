@@ -17,6 +17,7 @@
 package io.deepsense.workflowexecutor
 
 import scala.concurrent.duration._
+
 import akka.actor.{Actor, ActorRef, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.mockito.Matchers._
@@ -27,11 +28,13 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 import spray.json.JsObject
+
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
+import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
@@ -448,7 +451,7 @@ class WorkflowExecutorActorSpec
   }
 
   private def mockResults(size: Int): NodeExecutionResults = {
-    val ids = (1 to size).map(_ => Entity.Id.randomId).toSeq
+    val ids = (1 to size).map(_ => Entity.Id.randomId)
     val reports = ids.map { id => id -> mock[ReportContent]}.toMap
     val operables = ids.map { id => id -> mock[DOperable]}.toMap
     NodeExecutionResults(ids, reports, operables)
@@ -566,10 +569,10 @@ class WorkflowExecutorActorSpec
 
   val inputFile = InputStorageTypeChoice.File()
     .setFileFormat(InputFileFormatChoice.Json())
-    .setSourceFile("/whatever")
+    .setSourceFile(someFilePath)
   val outputFile = OutputStorageTypeChoice.File()
     .setFileFormat(OutputFileFormatChoice.Json())
-    .setOutputFile("/output")
+    .setOutputFile(someFilePath)
   val node1 = Node(
     Node.Id.randomId,
     ReadDataFrame().setStorageType(inputFile))
@@ -577,6 +580,10 @@ class WorkflowExecutorActorSpec
     Node.Id.randomId,
     WriteDataFrame().setStorageType(outputFile))
   val invalidNode = Node(Node.Id.randomId, new WriteDataFrame())
+
+  private def someFilePath: String = {
+    FilePath(FileScheme.File, "/tmp/doesnt_matter").fullPath
+  }
 
   private def workflowWithResults(id: Workflow.Id): WorkflowWithResults = WorkflowWithResults(
     id,

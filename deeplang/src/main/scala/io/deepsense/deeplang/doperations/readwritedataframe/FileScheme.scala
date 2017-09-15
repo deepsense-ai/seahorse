@@ -18,8 +18,8 @@ package io.deepsense.deeplang.doperations.readwritedataframe
 
 import io.deepsense.deeplang.exceptions.DeepLangException
 
-sealed abstract class FileScheme(val schema: String) {
-  def pathPrefix: String = schema + "://"
+sealed abstract class FileScheme(val scheme: String) {
+  def pathPrefix: String = scheme + "://"
 }
 
 object FileScheme {
@@ -33,6 +33,8 @@ object FileScheme {
 
   // TODO Autoderive values. There is macro-library for extracting sealed case objects.
   val values = Seq(HTTP, HTTPS, FTP, HDFS, File, Library)
+
+  val supportedByParquet = Seq(HDFS)
 
   def fromPath(path: String): FileScheme = {
     val matchingFileSchema = values.find(schema => path.startsWith(schema.pathPrefix))
@@ -55,6 +57,6 @@ object FilePath {
 }
 
 case class UnknownFileSchemaForPath(path: String) extends DeepLangException({
-  val allSchemas = FileScheme.values.map(_.schema).mkString("(", ", ", ")")
-  s"Unknown file schema for path $path. Known file schemas: $allSchemas"
+  val allSchemes = FileScheme.values.map(_.scheme).mkString("(", ", ", ")")
+  s"Unknown file scheme for path $path. Known file schemes: $allSchemes"
 })

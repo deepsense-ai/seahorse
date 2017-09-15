@@ -37,6 +37,7 @@ import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe._
 import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvSchemaInferencerAfterReading
+import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
@@ -74,6 +75,7 @@ case class ReadDataFrame()
 
   override protected def _inferKnowledge(context: InferContext)():
       (DKnowledge[DataFrame], InferenceWarnings) = {
+    FilePathHasValidFileScheme.validate(this)
     ParquetSupportedOnClusterOnly.validate(this)
     super._inferKnowledge(context)()
   }
