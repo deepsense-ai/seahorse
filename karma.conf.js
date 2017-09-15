@@ -22,12 +22,13 @@ module.exports = function(config) {
 
         frameworks: ['browserify', 'jasmine'],
 
-        browsers: ['Chrome'],
+        browsers: ['PhantomJS'],
 
         plugins: [
           'karma-chrome-launcher',
           'karma-jasmine',
-          'karma-browserify'
+          'karma-browserify',
+          'karma-phantomjs-launcher'
         ],
 
        preprocessors: {},

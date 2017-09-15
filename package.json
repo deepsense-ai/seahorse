@@ -61,6 +61,8 @@
     "karma-chrome-launcher": "^0.1.7",
     "karma-cli": "0.0.4",
     "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "phantomjs": "^1.9.16",
     "protractor": "^1.7.0",
     "run-sequence": "^1.0.2",
     "vinyl-buffer": "^1.0.0",
