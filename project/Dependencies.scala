@@ -27,7 +27,7 @@ object Version {
   val scalacheck = "1.12.2"
   val scalatest = "3.0.0-SNAP4"
   val scoverage = "1.0.4"
-  val spark = "1.6.0"
+  val spark = "1.6.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
   val wireMock = "1.57"
@@ -54,7 +54,7 @@ object Library {
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
   val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
-  val sparkCSV = "com.databricks" %% "spark-csv" % "1.2.0"
+  val sparkCSV = "com.databricks" %% "spark-csv" % "1.4.0"
   val sprayCan = spray("can")
   val sprayClient = spray("client")
   val sprayHttpx = spray("httpx")
@@ -82,30 +82,44 @@ object Dependencies {
     "central.maven.org" at "http://central.maven.org/maven2/"
   )
 
-  val commons = Seq(
+  object Spark {
+    private val sparkComponents = Seq(
+      sparkMLLib,
+      sparkSql,
+      sparkCore,
+      sparkCSV)
+    val provided = sparkComponents.map(_ % Provided)
+    val test = sparkComponents.map(_ % s"$Test,it")
+    val onlyInTests = provided ++ test
+  }
+
+  object Hadoop {
+    private val hadoopComponents = Seq(
+      hadoopAWS,
+      hadoopClient,
+      hadoopCommon
+    )
+    val provided = hadoopComponents.map(_ % Provided)
+    val test = hadoopComponents.map(_ % s"$Test,it")
+    val onlyInTests = provided ++ test
+  }
+
+  val commons = Spark.onlyInTests ++ Seq(
     apacheCommons,
     log4JExtras,
     nscalaTime,
     slf4j,
     slf4jLog4j,
-    sparkMLLib,
-    sparkSql,
     sprayCan,
     sprayHttpx,
     sprayJson
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
-  val deeplang = Seq(
+  val deeplang = Spark.onlyInTests ++ Hadoop.onlyInTests ++ Seq(
     apacheCommons,
     amazonS3,
     nscalaTime,
     scalaReflect,
-    sparkSql,
-    sparkMLLib,
-    sparkCore,
-    hadoopAWS,
-    hadoopClient,
-    hadoopCommon,
     sparkCSV
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)
 
@@ -113,22 +127,21 @@ object Dependencies {
 
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val workflowJson = Seq(
+  val workflowJson = Spark.onlyInTests ++ Seq(
     nscalaTime,
     sprayJson
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val models = Seq(scalatest, mockitoCore).map(_ % Test)
+  val models = Spark.onlyInTests ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val reportlib = Seq(
+  val reportlib = Spark.onlyInTests ++ Seq(
     sprayJson
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val workflowexecutor = Seq(
+  val workflowexecutor = Spark.onlyInTests ++ Seq(
     akkaActor,
     scopt,
     sprayClient,
     rabbitmq
-  ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++
-  Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
+  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
 }
