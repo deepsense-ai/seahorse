@@ -141,6 +141,9 @@ object CatalogRecorder {
     catalog.registerDOperation[Fit](
       DOperationCategories.DataManipulation)
 
+    catalog.registerDOperation[FitPlusTransform](
+      DOperationCategories.Transformation)
+
     catalog.registerDOperation[Join](
       DOperationCategories.DataManipulation)
 
