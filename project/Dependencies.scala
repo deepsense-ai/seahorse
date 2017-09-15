@@ -44,6 +44,7 @@ object Library {
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
+  val apacheCommonsExec = "org.apache.commons" % "commons-exec" % "1.3"
   val guice = "com.google.inject" % "guice" % Version.guice
   val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % Version.guice
   val jcloudsKeystone = jclouds("keystone")
@@ -142,6 +143,7 @@ object Dependencies {
 
   val sessionmanager = Seq(
     akkaActor,
+    apacheCommonsExec,
     h2,
     seahorseMqProtocol,
     slick,

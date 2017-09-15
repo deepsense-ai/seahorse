@@ -5,21 +5,23 @@
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
 import scalaz._
+import scalaz.Scalaz._
 
 import org.apache.spark.launcher.SparkLauncher
 
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner._
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherError, UnexpectedException, SparkLauncherConfig}
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
 
 object SeahorseSparkLauncher {
 
   def apply(
-      sessionConfig: SessionConfig,
-      sparkLauncherConfig: SparkLauncherConfig,
-      clusterConfig: ClusterDetails): Validation[UnknownOption, SparkLauncher] = {
+    sessionConfig: SessionConfig,
+    sparkLauncherConfig: SparkLauncherConfig,
+    clusterConfig: ClusterDetails
+  ): Validation[SparkLauncherError, SparkLauncher] = handleUnexpectedExceptions {
     for {
       args <- SparkAgumentParser.parse(clusterConfig.params)
     } yield {
@@ -38,6 +40,13 @@ object SeahorseSparkLauncher {
         .setSparkArgs(args.toMap)
     }
   }
+
+  private def handleUnexpectedExceptions[T, E <: SparkLauncherError](code: => Validation[E, T]) =
+    try {
+      code
+    } catch {
+      case ex: Exception => UnexpectedException(ex).failure
+    }
 
   private implicit class RichSparkLauncher(self: SparkLauncher) {
 

@@ -31,22 +31,31 @@ class SparkAgumentParserTest extends FunSuite with Matchers {
       "--verbose" -> null,
       "--executor-memory" -> "20G"
     )),
-    TestCase("--executor-memory 20G --num-executors 50",
+    TestCase("--executor-memory 10 --num-executors 10",
       Map(
-        "--executor-memory" -> "20G",
-        "--num-executors" -> "50"
+        "--executor-memory" -> "10",
+        "--num-executors" -> "10"
       )
     ),
-    TestCase("--executor-memory 20G   --num-executors 50",
+    TestCase("  --executor-memory  20G   --num-executors   20",
       Map(
         "--executor-memory" -> "20G",
-        "--num-executors" -> "50"
+        "--num-executors" -> "20"
       )
     ),
-    TestCase("--executor-memory 20G \n  --num-executors 50",
+    TestCase(
+      """--executor-memory 30G
+        |  --num-executors 30""".stripMargin,
       Map(
-        "--executor-memory" -> "20G",
-        "--num-executors" -> "50"
+        "--executor-memory" -> "30G",
+        "--num-executors" -> "30"
+      )
+    ),
+    TestCase(
+      """--conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps" """,
+      Map(
+        "--conf" ->
+          "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
       )
     )
   )

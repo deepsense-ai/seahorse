@@ -9,7 +9,7 @@ import org.scalatest.concurrent.Futures
 import org.scalatest.time.{Second, Seconds, Span}
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherSessionSpawner
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherError, SparkLauncherSessionSpawner}
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
 
 class SparkLauncherErrorHandlingTest extends StandardSpec with Futures {
@@ -28,6 +28,15 @@ class SparkLauncherErrorHandlingTest extends StandardSpec with Futures {
     )
     val creating = sessionSpawner.createSession(someSessionConfig(), clusterDetails)
     creating.failed.futureValue shouldBe an [UnknownOption]
+  }
+
+  "Unknown illegal conf key in params" in {
+    val clusterDetails = someClusterDetails.copy (
+      params = Some("--conf not-spark.executor.extraJavaOptions=-XX:+PrintGCDetails")
+    )
+    val creating = sessionSpawner.createSession(someSessionConfig(), clusterDetails)
+    creating.failed.futureValue shouldBe an [SparkLauncherError]
+    creating.failed.futureValue.getMessage should include ("'key' must start with 'spark.'")
   }
 
 }
