@@ -73,7 +73,7 @@ class PythonExecutionCaretaker(
   private val pythonGateway =
     PythonGateway(GatewayConfig(), sparkContext, dataFrameStorage, dataFrameStorage)
 
-  private val pyExecutorProcess = new AtomicReference[Option[Process]]
+  private val pyExecutorProcess = new AtomicReference[Option[Process]](None)
 
   private def runPyExecutor(gatewayPort: Int): Process = {
     val pyLogger = ProcessLogger(fout = logger.debug, ferr = logger.error)
