@@ -4,54 +4,49 @@
 
 package io.deepsense.e2etests
 
-import java.util.UUID
-
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.Try
 import scalaz.Scalaz._
 import scalaz._
-import io.deepsense.sessionmanager.service.{Status => SessionStatus}
 
-import com.ning.http.client.AsyncHttpClient
-import com.ning.http.client.multipart.ByteArrayPart
 import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig
 import com.ning.http.client.ws.WebSocketListener
-import com.ning.http.client.{AsyncCompletionHandler, AsyncHttpClientConfig, Request}
-import com.ning.http.client.{Response => AHCResponse}
+import com.ning.http.client.{AsyncHttpClient, AsyncHttpClientConfig, Response => AHCResponse}
 import org.jfarcand.wcs.{Options, TextListener, WebSocket}
+import org.scalactic.source.Position
+import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
-import org.scalatest.{Matchers, Suite}
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
-import play.api.libs.ws.ning.{NingWSClient, NingWSResponse}
-import org.scalactic.source.Position
+import play.api.libs.ws.ning.NingWSClient
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
+import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
 import io.deepsense.sessionmanager.rest._
 import io.deepsense.sessionmanager.rest.requests._
+import io.deepsense.sessionmanager.service.{Status => SessionStatus}
 
 trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private val httpClient = NingWSClient()
+  protected val httpClient = NingWSClient()
 
   // Values from docker-compose file
   private val mqUser = "yNNp7VJS"
   private val mqPass = "1ElYfGNW"
 
-  private val baseUrl = "http://localhost:33321"
-  private val workflowsUrl = s"$baseUrl/v1/workflows"
-  private val sessionsUrl = s"$baseUrl/v1/sessions"
+  protected val baseUrl = "http://localhost:33321"
+  protected val workflowsUrl = s"$baseUrl/v1/workflows"
+  protected val sessionsUrl = s"$baseUrl/v1/sessions"
 
   private val ws = "ws://localhost:33321/stomp/645/bg1ozddg/websocket"
 
-  private val httpTimeout = 10 seconds
+  protected val httpTimeout = 10 seconds
   private val workflowTimeout = 30 minutes
 
   private implicit val patience = PatienceConfig(
@@ -67,72 +62,11 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     }
   }
 
-  def getExampleWorkflowsIds(): Seq[String] = {
-    Await.result(
-      httpClient.url(workflowsUrl)
-        .get()
-        .map { response =>
-          val JsArray(workflowsJson) = response.json
-          val workflowJsonObjects = workflowsJson.map(_.asInstanceOf[JsObject])
-
-          val examples = workflowJsonObjects.filter { workflow =>
-            workflow.value("ownerName").asInstanceOf[JsString].value == "seahorse"
-          }.sortBy { workflow =>
-            workflow.value("name").asInstanceOf[JsString].value
-          }
-
-          examples.map(_.value("id").asInstanceOf[JsString].value)
-        }, httpTimeout)
-  }
-
-  case class WorkflowId(workflowId: String)
-  implicit val workflowIdFormat = Json.format[WorkflowId]
-
-
-  def uploadWorkflow(js: String): String = {
-    val asyncHttpClient = httpClient.underlying[AsyncHttpClient]
-    val postBuilder = asyncHttpClient.preparePost(s"$workflowsUrl/upload")
-    val builder = postBuilder.addBodyPart(new ByteArrayPart("workflowFile", js.getBytes))
-    val updatedWorkflowId =
-      Await.result(httpClientExecute(asyncHttpClient, builder.build())
-      .map { response =>
-        response.json.as[WorkflowId]
-      }, httpTimeout)
-    updatedWorkflowId.workflowId
-  }
-
-  private def httpClientExecute(asyncHttpClient: AsyncHttpClient,
-                                request: Request) : Future[NingWSResponse] = {
-    val result = Promise[NingWSResponse]()
-    asyncHttpClient.executeRequest(request,
-      new AsyncCompletionHandler[AHCResponse]() {
-        override def onCompleted(response: AHCResponse) = {
-          result.success(NingWSResponse(response))
-          response
-        }
-        override def onThrowable(t: Throwable) = {
-          result.failure(t)
-        }
-      })
-    result.future
-  }
-
-  def cloneWorkflow(workflowId: String): String = {
-    val clonedWorkflowId = Await.result(httpClient.url(s"$workflowsUrl/$workflowId/clone")
-      .post(Json.obj("name" -> s"Clone of $workflowId", "description" -> "Some description"))
-      .map { response =>
-        response.json.asInstanceOf[JsObject].value("workflowId").asInstanceOf[JsString].value
-      }, httpTimeout)
-    logger.info(s"Cloned workflow with id $workflowId. Cloned workflow id $clonedWorkflowId")
-    clonedWorkflowId
-  }
-
-  def deleteWorkflow(workflowId: String): Unit =
-    Await.result(httpClient.url(s"$workflowsUrl/$workflowId").delete(), httpTimeout)
-
   case class ExecutorContext(wsClient: WebSocket, websocketMessages: mutable.MutableList[String])
 
-  def launch(workflowId: String)(implicit ctx: ExecutorContext): Unit = {
+  // TODO Extract SessionManagerClient and move SM-related logic in there.
+  // TODO Use SM-module classes to achieve type-safety
+  def launch(workflowId: Workflow.Id)(implicit ctx: ExecutorContext): Unit = {
     logger.info(s"Launching workflow $workflowId")
     ctx.wsClient.send(
       s"""["SEND\ndestination:/exchange/seahorse/workflow.$workflowId.""" +
@@ -141,7 +75,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
           .stripMargin)
   }
 
-  def withExecutor[T](workflowId: String, clusterDetails: ClusterDetails)(code: ExecutorContext => T): Unit = {
+  def withExecutor[T](workflowId: Workflow.Id, clusterDetails: ClusterDetails)(code: ExecutorContext => T): Unit = {
     logger.info(s"Starting executor for workflow $workflowId")
 
     httpClient.url(sessionsUrl).post(Json.parse(createSessionBody(workflowId, clusterDetails)))
@@ -178,8 +112,9 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     Await.result(httpClient.url(s"$sessionsUrl/$workflowId").delete(), 10 seconds)
   }
 
-  private def createSessionBody(workflowId: String, clusterDetails: ClusterDetails) = {
+  private def createSessionBody(workflowId: Workflow.Id, clusterDetails: ClusterDetails) = {
     import spray.json._
+
     import SessionsJsonProtocol._
 
     val request = CreateSession(
@@ -199,7 +134,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     }
   }
 
-  private def ensureExecutorIsRunning(workflowId: String): Unit = {
+  private def ensureExecutorIsRunning(workflowId: Workflow.Id): Unit = {
     eventually {
       val statusString = Await.result(
         httpClient.url(sessionsUrl)
@@ -208,7 +143,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
             val JsArray(jsonSessions: Seq[JsObject]) =
               request.json.asInstanceOf[JsObject].value("sessions")
             val jsonSessionForWorkflow = jsonSessions.find(
-              _.value("workflowId").asInstanceOf[JsString].value == workflowId
+              _.value("workflowId").asInstanceOf[JsString].value == workflowId.toString()
             ).get
             jsonSessionForWorkflow.value("status").asInstanceOf[JsString].value
           }), httpTimeout)
@@ -217,9 +152,9 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
   }
 
   def assertAllNodesCompletedSuccessfully
-      (workflowId: String)
+      (workflow: WorkflowInfo)
       (implicit ctx: ExecutorContext): Unit = {
-    val numberOfNodes = calculateNumberOfNodes(workflowId)
+    val numberOfNodes = calculateNumberOfNodes(workflow.id)
 
     val nodesResult = eventually {
       val failedNodes = ctx.websocketMessages.filter { msg =>
@@ -227,7 +162,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
       }
 
       if (failedNodes.nonEmpty) {
-        s"Failed nodes: ${failedNodes.toString()} for workflow $workflowId".failure
+        s"Failed nodes: ${failedNodes.toString()} for workflow id: ${workflow.id}. name: ${workflow.name}".failure
       } else {
         // TODO Parse messages instead
         val completedNodeMessages = ctx.websocketMessages.filter { msg =>
@@ -235,7 +170,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
         }
 
         logger.info(s"${completedNodeMessages.length} nodes completed." +
-          s" Need all $numberOfNodes nodes completed. Workflow $workflowId")
+          s" Need all $numberOfNodes nodes completed for workflow id: ${workflow.id}. name: ${workflow.name}")
 
         if(completedNodeMessages.length > numberOfNodes) {
           logger.error(
@@ -257,11 +192,11 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     nodesResult match {
       case Success(_) =>
       case Failure(nodeReport) =>
-        fail(s"Some nodes failed for workflow $workflowId. Node report: $nodeReport")
+        fail(s"Some nodes failed for workflow id: ${workflow.id}. name: ${workflow.name}'. Node report: $nodeReport")
     }
   }
 
-  private def calculateNumberOfNodes(workflowId: String): Int = {
+  private def calculateNumberOfNodes(workflowId: Workflow.Id): Int = {
     Await.result(
       httpClient.url(s"$baseUrl/v1/workflows/$workflowId")
         .get()

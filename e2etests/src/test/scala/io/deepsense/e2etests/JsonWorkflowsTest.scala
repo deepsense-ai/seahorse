@@ -5,6 +5,8 @@ package io.deepsense.e2etests
 
 import org.scalatest.{FreeSpec, Matchers, WordSpec}
 
+import io.deepsense.e2etests.client.WorkflowManagerClient
+
 class JsonWorkflowsTest extends WordSpec with Matchers with SeahorseIntegrationTestDSL {
 
   ensureSeahorseIsRunning()
@@ -13,12 +15,13 @@ class JsonWorkflowsTest extends WordSpec with Matchers with SeahorseIntegrationT
       "be correct - all nodes run and completed successfully" when {
         for (cluster <- TestClusters.allAvailableClusters) {
           s"run on ${cluster.clusterType} cluster" in {
-            val id = uploadWorkflow(fileContents)
+            val id = WorkflowManagerClient.uploadWorkflow(fileContents)
+            val workflow = WorkflowManagerClient.getWorkflow(id)
             withExecutor(id, cluster) { implicit ctx =>
               launch(id)
-              assertAllNodesCompletedSuccessfully(id)
+              assertAllNodesCompletedSuccessfully(workflow)
             }
-            deleteWorkflow(id)
+            WorkflowManagerClient.deleteWorkflow(id)
           }
         }
       }
