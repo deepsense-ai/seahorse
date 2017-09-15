@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
-trait Classifier extends Evaluable {
-  def getReporter: Reporter = ClassificationReporter
+import io.deepsense.deeplang.DOperable
+
+trait Evaluable extends DOperable {
+  def getReporter: Reporter
 }

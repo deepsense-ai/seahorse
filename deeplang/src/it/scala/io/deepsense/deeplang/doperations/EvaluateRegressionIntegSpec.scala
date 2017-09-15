@@ -136,21 +136,9 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
       dataFrame: DataFrame,
       targetColumnName: String,
       predictionColumnName: String): Report = {
-    val operation = evaluateRegressionOperation(targetColumnName, predictionColumnName)
+    val operation = EvaluateRegression(targetColumnName, predictionColumnName)
     val resultVector = operation.execute(executionContext)(Vector(dataFrame))
     resultVector.head.asInstanceOf[Report]
   }
 
-  private def evaluateRegressionOperation(
-      targetColumnName: String,
-      predictionColumnName: String): EvaluateRegression = {
-    val operation = new EvaluateRegression
-    val targetColumnParam =
-      operation.parameters.getSingleColumnSelectorParameter(Evaluator.targetColumnParamKey)
-    targetColumnParam.value = Some(NameSingleColumnSelection(targetColumnName))
-    val predictionColumnParam =
-      operation.parameters.getSingleColumnSelectorParameter(Evaluator.predictionColumnParamKey)
-    predictionColumnParam.value = Some(NameSingleColumnSelection(predictionColumnName))
-    operation
-  }
 }

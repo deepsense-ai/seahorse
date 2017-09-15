@@ -72,23 +72,14 @@ class CrossValidateRegressorIntegSpec
 
   val numberOfFolds = 4
   val regressor = new CrossValidateRegressor
-  import io.deepsense.deeplang.doperations.CrossValidateRegressor._
-  regressor.parameters.getNumericParameter(numOfFoldsParamKey).value = Some(numberOfFolds * 1.0)
-  regressor.parameters.getChoiceParameter(CrossValidateRegressor.shuffleParamKey).value =
-    Some(shuffleYes)
-  regressor
-    .parameters
-    .getChoiceParameter(shuffleParamKey)
-    .options
-    .get(shuffleYes)
-    .get
-    .getNumericParameter(seedParamKey)
-    .value = Some(0.0)
-  regressor.parameters.getSingleColumnSelectorParameter("target column").value =
-    Some(NameSingleColumnSelection("column3"))
-  regressor.parameters.getColumnSelectorParameter("feature columns").value =
-    Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("column2"))), false))
+  regressor.numberOfFoldsParameter.value = Some(numberOfFolds * 1.0)
+  regressor.shuffleParameter.value = Some(CrossValidate.BinaryChoice.YES.toString)
+  regressor.seedShuffleParameter.value = Some(0.0)
 
+  regressor.targetColumnParameter.value =
+    Some(NameSingleColumnSelection("column3"))
+  regressor.featureColumnsParameter.value =
+    Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("column2"))), excluding = false))
 
   "CrossValidateRegressor with parameters set" should {
     "train untrained model on DataFrame and produce report" in {
@@ -121,8 +112,7 @@ class CrossValidateRegressorIntegSpec
       dataFrame: DataFrame): Unit = {
     val effectiveNumberOfFolds = math.min(
       if (dataFrame.sparkDataFrame.count() == 1) 0 else dataFrame.sparkDataFrame.count(),
-      math.round(
-        regressor.parameters.getDouble(CrossValidateRegressor.numOfFoldsParamKey).get).toInt)
+      math.round(regressor.numberOfFoldsParameter.value.get).toInt)
 
     // Training untrained RidgeReggressor
     val createRidgeRegression = CreateRidgeRegression(0.0, 10)
@@ -137,22 +127,21 @@ class CrossValidateRegressorIntegSpec
     //logger.debug("Cross-validation report=" + content.toJson.prettyPrint)
 
     if (effectiveNumberOfFolds > 0) {
-      val table = content.tables.get(CrossValidateRegressor.reportTableName).get
+      val table = content.tables.get("Cross-validate Regression Report").get
 
       // Check number of rows in report (one for every fold + one for summary)
       table.rowNames.get.length shouldBe (effectiveNumberOfFolds + 1)
       table.values.length shouldBe table.rowNames.get.length
 
       // Check number of columns in report
-      table.columnNames.get shouldBe CrossValidateRegressor.reportColumnNames
+      table.columnNames.get shouldBe RegressionReporter.CvReportColumnNames
       table.values.foreach(r => r.length shouldBe table.columnNames.get.length)
 
       // Check sizes of test sets
       val allTestSetsSize = table.values.slice(0, effectiveNumberOfFolds.toInt).fold(0) {
-        case (z: Int, i: List[Option[String]]) =>
-          // Training and test sets sizes sum should be equal to size of DataFrame
-          i(1).get.toInt + i(2).get.toInt shouldBe dataFrame.sparkDataFrame.count()
-          z + i(2).get.toInt
+        case (z: Int, _ :: Some(trainingSetSize: String) :: Some(testSetSize: String) :: _) =>
+          trainingSetSize.toInt + testSetSize.toInt shouldBe dataFrame.sparkDataFrame.count()
+          z + testSetSize.toInt
       }
       // Sum of test sets sizes from all folds should be equal to size of DataFrame
       allTestSetsSize shouldBe dataFrame.sparkDataFrame.count()

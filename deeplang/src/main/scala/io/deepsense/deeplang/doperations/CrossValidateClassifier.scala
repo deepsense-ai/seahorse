@@ -18,20 +18,20 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang._
+import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperables._
 
-case class CrossValidateRegressor() extends CrossValidate[Regressor] {
-  override def reportName: String = RegressionReporter.CvReportName
+case class CrossValidateClassifier() extends CrossValidate[Classifier] {
+  override def reportName: String = ClassificationReporter.CvReportName
 
   @transient
-  override lazy val tTagTI_0: ru.TypeTag[Regressor with Trainable] =
-    ru.typeTag[Regressor with Trainable]
+  override lazy val tTagTI_0: ru.TypeTag[Classifier with Trainable] =
+    ru.typeTag[Classifier with Trainable]
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[Regressor with Scorable] =
-    ru.typeTag[Regressor with Scorable]
+  override lazy val tTagTO_0: ru.TypeTag[Classifier with Scorable] =
+    ru.typeTag[Classifier with Scorable]
 
-  override val id: DOperation.Id = "95ca5225-b8e0-45c7-8ecd-a2c9d4d6861f"
+  override val id: DOperation.Id = "0a3f1185-1284-4609-a363-fcd692dccb25"
 
-  override val name: String = "Cross-validate Regressor"
+  override val name: String = "Cross-validate Classifier"
 }

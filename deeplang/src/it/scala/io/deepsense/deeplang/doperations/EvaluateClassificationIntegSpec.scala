@@ -138,7 +138,7 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
       "Evaluate classification summary",
       Some(
         List(
-          "DataFrame size",
+          "DataFrame Size",
           "AUC",
           "Logarithmic Loss")),
       None,
@@ -147,7 +147,7 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
     )
 
     Report(ReportContent(
-      EvaluateClassification.ReportName,
+      "Evaluate Classification Report",
       Map(
         summaryTable.name -> summaryTable,
         accuracyTable.name -> accuracyTable,

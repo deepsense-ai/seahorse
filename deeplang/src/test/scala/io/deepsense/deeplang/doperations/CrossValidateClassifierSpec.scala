@@ -17,42 +17,42 @@
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
+import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}
 import io.deepsense.reportlib.model.ReportContent
 
 /**
- * Tests only mocked model trained by CrossValidateRegressor (ignores report)
+ * Tests only mocked model trained by CrossValidateClassifier (ignores report)
  */
-class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
+class CrossValidateClassifierSpec extends UnitSpec with MockitoSugar {
 
-  val regressor = new CrossValidateRegressor
-  // NOTE: When folds == 0, only regression train is performed (returned report is empty)
-  regressor.numberOfFoldsParameter.value = Some(0.0)
-  regressor.shuffleParameter.value = Some(CrossValidate.BinaryChoice.NO.toString)
-  regressor.seedShuffleParameter.value = Some(0.0)
+  val classifier = new CrossValidateClassifier
+  // NOTE: When folds == 0, only training is performed (returned report is empty)
+  classifier.numberOfFoldsParameter.value = Some(0.0)
+  classifier.shuffleParameter.value = Some(CrossValidate.BinaryChoice.NO.toString)
+  classifier.seedShuffleParameter.value = Some(0.0)
 
   val trainableParametersStub = Trainable.Parameters(
-      Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
+    Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
 
-  regressor.featureColumnsParameter.value = trainableParametersStub.featureColumns
-  regressor.targetColumnParameter.value = trainableParametersStub.targetColumn
+  classifier.featureColumnsParameter.value = trainableParametersStub.featureColumns
+  classifier.targetColumnParameter.value = trainableParametersStub.targetColumn
 
-  "CrossValidateRegressor with parameters set" should {
+  "CrossValidateClassifier with parameters set" should {
     "train untrained model on DataFrame" in {
-      val trainableMock = mock[UntrainedRidgeRegression]
+      val trainableMock = mock[UntrainedLogisticRegression]
       val trainMethodMock = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       val executionContextStub = mock[ExecutionContext]
-      val scorableStub = mock[TrainedRidgeRegression]
+      val scorableStub = mock[TrainedLogisticRegression]
       val dataframeStub = mock[DataFrame]
       val dataframeSparkStub = mock[sql.DataFrame]
       when(dataframeStub.sparkDataFrame).thenReturn(dataframeSparkStub)
@@ -62,14 +62,14 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       when(trainMethodMock.apply(
         executionContextStub)(trainableParametersStub)(dataframeStub)).thenReturn(scorableStub)
 
-      val result = regressor.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
+      val result = classifier.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
 
       result shouldBe Vector(
-        scorableStub, Report(ReportContent("Cross-validate Regression Report")))
+        scorableStub, Report(ReportContent("Cross-validate Classification Report")))
     }
 
     "infer results of it's types" in {
-      val regressorWithoutParams = new CrossValidateRegressor
+      val classifierWithoutParams = new CrossValidateClassifier
       val inferContextStub = mock[InferContext]
       val dDOperableCatalogMock = mock[DOperableCatalog]
       when(inferContextStub.dOperableCatalog).thenReturn(dDOperableCatalogMock)
@@ -82,10 +82,10 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       val scorableKnowledgeStub2 = DKnowledge(Set(scorableStubs(1), scorableStubs(2)))
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]
 
-      val trainableMock1 = mock[UntrainedRidgeRegression]
+      val trainableMock1 = mock[UntrainedLogisticRegression]
       val trainMethodMock1 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
-      val trainableMock2 = mock[UntrainedRidgeRegression]
+      val trainableMock2 = mock[UntrainedLogisticRegression]
       val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)
@@ -96,7 +96,7 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       when(trainMethodMock2.infer(any())(any())(any()))
         .thenReturn((scorableKnowledgeStub2, InferenceWarnings.empty))
 
-      val (result, _) = regressorWithoutParams.inferKnowledge(
+      val (result, _) = classifierWithoutParams.inferKnowledge(
         inferContextStub)(
             Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
 

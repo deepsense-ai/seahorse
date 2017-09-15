@@ -16,6 +16,6 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.DOperable
-
-trait Regressor extends DOperable
+trait Regressor extends Evaluable {
+  def getReporter: Reporter = RegressionReporter
+}

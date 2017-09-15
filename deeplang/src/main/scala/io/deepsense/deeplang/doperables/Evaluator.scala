@@ -16,53 +16,66 @@
 
 package io.deepsense.deeplang.doperables
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.parameters.{ColumnType, ParametersSchema, SingleColumnSelectorParameter}
+import io.deepsense.deeplang.parameters.{ColumnType, ParametersSchema, SingleColumnSelection, SingleColumnSelectorParameter}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-trait Evaluator extends DOperation1To1[DataFrame, Report] {
-
-  val evaluatorParameters = ParametersSchema(
-    Evaluator.targetColumnParamKey ->
-      SingleColumnSelectorParameter("Target Column", required = true, portIndex = 0),
-    Evaluator.predictionColumnParamKey ->
-      SingleColumnSelectorParameter("Prediction Column", required = true, portIndex = 0)
-  )
+trait Evaluator extends DOperation1To1[DataFrame, Report] with EvaluatorParams {
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Report = {
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
     val predictionsAndLabels = getPredictionsAndLabels(dataFrame)
     logger.debug("Preparing evaluation report")
-    val evaluationReport = report(dataFrame, predictionsAndLabels)
+    val evaluationReport = report(predictionsAndLabels)
     logger.debug("Execution of " + this.getClass.getSimpleName + " ends")
     evaluationReport
   }
 
-  protected def report(dataFrame: DataFrame, predictionsAndLabels: RDD[(Double, Double)]): Report
+  protected def report(predictionsAndLabels: RDD[(Double, Double)]): Report
 
-  protected def getPredictionsAndLabels(
-      dataFrame: DataFrame): RDD[(Double, Double)] = {
-    val predictionColumnName: String =
-      columnName(dataFrame, Evaluator.predictionColumnParamKey)
-    val targetColumnName: String = columnName(dataFrame, Evaluator.targetColumnParamKey)
-    dataFrame.sparkDataFrame.select(predictionColumnName, targetColumnName).rdd.map { r =>
-      (r.getDouble(0), r.getDouble(1))
+  protected def getPredictionsAndLabels(dataFrame: DataFrame): RDD[(Double, Double)] = {
+    val predictionColumnName = columnName(dataFrame, predictionColumnParameter.value.get)
+    val targetColumnName: String = columnName(dataFrame, targetColumnParameter.value.get)
+
+    dataFrame.sparkDataFrame
+      .select(predictionColumnName, targetColumnName)
+      .rdd
+      .map { r => (r.getDouble(0), r.getDouble(1))
     }
   }
 
   private def columnName(
       dataFrame: DataFrame,
-      columnParamKey: String): String = {
-    val colName = dataFrame.getColumnName(parameters.getSingleColumnSelection(columnParamKey).get)
-    DataFrame.assertExpectedColumnType(dataFrame.sparkDataFrame.schema(colName), ColumnType.numeric)
-    colName
+      columnSelection: SingleColumnSelection): String = {
+    val name = dataFrame.getColumnName(columnSelection)
+    DataFrame.assertExpectedColumnType(dataFrame.sparkDataFrame.schema(name), ColumnType.numeric)
+
+    name
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[Report] = ru.typeTag[Report]
 }
 
-object Evaluator {
-  val targetColumnParamKey = "target column"
-  val predictionColumnParamKey = "prediction column"
+trait EvaluatorParams {
+  val targetColumnParameter = SingleColumnSelectorParameter(
+    "Target Column",
+    required = true,
+    portIndex = 0)
+
+  val predictionColumnParameter = SingleColumnSelectorParameter(
+    "Prediction Column",
+    required = true,
+    portIndex = 0)
+
+  val parameters = ParametersSchema(
+    "Target Column" -> targetColumnParameter,
+    "Prediction Column" -> predictionColumnParameter
+  )
 }
