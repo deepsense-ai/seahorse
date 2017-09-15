@@ -32,7 +32,7 @@ class ALSModel
   with HasPredictionColumnCreatorParam
   with HasUserColumnParam {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     itemColumn,
     predictionColumn,
     userColumn)

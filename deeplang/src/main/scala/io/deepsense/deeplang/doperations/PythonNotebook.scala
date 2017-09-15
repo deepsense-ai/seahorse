@@ -32,7 +32,7 @@ case class PythonNotebook()
 
   override val since: Version = Version(1, 0, 0)
 
-  override val params = declareParams()
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = ()
 

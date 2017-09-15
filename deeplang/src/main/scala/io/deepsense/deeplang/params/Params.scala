@@ -28,6 +28,8 @@ import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 import io.deepsense.deeplang.params.multivalue.MultipleValuesParam
 import io.deepsense.deeplang.params.wrappers.spark._
 
+import scala.reflect.runtime.{ universe => ru }
+
 /**
  * Everything that inherits this trait declares that it contains parameters.
  * Parameters are discovered by reflection.
@@ -152,30 +154,6 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
   }
 
   def params: Array[Param[_]]
-
-  /**
-   * Allows to declare parameters order conveniently and makes sure
-   * that all parameters are declared.
-   * Additionally check uniqueness of names.
-   */
-  protected def declareParams(params: Param[_]*): Array[Param[_]] = {
-    val declaredParamSet = params.toSet
-    val reflectionParamSet = getParamsByReflection.toSet
-    require(declaredParamSet == reflectionParamSet,
-      s"[${getClass.getName}] Declared params set must be equal to reflection param set." +
-        s" Differences: ${declaredParamSet xor reflectionParamSet}")
-    require(params.map(_.name).hasUniqueValues, "Names of parameters are not unique")
-    params.toArray
-  }
-
-  private def getParamsByReflection: Array[Param[_]] = {
-    val methods = this.getClass.getMethods
-    methods.filter { m =>
-      Modifier.isPublic(m.getModifiers) &&
-        classOf[Param[_]].isAssignableFrom(m.getReturnType) &&
-        m.getParameterTypes.isEmpty
-    }.map(m => m.invoke(this).asInstanceOf[Param[_]])
-  }
 
   private lazy val paramsByName: Map[String, Param[_]] =
     params.map { case param => param.name -> param }.toMap

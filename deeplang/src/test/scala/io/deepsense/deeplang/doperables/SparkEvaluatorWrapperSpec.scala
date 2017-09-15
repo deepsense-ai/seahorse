@@ -100,7 +100,7 @@ object SparkEvaluatorWrapperSpec {
 
     def setColumnWrapper(value: SingleColumnSelection): this.type = set(columnWrapper, value)
 
-    override val params: Array[Param[_]] = declareParams(paramWrapper, columnWrapper)
+    override val params: Array[Param[_]] = Array(paramWrapper, columnWrapper)
 
     override def getMetricName: String = metricName
 

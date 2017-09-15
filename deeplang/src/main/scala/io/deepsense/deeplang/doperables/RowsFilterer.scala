@@ -35,7 +35,7 @@ class RowsFilterer extends Transformer {
   def getCondition: String = $(condition)
   def setCondition(value: String): this.type = set(condition, value)
 
-  override val params: Array[Param[_]] = declareParams(condition)
+  override val params: Array[Param[_]] = Array(condition)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val uniqueDataFrameId = "row_filterer_" + java.util.UUID.randomUUID.toString.replace('-', '_')

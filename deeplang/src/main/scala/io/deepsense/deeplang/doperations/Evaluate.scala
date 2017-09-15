@@ -47,7 +47,7 @@ case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] 
   def getEvaluatorParams: JsValue = $(evaluatorParams)
   def setEvaluatorParams(jsValue: JsValue): this.type = set(evaluatorParams, jsValue)
 
-  override val params = declareParams(evaluatorParams)
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(evaluatorParams)
 
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
   override lazy val tTagTI_1: TypeTag[Evaluator] = typeTag

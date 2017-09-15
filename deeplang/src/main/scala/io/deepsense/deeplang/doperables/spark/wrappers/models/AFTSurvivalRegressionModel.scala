@@ -35,7 +35,7 @@ class AFTSurvivalRegressionModel
   with PredictorParams
   with AFTSurvivalRegressionParams {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     featuresColumn,
     predictionColumn,
     quantileProbabilities,

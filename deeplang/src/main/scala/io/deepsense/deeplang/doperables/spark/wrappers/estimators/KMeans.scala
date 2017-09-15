@@ -53,7 +53,7 @@ class KMeans
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(initSteps, 5.0)
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     k,
     maxIterations,
     seed,
@@ -67,7 +67,7 @@ class KMeans
 object KMeans {
 
   sealed trait KMeansInitMode extends Choice {
-    override val params: Array[Param[_]] = declareParams()
+    override val params: Array[Param[_]] = Array()
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[RandomInitMode],
       classOf[ParallelInitMode]

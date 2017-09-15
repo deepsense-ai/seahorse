@@ -30,7 +30,7 @@ class IsotonicRegressionModel
   with PredictorParams
   with HasFeatureIndexParam {
 
-  override val params = declareParams(
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(
     featureIndex,
     featuresColumn,
     predictionColumn)

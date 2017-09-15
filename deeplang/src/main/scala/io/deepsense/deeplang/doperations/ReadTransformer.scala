@@ -39,7 +39,7 @@ case class ReadTransformer()
 
   override val since: Version = Version(1, 1, 0)
 
-  val params = declareParams(sourcePath)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(sourcePath)
 
   override protected def _execute(context: ExecutionContext)(): Transformer = {
     val path = getSourcePath

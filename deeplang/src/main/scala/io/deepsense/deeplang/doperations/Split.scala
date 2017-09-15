@@ -59,7 +59,7 @@ case class Split()
   def getSplitMode: SplitModeChoice = $(splitMode)
   def setSplitMode(value: SplitModeChoice): this.type = set(splitMode, value)
 
-  val params = declareParams(splitMode)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(splitMode)
 
   override def outPortsLayout: Vector[DPortPosition] =
     Vector(DPortPosition.Left, DPortPosition.Right)
@@ -175,7 +175,7 @@ object SplitModeChoice {
     def getSeed: Int = $(seed).toInt
     def setSeed(value: Int): this.type = set(seed, value.toDouble)
 
-    override val params = declareParams(splitRatio, seed)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(splitRatio, seed)
   }
 
   case class Conditional()
@@ -196,7 +196,7 @@ object SplitModeChoice {
     def getCondition: String = $(condition)
     def setCondition(value: String): this.type = set(condition, value)
 
-    override val params = declareParams(condition)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(condition)
   }
 
 }

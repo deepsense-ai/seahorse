@@ -62,7 +62,7 @@ class VanillaGBTClassifier()
     sparkParamGetter = _.lossType)
   setDefault(lossType, Logistic())
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     impurity,
     lossType,
     maxBins,
@@ -84,7 +84,7 @@ object GBTClassifier {
 
   sealed abstract class LossType(override val name: String) extends Choice {
 
-    override val params: Array[Param[_]] = declareParams()
+    override val params: Array[Param[_]] = Array()
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[Logistic]

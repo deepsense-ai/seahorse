@@ -48,7 +48,7 @@ class GBTRegression
     sparkParamGetter = _.lossType)
   setDefault(lossType, Squared())
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     impurity,
     lossType,
     maxBins,
@@ -67,7 +67,7 @@ class GBTRegression
 object GBTRegression {
 
   sealed abstract class LossType(override val name: String) extends Choice {
-    override val params: Array[Param[_]] = declareParams()
+    override val params: Array[Param[_]] = Array()
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[Squared],

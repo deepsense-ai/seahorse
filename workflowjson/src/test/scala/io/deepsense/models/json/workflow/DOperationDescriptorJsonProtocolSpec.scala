@@ -68,6 +68,7 @@ class DOperationDescriptorJsonProtocolSpec
       "operation name",
       "operation description",
       category,
+      hasDocumentation = false,
       parameters.paramsToJson,
       Seq(typeOf[A], typeOf[A with T1]),
       Vector(DPortPosition.Left, DPortPosition.Center),
@@ -82,6 +83,7 @@ class DOperationDescriptorJsonProtocolSpec
       "category" -> JsString(category.id.toString),
       "description" -> JsString(operationDescriptor.description),
       "deterministic" -> JsBoolean(false),
+      "hasDocumentation" -> JsBoolean(false),
       "parameters" -> parametersJsRepresentation,
       "ports" -> JsObject(
         "input" -> JsArray(

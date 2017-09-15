@@ -66,7 +66,7 @@ object DOperationCatalogTestResources {
 
     override val inArity: Int = 2
     override val outArity: Int = 3
-    val params = declareParams()
+    val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }
 
   case class X() extends DOperableMock
@@ -147,13 +147,13 @@ object ViewingTestResources extends MockitoSugar {
 
   val operationD = catalog.createDOperation(idD)
 
-  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA,
+  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA, true,
     DOperationA().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB,
+  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB, true,
     DOperationB().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC,
+  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC, true,
     DOperationC().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD,
+  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD, true,
     DOperationD().paramsToJson, List(XTypeTag.tpe, YTypeTag.tpe), operationD.inPortsLayout,
     List(XTypeTag.tpe), operationD.outPortsLayout)
 }

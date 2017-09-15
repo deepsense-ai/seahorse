@@ -55,7 +55,7 @@ case class ReadDataFrame()
 
   override val since: Version = Version(0, 4, 0)
 
-  val params = declareParams(storageType)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(storageType)
   setDefault(storageType, InputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {

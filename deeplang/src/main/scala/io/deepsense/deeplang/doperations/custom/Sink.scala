@@ -33,7 +33,7 @@ case class Sink() extends DOperation1To1[DataFrame, DataFrame] {
 
   override val since: Version = Version(1, 0, 0)
 
-  override val params: Array[Param[_]] = declareParams()
+  override val params: Array[Param[_]] = Array()
 
   @transient
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]

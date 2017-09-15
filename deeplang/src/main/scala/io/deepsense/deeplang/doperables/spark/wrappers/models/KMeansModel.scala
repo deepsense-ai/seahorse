@@ -26,7 +26,7 @@ import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
 class KMeansModel extends SparkModelWrapper[SparkKMeansModel, SparkKMeans] {
 
-  override val params: Array[Param[_]] = declareParams()
+  override val params: Array[Param[_]] = Array()
 
   override def report: Report = {
     val summary =

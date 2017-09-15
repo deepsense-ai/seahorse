@@ -36,15 +36,13 @@ object CommonSettingsPlugin extends AutoPlugin {
   override def globalSettings = Seq(
     // Set custom URL using -Dartifactory.url
     // sbt -Dartifactory.url=http://192.168.59.104/artifactory/
-    artifactoryUrl := sys.props.getOrElse("artifactory.url", "http://artifactory.deepsense.codilime.com:8081/artifactory/")
+    artifactoryUrl := sys.props.getOrElse("artifactory.url", "http://artifactory.deepsense.codilime.com:8081/artifactory/"),
+    // Default scala version
+    scalaVersion := Versions.scala
   )
 
   override def projectSettings = Seq(
     organization := "io.deepsense",
-    // Default scala version
-    scalaVersion := Versions.scala,
-    // Scala versions used for cross-builds
-    // (use `sbt clean "+ publish"` to publish using scala 2.11.8)
     crossScalaVersions := Seq(Versions.scala),
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",

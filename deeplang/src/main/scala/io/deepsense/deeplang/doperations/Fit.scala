@@ -46,7 +46,7 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Trans
 
   def setEstimatorParams(jsValue: JsValue): this.type = set(estimatorParams -> jsValue)
 
-  override val params = declareParams(estimatorParams)
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(estimatorParams)
 
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
   override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag

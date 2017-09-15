@@ -30,7 +30,7 @@ class GBTRegressionModel
   with LoadableWithFallback[SparkGBTRegressionModel, SparkGBTRegressor]
   with PredictorParams {
 
-  override val params: Array[Param[_]] = declareParams(featuresColumn, predictionColumn)
+  override val params: Array[Param[_]] = Array(featuresColumn, predictionColumn)
 
   override def report: Report = {
     val summary =

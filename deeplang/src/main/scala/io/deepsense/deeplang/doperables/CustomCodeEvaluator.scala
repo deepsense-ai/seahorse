@@ -40,7 +40,7 @@ abstract class CustomCodeEvaluator()
   val codeParameter: CodeSnippetParam
 
   override def params: Array[Param[_]] =
-    declareParams(metricName, codeParameter, isLargerBetterParam)
+    Array(metricName, codeParameter, isLargerBetterParam)
 
   override def isLargerBetter: Boolean = $(isLargerBetterParam)
 

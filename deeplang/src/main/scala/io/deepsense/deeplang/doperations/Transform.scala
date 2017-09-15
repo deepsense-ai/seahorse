@@ -46,7 +46,7 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
   def getTransformerParams: JsValue = $(transformerParams)
   def setTransformerParams(jsValue: JsValue): this.type = set(transformerParams, jsValue)
 
-  override val params = declareParams(transformerParams)
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(transformerParams)
 
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
   override lazy val tTagTI_1: TypeTag[Transformer] = typeTag

@@ -30,7 +30,7 @@ class RandomForestRegressionModel
   with LoadableWithFallback[SparkRFRModel, SparkRFR]
   with PredictorParams {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     featuresColumn,
     predictionColumn)
 

@@ -41,7 +41,7 @@ class BinaryClassificationEvaluator
     description = "The metric used in evaluation.")
   setDefault(metricName, AreaUnderROC())
 
-  override val params: Array[Param[_]] = declareParams(metricName, labelColumn)
+  override val params: Array[Param[_]] = Array(metricName, labelColumn)
 
   def getMetricName: String = $(metricName).name
   def setMetricName(value: Metric): this.type = set(metricName, value)
@@ -165,26 +165,26 @@ object BinaryClassificationEvaluator {
 
   case class AreaUnderROC() extends Metric(areaUnderROC) with RawPredictionMetric {
     override val name = areaUnderROC
-    override val params = declareParams(rawPredictionColumnParam)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(rawPredictionColumnParam)
   }
 
   case class AreaUnderPR() extends Metric(areaUnderPR) with RawPredictionMetric {
     override val name = areaUnderPR
-    override val params = declareParams(rawPredictionColumnParam)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(rawPredictionColumnParam)
   }
 
   case class Precision() extends Metric(precision) with PredictionMetric {
     override val name = precision
-    override val params = declareParams(predictionColumnParam)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(predictionColumnParam)
   }
 
   case class Recall() extends Metric(recall) with PredictionMetric {
     override val name = recall
-    override val params = declareParams(predictionColumnParam)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(predictionColumnParam)
   }
 
   case class F1Score() extends Metric(f1Score) with PredictionMetric {
     override val name = f1Score
-    override val params = declareParams(predictionColumnParam)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(predictionColumnParam)
   }
 }

@@ -107,7 +107,7 @@ final class SqlCombine
     destinationCtx.createDataFrame(df.rdd, df.schema)
 
   override def params: Array[Param[_]] =
-    declareParams(leftTableName, rightTableName, sqlCombineExpression)
+    Array(leftTableName, rightTableName, sqlCombineExpression)
 
   override def since: Version = Version(1, 4, 0)
 

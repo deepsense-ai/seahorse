@@ -41,7 +41,7 @@ class ParamsSpec extends UnitSpec {
       p.validateParams should contain theSameElementsAs
         new ParamValueNotProvidedException(nameOfParam2) +: p.param1.validate(4)
     }
-    "describe its params as json ordered as in declareParams()" in {
+    "describe its params as json ordered as in params Array()" in {
       val p = WithParams()
       p.paramsToJson shouldBe JsArray(
         p.param2.toJson(maybeDefault = None),
@@ -228,29 +228,6 @@ class ParamsSpec extends UnitSpec {
       }
     }
   }
-
-  "declareParams()" should {
-    "accept parameters" when {
-      "there are parameters with the same name in different choice options" in {
-        ParamsWithChoice()
-      }
-    }
-    "throw IllegalArgumentException" when {
-      import DeclareParamsFixtures._
-      "some declared params are defined outside of class" in {
-        an [IllegalArgumentException] shouldBe thrownBy { new ParamsFromOutside }
-      }
-      "some param names are not unique" in {
-        an [IllegalArgumentException] shouldBe thrownBy { new ParamsWithNotUniqueNames }
-      }
-      "not all defined params are declared" in {
-        an [IllegalArgumentException] shouldBe thrownBy { new NotAllParamsDeclared }
-      }
-      "some params are declared more then one time" in {
-        an [IllegalArgumentException] shouldBe thrownBy { new ParamsRepeated }
-      }
-    }
-  }
 }
 
 object ParamsSpec extends UnitSpec {
@@ -276,7 +253,7 @@ object ParamsSpec extends UnitSpec {
     val param2 = MockParam(nameOfParam2)
     val param1 = MockParam("name of param1")
 
-    val params = declareParams(param2, param1)
+    val params: Array[Param[_]] = Array(param2, param1)
 
     def set1(v: Int): this.type = set(param1 -> v)
     def set2(v: Int): this.type = set(param2 -> v)
@@ -304,7 +281,7 @@ object ParamsSpec extends UnitSpec {
 
     def setChoice(v: ChoiceWithRepeatedParameter): this.type = set(choiceParam, v)
 
-    override val params = declareParams(choiceParam)
+    override val params: Array[Param[_]] = Array(choiceParam)
   }
 
   sealed trait ChoiceWithRepeatedParameter extends Choice {
@@ -320,7 +297,7 @@ object ParamsSpec extends UnitSpec {
       name = "x",
       description = "numericParam")
 
-    override val params = declareParams(numericParam)
+    override val params: Array[Param[_]] = Array(numericParam)
   }
 
   case class ChoiceTwo() extends ChoiceWithRepeatedParameter {
@@ -330,7 +307,7 @@ object ParamsSpec extends UnitSpec {
       name = "x",
       description = "numericParam")
 
-    override val params = declareParams(numericParam)
+    override val params: Array[Param[_]] = Array(numericParam)
   }
 
   object DeclareParamsFixtures {
@@ -338,25 +315,25 @@ object ParamsSpec extends UnitSpec {
 
     class ParamsFromOutside extends Params {
       val param = MockParam("name")
-      val params = declareParams(outsideParam, param)
+      val params: Array[Param[_]] = Array(outsideParam, param)
     }
 
     class ParamsWithNotUniqueNames extends Params {
       val param1 = MockParam("some name")
       val param2 = MockParam(param1.name)
-      val params = declareParams(param1, param2)
+      val params: Array[Param[_]] = Array(param1, param2)
     }
 
     class NotAllParamsDeclared extends Params {
       val param1 = MockParam("some name")
       val param2 = MockParam("some other name")
-      val params = declareParams(param1)
+      val params: Array[Param[_]] = Array(param1)
     }
 
     class ParamsRepeated extends Params {
       val param1 = MockParam("some name")
       val param2 = MockParam("some other name")
-      val params = declareParams(param1, param2, param1)
+      val params: Array[Param[_]] = Array(param1, param2, param1)
     }
   }
 }

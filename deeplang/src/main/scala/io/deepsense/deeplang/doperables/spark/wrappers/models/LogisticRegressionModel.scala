@@ -33,7 +33,7 @@ class LogisticRegressionModel
   with ProbabilisticClassifierParams
   with HasThreshold {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     featuresColumn,
     probabilityColumn,
     rawPredictionColumn,
