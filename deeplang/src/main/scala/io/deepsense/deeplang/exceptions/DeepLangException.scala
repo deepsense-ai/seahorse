@@ -16,7 +16,13 @@
 
 package io.deepsense.deeplang.exceptions
 
+import io.deepsense.commons.exception.{FailureCode, DeepSenseException}
+
 abstract class DeepLangException(
-    val message: String,
-    val cause: Throwable = null)
-  extends Exception(message, cause)
+    override val message: String,
+    cause: Throwable = null)
+  extends DeepSenseException(
+    FailureCode.NodeFailure,
+    getClass.getSimpleName,
+    message,
+    Option(cause))
