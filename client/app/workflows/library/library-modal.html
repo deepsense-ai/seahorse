@@ -9,6 +9,11 @@
              ng-model="controller.filterString"
              placeholder="Search in {{controller.currentDirName}}"
       />
+      <span class="clear-search"
+            ng-click="controller.clearSearchInput()"
+            ng-if="controller.filterString">
+        X
+      </span>
     </div>
   </div>
 

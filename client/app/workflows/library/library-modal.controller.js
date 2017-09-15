@@ -20,9 +20,10 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
 
   vm.deleteFile = deleteFile;
   vm.onSelect = onSelect;
+  vm.showNewDirectoryInput = showNewDirectoryInput;
+  vm.clearSearchInput = clearSearchInput;
   vm.close = close;
   vm.ok = ok;
-  vm.showNewDirectoryInput = showNewDirectoryInput;
 
 
   $scope.$watch(() => LibraryService.getCurrentDirectoryContent(), () => {
@@ -55,8 +56,8 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
   }
 
 
-  function close() {
-    $uibModalInstance.dismiss();
+  function clearSearchInput() {
+    this.filterString = '';
   }
 
 
@@ -65,6 +66,16 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
     if (!isUploadingFilesPopoverOpen) {
       LibraryModalService.showNewDirectoryInput();
     }
+  }
+
+
+  function close() {
+    $uibModalInstance.dismiss();
+  }
+
+
+  function ok() {
+    $uibModalInstance.close(`${vm.currentDirUri}/${vm.selectedItem}`.replace('///', '//'));
   }
 
 
@@ -88,10 +99,6 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
     }
   }
 
-
-  function ok() {
-    $uibModalInstance.close(`${vm.currentDirUri}/${vm.selectedItem}`.replace('///', '//'));
-  }
 }
 
 exports.inject = function (module) {
