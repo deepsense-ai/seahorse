@@ -15,5 +15,3 @@
  */
 
 name := "deepsense-seahorse-entitystorage-model"
-
-ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }

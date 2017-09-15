@@ -17,5 +17,3 @@
 name := "deepsense-seahorse-reportlib"
 
 libraryDependencies ++= Dependencies.reportlib
-
-ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }

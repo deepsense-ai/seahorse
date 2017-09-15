@@ -17,5 +17,3 @@
 name := "deepsense-seahorse-entitystorage-client"
 
 libraryDependencies ++= Dependencies.entitystorageClient
-
-ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }

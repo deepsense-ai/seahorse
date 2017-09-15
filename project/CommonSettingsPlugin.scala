@@ -36,7 +36,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     scalaVersion := "2.10.5",
     // Scala versions used for cross-builds
     // (use `sbt clean "+ publish"` to publish using scala 2.11.6)
-//    crossScalaVersions := Seq("2.10.5", "2.11.6"),
+    crossScalaVersions := Seq("2.10.5", "2.11.6"),
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions"
@@ -47,7 +47,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     ),
     resolvers ++= Dependencies.resolvers,
     // Disable using the Scala version in output paths and artifacts
-    crossPaths := false
+    crossPaths := true
   ) ++ ouritSettings ++ testSettings ++ Seq(
     test <<= test in Test
   ) ++ Seq(

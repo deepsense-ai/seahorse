@@ -26,17 +26,17 @@ object Version {
   val scala         = "2.10.5"
   val scalacheck    = "1.12.2"
   val scalatest     = "3.0.0-SNAP4"
-  val spray         = "1.2.3"
+  val spray         = "1.3.3"
   val scoverage     = "1.0.4"
 }
 
 object Library {
-  val akka    = (name: String) => "org.spark-project.akka"     % s"akka-$name"               % Version.akka
-  val spark   = (name: String) => "org.apache.spark"           % s"spark-$name"              % Version.spark
-  val spray   = (name: String) => "io.spray"                   % s"spray-$name"              % Version.spray
+  val akka    = (name: String) => "org.spark-project.akka"    %% s"akka-$name"               % Version.akka
+  val spark   = (name: String) => "org.apache.spark"          %% s"spark-$name"              % Version.spark
+  val spray   = (name: String) => "io.spray"                  %% s"spray-$name"              % Version.spray
 
-  val akkaActor          = akka("actor_2.10")
-  val akkaTestkit        = akka("testkit_2.10")
+  val akkaActor          = akka("actor")
+  val akkaTestkit        = akka("testkit")
   val apacheCommons      = "org.apache.commons"                %  "commons-lang3"            % Version.apacheCommons
   val log4JExtras        = "log4j"                             %  "apache-log4j-extras"      % "1.2.17"
   val nscalaTime         = "com.github.nscala-time"           %%  "nscala-time"              % Version.nsscalaTime
@@ -51,9 +51,9 @@ object Library {
   val scalatest          = "org.scalatest"                    %% "scalatest"                 % Version.scalatest
   val scopt              = "com.github.scopt"                 %% "scopt"                     % "3.3.0"
   val scoverage          = "org.scoverage"                    %% "scalac-scoverage-runtime"  % "1.0.4"
-  val sparkCore          = spark("core_2.10")
-  val sparkMLLib         = spark("mllib_2.10")
-  val sparkSql           = spark("sql_2.10")
+  val sparkCore          = spark("core")
+  val sparkMLLib         = spark("mllib")
+  val sparkSql           = spark("sql")
 }
 
 object Dependencies {
