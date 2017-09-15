@@ -17,19 +17,19 @@ function SelectionItemsController($scope, $rootScope, MultiSelectionService, Wor
   return vm;
 
   function initialize() {
-    //track selections from MultiSelectionService
-    //$rootScope over $scope for performance
+    // track selections from MultiSelectionService
+    // $rootScope over $scope for performance
     let selectionListener = $rootScope.$watch(() => MultiSelectionService.getSelectedNodeIds(), (newSelection) => {
       vm.selection = newSelection;
     });
 
-    //clear selections when switching workspaces, as MultiSelection service is not aware of Workflow change
-    //$rootScope over $scope for performance
+    // clear selections when switching workspaces, as MultiSelection service is not aware of Workflow change
+    // $rootScope over $scope for performance
     let workflowListener = $rootScope.$watch(() => WorkflowService.getCurrentWorkflow(), () => {
-        vm.selection = [];
+      vm.selection = [];
     });
 
-    //unbind all listeners on destroy
+    // unbind all listeners on destroy
     $scope.$on('$destroy', () => {
       selectionListener();
       workflowListener();
@@ -37,9 +37,9 @@ function SelectionItemsController($scope, $rootScope, MultiSelectionService, Wor
   }
 
   function canDelete() {
-    return (isOwner() &&
+    return isOwner() &&
       vm.currentWorkflow.workflowStatus === 'editor' &&
-      vm.currentWorkflow.sessionStatus === 'running');
+      vm.currentWorkflow.sessionStatus === 'running';
   }
 
   function isOwner() {

@@ -34,6 +34,7 @@ const NEW_NODE_EDGE = {
 class AdapterService {
   constructor(WorkflowService, GraphStyleService, Report) {
     'ngInject';
+
     this.WorkflowService = WorkflowService;
     this.GraphStyleService = GraphStyleService;
     this.Report = Report;
@@ -237,7 +238,7 @@ class AdapterService {
       jsPlumbPort.setParameter('portIndex', port.index);
       jsPlumbPort.setParameter('nodeId', node.id);
     });
-  };
+  }
 
   renderInputPorts(node, ports) {
     ports.forEach((port) => {
@@ -260,7 +261,7 @@ class AdapterService {
 
       jsPlumbPort.setParameter('portIndex', port.index);
     });
-  };
+  }
 
   renderEdges(edges) {
     jsPlumb.detachEveryConnection();

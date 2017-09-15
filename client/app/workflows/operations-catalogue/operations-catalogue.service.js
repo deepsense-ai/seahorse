@@ -3,6 +3,7 @@
 class OperationsCatalogueService {
   constructor(Operations) {
     'ngInject';
+
     this.allOperations = Operations.getCatalog();
   }
 

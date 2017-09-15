@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('deepsense.graph-model').
-  factory('Port', function() {
+angular
+  .module('deepsense.graph-model')
+  .factory('Port', function() {
     class Port {
       constructor(options) {
         this.nodeId = options.nodeId;

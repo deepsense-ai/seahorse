@@ -4,7 +4,7 @@ import startEditingHTML from './additional-html/starting-popover.html';
 import startExecutorHTML from './additional-html/running-executor-popover.html';
 import executorErrorHTML from './additional-html/executor-error.html';
 
-import {sessionStatus} from '_appRoot/enums/session-status.js';
+import {sessionStatus} from 'APP/enums/session-status.js';
 
 /* ngInject */
 function WorkflowStatusBarService($rootScope, WorkflowService, UserService) {
@@ -133,6 +133,7 @@ function WorkflowStatusBarService($rootScope, WorkflowService, UserService) {
         } else {
           throw 'Cannot run inner workflow';
         }
+      // no default
     }
   }
 

@@ -3,6 +3,7 @@
 class CanvasController {
   constructor(CanvasService, AdapterService, $element, $timeout) {
     'ngInject';
+
     this.CanvasService = CanvasService;
     this.AdapterService = AdapterService;
     this.$element = $element;

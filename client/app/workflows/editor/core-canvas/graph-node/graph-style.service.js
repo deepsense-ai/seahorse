@@ -43,7 +43,7 @@ const STYLES_MAP = {
 };
 
 const CONNECTOR_STYLE_DEFAULT = {
-  strokeWidth: 2,
+  strokeWidth: 2
 };
 
 const CONNECTOR_HOVER_STYLE = {
@@ -78,6 +78,7 @@ const INPUT_STYLE = {
 class GraphStyleService {
   constructor(OperationsHierarchyService) {
     'ngInject';
+
     this.OperationsHierarchyService = OperationsHierarchyService;
   }
 
@@ -210,6 +211,4 @@ class GraphStyleService {
 }
 
 export default GraphStyleService;
-
-
 

@@ -6,7 +6,7 @@ import './canvas.less';
 
 const CanvasComponent = {
   bindings: {
-    'isEditable' : '<',
+    'isEditable': '<',
     'newNodeData': '<',
     'workflow': '<',
     'onConnectionAbort': '&'

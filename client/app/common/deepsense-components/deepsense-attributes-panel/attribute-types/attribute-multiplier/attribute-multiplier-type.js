@@ -8,7 +8,7 @@
 
 import tpl from './attribute-multiplier-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeMultiplierType($compile, $rootScope, DeepsenseNodeParameters) {
   return {
     restrict: 'E',
@@ -17,7 +17,7 @@ function AttributeMultiplierType($compile, $rootScope, DeepsenseNodeParameters) 
     link: function(scope, element) {
       let internal = {};
 
-      internal.renderParametersLists = function renderParametersLists () {
+      internal.renderParametersLists = function renderParametersLists() {
         let template = `
         <div class="ibox multiplier-item"
              ng-repeat="parametersList in parameter.parametersLists">
@@ -57,5 +57,6 @@ function AttributeMultiplierType($compile, $rootScope, DeepsenseNodeParameters) 
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeMultiplierType', AttributeMultiplierType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeMultiplierType', AttributeMultiplierType);

@@ -1,10 +1,10 @@
-/*global inject*/
+/* global inject */
 
 'use strict';
 
 describe('BaseApiClient', () => {
-  var module,
-    BaseApiClient;
+  var module;
+  var BaseApiClient;
 
   beforeEach(() => {
     module = angular.module('test', []);
@@ -45,12 +45,12 @@ describe('BaseApiClient', () => {
   });
 
   describe('should have request method', () => {
-    var client,
-      $httpBackend,
-      mockRequest;
+    var client;
+    var $httpBackend;
+    var mockRequest;
 
-    var url = '/test/url',
-      response = {
+    var url = '/test/url';
+    var response = {
         'test': true
       };
 
@@ -89,9 +89,9 @@ describe('BaseApiClient', () => {
     });
 
     it('which return promise & resolve it on request success', () => {
-      let success = false,
-        error = false,
-        responseData;
+      let success = false;
+      let error = false;
+      let responseData;
 
       $httpBackend.expectGET(url);
 
@@ -114,8 +114,8 @@ describe('BaseApiClient', () => {
     });
 
     it('which return promise & rejects it on request error', () => {
-      let success = false,
-        error = false;
+      let success = false;
+      let error = false;
 
       $httpBackend.expectGET(url);
 

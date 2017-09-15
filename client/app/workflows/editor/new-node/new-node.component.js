@@ -14,6 +14,7 @@ const NewNodeComponent = {
   controller: class NewNodeController {
     constructor($element, $timeout) {
       'ngInject';
+
       this.$element = $element;
       this.$timeout = $timeout;
     }

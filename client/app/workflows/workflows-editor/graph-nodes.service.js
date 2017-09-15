@@ -1,13 +1,14 @@
 'use strict';
 
-import {specialOperations} from '_appRoot/enums/special-operations.js';
+import {specialOperations} from 'APP/enums/special-operations.js';
 
 class GraphNodesService {
   /* @ngInject */
-  constructor($q, $rootScope, DeepsenseNodeParameters, Operations, UUIDGenerator, WorkflowsApiClient) {
+  constructor($q, $rootScope, $log, DeepsenseNodeParameters, Operations, UUIDGenerator, WorkflowsApiClient) {
     _.assign(this, {
       $q,
       $rootScope,
+      $log,
       DeepsenseNodeParameters,
       Operations,
       UUIDGenerator,
@@ -29,7 +30,7 @@ class GraphNodesService {
             deferred.resolve(node, 'async');
           });
         }, (error) => {
-          console.error('operation fetch error', error);
+          this.$log.error('operation fetch error', error);
           deferred.reject(error);
         });
     }

@@ -101,7 +101,7 @@ function DragAndDrop($rootScope, $log, MouseEvent) {
   }
 
   function publishExactEvent(event, element) {
-    $rootScope.$broadcast(`Drop.EXACT`,
+    $rootScope.$broadcast('Drop.EXACT',
       ...arguments, internal.draggableElement.exactType);
   }
 

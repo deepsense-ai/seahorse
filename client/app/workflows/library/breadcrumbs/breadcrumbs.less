@@ -1,0 +1,76 @@
+@import "../../../../css/variables";
+
+.breadcrumbs {
+  background-color: @color-darker-gray;
+  color: #fff;
+  height: 26px;
+  line-height: 26px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+
+  .parent-wrapper {
+    background-color: @seahorse-blue;
+  }
+
+  .parent-wrapper:nth-last-child(2) {
+    background-color: @color-darker-gray;
+  }
+
+  .element {
+    display: flex;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 15%;
+    max-width: 25%;
+
+    &:not(:last-of-type):hover {
+      cursor: pointer;
+    }
+
+    &:last-of-type {
+
+      &:hover {
+        cursor: default;
+      }
+    }
+  }
+
+  .triangle-left {
+    width: 0;
+    height: 0;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+    border-left: 10px solid @color-white;
+  }
+
+  .inner-triangle {
+    position: relative;
+    top: -15px;
+    left: -13px;
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 11px solid @seahorse-blue;
+  }
+
+  .text {
+    padding-right: 20px;
+    padding-left: 15px;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .parent-elem {
+    background-color: @seahorse-blue;
+  }
+
+  .current-wrapper .triangle-left {
+    visibility: hidden;
+  }
+}

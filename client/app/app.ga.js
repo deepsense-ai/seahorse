@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use strict';
 
 (function(i, s, o, g, r, a, m) {

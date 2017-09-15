@@ -1,10 +1,10 @@
 'use strict';
 
-import {sessionStatus} from '_appRoot/enums/session-status.js';
+import {sessionStatus} from 'APP/enums/session-status.js';
 
 /* @ngInject */
-function WorkflowStatusBarController($scope, UserService, ClusterModalService, DataframeLibraryModalService,
-                                     SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService) {
+function WorkflowStatusBarController($scope, UserService, ClusterModalService, LibraryModalService,
+                                     SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService, PredefinedUser) {
 
   const vm = this;
 
@@ -25,6 +25,7 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
   vm.isOwner = isOwner;
   vm.isViewerMode = isViewerMode;
   vm.openLibrary = openLibrary;
+  vm.predefinedUserId = PredefinedUser.id;
 
   $scope.$watch(getCurrentPreset, (newValue, oldValue) => {
     if (newValue && newValue !== oldValue) {
@@ -78,7 +79,7 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
   }
 
   function openLibrary() {
-    DataframeLibraryModalService.openLibraryModal();
+    LibraryModalService.openLibraryModal();
   }
 
 }

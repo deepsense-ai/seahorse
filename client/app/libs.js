@@ -9,7 +9,7 @@ require('angular-ui-bootstrap');
 require('angular-xeditable');
 require('angucomplete-alt');
 require('ace-webapp');
-require("font-awesome-webpack!./font-awesome.config.js");
+require('font-awesome-webpack!./font-awesome.config.js');
 require('jquery');
 require('lodash');
 require('imports?this=>window!script!malihu-custom-scrollbar-plugin');

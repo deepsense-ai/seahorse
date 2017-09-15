@@ -6,6 +6,7 @@ const OPERATION_MENU_HEIGHT = 175;
 class CategoriesListController {
   constructor($element, $timeout) {
     'ngInject';
+
     this.$element = $element;
     this.$timeout = $timeout;
   }

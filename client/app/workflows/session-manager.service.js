@@ -1,6 +1,6 @@
 'use strict';
 
-import {sessionStatus} from '_appRoot/enums/session-status.js';
+import {sessionStatus} from 'APP/enums/session-status.js';
 
 const CHECKING_SESSION_MANAGER_STATE_TIMEOUT = 10000;
 /* @ngInject */
@@ -26,8 +26,8 @@ function SessionManager($interval, config, SessionManagerApi) {
   };
 
   function pollSessionManager() {
-    SessionManagerApi.downloadSessions().
-      then((result) => {
+    SessionManagerApi.downloadSessions()
+      .then((result) => {
         service.sessions = result;
       });
   }

@@ -2,7 +2,7 @@
 
 import tpl from './attribute-boolean-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeBooleanType() {
   return {
     restrict: 'E',
@@ -19,6 +19,6 @@ function AttributeBooleanType() {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeBooleanType', AttributeBooleanType);
-
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeBooleanType', AttributeBooleanType);

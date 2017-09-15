@@ -6,7 +6,7 @@ import newWorkflowTpl from '../common/modals/new-workflow-modal/new-workflow-mod
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalService, SessionManagerApi,
-              WorkflowCloneService, ServerCommunication, SessionManager, config, UserService) {
+              WorkflowCloneService, ServerCommunication, SessionManager, config, UserService, PredefinedUser) {
   this.init = () => {
     $rootScope.stateData.dataIsLoaded = true;
     $rootScope.pageTitle = 'Workflows';
@@ -20,14 +20,17 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
       column: 'updated',
       descending: true
     };
-
+    this.predefinedUserId = PredefinedUser.id;
     this.downloadWorkflows();
 
-    SessionManager.checkSessionManagerState().then(() => {
-      this.sessionManagerState = 'WORKING';
-    }).catch(() => {
-      this.sessionManagerState = 'NOT_WORKING';
-    });
+    SessionManager
+      .checkSessionManagerState()
+      .then(() => {
+        this.sessionManagerState = 'WORKING';
+      })
+      .catch(() => {
+        this.sessionManagerState = 'NOT_WORKING';
+      });
 
     $rootScope.$watch(() => {
       return {
@@ -42,12 +45,15 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
   };
 
   this.downloadWorkflows = () => {
-    WorkflowService.downloadWorkflows().then((workflows) => {
-      this.workflows = workflows;
-      this.loadingWorkflowsState = 'LOADED';
-    }).catch(() => {
-      this.loadingWorkflowsState = 'ERROR';
-    });
+    WorkflowService
+      .downloadWorkflows()
+      .then((workflows) => {
+        this.workflows = workflows;
+        this.loadingWorkflowsState = 'LOADED';
+      })
+      .catch(() => {
+        this.loadingWorkflowsState = 'ERROR';
+      });
   };
 
   this.search = (workflow) => {
@@ -55,11 +61,11 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     let updated = moment(workflow.updated).format('DD/MM/YYYY - hh:mm a');
 
     return !this.filterString ||
-      (workflow.name.toLowerCase().includes(this.filterString.toLowerCase())) ||
-      (workflow.description.toLowerCase().includes(this.filterString.toLowerCase())) ||
-      (created.toString().includes(this.filterString.toLowerCase())) ||
-      (updated.toString().includes(this.filterString.toLowerCase())) ||
-      (workflow.ownerName.toLowerCase().includes(this.filterString.toLowerCase()));
+      workflow.name.toLowerCase().includes(this.filterString.toLowerCase()) ||
+      workflow.description.toLowerCase().includes(this.filterString.toLowerCase()) ||
+      created.toString().includes(this.filterString.toLowerCase()) ||
+      updated.toString().includes(this.filterString.toLowerCase()) ||
+      workflow.ownerName.toLowerCase().includes(this.filterString.toLowerCase());
   };
 
   this.reloadPage = () => {

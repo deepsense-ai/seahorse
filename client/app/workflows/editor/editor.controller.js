@@ -5,8 +5,9 @@ const ZOOM_STEP = 0.1;
 const TRANSITION_TIME = 0.5;
 
 class EditorController {
-  constructor($rootScope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent,  $element) {
+  constructor($rootScope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent, $element) {
     'ngInject';
+
     this.CanvasService = CanvasService;
     this.AdapterService = AdapterService;
     this.UUIDGenerator = UUIDGenerator; //TODO remove when services are refactored
@@ -118,7 +119,7 @@ class EditorController {
   onConnectionAbort(newNodeData) {
     const portPositionX = newNodeData.x - (NEW_NODE_ELEMENT_WIDTH / 2 * this.CanvasService.scale);
     const portPositionY = newNodeData.y - this.$canvas.offset().top;
-    const [x, y] = this.CanvasService.translateScreenToCanvasPosition(portPositionX , portPositionY);
+    const [x, y] = this.CanvasService.translateScreenToCanvasPosition(portPositionX, portPositionY);
     this.startWizard(x, y, newNodeData.endpoint);
   }
 

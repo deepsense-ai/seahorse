@@ -1,8 +1,10 @@
 'use strict';
 
-var angular = require('angular');
+import jqCronDirective from './jqcron/jqcron.directive';
 
+var angular = require('angular');
 var common = angular.module('ds.common', []);
+
 
 require('./api-clients/api-clients.module.js').inject(common);
 require('./custom-scrollbar/common-custom-scrollbar.js').inject(common);
@@ -17,5 +19,9 @@ require('./resizable/resizable-listener.js').inject(common);
 require('./services/services.module.js').inject(common);
 require('./services/preset.service.js').inject(common);
 require('./services/uuid-generator.js').inject(common);
+
+common
+  .directive('jqCron', jqCronDirective);
+
 
 module.exports = common;

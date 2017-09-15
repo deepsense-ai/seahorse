@@ -13,11 +13,11 @@ function TimeService() {
     let diffDays = Math.floor(diffHours / 24);
 
     if (diffSeconds < 60) {
-      return `less than a minute`;
+      return 'less than a minute';
     } else if (diffMinutes < 60) {
-      return diffMinutes === 1 ? `a minute` : `${diffMinutes} minutes`;
+      return diffMinutes === 1 ? 'a minute' : `${diffMinutes} minutes`;
     } else if (diffHours < 24) {
-      return diffHours === 1 ? `an hour` : `${diffHours} hours`;
+      return diffHours === 1 ? 'an hour' : `${diffHours} hours`;
     } else {
       return `${diffDays} days`;
     }

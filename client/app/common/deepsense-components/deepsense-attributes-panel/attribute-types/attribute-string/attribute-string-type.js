@@ -10,7 +10,7 @@ import tpl from './attribute-string-type.html';
 
 require('./attribute-string-type.service.js');
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeStringType(StringParamTypeService) {
   return {
     restrict: 'E',
@@ -22,5 +22,6 @@ function AttributeStringType(StringParamTypeService) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeStringType', AttributeStringType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeStringType', AttributeStringType);

@@ -28,8 +28,9 @@ function ReportCtrl($scope, $uibModal, BottomBarService) {
 
     let values = 0;
 
-    _.each(this.currentReport.tables, dataObject =>
-      values += dataObject.values.length);
+    _.each(this.currentReport.tables, dataObject => {
+      values += dataObject.values.length;
+    });
 
     this.autoHeight = values < 10;
   };

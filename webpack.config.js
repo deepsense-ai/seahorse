@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 'use strict';
 
 const _ = require('lodash');
@@ -12,9 +14,7 @@ const _configs = {
 };
 
 const _load = function() {
-  const ENV = process.env.NODE_ENV
-    ? process.env.NODE_ENV
-    : 'production';
+  const ENV = process.env.NODE_ENV || 'production';
 
   console.log('Current Environment: ', ENV);
 

@@ -146,7 +146,7 @@ class MultiSelection {
 
       that.viewFix = internal.debounce(50, () => {
         let oldRepaintValue = $selectionElement[0].style.left;
-        let newRepaintValue = parseInt($selectionElement[0].style.left) - 1;
+        let newRepaintValue = parseInt($selectionElement[0].style.left, 10) - 1;
 
         // force to repaint
         $selectionElement[0].style.left =
@@ -177,7 +177,7 @@ class MultiSelection {
         that.calculate('x', diff);
         that.calculate('y', diff);
 
-        if (event.ctrlKey) {
+        if (internal.MouseEvent.isModKeyDown(event)) {
           that.filterNodes(selectionElementDimensions, CTRL_KEY);
         } else {
           that.selectNodes(selectionElementDimensions);
@@ -226,7 +226,7 @@ class MultiSelection {
       };
 
       that.clearNodes = (event) => {
-        if (!event.ctrlKey) {
+        if (!internal.MouseEvent.isModKeyDown(event)) {
           internal.MultiSelectionService.clearSelection();
           that.clearAllFromSelection();
           that.viewFix();
@@ -234,7 +234,7 @@ class MultiSelection {
       };
 
       that.graphNodeMouseDownHandler = (event, data) => {
-        if (data.originalEvent.ctrlKey) {
+        if (internal.MouseEvent.isModKeyDown(data.originalEvent)) {
           if (internal.MultiSelectionService.isAlreadyAddedToSelection(data.selectedNode)) {
             internal.MultiSelectionService.removeNodeIdsFromSelection([data.selectedNode.id]);
             that.removeFromSelection([data.selectedNode.id]);

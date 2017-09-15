@@ -6,7 +6,7 @@ import './editor.less';
 
 const EditorComponent = {
   bindings: {
-    'isEditable' : '<',
+    'isEditable': '<',
     'workflow': '<'
   },
   controller: EditorController,

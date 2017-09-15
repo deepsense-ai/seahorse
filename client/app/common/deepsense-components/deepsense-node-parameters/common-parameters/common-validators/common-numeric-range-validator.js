@@ -41,6 +41,7 @@ NumericRangeValidator.prototype.validate = function(value) {
       let getMultipliedNumber = (num, power) => {
         let lengthOfDecimalPart = getLengthOfDecimalPart(num);
         let multipliedNumberStr = num.toString().replace('.', '').concat(_.repeat('0', power - lengthOfDecimalPart));
+
         return parseInt(multipliedNumberStr, 10);
       };
 

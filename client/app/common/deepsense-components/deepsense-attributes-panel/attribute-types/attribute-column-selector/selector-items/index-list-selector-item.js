@@ -2,7 +2,7 @@
 
 import tpl from './index-list-selector-item.html';
 
-/*@ngInject*/
+/* @ngInject */
 function IndexListSelectorItem($document, $timeout) {
   return {
     restrict: 'E',
@@ -20,7 +20,7 @@ function IndexListSelectorItem($document, $timeout) {
        * in modal, you have added index object to the items array. So when you
        * see field with from and to you in fact redacting this last added index.
        */
-      $scope.addIndex = function addIndex (index) {
+      $scope.addIndex = function addIndex(index) {
         let allIndexes = $scope.getItemsThisType('indexRange');
 
         /**
@@ -36,27 +36,30 @@ function IndexListSelectorItem($document, $timeout) {
 
         index.firstNum = index.secondNum = '';
 
-        $($element).find('[ng-model="index.firstNum"]').focus();
+        $($element)
+          .find('[ng-model="index.firstNum"]')
+          .focus();
 
         $scope.addItem('indexRange');
       };
 
-      $scope.removeIndex = function removeIndex (item) {
+      $scope.removeIndex = function removeIndex(item) {
         $scope.removeItem($scope.getCurrentItemIndex(item));
       };
 
-      $scope.hasValues = function hasValues (indexParam) {
+      $scope.hasValues = function hasValues(indexParam) {
         return !$scope.isEmptyParameter(indexParam);
       };
 
       $scope.maxIndex = $scope.parameter.dataFrameSchema && $scope.parameter.dataFrameSchema.fields.length - 1;
 
       $scope.isRangeValid = $scope.maxIndex ?
-        function(range) { return range.secondNum <= $scope.maxIndex; }
-        : function(range) { return true; };
+        function(range) { return range.secondNum <= $scope.maxIndex; } :
+        function(range) { return true; };
     }
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('indexListSelectorItem', IndexListSelectorItem);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('indexListSelectorItem', IndexListSelectorItem);

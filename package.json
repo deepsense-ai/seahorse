@@ -13,8 +13,9 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "dist": "cross-env NODE_ENV=production webpack -p --colors",
-    "lint": "eslint ./client",
-    "posttest": "npm run lint",
+    "prelint": "eslint -c ./config/eslint/eslint-env.config.js ./*.js ./config",
+    "lint": "eslint -c ./config/eslint/eslint-src.config.js ./client",
+    "pretest": "npm run lint",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",

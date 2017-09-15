@@ -92,11 +92,11 @@ function StickOnScroll($window, $document, debounce) {
         let stickEndPointAbsolutePositionTop = $stickEndPoint.offset()
           .top - topMistake;
 
-        if (viewScroll < parseInt($element.css('top'))) {
+        if (viewScroll < parseInt($element.css('top'), 10)) {
           return false;
         }
 
-        if ((parseInt($element.css('top')) + $element.outerHeight(true)) >= stickEndPointAbsolutePositionTop) {
+        if ((parseInt($element.css('top'), 10) + $element.outerHeight(true)) >= stickEndPointAbsolutePositionTop) {
           // Bottom reached!
           $element.css('top', `${stickEndPointAbsolutePositionTop - $element.outerHeight(true)}px`);
           return true;

@@ -2,7 +2,7 @@
 
 import tpl from './catalogue-panel.html';
 
-function OperationCatalogue () {
+function OperationCatalogue() {
   return {
     scope: {
       catalogCollection: '=',

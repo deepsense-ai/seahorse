@@ -77,12 +77,12 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const MOCK_STORE = {
-    1 : DEFAULT_PRESET,
-    2 : MOCK_PRESET
+    1: DEFAULT_PRESET,
+    2: MOCK_PRESET
   };
   const MOCK_STORE_EDITABLE = {
-    1 : DEFAULT_PRESET,
-    2 : MOCK_PRESET_EDITABLE
+    1: DEFAULT_PRESET,
+    2: MOCK_PRESET_EDITABLE
   };
   const INVALID_NAME = 'invalid-name';
 
@@ -99,7 +99,7 @@ describe('PresetService', () => {
       });
       $provide.service('PresetsApiService', function($q) {
         let mockData = {};
-        this.get = function ( key) {
+        this.get = function (key) {
           return mockData[key];
         };
         this.getAll = function () {
@@ -128,7 +128,7 @@ describe('PresetService', () => {
         };
       });
     });
-    angular.mock.inject((_PresetService_, _PresetsApiService_, _$rootScope_, _WorkflowService_ ) => {
+    angular.mock.inject((_PresetService_, _PresetsApiService_, _$rootScope_, _WorkflowService_) => {
       PresetService = _PresetService_;
       PresetsApiService = _PresetsApiService_;
       WorkflowService = _WorkflowService_;
@@ -137,20 +137,20 @@ describe('PresetService', () => {
     PresetsApiService.clear();
   });
 
-  describe ('getAll()', () => {
+  describe('getAll()', () => {
     it('should by default return only default preset', () => {
       expect(PresetService.getAll()).toBeUndefined();
     });
   });
 
-  describe ('createPreset()', () => {
+  describe('createPreset()', () => {
     it('should create preset if valid object is provided', () => {
       PresetService.createPreset(MOCK_PRESET);
       expect(Object.keys(PresetsApiService.mockData()).length).toEqual(1);
     });
   });
 
-  describe ('deletePreset()', () => {
+  describe('deletePreset()', () => {
     it('should delete non-default, editable preset', () => {
       PresetsApiService.mock(MOCK_STORE_EDITABLE);
       PresetService.deletePreset(MOCK_PRESET_EDITABLE.id);
@@ -158,7 +158,7 @@ describe('PresetService', () => {
     });
   });
 
-  describe ('updatePreset()', () => {
+  describe('updatePreset()', () => {
     it('should update non-default, editable preset', () => {
       PresetsApiService.mock(MOCK_STORE_EDITABLE);
       PresetService.updatePreset(MOCK_PRESET_EDITABLE_CHANGED);
@@ -166,7 +166,7 @@ describe('PresetService', () => {
     });
   });
 
-  describe ('savePreset()', () => {
+  describe('savePreset()', () => {
     it('should update non-default, editable preset', () => {
       PresetsApiService.mock(MOCK_STORE_EDITABLE);
       PresetService.savePreset(MOCK_PRESET_EDITABLE_CHANGED);
@@ -179,7 +179,7 @@ describe('PresetService', () => {
     });
   });
 
-  describe ('isValid()', () => {
+  describe('isValid()', () => {
     it('shouldn\'t validate valid preset', () => {
       expect(PresetService.isValid(INVALID_MOCK_PRESET)).toEqual(false);
     });
@@ -189,7 +189,7 @@ describe('PresetService', () => {
     });
   });
 
-  describe ('getErrors()', () => {
+  describe('getErrors()', () => {
     it('should return an object with errors if validator returned false', () => {
       PresetService.isValid(INVALID_MOCK_PRESET);
       expect(Object.keys(PresetService.getErrors()).length).toBeGreaterThan(0);
@@ -200,7 +200,7 @@ describe('PresetService', () => {
     });
   });
 
-  describe ('isNameUsed()', () => {
+  describe('isNameUsed()', () => {
     it('should return true if existing name is provided', () => {
       PresetsApiService.mock(MOCK_STORE);
       PresetService.fetch();

@@ -78,13 +78,12 @@ function OperationsHierarchyService($q, OperationsApiClient) {
       deferred.resolve();
       return deferred.promise;
     } else {
-      return OperationsApiClient.
-      getHierarchy()
-        .
-      then((data) => {
-        graph.build(data);
-        isLoaded = true;
-      });
+      return OperationsApiClient
+        .getHierarchy()
+        .then((data) => {
+          graph.build(data);
+          isLoaded = true;
+        });
     }
   };
 

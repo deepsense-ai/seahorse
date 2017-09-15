@@ -1,6 +1,6 @@
 <aside class="ibox operation-attributes-panel animated fadeIn" ng-class="{'operation-attributes-panel__disabled': disabledMode}">
   <header class="ibox-title ibox-title--main">
-    <section class="ibox-title node-edition-section flex-content--no-flex m-b-n-xs" ng-hide="disabledMode">
+    <section class="ibox-title node-edition-section flex-content--no-flex m-b-n-xs" ng-hide="disabledMode && !node.uiName">
       <span color-picker></span>
       <p class="node-edition-section__editable-text"
          ng-click="controller.enableEdition()"
@@ -20,13 +20,15 @@
         <span class="node-edition-section__editable-info">Press esc to <a href="" ng-click="controller.hideInput()">Cancel</a></span>
       </div>
     </section>
-    <section class="operation-attributes-panel__details" ng-class="{'u-top-border': disabledMode}">
+    <section class="operation-attributes-panel__details" ng-class="{'u-top-border': disabledMode && !node.uiName}">
       <p class="operation-attributes-panel__title m-b-xs" ng-class="{'m-t-sm': disabledMode}">{{ node.name }}</p>
 
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
       <a ng-href="{{controller.getDocsHost()}}/docs/{{controller.getDocsVersion()}}/uuid/{{node.operationId}}.html" target="_blank"
-         class="o-read-more block m-t m-b">
+         class="o-read-more block m-t m-b"
+         ng-if="hasDocumentation"
+      >
         <i class="fa fa-book"></i>
         <span>Documentation</span>
       </a>

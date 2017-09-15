@@ -88,13 +88,13 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config, $
       );
     }
 
-    bindPresetToWorkflow(presetId, workflowId){
+    bindPresetToWorkflow(presetId, workflowId) {
       return this.makeRequest(
         this.METHOD_POST,
         `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/preset`,
         {
-          'id' : workflowId,
-          'presetId' : presetId
+          'id': workflowId,
+          'presetId': presetId
         }
       );
     }

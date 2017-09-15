@@ -23,10 +23,12 @@ SingleIndexSelectorItem.prototype.serialize = function serialize() {
   } : null;
 };
 
-SingleIndexSelectorItem.getType = () => { return {
-  'id': 'index',
-  'verbose': 'Select by index'
-};};
+SingleIndexSelectorItem.getType = () => {
+  return {
+    'id': 'index',
+    'verbose': 'Select by index'
+  };
+};
 
 SingleIndexSelectorItem.prototype.containsField = function(field, index) {
   return this.firstNum === index;

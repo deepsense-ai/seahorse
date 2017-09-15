@@ -24,7 +24,7 @@ SingleChoiceParameter.prototype.serialize = function () {
   let choicesNum = Object.keys(serializedObject).length;
 
   if (choicesNum > 1) {
-    throw `too many choices in the SingleChoiceParameter object: ${ this.name }`;
+    throw `too many choices in the SingleChoiceParameter object: ${this.name}`;
   }
 
   return choicesNum === 0 ?

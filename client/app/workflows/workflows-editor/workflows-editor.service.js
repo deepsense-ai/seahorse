@@ -9,7 +9,7 @@ function WorkflowsEditorService(DeleteModalService, EventsService, WorkflowServi
 
   service.handleDelete = handleDelete;
 
-  function handleDelete(){
+  function handleDelete() {
     if (WorkflowService.isWorkflowEditable()) {
       DeleteModalService.handleDelete(deleteSelection, COOKIE_NAME);
     }

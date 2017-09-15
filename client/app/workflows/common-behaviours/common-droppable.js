@@ -12,10 +12,8 @@ function Droppable($log, DragAndDrop) {
       // TODO highlight
       var highlightTo;
 
-      switch (attrs.droppableHighlight) {
-        case 'parent':
-          highlightTo = element.parent();
-          break;
+      if (attrs.droppableHighlight === 'parent') {
+        highlightTo = element.parent();
       }
 
       element.on('drop', drop);

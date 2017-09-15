@@ -1,7 +1,7 @@
 'use strict';
 
 
-function DynamicParamTypeService () {
+function DynamicParamTypeService() {
   /**
    * These watches perform equality-wise two-way binding.
    * When parameter.internalParams is changed, bufferedInternalParams is changed only

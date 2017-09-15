@@ -8,7 +8,7 @@
 
 import tpl from './attribute-creator-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeCreatorType(StringParamTypeService) {
   return {
     restrict: 'E',
@@ -20,5 +20,6 @@ function AttributeCreatorType(StringParamTypeService) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeCreatorType', AttributeCreatorType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeCreatorType', AttributeCreatorType);

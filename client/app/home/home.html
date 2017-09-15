@@ -1,10 +1,23 @@
 <div class="panel panel-default no-border home-screen">
   <a href="http://deepsense.io/" target="_blank" class="deepsense-logo">
-    <img alt="deepsense.io" src="~_images/deepsense-logo.svg">
+    <img alt="deepsense.io" src="~ASSETS/images/deepsense-logo.svg">
   </a>
+  <div class="panel panel-default no-border home-screen">
+    <div class="logged-user" ng-if="::home.getCurrentUser().id != home.predefinedUserId">
+      <span class="username">
+        <i class="fa fa-user logged-user__icon"></i>
+        {{::home.getCurrentUser().name}}
+      </span>
+      <span>
+        <a href="/logout" >
+          <span>Log out</span>
+        </a>
+      </span>
+    </div>
+
   <!-- Default panel contents -->
   <div class="panel-heading text-center logo">
-    <img src="~_images/seahorse-main.png">
+    <img src="~ASSETS/images/seahorse-main.png">
     <p class="api-version">v{{home.getVersion()}}</p>
   </div>
   <!-- List group -->

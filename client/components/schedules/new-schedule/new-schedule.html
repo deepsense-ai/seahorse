@@ -1,0 +1,65 @@
+<div class="schedule new-schedule">
+  <h4>New schedule:</h4>
+
+  <div class="schedule__attributes">
+    <div class="schedule-attribute schedule-cron">
+      <div class="schedule-attribute__content">
+        <span class="schedule-attribute__label">Run workflow</span>
+        <span class="schedule-attribute__value" jq-cron="$ctrl.jqCronSettings" ng-model="$ctrl.model.schedule.cron"></span>
+      </div>
+    </div>
+
+    <div class="schedule-attribute schedule-cluster-preset">
+      <div class="schedule-attribute__content">
+        <span class="schedule-attribute__label">Using</span>
+        <select
+          class="form-control schedule-attribute__input"
+          ng-model="$ctrl.model.executionInfo.presetId"
+          ng-options="preset.id as preset.name for preset in $ctrl.clusterPresets"
+        >
+          <option value="">-- choose preset --</option>
+        </select>
+        <span class="schedule-attribute__label">cluster preset</span>
+      </div>
+      <div class="schedule-attribute__errors">
+        <p
+          ng-if="$ctrl.error.presetId.required"
+          class="schedule-attribute-error"
+        >Cluster preset is required</p>
+      </div>
+    </div>
+
+    <div class="schedule-attribute schedule-email">
+      <div class="schedule-attribute__content">
+        <span class="schedule-attribute__label">Send report to</span>
+        <input
+          class="form-control schedule-attribute__input"
+          ng-model="$ctrl.model.executionInfo.emailForReports"
+        />
+      </div>
+      <div class="schedule-attribute__errors">
+        <p
+          ng-if="$ctrl.error.emailForReports.required"
+          class="schedule-attribute-error"
+        >Email is required</p>
+        <p
+          ng-show="$ctrl.error.emailForReports.email"
+          class="schedule-attribute-error"
+        >Not valid email</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="schedule__actions">
+    <button
+      class="schedule-action btn btn-sm btn-success"
+      ng-click="$ctrl.addSchedule()"
+      ng-disabled="!$ctrl.valid"
+    >OK</button>
+
+    <button
+      class="schedule-action btn btn-sm btn-default"
+      ng-click="$ctrl.cancelAddingSchedule()"
+    >Cancel</button>
+  </div>
+</div>

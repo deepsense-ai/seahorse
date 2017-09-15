@@ -49,7 +49,7 @@ const common = {
     placeholder: 'e.g. 1',
     type: 'number'
   },
-  params : {
+  params: {
     name: 'Custom settings',
     instruction: '<div>Here you can specify any additional options to spark-submit. Note that Seahorse runs spark' +
     ' applications in client mode, so not all options will make sense. Also, Seahorse needs to override some ' +
@@ -74,7 +74,7 @@ const yarn = {
     '<code>/resources/data/MyYARN</code>.</div>',
     placeholder: 'e.g. /resources/data/MyYARN',
     type: 'text'
-  },
+  }
 };
 
 const mesos = {
@@ -99,7 +99,7 @@ const standalone = {
 
 const local = {
   main: 'Local',
-  params : {
+  params: {
     name: 'Custom settings',
     instruction: '<div>Here you can specify any additional options to spark-submit. Note that Seahorse runs spark' +
     ' applications in client mode, so not all options will make sense. Also, Seahorse needs to override some ' +

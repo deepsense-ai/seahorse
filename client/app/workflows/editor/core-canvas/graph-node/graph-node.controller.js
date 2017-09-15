@@ -1,37 +1,38 @@
 'use strict';
 
 const CSS_CLASSES_MAP = {
-  status_completed: {
+  'status_completed': {
     status: 'completed',
     icon: 'fa-check'
   },
-  status_running: {
+  'status_running': {
     status: 'running',
     icon: 'fa-cog fa-spin'
   },
-  status_queued: {
+  'status_queued': {
     status: 'queued',
     icon: 'fa-clock-o'
   },
-  status_aborted: {
+  'status_aborted': {
     status: 'aborted',
     icon: 'fa-exclamation'
   },
-  status_failed: {
+  'status_failed': {
     status: 'failed',
     icon: 'fa-ban'
   },
-  error: {
+  'error': {
     status: 'failed',
     icon: 'fa-exclamation'
   }
 };
 
-import {specialOperations} from '_appRoot/enums/special-operations.js';
+import {specialOperations} from 'APP/enums/special-operations.js';
 
 class GraphNodeController {
   constructor($rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService) {
     'ngInject';
+
     _.assign(this, {$rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService});
 
     this.nodeType = this.getNodeType();
@@ -79,8 +80,8 @@ class GraphNodeController {
     const operationId = this.node.operationId;
     if (Object.values(specialOperations.ACTIONS).includes(operationId)) {
       return 'action';
-    } else if (operationId === specialOperations.CUSTOM_TRANSFORMER.SINK
-      || operationId === specialOperations.CUSTOM_TRANSFORMER.SOURCE) {
+    } else if (operationId === specialOperations.CUSTOM_TRANSFORMER.SINK ||
+      operationId === specialOperations.CUSTOM_TRANSFORMER.SOURCE) {
       return 'source-or-sink';
     } else {
       return 'standard';

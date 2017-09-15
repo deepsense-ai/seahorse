@@ -32,7 +32,7 @@ class OperationsCatalogueController {
     } else {
       return newTree;
     }
-  };
+  }
 
 }
 

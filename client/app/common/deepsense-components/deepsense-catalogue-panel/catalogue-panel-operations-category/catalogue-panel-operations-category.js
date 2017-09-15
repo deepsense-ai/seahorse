@@ -2,8 +2,9 @@
 
 import categoryTpl from './catalogue-panel-operations-category.html';
 import popoverTpl from './popoverTemplate.html';
+
 /* @ngInject */
-function RecursionHelper($compile){
+function RecursionHelper($compile) {
   return {
     /**
      * Manually compiles the element, fixing the recursion loop.
@@ -11,9 +12,9 @@ function RecursionHelper($compile){
      * @param [link] A post-link function, or an object with function(s) registered via pre and post properties.
      * @returns An object containing the linking functions.
      */
-    compile: function(element, link){
+    compile: function(element, link) {
       // Normalize the link parameter
-      if(angular.isFunction(link)){
+      if(angular.isFunction(link)) {
         link = { post: link };
       }
 
@@ -21,22 +22,22 @@ function RecursionHelper($compile){
       var contents = element.contents().remove();
       var compiledContents;
       return {
-        pre: (link && link.pre) ? link.pre : null,
+        pre: link && link.pre ? link.pre : null,
         /**
          * Compiles and re-adds the contents
          */
-        post: function(scope, element){
+        post: function(scope, element) {
           // Compile the contents
-          if(!compiledContents){
+          if(!compiledContents) {
             compiledContents = $compile(contents);
           }
           // Re-add the compiled contents to the element
-          compiledContents(scope, function(clone){
+          compiledContents(scope, function(clone) {
             element.append(clone);
           });
 
           // Call the post-linking function, if any
-          if(link && link.post){
+          if(link && link.post) {
             link.post.apply(null, arguments);
           }
         }
@@ -44,8 +45,10 @@ function RecursionHelper($compile){
     }
   };
 }
+
+
 /* @ngInject */
-function OperationsCategory(RecursionHelper) {
+function OperationsCategory(RecursionHelper, $log) {
   return {
     templateUrl: categoryTpl,
     replace: true,
@@ -65,7 +68,7 @@ function OperationsCategory(RecursionHelper) {
       };
 
       ocCtrl.showCategory = function (category) {
-        console.log('showCategory ', category);
+        $log.log('showCategory ', category);
         var canShow = false;
         category.items.forEach(function (item) {
           if (item.name.toLowerCase().indexOf($scope.search) > -1) {
@@ -90,7 +93,4 @@ function OperationsCategory(RecursionHelper) {
 angular.module('deepsense-catalogue-panel')
   .directive('operationsCategory', OperationsCategory)
   .factory('RecursionHelper', RecursionHelper);
-
-
-
 

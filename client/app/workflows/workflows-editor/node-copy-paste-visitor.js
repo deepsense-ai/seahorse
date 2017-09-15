@@ -38,7 +38,8 @@ class NodeCopyPasteVisitorService {
         const legalNodesToPaste = _.filter(nodes, n => !this.GraphNodesService.isSinkOrSource(n));
         return this.GraphNodesService.cloneNodes(workflow, legalNodesToPaste);
       }
-    ).then((clonedNodes) => {
+    )
+    .then((clonedNodes) => {
       // mark clones as selected after they are created
       this.$rootScope.$applyAsync(() => {
         let nodesId = clonedNodes.map(node => node.id);

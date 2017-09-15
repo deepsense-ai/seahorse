@@ -116,6 +116,7 @@ let ParameterFactory = {
                 options.value;
             }
             break;
+          // no default
         }
 
         if (parameterConstructors[paramSchema.type]) {
@@ -124,7 +125,9 @@ let ParameterFactory = {
             parametersList.push(new Constructor(options, node, this));
           }
         } else {
+          /* eslint-disable no-console */
           console.warn('No constructor for param of type ' + paramSchema.type);
+          /* eslint-enable no-console */
         }
       }
     }

@@ -8,8 +8,9 @@
 
 require('./../deepsense-graph-model/deepsense-graph-model.module.js');
 
-const cycleAnalyser = angular.module('deepsense.cycle-analyser', ['deepsense.graph-model']).
-  factory('DeepsenseCycleAnalyser', /*@ngInject*/function() {
+const cycleAnalyser = angular
+  .module('deepsense.cycle-analyser', ['deepsense.graph-model'])
+  .factory('DeepsenseCycleAnalyser', /* @ngInject */function() {
     let cycleExists = (experiment) => {
       const COLOUR = {
         'WHITE': 'white',
@@ -25,7 +26,7 @@ const cycleAnalyser = angular.module('deepsense.cycle-analyser', ['deepsense.gra
           let currNodeId = _.last(stack);
 
           switch (colour[currNodeId]) {
-            case COLOUR.WHITE:
+            case COLOUR.WHITE: {
               colour[currNodeId] = COLOUR.GREY;
 
               let neighbourNodesIds = experiment.getNeightbours(currNodeId);
@@ -38,6 +39,7 @@ const cycleAnalyser = angular.module('deepsense.cycle-analyser', ['deepsense.gra
               }
 
               break;
+            }
             case COLOUR.GREY:
               colour[currNodeId] = COLOUR.BLACK;
               stack.pop();
@@ -45,6 +47,7 @@ const cycleAnalyser = angular.module('deepsense.cycle-analyser', ['deepsense.gra
             case COLOUR.BLACK:
               stack.pop();
               break;
+            // no default
           }
         }
       };

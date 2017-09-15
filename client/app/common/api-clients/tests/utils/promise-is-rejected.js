@@ -7,14 +7,12 @@ module.exports = function promiseIsRejected($httpBackend, mockRequest, functionR
   expectRequest();
 
   functionReturningPromise()
-    .
-  then(() => {
+    .then(() => {
       success = true;
     })
-    .
-  catch(() => {
-    error = true;
-  });
+    .catch(() => {
+      error = true;
+    });
 
   mockRequest.respond(500, 'Server Error');
 

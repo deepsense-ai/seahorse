@@ -1,7 +1,0 @@
-{
-  "timeout": 30000,
-  "session_config" : {
-    "idle_time": 1800,
-    "keepalive_time": 5
-  }
-}

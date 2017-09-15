@@ -1,4 +1,5 @@
-"use strict";
+'use strict';
+
 let REPORT_EVENTS = require('../reports.controller.js').EVENTS;
 
 /* @ngInject */
@@ -31,7 +32,7 @@ function ReportTableController($scope, $rootScope, $filter) {
     });
   }
 
-  function getColumnType(columnName)  {
+  function getColumnType(columnName) {
     // Not using zip to avoid object allocation every digest cycle.
     const indexOfColumn = controller.table.columnNames.indexOf(columnName);
     return controller.table.columnTypes[indexOfColumn];
@@ -55,7 +56,7 @@ function ReportTableController($scope, $rootScope, $filter) {
     return $filter('cut')(value, true, maxLength, ' ...');
   }
 
-   function showDistribution(columnName) {
+  function showDistribution(columnName) {
     if (controller.getDistributionType(columnName)) {
       $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
         colName: columnName,

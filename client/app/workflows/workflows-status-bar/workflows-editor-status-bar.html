@@ -12,10 +12,10 @@
         </div>
         <div ng-if="controller.currentPreset" ng-click="controller.openCurrentPresetModal(controller.currentPreset)" class="current-cluster">
           <div ng-switch on="controller.currentPreset.clusterType" class="current-cluster__icon">
-            <img ng-switch-when="local" src="~_images/cluster-local.png"/>
-            <img ng-switch-when="standalone" src="~_images/cluster-spark-sm.png"/>
-            <img ng-switch-when="mesos" src="~_images/cluster-mesos-sm.png"/>
-            <img ng-switch-when="yarn" src="~_images/cluster-yarn-sm.png"/>
+            <img ng-switch-when="local" src="~ASSETS/images/cluster-local-sm.png"/>
+            <img ng-switch-when="standalone" src="~ASSETS/images/cluster-spark-sm.png"/>
+            <img ng-switch-when="mesos" src="~ASSETS/images/cluster-mesos-sm.png"/>
+            <img ng-switch-when="yarn" src="~ASSETS/images/cluster-yarn-sm.png"/>
           </div>
           <div>{{controller.formatPresetType(controller.currentPreset.clusterType)}}</div>
           <div class="current-cluster__name">{{controller.currentPreset.name}}</div>
@@ -26,9 +26,14 @@
       </div>
     </div>
     <div class="c-workflows-status-bar__upper-section-user">
-      <i class="fa fa-user"></i>
-      <span>{{::controller.getCurrentUser().name}}</span>
-      <span ng-if="::controller.isOwner()">(owner)</span>
+      <div class="username">
+        <i class="fa fa-user"></i>
+        <span>{{::controller.getCurrentUser().name}}</span>
+        <span ng-if="::controller.isOwner()">(owner)</span>
+      </div>
+      <a class="logout" href="/logout" ng-if="::controller.getCurrentUser().id != controller.predefinedUserId">
+        <span>Log out</span>
+      </a>
     </div>
   </div>
   <div class="c-workflows-status-bar__lower-section">

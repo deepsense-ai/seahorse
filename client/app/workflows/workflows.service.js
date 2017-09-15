@@ -1,7 +1,7 @@
 'use strict';
 
-import {specialOperations} from '_appRoot/enums/special-operations.js';
-import {sessionStatus} from '_appRoot/enums/session-status.js';
+import {specialOperations} from 'APP/enums/special-operations.js';
+import {sessionStatus} from 'APP/enums/session-status.js';
 
 /* @ngInject */
 function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations,

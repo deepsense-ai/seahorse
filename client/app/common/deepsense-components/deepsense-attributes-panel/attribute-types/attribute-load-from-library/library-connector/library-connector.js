@@ -2,9 +2,9 @@
 
 import tpl from './library-connector.html';
 
-const CAN_SELECT_DATAFRAME = true;
+const LIBRARY_MODE = 'read-file';
 
-/*@ngInject*/
+/* @ngInject */
 function LibraryConnector() {
   return {
     restrict: 'E',
@@ -14,7 +14,7 @@ function LibraryConnector() {
       fileUri: '='
     },
     controllerAs: 'controller',
-    controller: function ($scope, DataframeLibraryModalService, LibraryService) {
+    controller: function ($scope, LibraryModalService, LibraryService) {
       const vm = this;
 
       vm.openLibrary = openLibrary;
@@ -25,7 +25,7 @@ function LibraryConnector() {
       });
 
       function openLibrary() {
-        DataframeLibraryModalService.openLibraryModal(CAN_SELECT_DATAFRAME)
+        LibraryModalService.openLibraryModal(LIBRARY_MODE)
           .then((result) => {
             if (result) {
               vm.fileUri = result.uri;

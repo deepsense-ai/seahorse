@@ -2,36 +2,24 @@
 
 import tpl from './attribute-save-to-library-type.html';
 
+const LIBRARY_MODE = 'write-to-file';
 
-/*@ngInject*/
-function AttributeSaveToLibrary(config) {
+/* @ngInject */
+function AttributeSaveToLibrary(LibraryModalService) {
   return {
     restrict: 'E',
     templateUrl: tpl,
     replace: true,
     link: function (scope) {
-      scope.placeInLibrary = scope.parameter.value && scope.parameter.value.indexOf(config.libraryPrefix) === 0;
-      scope.file = {
-        name: getNameFromURI(scope.parameter.value),
-        uri: scope.parameter.value
+      scope.openLibrary = (params) => {
+        LibraryModalService.openLibraryModal(LIBRARY_MODE, params)
+          .then((result) => {
+            if (result) {
+              scope.parameter.value = result;
+            }
+          });
+
       };
-
-      scope.$watchGroup(['file.name', 'placeInLibrary'], () => {
-        scope.file.uri = addURIToName(scope.file.name);
-        if (scope.placeInLibrary) {
-          scope.parameter.value = scope.file.uri;
-        } else {
-          scope.parameter.value = scope.file.name;
-        }
-      });
-
-      function getNameFromURI(uri) {
-        return uri ? uri.replace(config.libraryPrefix, '') : '';
-      }
-
-      function addURIToName(name) {
-        return config.libraryPrefix + name;
-      }
     }
   };
 }

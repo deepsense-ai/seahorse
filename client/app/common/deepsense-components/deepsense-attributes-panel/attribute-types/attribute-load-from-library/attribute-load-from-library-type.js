@@ -2,7 +2,7 @@
 
 import tpl from './attribute-load-from-library-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeLoadFromLibrary() {
   return {
     restrict: 'E',

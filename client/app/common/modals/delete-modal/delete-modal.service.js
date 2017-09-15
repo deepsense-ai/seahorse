@@ -12,7 +12,7 @@ function DeleteModalService($uibModal, $cookies) {
     if ($cookies.get(cookieName) !== 'true') {
       openDeleteModal()
         .then((cookieValue) => {
-          return (cookieValue) ? $cookies.put(cookieName, 'true') : false;
+          return cookieValue ? $cookies.put(cookieName, 'true') : false;
         })
         .then(deleteHandler);
     } else {

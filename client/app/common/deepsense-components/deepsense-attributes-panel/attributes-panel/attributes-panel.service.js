@@ -1,6 +1,6 @@
 'use strict';
 
-function AttributesPanelService (){
+function AttributesPanelService() {
   this.disabledMode = false;
 
   this.setDisabledMode = function () {

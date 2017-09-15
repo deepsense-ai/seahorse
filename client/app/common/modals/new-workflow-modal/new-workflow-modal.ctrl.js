@@ -13,8 +13,8 @@ function NewWorkflowModalController($uibModalInstance, WorkflowsApiClient) {
       const DEFAULT_NAME = 'Draft workflow';
       this.loading = true;
 
-      WorkflowsApiClient.
-      createWorkflow({
+      WorkflowsApiClient
+        .createWorkflow({
           name: this.name || DEFAULT_NAME,
           description: this.description || ''
         })

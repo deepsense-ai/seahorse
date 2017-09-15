@@ -1,12 +1,12 @@
 'use strict';
 
 describe('Operations', () => {
-  var module,
-    Operations;
+  var module;
+  var Operations;
 
-  var id = 'id-01',
-    category1 = 'c1',
-    mockOperations = {
+  var id = 'id-01';
+  var category1 = 'c1';
+  var mockOperations = {
       'id-01': {
         'id': id,
         'category': category1,
@@ -17,8 +17,8 @@ describe('Operations', () => {
         'category': 'c2',
         'value': 102
       }
-    },
-    mockOperationsFull = {
+    };
+  var mockOperationsFull = {
       'id-01': {
         'id': id,
         'category': category1,
@@ -29,8 +29,8 @@ describe('Operations', () => {
           }
         }
       }
-    },
-    mockCatalog = {
+    };
+  var mockCatalog = {
       'catalog': [{
         'id': category1,
         'name': 'Category1',
@@ -136,8 +136,8 @@ describe('Operations', () => {
     it(
       'resolve promise on requests success',
       angular.mock.inject(($rootScope, OperationsApiClient) => {
-        let success = false,
-          error = false;
+        let success = false;
+        let error = false;
 
         OperationsApiClient.changeRequestState(true);
 
@@ -158,8 +158,8 @@ describe('Operations', () => {
     it(
       'request api only once / use cache for next initialization',
       angular.mock.inject(($rootScope, OperationsApiClient) => {
-        let success = false,
-          error = false;
+        let success = false;
+        let error = false;
 
         OperationsApiClient.changeRequestState(true);
 
@@ -217,8 +217,8 @@ describe('Operations', () => {
     it(
       'reject promise on api request error',
       angular.mock.inject(($rootScope, OperationsApiClient) => {
-        let success = false,
-          error = false;
+        let success = false;
+        let error = false;
 
         OperationsApiClient.changeRequestState(false);
 
@@ -296,9 +296,9 @@ describe('Operations', () => {
     it(
       'resolve promise on requests success',
       angular.mock.inject(($rootScope, OperationsApiClient) => {
-        let success = false,
-          error = false,
-          responseData;
+        let success = false;
+        let error = false;
+        let responseData;
 
         expect(Operations.get(id)
             .parameters)

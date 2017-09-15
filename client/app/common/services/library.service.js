@@ -1,13 +1,17 @@
 'use strict';
 
+import CurrentDirectory from './current-directory';
+
+
 const STATUS_UPLOADING = 'uploading';
 const STATUS_ERROR = 'error';
 const STATUS_COMPLETE = 'complete';
 
 /* @ngInject */
-function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService, config) {
+function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService) {
   const uploading = [];
   const service = this;
+  const currentDirectory = new CurrentDirectory();
 
   let library;
   let currentDirectoryUri;
@@ -17,23 +21,47 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
     results: null
   };
 
-  service.cleanUploadingFiles = cleanUploadingFiles;
+  service.addDirectory = addDirectory;
+  service.changeDirectory = changeDirectory;
   service.fetchAll = fetchAll;
-  service.getDirectoryContent = getDirectoryContent;
-  service.getFileByURI = getFileByURI;
-  service.getRootDirectoryContent = getRootDirectoryContent;
-  service.getSearchResults = getSearchResults;
+  service.getAll = getAll;  // Used once in LibraryConnector
+  service.getCurrentDirectory = getCurrentDirectory;
+  service.getCurrentDirectoryContent = getCurrentDirectoryContent;
+  service.getFileByURI = getFileByURI; // Used once in LibraryConnector
   service.getUploadingFiles = getUploadingFiles;
+  service.removeDirectory = removeDirectory;
   service.removeFile = removeFile;
   service.removeUploadingFile = removeUploadingFile;
-  service.searchFilesInDirectory = searchFilesInDirectory;
-  service.uploadFile = uploadFile;
+  service.setFilter = setFilter;
   service.uploadFiles = uploadFiles;
-
-
-  service.getAll = getAll;
+  service.doesDirectoryAlreadyExists = doesDirectoryAlreadyExists;
 
   fetchAll();
+
+
+  /**
+   * @param {String} directoryName
+   * @returns {Promise} Promise with parsed data from API
+   */
+  function addDirectory(directoryName) {
+    $log.info(`LibraryService.addDirectory(${directoryName})`);
+
+    return LibraryApiService
+      .addDirectory(directoryName, currentDirectory.path)
+      .then((result) => {
+        service.fetchAll();
+        return result;
+      });
+  }
+
+
+  function changeDirectory(directoryUri) {
+    const newDirectory = library.get(directoryUri) || library.getRootDirectory();
+    currentDirectory.changeTo(newDirectory);
+    // TODO: remove
+    currentDirectoryUri = currentDirectory.uri;
+  }
+
 
   /**
    * Fetches library from the server to local object
@@ -44,156 +72,59 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
       .getAll()
       .then((results) => {
         library = LibraryDataConverterService.decodeResponseData(results);
-
-        if (lastSearch.directory) {
-          searchFilesInDirectory(lastSearch.pattern, lastSearch.directoryUri);
-        }
+        changeDirectory(currentDirectory.uri);
 
         return library;
       });
   }
 
 
+  // TODO: Do we need this? Used once in LibraryConnector in $watchGroun
   /**
-   * Return directory and its items
-   * @param  {String} directoryUri  uri of desired directory
-   * @return {Object} directory in library
+   * Exposes library to the rest of the application.
+   * This functions should be watched by the controllers
+   * File returned from API will have a format:
+   * {
+   *    name: "FileName",
+   *    downloadUrl: "http://address-to-file/FileName" - address for download
+   *    uri: "myLibrary://file" - address for API
+   *
+   * }
+   * @returns {Object|undefined}
    */
-  function getDirectoryContent(directoryUri = currentDirectoryUri) {
-    if (directoryUri) {
-      currentDirectoryUri = directoryUri;
-      return library.get(directoryUri);
-    }
-    return getRootDirectoryContent();
+  function getAll() {
+    return library;
   }
 
 
-  /**
-   * Return root directory and its items
-   * @return {Object}  root directory in library
-   */
-  function getRootDirectoryContent() {
-    let directory = library.getRootDirectory();
-    currentDirectoryUri = directory.uri;
-
-    return directory;
+  function getCurrentDirectory() {
+    return currentDirectory;
   }
 
 
-  function searchFilesInDirectory(pattern, directoryUri = currentDirectoryUri) {
-    let directory = getDirectoryContent(directoryUri);
-    let uriPrefix = directory.uri + (directory.root ? '' : '/');
-    let uriPrefixLength = uriPrefix.length;
-    let results = [];
+  function getCurrentDirectoryContent() {
+    return currentDirectory.items;
+  }
 
-    function getMatchedFiles(directory) {
-      return directory.items.reduce((items, item) => {
-        if (item.kind === 'file' && item.name.includes(pattern)) {
-          items.push(item);
-        }
-        return items;
-      }, []);
+
+  // TODO: Do we need this? Used once in LibraryConnector
+  /**
+   * @param {String} uri
+   * @returns {FileObject}
+   */
+  function getFileByURI(uri) {
+    const parsedUri = /(library:\/\/)(.*)/.exec(uri);
+    if (!parsedUri) {
+      return false;
     }
 
-    results.push({
-      name: '',
-      items: getMatchedFiles(directory)
-    });
-    library.forEach((subDir, subDirUri) => {
-      if (subDirUri !== uriPrefix && subDirUri.startsWith(uriPrefix)) {
-        let items = getMatchedFiles(subDir);
-        if (items.length) {
-          results.push({
-            name: subDirUri.slice(uriPrefixLength),
-            items: items
-          });
-        }
-      }
-    });
+    const [fileName, items] = (
+      (parts) => (
+        (prefix, path) => [path.pop(), library.get(`${prefix}${path.join('/')}`).items]
+      )(parts[0], parts[1].split('/'))
+    )(parsedUri.slice(1));
 
-    lastSearch.pattern = pattern;
-    lastSearch.directory = directory;
-    lastSearch.results = results;
-
-    return results;
-  }
-
-
-  function getSearchResults() {
-    return lastSearch.results;
-  }
-
-
-  /**
-   * @param {String} fileUrl
-   * @returns {Promise} Promise with parsed data from API
-   */
-  function removeFile(file) {
-    return LibraryApiService
-      .removeFile(file.downloadUrl)
-      .then((result) => {
-        service.fetchAll();
-        return result;
-      });
-  }
-
-
-  /**
-   * Uploads the file to the server and tracks the upload progress. Handles server errors.
-   * @param {File} file from HTML5 FileAPI
-   * @returns {Promise}
-   */
-  function uploadFile(file) {
-    const workingDirectory = getDirectoryContent();
-    const uploadingFile = LibraryDataConverterService.makeItem({
-        kind: 'file',
-        name: file.name
-      },
-      getDirectoryContent(),
-      {
-        progress: 0,
-        status: STATUS_UPLOADING
-      }
-    );
-
-    const progressHandler = function (progress) {
-      uploadingFile.progress = progress;
-      if (progress === 100) {
-        uploadingFile.status =  STATUS_COMPLETE;
-      } else {
-        uploadingFile.status = STATUS_UPLOADING;
-      }
-    };
-
-    uploading.push(uploadingFile);
-
-    return LibraryApiService
-      .uploadFile(file, workingDirectory.path, progressHandler)
-      .then((result) => {
-        service.fetchAll();
-        return result;
-      }, (error) => {
-        uploadingFile.status = STATUS_ERROR;
-        $log.error('Uplading failed for file ', file, error);
-        throw error;
-      });
-  }
-
-
-  /**
-   * @param {Array} files to be uploaded
-   * @returns {Promise}
-   */
-  function uploadFiles(files) {
-    let promisesArray = [];
-    if (angular.isArray(files)) {
-      promisesArray = files.map((file) => {
-        return uploadFile(file);
-      });
-    } else {
-      $log.error('FilesList is not an array');
-    }
-    return $q.all(promisesArray);
+    return _.find(items, {name: fileName});
   }
 
 
@@ -213,33 +144,34 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
 
 
   /**
-   * Manages the uploading files array to keep only uploads in progress.
-   * @returns {Array} with removed files from uploading list
+   * @param {Object} directory
+   * @returns {Promise} Promise with parsed data from API
    */
-  function cleanUploadingFiles() {
-    return _.remove(uploading, (file) => {
-      return file.status === STATUS_COMPLETE || file.status === STATUS_ERROR;
-    });
+  function removeDirectory(directory) {
+    $log.info(`LibraryService.removeDirectory(${directory})`);
+
+    return LibraryApiService
+      .removeDirectory(directory.path)
+      .then((result) => {
+        service.fetchAll();
+        return result;
+      });
   }
 
 
   /**
-   * @param {String} uri
-   * @returns {FileObject}
+   * @param {Object} file
+   * @returns {Promise} Promise with parsed data from API
    */
-  function getFileByURI(uri) {
-    const parsedUri = /(library:\/\/)(.*)/.exec(uri);
-    if (!parsedUri) {
-      return false;
-    }
+  function removeFile(file) {
+    $log.info(`LibraryService.removeFile(${file})`);
 
-    const [fileName, items] = (
-        (parts) => (
-          (prefix, path) => [path.pop(), library.get(`${prefix}${path.join('/')}`).items]
-        )(parts[0], parts[1].split('/'))
-      )(parsedUri.slice(1));
-
-    return _.find(items, {name: fileName});
+    return LibraryApiService
+      .removeFile(file.downloadUrl)
+      .then((result) => {
+        service.fetchAll();
+        return result;
+      });
   }
 
 
@@ -251,26 +183,91 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
   }
 
 
-  // TODO: Code below: review, update, remove unused
+  function setFilter(filter) {
+    $log.info(`LibraryService.setFilter(${filter})`);
+
+    currentDirectory.setFilter(filter);
+
+    $log.info(`> filter set to [${currentDirectory.filter}]`);
+  }
 
   /**
-   * Exposes library to the rest of the application.
-   * This functions should be watched by the controllers
-   * File returned from API will have a format:
-   * {
-   *    name: "FileName",
-   *    downloadUrl: "http://address-to-file/FileName" - address for download
-   *    uri: "myLibrary://file" - address for API
-   *
-   * }
-   * @returns {Object|undefined}
+   * Uploads the file to the server and tracks the upload progress. Handles server errors.
+   * @param {File} file from HTML5 FileAPI
+   * @returns {Promise}
    */
-  function getAll() {
-    return library;
+  function uploadFile(file) {
+    $log.info(`LibraryService.uploadFile(${file})`);
+
+    const uploadingFile = LibraryDataConverterService.makeLibraryFile({
+        kind: 'file',
+        name: file.name
+      },
+      currentDirectory.directory,
+      {
+        progress: 0,
+        status: STATUS_UPLOADING
+      }
+    );
+
+    const progressHandler = function (progress) {
+      uploadingFile.progress = progress;
+      if (progress === 100) {
+        uploadingFile.status = STATUS_COMPLETE;
+      } else {
+        uploadingFile.status = STATUS_UPLOADING;
+      }
+    };
+
+    const alreadyUploadedIndex = uploading.findIndex((uploaded) => uploaded.path === uploadingFile.path);
+
+    if (alreadyUploadedIndex > -1) {
+      uploading.splice(alreadyUploadedIndex, 1);
+    }
+    uploading.push(uploadingFile);
+
+    return LibraryApiService
+      .uploadFile(file, currentDirectory.path, progressHandler)
+      .then((result) => {
+        service.fetchAll();
+        return result;
+      }, (error) => {
+        uploadingFile.status = STATUS_ERROR;
+        $log.error('Uplading failed for file ', file, error);
+        throw error;
+      });
   }
+
+
+  /**
+   * @param {Array} files to be uploaded
+   * @returns {Promise}
+   */
+  function uploadFiles(files) {
+    $log.info(`LibraryService.uploadFiles(${files})`);
+
+    let promisesArray = [];
+    if (angular.isArray(files)) {
+      promisesArray = files.map((file) => {
+        return uploadFile(file);
+      });
+    } else {
+      $log.error('FilesList is not an array');
+    }
+    return $q.all(promisesArray);
+  }
+
+  /**
+   * @param {String} name of directory to be created
+   * @returns {Bool}
+   */
+  function doesDirectoryAlreadyExists(directoryName) {
+    return currentDirectory.containsDirectory(directoryName);
+  }
+
 }
 
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.service('LibraryService', LibraryService);
 };

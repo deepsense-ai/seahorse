@@ -23,15 +23,13 @@ describe('OperationsApiClient', () => {
       $httpBackend.expectGET(url);
 
       functionReturningPromise()
-        .
-      then((data) => {
+        .then((data) => {
           success = true;
           responseData = data;
         })
-        .
-      catch(() => {
-        error = true;
-      });
+        .catch(() => {
+          error = true;
+        });
 
       $httpBackend.flush();
 
@@ -49,14 +47,12 @@ describe('OperationsApiClient', () => {
       $httpBackend.expectGET(url);
 
       functionReturningPromise()
-        .
-      then(() => {
+        .then(() => {
           success = true;
         })
-        .
-      catch(() => {
-        error = true;
-      });
+        .catch(() => {
+          error = true;
+        });
 
       mockRequest.respond(500, 'Server Error');
       $httpBackend.flush();

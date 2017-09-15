@@ -9,7 +9,9 @@ ENV SESSION_POLLING_INTERVAL 5000
 
 COPY dist/ /usr/share/nginx/html
 COPY src/config.js.tmpl /tmp/
-copy src/run.sh /tmp/
+COPY src/run.sh /tmp/
+# Update nginx configuration so it would request browser not to cache index.html
+COPY default.conf /etc/nginx/conf.d/
 
 ENTRYPOINT [ "/tmp/run.sh" ]
 CMD ["nginx", "-g", "daemon off;"]

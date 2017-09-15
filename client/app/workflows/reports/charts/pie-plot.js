@@ -1,3 +1,5 @@
+/* globals d3, nv */
+
 'use strict';
 
 import tpl from './plot.html';
@@ -38,6 +40,9 @@ function PiePlot($filter) {
             .labelType('percent');
 
         chart.tooltip.hideDelay(0);
+
+        //We don't want any formatting to the numbers in tooltip
+        chart.tooltip.valueFormatter(n => n);
 
         d3.select(element[0].querySelector('.svg-plot'))
             .datum(chartValues)

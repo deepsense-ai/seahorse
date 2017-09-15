@@ -13,20 +13,20 @@ describe('cycleAnalyser', () => {
   let experiment;
   let createNode = (experiment, nodeID, inputPorts, outputPorts) => {
     const TYPE_QUALIFIER = 'T';
-    let node =  experiment.createNode({
+    let node = experiment.createNode({
       id: nodeID,
       'operation': {
         'ports': {
           'input': _.map(inputPorts, (inputPort) => {
             return {
               'portIndex': inputPort,
-              'typeQualifier': [ TYPE_QUALIFIER ]
+              'typeQualifier': [TYPE_QUALIFIER]
             };
           }),
           'output': _.map(outputPorts, (outputPort) => {
             return {
               'portIndex': outputPort,
-              'typeQualifier': [ TYPE_QUALIFIER ]
+              'typeQualifier': [TYPE_QUALIFIER]
             };
           })
         }

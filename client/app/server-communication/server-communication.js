@@ -1,3 +1,5 @@
+/* globals Stomp */
+
 'use strict';
 
 import SockJS from 'sockjs-client';
@@ -160,7 +162,7 @@ class ServerCommunication {
   }
 
   init(workflowId) {
-    console.log('ServerCommunication init', 'Server communication initialized with workflow id ' + workflowId);
+    this.$log.log('ServerCommunication init', 'Server communication initialized with workflow id ' + workflowId);
     this.workflowId = workflowId; // TODO There should be no state here. Get rid of state in this service.
     this._connectToWebSocket();
   }

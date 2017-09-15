@@ -2,7 +2,7 @@
 
 import tpl from './column-list-selector-item.html';
 
-/*@ngInject*/
+/* @ngInject */
 function ColumnListSelectorItem($timeout) {
 
   let calculateInvalidColumnsNames = function(scope) {
@@ -27,7 +27,9 @@ function ColumnListSelectorItem($timeout) {
 
           $timeout(() => {
             scope.item.name = '';
-            $(element).find('[ng-model="item.name"]').focus();
+            $(element)
+              .find('[ng-model="item.name"]')
+              .focus();
           }, false);
         },
         addSelectedObject(object) {
@@ -48,5 +50,6 @@ function ColumnListSelectorItem($timeout) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('columnListSelectorItem', ColumnListSelectorItem);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('columnListSelectorItem', ColumnListSelectorItem);

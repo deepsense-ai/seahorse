@@ -1,0 +1,21 @@
+<div class="file-upload-section">
+  <input
+    multiple
+    type="file"
+    id="uploader-input"
+    style="display: none;"
+    file-upload-change
+  >
+
+  <div class="add-file">
+    <button class="btn btn-grey" ng-click="$ctrl.openFileBrowser()">
+      <i class="fa fa-plus"></i>
+      <span>Add file</span>
+    </button>
+  </div>
+
+  <div class="drop-area" dropzone-file-upload
+       ng-click="$ctrl.openFileBrowser()">
+    Drag new files here
+  </div>
+</div>

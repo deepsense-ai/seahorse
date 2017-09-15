@@ -30,10 +30,12 @@ SingleColumnSelectorItem.prototype.serialize = function serialize() {
 };
 
 // TODO why not prototype?
-SingleColumnSelectorItem.getType = () => { return {
-  'id': 'column',
-  'verbose': 'Select by name'
-};};
+SingleColumnSelectorItem.getType = () => {
+  return {
+    'id': 'column',
+    'verbose': 'Select by name'
+  };
+};
 
 SingleColumnSelectorItem.prototype.containsField = function(field) {
   return this.column.name === field.name;

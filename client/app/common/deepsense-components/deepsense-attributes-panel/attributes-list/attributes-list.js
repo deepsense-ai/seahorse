@@ -2,7 +2,7 @@
 
 import tpl from './attributes-list.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributesList(AttributesPanelService) {
 
   return {

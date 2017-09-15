@@ -22,12 +22,12 @@ class CanvasService {
 
     this.slidingWindowSize = {
       width: 0,
-      height: 0,
+      height: 0
     };
 
     this.slidingWindowPosition = {
       x: 0,
-      y: 0,
+      y: 0
     };
 
     this.scale = 1;
@@ -46,7 +46,7 @@ class CanvasService {
         ratio = heightDelta / newValue.height * this.scale;
       }
       this.centerZoom(ratio);
-      this.moveWindow(widthDelta/2, heightDelta/2);
+      this.moveWindow(widthDelta / 2, heightDelta / 2);
       this.slidingWindowSize = this.getWindowSize();
     }, true); // deep
 
@@ -58,7 +58,7 @@ class CanvasService {
     return {
       width: this.$slidingWindow.width(),
       height: this.$slidingWindow.height()
-    }
+    };
   }
 
   applyToWindow(animateTime = 0) {
@@ -76,7 +76,7 @@ class CanvasService {
   setPosition(position, animateTime) {
     const newPosition = {
       x: _.clamp(position.x, POSITION_BOUNDS.X[0] * this.scale + this.slidingWindowSize.width, POSITION_BOUNDS.X[1]),
-      y: _.clamp(position.y, POSITION_BOUNDS.Y[0] * this.scale + this.slidingWindowSize.height, POSITION_BOUNDS.Y[1]),
+      y: _.clamp(position.y, POSITION_BOUNDS.Y[0] * this.scale + this.slidingWindowSize.height, POSITION_BOUNDS.Y[1])
     };
     this.slidingWindowPosition = newPosition;
     this.applyToWindow(animateTime);
@@ -126,7 +126,7 @@ class CanvasService {
     this.setPosition({
       x: -this.scale * ((boundaries.left + boundaries.right) / 2) + (this.slidingWindowSize.width) / 2,
       y: -this.scale * ((boundaries.top + boundaries.bottom) / 2) + (this.slidingWindowSize.height) / 2
-    })
+    });
   }
 
   zoomToPosition(zoomDelta, posX, posY) {
@@ -136,11 +136,11 @@ class CanvasService {
     this.setPosition({
       x: posX - (posX - this.slidingWindowPosition.x) * ratio,
       y: posY - (posY - this.slidingWindowPosition.y) * ratio
-    })
+    });
   }
 
   centerZoom(zoomDelta) {
-    this.zoomToPosition(zoomDelta, this.slidingWindowSize.width/2, this.slidingWindowSize.height/2);
+    this.zoomToPosition(zoomDelta, this.slidingWindowSize.width / 2, this.slidingWindowSize.height / 2);
   }
 
   translateScreenToCanvasPosition(x, y) {

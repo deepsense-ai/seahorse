@@ -22,12 +22,11 @@ function BaseApiClientFactory($http, $q, config) {
         'data': data,
         'timeout': timeout
       })
-      .
-    then((result) => {
-      deferred.resolve(result.data);
-    }, (error) => {
-      deferred.reject(error);
-    });
+      .then((result) => {
+        deferred.resolve(result.data);
+      }, (error) => {
+        deferred.reject(error);
+      });
 
     return deferred.promise;
   };

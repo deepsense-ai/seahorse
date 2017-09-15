@@ -1,4 +1,5 @@
 'use strict';
+
 const SCHEMA = require('./preset.schema.json');
 const jsonSchema = require('jsen');
 
@@ -9,7 +10,7 @@ function PresetService(PresetsApiService, WorkflowService) {
 
   vm.fetch = fetch;
   vm.getAll = getAll;
-  vm.createPreset =  createPreset;
+  vm.createPreset = createPreset;
   vm.deletePreset = deletePreset;
   vm.updatePreset = updatePreset;
   vm.savePreset = savePreset;
@@ -26,13 +27,16 @@ function PresetService(PresetsApiService, WorkflowService) {
    */
   function fetch() {
     return PresetsApiService.getAll()
-      .then((result) => presets = result)
+      .then((result) => {
+        presets = result;
+        return result;
+      })
       .then(() => WorkflowService.fetchCluster(WorkflowService.getRootWorkflow()));
   }
 
   /**
    * @return {Array|undefined}
-     */
+   */
   function getAll() {
     return presets;
   }
@@ -40,7 +44,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {Object} presetCandidate
    * @return {Promise}
-     */
+   */
   function createPreset(presetCandidate) {
     return PresetsApiService.create(presetCandidate)
       .then(fetch);
@@ -50,7 +54,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {Number} id
    * @return {Promise}
-     */
+   */
   function deletePreset(id) {
     return PresetsApiService.remove(id)
       .then(fetch);
@@ -59,7 +63,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {Object} presetCandidate
    * @return {Promise}
-     */
+   */
   function updatePreset(presetCandidate) {
     return PresetsApiService.update(presetCandidate.id, presetCandidate)
       .then(fetch);
@@ -70,13 +74,13 @@ function PresetService(PresetsApiService, WorkflowService) {
    * @return {Promise}
    */
   function savePreset(presetCandidate) {
-    return (presetCandidate.id) ? updatePreset(presetCandidate) : createPreset(presetCandidate);
+    return presetCandidate.id ? updatePreset(presetCandidate) : createPreset(presetCandidate);
   }
 
   /**
    * @param {Object} preset
    * @returns {Boolean}
-     */
+   */
   function isValid(preset) {
     return validate(preset);
   }
@@ -94,7 +98,7 @@ function PresetService(PresetsApiService, WorkflowService) {
   /**
    * @param {String} name
    * @returns {Boolean}
-     */
+   */
   function isNameUsed(name) {
     if (presets) {
       return Object.keys(presets).filter((key) => {

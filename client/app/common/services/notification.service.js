@@ -16,7 +16,7 @@ class NotificationService {
   }
 
   showError(data, error) {
-    console.error(data.title, error);
+    this.$log.error(data.title, error);
 
     let toast = this.toastr.error(data.message, data.title, {
       timeOut: 10000
@@ -43,7 +43,7 @@ class NotificationService {
   }
 
   clearToasts() {
-    this.messages.map((messsage) => {
+    this.messages.forEach((messsage) => {
       this.toastr.clear(messsage.toast);
     });
   }
@@ -60,7 +60,7 @@ class NotificationService {
 }
 
 /* @ngInject */
-let createNotificationService = function($rootScope, $log, toastr) {
+let createNotificationService = function ($rootScope, $log, toastr) {
   NotificationService.instance = new NotificationService($rootScope, $log, toastr);
   return NotificationService.instance;
 };
