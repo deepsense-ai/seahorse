@@ -32,9 +32,8 @@ object ColumnTypesPredicates {
     SparkConversions.sparkColumnTypeToColumnType(field.dataType) match {
       case ColumnType.numeric => Success()
       case _ =>
-        Failure(WrongColumnTypeException(
-          s"Column ${field.name} is of type that is unsupported in this operation. " +
-            s"Expected ${Numeric.toString}"))
+        val columnType = SparkConversions.sparkColumnTypeToColumnType(field.dataType)
+        Failure(WrongColumnTypeException(field.name, columnType, ColumnType.numeric))
     }
 
   def isNumericOrCategorical: Predicate = (field) =>
@@ -42,9 +41,9 @@ object ColumnTypesPredicates {
       case ColumnType.numeric => Success()
       case ColumnType.categorical => Success()
       case _ =>
-        Failure(WrongColumnTypeException(
-          s"Column ${field.name} is of type that is unsupported in this operation. " +
-            s"Expected ${Seq(ColumnType.numeric, ColumnType.categorical).mkString}"))
+        val columnType = SparkConversions.sparkColumnTypeToColumnType(field.dataType)
+        Failure(WrongColumnTypeException(field.name, columnType,
+          ColumnType.numeric, ColumnType.categorical))
     }
 
   def isNumericOrBinaryValued: Predicate = (field) =>
@@ -57,12 +56,15 @@ object ColumnTypesPredicates {
           case 2 => Success()
           case categoriesCount =>
             Failure(WrongColumnTypeException(
-              s"Column '${field.name}' is categorical with more than 2 levels: $categoriesCount"))
+              s"Column '${field.name}' is '${ColumnType.categorical}' " +
+                s"with more than 2 levels: $categoriesCount."))
         }
       case _ =>
+        val columnType = SparkConversions.sparkColumnTypeToColumnType(field.dataType)
         Failure(WrongColumnTypeException(
-          s"Column ${field.name} is of type that is unsupported in this operation. " +
-            s"Expected ${Seq(ColumnType.boolean, ColumnType.numeric)} " +
-            s"or ${ColumnType.categorical} with 2 levels."))
+          s"Column '${field.name}' is of type '$columnType', " +
+            s"which is unsupported in this operation. " +
+            s"Expected '${ColumnType.boolean}', '${ColumnType.numeric}' " +
+            s"or '${ColumnType.categorical}' with 2 levels."))
     }
 }
