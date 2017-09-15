@@ -31,7 +31,7 @@ the scoring will be produced (model performance report).
 
 ### Build workflow
 
-<img style="float:right" src="./img/examples_workflow1.png" />
+<img class="img-responsive" style="float:right" src="./img/examples_workflow1.png" />
 
 * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a> and click **New workflow**
   * Put <code>machinelearning1</code> in the **Name** section
@@ -99,12 +99,12 @@ Click on the **LAST EXECUTION REPORT**, and on the report icon under the
 In the next example we will try to improve these metrics.
 
 <div class="centered-container" markdown="1">
-  ![Evaluate Regression Report](./img/examples_report1.png){: .centered-image}
+  ![Evaluate Regression Report](./img/examples_report1.png){: .centered-image .img-responsive}
 </div>
 
 ## Example 2 - Build a better model
 
-<img style="float:right" src="./img/examples_workflow2.png" />
+<img class="img-responsive" style="float:right" src="./img/examples_workflow2.png" />
 
 The goal of this exercise is to improve our previous models performance.
 In previous example we only used 3 features of the apartments:
@@ -168,5 +168,5 @@ Click on the **LAST EXECUTION REPORT**, and on the report icon under the
 As you can see the model performance is much better than in previous example.
 
 <div class="centered-container" markdown="1">
-  ![Evaluate Regression Report](./img/examples_report2.png){: .centered-image}
+  ![Evaluate Regression Report](./img/examples_report2.png){: .centered-image .img-responsive}
 </div>

@@ -217,6 +217,9 @@ p.footer-text span {
   }
 }
 @media (max-width: 1280px) {
+  .sidemenu-container {
+    display: none;
+  }
   .sidemenu-unactive {
     left: 0 !important;
     top: 69px !important;

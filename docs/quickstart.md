@@ -22,7 +22,7 @@ city, number of bedrooms, number of bathrooms, size of the apartment (in square 
 
 ### Build workflow
 
-<img style="float:right" src="./img/quickstart_workflow.png" />
+<img class="img-responsive" style="float:right" src="./img/quickstart_workflow.png" />
 
 * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a>
 and click **New workflow**

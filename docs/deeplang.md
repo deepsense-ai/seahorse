@@ -38,7 +38,7 @@ Operations are the base building blocks for workflows. Operations serve mainly t
 $$n$$ input ports, $$m$$ output ports and configurable parameters. Ports are indexed from $$0$$. In order to be executed, an operation needs one entity to be placed in each of its input ports. Additionally, all required parameters have to be filled. When an operation is executed, it produces one entity for each of its output ports.It also can have some side effects (like logging or exporting an entity to an external destination), but it never modifies its input entities (as they are immutable).
 
 <div class="centered-container" markdown="1">
-  ![operations](./img/operations.png){: .centered-image}
+  ![operations](./img/operations.png){: .centered-image .img-responsive}
 </div>
 
 One can think about an operation as a function that receives a tuple of entities and parameters' values, and returns a tuple of entities.
@@ -93,7 +93,7 @@ Note that if two branches of workflow do not depend on each other, they can be e
 #### Example
 
 <div class="centered-container" markdown="1">
-  ![workflow](./img/deeplang_workflow.png)
+  ![workflow](./img/deeplang_workflow.png){: .centered-image .img-responsive}
 </div>
 
 In the example, there is a simple  presented. It reads a `DataFrame` from some external source and then passes it to the `Split` operation. This operation splits `DataFrame` by rows, producing two new `DataFrame`s. One is immediately written at some destination. The other one is projected to the selected subset of its columns, and than written. Note, that writing of left `DataFrame` can be executed simultanously with projecting and writting of right `DataFrame`.
