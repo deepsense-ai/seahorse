@@ -18,16 +18,15 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression}
 
 class LogisticRegressionSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkLogisticRegression] {
+  extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "LogisticRegression"
 
-  override val estimatorWrapper = new LogisticRegression()
+  override val estimator = new LogisticRegression()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     elasticNetParam -> 0.8,

@@ -16,19 +16,17 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{CountVectorizer => SparkCountVectorizer}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class CountVectorizerEstimatorSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkCountVectorizer] {
+  extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "CountVectorizer"
 
-  override val estimatorWrapper = new CountVectorizerEstimator()
+  override val estimator = new CountVectorizerEstimator()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     inputColumn -> NameSingleColumnSelection("myStringFeatures"),

@@ -16,22 +16,21 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import org.apache.spark.mllib
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.{ml, mllib}
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.Estimator
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.AbstractEstimatorModelWrapperSmokeTest.TestDataFrameRow
 import io.deepsense.deeplang.params.ParamPair
 
-abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
-  extends DeeplangIntegTestSupport {
+abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestSupport {
 
   def className: String
 
-  val estimatorWrapper: SparkEstimatorWrapper[_, E, _]
+  val estimator: Estimator
 
   val estimatorParams: Seq[ParamPair[_]]
 
@@ -51,7 +50,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
 
   className should {
     "successfully run _fit(), _transform() and _transformSchema()" in {
-      val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
+      val estimatorWithParams = estimator.set(estimatorParams: _*)
       val transformer = estimatorWithParams._fit(executionContext, dataFrame)
       val transformed = transformer._transform(executionContext, dataFrame)
        assertTransformedDF(transformed)
@@ -59,16 +58,16 @@ abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
       assertTransformedSchema(transformedSchema.get)
     }
     "successfully run _fit_infer() and _transformSchema() with schema" in {
-      val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
+      val estimatorWithParams = estimator.set(estimatorParams: _*)
       val transformer = estimatorWithParams._fit_infer(Some(dataFrame.sparkDataFrame.schema))
       transformer._transformSchema(dataFrame.sparkDataFrame.schema)
     }
     "successfully run _fit_infer() without schema" in {
-      val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
+      val estimatorWithParams = estimator.set(estimatorParams: _*)
       estimatorWithParams._fit_infer(None)
     }
     "succesfully run report" in {
-      val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
+      val estimatorWithParams = estimator.set(estimatorParams: _*)
       estimatorWithParams.report
     }
   }

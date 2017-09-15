@@ -22,7 +22,7 @@ import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml.feature.{IndexToString, StringIndexer}
 import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.util.Identifiable
-import org.apache.spark.ml.{Pipeline, feature}
+import org.apache.spark.ml.{Model, Pipeline, feature}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DataType, StructType}
 import org.apache.spark.{ml, sql}
@@ -30,19 +30,17 @@ import org.apache.spark.{ml, sql}
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.SimpleSparkEstimatorWrapper
 import io.deepsense.deeplang.params.Param
 
-trait WithStringIndexing[
-    MD <: ml.Model[MD],
-    E <: ml.Estimator[MD],
-    MW <: SparkModelWrapper[MD, E]] {
+trait WithStringIndexing[M <: Model[M]] {
 
   def fitWithStringIndexing(
       executionContext: ExecutionContext,
       dataFrame: DataFrame,
-      estimator: SparkEstimatorWrapper[MD, E, MW],
+      estimator: SimpleSparkEstimatorWrapper[M],
       labelColumnName: String,
-      predictionColumnName: String): Transformer = {
+      predictionColumnName: String): SparkCustomTransformerWrapper = {
 
     val sparkDataFrame = dataFrame.sparkDataFrame
     val (labelIndexer, indexedLabelColumnName) =
@@ -71,16 +69,15 @@ trait WithStringIndexing[
 
   private def fitPipeline(
       sparkDataFrame: sql.DataFrame,
-      estimator: SparkEstimatorWrapper[MD, E, MW],
-      pipeline: Pipeline): Transformer = {
-    val params: Array[Param[_]] = estimator.createModelWrapperInstance().params
+      estimator: SimpleSparkEstimatorWrapper[M],
+      pipeline: Pipeline): SparkCustomTransformerWrapper = {
     val paramMap = estimator.sparkParamMap(estimator.sparkEstimator, sparkDataFrame.schema)
-    new SparkTransformerWrapper(
+    new SparkCustomTransformerWrapper(
       pipeline.fit(sparkDataFrame, paramMap),
-      params)
+      estimator.params)
   }
 
-  def getLabelColumnType(
+  private def getLabelColumnType(
       sparkDataFrame: sql.DataFrame,
       labelColumnName: String): DataType = {
     sparkDataFrame.schema(labelColumnName).dataType
@@ -110,10 +107,10 @@ trait WithStringIndexing[
 }
 
 /**
-  * Wraps spark transformer into deeplang transformer.
+  * Wraps custom (from pipeline) spark transformer into deeplang transformer.
   */
-private class SparkTransformerWrapper(
-    transformer: ml.Transformer,
+class SparkCustomTransformerWrapper(
+    val transformer: ml.Transformer,
     transformerParams: Array[Param[_]]) extends Transformer {
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
@@ -123,6 +120,12 @@ private class SparkTransformerWrapper(
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
     Some(transformer.transformSchema(schema))
+  }
+
+  override def replicate(extra: io.deepsense.deeplang.params.ParamMap):
+      SparkCustomTransformerWrapper.this.type = {
+    val that = new SparkCustomTransformerWrapper(transformer, params).asInstanceOf[this.type]
+    copyValues(that, extra)
   }
 
   override val params: Array[Param[_]] = transformerParams

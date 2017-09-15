@@ -16,18 +16,16 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{IDF => SparkIDF}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class IDFEstimatorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkIDF] {
+class IDFEstimatorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "IDF"
 
-  override val estimatorWrapper = new IDFEstimator()
+  override val estimator = new IDFEstimator()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     minDocFreq -> 0,

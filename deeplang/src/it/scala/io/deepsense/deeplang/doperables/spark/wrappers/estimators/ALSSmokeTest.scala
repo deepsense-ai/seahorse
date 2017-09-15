@@ -16,18 +16,16 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.recommendation.{ALS => SparkALS}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class ALSSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkALS] {
+class ALSSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "ALS"
 
-  override val estimatorWrapper = new ALS()
+  override val estimator = new ALS()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     alpha -> 1.0,

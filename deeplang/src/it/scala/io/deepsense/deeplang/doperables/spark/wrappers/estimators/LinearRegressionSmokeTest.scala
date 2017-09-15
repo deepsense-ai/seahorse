@@ -16,19 +16,17 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.regression.{LinearRegression => SparkLinearRegression}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class LinearRegressionSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkLinearRegression] {
+  extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "LinearRegression"
 
-  override val estimatorWrapper = new LinearRegression()
+  override val estimator = new LinearRegression()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     elasticNetParam -> 0.8,

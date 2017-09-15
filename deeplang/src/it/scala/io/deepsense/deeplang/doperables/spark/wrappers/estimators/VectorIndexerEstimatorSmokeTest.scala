@@ -16,19 +16,17 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class VectorIndexerEstimatorSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkVectorIndexer] {
+  extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "VectorIndexer"
 
-  override val estimatorWrapper = new VectorIndexerEstimator()
+  override val estimator = new VectorIndexerEstimator()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     maxCategories -> 2,

@@ -16,19 +16,17 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{Word2Vec => SparkWord2Vec}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class Word2VecEstimatorSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkWord2Vec] {
+  extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "Word2Vec"
 
-  override val estimatorWrapper = new Word2VecEstimator()
+  override val estimator = new Word2VecEstimator()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     inputColumn -> NameSingleColumnSelection("myStringFeatures"),

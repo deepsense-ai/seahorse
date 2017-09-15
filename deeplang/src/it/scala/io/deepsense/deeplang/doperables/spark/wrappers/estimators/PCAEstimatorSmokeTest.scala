@@ -16,19 +16,17 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{PCA => SparkPCA}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class PCAEstimatorSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkPCA] {
+  extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "PCA"
 
-  override val estimatorWrapper = new PCAEstimator()
+  override val estimator = new PCAEstimator()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     k -> 2,

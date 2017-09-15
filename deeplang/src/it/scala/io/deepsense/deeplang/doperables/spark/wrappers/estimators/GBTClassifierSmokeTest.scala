@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.classification.{GBTClassifier => SparkGBTClassifier}
 import org.apache.spark.sql.types.{DoubleType, Metadata, StructType}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -25,15 +24,15 @@ import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.utils.DataFrameUtils
 
 class GBTClassifierSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkGBTClassifier] {
+  extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "GBTClassifier"
 
-  override val estimatorWrapper = new GBTClassifier()
+  override val estimator = new GBTClassifier()
 
   private val labelColumnName = "myRating"
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featuresColumn -> NameSingleColumnSelection("myFeatures"),

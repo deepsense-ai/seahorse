@@ -16,20 +16,18 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.regression.{GBTRegressor => SparkGBTRegressor}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class GBTRegressorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkGBTRegressor] {
+class GBTRegressorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "GBTRegressor"
 
-  override val estimatorWrapper = new GBTRegressor()
+  override val estimator = new GBTRegressor()
 
   private val labelColumnName = "myRating"
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featuresColumn -> NameSingleColumnSelection("myFeatures"),

@@ -16,18 +16,16 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.clustering.{KMeans => SparkKMeans}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class KMeansSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkKMeans] {
+class KMeansSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "KMeans"
 
-  override val estimatorWrapper = new KMeans()
+  override val estimator = new KMeans()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featuresColumn -> NameSingleColumnSelection("myFeatures"),

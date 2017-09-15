@@ -16,11 +16,13 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import scala.reflect.runtime.universe._
+
+import org.apache.spark.ml
 import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTClassificationModel, GBTClassifier => SparkGBTClassifier}
+import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTClassificationModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
@@ -28,18 +30,13 @@ import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
 import io.deepsense.deeplang.utils.WithStringIndexing
+import io.deepsense.deeplang.{doperables, ExecutionContext, TypeUtils}
 
 class GBTClassifier()
-  extends SparkEstimatorWrapper[
-    SparkGBTClassificationModel,
-    SparkGBTClassifier,
-    GBTClassificationModel]
+  extends SimpleSparkEstimatorWrapper[SparkGBTClassificationModel]
   with GBTParams
   with Logging
-  with WithStringIndexing[
-    SparkGBTClassificationModel,
-    SparkGBTClassifier,
-    GBTClassificationModel] {
+  with WithStringIndexing[SparkGBTClassificationModel] {
 
   import GBTClassifier._
 
@@ -47,10 +44,28 @@ class GBTClassifier()
 
   setDefault(stepSize, 0.1)
 
-  override private[deeplang] def _fit(ctx: ExecutionContext, dataFrame: DataFrame): Transformer = {
+  val estimator = TypeUtils.instanceOfType(typeTag[SparkGBTClassifier])
+
+  override def sparkEstimator: ml.Estimator[SparkGBTClassificationModel] = estimator
+
+  override private[deeplang] def _fit_infer(
+      maybeSchema: Option[StructType]): doperables.Transformer = {
+    validateParameters(maybeSchema)
+    new GBTClassificationModel()
+  }
+
+  private def validateParameters(maybeSchema: Option[StructType]): Unit = {
+    maybeSchema.foreach(schema => sparkParamMap(estimator, schema))
+  }
+
+  override private[deeplang] def _fit(
+      ctx: ExecutionContext,
+      dataFrame: DataFrame): doperables.Transformer = {
     val labelColumnName = dataFrame.getColumnName($(labelColumn))
     val predictionColumnName: String = $(predictionColumn)
-    fitWithStringIndexing(ctx, dataFrame, this, labelColumnName, predictionColumnName)
+    val transformer =
+      fitWithStringIndexing(ctx, dataFrame, this, labelColumnName, predictionColumnName)
+    new GBTClassificationModel(transformer)
   }
 
   val impurity = new ChoiceParamWrapper[SparkGBTClassifier, Impurity](

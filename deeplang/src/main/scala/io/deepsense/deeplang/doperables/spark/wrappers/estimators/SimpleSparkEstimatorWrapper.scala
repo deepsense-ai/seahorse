@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,15 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import io.deepsense.deeplang.params.ParamPair
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+import org.apache.spark.ml
+import org.apache.spark.ml.Model
 
-class StandardScalerEstimatorSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest {
+import io.deepsense.deeplang.doperables.Estimator
+import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
-  override def className: String = "StandardScaler"
+abstract class SimpleSparkEstimatorWrapper[M <: Model[M]]
+  extends Estimator
+  with ParamsWithSparkWrappers {
 
-  override val estimator = new StandardScalerEstimator()
-
-  import estimator._
-
-  override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    withMean -> false,
-    withStd -> true,
-    inputColumn -> NameSingleColumnSelection("myFeatures"),
-    outputColumn -> "testOutputColumn"
-  )
+  def sparkEstimator: ml.Estimator[M]
 }

@@ -16,18 +16,16 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.regression.{RandomForestRegressor => SparkRFR}
-
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class RandomForestRegressionSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkRFR] {
+class RandomForestRegressionSmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
 
   override def className: String = "RandomForestRegression"
 
-  override val estimatorWrapper = new RandomForestRegression()
+  override val estimator = new RandomForestRegression()
 
-  import estimatorWrapper._
+  import estimator._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     maxDepth -> 5.0,
