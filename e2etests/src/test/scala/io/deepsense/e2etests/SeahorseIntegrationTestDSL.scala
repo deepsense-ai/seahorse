@@ -20,6 +20,7 @@ import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.CatalogPair
@@ -82,8 +83,8 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     }
   }
 
-  def createSessionSynchronously(id: Workflow.Id): Unit = {
-    smclient.createSession(id, TestClusters.local())
+  def createSessionSynchronously(id: Workflow.Id, clusterDetails: ClusterDetails): Unit = {
+    smclient.createSession(id, clusterDetails)
 
     eventually {
       Await.result(

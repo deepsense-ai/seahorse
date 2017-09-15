@@ -24,7 +24,7 @@ class JsonWorkflowsTest extends WordSpec with Matchers with SeahorseIntegrationT
               workflowFut.flatMap { workflow =>
                 val id = workflow.id
 
-                createSessionSynchronously(id)
+                createSessionSynchronously(id, cluster)
                 smclient.launchSession(id)
 
                 assertAllNodesCompletedSuccessfully(workflow)

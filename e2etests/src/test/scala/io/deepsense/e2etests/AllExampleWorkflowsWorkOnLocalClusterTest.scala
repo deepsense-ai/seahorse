@@ -51,7 +51,7 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
   def cloneAndRunWorkflow(wflow: WorkflowInfo): Future[Unit] = {
     cloneWorkflow(wflow).flatMap { clonedWorkflow =>
       val clonedWorkflowId = clonedWorkflow.id
-      createSessionSynchronously(clonedWorkflowId)
+      createSessionSynchronously(clonedWorkflowId, TestClusters.local())
       smclient.launchSession(clonedWorkflowId)
       assertAllNodesCompletedSuccessfully(clonedWorkflow)
       smclient.deleteSession(clonedWorkflowId)
