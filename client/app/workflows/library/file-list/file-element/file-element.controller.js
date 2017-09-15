@@ -41,7 +41,7 @@ class FileElementController {
 
   $onChanges(changes) {
     this.templateUrl = templateMap[this.item.kind];
-    this.extension = this.item.name ? this.getExtension(this.item.name) : '';
+    this.extension = this.getExtension(this.item.name);
     this.canShowExtension = this.extension === 'json' || this.extension === 'csv';
 
     if (this.item.parents && this.item.progress) {
@@ -69,7 +69,13 @@ class FileElementController {
 
 
   getExtension(fileName) {
-    return fileName.substr(fileName.lastIndexOf('.') + 1);
+    if (!fileName) {
+      return '';
+    }
+    return fileName
+      .split('.')
+      .pop()
+      .toLowerCase();
   }
 
 
