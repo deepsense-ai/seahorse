@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# Copyright (c) 2015, CodiLime, Inc.
+# Copyright (c) 2016, CodiLime, Inc.
 #
 # Installs Notebooks dependencies.
 # Takes parameters (all parameters are required):
+# --working-dir
 # --mq-host
 # --mq-port
 # --workflow-id
@@ -14,6 +15,10 @@ do
 key="$1"
 
 case $key in
+  -d|--working-dir)
+  WORKING_DIR="$2"
+  shift # past argument
+  ;;
   -h|--mq-host)
   MQ_HOST="$2"
   shift # past argument
@@ -39,11 +44,11 @@ shift # past argument or value
 done
 
 # Verifying if all required parameters are set
+if [ -z "$WORKING_DIR" ]; then echo "Parameter --working-dir is required"; exit -1; fi
 if [ -z "$MQ_HOST" ];     then echo "Parameter --mq-host is required"; exit -1; fi
 if [ -z "$MQ_PORT" ];     then echo "Parameter --mq-port is required"; exit -1; fi
 if [ -z "$WORKFLOW_ID" ]; then echo "Parameter --workflow-id is required"; exit -1; fi
 if [ -z "$SESSION_ID" ];  then echo "Parameter --session-id is required"; exit -1; fi
-
 
 
 echo "DIAGNOSTIC CHECKS"
@@ -86,7 +91,7 @@ pip list
 
 
 # Exit script after first erroneous instruction
-set -e
+set -ex
 echo "INSTALLING DEPENDENCIES"
 
 PWD=`pwd`
@@ -96,31 +101,29 @@ echo "download get_pip"
 wget https://bootstrap.pypa.io/get-pip.py
 
 echo "install pip"
-python2.7 get-pip.py --root $PWD
+python2.7 get-pip.py -I --root $PWD
 
-PIP_PATH="$PWD/usr/bin/pip"
+export PIP_PATH="$PWD/usr/local/bin/pip"
 echo "PIP_PATH=$PIP_PATH"
 
-PYTHONPATH="$PWD/usr/lib/python2.7/site-packages"
+PREFIX_PATH="usr/local"
+
+export PYTHONPATH="$PWD/usr/local/lib/python2.7/dist-packages:$PWD/usr/local/lib/python2.7:$PWD/usr/local/lib/python2.7/site-packages"
 echo "PYTHONPATH=$PYTHONPATH"
 
-$PWD/usr/bin/pip install --root $PWD ipykernel
-$PWD/usr/bin/pip install --root $PWD jupyter_client
-$PWD/usr/bin/pip install --root $PWD pika
-
-echo "unzip executing_kernel_manager"
-unzip -d executing_kernel notebook_executing_kernel.zip
-
-
+$PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD ipykernel
+$PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD jupyter_client
+$PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD pika
 
 # STARTING EXECUTING KERNEL MANAGER
-echo "listing the CWD"
-ls -laR
+# echo "listing the CWD"
+#ls -laR
+
+cd $WORKING_DIR
 
 echo "start executing_kernel_manager"
-/usr/bin/python2.7 executing_kernel/executing_kernel_manager.py \
+python2.7 executing_kernel_manager.py \
   --mq-host "$MQ_HOST" \
   --mq-port "$MQ_PORT" \
   --workflow-id "$WORKFLOW_ID" \
   --session-id "$SESSION_ID"
-

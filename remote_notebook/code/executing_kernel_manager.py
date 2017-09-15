@@ -23,7 +23,7 @@ class ExecutingKernelManager(object):
     ALL_MANAGEMENT_SUBSCRIPTION_TOPIC = 'management.{session_id}.*.to_manager'
 
     SX_EXCHANGE = 'seahorse'
-    SX_PUBLISHING_TOPIC = 'kernelmanager.{session_id}.{workflow_id}.from_to_executor'
+    SX_PUBLISHING_TOPIC = 'kernelmanager.{session_id}.{workflow_id}.from'
 
     EXECUTING_KERNEL_NAME = 'ExecutingKernel'
 

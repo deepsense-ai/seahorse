@@ -4,11 +4,14 @@
 TMPDIR=executing_kernel_tmp
 rm -rf $TMPDIR
 mkdir $TMPDIR
+mkdir $TMPDIR/executing_kernel
 
-cp code/executing_kernel/executing_kernel.py code/executing_kernel/kernel.json $TMPDIR
+cp code/executing_kernel/executing_kernel.py code/executing_kernel/kernel.json $TMPDIR/executing_kernel
 cp code/*.py $TMPDIR
+cp code/start.sh $TMPDIR
 
 rm notebook_executing_kernel.zip
-zip -r -j notebook_executing_kernel.zip $TMPDIR/*
-
+cd $TMPDIR
+zip -r ../notebook_executing_kernel.zip *
+cd ..
 rm -rf $TMPDIR
