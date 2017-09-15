@@ -12,17 +12,16 @@ Returns result of Python function execution as a DataFrame and CustomPythonColum
 
 The function that will be executed has to:
 
-* have name <code>transform_column</code>,
+* have name <code>transform_value</code>,
 
-* take exactly one argument of type
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/api/python/pyspark.sql.html#pyspark.sql.Column">Column</a>,
+* take exactly two arguments: value to be transformed and the name of column currently being transformed,
 
-* return Column.
+* return transformed value that conforms with selected target type (parameter).
 
 #### Example Python code:
 
-    def transform_column(column):
-      return column * 2
+    def transform_value(value, column_name):
+      value
 
 
 **Since**: Seahorse 1.0.0
