@@ -160,12 +160,21 @@ case class SessionExecutor(
         MQCommunication.Topic.seahorsePublicationTopic(sessionId),
         MQCommunication.Actor.Publisher.seahorse)
 
-      val heartbeatBroadcaster = communicationFactory.createBroadcaster(
+      val heartbeatWorkflowBroadcaster = communicationFactory.createBroadcaster(
         MQCommunication.Exchange.heartbeats(workflowId),
         MQCommunication.Actor.Publisher.heartbeat(workflowId)
       )
 
-      val routeePaths = scala.collection.immutable.Iterable(seahorsePublisher, heartbeatBroadcaster)
+      val heartbeatAllBroadcaster = communicationFactory.createBroadcaster(
+        MQCommunication.Exchange.heartbeatsAll,
+        MQCommunication.Actor.Publisher.heartbeatAll
+      )
+
+      val routeePaths = scala.collection.immutable
+        .Iterable(
+          seahorsePublisher,
+          heartbeatWorkflowBroadcaster,
+          heartbeatAllBroadcaster)
         .map(_.path.toString)
 
       val heartbeatPublisher = system.actorOf(
