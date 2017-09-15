@@ -17,8 +17,4 @@ import org.scalatest.mock.MockitoSugar
  */
 trait UnitTestSupport extends MockitoSugar {
   suite: StandardSpec =>
-
-  override protected implicit def routeTestTimeout: RouteTestTimeout = {
-    RouteTestTimeout(1.seconds)
-  }
 }

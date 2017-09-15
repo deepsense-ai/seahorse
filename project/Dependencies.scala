@@ -32,8 +32,8 @@ object Library {
   val spray   = (name: String) => "io.spray"               %% s"spray-$name"      % Version.spray
 
   val akkaActor          = akka("actor")
-  val apacheCommons      = "org.apache.commons"           %  "commons-lang3"      % Version.apacheCommons
   val akkaTestkit        = akka("testkit")
+  val apacheCommons      = "org.apache.commons"           %  "commons-lang3"      % Version.apacheCommons
   val avroCore           = avro("")
   // Please mind the dash to handle empty main module in avro and avro-ipc
   val avroRpc            = avro("-ipc")
@@ -77,7 +77,7 @@ object Dependencies {
 
   val entitystorage = Seq(
     akkaActor
-  ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit).map(_ % s"$Test,it")
+  ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit, akkaTestkit).map(_ % s"$Test,it")
 
   val commons = Seq(
     akkaActor,

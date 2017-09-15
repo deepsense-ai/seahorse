@@ -40,9 +40,9 @@ class EntitiesApiActorSpec
 
   implicit val timeout: Timeout = Timeout(1 second)
   val tenantId = "tenantId"
-  val existingEntityId = Entity.Id.randomId
   val notExistingEntityId = Entity.Id.randomId
   val entity = testEntity
+  val existingEntityId = entity.id
 
   "EntityApiActor" should "send entity if exists" in {
     testProbe.send(actorRef, Get(tenantId, existingEntityId))

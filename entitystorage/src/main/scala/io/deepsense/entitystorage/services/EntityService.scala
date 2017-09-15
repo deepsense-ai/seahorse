@@ -35,9 +35,8 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
 
   /**
    * Creates new entity using input params.
-   * This operation is not blocking.
    */
-  def createEntity(inputEntity: InputEntity): Unit = {
+  def createEntity(inputEntity: InputEntity): Future[Entity] = {
     val now = DateTimeConverter.now
     val entity = Entity(
       inputEntity.tenantId,
@@ -50,7 +49,7 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
       now,
       now,
       inputEntity.saved)
-    entityDao.upsert(entity)
+    entityDao.upsert(entity).map(_ => entity)
   }
 
   /**
