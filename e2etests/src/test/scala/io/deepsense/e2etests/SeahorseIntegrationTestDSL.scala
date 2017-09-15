@@ -21,6 +21,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import spray.http.HttpResponse
 
+import io.deepsense.api.datasourcemanager.model.DatasourceParams
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CatalogRecorder
@@ -32,7 +33,6 @@ import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
 import io.deepsense.sessionmanager.rest.client.SessionManagerClient
 import io.deepsense.sessionmanager.service.Status
 import io.deepsense.workflowmanager.client.WorkflowManagerClient
-
 
 trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging with WorkflowJsonProtocol {
 
@@ -48,6 +48,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
   protected val baseUrl = new URL("http", "localhost", 33321, "")
   protected val workflowsUrl = new URL(baseUrl, "/v1/workflows/")
   protected val sessionsUrl = new URL(baseUrl, "/v1/sessions/")
+  protected val datasourcesUrl = new URL(baseUrl, "/datasourcemanager/v1/")
 
   private val userId = UUID.fromString("dd63e120-548f-4ac9-8fd5-092bad7616ab")
   private val userName = "Seahorse test"
@@ -74,11 +75,18 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     None
   )
 
+  val dsclient = new DatasourcesClient(
+    datasourcesUrl,
+    userId,
+    userName
+  )
+
   def ensureSeahorseIsRunning(): Unit = {
     eventually {
       logger.info("Waiting for Seahorse to boot up...")
-      val smIsUp = Await.result(smclient.fetchSessions(), httpTimeout)
-      val wmIsUp = Await.result(wmclient.fetchWorkflows(), httpTimeout)
+      Await.result(smclient.fetchSessions(), httpTimeout)
+      Await.result(wmclient.fetchWorkflows(), httpTimeout)
+      // If wm is running, DatasourceManager is also running.
     }
   }
 
@@ -148,11 +156,12 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     nodesResult
   }
 
-  def checkCompletedNodesNumber(errorNodeStatuses: Int,
-                                completedNodes: Int,
-                                numberOfNodes: Int,
-                                workflowID: Workflow.Id,
-                                workflowName: String): Validation[String, String] = {
+  def checkCompletedNodesNumber(
+      errorNodeStatuses: Int,
+      completedNodes: Int,
+      numberOfNodes: Int,
+      workflowID: Workflow.Id,
+      workflowName: String): Validation[String, String] = {
     if (errorNodeStatuses > 0) {
       s"Errors: $errorNodeStatuses nodes failed for workflow id: $workflowID. name: $workflowName".failure
     } else {
@@ -176,5 +185,9 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
 
   private def calculateNumberOfNodes(workflowId: Workflow.Id): Future[Int] = {
     wmclient.fetchWorkflow(workflowId).map(_.graph.nodes.size)
+  }
+
+  protected def insertDatasource(uuid: UUID, datasourceParams: DatasourceParams): Unit = {
+    dsclient.insertDatasource(uuid, datasourceParams)
   }
 }

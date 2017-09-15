@@ -265,26 +265,11 @@
     }, {
       "id": "61cf8afa-2587-4d07-8d55-fc1bbc7b4435",
       "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read Datasource"
       },
       "parameters": {
-        "data storage type": {
-          "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/StateNamesSmall.csv",
-            "format": {
-              "CSV": {
-                "separator": {
-                  ",": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": false
-              }
-            }
-          }
-        }
+        "datasourceId": "3f64a431-6248-48df-826c-b662b076b135"
       }
     }, {
       "id": "46ea2d54-e8d1-1f7d-0427-b03e2a310926",

@@ -28,12 +28,10 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
           exampleWorkflow <- exampleWorkflows
         } {
           s"Workflow '${exampleWorkflow.name}'" in {
-            Await.result({
-              val workflowFut = cloneWorkflow(exampleWorkflow)
-              workflowFut.flatMap { workflow =>
-                runAndCleanupWorkflow(workflow, TestClusters.local())
-              }
-            }, workflowTimeout)
+            Await.result(for {
+              workflow <- cloneWorkflow(exampleWorkflow)
+              _ <- runAndCleanupWorkflow(workflow, TestClusters.local())
+            } yield (), workflowTimeout)
           }
         }), httpTimeout)
   }
