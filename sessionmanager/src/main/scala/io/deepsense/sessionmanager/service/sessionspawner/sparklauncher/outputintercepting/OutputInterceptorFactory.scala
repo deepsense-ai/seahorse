@@ -60,6 +60,9 @@ class OutputInterceptorFactory @Inject()(
     val handler = new FileHandler(s"$executorsLogDirectory/$fileName")
     handler.setFormatter(new SimpleFormaterWithoutOutputRedirectorNoise)
     logger.addHandler(handler)
+    sys.addShutdownHook {
+      handler.close()
+    }
     OutputInterceptorHandle(logger, childProcLoggerName)
   }
 
