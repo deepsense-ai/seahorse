@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-graph-json"
+name := "deepsense-seahorse-workflow-json"
 
 libraryDependencies ++= Dependencies.graphJson
 

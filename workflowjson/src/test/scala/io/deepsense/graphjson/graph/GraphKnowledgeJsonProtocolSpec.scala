@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.graphjson.graph
 
 import spray.json._
 
@@ -23,7 +23,7 @@ import io.deepsense.model.json.graph.GraphKnowledgeJsonProtocol
 
 class GraphKnowledgeJsonProtocolSpec extends GraphJsonTestSupport {
 
-  import GraphKnowledgeJsonProtocol._
+  import io.deepsense.model.json.graph.GraphKnowledgeJsonProtocol._
 
   val mockOperable1 = mock[DOperable]
   val mockOperable2 = mock[DOperable]

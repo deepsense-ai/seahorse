@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.graphjson.graph
 
 import org.mockito.Mockito._
 import spray.json._
@@ -27,7 +27,7 @@ import io.deepsense.model.json.graph.NodeJsonProtocol
 
 class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
 
-  import NodeJsonProtocol._
+  import io.deepsense.model.json.graph.NodeJsonProtocol._
 
   "Node with Operation transformed to Json" should {
     val expectedOperationId = DOperation.Id.randomId

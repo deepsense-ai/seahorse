@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.graphjson.graph
 
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar

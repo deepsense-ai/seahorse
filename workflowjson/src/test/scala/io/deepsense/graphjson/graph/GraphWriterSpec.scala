@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.graphjson.graph
 
 import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
-import io.deepsense.model.json.graph.{NodeJsonProtocol, GraphJsonProtocol}
+import io.deepsense.model.json.graph.{GraphJsonProtocol, NodeJsonProtocol}
 
 class GraphWriterSpec extends GraphJsonTestSupport {
 
-  import GraphJsonProtocol.GraphWriter
+  import io.deepsense.model.json.graph.GraphJsonProtocol.GraphWriter
 
   val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", "version1")
   val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", "version2")
@@ -64,7 +64,7 @@ class GraphWriterSpec extends GraphJsonTestSupport {
       "have values created by NodeFormat" in {
         val nodesArray = graphJson.fields("nodes").asInstanceOf[JsArray]
         val nodes = Set(node1, node2, node3, node4)
-        import NodeJsonProtocol._
+        import io.deepsense.model.json.graph.NodeJsonProtocol._
         assert(nodes.forall(node => {
           val nodeJson = node.toJson
           nodesArray.elements.count(jsValue => {

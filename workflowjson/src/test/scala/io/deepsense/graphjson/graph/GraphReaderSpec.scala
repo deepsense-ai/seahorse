@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.graphjson.graph
 
 import org.mockito.Mockito._
 import spray.json._
@@ -23,7 +23,7 @@ import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.model.json.graph.GraphJsonProtocol
-import GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.graph.GraphJsonProtocol.GraphReader
 
 class GraphReaderSpec extends GraphJsonTestSupport {
 

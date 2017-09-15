@@ -29,6 +29,5 @@ import org.scalatest.{Matchers, WordSpec}
 class StandardSpec
   extends WordSpec
   with Matchers
-  with ScalaFutures {
-}
+  with ScalaFutures
 

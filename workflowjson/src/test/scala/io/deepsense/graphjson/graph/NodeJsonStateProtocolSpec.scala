@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.graphjson.graph
 
 import org.joda.time.DateTime
 import org.mockito.Mockito._
 import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.exception.{DeepSenseFailure, FailureDescription}
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.json.DateTimeJsonProtocol
 import io.deepsense.graph.{Progress => GraphProgress, State}
 import io.deepsense.model.json.graph.NodeStateJsonProtocol
 import io.deepsense.models.entities.Entity
-import io.deepsense.commons.exception.FailureCode
 
 class NodeJsonStateProtocolSpec extends GraphJsonTestSupport {
 
-  import DateTimeJsonProtocol._
-  import NodeStateJsonProtocol._
+  import io.deepsense.commons.json.DateTimeJsonProtocol._
+  import io.deepsense.model.json.graph.NodeStateJsonProtocol._
 
   val status = io.deepsense.graph.Status.Completed
 

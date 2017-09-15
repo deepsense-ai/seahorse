@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.graphjson.graph
 
 import spray.json._
 
@@ -23,7 +23,7 @@ import io.deepsense.model.json.graph.EdgeJsonProtocol
 
 class EdgeJsonProtocolSpec extends GraphJsonTestSupport {
 
-  import EdgeJsonProtocol._
+  import io.deepsense.model.json.graph.EdgeJsonProtocol._
 
   val expectedFromId: Node.Id = Node.Id.randomId
   val expectedFromPort = 1989
