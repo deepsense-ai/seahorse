@@ -216,8 +216,8 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       const sessionByWorkflowId = _.object(_.map(sessions, s => [s.workflowId, s]));
       const session = sessionByWorkflowId[workflow.id];
       if(session && session.status === 'error') {
-        console.error('Session status is `error` for ', session);
-        throw 'Session must not be `error`';
+        // TODO Design and implement proper error handling.
+        console.warn('Session status is `error` for ', session);
       }
       workflow.sessionStatus = _.isUndefined(session) ? SessionStatus.NOT_RUNNING : SessionStatus.RUNNING;
     }
