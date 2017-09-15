@@ -14,6 +14,10 @@ class AttributesPanelService {
     this.disabledMode = true;
   }
 
+  setEnabledMode () {
+    this.disabledMode = false;
+  }
+
   getDisabledMode () {
     return this.disabledMode;
   }

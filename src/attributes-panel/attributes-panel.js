@@ -38,6 +38,8 @@ function OperationAttributes($timeout, AttributesPanelService) {
           if (scope.disabledMode) {
             AttributesPanelService.setDisabledMode();
             AttributesPanelService.disableElements(container);
+          } else {
+            AttributesPanelService.setEnabledMode();
           }
         });
       });
