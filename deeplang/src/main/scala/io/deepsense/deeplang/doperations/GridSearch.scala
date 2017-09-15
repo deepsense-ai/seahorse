@@ -40,17 +40,18 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
 
   override val name: String = "Grid Search"
   override val id: Id = "9163f706-eaaf-46f6-a5b0-4114d92032b7"
-  override val description: String = "Grid Search"
+  override val description: String = "Uses Cross-validation to find the best set of parameters " +
+    "for input estimator. User can specify a list of parameter values to test and compare."
 
   val estimatorParams = new GridSearchParam(
     name = "Parameters of input Estimator",
-    description = "These parameters are rendered dynamically, depending on type of Estimator",
+    description = "These parameters are rendered dynamically, depending on type of Estimator.",
     inputPort = 1)
   setDefault(estimatorParams, JsNull)
 
   val evaluatorParams = new DynamicParam(
     name = "Parameters of input Evaluator",
-    description = "These parameters are rendered dynamically, depending on type of Evaluator",
+    description = "These parameters are rendered dynamically, depending on type of Evaluator.",
     inputPort = 2)
   setDefault(evaluatorParams, JsNull)
 
