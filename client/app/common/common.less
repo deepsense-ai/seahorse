@@ -1,15 +1,19 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by: Grzegorz Swatowski
- */
-
 @import "./sticky-window/sticky-window.less";
 @import "./services/notification.service.less";
+@import "./navigation-bar/navigation-bar.less";
+@import "./modals/new-workflow-modal/new-workflow-modal.less";
+@import "./modals/upload-workflow-modal/upload-workflow-modal.less";
+@import "./modals/upload-execution-report-modal/upload-execution-report-modal.less";
 
-.ds-action-btn {
+.o-action-btn {
   min-width: 60px;
   text-transform: uppercase;
-  font-size: 10px;
   transition: all .5s;
+  border-radius: 0;
+  height: 100%;
+  min-height: 34px;
+
+  &:hover {
+    box-shadow: 0 0 5px gray inset;
+  }
 }

@@ -13,8 +13,8 @@ function BaseApiClientFactory($http, $q, config) {
   }
 
   BaseApiClient.prototype.API_URL = config.apiPort ?
-    `${config.apiHost}:${config.apiPort}/api` :
-    `${config.apiHost}/api`;
+    `${config.apiHost}:${config.apiPort}/${config.urlApiVersion}` :
+    `${config.apiHost}/${config.urlApiVersion}`;
 
   BaseApiClient.prototype.METHOD_GET = 'GET';
   BaseApiClient.prototype.METHOD_POST = 'POST';

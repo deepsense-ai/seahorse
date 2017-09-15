@@ -14,13 +14,14 @@
   <nav class="c-main-menu">
     <ul class="c-main-menu__wrapper">
       <li class="c-main-menu__item">
-        <a class="c-main-menu__link" href="#/experiments">New Workflow</a>
+        <a class="c-main-menu__link" ng-click="home.displayCreateWorkflowPopup($event)">New Workflow</a>
       </li>
-      <li class="c-main-menu__item">
-        <a class="c-main-menu__link" href="#/upload-workflow">Upload Workflow</a>
+      <li class="c-main-menu__item c-main-menu__item--upload">
+        <a class="c-main-menu__link" ng-click="home.displayUploadWorkflowPopup($event)">Upload Workflow</a>
       </li>
-      <li class="c-main-menu__item">
-        <a class="c-main-menu__link" href="#/upload-execution-report">Upload Execution Report </a>
+      <li class="c-main-menu__item c-main-menu__item--upload">
+        <a class="c-main-menu__link" ng-click="home.displayUploadExecutionWorkflowPopup($event)">Upload Execution
+          Report</a>
       </li>
     </ul>
   </nav>

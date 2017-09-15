@@ -1,0 +1,65 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ */
+
+._jsPlumb_drag_select * {
+  user-select: none;
+}
+
+._jsPlumb_connector {
+  z-index: 18;
+}
+
+._jsPlumb_endpoint {
+  z-index: 19;
+}
+
+path,
+._jsPlumb_endpoint {
+  cursor: pointer;
+}
+
+.flowchart-box {
+  width: 100%;
+  background-color: rgba(239, 239, 239, 0.75);
+  overflow: hidden;
+  margin: 0;
+  height: 100%;
+  position: relative;
+  flex: 1;
+
+  &.active-drag-target {
+    border: 3px dashed @color-action;
+  }
+
+  .hover {
+    border: 1px solid red;
+  }
+
+  ._jsPlumb_connector {
+    z-index: 4;
+  }
+
+  .flowchart-paint-area {
+    position: absolute;
+    width: 3000px;
+    height: 3000px;
+    z-index: 1;
+  }
+
+  .deepsense-interaction-toolbar {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+
+@import "./graph-panel-node/graph-panel-node.less";
+@import "./multi-selection/multi-selection.less";
