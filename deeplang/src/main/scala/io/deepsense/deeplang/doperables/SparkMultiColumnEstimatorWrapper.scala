@@ -41,7 +41,7 @@ abstract class SparkMultiColumnEstimatorWrapper[
   implicit val estimatorTag: TypeTag[E],
   implicit val estimatorWrapperTag: TypeTag[EW],
   implicit val multiColumnModelTag: TypeTag[MMW])
- extends MultiColumnEstimator
+ extends MultiColumnEstimator[Transformer, MMW, MW]
  with ParamsWithSparkWrappers {
 
   val sparkEstimatorWrapper: EW = createEstimatorWrapperInstance()
@@ -55,7 +55,7 @@ abstract class SparkMultiColumnEstimatorWrapper[
       .set(sparkEstimatorWrapper.inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
 
-    val mw = estimator._fit(ctx, df).asInstanceOf[MW]
+    val mw = estimator._fit(ctx, df)
       mw.set(mw.inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
   }
@@ -76,7 +76,6 @@ abstract class SparkMultiColumnEstimatorWrapper[
           .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
         estimator.
           _fit(ctx, df)
-          .asInstanceOf[MW]
           .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
     }
 
@@ -89,14 +88,14 @@ abstract class SparkMultiColumnEstimatorWrapper[
 
   override def handleSingleColumnChoiceInfer(
       schema: Option[StructType],
-      single: SingleColumnChoice): Transformer with HasInputColumn = {
+      single: SingleColumnChoice): MW = {
 
     import sparkEstimatorWrapper._
 
     sparkEstimatorWrapper.replicate()
       .set(inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
-      ._fit_infer(schema).asInstanceOf[SparkSingleColumnModelWrapper[MD, E]]
+      ._fit_infer(schema)
       .setSingleInPlaceParam(single.getInPlace)
   }
 
@@ -116,7 +115,7 @@ abstract class SparkMultiColumnEstimatorWrapper[
           sparkEstimatorWrapper.replicate()
             .set(inputColumn -> NameSingleColumnSelection(inputColumnName))
             .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
-            ._fit_infer(Some(s)).asInstanceOf[MW]
+            ._fit_infer(Some(s))
             .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
       }
 

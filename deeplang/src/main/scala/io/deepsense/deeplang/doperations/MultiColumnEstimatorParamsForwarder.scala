@@ -18,7 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang.doperables.{Transformer, MultiColumnEstimator}
 
-trait MultiColumnEstimatorParamsForwarder[E <: MultiColumnEstimator] {
+trait MultiColumnEstimatorParamsForwarder[E <: MultiColumnEstimator[Transformer, _, _]] {
   self: EstimatorAsOperation[E, Transformer] =>
 
   def setSingleColumn(inputColumnName: String, outputColumnName: String): this.type = {

@@ -36,15 +36,14 @@ import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
  * that can work on either a single column or multiple columns.
  * Also, it can also work in-place (by replacing columns) or
  * not (new columns will be appended to a [[io.deepsense.deeplang.doperables.dataframe.DataFrame]]).
- * When not working in-place and when working with a single column one has to
- * specify output column's name.
- * When working with multiple columns one has to specify output column names' prefix.
  *
- * In single-column mode, a MultiColumnTransformer will be returned.
- * In multi-column mode, an AlwaysMultiColumnTransformer will be returned.
+ * @tparam T Parent type of the returned transformers.
+ * @tparam MC The type of the returned transformer when working on multiple columns.
+ * @tparam SC The type of the returned transformer when working on a single column.
  */
-// TODO change Transformer to T <: Transformer
-abstract class MultiColumnEstimator extends Estimator[Transformer] with HasSpecificParams {
+abstract class MultiColumnEstimator[T <: Transformer, MC <: T, SC <: T with HasInputColumn]
+(implicit val transformerTypeTag: TypeTag[T])
+  extends Estimator[T] with HasSpecificParams {
 
   val singleOrMultiChoiceParam = IOColumnsParam()
   override lazy val params = getSpecificParams :+ singleOrMultiChoiceParam
@@ -78,17 +77,17 @@ abstract class MultiColumnEstimator extends Estimator[Transformer] with HasSpeci
   def handleSingleColumnChoice(
     ctx: ExecutionContext,
     df: DataFrame,
-    single: SingleColumnChoice): Transformer with HasInputColumn
+    single: SingleColumnChoice): SC
 
   def handleMultiColumnChoice(
     ctx: ExecutionContext,
     df: DataFrame,
-    multi: MultiColumnChoice): Transformer
+    multi: MultiColumnChoice): MC
 
   /**
    * Creates a Transformer based on a DataFrame.
    */
-  override private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer = {
+  override private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): T = {
     $(singleOrMultiChoiceParam) match {
       case single: SingleColumnChoice =>
         handleSingleColumnChoice(ctx, df, single)
@@ -99,18 +98,18 @@ abstract class MultiColumnEstimator extends Estimator[Transformer] with HasSpeci
 
   def handleSingleColumnChoiceInfer(
     schema: Option[StructType],
-    single: SingleColumnChoice): Transformer with HasInputColumn
+    single: SingleColumnChoice): SC
 
   def handleMultiColumnChoiceInfer(
     schema: Option[StructType],
-    multi: MultiColumnChoice): Transformer
+    multi: MultiColumnChoice): MC
 
   /**
    * Creates an instance of Transformer for inference.
    * @param schema the schema for inference, or None if it's unknown.
    */
   override private[deeplang] def _fit_infer(
-      schema: Option[StructType]): Transformer = {
+      schema: Option[StructType]): T = {
     $(singleOrMultiChoiceParam) match {
       case single: SingleColumnChoice =>
         handleSingleColumnChoiceInfer(schema, single)
