@@ -58,4 +58,6 @@ For more details on Vagrant configuration, take a look at
 ## Troubleshooting
 
 In case of any problems with connecting to external cluster, it is helpful to read error logs
-produced by Spark application. These logs can be found TODO
+produced by Spark application. Go to your Seahorse startup directory
+(where you keep either `docker-compose.yml` or `Vagrantfile`).
+The relevant logs can be found in `spark_applications_logs` directory.
