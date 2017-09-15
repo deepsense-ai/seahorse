@@ -62,7 +62,7 @@ object RawCsvRDDToDataframe {
       parser(row, ignoreMalformedRows)
     }
 
-    val sparkSession = sparkSQLSession.sparkSession
+    val sparkSession = sparkSQLSession.getSparkSession
     Dataset.ofRows(
       sparkSession,
       LogicalRDD(

@@ -29,9 +29,8 @@ object RawCsvRDDToDataframe {
       sparkSQLSession: SparkSQLSession,
       options: Map[String, String]): DataFrame = {
 
-    val sqlContext = sparkSQLSession.sQLContext
-    val relation = DeepsenseDefaultSource.createRelation(
-      sparkSQLSession.sQLContext, options, rdd
+    val sqlContext = sparkSQLSession.getSQLContext
+    val relation = DeepsenseDefaultSource.createRelation(sqlContext, options, rdd
     ).asInstanceOf[CsvRelation]
     sqlContext.baseRelationToDataFrame(relation)
   }

@@ -56,13 +56,18 @@ class PyExecutor(object):
             jsc=java_spark_context)
 
         java_spark_sql_session = gateway.entry_point.getSparkSQLSession()
+        spark_version = spark_context.version
         spark_sql_session = None
-        try:
+        if spark_version == "1.6.1":
+            from pyspark import HiveContext
+            java_sql_context = java_spark_sql_session.getSQLContext()
+            spark_sql_session = HiveContext(spark_context, java_sql_context)
+        elif spark_version == "2.0.0":
             from pyspark.sql import SparkSession
-            spark_sql_session = SparkSession(spark_context, java_spark_sql_session.sparkSession)
-        except ImportError:
-            from pyspark.sql import SQLContext
-            spark_sql_session = SQLContext(spark_context, java_spark_sql_session.sqlContext)
+            java_spark_session = java_spark_sql_session.getSparkSession()
+            spark_sql_session = SparkSession(spark_context, java_spark_session)
+        else:
+            raise ValueError("Spark version {} is not supported".format(spark_version))
 
         return spark_context, spark_sql_session
 
@@ -75,7 +80,7 @@ class PyExecutor(object):
         gateway = JavaGateway(GatewayClient(address=host, port=port),
                               start_callback_server=True,
                               auto_convert=True,
-                              callback_server_parameters = callback_params)
+                              callback_server_parameters=callback_params)
         try:
             java_import(gateway.jvm, "org.apache.spark.SparkEnv")
             java_import(gateway.jvm, "org.apache.spark.SparkConf")

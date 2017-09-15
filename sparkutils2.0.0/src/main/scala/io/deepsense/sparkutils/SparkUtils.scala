@@ -31,7 +31,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.{SparkContext, ml}
 
 
-class SparkSQLSession private[sparkutils](val sparkSession: SparkSession) {
+class SparkSQLSession private[sparkutils](private[sparkutils] val sparkSession: SparkSession) {
   def this(sparkContext: SparkContext) = this(SparkSession.builder().config(sparkContext.getConf).getOrCreate())
 
   def sparkContext: SparkContext = sparkSession.sparkContext
@@ -44,6 +44,9 @@ class SparkSQLSession private[sparkutils](val sparkSession: SparkSession) {
   def sql(text: String): DataFrame = sparkSession.sql(text)
   def dropTempTable(name: String): Unit = sparkSession.catalog.dropTempView(name)
   def newSession(): SparkSQLSession = new SparkSQLSession(sparkSession.newSession())
+
+  // This is for pyexecutor.py
+  def getSparkSession = sparkSession
 }
 
 object SQL {

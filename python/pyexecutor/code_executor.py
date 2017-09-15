@@ -44,7 +44,7 @@ class CodeExecutor(object):
             self.entry_point.executionFailed(workflow_id, node_id, stacktrace)
 
     def _convert_data_to_data_frame(self, data):
-        sparkSQLSession = self.spark_sql_session
+        spark_sql_session = self.spark_sql_session
         sc = self.spark_context
         try:
             import pandas
@@ -54,13 +54,13 @@ class CodeExecutor(object):
         if isinstance(data, DataFrame):
             return data
         elif self.is_pandas_available and isinstance(data, pandas.DataFrame):
-            return sparkSQLSession.createDataFrame(data)
+            return spark_sql_session.createDataFrame(data)
         elif isinstance(data, (list, tuple)) and all(isinstance(el, (list, tuple)) for el in data):
-            return sparkSQLSession.createDataFrame(sc.parallelize(data))
+            return spark_sql_session.createDataFrame(sc.parallelize(data))
         elif isinstance(data, (list, tuple)):
-            return sparkSQLSession.createDataFrame(sc.parallelize(map(lambda x: (x,), data)))
+            return spark_sql_session.createDataFrame(sc.parallelize(map(lambda x: (x,), data)))
         else:
-            return sparkSQLSession.createDataFrame(sc.parallelize([(data,)]))
+            return spark_sql_session.createDataFrame(sc.parallelize([(data,)]))
 
     def _run_custom_code(self, workflow_id, node_id, custom_operation_code):
         """
@@ -75,7 +75,15 @@ class CodeExecutor(object):
         assert self.isValid(custom_operation_code)
 
         new_spark_session = self.spark_sql_session.newSession()
-        new_sql_context = SQLContext(self.spark_context, new_spark_session)  # TODO HiveContext
+
+        new_sql_context = None
+        spark_version = self.spark_context.version
+        if spark_version == "2.0.0":
+            new_sql_context = SQLContext(self.spark_context, new_spark_session)
+        elif spark_version == "1.6.1":
+            new_sql_context = new_spark_session
+        else:
+            raise ValueError("Spark version {} is not supported".format(spark_version))
 
         raw_input_data_frame = DataFrame(
             jdf=self.entry_point.retrieveInputDataFrame(workflow_id,

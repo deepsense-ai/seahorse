@@ -66,7 +66,6 @@ object Library {
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
   val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
-  val sparkCSV = "com.databricks" %% "spark-csv" % "1.4.0"
   val sprayCan = spray("can")
   val sprayClient = spray("client")
   val sprayHttpx = spray("httpx")
@@ -97,6 +96,11 @@ object Dependencies {
     "central.maven.org" at "http://central.maven.org/maven2/"
   )
 
+  val sparkCSV: Seq[ModuleID] = Version.spark match {
+    case "1.6.1" => Seq("com.databricks" %% "spark-csv" % "1.4.0")
+    case "2.0.0" => Seq()
+  }
+
   class Spark(version: String) {
     private val unversionedComponents = Seq(
       sparkMLLib,
@@ -104,7 +108,7 @@ object Dependencies {
       sparkCore,
       sparkHive
     )
-    val components = unversionedComponents.map(_(version)) :+ sparkCSV
+    val components = unversionedComponents.map(_(version)) ++ sparkCSV
     val provided = components.map(_ % Provided)
     val test = components.map(_ % s"$Test,it")
     val onlyInTests = provided ++ test
@@ -125,7 +129,7 @@ object Dependencies {
 
   val sparkutils_2_0_0 = new Spark("2.0.0").onlyInTests
 
-   val usedSpark = new Spark(Version.spark)
+  val usedSpark = new Spark(Version.spark)
 
   val commons = usedSpark.onlyInTests ++ Seq(
     apacheCommonsLang3,
@@ -143,9 +147,9 @@ object Dependencies {
     amazonS3,
     nscalaTime,
     scalaReflect,
-    apacheCommonsCsv,
-    sparkCSV
-  ) ++ Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
+    apacheCommonsCsv) ++
+    sparkCSV ++
+    Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 
   val docgen = usedSpark.components
 

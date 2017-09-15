@@ -32,19 +32,22 @@ import org.apache.spark.sql.types._
 import org.apache.spark.{SparkContext, ml}
 import org.apache.spark.sql.hive.HiveContext
 
-class SparkSQLSession private[sparkutils](val sQLContext: SQLContext) {
+class SparkSQLSession private[sparkutils](private[sparkutils] val sqlContext: SQLContext) {
   def this(sparkContext: SparkContext) = this(new HiveContext(sparkContext))
 
-  def sparkContext: SparkContext = sQLContext.sparkContext
-  def createDataFrame(rdd: RDD[Row], schema: StructType): DataFrame = sQLContext.createDataFrame(rdd, schema)
-  def createDataFrame[T <: Product : TypeTag : ClassTag](rdd: RDD[T]): DataFrame = sQLContext.createDataFrame(rdd)
-  def createDataFrame[A <: Product : TypeTag](data: Seq[A]): DataFrame = sQLContext.createDataFrame(data)
-  def udfRegistration: UDFRegistration = sQLContext.udf
-  def table(tableName: String): DataFrame = sQLContext.table(tableName)
-  def read: DataFrameReader = sQLContext.read
-  def sql(text: String): DataFrame = sQLContext.sql(text)
-  def dropTempTable(name: String): Unit = sQLContext.dropTempTable(name)
-  def newSession(): SparkSQLSession = new SparkSQLSession(sQLContext.newSession())
+  def sparkContext: SparkContext = sqlContext.sparkContext
+  def createDataFrame(rdd: RDD[Row], schema: StructType): DataFrame = sqlContext.createDataFrame(rdd, schema)
+  def createDataFrame[T <: Product : TypeTag : ClassTag](rdd: RDD[T]): DataFrame = sqlContext.createDataFrame(rdd)
+  def createDataFrame[A <: Product : TypeTag](data: Seq[A]): DataFrame = sqlContext.createDataFrame(data)
+  def udfRegistration: UDFRegistration = sqlContext.udf
+  def table(tableName: String): DataFrame = sqlContext.table(tableName)
+  def read: DataFrameReader = sqlContext.read
+  def sql(text: String): DataFrame = sqlContext.sql(text)
+  def dropTempTable(name: String): Unit = sqlContext.dropTempTable(name)
+  def newSession(): SparkSQLSession = new SparkSQLSession(sqlContext.newSession())
+
+  // This is for pyexecutor.py
+  def getSQLContext = sqlContext
 }
 
 object SQL {
