@@ -30,7 +30,5 @@ class PythonColumnTransformation
   override val description: String =
     "Executes a custom Python transformation on a column of a DataFrame"
 
-  override lazy val tTagTO_1: TypeTag[PythonColumnTransformer] = typeTag
-
   override val since: Version = Version(1, 0, 0)
 }

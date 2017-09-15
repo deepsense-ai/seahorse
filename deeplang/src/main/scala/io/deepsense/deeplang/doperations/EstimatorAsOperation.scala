@@ -23,11 +23,10 @@ import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DOperation1To2, ExecutionContext, TypeUtils}
 
-abstract class EstimatorAsOperation[E <: Estimator[T], T <: Transformer]
-    ()(implicit typeTagE: TypeTag[E], typeTagT: TypeTag[T])
+abstract class EstimatorAsOperation[E <: Estimator[T] : TypeTag, T <: Transformer : TypeTag]
   extends DOperation1To2[DataFrame, DataFrame, T] {
 
-  val estimator: E = TypeUtils.instanceOfType(typeTagE)
+  val estimator: E = TypeUtils.instanceOfType(typeTag[E])
 
   val params = estimator.params
 
@@ -58,8 +57,4 @@ abstract class EstimatorAsOperation[E <: Estimator[T], T <: Transformer]
     validateDynamicParams(estimatorWithParams)
     estimatorWithParams
   }
-
-  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override lazy val tTagTO_1: TypeTag[T] = typeTag[T]
 }

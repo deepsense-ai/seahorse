@@ -114,9 +114,6 @@ case class ReadDataFrame()
       .option("url", jdbcChoice.getJdbcUrl)
       .option("dbtable", jdbcChoice.getJdbcTableName)
       .load()
-
-  @transient
-  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object ReadDataFrame {

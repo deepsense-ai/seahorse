@@ -135,7 +135,4 @@ case class WriteDataFrame()
 
   case class NotSupportedScheme(fileScheme: FileScheme)
     extends DeepLangException(s"Not supported file scheme ${fileScheme.pathPrefix}")
-
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

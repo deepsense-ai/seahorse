@@ -48,10 +48,6 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Trans
 
   override val params = declareParams(estimatorParams)
 
-  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
-  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag
-  override lazy val tTagTO_0: TypeTag[Transformer] = typeTag
-
   override protected def _execute(
       ctx: ExecutionContext)(
       dataFrame: DataFrame,

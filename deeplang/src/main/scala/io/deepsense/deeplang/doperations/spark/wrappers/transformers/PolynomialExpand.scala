@@ -31,8 +31,6 @@ class PolynomialExpand extends TransformerAsOperation[PolynomialExpander]
   override val name: String = "Polynomial Expansion"
   override val description: String = "Applies polynomial expansion to vector columns"
 
-  override lazy val tTagTO_1: TypeTag[PolynomialExpander] = typeTag
-
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#polynomialexpansion")
   override val since: Version = Version(1, 0, 0)

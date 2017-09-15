@@ -137,13 +137,6 @@ case class Split()
       ((DKnowledge[DataFrame], DKnowledge[DataFrame]), InferenceWarnings) = {
     ((knowledge, knowledge), InferenceWarnings.empty)
   }
-
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTO_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 sealed trait SplitModeChoice extends Choice {

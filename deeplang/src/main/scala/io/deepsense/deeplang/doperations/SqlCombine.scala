@@ -106,11 +106,4 @@ final class SqlCombine
     declareParams(leftTableName, rightTableName, sqlCombineExpression)
 
   override def since: Version = Version(1, 4, 0)
-
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

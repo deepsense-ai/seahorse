@@ -29,7 +29,5 @@ class ComposeDatetime extends TransformerAsOperation[DatetimeComposer] {
   override val description: String =
     "Combines Numeric fields (year, month, etc.) into a Timestamp column"
 
-  override lazy val tTagTO_1: TypeTag[DatetimeComposer] = typeTag
-
   override val since: Version = Version(1, 3, 0)
 }

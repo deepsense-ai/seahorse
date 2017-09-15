@@ -31,8 +31,6 @@ class AssembleVector extends TransformerAsOperation[VectorAssembler]
   override val name: String = "Assemble Vector"
   override val description: String = "Merges multiple columns into a single vector column"
 
-  override lazy val tTagTO_1: TypeTag[VectorAssembler] = typeTag
-
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#vectorassembler")
   override val since: Version = Version(1, 0, 0)

@@ -58,9 +58,6 @@ case class WriteTransformer()
         throw DeepSenseIOException(e)
     }
   }
-
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[Transformer] = ru.typeTag[Transformer]
 }
 
 object WriteTransformer {

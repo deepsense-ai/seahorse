@@ -31,7 +31,5 @@ class RColumnTransformation
   override val description: String =
     "Executes a custom R transformation on a column of a DataFrame"
 
-  override lazy val tTagTO_1: TypeTag[RColumnTransformer] = typeTag
-
   override val since: Version = Version(1, 3, 0)
 }

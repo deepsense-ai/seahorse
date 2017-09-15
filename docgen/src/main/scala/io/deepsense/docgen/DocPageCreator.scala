@@ -278,9 +278,9 @@ trait DocPageCreator {
     val createExamplesSection: Boolean = operation match {
       // It is impossible to match DOperation1To2[DataFrame, DataFrame, Transformer] in match-case
       case op: DOperation1To2[_, _, _] =>
-        (op.tTagTI_0.tpe <:< typeTag[DataFrame].tpe) &&
-          (op.tTagTO_0.tpe <:< typeTag[DataFrame].tpe) &&
-          (op.tTagTO_1.tpe <:< typeTag[Transformer].tpe)
+        (op.inPortTypes(0).tpe <:< typeTag[DataFrame].tpe) &&
+          (op.outPortTypes(0).tpe <:< typeTag[DataFrame].tpe) &&
+          (op.outPortTypes(1).tpe <:< typeTag[Transformer].tpe)
       case op =>
         false
     }

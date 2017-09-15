@@ -33,8 +33,6 @@ class RemoveStopWords extends TransformerAsOperation[StopWordsRemover]
     """Filters out default English stop words from the input.
       |Null values from the input array are preserved.""".stripMargin
 
-  override lazy val tTagTO_1: TypeTag[StopWordsRemover] = typeTag
-
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#stopwordsremover")
   override val since: Version = Version(1, 0, 0)

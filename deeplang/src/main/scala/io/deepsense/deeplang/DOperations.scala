@@ -65,20 +65,17 @@ private object ToVectorConversions {
 // scalastyle:off
 
 abstract class DOperation0To1[
-    TO_0 <: DOperable]
+    TO_0 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 0
   val outArity = 1
-
-
-  def tTagTO_0: ru.TypeTag[TO_0]
 
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0))
+    ru.typeTag[TO_0])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -101,7 +98,7 @@ abstract class DOperation0To1[
   }
 
   protected def _inferTypeKnowledge(context: InferContext)(): (DKnowledge[TO_0], InferenceWarnings) = {(
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(): (DKnowledge[TO_0], InferenceWarnings) = {
@@ -110,24 +107,19 @@ abstract class DOperation0To1[
 }
 
 abstract class DOperation0To2[
-    TO_0 <: DOperable,
-    TO_1 <: DOperable]
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 0
   val outArity = 2
-
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
 
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -150,8 +142,8 @@ abstract class DOperation0To2[
   }
 
   protected def _inferTypeKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
@@ -160,28 +152,21 @@ abstract class DOperation0To2[
 }
 
 abstract class DOperation0To3[
-    TO_0 <: DOperable,
-    TO_1 <: DOperable,
-    TO_2 <: DOperable]
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag,
+    TO_2 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 0
   val outArity = 3
-
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
-
-  def tTagTO_2: ru.TypeTag[TO_2]
 
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1),
-    ru.typeTag[TO_2](tTagTO_2))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -204,9 +189,9 @@ abstract class DOperation0To3[
   }
 
   protected def _inferTypeKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](tTagTO_2))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
@@ -215,17 +200,14 @@ abstract class DOperation0To3[
 }
 
 abstract class DOperation1To0[
-    TI_0 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 1
   val outArity = 0
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0))
+    ru.typeTag[TI_0])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
@@ -267,24 +249,19 @@ abstract class DOperation1To0[
 }
 
 abstract class DOperation1To1[
-    TI_0 <: DOperable,
-    TO_0 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 1
   val outArity = 1
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0))
+    ru.typeTag[TI_0])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0))
+    ru.typeTag[TO_0])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -312,7 +289,7 @@ abstract class DOperation1To1[
 
   protected def _inferTypeKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0]): (DKnowledge[TO_0], InferenceWarnings) = {(
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -322,28 +299,21 @@ abstract class DOperation1To1[
 }
 
 abstract class DOperation1To2[
-    TI_0 <: DOperable,
-    TO_0 <: DOperable,
-    TO_1 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 1
   val outArity = 2
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0))
+    ru.typeTag[TI_0])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -371,8 +341,8 @@ abstract class DOperation1To2[
 
   protected def _inferTypeKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -382,32 +352,23 @@ abstract class DOperation1To2[
 }
 
 abstract class DOperation1To3[
-    TI_0 <: DOperable,
-    TO_0 <: DOperable,
-    TO_1 <: DOperable,
-    TO_2 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag,
+    TO_2 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 1
   val outArity = 3
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
-
-  def tTagTO_2: ru.TypeTag[TO_2]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0))
+    ru.typeTag[TI_0])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1),
-    ru.typeTag[TO_2](tTagTO_2))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -435,9 +396,9 @@ abstract class DOperation1To3[
 
   protected def _inferTypeKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](tTagTO_2))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -447,21 +408,16 @@ abstract class DOperation1To3[
 }
 
 abstract class DOperation2To0[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 2
   val outArity = 0
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
@@ -509,28 +465,21 @@ abstract class DOperation2To0[
 }
 
 abstract class DOperation2To1[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable,
-    TO_0 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 2
   val outArity = 1
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0))
+    ru.typeTag[TO_0])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -563,7 +512,7 @@ abstract class DOperation2To1[
   protected def _inferTypeKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): (DKnowledge[TO_0], InferenceWarnings) = {(
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -574,32 +523,23 @@ abstract class DOperation2To1[
 }
 
 abstract class DOperation2To2[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable,
-    TO_0 <: DOperable,
-    TO_1 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 2
   val outArity = 2
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -632,8 +572,8 @@ abstract class DOperation2To2[
   protected def _inferTypeKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -644,36 +584,25 @@ abstract class DOperation2To2[
 }
 
 abstract class DOperation2To3[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable,
-    TO_0 <: DOperable,
-    TO_1 <: DOperable,
-    TO_2 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag,
+    TO_2 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 2
   val outArity = 3
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
-
-  def tTagTO_2: ru.TypeTag[TO_2]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1),
-    ru.typeTag[TO_2](tTagTO_2))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -706,9 +635,9 @@ abstract class DOperation2To3[
   protected def _inferTypeKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](tTagTO_2))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -719,25 +648,18 @@ abstract class DOperation2To3[
 }
 
 abstract class DOperation3To0[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable,
-    TI_2 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag,
+    TI_2 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 3
   val outArity = 0
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
-  def tTagTI_2: ru.TypeTag[TI_2]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1),
-    ru.typeTag[TI_2](tTagTI_2))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
@@ -791,32 +713,23 @@ abstract class DOperation3To0[
 }
 
 abstract class DOperation3To1[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable,
-    TI_2 <: DOperable,
-    TO_0 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag,
+    TI_2 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 3
   val outArity = 1
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
-  def tTagTI_2: ru.TypeTag[TI_2]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1),
-    ru.typeTag[TI_2](tTagTI_2))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0))
+    ru.typeTag[TO_0])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -854,7 +767,7 @@ abstract class DOperation3To1[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): (DKnowledge[TO_0], InferenceWarnings) = {(
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -866,36 +779,25 @@ abstract class DOperation3To1[
 }
 
 abstract class DOperation3To2[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable,
-    TI_2 <: DOperable,
-    TO_0 <: DOperable,
-    TO_1 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag,
+    TI_2 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 3
   val outArity = 2
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
-  def tTagTI_2: ru.TypeTag[TI_2]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1),
-    ru.typeTag[TI_2](tTagTI_2))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -933,8 +835,8 @@ abstract class DOperation3To2[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(
@@ -946,40 +848,27 @@ abstract class DOperation3To2[
 }
 
 abstract class DOperation3To3[
-    TI_0 <: DOperable,
-    TI_1 <: DOperable,
-    TI_2 <: DOperable,
-    TO_0 <: DOperable,
-    TO_1 <: DOperable,
-    TO_2 <: DOperable]
+    TI_0 <: DOperable : ru.TypeTag,
+    TI_1 <: DOperable : ru.TypeTag,
+    TI_2 <: DOperable : ru.TypeTag,
+    TO_0 <: DOperable : ru.TypeTag,
+    TO_1 <: DOperable : ru.TypeTag,
+    TO_2 <: DOperable : ru.TypeTag]
   extends DOperation {
   val inArity = 3
   val outArity = 3
 
-
-  def tTagTI_0: ru.TypeTag[TI_0]
-
-  def tTagTI_1: ru.TypeTag[TI_1]
-
-  def tTagTI_2: ru.TypeTag[TI_2]
-
-  def tTagTO_0: ru.TypeTag[TO_0]
-
-  def tTagTO_1: ru.TypeTag[TO_1]
-
-  def tTagTO_2: ru.TypeTag[TO_2]
-
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TI_0](tTagTI_0),
-    ru.typeTag[TI_1](tTagTI_1),
-    ru.typeTag[TI_2](tTagTI_2))
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
   @transient
   override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
-    ru.typeTag[TO_0](tTagTO_0),
-    ru.typeTag[TO_1](tTagTO_1),
-    ru.typeTag[TO_2](tTagTO_2))
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -1017,9 +906,9 @@ abstract class DOperation3To3[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](tTagTO_0)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](tTagTO_1)),
-    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](tTagTO_2))), InferenceWarnings.empty)
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
   }
 
   protected def _inferFullKnowledge(context: InferContext)(

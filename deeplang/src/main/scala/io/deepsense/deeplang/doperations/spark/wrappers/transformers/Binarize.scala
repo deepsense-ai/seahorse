@@ -31,8 +31,6 @@ class Binarize extends TransformerAsOperation[Binarizer]
   override val name: String = "Binarize"
   override val description: String = "Binarizes continuous features"
 
-  override lazy val tTagTO_1: TypeTag[Binarizer] = typeTag
-
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#binarizer")
   override val since: Version = Version(1, 0, 0)

@@ -24,12 +24,10 @@ import io.deepsense.deeplang.doperables.Evaluator
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Param
 
-abstract class EvaluatorAsFactory[T <: Evaluator]
-  (implicit typeTag: TypeTag[T])
+abstract class EvaluatorAsFactory[T <: Evaluator : TypeTag]
   extends DOperation0To1[T] {
 
-  val evaluator: T = TypeUtils.instanceOfType(typeTag)
-  override lazy val tTagTO_0: TypeTag[T] = typeTag[T]
+  val evaluator: T = TypeUtils.instanceOfType(typeTag[T])
   override val params: Array[Param[_]] = evaluator.params
 
   setDefault(evaluator.extractParamMap().toSeq: _*)

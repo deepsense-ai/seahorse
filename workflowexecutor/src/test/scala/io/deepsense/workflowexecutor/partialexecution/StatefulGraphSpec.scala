@@ -256,7 +256,7 @@ class StatefulGraphSpec
       graphIn shouldBe graph
       val operation = graphIn.node(id).value.asInstanceOf[DOperationAToALogging]
       operation.trace("Logging just to clarify that it works after deserialization!")
-      operation.tTagTI_0.tpe should not be null
+      operation.inPortTypes.foreach(typeTag => typeTag.tpe should not be null)
     }
     "allow to update status using another StatefulGraph" in {
       val states: Map[Id, NodeStateWithResults] = Map(

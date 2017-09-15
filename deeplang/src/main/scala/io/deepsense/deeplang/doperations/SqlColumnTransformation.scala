@@ -30,7 +30,5 @@ case class SqlColumnTransformation()
   override val description: String =
     "Executes a SQL transformation on a column of a DataFrame"
 
-  override lazy val tTagTO_1: TypeTag[SqlColumnTransformer] = typeTag
-
   override val since: Version = Version(1, 1, 0)
 }

@@ -28,8 +28,6 @@ case class PythonTransformation() extends TransformerAsOperation[PythonTransform
   override val name: String = "Python Transformation"
   override val description: String = "Creates a custom Python transformation"
 
-  override lazy val tTagTO_1: TypeTag[PythonTransformer] = typeTag
-
   override val since: Version = Version(1, 0, 0)
 }
 

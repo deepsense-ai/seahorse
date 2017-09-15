@@ -58,8 +58,6 @@ case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransfor
 
   override val params: Array[Param[_]] = declareParams(innerWorkflow)
 
-  override lazy val tTagTO_0: TypeTag[CustomTransformer] = typeTag
-
   override protected def _execute(context: ExecutionContext)(): CustomTransformer =
     customTransformer(context.innerWorkflowExecutor)
 

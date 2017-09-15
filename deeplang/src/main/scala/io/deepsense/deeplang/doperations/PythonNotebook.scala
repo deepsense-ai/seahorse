@@ -35,7 +35,4 @@ case class PythonNotebook()
   override val params = declareParams()
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = ()
-
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

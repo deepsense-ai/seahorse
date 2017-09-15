@@ -90,10 +90,6 @@ class AbstractInferenceSpec
       }
       (k0, InferenceWarnings(warning))
     }
-
-    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
-    override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
-    override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 
   object DOperationA1A2ToFirst {

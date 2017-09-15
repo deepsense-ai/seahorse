@@ -31,8 +31,6 @@ class TokenizeWithRegex extends TransformerAsOperation[RegexTokenizer]
   override val name: String = "Tokenize With Regex"
   override val description: String = "Splits text using a regular expression"
 
-  override lazy val tTagTO_1: TypeTag[RegexTokenizer] = typeTag
-
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#tokenizer")
   override val since: Version = Version(1, 0, 0)

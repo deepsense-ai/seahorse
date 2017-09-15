@@ -223,13 +223,6 @@ case class Join()
     joinCondition
   }
 
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-
   private case class RenamedColumnNames(
       originalLeftColumns: Seq[String],
       originalRightColumns: Seq[String]) {

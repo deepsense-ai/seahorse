@@ -34,8 +34,6 @@ class ConvertToNGrams extends TransformerAsOperation[NGramTransformer]
     "string of words. When the input is empty, an empty array is returned. When the input array " +
     "is shorter than n (number of elements per n-gram), no n-grams are returned."
 
-  override lazy val tTagTO_1: TypeTag[NGramTransformer] = typeTag
-
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#n-gram")
   override val since: Version = Version(1, 0, 0)
