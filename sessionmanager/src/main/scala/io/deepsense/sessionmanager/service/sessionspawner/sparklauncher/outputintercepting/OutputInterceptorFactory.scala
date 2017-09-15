@@ -25,25 +25,31 @@ import io.deepsense.commons.models.ClusterDetails
   * This class tries to hide the fact, that output intercepting is done via
   * hooking file handler to a specific logger.
   */
+
+case class OutputInterceptorHandle private [outputintercepting] (
+    private val logger: Logger,
+    private val childProcLoggerName: String,
+    private val loggerFileHandler: FileHandler ) {
+
+  def attachTo(sparkLauncher: SparkLauncher): Unit = {
+    sparkLauncher.setConf(
+      "spark.launcher.childProcLoggerName", childProcLoggerName
+    )
+  }
+
+  def writeOutput(text: String): Unit = {
+    logger.info(text)
+  }
+
+  def close(): Unit = {
+    loggerFileHandler.close()
+  }
+
+}
+
 class OutputInterceptorFactory @Inject()(
   @Named("session-executor.spark-applications-logs-dir") val executorsLogDirectory: String
 ) {
-
-  case class OutputInterceptorHandle private [OutputInterceptorFactory](
-    private val logger: Logger,
-    private val childProcLoggerName: String
-  ) {
-    def attachTo(sparkLauncher: SparkLauncher): Unit = {
-      sparkLauncher.setConf(
-        "spark.launcher.childProcLoggerName", childProcLoggerName
-      )
-    }
-
-    def writeOutput(text: String): Unit = {
-      logger.info(text)
-    }
-
-  }
 
   def prepareInterceptorWritingToFiles(clusterDetails: ClusterDetails): OutputInterceptorHandle = {
     new File(executorsLogDirectory).mkdirs()
@@ -57,13 +63,13 @@ class OutputInterceptorFactory @Inject()(
       val formattedTime = format.format(time)
       s"$formattedTime-${clusterDetails.name}.log"
     }
-    val handler = new FileHandler(s"$executorsLogDirectory/$fileName")
-    handler.setFormatter(new SimpleFormaterWithoutOutputRedirectorNoise)
-    logger.addHandler(handler)
+    val fileHandler = new FileHandler(s"$executorsLogDirectory/$fileName")
+    fileHandler.setFormatter(new SimpleFormaterWithoutOutputRedirectorNoise)
+    logger.addHandler(fileHandler)
     sys.addShutdownHook {
-      handler.close()
+      fileHandler.close()
     }
-    OutputInterceptorHandle(logger, childProcLoggerName)
+    OutputInterceptorHandle(logger, childProcLoggerName, fileHandler)
   }
 
   class SimpleFormaterWithoutOutputRedirectorNoise extends Formatter {

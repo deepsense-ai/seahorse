@@ -12,12 +12,10 @@ import io.deepsense.commons.akka.GuiceAkkaExtension
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor
 import io.deepsense.sessionmanager.service.sessionspawner.SessionSpawner
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherSessionSpawner
-import io.deepsense.sessionmanager.service.statusinferencer.DefaultStatusInferencer
 
 class ServiceModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[SessionSpawner]).to(classOf[SparkLauncherSessionSpawner])
-    bind(classOf[StatusInferencer]).to(classOf[DefaultStatusInferencer])
   }
 
   @Provides

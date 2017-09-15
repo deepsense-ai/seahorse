@@ -140,14 +140,14 @@ class SessionsApiSpec
 
       when(service.createSession(
         someSessionConfig, someClusterDetails
-      )).thenReturn(Future.successful(someWorkflowId))
+      )).thenReturn(Future.successful(someSession))
 
       Post(s"/$apiPrefix", CreateSession(someWorkflowId, someClusterDetails))
         .withUserId(someUserId) ~> testRoute(service) ~> check {
 
         status shouldBe StatusCodes.OK
-        val returnedSessionId = responseAs[Envelope[Id]].content
-        returnedSessionId shouldBe someWorkflowId
+        val returnedSession = responseAs[Envelope[Session]].content
+        returnedSession shouldBe someSession
       }
     }
     "return ServiceUnavailable" when {
@@ -197,6 +197,7 @@ class SessionsApiSpec
   )
   private lazy val someUserId = Id.randomId.toString
   private lazy val someWorkflowId = Id.randomId
+  private lazy val someSession = Session(someWorkflowId, Status.Running, someClusterDetails)
 
   private implicit class RichHttpRequest(httpRequest: HttpRequest) {
     def withUserId(userId: String): HttpRequest =

@@ -4,35 +4,31 @@
 
 package io.deepsense.sessionmanager.service.actors
 
-import scala.concurrent.Future
+import scala.collection.mutable
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 import akka.actor.Actor
-import akka.agent.Agent
-import akka.pattern.pipe
 import com.google.inject.Inject
-import org.apache.spark.launcher.SparkAppHandle
-import org.joda.time.DateTime
+import com.google.inject.name.Named
 
-import io.deepsense.commons.models.Id
-import io.deepsense.commons.utils.Logging
 import io.deepsense.commons.models.ClusterDetails
-import io.deepsense.sessionmanager.service.EventStore.Event
+import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.Model.Id
+import io.deepsense.sessionmanager.service.Session
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor._
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
-import io.deepsense.sessionmanager.service.sessionspawner.{SessionConfig, SessionSpawner}
-import io.deepsense.sessionmanager.service.{EventStore, Session, StatusInferencer}
+import io.deepsense.sessionmanager.service.sessionspawner.{ExecutorSession, SessionConfig, SessionSpawner}
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
 
 class SessionServiceActor @Inject()(
   private val sessionSpawner: SessionSpawner,
-  private val eventStore: EventStore,
-  private val statusInferencer: StatusInferencer,
   private val sessionExecutorClients: SessionExecutorClients
 ) extends Actor with Logging {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
-  private val sparkHandleBySessionId = Agent(Map.empty[Id, SparkAppHandle])
+  // NOTE! No synchronising is needed because all mutations are in `receive` method call scope.
+  // When modified from outside `receive` (possible throught futures!) scope add synchronization
+  val sessionStateByWorkflowId = mutable.Map.empty[Id, ExecutorSession]
 
   override def receive: Receive = {
     case r: Request => handleRequest(r)
@@ -42,77 +38,63 @@ class SessionServiceActor @Inject()(
 
   private def handleRequest(request: Request): Unit = {
     request match {
-      case GetRequest(id) =>
-        handleGet(id) pipeTo sender()
-      case KillRequest(id) =>
-        handleKill(id) pipeTo sender()
-      case ListRequest() =>
-        handleList() pipeTo sender()
+      case GetRequest(id) => sender() ! handleGet(id)
+      case KillRequest(id) => sender() ! handleKill(id)
+      case ListRequest() => sender() ! handleList()
       case CreateRequest(sessionConfig, clusterConfig) =>
-        handleCreate(sessionConfig, clusterConfig) pipeTo sender()
+        sender() ! handleCreate(sessionConfig, clusterConfig)
     }
-  }
-
-  private def handleHeartbeat(heartbeat: Heartbeat): Unit = {
-    logger.trace(s"Received Heartbeat $heartbeat")
-    val workflowId: Id = heartbeat.workflowId
-    eventStore.heartbeat(workflowId).foreach {
-      case Left(_) =>
-        // Invalid WorkflowId
-        logger.warn(s"Received incorrect heartbeat from $workflowId. Sending PoisonPill")
-        sessionExecutorClients.sendPoisonPill(workflowId)
-      case Right(_) =>
-        // All's good!
-    }
-  }
-
-  private def handleGet(id: Id): Future[Option[Session]] = {
-    val singleEventToSession = eventToSession(id, _: Event)
-    eventStore.getLastEvent(id).map(_.map(singleEventToSession))
-  }
-
-  private def eventToSession(workflowId: Id, event: Event): Session = {
-    val status = statusInferencer.statusFromEvent(event, DateTime.now)
-    logger.info(s"Session '$workflowId' is '$status'")
-    Session(workflowId, status, event.cluster)
-  }
-
-  private def handleList(): Future[Seq[Session]] = {
-    eventStore.getLastEvents.map(_.map {
-      case (workflowId, event) => eventToSession(workflowId, event)
-    }.toSeq)
   }
 
   private def handleCreate(
       sessionConfig: SessionConfig,
-      clusterConfig: ClusterDetails): Future[Id] = {
-    eventStore.started(sessionConfig.workflowId, clusterConfig).flatMap {
-      case Left(_) =>
-        logger.info(s"Session '${sessionConfig.workflowId}' already exists!")
-        Future.successful(sessionConfig.workflowId)
-      case Right(_) =>
-        logger.info(s"Session '${sessionConfig.workflowId}' does not exist. Creating!")
-        val handleValidation = sessionSpawner.createSession(sessionConfig, clusterConfig)
-        // TODO We already know that there was an error with launching App. We ignore it for now
-        handleValidation.foreach(handle => {
-          sparkHandleBySessionId.send(_.updated(sessionConfig.workflowId, handle))
-        })
-        Future.successful(sessionConfig.workflowId)
+      clusterDetails: ClusterDetails): Session = {
+    val workflowId = sessionConfig.workflowId
+    val session = sessionStateByWorkflowId.get(workflowId) match {
+      case Some(existingSession) =>
+        logger.warn(s"Session id=$workflowId already exists. Ignoring in the sake of idempotency.")
+        existingSession
+      case None => sessionSpawner.createSession(sessionConfig, clusterDetails)
+    }
+    sessionStateByWorkflowId(workflowId) = session
+    session.sessionForApi()
+  }
+
+  private def handleHeartbeat(heartbeat: Heartbeat): Unit = {
+    val workflowId = heartbeat.workflowId
+    logger.debug(s"Session id=$workflowId received heartbeat $heartbeat")
+
+    sessionStateByWorkflowId.get(workflowId) match {
+      case Some(session) =>
+        val updatedSession = session.handleHeartbeat()
+        sessionStateByWorkflowId(workflowId) = updatedSession
+      case None =>
+        logger.error(
+          s"""Session id=$workflowId unknown!
+             |  This should never happen
+             |  Are there any other Session Managers connected to same MQ running?
+             |  Sending poison pill to the executor.
+           """.stripMargin)
+        sessionExecutorClients.sendPoisonPill(workflowId)
     }
   }
 
-  private def handleKill(workflowId: Id): Future[Unit] = {
-    tryToKillInstantlyIfHandleAvailable(workflowId)
-    sessionExecutorClients.sendPoisonPill(workflowId)
-    eventStore.killed(workflowId)
-  }
+  private def handleGet(id: Id): Option[Session] =
+    sessionStateByWorkflowId.get(id).map(_.sessionForApi())
 
-  private def tryToKillInstantlyIfHandleAvailable(workflowId: Id): Unit = {
-    sparkHandleBySessionId.send { handleBySessionId =>
-      handleBySessionId.get(workflowId).foreach(_.kill())
-      handleBySessionId - workflowId
+  private def handleList(): List[Session] = {
+    sessionStateByWorkflowId.values.map(_.sessionForApi())
+  }.toList
+
+  private def handleKill(workflowId: Id): Unit = {
+    sessionStateByWorkflowId.get(workflowId) match {
+      case Some(session) =>
+        session.kill()
+        sessionStateByWorkflowId.remove(workflowId)
+      case None =>
     }
   }
+
 }
 
 object SessionServiceActor {
@@ -124,4 +106,5 @@ object SessionServiceActor {
     sessionConfig: SessionConfig,
     clusterConfig: ClusterDetails
   ) extends Request
+
 }

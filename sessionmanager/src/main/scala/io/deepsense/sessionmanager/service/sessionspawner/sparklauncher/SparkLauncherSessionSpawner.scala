@@ -4,46 +4,53 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.time.Instant
+
 import scalaz.Scalaz._
-import scalaz._
 import scalaz.Validation.FlatMap._
+import scalaz._
 
 import com.google.inject.Inject
-import org.apache.spark.launcher.{SparkAppHandle, SparkLauncher}
 
-import io.deepsense.commons.utils.Logging
 import io.deepsense.commons.models.ClusterDetails
+import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.outputintercepting.OutputInterceptorFactory
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.LoggingSparkAppListener
-import io.deepsense.sessionmanager.service.sessionspawner.{SessionConfig, SessionSpawner}
+import io.deepsense.sessionmanager.service.sessionspawner.{ExecutorSession, SessionConfig, SessionSpawner, StateInferencerFactory}
 
 class SparkLauncherSessionSpawner @Inject()(
   private val sparkLauncherConfig: SparkLauncherConfig,
-  private val outputInterceptorFactory: OutputInterceptorFactory
+  private val outputInterceptorFactory: OutputInterceptorFactory,
+  private val stateInferencerFactory: StateInferencerFactory
 ) extends SessionSpawner with Logging {
 
   override def createSession(
       sessionConfig: SessionConfig,
-      clusterDetails: ClusterDetails): Validation[SparkLauncherError, SparkAppHandle] = {
+      clusterDetails: ClusterDetails): ExecutorSession = {
     logger.info(s"Creating session for workflow ${sessionConfig.workflowId}")
 
     val interceptorHandle = outputInterceptorFactory.prepareInterceptorWritingToFiles(
       clusterDetails
     )
 
-    val startedApplicationHandler = for {
+    val startedSession = for {
       launcher <- SeahorseSparkLauncher(sessionConfig, sparkLauncherConfig, clusterDetails)
-      handleForStartedApplication <- handleUnexpectedExceptions {
+      listener = new LoggingSparkAppListener()
+      handle <- handleUnexpectedExceptions {
         interceptorHandle.attachTo(launcher)
-        launcher.startApplication(new LoggingSparkAppListener())
+        launcher.startApplication(listener)
       }
-    } yield handleForStartedApplication
+      stateInferencer = stateInferencerFactory.newInferencer(Instant.now())
+      executorSession = ExecutorSession(
+        sessionConfig, clusterDetails, Some(handle), stateInferencer, interceptorHandle
+      )
+    } yield executorSession
 
-    startedApplicationHandler.bimap(error => {
+    startedSession.fold(error => {
       interceptorHandle.writeOutput(error.getMessage)
-      error
+      val stateInferencer = stateInferencerFactory.newInferencer(Instant.now())
+      ExecutorSession(sessionConfig, clusterDetails, None, stateInferencer, interceptorHandle)
     }, identity)
   }
 

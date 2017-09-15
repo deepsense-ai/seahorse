@@ -25,4 +25,12 @@ object TestData {
     userIP = "127.0.0.1"
   )
 
+  lazy val localClusterDetails = ClusterDetails(
+    clusterType = "local",
+    id = Some(2),
+    name = "some-other-name",
+    uri = "uri-doesnt-matter",
+    userIP = "127.0.0.1"
+  )
+
 }
