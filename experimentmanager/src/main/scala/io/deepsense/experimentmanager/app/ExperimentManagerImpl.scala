@@ -6,14 +6,20 @@
 
 package io.deepsense.experimentmanager.app
 
+import java.util.concurrent.TimeUnit
+
 import scala.concurrent.{ExecutionContext, Future}
 
+import akka.actor.ActorRef
+import akka.pattern.ask
+import akka.util.Timeout
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import com.google.inject.name.Named
 
-import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
-import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment}
+import io.deepsense.experimentmanager.app.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
+import io.deepsense.experimentmanager.app.execution.RunningExperimentsActor._
+import io.deepsense.experimentmanager.app.models.{Experiment, Id, InputExperiment}
 import io.deepsense.experimentmanager.app.storage.ExperimentStorage
 import io.deepsense.experimentmanager.auth.usercontext.UserContext
 import io.deepsense.experimentmanager.auth.{Authorizator, AuthorizatorProvider}
@@ -33,17 +39,28 @@ class ExperimentManagerImpl @Inject()(
   @Named("roles.list") roleList: String,
   @Named("roles.delete") roleDelete: String,
   @Named("roles.launch") roleLaunch: String,
-  @Named("roles.abort") roleAbort: String)
+  @Named("roles.abort") roleAbort: String,
+  @Named("RunningExperimentsActor") runningExperimentsActor: ActorRef,
+  @Named("runningexperiments.timeout") timeoutMillis: Long)
   (implicit ec: ExecutionContext) extends ExperimentManager {
+
+  implicit val runningExperimentsTimeout = Timeout(timeoutMillis, TimeUnit.MILLISECONDS)
 
   private def authorizator: Authorizator = authorizatorProvider.forContext(userContextFuture)
 
   def get(id: Experiment.Id): Future[Option[Experiment]] = {
     authorizator.withRole(roleGet) { userContext =>
-      storage.get(id).map {
-        case Some(experiment) => Some(experiment.assureOwnedBy(userContext))
-        case None => None
+      val experiment = storage.get(id).flatMap {
+        case Some(storedExperiment) => {
+          val ownedExperiment = storedExperiment.assureOwnedBy(userContext)
+          runningExperiment(id).map {
+            case running: Some[Experiment] => running
+            case None => Some(ownedExperiment)
+          }
+        }
+        case None => Future.successful(None)
       }
+      experiment
     }
   }
 
@@ -52,10 +69,15 @@ class ExperimentManagerImpl @Inject()(
       val oldExperimentOption = storage.get(experiment.id)
       oldExperimentOption.flatMap {
         case Some(oldExperiment) =>
-          val updatedExperiment = oldExperiment
-            .assureOwnedBy(userContext)
-            .updatedWith(experiment)
-          storage.save(updatedExperiment)
+          runningExperiment(experiment.id).flatMap {
+            case Some(runningExperiment) /* if runningExperiment.status == InDraft */ =>
+              throw new ExperimentRunningException(experiment.id)
+            case _ =>
+              val updatedExperiment = oldExperiment
+                .assureOwnedBy(userContext)
+                .updatedWith(experiment)
+              storage.save(updatedExperiment)
+          }
         case None => throw new ExperimentNotFoundException(experiment.id)
       }
     }
@@ -72,7 +94,19 @@ class ExperimentManagerImpl @Inject()(
     page: Option[Int],
     status: Option[Experiment.Status.Value]): Future[Seq[Experiment]] = {
     authorizator.withRole(roleList) { userContext =>
-      storage.list(userContext, limit, page, status)
+      val tenantExperimentsFuture: Future[List[Experiment]] =
+        storage.list(userContext, limit, page, status)
+      val runningExperimentsFuture: Future[Map[Id, Experiment]] = runningExperimentsActor
+        .ask(ListExperiments(Some(userContext.tenantId)))
+        .mapTo[Experiments]
+        .map(_.experimentsByTenantId(userContext.tenantId)
+          .map(experiment => experiment.id -> experiment).toMap)
+
+      for {
+        tenantExperiments <- tenantExperimentsFuture
+        runningExperiments <- runningExperimentsFuture
+      } yield tenantExperiments
+        .map(experiment => runningExperiments.getOrElse(experiment.id, experiment))
     }
   }
 
@@ -92,12 +126,13 @@ class ExperimentManagerImpl @Inject()(
     targetNodes: List[Node.Id]): Future[Experiment] = {
     authorizator.withRole(roleLaunch) { userContext =>
       val experimentFuture = storage.get(id)
-      experimentFuture.map {
+      experimentFuture.flatMap {
         case Some(experiment) =>
           val ownedExperiment = experiment.assureOwnedBy(userContext)
-          // graphExecutor.launch(...)
-          // storage.save(...)
-          ownedExperiment
+          runningExperimentsActor
+            .ask(Launch(ownedExperiment))
+            .mapTo[Status]
+            .map(_.experiment.get)
         case None => throw new ExperimentNotFoundException(id)
       }
     }
@@ -106,14 +141,22 @@ class ExperimentManagerImpl @Inject()(
   def abort(id: Experiment.Id, nodes: List[Node.Id]): Future[Experiment] = {
     authorizator.withRole(roleAbort) { userContext =>
       val experimentFuture = storage.get(id)
-      experimentFuture.map {
+      experimentFuture.flatMap {
         case Some(experiment) =>
           val ownedExperiment = experiment.assureOwnedBy(userContext)
-          // graphExecutor.abort(...)
-          // storage.save(...)
-          ownedExperiment
+          runningExperimentsActor
+            .ask(Abort(ownedExperiment.id))
+            .mapTo[Status]
+            .map(_ => ownedExperiment)
         case None => throw new ExperimentNotFoundException(id)
       }
     }
+  }
+
+  private def runningExperiment(id: Experiment.Id): Future[Option[Experiment]] = {
+    runningExperimentsActor
+      .ask(GetStatus(id))
+      .mapTo[Status]
+      .map(_.experiment)
   }
 }

@@ -53,8 +53,11 @@ object Experiment {
 
   object Status extends Enumeration {
     type Status = Value
-    val INDRAFT = Value(0, "indraft")
-    val RUNNING = Value(1, "running")
+    val InDraft = Value(0, "indraft")
+    val Running = Value(1, "running")
+    val Completed = Value(2, "completed")
+    val Failed = Value(3, "failed")
+    val Aborted = Value(4, "aborted")
   }
 
   case class State(status: Experiment.Status.Value /* , error: Optional[Error] */)
