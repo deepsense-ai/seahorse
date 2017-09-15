@@ -1,5 +1,6 @@
 # Copyright (c) 2016, CodiLime Inc.
 
+import argparse
 import os
 from threading import Event
 
@@ -7,11 +8,10 @@ from jupyter_client import MultiKernelManager
 from jupyter_client.kernelspec import KernelSpecManager
 
 from rabbit_mq_client import RabbitMQClient, RabbitMQJsonReceiver, RabbitMQJsonSender
-from utils import debug
-import argparse
+from utils import setup_logging, Logging
 
 
-class ExecutingKernelManager(object):
+class ExecutingKernelManager(Logging):
     """
     This is the class implementing the main process on the remote host.
 
@@ -44,12 +44,12 @@ class ExecutingKernelManager(object):
                                                   workflow_id=self._workflow_id))
 
     def run(self):
-        debug('ExecutingKernelManager::start: Starting.')
+        self.logger.debug('Starting.')
         self._rabbit_listener.subscribe(
             topic=self.ALL_MANAGEMENT_SUBSCRIPTION_TOPIC.format(session_id=self._session_id),
             handler=self._handle_management_message)
 
-        # Send ready nofitication
+        # Send ready notification
         self._sx_sender.send({
             "messageType": "kernelManagerReady",
             "messageBody": {}
@@ -59,9 +59,9 @@ class ExecutingKernelManager(object):
         while not self._shutdown_event.is_set():
             self._shutdown_event.wait(1)
 
-        debug('ExecutingKernelManager::start: Shutting down kernels.')
+        self.logger.debug('Shutting down kernels.')
         self._multi_kernel_manager.shutdown_all(now=True)
-        debug('ExecutingKernelManager::start: Bye.')
+        self.logger.debug('Bye.')
 
     def stop(self):
         self._shutdown_event.set()
@@ -69,7 +69,7 @@ class ExecutingKernelManager(object):
     def _handle_management_message(self, message):
         known_message_types = ['start_kernel', 'shutdown_kernel']
         if not isinstance(message, dict) or 'type' not in message or message['type'] not in known_message_types:
-            debug('ExecutingKernelManager::_handle_management_message: Unknown message: {}'.format(message))
+            self.logger.debug('Unknown message: {}'.format(message))
             self._shutdown_event.set()
             return
 
@@ -85,10 +85,10 @@ class ExecutingKernelManager(object):
             self.shutdown_kernel(kernel_id=message['kernel_id'])
 
     def start_kernel(self, kernel_id, signature_key, node_id, port_number):
-        debug('ExecutingKernelManager::start_kernel: kernel_id {}, signature key {}'.format(kernel_id, signature_key))
+        self.logger.debug('kernel_id {}, signature key {}'.format(kernel_id, signature_key))
 
         if kernel_id in self._multi_kernel_manager.list_kernel_ids():
-            debug('ExecutingKernelManager::start_kernel: kernel_id {}. Shutting down before restart.'.format(kernel_id))
+            self.logger.debug('kernel_id {}. Shutting down before restart.'.format(kernel_id))
             self._multi_kernel_manager.shutdown_kernel(kernel_id, now=True)
 
         extra_arguments = ['--',
@@ -107,14 +107,14 @@ class ExecutingKernelManager(object):
         if port_number is not None:
             extra_arguments.extend(['--port-number', str(port_number)])
 
-        debug('ExecutingKernelManager::start_kernel: extra_arguments = {}'.format(extra_arguments))
+        self.logger.debug('extra_arguments = {}'.format(extra_arguments))
 
         self._multi_kernel_manager.start_kernel(kernel_name=self.EXECUTING_KERNEL_NAME,
                                                 kernel_id=kernel_id,
                                                 extra_arguments=extra_arguments)
 
     def shutdown_kernel(self, kernel_id):
-        debug('ExecutingKernelManager::shutdown_kernel: kernel_id {}'.format(kernel_id))
+        self.logger.debug('kernel_id {}'.format(kernel_id))
         self._multi_kernel_manager.shutdown_kernel(kernel_id=kernel_id)
 
     def _init_rabbit_client(self):
@@ -134,6 +134,8 @@ class ExecutingKernelManager(object):
 
 
 if __name__ == '__main__':
+    setup_logging(os.path.join(os.getcwd(), 'executing_kernel_manager.log'))
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--gateway-host', action='store', dest='gateway_host')
     parser.add_argument('--gateway-port', action='store', dest='gateway_port')

@@ -2,11 +2,13 @@
 
 import json
 import urllib2
-from utils import debug
+from utils import Logging
 
-class NotebookServerClient(object):
+
+class NotebookServerClient(Logging):
 
     def __init__(self, nb_host, nb_port, kernel_id):
+        super(NotebookServerClient, self).__init__()
         self._nb_host = nb_host
         self._nb_port = nb_port
         self._kernel_id = kernel_id
@@ -23,15 +25,15 @@ class NotebookServerClient(object):
                                                                           self._kernel_id), "")
 
     def stop_kernel(self):
-        debug("NotebookServerClient::stop_kernel: getting session")
+        self.logger.debug("Getting session")
         session = self._get_my_session()
-        debug("NotebookServerClient::stop_kernel: got session: {}".format(session))
+        self.logger.debug("Got session: {}".format(session))
         url = "{}/{}".format(self._api_url, session['id'])
-        debug("NotebookServerClient::stop_kernel: preparing DELETE request to {}".format(url))
+        self.logger.debug("Preparing DELETE request to {}".format(url))
         request = urllib2.Request(url)
         request.get_method = lambda: 'DELETE'
         result = urllib2.urlopen(request)
-        debug("NotebookServerClient::stop_kernel: DELETE returned: {}".format(result))
+        self.logger.debug("DELETE returned: {}".format(result))
 
     def _get_my_session(self):
         sessions = self._get_sessions()

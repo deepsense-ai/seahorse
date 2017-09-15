@@ -4,12 +4,13 @@ import json
 from threading import Thread
 
 from rabbit_mq_client import RabbitMQClient
-from utils import debug
+from utils import Logging
 
 
-class ReadyHandler(object):
+class ReadyHandler(Logging):
 
     def __init__(self, rabbit_mq_address, session_id):
+        super(ReadyHandler, self).__init__()
         self._connection = RabbitMQClient(address=rabbit_mq_address,
                                           exchange='seahorse_ready_{}'.format(session_id),
                                           exchange_type='fanout')
@@ -19,7 +20,7 @@ class ReadyHandler(object):
         def handle_message(ch, method, properties, body):
             response = json.loads(body)
             if response['messageType'] == 'ready':
-                debug("ReadyHandler::handle_ready: Received 'ready'. Calling on_ready callback")
+                self.logger.debug("Received 'ready'. Calling on_ready callback")
                 ch.basic_ack(method.delivery_tag)
                 on_ready()
 

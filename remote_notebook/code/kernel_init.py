@@ -6,7 +6,6 @@ from pyspark.sql import SQLContext
 from pyspark.sql import DataFrame
 from py4j.java_gateway import JavaGateway, GatewayClient, java_import
 from py4j.protocol import Py4JJavaError
-import urllib2
 
 # gateway_address and gateway_port are set in the kernel
 gateway = JavaGateway(

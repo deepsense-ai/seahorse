@@ -1,9 +1,9 @@
 # Copyright (c) 2016, CodiLime Inc.
 
-from utils import started_daemon_thread, debug
+from utils import started_daemon_thread, Logging
 
 
-class SocketForwarder(object):
+class SocketForwarder(Logging):
     """
     This class is responsible for forwarding traffic between
     RabbitMQ and a ZMQ socket in both directions.
@@ -13,6 +13,7 @@ class SocketForwarder(object):
     """
 
     def __init__(self, stream_name, zmq_socket, to_rabbit_sender):
+        super(SocketForwarder, self).__init__()
         self.stream_name = stream_name
         self.zmq_socket = zmq_socket
         self.to_rabbit_sender = to_rabbit_sender
@@ -29,18 +30,18 @@ class SocketForwarder(object):
         return self._received_message_from_rabbit
 
     def start(self):
-        debug('Started {} SocketForwarder.'.format(self.stream_name))
+        self.logger.debug('Started {} SocketForwarder.'.format(self.stream_name))
         self.to_rabbit_forwarding_thread = started_daemon_thread(target=self.to_rabbit_forwarder)
 
     def forward_to_zmq(self, message):
-        debug('ZMQForwarder[{}]::forward_to_zmq: Sending {}'.format(self.stream_name, message))
+        self.logger.debug('[{}] Sending {}'.format(self.stream_name, message))
         self.zmq_socket.send_multipart(message)
         self._received_message_from_rabbit = True
 
     def to_rabbit_forwarder(self):
         while True:
             message = self.zmq_socket.recv_multipart()
-            debug('ZMQForwarder[{}]::to_rabbit_forwarder: Sending {}'.format(self.stream_name, message))
+            self.logger.debug('[{}] Sending {}'.format(self.stream_name, message))
             self.to_rabbit_sender(message)
 
 
@@ -52,4 +53,4 @@ class ToZmqSocketForwarder(SocketForwarder):
     This is useful for sockets that don't support receiving, like PUBs.
     """
     def start(self):
-        debug('ToZmqSocketForwarder[{}]::start: NOT starting forwarding to Rabbit'.format(self.stream_name))
+        self.logger.debug('[{}] NOT starting forwarding to Rabbit'.format(self.stream_name))
