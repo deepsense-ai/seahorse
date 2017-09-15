@@ -203,8 +203,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           StructField("timestamp", TimestampType),
           StructField("boolean", BooleanType)))
         val emptyDataFrame = executionContext.dataFrameBuilder.buildDataFrame(
-            schema,
-            sparkContext.parallelize(Seq.empty[Row]))
+          schema,
+          sparkContext.parallelize(Seq.empty[Row]))
 
         val report = emptyDataFrame.report(executionContext)
 
@@ -220,6 +220,41 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         testCategoricalDistribution(report, "categorical", 0L, categories, Seq(0, 0, 0))
         testContinuousDistribution(report, "timestamp", 0L, Seq.empty, Seq.empty, Statistics())
         testCategoricalDistribution(report, "boolean", 0L, Seq("false", "true"), Seq(0, 0))
+      }
+      "DataFrame consists of null values only" in {
+        val categories = Seq("red", "blue", "green")
+        val mapping = CategoriesMapping(categories)
+        val metadata = MappingMetadataConverter.mappingToMetadata(mapping, SparkMetadata.empty)
+        val schema = StructType(Seq(
+          StructField("string", StringType),
+          StructField("numeric", DoubleType),
+          StructField("categorical", IntegerType, metadata = metadata),
+          StructField("timestamp", TimestampType),
+          StructField("boolean", BooleanType)))
+        val emptyDataFrame = executionContext.dataFrameBuilder.buildDataFrame(
+          schema,
+          sparkContext.parallelize(Seq(
+            Row(null, null, null, null, null),
+            Row(null, null, null, null, null),
+            Row(null, null, null, null, null))))
+
+        val report = emptyDataFrame.report(executionContext)
+
+        val tables = report.content.tables
+        val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
+        dataSampleTable.columnNames shouldBe
+          Some(List("string", "numeric", "categorical", "timestamp", "boolean"))
+        dataSampleTable.rowNames shouldBe None
+        dataSampleTable.values shouldBe List(
+          List(None, None, None, None, None),
+          List(None, None, None, None, None),
+          List(None, None, None, None, None))
+        testDataFrameSizeTable(tables, 5, 3)
+        testEmptyDistribution(report, "string")
+        testContinuousDistribution(report, "numeric", 3L, Seq.empty, Seq.empty, Statistics())
+        testCategoricalDistribution(report, "categorical", 3L, categories, Seq(0, 0, 0))
+        testContinuousDistribution(report, "timestamp", 3L, Seq.empty, Seq.empty, Statistics())
+        testCategoricalDistribution(report, "boolean", 3L, Seq("false", "true"), Seq(0, 0))
       }
     }
   }

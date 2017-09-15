@@ -123,11 +123,12 @@ trait DataFrameReportGenerator {
         rdd.cache()
         distributionType(p._1, categoricalMetadata) match {
           case Continuous =>
+            val basicStatsForColumnOption = if (rdd.isEmpty()) { None } else { basicStats }
             Some(continuousDistribution(
               p._1,
               rdd,
-              basicStats.map(_.min(p._2)),
-              basicStats.map(_.max(p._2)),
+              basicStatsForColumnOption.map(_.min(p._2)),
+              basicStatsForColumnOption.map(_.max(p._2)),
               dataFrameSize,
               categoricalMetadata,
               executionContext.reportLevel))
