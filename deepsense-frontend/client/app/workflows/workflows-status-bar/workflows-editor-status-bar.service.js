@@ -94,6 +94,9 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   menuItems.disabledStartEditing = angular.copy(menuItems.startEditing);
   menuItems.disabledStartEditing.additionalClass = 'menu-item-disabled';
 
+  menuItems.disabledStopEditing = angular.copy(menuItems.stopEditing);
+  menuItems.disabledStopEditing.additionalClass = 'menu-item-disabled';
+
   menuItems.disabledClear = angular.copy(menuItems.clear);
   menuItems.disabledClear.additionalClass = 'menu-item-disabled';
 
@@ -109,7 +112,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     editorExecutorNotRunning: [menuItems.export, menuItems.clone, menuItems.startEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorExecutorError: [menuItems.export, menuItems.clone, menuItems.executorError, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorReadOnlyForNotOwner: [menuItems.export, menuItems.clone, menuItems.disabledStartEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    running: [menuItems.export, menuItems.clone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
+    running: [menuItems.export, menuItems.clone, menuItems.disabledStopEditing, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
     aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.aborting, menuItems.documentation],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
   };

@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
+function WorkflowService($rootScope, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, ConfirmationModalService,
   DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager, ServerCommunication) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
@@ -59,8 +59,12 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       });
 
       $rootScope.$on('StatusBar.STOP_EDITING', () => {
-        const workflow = this.getRootWorkflow();
-        SessionManagerApi.deleteSessionById(workflow.id);
+        ConfirmationModalService.showModal({
+          message: 'Are you sure you want to stop executor? Cached reports will disappear.'
+        }).then(() => {
+          const workflow = this.getRootWorkflow();
+          SessionManagerApi.deleteSessionById(workflow.id);
+        });
       });
 
       this._watchForNewCustomTransformers(workflow, workflow);
