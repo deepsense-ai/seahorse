@@ -20,24 +20,15 @@ function Experiment() {
   };
 
   that.getNodeById = function getNodeById(nodeId) {
-    var nodes = that.getNodes();
-    return nodes[nodeId];
+    return internal.nodes[nodeId];
   };
 
   that.getEdges = function getEdges() {
     return internal.edges;
   };
 
-  that.addNode = function addNode(node) {
-    internal.nodes[node.id] = node;
-  };
-
-  that.removeNode = function removeNode(nodeId) {
-    if (nodeId in internal.nodes) {
-      delete internal.nodes[nodeId];
-      return true;
-    }
-    return false;
+  that.getEdgeById = function getEdgeById(edgeId) {
+    return internal.edges[edgeId];
   };
 
   that.createNode = function createNode(nodeID, operation, paramValues, x, y) {
@@ -76,20 +67,14 @@ function Experiment() {
     }
   };
 
-  /**
-   * Removes edge form internal data.
-   *
-   * @param {string} edgeId
-   *
-   * @return {boolean}
-   */
-
-  that.removeEdge = function removeEdge(edgeId) {
-    if (edgeId in internal.edges) {
-      delete internal.edges[edgeId];
-      return true;
+  that.removeEdges = function removeEdges(nodeId) {
+    for (var edge in internal.nodes[nodeId].edges) {
+      that.removeEdge(internal.nodes[nodeId].edges[edge]);
     }
-    return false;
+  };
+
+  that.getEdgesByNodeId = function getEdgesByNodeId(nodeId) {
+    return internal.nodes[nodeId].edges;
   };
 
   that.setData = function setData(data) {
@@ -115,32 +100,111 @@ function Experiment() {
   };
 
   /**
-   * Create connection.
+   * Add node from internal data.
+   *
+   * @param {Node} node
+   *
+   */
+
+  that.addNode = function addNode(node) {
+    if (that.getNodeById(node.id)) {
+      throw new Error('Node ' + node.id + ' already exists');
+    }
+    internal.nodes[node.id] = node;
+  };
+
+  /**
+   * Add edge from internal data.
+   *
+   * @param {Edge} edge
+   *
+   */
+
+  that.addEdge = function addEdge(edge) {
+
+    if (!edge.id) {
+      throw new Error('Cannot add edge without id set.');
+    }
+    else if (!that.getNodeById(edge.startNodeId)) {
+      throw new Error('Cannot create edge between nodes. Start node id: ' + edge.startNodeId + ' doesn\'t exist.');
+    }
+    else if (!that.getNodeById(edge.endNodeId)) {
+      throw new Error('Cannot create edge between nodes. End node id: ' + edge.endNodeId + ' doesn\'t exist.');
+    }
+
+    internal.edges[edge.id] = edge;
+    that.getNodeById(edge.startNodeId)[edge.id] = edge;
+    that.getNodeById(edge.endNodeId)[edge.id] = edge;
+  };
+
+  /**
+   * Removes edge
+   *
+   * @param {Edge} edge
+   *
+   */
+
+  that.removeEdge = function removeEdge(edge) {
+    if (!edge.id) {
+      throw new Error('Cannot remove edge. Edge id: ' + edge.id + ' doesn\'t exist.');
+    }
+    else if (!that.getNodeById(edge.startNodeId)) {
+      throw new Error('Cannot remove edge between nodes. Start node id: ' + edge.startNodeId + ' doesn\'t exist.');
+    }
+    else if (!that.getNodeById(edge.startNodeId)) {
+      throw new Error('Cannot remove edge between nodes. End node id: ' + edge.endNodeId + ' doesn\'t exist.');
+    }
+
+    delete internal.edges[edge.id];
+    delete internal.nodes[edge.startNodeId].edges[edge.id];
+    delete internal.nodes[edge.endNodeId].edges[edge.id];
+  };
+
+  /**
+   * Removes node
+   *
+   * @param {string} nodeId
+   *
+   */
+
+  that.removeNode = function removeNode(nodeId) {
+    try {
+      that.removeEdges(nodeId);
+      delete internal.nodes[nodeId];
+    }
+    catch (error) {
+      throw new Error('Cannot remove node. Node id: ' + nodeId + ' doesn\'t exist.');
+    }
+  };
+
+  /**
+   * Create edge.
    *
    * @param {object} data
    *
    * @return {Edge}
    */
-  that.createConnection = function createConnection(data) {
+
+  that.createEdge = function createEdge(data) {
     var edge = new Edge({
       startNodeId: data.from.node,
       startPortId: data.from.portIndex,
       endNodeId: data.to.node,
       endPortId: data.to.portIndex
     });
-    internal.edges[edge.id] = edge;
-
     return edge;
   };
 
   /**
-   * Create connections.
+   * Create edges.
    *
-   * @param {object} connections
+   * @param {object} edges
    */
-  that.createConnections = function createConnections(connections) {
-    for (var i = 0; i < connections.length; i++) {
-      that.createConnection(connections[i]);
+
+  that.createEdges = function createEdges(edges) {
+    for (var i = 0; i < edges.length; i++) {
+      var edge = that.createEdge(edges[i]);
+      that.addEdge(edge);
     }
   };
 
@@ -149,6 +213,7 @@ function Experiment() {
    *
    * @return {object}
    */
+
   that.serialize = function serialize() {
     let data = {
       'id': internal.id,

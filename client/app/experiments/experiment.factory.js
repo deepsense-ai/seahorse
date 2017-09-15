@@ -14,7 +14,7 @@ function ExperimentFactory() {
     experiment.setData(data.experiment);
     experiment.saveParametersSchema(operations);
     experiment.createNodes(data.experiment.graph.nodes, operations);
-    experiment.createConnections(data.experiment.graph.edges);
+    experiment.createEdges(data.experiment.graph.edges);
     return experiment;
   };
 

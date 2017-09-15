@@ -5,8 +5,7 @@
 
 
 describe('experiment', () => {
-  var Experiment = require('../common-experiment.js'),
-      Edge = require('../common-edge.js');
+  var Experiment = require('../common-experiment.js');
 
   var initId = '111-111-111',
       initName = 'Sample name',
@@ -99,38 +98,41 @@ describe('experiment', () => {
         }
       };
 
-
   it('should be defined', () => {
    expect(Experiment).toBeDefined();
    expect(Experiment).toEqual(jasmine.any(Function));
   });
 
-  it('can create connections', () => {
+  it('can create nodes and edges', () => {
     let experiment = new Experiment();
+    experiment.createNodes(initNodes, initOperations);
     expect(Object.keys(experiment.getEdges()).length).toBe(0);
-
-    experiment.createConnections(initConnections);
+    experiment.createEdges(initConnections);
     expect(Object.keys(experiment.getEdges()).length).toBe(1);
   });
 
-  it('can create connection', () => {
+  it('can create nodes and edge', () => {
     let experiment = new Experiment();
-    expect(Object.keys(experiment.getEdges()).length).toBe(0);
-
-    let edge = experiment.createConnection(initConnections[0]);
+    experiment.addNode(experiment.createNode(initNodes[0].id, initOperations[initNodes[0].operation.id], initNodes[0].parameters));
+    experiment.addNode(experiment.createNode(initNodes[1].id, initOperations[initNodes[1].operation.id], initNodes[1].parameters));
+    expect(Object.keys(experiment.getNodes()).length).toBe(2);
+    var edge = experiment.createEdge(initConnections[0]);
+    experiment.addEdge(edge);
     expect(Object.keys(experiment.getEdges()).length).toBe(1);
-    expect(edge instanceof Edge).toBe(true);
   });
 
-  it('can remove connection', () => {
+  it('can remove nodes and edge', () => {
     let experiment = new Experiment();
-    expect(Object.keys(experiment.getEdges()).length).toBe(0);
-
-    let edge = experiment.createConnection(initConnections[0]);
-    expect(Object.keys(experiment.getEdges()).length).toBe(1);
-
-    experiment.removeEdge(edge.id);
-    expect(Object.keys(experiment.getEdges()).length).toBe(0);
+    experiment.addNode(experiment.createNode(initNodes[0].id, initOperations[initNodes[0].operation.id], initNodes[0].parameters));
+    experiment.addNode(experiment.createNode(initNodes[1].id, initOperations[initNodes[1].operation.id], initNodes[1].parameters));
+    var edge = experiment.createEdge(initConnections[0]);
+    experiment.addEdge(edge);
+    expect(Object.keys(experiment.getEdges()).length).toEqual(1);
+    experiment.removeEdge(edge);
+    expect(Object.keys(experiment.getEdges()).length).toEqual(0);
+    experiment.removeNode(edge.startNodeId);
+    experiment.removeNode(edge.endNodeId);
+    expect(Object.keys(experiment.getNodes()).length).toEqual(0);
   });
 
   it('should have serialize method', () => {
@@ -141,7 +143,7 @@ describe('experiment', () => {
       'description': initDescription
     });
     experiment.createNodes(initNodes, initOperations);
-    experiment.createConnections(initConnections);
+    experiment.createEdges(initConnections);
 
     expect(experiment.serialize).toEqual(jasmine.any(Function));
     expect(experiment.serialize()).toEqual(serializedData);

@@ -11,10 +11,10 @@ function GraphNode(options) {
   this.operationId = options.operationId;
   this.version = options.version;
   this.type = options.type;
-  this.type = options.type;
   this.description = options.description;
   this.input = this.fetchPorts('input', options.input);
   this.output = this.fetchPorts('output', options.output);
+  this.edges = {};
   this.x = options.x;
   this.y = options.y;
   this.parameters = options.parameters;

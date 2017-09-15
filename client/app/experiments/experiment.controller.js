@@ -9,8 +9,8 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
   var that = this;
   var internal = {};
 
-  var GraphNode = require('./common-objects/common-graph-node.js'),
-      Edge = require('./common-objects/common-edge.js');
+  var GraphNode = require('./common-objects/common-graph-node.js');
+  var Edge = require('./common-objects/common-edge.js');
 
   internal.operations = null;
   internal.experiment = null;
@@ -51,10 +51,9 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
   };
 
   that.onRenderFinish = function onRenderFinish() {
-    //console.log('Nodes rendering finished');
     DrawingService.renderPorts();
-    DrawingService.renderConnections();
-    jsPlumb.repaintEverything();
+    DrawingService.renderEdges();
+    DrawingService.redrawEverything();
   };
 
   that.getCatalog = function getCatalog() {
@@ -104,11 +103,10 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
   $rootScope.$on(Edge.REMOVE, ()  => that.saveData());
 
   $rootScope.$on('Keyboard.KEY_PRESSED', (event,data) => {
+    internal.experiment.removeNode(internal.selectedNode.id);
     DrawingService.removeNode(internal.selectedNode.id);
-    console.log(internal.experiment.removeNode(internal.selectedNode.id));
     $rootScope.$apply();
     that.onRenderFinish();
-    jsPlumb.repaintEverything();
   });
 
   $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
@@ -121,8 +119,7 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
     internal.experiment.addNode(node);
     $rootScope.$apply();
     that.onRenderFinish();
-    jsPlumb.repaintEverything();
-    //that.saveData();
+    that.saveData();
   });
 
   internal.init();

@@ -8,15 +8,14 @@ function Edge(options) {
   this.endNodeId = options.endNodeId;
   this.startPortId = options.startPortId;
   this.endPortId = options.endPortId;
-
-  this.generateId();
+  this.id = this.generateId();
 }
 
 /**
  * Generates node id.
  */
 Edge.prototype.generateId = function generateId() {
-  this.id = this.startNodeId + '#' + this.startPortId + '_' + this.endNodeId + '#' + this.endPortId;
+  return this.startNodeId + '#' + this.startPortId + '_' + this.endNodeId + '#' + this.endPortId;
 };
 
 /**

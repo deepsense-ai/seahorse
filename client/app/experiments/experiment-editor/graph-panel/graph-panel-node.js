@@ -18,7 +18,6 @@ function GraphNodeView() {
     templateUrl: 'app/experiments/experiment-editor/graph-panel/graph-panel-node.html',
     link: function (scope, element, attrs) {
       element.on('click', function () {
-        console.log(element);
         scope.$emit(GraphNode.CLICK, {
           selectedNode: scope.node
         });

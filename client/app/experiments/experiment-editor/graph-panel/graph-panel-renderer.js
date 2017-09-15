@@ -4,7 +4,7 @@
 'use strict';
 
 var jsPlumb = require('jsPlumb'),
-    Edge = require('../../common-objects/common-edge.js');
+  Edge = require('../../common-objects/common-edge.js');
 
 var connectorPaintStyle = {
   lineWidth: 2,
@@ -65,12 +65,16 @@ function DrawingService($rootScope) {
       Container: 'flowchart-box'
     });
 
-    that.bindConnectionEvents();
+    that.bindEdgeEvent();
   };
 
   internal.getNodeById = function getNodeById(id) {
     var idPrefix = '#node-';
     return document.querySelector(idPrefix + id);
+  };
+
+  that.redrawEverything = function redrawEverything() {
+    jsPlumb.repaintEverything();
   };
 
   that.renderExperiment = function renderExperiment(experiment) {
@@ -93,19 +97,19 @@ function DrawingService($rootScope) {
     }
   };
 
-  that.renderConnections = function renderConnections() {
+  that.renderEdges = function renderEdges() {
     var edges = internal.experiment.getEdges();
     var outputPrefix = 'output';
     var inputPrefix = 'input';
 
     for (let id in edges) {
       var edge = edges[id],
-          connection = jsPlumb.connect({
-            uuids: [
-              outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
-              inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
-            ]
-          });
+        connection = jsPlumb.connect({
+          uuids: [
+            outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
+            inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
+          ]
+        });
       connection.setParameter('edgeId', edge.id);
     }
   };
@@ -152,7 +156,7 @@ function DrawingService($rootScope) {
     });
   };
 
-  that.bindConnectionEvents = function bindConnectionEvents() {
+  that.bindEdgeEvent = function bindEdgeEvents() {
     if (that.connectionEventsBinded) {
       return;
     }
@@ -173,7 +177,7 @@ function DrawingService($rootScope) {
             'portIndex': info.targetEndpoint.getParameter('portIndex')
           }
         },
-        edge = internal.experiment.createConnection(data);
+        edge = internal.experiment.createEdge(data);
       info.connection.setParameter('edgeId', edge.id);
       $rootScope.$emit(Edge.CREATE, {});
     });
@@ -185,9 +189,9 @@ function DrawingService($rootScope) {
       }
     });
 
-    jsPlumb.bind('connectionMoved', function(info) {
-       internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
-       $rootScope.$emit(Edge.REMOVE, {});
+    jsPlumb.bind('connectionMoved', function (info) {
+      internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
+      $rootScope.$emit(Edge.REMOVE, {});
     });
   };
 
