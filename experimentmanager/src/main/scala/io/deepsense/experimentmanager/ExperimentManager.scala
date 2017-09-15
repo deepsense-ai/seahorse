@@ -9,7 +9,7 @@ package io.deepsense.experimentmanager
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
-import io.deepsense.experimentmanager.models.{Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.{ExperimentsList, Experiment, InputExperiment}
 import io.deepsense.graph.Node
 
 /**
@@ -48,7 +48,7 @@ trait ExperimentManager {
   def experiments(
       limit: Option[Int],
       page: Option[Int],
-      status: Option[Experiment.Status.Value]): Future[Seq[Experiment]]
+      status: Option[Experiment.Status.Value]): Future[ExperimentsList]
 
   /**
    * Deletes an experiment by Id.

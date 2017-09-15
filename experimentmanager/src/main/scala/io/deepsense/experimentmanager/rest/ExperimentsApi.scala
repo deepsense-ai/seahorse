@@ -130,7 +130,7 @@ class ExperimentsApi @Inject() (
                   val statusEnum = status.map(Experiment.Status.withName)
                   complete(experimentManagerProvider
                     .forContext(userContext)
-                    .experiments(limitInt, pageInt, statusEnum).map(_.toList))
+                    .experiments(limitInt, pageInt, statusEnum))
                 }
               }
             }

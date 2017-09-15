@@ -25,7 +25,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.models.Experiment.Status
-import io.deepsense.experimentmanager.models.{Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.{Count, ExperimentsList, Experiment, InputExperiment}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider, StandardSpec, UnitTestSupport}
@@ -112,7 +112,7 @@ class ExperimentsApiSpec
         Get(s"/$apiPrefix") ~>
         addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-          responseAs[List[Experiment]]
+          responseAs[ExperimentsList]
         }
       }
     }
@@ -567,13 +567,17 @@ class ExperimentsApiSpec
     override def experiments(
         limit: Option[Int],
         page: Option[Int],
-        status: Option[Status.Value]): Future[Seq[Experiment]] = {
+        status: Option[Status.Value]): Future[ExperimentsList] = {
       val wantedRole = "experiments:list"
       userContext.flatMap(uc => {
         if (!uc.roles.contains(Role(wantedRole))) {
           throw new NoRoleException(uc, wantedRole)
         } else {
-          Future.successful(storedExperiments.filter(_.tenantId == uc.tenantId).toSeq)
+          val filteredExperiments = storedExperiments.filter(_.tenantId == uc.tenantId)
+          Future.successful(
+            ExperimentsList(
+              Count(filteredExperiments.size, filteredExperiments.size),
+              filteredExperiments))
         }
       })
     }

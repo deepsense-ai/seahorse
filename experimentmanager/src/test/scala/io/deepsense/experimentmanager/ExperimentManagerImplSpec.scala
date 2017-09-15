@@ -173,7 +173,8 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
       val mergedExperiments = experimentManager.experiments(None, None, None)
       probe.expectMsg(ListExperiments(Some(tenantId)))
       probe.reply(Experiments(Map(tenantId -> Set(runningExperiment))))
-      whenReady(mergedExperiments) { experiments =>
+      whenReady(mergedExperiments) { experimentsLists =>
+        val experiments = experimentsLists.experiments
         val experimentsById = experiments.map( experiment => experiment.id -> experiment).toMap
         experimentsById(e1.id) shouldBe e1
         experimentsById(e2.id) shouldBe runningExperiment

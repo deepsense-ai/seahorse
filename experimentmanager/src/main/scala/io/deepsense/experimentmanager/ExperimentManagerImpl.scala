@@ -22,7 +22,7 @@ import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.models.Id
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
-import io.deepsense.experimentmanager.models.{Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.{Count, ExperimentsList, Experiment, InputExperiment}
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.graph.Node
 
@@ -92,7 +92,7 @@ class ExperimentManagerImpl @Inject()(
   def experiments(
     limit: Option[Int],
     page: Option[Int],
-    status: Option[Experiment.Status.Value]): Future[Seq[Experiment]] = {
+    status: Option[Experiment.Status.Value]): Future[ExperimentsList] = {
     authorizator.withRole(roleList) { userContext =>
       val tenantExperimentsFuture: Future[List[Experiment]] =
         storage.list(userContext, limit, page, status)
@@ -102,11 +102,15 @@ class ExperimentManagerImpl @Inject()(
         .map(_.experimentsByTenantId(userContext.tenantId)
           .map(experiment => experiment.id -> experiment).toMap)
 
-      for {
+      val runningAndStoredExperiments = for {
         tenantExperiments <- tenantExperimentsFuture
         runningExperiments <- runningExperimentsFuture
       } yield tenantExperiments
         .map(experiment => runningExperiments.getOrElse(experiment.id, experiment))
+
+      runningAndStoredExperiments.map(rse => {
+        ExperimentsList(Count(rse.size, rse.size), rse)
+      })
     }
   }
 

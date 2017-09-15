@@ -13,7 +13,7 @@ import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.InferContext
-import io.deepsense.experimentmanager.models.{Experiment, InputExperiment}
+import io.deepsense.experimentmanager.models.{Count, ExperimentsList, Experiment, InputExperiment}
 import io.deepsense.graph.Graph
 import io.deepsense.graphjson.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.graphjson._
@@ -85,4 +85,6 @@ trait ExperimentJsonProtocol
   }
 
   implicit val inputExperimentFormat = jsonFormat3(InputExperiment.apply)
+  implicit val countFormat = jsonFormat2(Count)
+  implicit val experimentsListFormat = jsonFormat2(ExperimentsList)
 }
