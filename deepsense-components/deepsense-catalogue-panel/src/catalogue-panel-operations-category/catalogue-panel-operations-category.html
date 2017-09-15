@@ -9,6 +9,7 @@
   <ul ng-hide="category.collapsed">
     <operations-category
       ng-repeat="category in ::category.catalog"
+      is-running="isRunning"
       filtered-data="filteredData"
       category="::category"
       is-running="isRunning"
