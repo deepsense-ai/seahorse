@@ -8,9 +8,13 @@ SEAHORSE_BUILD_TAG=$1
 API_VERSION=$2
 echo "SEAHORSE_BUILD_TAG='$SEAHORSE_BUILD_TAG'; API_VERSION='$API_VERSION'"
 REPOSITORY="seahorse-distribution"
-
 BOX_FILE_LOCAL_NAME="seahorse-vm.box"
 BOX_FILE_REMOTE_NAME="seahorse-vm-${API_VERSION}.box"
+
+ARTIFACTORY_CREDENTIALS=$HOME/.artifactory_credentials
+ARTIFACTORY_USER=`grep "user=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
+ARTIFACTORY_PASSWORD=`grep "password=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
+ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 
 #Publishes file (first parameter) with given version (second parameter)
 function publish() {

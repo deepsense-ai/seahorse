@@ -30,6 +30,9 @@ usermod -aG docker vagrant
 # Start docker daemon
 service docker restart
 
+# Disable docker daemon start on system startup
+echo 'manual' > /etc/init/docker.override
+
 # Install docker-compose
 pip install docker-compose
 

@@ -6,8 +6,8 @@ Vagrant.configure(2) do |config|
     seahorsevm.vm.box_url = "SEAHORSE_BOX_URL_VARIABLE"
     seahorsevm.vm.hostname = "SEAHORSE_BOX_HOSTNAME_VARIABLE"
     seahorsevm.vm.boot_timeout = 1200
-    seahorsevm.vm.provision "shell", inline: "cd /home/vagrant && for f in *.tar; do docker load --input $f; done"
-    seahorsevm.vm.provision "shell", inline: "cd /home/vagrant && rm *.tar"
+    seahorsevm.vm.provision "shell", inline: "start docker", run: "always"
+    seahorsevm.vm.provision "shell", inline: "cd /home/vagrant && for f in *.tar; do docker load --input $f; done && rm *.tar"
     seahorsevm.vm.provision "shell", inline: "cd /resources && docker-compose up -d 2>&1", run: "always"
   end
 
