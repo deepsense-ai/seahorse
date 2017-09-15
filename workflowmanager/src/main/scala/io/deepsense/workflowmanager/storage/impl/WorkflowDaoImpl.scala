@@ -26,7 +26,8 @@ import io.deepsense.workflowmanager.storage.{WorkflowStorage, WorkflowFullInfo}
 case class WorkflowDaoImpl @Inject()(
     @Named("workflowmanager") db: JdbcDriver#API#Database,
     @Named("workflowmanager") driver: JdbcDriver,
-    override val graphReader: GraphReader)
+    override val graphReader: GraphReader,
+    @Named("scheduling-manager.user.id") schedulerUserId: String)
     (implicit ec: ExecutionContext)
   extends WorkflowStorage
   with WorkflowVersionUtil
@@ -68,7 +69,7 @@ case class WorkflowDaoImpl @Inject()(
   }
 
   override def getAll(): Future[Map[Id, WorkflowFullInfo]] = {
-    db.run(workflows.filter(_.deleted === false).result).map(_.map {
+    db.run(workflows.filterNot(w => w.deleted || w.ownerId === schedulerUserId).result).map(_.map {
       case (id, workflow, _, created, updated, ownerId, ownerName) =>
         Id.fromUuid(id) -> WorkflowFullInfo(
           workflow.parseJson.convertTo[Workflow],

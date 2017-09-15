@@ -6,6 +6,7 @@ package io.deepsense.workflowmanager.storage.impl
 
 import scala.concurrent.{Await, Future}
 
+import com.typesafe.config.{Config, ConfigFactory}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -46,21 +47,47 @@ class WorkflowDaoImplIntegSpec
   when(catalog.createDOperation(operation3.id)).thenReturn(operation3)
   when(catalog.createDOperation(operation4.id)).thenReturn(operation4)
 
-  val w1@(workflow1Id, workflow1) = createWorkflow(graph = DeeplangGraph())
-  val w2@(workflow2Id, workflow2) = createWorkflow(graph = createGraph())
+  val (workflow1Id, workflow1) = createWorkflow(graph = DeeplangGraph())
+  val (workflow2Id, workflow2) = createWorkflow(graph = createGraph())
+  val (schedulerWorkflowId, schedulerWorkflow) = createWorkflow(graph = DeeplangGraph())
 
-  val storedWorkflows = Set(w1, w2)
+  case class StoredWorkflow(id: Workflow.Id, workflow: Workflow, ownerId: String, ownerName: String)
+
+  val config: Config = ConfigFactory.load()
+
+  val genericUserId = "ownerid"
+  val genericUserName = "ownername"
+  val schedulerUserId = config.getString("scheduling-manager.user.id")
+  val schedulerUserName = config.getString("scheduling-manager.user.name")
+
+  val storedWorkflows = Set(
+    StoredWorkflow(workflow1Id, workflow1, genericUserId, genericUserName),
+    StoredWorkflow(workflow2Id, workflow2, genericUserId, genericUserName),
+    StoredWorkflow(schedulerWorkflowId, schedulerWorkflow, schedulerUserId, schedulerUserName)
+  )
 
   before {
-    workflowsDao = new WorkflowDaoImpl(db, driver, graphReader)
+    workflowsDao = WorkflowDaoImpl(db, driver, graphReader, schedulerUserId)
   }
 
   "WorkflowsDao" should {
 
-    "not get deleted workflow" in withStoredWorkflows(storedWorkflows) {
-      whenReady(workflowsDao.delete(workflow2Id)) { _ =>
-        whenReady(workflowsDao.get(workflow2Id)) { workflow =>
-          workflow shouldBe None
+    "not get workflow" when {
+      "workflow is deleted" in {
+        withStoredWorkflows(storedWorkflows) {
+          whenReady(workflowsDao.delete(workflow2Id)) { _ =>
+            whenReady(workflowsDao.get(workflow2Id)) { workflow =>
+              workflow shouldBe None
+            }
+          }
+        }
+      }
+
+      "workflow belongs to scheduler user" in {
+        withStoredWorkflows(storedWorkflows) {
+          whenReady(workflowsDao.getAll()) { workflows =>
+            workflows.keySet should not contain schedulerWorkflowId
+          }
         }
       }
     }
@@ -90,12 +117,12 @@ class WorkflowDaoImplIntegSpec
   }
 
   private def withStoredWorkflows(
-      storedWorkflows: Set[(Workflow.Id, Workflow)])(testCode: => Any): Unit = {
+      storedWorkflows: Set[StoredWorkflow])(testCode: => Any): Unit = {
 
     Await.ready(workflowsDao.create(), operationDuration)
 
     val s = Future.sequence(storedWorkflows.map {
-      case (id, workflow) => workflowsDao.create(id, workflow, "ownerid", "ownername")
+      case StoredWorkflow(id, workflow, ownerId, ownerName) => workflowsDao.create(id, workflow, ownerId, ownerName)
     })
     Await.ready(s, operationDuration)
 

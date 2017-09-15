@@ -148,14 +148,10 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("List workflows")
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.getAll().map { workflows =>
-        val extractedThirdPartyData = workflows.mapValues {
-          case WorkflowFullInfo(objectWorkflow, created, updated, ownerId, ownerName) =>
-            (objectWorkflow.additionalData, created, updated, ownerId, ownerName)
-        }
-
-        extractedThirdPartyData.map {
-          case (workflowId, (thirdPartyData, created, updated, ownerId, ownerName)) =>
-            workflowInfo(workflowId, thirdPartyData, created, updated, ownerId, ownerName)
+        workflows.map {
+          case (workflowId,
+          WorkflowFullInfo(Workflow(_, _, additionalData), created, updated, ownerId, ownerName)) =>
+            workflowInfo(workflowId, additionalData, created, updated, ownerId, ownerName)
         }.toSeq
       }
     }

@@ -6,11 +6,12 @@ package io.deepsense.workflowmanager.storage.inmemory
 
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.Future
+import scala.language.postfixOps
 
 import org.joda.time.DateTime
 
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowmanager.storage.{WorkflowStorage, WorkflowFullInfo}
+import io.deepsense.workflowmanager.storage.{WorkflowFullInfo, WorkflowStorage}
 
 /**
  * Thread-safe, in-memory WorkflowStorage.
@@ -34,8 +35,8 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
       WorkflowFullInfo(workflow,
         old.map(_.created).getOrElse(DateTime.now),
         old.map(_.updated).getOrElse(DateTime.now),
-        ownerId.getOrElse(old.map(_.ownerId).getOrElse(???)),
-        ownerName.getOrElse(old.map(_.ownerName).getOrElse(???)))
+        ownerId orElse old.map(_.ownerId) get,
+        ownerName orElse old.map(_.ownerName) get)
 
     var oldEntry = workflows.get(id)
     var newEntry = withNewWorkflow(oldEntry)
