@@ -26,19 +26,19 @@
     Ok
   </button>
   <button
-    ng-if="$ctrl.previewMode"
-    ng-click="$ctrl.cancel()"
-    class="btn btn-blue"
-    type="button"
-  >
-    Close
-  </button>
-  <button
     ng-if="!$ctrl.previewMode"
     ng-click="$ctrl.cancel()"
     class="btn btn-white"
     type="button"
   >
     Cancel
+  </button>
+  <button
+    ng-if="$ctrl.previewMode"
+    ng-click="$ctrl.cancel()"
+    class="btn btn-blue"
+    type="button"
+  >
+    Close
   </button>
 </div>

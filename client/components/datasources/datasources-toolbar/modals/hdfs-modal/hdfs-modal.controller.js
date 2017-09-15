@@ -15,11 +15,11 @@ class HdfsModalController extends DatasourceModal {
     $uibModalInstance,
     datasourcesService,
     editedDatasource,
-    previewMode
+    mode
   ) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, mode);
 
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
@@ -50,6 +50,7 @@ class HdfsModalController extends DatasourceModal {
     }, true);
   }
 
+
   canAddDatasource() {
     const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.hdfsParams);
     const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== '';
@@ -59,23 +60,32 @@ class HdfsModalController extends DatasourceModal {
       isSourceValid;
   }
 
+
   onChangeHandler() {
     this.hideHdfsPrefix();
     this.validateHdfsPath();
   }
+
 
   hideHdfsPrefix() {
     this.hdfsPathBuffer = this.hdfsPathBuffer.toLowerCase().replace(HDFS_PREFIX, '');
     this.datasourceParams.hdfsParams.hdfsPath = `${HDFS_PREFIX}${this.hdfsPathBuffer}`;
   }
 
+
   validateHdfsPath() {
     this.isHdfsPathValid = this.datasourceParams.hdfsParams.hdfsPath !== '' &&
       this.datasourceParams.hdfsParams.hdfsPath.match(HDFS_REGEX);
   }
 
-  onFileSettingsChange(data) {
-    this.datasourceParams.hdfsParams = Object.assign({}, this.datasourceParams.hdfsParams, data);
+
+  onFileSettingsChange(newFileSettings) {
+    this.datasourceParams.hdfsParams = Object.assign(
+      {
+        hdfsPath: this.datasourceParams.hdfsParams.hdfsPath
+      },
+      newFileSettings
+    );
   }
 }
 

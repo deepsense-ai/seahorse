@@ -3,6 +3,9 @@
 // Assets
 import footerTpl from './modal-footer/modal-footer.html';
 
+// App
+import {datasourceModalMode} from 'COMMON/datasources/datasource-modal-mode.js';
+
 
 class DatasourceModal {
   constructor(
@@ -10,7 +13,7 @@ class DatasourceModal {
     $uibModalInstance,
     datasourcesService,
     editedDatasource,
-    previewMode
+    mode
   ) {
     'ngInject';
 
@@ -18,11 +21,8 @@ class DatasourceModal {
     this.$uibModalInstance = $uibModalInstance;
     this.datasourcesService = datasourcesService;
     this.editedDatasource = angular.copy(editedDatasource);
-    this.previewMode = previewMode;
+    this.previewMode = mode === datasourceModalMode.VIEW;
     this.footerTpl = footerTpl;
-
-    this.$log.warn('DatasourceModal.constructor() editedDatasource:');
-    this.$log.warn(JSON.stringify(this.editedDatasource, null, 2));
   }
 
 

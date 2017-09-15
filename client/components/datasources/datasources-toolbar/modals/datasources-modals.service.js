@@ -46,10 +46,7 @@ class DatasourcesModalsService {
 
 
   openModal(datasourceType, mode, datasource) {
-    this.$log.warn('DatasourcesModalsService.openModal()');
-    this.$log.warn('datasourceType', datasourceType);
-    this.$log.warn('mode', mode);
-    this.$log.warn('datasource', JSON.stringify(datasource, null, 2));
+    this.$log.info('DatasourcesModalsService.openModal()', mode, datasourceType);
 
     const modal = MODAL_CONFIGS[datasourceType];
     const $datasourcesToolbar = angular.element(document.querySelector('.datasources-panel'));
@@ -66,7 +63,7 @@ class DatasourcesModalsService {
       keyboard: true,
       resolve: {
         editedDatasource: () => angular.copy(datasource),
-        previewMode: () => mode === datasourceModalMode.VIEW
+        mode: () => mode
       }
     });
   }

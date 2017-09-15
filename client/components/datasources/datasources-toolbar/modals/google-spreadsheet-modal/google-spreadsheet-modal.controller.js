@@ -15,11 +15,11 @@ class GoogleSpreadsheetModalController extends DatasourceModal {
     $uibModalInstance,
     datasourcesService,
     editedDatasource,
-    previewMode
+    mode
   ) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, mode);
 
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;

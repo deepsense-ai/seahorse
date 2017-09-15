@@ -1,13 +1,23 @@
 'use strict';
 
+// Libs
+import angular from 'angular';
+
 // Assets
 import templateUrl from './file-settings.html';
 import './file-settings.less';
 
 
+const DEFAULT_CSS_FILE_FORMAT_PARAMS = {
+  includeHeader: true,
+  convert01ToBoolean: false,
+  separatorType: 'comma',
+  customSeparator: ''
+};
+
+
 const FileSettingsComponent = {
   bindings: {
-    extension: '<',
     onChange: '&',
     fileSettings: '<',
     disabledMode: '<'
@@ -21,30 +31,23 @@ const FileSettingsComponent = {
 
       this.$scope = $scope;
       this.$log = $log;
-
-      this.$log.warn(`FileSettingsComponent extension is '${this.extension}'`);
-
-      this.$scope.$watch(() => this.extension, (newValue, oldValue) => {
-        this.$log.warn(`FileSettingsComponent $watch extension ${oldValue}-> ${newValue}`);
-        this.$log.warn('fileSettings equals to:', JSON.stringify(this.fileSettings, null, 2));
-
-        if (newValue !== oldValue && newValue === 'csv') {
-          this.fileSettings.csvFileFormatParams.includeHeader = true;
-          this.fileSettings.csvFileFormatParams.convert01ToBoolean = false;
-          this.fileSettings.csvFileFormatParams.separatorType = 'comma';
-          this.$log.warn('Update csv settings to', JSON.stringify(this.fileSettings, null, 2));
-          this.onChange({fileSettings: this.fileSettings});
-        }
-      });
-
       this.formats = ['csv', 'json', 'parquet'];
     }
 
 
+    $onChanges(changed) {
+      if (changed.fileSettings) {
+        const newFileSettings = changed.fileSettings.currentValue;
+
+        this.fileFormat = newFileSettings.fileFormat;
+        this.csvFileFormatParams = angular.copy(newFileSettings.csvFileFormatParams || DEFAULT_CSS_FILE_FORMAT_PARAMS);
+      }
+    }
+
+
     $postLink() {
-      // TODO: what if we change file type?
-      if (this.fileSettings.fileFormat === 'csv') {
-        this.$scope.$watch(() => this.fileSettings.csvFileFormatParams.separatorType, (newValue) => {
+      if (this.fileFormat === 'csv') {
+        this.$scope.$watch(() => this.csvFileFormatParams.separatorType, (newValue) => {
           if (newValue === 'custom') {
             document.querySelector('#custom-separator').focus();
           }
@@ -53,9 +56,25 @@ const FileSettingsComponent = {
     }
 
 
-    onFocus() {
+    onCustomSeparatorInputFocus() {
       this.fileSettings.csvFileFormatParams.separatorType = 'custom';
-      this.onChange({fileSettings: this.fileSettings});
+      this.updateFileSettings();
+    }
+
+
+    updateFileSettings() {
+      const fileSettings = {
+        fileFormat: this.fileFormat
+      };
+
+      if (this.fileFormat === 'csv') {
+        fileSettings.csvFileFormatParams = this.csvFileFormatParams;
+        if (fileSettings.csvFileFormatParams.separatorType !== 'custom') {
+          fileSettings.csvFileFormatParams.customSeparator = '';
+        }
+      }
+
+      this.onChange({fileSettings});
     }
   }
 };

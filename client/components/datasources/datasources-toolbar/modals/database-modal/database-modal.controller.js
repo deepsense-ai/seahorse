@@ -11,17 +11,18 @@ class DatabaseModalController extends DatasourceModal {
     $uibModalInstance,
     datasourcesService,
     editedDatasource,
-    previewMode
+    mode
   ) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, mode);
 
     this.drivers = [
       'com.mysql.jdbc.driver',
       'com.postgresql.jdbc.driver',
       'com.oracle.jdbc.driver'
     ];
+
     this.copyFromQueryInput = true;
     this.sqlInstruction = '';
 
@@ -63,6 +64,7 @@ class DatabaseModalController extends DatasourceModal {
       this.canAddNewDatasource = this.canAddDatasource();
     }, true);
   }
+
 
   canAddDatasource() {
     return super.canAddDatasource() &&

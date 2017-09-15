@@ -13,22 +13,18 @@ class LibraryModalController extends DatasourceModal {
     datasourcesService,
     DatasourcesPanelService,
     editedDatasource,
-    previewMode
+    mode
   ) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, mode);
 
     this.LibraryModalService = LibraryModalService;
     this.DatasourcesPanelService = DatasourcesPanelService;
 
-    this.$log.warn('LibraryModalController.constructor() datasourceParams:');
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
       this.datasourceParams = editedDatasource.params;
-      this.extension = this.getFileExtension(this.datasourceParams.libraryFileParams.libraryPath);
-
-      this.$log.warn('Exists and equals to:', JSON.stringify(this.datasourceParams, null, 2));
     } else {
       this.datasourceParams = {
         name: '',
@@ -38,20 +34,16 @@ class LibraryModalController extends DatasourceModal {
           libraryPath: '',
           fileFormat: 'csv',
           csvFileFormatParams: {
-            includeHeader: false,
+            includeHeader: true,
             convert01ToBoolean: false,
-            separatorType: '',
+            separatorType: 'comma',
             customSeparator: ''
           }
         }
       };
-      this.$log.warn('Does not exists and set to:', JSON.stringify(this.datasourceParams, null, 2));
     }
 
     $scope.$watch(() => this.datasourceParams, (newSettings) => {
-      this.$log.warn('LibraryModalController $watch datasourceParams');
-      this.$log.warn(JSON.stringify(newSettings, null, 2));
-
       this.datasourceParams = newSettings;
       this.canAddNewDatasource = this.canAddDatasource();
     }, true);
@@ -61,6 +53,7 @@ class LibraryModalController extends DatasourceModal {
     }
   }
 
+
   canAddDatasource() {
     const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.libraryFileParams);
     const isSourceValid = this.datasourceParams.libraryFileParams.libraryPath !== '';
@@ -69,6 +62,7 @@ class LibraryModalController extends DatasourceModal {
       isCsvSeparatorValid &&
       isSourceValid;
   }
+
 
   openLibrary() {
     if (this.DatasourcesPanelService.isOpenedForWrite()) {
@@ -93,31 +87,64 @@ class LibraryModalController extends DatasourceModal {
   }
 
 
-  getFileExtension(fullFilePath) {
-    return fullFilePath
-      .substr(fullFilePath.lastIndexOf('.') + 1)
-      .toLowerCase();
+  parsePath(filename) {
+    const splitFilenameRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^/]+?|)(\.[^./]*|))(?:[/]*)$/;
+    const parsedParts = splitFilenameRe.exec(filename).slice(1);
+
+    parsedParts[1] = parsedParts[1] || '';
+    parsedParts[2] = parsedParts[2] || '';
+    parsedParts[3] = parsedParts[3] || '';
+
+    return {
+      root: parsedParts[0],
+      dir: parsedParts[0] + parsedParts[1].slice(0, -1),
+      base: parsedParts[2],
+      ext: parsedParts[3],
+      name: parsedParts[2].slice(0, parsedParts[2].length - parsedParts[3].length)
+    };
   }
+
+
+  parseLibraryUri(uri) {
+    const filename = uri.replace('library:/', '');
+
+    return this.parsePath(filename);
+  }
+
 
   setDatasourceParams(fullFilePath) {
-    this.extension = this.getFileExtension(fullFilePath);
-    this.datasourceParams.libraryFileParams.libraryPath = fullFilePath;
-    this.datasourceParams.libraryFileParams.fileFormat = this.extension;
-    this.datasourceParams.name = fullFilePath
-      .split('.')
-      .slice(0, fullFilePath.split('.').length - 1)
-      .join('.')
-      .replace('library://', '');
+    const {name, ext} = this.parseLibraryUri(fullFilePath);
 
-    this.$log.warn(`LibraryModalController.setDatasourceParams(${fullFilePath}) datasourceParams:`);
-    this.$log.warn(JSON.stringify(this.datasourceParams, null, 2));
+    let fileFormat = ext.slice(1).toLowerCase();
+    if (fileFormat !== 'csv' && fileFormat !== 'json') {
+      fileFormat = 'csv';
+    }
+
+    const libraryFileParams = {
+      libraryPath: fullFilePath,
+      fileFormat: fileFormat
+    };
+    if (fileFormat === 'csv') {
+      libraryFileParams.csvFileFormatParams = {
+        includeHeader: true,
+        convert01ToBoolean: false,
+        separatorType: 'comma',
+        customSeparator: ''
+      };
+    }
+    this.datasourceParams.name = name;
+
+    this.datasourceParams.libraryFileParams = libraryFileParams;
   }
 
-  onFileSettingsChange(data) {
-    this.$log.warn('LibraryModalController.onFileSettingsChange()');
-    this.$log.warn('data is:', JSON.stringify(data, null, 2));
 
-    this.datasourceParams.libraryFileParams = Object.assign({}, this.datasourceParams.libraryFileParams, data);
+  onFileSettingsChange(newFileSettings) {
+    this.datasourceParams.libraryFileParams = Object.assign(
+      {
+        libraryPath: this.datasourceParams.libraryFileParams.libraryPath
+      },
+      newFileSettings
+    );
   }
 }
 

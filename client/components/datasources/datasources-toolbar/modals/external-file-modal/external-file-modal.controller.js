@@ -14,12 +14,11 @@ class ExternalFileModalController extends DatasourceModal {
     $uibModalInstance,
     datasourcesService,
     editedDatasource,
-    previewMode
+    mode
   ) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
-    this.extension = 'csv';
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, mode);
 
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
@@ -49,6 +48,7 @@ class ExternalFileModalController extends DatasourceModal {
     }, true);
   }
 
+
   canAddDatasource() {
     const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.externalFileParams);
     const isSourceValid = this.datasourceParams.externalFileParams.url !== '';
@@ -58,13 +58,20 @@ class ExternalFileModalController extends DatasourceModal {
       isSourceValid;
   }
 
+
   validateUrl() {
     this.isUrlValid = this.datasourceParams.externalFileParams.url !== '' &&
         !!this.datasourceParams.externalFileParams.url.match(URL_REGEX);
   }
 
-  onFileSettingsChange(data) {
-    this.datasourceParams.externalFileParams = Object.assign({}, this.datasourceParams.externalFileParams, data);
+
+  onFileSettingsChange(newFileSettings) {
+    this.datasourceParams.externalFileParams = Object.assign(
+      {
+        url: this.datasourceParams.externalFileParams.url
+      },
+      newFileSettings
+    );
   }
 }
 
