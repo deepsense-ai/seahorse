@@ -1,0 +1,13 @@
+applications:
+  - name: seahorse-proxy
+    memory: 512M
+    disk_quota: 128M
+    instances: 1
+    host: proxy
+    buildpack: nodejs_buildpack
+    env:
+      NPM_CONFIG_PRODUCTION: true
+      VERSION: dev
+      OAUTH2_CLIENT_CLIENTID: developer_console
+      OAUTH_CLIENT_ID: developer_console
+      SPRING_PROFILES_ACTIVE: cloud,redis

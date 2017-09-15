@@ -1,0 +1,41 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": true,
+    "newcap": true,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "unused": true,
+    "boss": true,
+    "eqnull": true,
+    "browser": true,
+    "latedef" :false,
+    "globals": {
+        "process": true,
+        "angular": true,
+        "google":true,
+        "$": true,
+        "_": true,
+        "UAParser": true,
+        "console": true,
+        "App": true,
+        "c3": true,
+        "hljs": true,
+        // expect.js UTs methods
+        "describe": true,
+        "beforeEach": true,
+        "it": true,
+        "expect": true,
+        "module": true,
+        "inject": true,
+        "sinon": true,
+        "browser": true,
+        "by": true,
+        "element": true,
+        // Gulp
+        "require": true,
+        "__dirname": true
+    }
+}
