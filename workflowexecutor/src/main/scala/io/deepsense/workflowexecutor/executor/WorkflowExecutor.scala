@@ -63,7 +63,8 @@ case class WorkflowExecutor(
     val statusReceiverActor =
       actorSystem.actorOf(TerminationListenerActor.props(finishedExecutionStatus))
     val workflowExecutorActor = actorSystem.actorOf(
-      WorkflowExecutorActor.props(executionContext, None, Some(statusReceiverActor)))
+      WorkflowExecutorActor.props(executionContext, None, Some(statusReceiverActor)),
+      workflow.id.toString)
 
     val startedTime = DateTimeConverter.now
     workflowExecutorActor ! Connect(workflow.id)
