@@ -45,9 +45,14 @@ if [ ! -z "$SEAHORSE_BUILD_TAG" ]; then
   docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
 fi
 
-# TODO Check with remote if it is actually LATEST commit for this branch.
 GIT_BRANCH=`git symbolic-ref --short -q HEAD || echo ""` # it fails if not on branch
 if [ ! -z "$GIT_BRANCH" ]; then
-  docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
-  docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
+  git fetch origin $GIT_BRANCH
+
+  if [ "$GIT_SHA" = "$(git rev-parse origin/$GIT_BRANCH)" ]
+  then
+    echo "This GIT_SHA is also tip of the origin/$GIT_BRANCH! Publishing $GIT_BRANCH-latest image"
+    docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
+    docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
+  fi
 fi
