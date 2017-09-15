@@ -30,6 +30,10 @@ function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
         return config.docsHost;
       },
 
+      getNotebookURL() {
+        return config.docsHost + '/notebooks/' + $stateParams.id + '.ipynb';
+      },
+
       exportReportLink: WorkflowsApiClient.getDownloadReportUrl($stateParams.reportId),
       reportHasBeenUploaded: () => !_.isNull(WorkflowService.getWorkflow()
         .lastExecutionReportTime),
