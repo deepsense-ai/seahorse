@@ -2,6 +2,7 @@
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var sourcemaps = require('gulp-sourcemaps');
 var runSequence = require('run-sequence');
 var nodemon = require('gulp-nodemon');
 var browserSync = require('browser-sync');
@@ -39,6 +40,7 @@ var hash = 'hash-commit';
 client.path = __dirname + '/' + client.path;
 
 var BROWSER_SYNC_RELOAD_DELAY = 2000;
+var SOURCEMAPS_PATH = './sourcemaps';
 
 gulp.task('clean', function () {
   return gulp.src([build.path], {read: false})
@@ -215,11 +217,13 @@ gulp.task('browserify', function () {
     .bundle()
     .pipe(source(build.js + build.bundle.app))
     .pipe(buffer())
+    .pipe( devMode ? sourcemaps.init({ loadMaps: true }) : gutil.noop() )
     .pipe(!devMode ? uglify() : gutil.noop())
     .pipe(size({
       title: 'browserify',
       showFiles: true
     }))
+    .pipe( devMode ? sourcemaps.write(SOURCEMAPS_PATH) : gutil.noop() )
     .pipe(gulp.dest(build.path));
 });
 
