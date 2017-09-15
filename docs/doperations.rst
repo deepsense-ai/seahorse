@@ -18,6 +18,7 @@ Contents:
    doperations/ridge_regression
    doperations/train_regressor
    doperations/score_regressor
+   doperations/evaluate_regression
    doperations/cross_validate_regressor
    doperations/one_hot_encoder
    doperations/apply_transformation
