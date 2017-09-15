@@ -2,13 +2,15 @@
 
 # Copyright (c) 2015, CodiLime Inc.
 #
-# Usage: ./publish.sh SEAHORSE_BUILD_TAG
+# Usage: ./publish.sh SEAHORSE_BUILD_TAG API_VERSION
 
 SEAHORSE_BUILD_TAG=$1
-echo "SEAHORSE_BUILD_TAG='$SEAHORSE_BUILD_TAG'"
+API_VERSION=$2
+echo "SEAHORSE_BUILD_TAG='$SEAHORSE_BUILD_TAG'; API_VERSION='$API_VERSION'"
 REPOSITORY="seahorse-distribution"
 
-BOX_NAME="seahorse-vm.box"
+BOX_FILE_LOCAL_NAME="seahorse-vm.box"
+BOX_FILE_REMOTE_NAME="seahorse-vm-${API_VERSION}.box"
 
 #Publishes file (first parameter) with given version (second parameter)
 function publish() {
@@ -39,10 +41,10 @@ function publishVersion() {
   publish $artifactLocalName $artifactVersion $url
 }
 
-publishVersion "${BOX_NAME}" "${BOX_NAME}" "${SEAHORSE_BUILD_TAG}"
+# Publish vagrant box file
+publishVersion "${BOX_FILE_LOCAL_NAME}" "${BOX_FILE_REMOTE_NAME}" "${SEAHORSE_BUILD_TAG}"
 
-URL="$ARTIFACTORY_URL/$REPOSITORY/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${BOX_NAME}"
-sed "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" Vagrantfile.template > Vagrantfile
-
-
+# Publish Vagrantfile
+URL="$ARTIFACTORY_URL/$REPOSITORY/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${BOX_FILE_REMOTE_NAME}"
+sed -e "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" -e "s#SEAHORSE_BOX_NAME_VARIABLE#seahorse-vm-${API_VERSION}#" -e "s#SEAHORSE_BOX_HOSTNAME_VARIABLE#seahorse-vm-${API_VERSION//./-}#" Vagrantfile.template > Vagrantfile
 publishVersion "Vagrantfile" "Vagrantfile-internal" "${SEAHORSE_BUILD_TAG}"
