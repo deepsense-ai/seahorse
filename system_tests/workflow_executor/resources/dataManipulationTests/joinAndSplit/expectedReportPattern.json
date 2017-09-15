@@ -4,7 +4,7 @@
       "c21973ce-4bea-ba68-9d92-d4045d11dda2": {
         "status": "COMPLETED", 
         "results": [
-          "36fd2859-d961-454d-b6a2-9b896ea4071d"
+          "9553058d-5b6d-4024-a2a4-3d026a812a64"
         ], 
         "error": null
       }, 
@@ -21,160 +21,31 @@
       "31f196ac-d3a5-3859-c678-27105f7a6d2b": {
         "status": "COMPLETED", 
         "results": [
-          "916ea2a9-744e-4ee1-b2ac-796b943bd755"
+          "76989553-0314-49d7-ad73-d3c6078a7ca5"
         ], 
         "error": null
       }, 
       "94d963d6-92e7-64b9-05e8-15661774d1bb": {
         "status": "COMPLETED", 
         "results": [
-          "790577c6-04f1-41cc-8871-70b0397ec9ba", 
-          "d08ff3b6-720f-4868-875f-6556e678bc48"
+          "12a51e04-f9d5-4086-ad20-aa3e8c085277", 
+          "296a4928-18c8-41db-868a-184392b81484"
         ], 
         "error": null
       }, 
       "01ccc706-2912-c87d-5f02-9604a7db2b5f": {
         "status": "COMPLETED", 
         "results": [
-          "1bc43cfd-0511-46eb-81d2-010dedd22179"
+          "6733065c-d153-47e1-a7a8-b301f9ba410a"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "916ea2a9-744e-4ee1-b2ac-796b943bd755": {
+      "12a51e04-f9d5-4086-ad20-aa3e8c085277": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "3", 
-                  "5"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
-              "columnNames": [
-                "name", 
-                "surname", 
-                "salary"
-              ], 
-              "columnTypes": [
-                "string", 
-                "string", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "Charlotte", 
-                  "Falconet", 
-                  "6690"
-                ], 
-                [
-                  "Bobert", 
-                  "Tard", 
-                  "850"
-                ], 
-                [
-                  "Larry", 
-                  "Wall", 
-                  "12880"
-                ], 
-                [
-                  "Alan", 
-                  "Smith", 
-                  "9820"
-                ], 
-                [
-                  "Bob", 
-                  "Dylan", 
-                  "15410"
-                ]
-              ], 
-              "name": "Data Sample"
-            }
-          }, 
-          "distributions": {
-            "salary": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "15410", 
-                "mean": "9130", 
-                "min": "850"
-              }, 
-              "name": "salary", 
-              "missingValues": 0
-            }, 
-            "surname": {
-              "subtype": "discrete", 
-              "name": "surname", 
-              "missingValues": 0
-            }, 
-            "name": {
-              "subtype": "discrete", 
-              "name": "name", 
-              "missingValues": 0
-            }
-          }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "name", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "surname", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "salary", 
-                "nullable": true
-              }
-            ]
-          }
-        }
-      }, 
-      "1bc43cfd-0511-46eb-81d2-010dedd22179": {
-        "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "10"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "name", 
                 "surname", 
@@ -189,12 +60,6 @@
               ], 
               "rowNames": null, 
               "values": [
-                [
-                  "Rita", 
-                  "Innkeeper", 
-                  "0", 
-                  null
-                ], 
                 [
                   "Bob", 
                   "Dylan", 
@@ -220,12 +85,6 @@
                   null
                 ], 
                 [
-                  "Charlotte", 
-                  "Falconet", 
-                  "1", 
-                  "6690"
-                ], 
-                [
                   "Ralph", 
                   "Max", 
                   "0", 
@@ -239,20 +98,32 @@
                 ], 
                 [
                   "Alan", 
-                  "Smith", 
-                  "0", 
-                  "9820"
-                ], 
-                [
-                  "Alan", 
                   "Turing", 
                   "3", 
                   null
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "7"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "salary": {
               "subtype": "continuous", 
@@ -262,7 +133,7 @@
                 "min": "850"
               }, 
               "name": "salary", 
-              "missingValues": 5
+              "missingValues": 4
             }, 
             "surname": {
               "subtype": "discrete", 
@@ -278,48 +149,61 @@
               "subtype": "continuous", 
               "statistics": {
                 "max": "3", 
-                "mean": "0.9", 
+                "mean": "1.142857", 
                 "min": "0"
               }, 
               "name": "marriage_status", 
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "name", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "surname", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "marriage_status", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "salary", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }, 
-      "36fd2859-d961-454d-b6a2-9b896ea4071d": {
+      "76989553-0314-49d7-ad73-d3c6078a7ca5": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
+          "tables": [
+            {
+              "columnNames": [
+                "name", 
+                "surname", 
+                "salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Charlotte", 
+                  "Falconet", 
+                  "6690"
+                ], 
+                [
+                  "Bobert", 
+                  "Tard", 
+                  "850"
+                ], 
+                [
+                  "Larry", 
+                  "Wall", 
+                  "12880"
+                ], 
+                [
+                  "Alan", 
+                  "Smith", 
+                  "9820"
+                ], 
+                [
+                  "Bob", 
+                  "Dylan", 
+                  "15410"
+                ]
+              ], 
+              "name": "Data Sample"
+            }, 
+            {
               "columnNames": [
                 "Number of columns", 
                 "Number of rows"
@@ -332,12 +216,134 @@
               "values": [
                 [
                   "3", 
-                  "10"
+                  "5"
                 ]
               ], 
               "name": "DataFrame Size"
+            }
+          ], 
+          "distributions": {
+            "salary": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "15410", 
+                "mean": "9130", 
+                "min": "850"
+              }, 
+              "name": "salary", 
+              "missingValues": 0
             }, 
-            "Data Sample": {
+            "surname": {
+              "subtype": "discrete", 
+              "name": "surname", 
+              "missingValues": 0
+            }, 
+            "name": {
+              "subtype": "discrete", 
+              "name": "name", 
+              "missingValues": 0
+            }
+          }, 
+          "reportType": "DataFrameFull"
+        }
+      }, 
+      "296a4928-18c8-41db-868a-184392b81484": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "name", 
+                "surname", 
+                "marriage_status", 
+                "salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Rita", 
+                  "Innkeeper", 
+                  "0", 
+                  null
+                ], 
+                [
+                  "Charlotte", 
+                  "Falconet", 
+                  "1", 
+                  "6690"
+                ], 
+                [
+                  "Alan", 
+                  "Smith", 
+                  "0", 
+                  "9820"
+                ]
+              ], 
+              "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "3"
+                ]
+              ], 
+              "name": "DataFrame Size"
+            }
+          ], 
+          "distributions": {
+            "salary": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "9820", 
+                "mean": "NaN", 
+                "min": "6690"
+              }, 
+              "name": "salary", 
+              "missingValues": 1
+            }, 
+            "surname": {
+              "subtype": "discrete", 
+              "name": "surname", 
+              "missingValues": 0
+            }, 
+            "name": {
+              "subtype": "discrete", 
+              "name": "name", 
+              "missingValues": 0
+            }, 
+            "marriage_status": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.333333", 
+                "min": "0"
+              }, 
+              "name": "marriage_status", 
+              "missingValues": 0
+            }
+          }, 
+          "reportType": "DataFrameFull"
+        }
+      }, 
+      "9553058d-5b6d-4024-a2a4-3d026a812a64": {
+        "report": {
+          "tables": [
+            {
               "columnNames": [
                 "name", 
                 "surname", 
@@ -402,8 +408,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "10"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "surname": {
               "subtype": "discrete", 
@@ -426,53 +450,13 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "name", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "surname", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "marriage_status", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }, 
-      "790577c6-04f1-41cc-8871-70b0397ec9ba": {
+      "6733065c-d153-47e1-a7a8-b301f9ba410a": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "7"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "name", 
                 "surname", 
@@ -487,6 +471,12 @@
               ], 
               "rowNames": null, 
               "values": [
+                [
+                  "Rita", 
+                  "Innkeeper", 
+                  "0", 
+                  null
+                ], 
                 [
                   "Bob", 
                   "Dylan", 
@@ -512,6 +502,12 @@
                   null
                 ], 
                 [
+                  "Charlotte", 
+                  "Falconet", 
+                  "1", 
+                  "6690"
+                ], 
+                [
                   "Ralph", 
                   "Max", 
                   "0", 
@@ -525,14 +521,38 @@
                 ], 
                 [
                   "Alan", 
+                  "Smith", 
+                  "0", 
+                  "9820"
+                ], 
+                [
+                  "Alan", 
                   "Turing", 
                   "3", 
                   null
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "10"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "salary": {
               "subtype": "continuous", 
@@ -542,7 +562,7 @@
                 "min": "850"
               }, 
               "name": "salary", 
-              "missingValues": 4
+              "missingValues": 5
             }, 
             "surname": {
               "subtype": "discrete", 
@@ -558,162 +578,14 @@
               "subtype": "continuous", 
               "statistics": {
                 "max": "3", 
-                "mean": "1.142857", 
+                "mean": "0.9", 
                 "min": "0"
               }, 
               "name": "marriage_status", 
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "name", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "surname", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "marriage_status", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "salary", 
-                "nullable": true
-              }
-            ]
-          }
-        }
-      }, 
-      "d08ff3b6-720f-4868-875f-6556e678bc48": {
-        "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "3"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
-              "columnNames": [
-                "name", 
-                "surname", 
-                "marriage_status", 
-                "salary"
-              ], 
-              "columnTypes": [
-                "string", 
-                "string", 
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "Rita", 
-                  "Innkeeper", 
-                  "0", 
-                  null
-                ], 
-                [
-                  "Charlotte", 
-                  "Falconet", 
-                  "1", 
-                  "6690"
-                ], 
-                [
-                  "Alan", 
-                  "Smith", 
-                  "0", 
-                  "9820"
-                ]
-              ], 
-              "name": "Data Sample"
-            }
-          }, 
-          "distributions": {
-            "salary": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "9820", 
-                "mean": "NaN", 
-                "min": "6690"
-              }, 
-              "name": "salary", 
-              "missingValues": 1
-            }, 
-            "surname": {
-              "subtype": "discrete", 
-              "name": "surname", 
-              "missingValues": 0
-            }, 
-            "name": {
-              "subtype": "discrete", 
-              "name": "name", 
-              "missingValues": 0
-            }, 
-            "marriage_status": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "1", 
-                "mean": "0.333333", 
-                "min": "0"
-              }, 
-              "name": "marriage_status", 
-              "missingValues": 0
-            }
-          }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "name", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "surname", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "marriage_status", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "salary", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }
     }, 

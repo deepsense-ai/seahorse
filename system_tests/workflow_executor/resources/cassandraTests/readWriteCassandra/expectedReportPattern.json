@@ -4,7 +4,7 @@
       "02f14ccc-c877-c242-bb82-534d0cac90d3": {
         "status": "COMPLETED", 
         "results": [
-          "6f6f1920-692b-4b74-a2ef-ecd07fbd85e4"
+          "a1c63942-75c9-47da-9652-3c08e8cfc9dc"
         ], 
         "error": null
       }, 
@@ -15,29 +15,10 @@
       }
     }, 
     "resultEntities": {
-      "6f6f1920-692b-4b74-a2ef-ecd07fbd85e4": {
+      "a1c63942-75c9-47da-9652-3c08e8cfc9dc": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "5", 
-                  "3"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "string_col", 
                 "numeric_col", 
@@ -77,8 +58,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "3"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "categorical_col": {
               "subtype": "discrete", 
@@ -116,40 +115,7 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "string_col", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "numeric_col", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "boolean", 
-                "deeplangType": "boolean", 
-                "name": "boolean_col", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "categorical_col", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "timestamp", 
-                "deeplangType": "timestamp", 
-                "name": "timestamp_col", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }
     }, 

@@ -44,6 +44,7 @@ def main(argv):
         output_file = path.join(destination_test_path, "expectedReportPattern.json")
         if not path.exists(destination_test_path):
           makedirs(destination_test_path)
+        print "Analysing report source: " + source_file
         create_extracted_pattern_file(source_file, output_file)
         print "Report pattern created: " + output_file
         counter += 1

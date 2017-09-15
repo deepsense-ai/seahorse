@@ -11,35 +11,16 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "06a68dd8-0b6e-4ca1-83ac-f9a9e9fcdc93"
+          "2bce43a2-6135-45f5-a890-6ba797ecb0a8"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "06a68dd8-0b6e-4ca1-83ac-f9a9e9fcdc93": {
+      "2bce43a2-6135-45f5-a890-6ba797ecb0a8": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "3", 
-                  "50"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "col_a", 
                 "col_b", 
@@ -104,8 +85,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "50"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "col_b": {
               "subtype": "continuous", 
@@ -128,28 +127,7 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "col_a", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "col_b", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "col_c", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }
     }, 

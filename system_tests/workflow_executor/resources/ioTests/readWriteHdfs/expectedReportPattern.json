@@ -9,35 +9,16 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "f3225c05-e016-483d-9e70-8a76b9492d82"
+          "8cc8aeb6-60ec-4a49-ac91-715580b2ae44"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "f3225c05-e016-483d-9e70-8a76b9492d82": {
+      "8cc8aeb6-60ec-4a49-ac91-715580b2ae44": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "25"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "unnamed_0", 
                 "unnamed_1", 
@@ -114,8 +95,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "25"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "unnamed_0": {
               "subtype": "continuous", 
@@ -153,34 +152,7 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "unnamed_0", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "unnamed_1", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "unnamed_2", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "unnamed_3", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }
     }, 

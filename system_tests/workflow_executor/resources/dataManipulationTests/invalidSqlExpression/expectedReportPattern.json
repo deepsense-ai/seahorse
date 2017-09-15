@@ -4,7 +4,7 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "3fe70f85-8b27-4df6-ac80-b6a0d5266c8c"
+          "dc7a4082-83be-4825-b4ac-3a5e29ebc68b"
         ], 
         "error": null
       }, 
@@ -22,29 +22,10 @@
       }
     }, 
     "resultEntities": {
-      "3fe70f85-8b27-4df6-ac80-b6a0d5266c8c": {
+      "dc7a4082-83be-4825-b4ac-3a5e29ebc68b": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "20"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "employee_id", 
                 "city", 
@@ -121,8 +102,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "20"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "salary": {
               "subtype": "continuous", 
@@ -160,34 +159,7 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "employee_id", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "city", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "salary", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "work_time", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }
     }, 

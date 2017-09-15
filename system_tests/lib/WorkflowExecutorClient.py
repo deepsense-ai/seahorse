@@ -61,7 +61,7 @@ def spark_submit_command(**kwargs):
     --driver-class-path {jar} {spark_submit_options} {jar}\\
     --noninteractive-mode --python-executor-path ./python/pyexecutor/pyexecutor.py\\
     --workflow-filename {workflow_filename} --output-directory {output_dir}\\
-    --report-level high""".format(
+    """.format(
     we_class=kwargs['we_class'],
     spark_master=kwargs['spark_master'],
     jar=kwargs['jar'],

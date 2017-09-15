@@ -4,15 +4,15 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "b065c4b6-0109-408e-84cd-643d4831f70b"
+          "448a899e-22d4-4ffd-81b0-8684ee09c223"
         ], 
         "error": null
       }, 
       "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
         "status": "COMPLETED", 
         "results": [
-          "0f76da9d-cb01-4281-9ea6-950137bc2ca5", 
-          "71ba3c56-638e-439e-b385-1071df1b4c34"
+          "28c4006e-84c6-49f0-a278-71b0dc527474", 
+          "67889736-5a6b-4873-b2d1-d906d538be88"
         ], 
         "error": null
       }, 
@@ -23,121 +23,10 @@
       }
     }, 
     "resultEntities": {
-      "0f76da9d-cb01-4281-9ea6-950137bc2ca5": {
+      "448a899e-22d4-4ffd-81b0-8684ee09c223": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "3"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
-              "columnNames": [
-                "city", 
-                "avg_salary"
-              ], 
-              "columnTypes": [
-                "string", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "Krak\u00f3w", 
-                  "5555"
-                ], 
-                [
-                  "Pozna\u0144", 
-                  "7000"
-                ], 
-                [
-                  "Warszawa", 
-                  "8840"
-                ]
-              ], 
-              "name": "Data Sample"
-            }
-          }, 
-          "distributions": {
-            "city": {
-              "subtype": "discrete", 
-              "name": "city", 
-              "missingValues": 0
-            }, 
-            "avg_salary": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "8840", 
-                "mean": "7131.666667", 
-                "min": "5555"
-              }, 
-              "name": "avg_salary", 
-              "missingValues": 0
-            }
-          }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "city", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "avg_salary", 
-                "nullable": true
-              }
-            ]
-          }
-        }
-      }, 
-      "71ba3c56-638e-439e-b385-1071df1b4c34": {
-        "report": {
-          "reportType": "Empty", 
-          "tables": {}, 
-          "distributions": {}, 
-          "schema": null
-        }
-      }, 
-      "b065c4b6-0109-408e-84cd-643d4831f70b": {
-        "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "4", 
-                  "20"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "employee_id", 
                 "city", 
@@ -214,8 +103,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "20"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "salary": {
               "subtype": "continuous", 
@@ -253,34 +160,82 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "employee_id", 
-                "nullable": true
+          "reportType": "DataFrameFull"
+        }
+      }, 
+      "67889736-5a6b-4873-b2d1-d906d538be88": {
+        "report": {
+          "tables": [], 
+          "distributions": {}, 
+          "reportType": "Empty"
+        }
+      }, 
+      "28c4006e-84c6-49f0-a278-71b0dc527474": {
+        "report": {
+          "tables": [
+            {
+              "columnNames": [
+                "city", 
+                "avg_salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Krak\u00f3w", 
+                  "5555"
+                ], 
+                [
+                  "Pozna\u0144", 
+                  "7000"
+                ], 
+                [
+                  "Warszawa", 
+                  "8840"
+                ]
+              ], 
+              "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "3"
+                ]
+              ], 
+              "name": "DataFrame Size"
+            }
+          ], 
+          "distributions": {
+            "city": {
+              "subtype": "discrete", 
+              "name": "city", 
+              "missingValues": 0
+            }, 
+            "avg_salary": {
+              "subtype": "continuous", 
+              "statistics": {
+                "max": "8840", 
+                "mean": "7131.666667", 
+                "min": "5555"
               }, 
-              {
-                "dataType": "string", 
-                "deeplangType": "string", 
-                "name": "city", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "salary", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "work_time", 
-                "nullable": true
-              }
-            ]
-          }
+              "name": "avg_salary", 
+              "missingValues": 0
+            }
+          }, 
+          "reportType": "DataFrameFull"
         }
       }
     }, 

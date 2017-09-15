@@ -33,22 +33,12 @@ REPORT_PATTERN = {
         'className': PM.Ignore,
         'report': {
           'name': PM.Ignore,
-          'tables': {
-            'Cross-validate Regression Report': {
-              'description': PM.Ignore,
-              'values': PM.Ignore,  # array of floats varies too much
-              PM.Any: PM.Match
-            },
-            "Evaluate Regression Report": {
-              'description': PM.Ignore,
-              'values': PM.Ignore,  # array of floats varies too much
-              PM.Any: PM.Match
-            },
-            PM.Any: {
+          'tables': [
+            {
               'description': PM.Ignore,
               PM.Any: PM.Match
             }
-          },
+          ],
           'distributions': {
             PM.Any: {
               'description': PM.Ignore,
@@ -144,7 +134,7 @@ def extract_list_pattern(source, pattern):
       return source
   if len(pattern) > 1:
     raise Exception(
-      "List pattern can hold only one pattern to be applied for all elements " + pattern)
+      "List pattern can hold only one pattern to be applied for all elements " + str(pattern))
 
   return [extract_pattern(el, pattern[0]) for el in source]
 
@@ -184,13 +174,13 @@ def check_json_containment(contained, container):
     for key in contained.keys():
       check_json_containment(contained[key], container[key])
   elif type(contained) == list and type(container) == list:
-    if len(container) != len(contained):
+    if len(contained) != len(container):
       raise Exception(
         "Lists length doesn't match " + str(len(contained)) + "!=" + str(len(container))
         + " " + str(contained) + " != " + str(container))
-    zipped = zip(container, contained)
-    for (container_value, contained_value) in zipped:
-      check_json_containment(container_value, contained_value)
+    zipped = zip(contained, container)
+    for (contained_value, container_value) in zipped:
+      check_json_containment(contained_value, container_value)
   else:
     if contained != container:
       if (isinstance(contained, float) or isinstance(contained, int)) and \

@@ -4,7 +4,7 @@
       "806d1a75-7f9b-3de1-3fc9-6f644684835d": {
         "status": "COMPLETED", 
         "results": [
-          "edfd0a0c-fd56-4dd3-b66c-e22497ca4375"
+          "0627666a-9c1c-43c2-b5bd-68a50db434bd"
         ], 
         "error": null
       }, 
@@ -17,29 +17,10 @@
       }
     }, 
     "resultEntities": {
-      "edfd0a0c-fd56-4dd3-b66c-e22497ca4375": {
+      "0627666a-9c1c-43c2-b5bd-68a50db434bd": {
         "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1", 
-                  "4"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "numbers"
               ], 
@@ -62,8 +43,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "4"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "numbers": {
               "subtype": "continuous", 
@@ -76,16 +75,7 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "numbers", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
         }
       }
     }, 

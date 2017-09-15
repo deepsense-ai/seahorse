@@ -11,50 +11,23 @@
       "9bceb22b-10d4-4c9d-9967-bfc4f2ba5dc5": {
         "status": "COMPLETED", 
         "results": [
-          "2d95a64c-c7f0-4e35-855b-e4723d5a147c"
+          "b636b3c5-3742-4402-860e-f2d0922c637e"
         ], 
         "error": null
       }, 
       "06753647-d497-427c-b36e-671f7dcc02a3": {
         "status": "COMPLETED", 
         "results": [
-          "09f55f2d-d360-4151-afe0-e4ea63c54eef"
+          "5e69041d-bcc0-45ee-b8f4-df1d56c06991"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "09f55f2d-d360-4151-afe0-e4ea63c54eef": {
+      "b636b3c5-3742-4402-860e-f2d0922c637e": {
         "report": {
-          "reportType": "Empty", 
-          "tables": {}, 
-          "distributions": {}, 
-          "schema": null
-        }
-      }, 
-      "2d95a64c-c7f0-4e35-855b-e4723d5a147c": {
-        "report": {
-          "reportType": "DataFrameFull", 
-          "tables": {
-            "DataFrame Size": {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "4"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }, 
-            "Data Sample": {
+          "tables": [
+            {
               "columnNames": [
                 "column1", 
                 "column2"
@@ -83,8 +56,26 @@
                 ]
               ], 
               "name": "Data Sample"
+            }, 
+            {
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "4"
+                ]
+              ], 
+              "name": "DataFrame Size"
             }
-          }, 
+          ], 
           "distributions": {
             "column1": {
               "subtype": "continuous", 
@@ -107,22 +98,14 @@
               "missingValues": 0
             }
           }, 
-          "schema": {
-            "fields": [
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "column1", 
-                "nullable": true
-              }, 
-              {
-                "dataType": "double", 
-                "deeplangType": "numeric", 
-                "name": "column2", 
-                "nullable": true
-              }
-            ]
-          }
+          "reportType": "DataFrameFull"
+        }
+      }, 
+      "5e69041d-bcc0-45ee-b8f4-df1d56c06991": {
+        "report": {
+          "tables": [], 
+          "distributions": {}, 
+          "reportType": "Empty"
         }
       }
     }, 
