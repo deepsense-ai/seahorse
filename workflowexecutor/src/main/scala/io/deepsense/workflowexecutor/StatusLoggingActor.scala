@@ -16,16 +16,14 @@
 
 package io.deepsense.workflowexecutor
 
-import io.deepsense.deeplang.doperables.ReportLevel
-import io.deepsense.deeplang.doperables.ReportLevel._
+import akka.actor.Actor
+import akka.actor.Actor.Receive
 
-case class ExecutionParams(
-  workflowFilename: Option[String] = None,
-  workflowId: Option[String] = None,
-  outputDirectoryPath: Option[String] = None,
-  uploadReport: Boolean = false,
-  reportLevel: ReportLevel = ReportLevel.MEDIUM,
-  apiAddress: Option[String] = None,
-  extraVars: Map[String, String] = Map.empty,
-  noninteractiveMode: Boolean = false,
-  messageQueueHost: Option[String] = None)
+import io.deepsense.commons.utils.Logging
+import io.deepsense.messageprotocol.WorkflowExecutorProtocol.ExecutionStatus
+
+class StatusLoggingActor extends Actor with Logging {
+  override def receive: Receive = {
+    case x => logger.info(s"Received status: $x")
+  }
+}

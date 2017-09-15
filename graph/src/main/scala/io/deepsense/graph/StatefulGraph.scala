@@ -120,6 +120,15 @@ case class StatefulGraph(
 
   def nodes: Set[Node] = directedGraph.nodes
 
+  /**
+    * Discards the current state of the graph. Creates a new graph
+    * that is structurally the same, but is in Draft state.
+    */
+  def reset: StatefulGraph = copy(
+    state = graphstate.Draft,
+    states = states.mapValues(_ => nodestate.Draft)
+  )
+
   // Delegated methods (TopologicallySortable)
 
   override def topologicallySorted: Option[List[Node]] = directedGraph.topologicallySorted

@@ -39,6 +39,7 @@ import io.deepsense.models.json.workflow.exceptions.{WorkflowVersionException, W
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{GraphFinished, Launch}
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
+import io.deepsense.workflowexecutor.communication.Connect
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.{ExecutionParams, ReportUploadClient, WorkflowDownloadClient, WorkflowExecutorActor}
 
@@ -62,10 +63,9 @@ case class WorkflowExecutor(
     val startedTime = DateTimeConverter.now
 
     val resultPromise: Promise[GraphFinished] = Promise()
-    workflowExecutorActor ! Launch(workflow.graph, resultPromise)
+    workflowExecutorActor ! Connect(workflow.id)
+    workflowExecutorActor ! Launch(workflow.graph)
 
-    logger.debug("Awaiting execution end...")
-    actorSystem.awaitTermination()
 
     val report = resultPromise.future.value.get match {
       case Failure(exception) => // WEA failed with an exception
@@ -81,6 +81,9 @@ case class WorkflowExecutor(
           entitiesMap
         ))
     }
+
+    logger.debug("Awaiting execution end...")
+    actorSystem.awaitTermination()
 
     cleanup(actorSystem, executionContext)
     report

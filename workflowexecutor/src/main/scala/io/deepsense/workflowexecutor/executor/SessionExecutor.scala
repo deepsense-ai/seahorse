@@ -16,38 +16,70 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import io.deepsense.deeplang._
+import akka.actor.{ActorSystem, Props}
+import com.rabbitmq.client.ConnectionFactory
+import com.thenewmotion.akka.rabbitmq.ConnectionActor
+import org.apache.spark.SparkContext
+
+import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.workflowexecutor.communication.{MQCommunication, ProtocolDeserializer}
+import io.deepsense.workflowexecutor.rabbitmq.{MQCommunicationFactory, MQPublisher, MySubscriber, SubscriberActor}
+import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingActor}
 
 /**
  * SessionExecutor waits for user instructions in an infinite loop.
  */
-case class SessionExecutor(reportLevel: ReportLevel) extends Executor {
+case class SessionExecutor(
+    reportLevel: ReportLevel,
+    messageQueueHost: String)
+  extends Executor {
+
+  val graphReader = new GraphReader(createDOperationsCatalog())
 
   /**
    * WARNING: Performs an infinite loop.
    */
   def execute(): Unit = {
     logger.debug("SessionExecutor starts")
-    val executionContext = createExecutionContext(reportLevel)
+    val sparkContext = createSparkContext()
+    val dOperableCatalog = createDOperableCatalog()
 
-    // TODO: some kind of infinite loop / some kind of break condition
-    // also: You might want to move something from WorkflowExecutor class to Executor trait
-    // to make it usable from here.
-    var counter = 0
-    while(true) {
-      counter = counter + 1
-      logger.debug("Loop lap number: " + counter)
-      Thread.sleep(10 * 1000)
-    }
+    implicit val system = ActorSystem()
+    val statusLogger = system.actorOf(Props[StatusLoggingActor], "status-logger")
 
-    cleanup(executionContext)
+    val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
+      sparkContext,
+      dOperableCatalog,
+      ReportLevel.HIGH,
+      statusLogger), "workflows")
+
+    val factory = new ConnectionFactory()
+    factory.setHost(messageQueueHost)
+
+    val connection = system.actorOf(
+      ConnectionActor.props(factory),
+      MQCommunication.mqActorSystemName)
+    val exchange = "seahorse"
+
+    val mySubscriber = system.actorOf(MySubscriber.props(executionDispatcher), "mySubscriber")
+    val communicationFactory = MQCommunicationFactory(system, connection)
+
+    val globalMessageDeserializer = ProtocolDeserializer(graphReader, currentVersion)
+    val globalSubscriber = SubscriberActor(mySubscriber, globalMessageDeserializer)
+
+    val globalPublisher: MQPublisher = communicationFactory.createCommunicationChannel(
+      exchange, globalSubscriber)
+
+    system.awaitTermination()
+    cleanup(sparkContext)
     logger.debug("SessionExecutor ends")
   }
 
-  private def cleanup(executionContext: ExecutionContext): Unit = {
+  private def cleanup(sparkContext: SparkContext): Unit = {
     logger.debug("Cleaning up...")
-    executionContext.sparkContext.stop()
+    sparkContext.stop()
     logger.debug("Spark terminated!")
   }
 }

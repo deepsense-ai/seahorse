@@ -83,6 +83,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       "name or value can be surrounded by quotation marks " +
       "if it contains special characters (e.g. space)"
 
+    opt[String]('m', "--message-queue-host") valueName "HOST" action {
+      (x, c) => c.copy(messageQueueHost = Some(x))
+    } text "message queue host"
+
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("")
@@ -100,8 +104,11 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
           success
         }
       } else {
-        // We do not need any parameters in interactive mode
-        success
+        if (c.messageQueueHost.isEmpty) {
+          failure("--message-queue-host is required")
+        } else {
+          success
+        }
       }
     }
   }
@@ -125,7 +132,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       // Interactive mode (SessionExecutor)
       logger.info("Starting SessionExecutor.")
       logger.debug("Starting SessionExecutor.")
-      SessionExecutor(params.reportLevel).execute()
+      SessionExecutor(params.reportLevel, params.messageQueueHost.get).execute()
     }
   }
 

@@ -19,9 +19,11 @@ package io.deepsense.workflowexecutor.executor
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
+import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
-import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.utils.{Version, Logging}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
@@ -29,12 +31,17 @@ import io.deepsense.deeplang.{CatalogRecorder, ExecutionContext}
 
 trait Executor extends Logging {
 
-  def createExecutionContext(reportLevel: ReportLevel): ExecutionContext = {
-    val sparkContext = createSparkContext()
-    val sqlContext = createSqlContext(sparkContext)
+  def currentVersion: Version =
+    Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
 
-    val dOperableCatalog = new DOperableCatalog
-    CatalogRecorder.registerDOperables(dOperableCatalog)
+  def createExecutionContext(
+      reportLevel: ReportLevel,
+      sparkContext: Option[SparkContext] = None,
+      dOperableCatalog: Option[DOperableCatalog] = None): ExecutionContext = {
+
+    val sContext = sparkContext.getOrElse(createSparkContext())
+    val sqlContext = createSqlContext(sContext)
+    val catalog = dOperableCatalog.getOrElse(createDOperableCatalog())
 
     val tenantId = ""
 
@@ -42,11 +49,11 @@ trait Executor extends Logging {
       DataFrameBuilder(sqlContext),
       entityStorageClient = null,  // temporarily not used
       tenantId,
-      dOperableCatalog,
+      catalog,
       fullInference = true)
 
     ExecutionContext(
-      sparkContext,
+      sContext,
       sqlContext,
       inferContext,
       FileSystemClientStub(), // temporarily mocked
@@ -54,7 +61,7 @@ trait Executor extends Logging {
       tenantId)
   }
 
-  private def createSparkContext(): SparkContext = {
+  def createSparkContext(): SparkContext = {
     val sparkConf = new SparkConf()
     sparkConf.setAppName("Seahorse Workflow Executor")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
@@ -63,10 +70,22 @@ trait Executor extends Logging {
     new SparkContext(sparkConf)
   }
 
-  private def createSqlContext(sparkContext: SparkContext): SQLContext = {
+  def createSqlContext(sparkContext: SparkContext): SQLContext = {
     val sqlContext = new SQLContext(sparkContext)
     UserDefinedFunctions.registerFunctions(sqlContext.udf)
     sqlContext
+  }
+
+  def createDOperableCatalog(): DOperableCatalog = {
+    val catalog = new DOperableCatalog
+    CatalogRecorder.registerDOperables(catalog)
+    catalog
+  }
+
+  def createDOperationsCatalog(): DOperationsCatalog = {
+    val catalog = DOperationsCatalog()
+    CatalogRecorder.registerDOperations(catalog)
+    catalog
   }
 
 }

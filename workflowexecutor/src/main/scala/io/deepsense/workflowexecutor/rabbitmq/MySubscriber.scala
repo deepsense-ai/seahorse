@@ -16,14 +16,31 @@
 
 package io.deepsense.workflowexecutor.rabbitmq
 
-import akka.actor.Actor
-import io.deepsense.workflowexecutor.communication.Connect
+import akka.actor.{ActorRef, Props, Actor}
+import io.deepsense.commons.utils.Logging
+import io.deepsense.workflowexecutor.{WorkflowExecutorActor, ExecutionDispatcherActor}
+import io.deepsense.workflowexecutor.communication.{Launch, Connect}
 
-class MySubscriber extends Actor {
+class MySubscriber(executionDispatcher: ActorRef) extends Actor with Logging {
 
   override def receive(): Actor.Receive = {
     // scalastyle:off println
-    case Connect(workflowId) => println(s"odebralem connect, workflowId: $workflowId")
+    case x @ Connect(workflowId) =>
+      println(s"odebralem connect, workflowId: $workflowId")
+      executionDispatcher ! x
     // scalastyle:on println
+    case Launch(workflow) =>
+//      println(s"odebralem connect, workflowId")
+      // TODO variables from main
+      logger.debug(s"LAUNCH! $workflow")
+      val selection = context
+        .actorSelection(executionDispatcher.path./(workflow.id.toString))
+      selection ! WorkflowExecutorActor.Messages.Launch(workflow.graph)
+  }
+}
+
+object MySubscriber {
+  def props(executionDispatcher: ActorRef): Props = {
+    Props(new MySubscriber(executionDispatcher))
   }
 }

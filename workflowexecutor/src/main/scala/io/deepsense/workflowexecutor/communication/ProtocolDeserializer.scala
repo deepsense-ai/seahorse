@@ -16,19 +16,30 @@
 
 package io.deepsense.workflowexecutor.communication
 
-import spray.json.{DefaultJsonProtocol, JsObject}
+import spray.json.{RootJsonFormat, DefaultJsonProtocol, JsObject}
 
+import io.deepsense.commons.utils.{Logging, Version}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.WorkflowVersionUtil
 import io.deepsense.workflowexecutor.communication.ConnectJsonProtocol._
 
-case class ProtocolDeserializer()
+case class ProtocolDeserializer(
+    override val graphReader: GraphReader,
+    override val currentVersion: Version)
   extends MQMessageDeserializer
-  with DefaultJsonProtocol {
+  with Logging
+  with DefaultJsonProtocol
+  with WorkflowVersionUtil {
+
+  def launchReader: RootJsonFormat[Launch] = jsonFormat1(Launch.apply)
 
   override protected def deserializeJson(jsObject: JsObject): MessageMQ = {
     val fields = jsObject.fields
     val messageType: String = fields(MessageMQ.messageTypeKey).convertTo[String]
     messageType match {
       case Connect.messageType => fields(MessageMQ.messageBodyKey).convertTo[Connect]
+      case Launch.messageType =>
+        fields(MessageMQ.messageBodyKey).convertTo[Launch](launchReader)
     }
   }
 }
