@@ -5,76 +5,83 @@ menuTab: index
 title: Quick Start
 description: Seahorse documentation homepage
 ---
+### Setup Seahorse
+<div class="centered-container" markdown="1">
+  [![Download Seahorse](/img/quickstart/download-button.png){: .centered-image .img-responsive}](http://10.10.1.77:8081/artifactory/seahorse-bundled-image/1451907274/Vagrantfile)
+  _Requires <a target="_blank" href="http://download.virtualbox.org/virtualbox/5.0.10/">VirtualBox 5.0.10</a> and
+  <a target="_blank" href="https://releases.hashicorp.com/vagrant/1.8.1/">Vagrant 1.8.1</a>_
+</div>
 
-The goal of this exercise is very simple.
-We have [csv file](/_static/transactions.csv) with apartments prices from 3
-cities and we want to calculate average apartment price for each city.
+* Run `vagrant up` from directory where `Vagrantfile` was downloaded. This may take a few minutes.
+* After [Seahorse Bundled Image](bundled_image_overview.html) was installed, in
+[Chrome browser](https://www.google.pl/chrome/browser/) go to locally hosted
+<a target="_blank" href=" {{ site.SEAHORSE_EDITOR_ADDRESS }} ">Seahorse Editor</a>.
 
-The csv file has 5 columns and 1000 rows (header row and 999 data rows).
+
+### Create a new empty workflow
+In the the main page of Seahorse you can manage existing workflows and create new. Let's make a new one:
+
+* Click **New workflow**.
+* Name your workflow with `quickstart` so you can distinguish it later on.
+* Press the **create** button.
+
+### Build workflow
+You've been redirected to workflow editor page where you can interactively compound complex algorithms.
+
+In Seahorse, algorithms are represented as graphs of connected [operations](/operations.html),
+which are consuming and producing [entities](/deeplang_overview.html#entities).
+
+Let's start with a single one.
+
+#### Read some data
+
+* From left panel called **Operation catalogue**, drag [Read DataFrame](operations/read_dataframe.html) operation
+  to your canvas.
+* As you can see operation yields a warning. You can read it by moving cursor over exclamation mark.
+
+
+  <div class="centered-container" markdown="1">
+    ![Read DataFrame](./img/quickstart/warning_read_dataframe.png){: .centered-image .img-responsive}
+  </div>
+
+
+* Click on **Read DataFrame** node on canvas to unfold parameters panel.
+* Fill missing **SOURCE** with example data set
+`https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv`
+* To make Seahorse fetch data, select dropped **Read DataFrame** and press **Run**.
+Node will change its state to **RUNNING** and after a while to **COMPLETED**.
+Execution time statistics are provided in the right panel.
+* You can view sample data of any completed operation with [DataFrame](/classes/dataframe.html)
+output by clicking its port icon.
+
+
+#### Query it!
+Loaded [transactions.csv file](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv)
+contains apartments prices from 3 cities.
+It has 5 columns and 1000 rows (header row and 999 data rows).
 Each row provides information about the apartment:
 city, number of bedrooms, number of bathrooms, size of the apartment (in square feets) and its price.
 
-    city,beds,baths,sq_ft,price
-    CityB,4,1,1294,529377
-    CityC,4,2,1418,574485
-    CityC,2,1,600,221661
-    ...
 
-### Build workflow
+<img class="img-responsive" style="display: block; margin-left: auto; margin-right: auto; width:60%; height:auto" src="./img/quickstart/transactions_sample.png" />
 
-<img class="img-responsive" style="float:right" src="./img/quickstart_workflow.png" />
+<img class="img-responsive" style="float:right" src="./img/quickstart/workflow.png" />
 
-* Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a>
-and click **New workflow**
-  * Put <code>quickstart</code> in the **Name** section
-  * Press the **create** button
-* Drag [Read DataFrame](operations/read_dataframe.html) operation
-  to your canvas
-  * Click on **Read DataFrame** operation - menu on the right will show its parameters
-  * Put <code>transactions.csv</code> in the **SOURCE** parameter
-* Drag [SQL Expression](operations/sql_expression.html)
-   to your canvas
-  * Put <code>transactions</code> in the **DATAFRAME ID** parameter
-  * Put <code>SELECT city, AVG(price) FROM transactions GROUP BY city</code> in the **EXPRESSION** parameter
-* Connect **Read Data Frame** output with **SQL Expression** input
+Let's calculate average apartment price for each city:
 
-* Press **Save** button from the top menu
-* Press **Export** button from the top menu
-  * Press **Download** in popup window
-  * Workflow file named **quickstart.json** will be downloaded to your machine
+* From **Operation catalogue**, drag [Execute SQL Expression](operations/execute_sql_expression.html) operation
+  to your canvas.
+* Drag **Read DataFrame** output to **Execute SQL Expression** input to make a connection.
+* Select **Execute SQL Expression** operation.
+* Fill its parameters:
+  * Set **DATAFRAME ID** to `transactions`. You will refer in SQL expression to the DataFrame by this name.
+  * Set **EXPRESSION** to `SELECT city, AVG(price) as avg_price FROM transactions GROUP BY city`
+* Click run to execute workflow and you will see two completed nodes.
+* To view results, click on the first output port of **Execute SQL Expression**.
 
-### Execute on Apache Spark
+<img class="img-responsive" style="display: block; margin-left: auto; margin-right: auto; width:60%; height:auto" src="./img/quickstart/report.png" />
 
-* Download [Workflow Executor JAR](/downloads.html)
-or [build from source](batch_workflow_executor_overview.html#building-workflow-executor}})
-* Download [transactions.csv](/_static/transactions.csv)
 
-The command presented below will execute workflow on the local Apache Spark.
-Workflow Executor JAR and transactions.csv have to be placed in current working directory.
-Replace `./bin/spark-submit` with path to script in Apache Spark's directory.
-For more details or information on how to run the workflow on real cluster, please check
-[this page](workflowexecutor.html#how-to-run-workflow-executor).
+Congratulations! You have successfully made your first Seahorse application.
 
-    ./bin/spark-submit \
-      --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
-      --master local[2] \
-      workflowexecutor_2.10-latest.jar \
-        --workflow-filename quickstart.json \
-        --output-directory . \
-        --report-level medium \
-        --upload-report
-
-### View the reports
-
-<img style="float:right" src="./img/quickstart_report.png" />
-When spark-submit job has finished, reports will be available in the Seahorse Editor.
-Go to the page with workflow canvas and press the **LAST EXECUTION REPORT** button in the top menu.
-The report will contain all the operations execution times and details about the
-produced entities.
-Click on the output port of
-[SQL Expression](operations/sql_expression.html)
-to see the results of the query.
-
-### Where to go from here
-
-* [More examples](examples.html): Data processing and Machine Learning examples
+Please visit [more examples](examples.html) that cover: Data Processing, Machine Learning and Custom Seahorse Operations.
