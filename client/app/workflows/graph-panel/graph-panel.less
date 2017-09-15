@@ -17,12 +17,24 @@ path,
 
 .flowchart-box {
   width: 100%;
-  background-color: rgba(239, 239, 239, 0.75);
+  background: rgb(239, 239, 239);
   overflow: hidden;
   margin: 0;
   height: 100%;
   position: relative;
   flex: 1;
+
+  &:after {
+    content: "";
+    background: url("../img/seahorse-small.png") center center no-repeat;
+    opacity: 0.5;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: 0;
+  }
 
   &.active-drag-target {
     border: 3px dashed @color-action;
@@ -53,6 +65,10 @@ path,
     left: 0;
     width: 100%;
   }
+}
+
+.deepsense-interactive-panel {
+  height: 100%;
 }
 
 @import "graph-panel-node/graph-panel-node.less";

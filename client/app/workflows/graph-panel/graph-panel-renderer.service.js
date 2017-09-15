@@ -67,17 +67,16 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
   internal.getAllInternalElementsPosition = function getAllInternalElementsPosition () {
     let elementsToFit = jsPlumb.getContainer().children;
-    let elementsToFitPositions = _.map(elementsToFit, (el) => {
+
+    return _.map(elementsToFit, (el) => {
       let elementDimensions = el.getBoundingClientRect();
       return {
-        top:    el.offsetTop,
-        left:   el.offsetLeft,
-        right:  el.offsetLeft  + elementDimensions.width,
-        bottom: el.offsetTop   + elementDimensions.height
+        top: el.offsetTop,
+        left: el.offsetLeft,
+        right: el.offsetLeft + elementDimensions.width,
+        bottom: el.offsetTop + elementDimensions.height
       };
     });
-
-    return elementsToFitPositions;
   };
 
   that.getPseudoContainerPosition = function getPseudoContainerPosition () {
@@ -188,11 +187,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     let connections = jsPlumb.getConnections();
     let edges = internal.workflow.getEdges();
     for (let id in edges) {
-      let edge = edges[id];
-      let connection = _.find(connections, (connection) => connection.getParameter('edgeId') === edge.id );
+      if (edges.hasOwnProperty(id)) {
+        let edge = edges[id];
+        let connection = _.find(connections, (connection) => connection.getParameter('edgeId') === edge.id );
 
-      if (!_.isUndefined(connection)) {
-        connection.setPaintStyle(connectorPaintStyles[edge.state]);
+        if (!_.isUndefined(connection)) {
+          connection.setPaintStyle(connectorPaintStyles[edge.state]);
+        }
       }
     }
   };
@@ -341,16 +342,16 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
   };
 
   that.rerender = function rerender() {
-    this.init();
-    this.renderPorts();
-    this.renderEdges();
-    this.repaintEverything();
+    that.init();
+    that.renderPorts();
+    that.renderEdges();
+    that.repaintEverything();
   };
 
   return that;
 }
 
-exports.function = GraphPanelRendererService;
+// exports.function = GraphPanelRendererService;
 
 exports.inject = function (module) {
   module.service('GraphPanelRendererService', GraphPanelRendererService);
