@@ -59,7 +59,7 @@ services:
       - "SM_MQ_PORT=5672"
       - "TEMP_DIR=/tmp/seahorse/download"
     volumes:
-      - "${DATA_DIR}:/data"
+      - "${DATA_DIR}:/resources/data"
     links:
       - rabbitmq
       - workflowmanager
