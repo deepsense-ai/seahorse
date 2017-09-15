@@ -8,6 +8,8 @@ package io.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
 
+// TODO remove currying and make contexts parameters implicit
+
 abstract class DMethod0To1[
     P,
     TO_0 <: DOperable : ru.TypeTag] extends DMethod {

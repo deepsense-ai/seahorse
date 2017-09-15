@@ -18,14 +18,14 @@ class ScoreRegressorSpec extends UnitSpec with MockitoSugar {
 
   "ScoreRegressor" should "score model on dataframe" in {
     val scorableMock = new Scorable {
-      override val score = mock[DMethod1To1[None.type, DataFrame, DataFrame]]
+      override val score = mock[DMethod1To1[Unit, DataFrame, DataFrame]]
     }
     val executionContextStub = mock[ExecutionContext]
     val dataframeStub = mock[DataFrame]
     val resultDataframeStub = mock[DataFrame]
 
     when(scorableMock.score.apply(
-      executionContextStub)(None)(dataframeStub)).thenReturn(resultDataframeStub)
+      executionContextStub)(())(dataframeStub)).thenReturn(resultDataframeStub)
 
     val result = scoreRegressor.execute(executionContextStub)(Vector(scorableMock, dataframeStub))
 

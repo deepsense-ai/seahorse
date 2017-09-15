@@ -53,6 +53,7 @@ object Library {
   val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
   val sparkSql           = spark("sql")
   val sparkCore          = spark("core")
+  val sparkMLLib         = spark("mllib")
   val sprayCan           = spray("can")
   val sprayRouting       = spray("routing")
   val sprayTestkit       = spray("testkit")
@@ -92,6 +93,7 @@ object Dependencies {
     nscalaTime,
     scalaReflect,
     sparkSql,
+    sparkMLLib,
     sparkCore,
     sprayJson
   ) ++ Seq(scalatest, mockitoCore).map(_ % "test")

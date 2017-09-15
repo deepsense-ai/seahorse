@@ -7,9 +7,9 @@
 package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{ExecutionContext, DOperation2To1}
 import io.deepsense.deeplang.doperables.Scorable
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 class ScoreRegressor extends DOperation2To1[Scorable, DataFrame, DataFrame]{

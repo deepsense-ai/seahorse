@@ -6,9 +6,9 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import org.apache.spark.sql.types._
-
 import scala.collection.mutable
+
+import org.apache.spark.sql.types._
 
 trait HasSchemaValidation {
 

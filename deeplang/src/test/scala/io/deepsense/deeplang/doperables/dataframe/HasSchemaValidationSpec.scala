@@ -6,8 +6,9 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import io.deepsense.deeplang.UnitSpec
 import org.apache.spark.sql.types._
+
+import io.deepsense.deeplang.UnitSpec
 
 class HasSchemaValidationSpec extends UnitSpec {
 

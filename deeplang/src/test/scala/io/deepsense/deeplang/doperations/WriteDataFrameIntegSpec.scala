@@ -8,13 +8,11 @@ package io.deepsense.deeplang.doperations
 
 import java.sql.Timestamp
 
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
 class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
@@ -52,16 +50,12 @@ class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter 
     pathParameter.value = Some(testDir)
 
     val schema: StructType = StructType(List(
-      StructField("column1", StringType, true),
-      StructField("column2", LongType, true),
-      StructField("column3", DoubleType, true),
-      StructField("column4", TimestampType, true)))
+      StructField("column1", StringType),
+      StructField("column2", LongType),
+      StructField("column3", DoubleType),
+      StructField("column4", TimestampType)))
 
-    val manualRDD: RDD[Row] = sparkContext.parallelize(rowsSeq)
-
-    val sparkDataFrame = sqlContext.createDataFrame(manualRDD, schema)
-    val builder = DataFrameBuilder(sqlContext)
-    val dataFrameToSave = builder.buildDataFrame(sparkDataFrame)
+    val dataFrameToSave = createDataFrame(rowsSeq, schema)
     operation.execute(context)(Vector[DOperable](dataFrameToSave))
 
     val loadedDataFrame = sqlContext.parquetFile(testDir)

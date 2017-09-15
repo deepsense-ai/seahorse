@@ -7,10 +7,10 @@
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql
-import org.apache.spark.sql.types.{IntegerType, StructType}
-import org.apache.spark.sql.{Column, ColumnName}
+import org.apache.spark.sql.Column
+import org.apache.spark.sql.types.IntegerType
 
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameUtils}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.TimestampDecomposer.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
@@ -28,9 +28,9 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
 
   override val parameters = ParametersSchema(
     timestampColumnParamKey ->
-      SingleColumnSelectorParameter("Timestamp column to decompose", true),
+      SingleColumnSelectorParameter("Timestamp column to decompose", required = true),
     timestampPartsParamKey ->
-      MultipleChoiceParameter("Parts of the date time to select", None, true, timeUnits)
+      MultipleChoiceParameter("Parts of the date time to select", None, required = true, timeUnits)
   )
 
   override val id: DOperation.Id = "42f2eb12-e28b-11e4-8a00-1681e6b88ec1"
@@ -38,42 +38,31 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
   override val name: String = "Decompose Timestamp"
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
-    val timestampColumnName: String =
+    val decomposedColumnName: String =
       dataFrame.getColumnName(parameters.getSingleColumnSelection(timestampColumnParamKey).get)
-    val timestampUnitColumnCreator =
-      timestampUnitColumn(dataFrame.sparkDataFrame, timestampColumnName) _
-    val selectedParts: Set[String] =
-      parameters.getMultipleChoice(timestampPartsParamKey).get.map(_.label).toSet
-    val newColumns: Traversable[Column] = timestampParts.filter(
-      p => selectedParts.contains(p.name)).map(timestampUnitColumnCreator)
-    val columns: List[Column] = new ColumnName("*") :: newColumns.toList
-    val newSparkDataFrame = dataFrame.sparkDataFrame.select(columns:_*)
-    context.dataFrameBuilder.buildDataFrame(newSparkDataFrame)
+    val firstFreeNamesLevel = dataFrame.getFirstFreeNamesLevel(
+      decomposedColumnName, timestampParts.map(_.name).toSet)
+
+    val selectedParts = parameters.getMultipleChoice(timestampPartsParamKey).get.map(_.label).toSet
+
+    val newColumns = for {
+      part <- timestampParts
+      if selectedParts.contains(part.name)
+    } yield timestampUnitColumn(
+        dataFrame.sparkDataFrame, decomposedColumnName, part, firstFreeNamesLevel)
+
+    dataFrame.withColumns(context, newColumns)
   }
 
-  private[this] def timestampUnitColumn(sDataFrame: sql.DataFrame, columnName: String)
-      (timestampPart: TimestampDecomposer.TimestampPart): Column = {
-    val newColumnName: String =
-      timestampUnitColumnName(sDataFrame.schema, columnName, timestampPart.name)
-    (sDataFrame(columnName).substr(timestampPart.start, timestampPart.length)
+  private[this] def timestampUnitColumn(
+      sparkDataFrame: sql.DataFrame,
+      columnName: String,
+      timestampPart: TimestampDecomposer.TimestampPart,
+      level: Int): Column = {
+
+    val newColumnName = DataFrame.createColumnName(columnName, timestampPart.name, level)
+    (sparkDataFrame(columnName).substr(timestampPart.start, timestampPart.length)
       as newColumnName cast IntegerType)
-  }
-
-  private[this] def timestampUnitColumnName(
-      schema: StructType,
-      originalColumnName: String,
-      timestampPart: String): String = {
-    val firstFreeNamesLevel = DataFrameUtils.getFirstFreeNamesLevel(schema.fieldNames.toSet,
-      originalColumnName, timestampParts.map(_.name).toSet, columnName)
-    columnName(originalColumnName, timestampPart, firstFreeNamesLevel)
-  }
-
-  private[this] def columnName(
-      originalColumnName: String,
-      timestampPart: String,
-      level: Int): String = {
-    val levelSuffix = if (level > 0) "_" + level else ""
-    originalColumnName + "_" + timestampPart + levelSuffix
   }
 }
 

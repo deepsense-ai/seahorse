@@ -9,7 +9,7 @@ package io.deepsense.deeplang.doperations
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Scorable, Trainable}
-import io.deepsense.deeplang.parameters.{ColumnSelectorParameter, SingleColumnSelection, SingleColumnSelectorParameter, ParametersSchema}
+import io.deepsense.deeplang.parameters.{ColumnSelectorParameter, ParametersSchema, SingleColumnSelectorParameter}
 
 class TrainRegressor extends DOperation2To1[Trainable, DataFrame, Scorable] {
   override val id: DOperation.Id = "c526714c-e7fb-11e4-b02c-1681e6b88ec1"

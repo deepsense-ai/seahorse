@@ -40,8 +40,6 @@ object ColumnSelection extends Serializable {
           NameColumnSelection.fromJson(value)
         case JsString(IndexColumnSelection.typeName) =>
           IndexColumnSelection.fromJson(value)
-        case JsString(RoleColumnSelection.typeName) =>
-          RoleColumnSelection.fromJson(value)
         case JsString(TypeColumnSelection.typeName) =>
           TypeColumnSelection.fromJson(value)
         case unknownType =>
@@ -56,7 +54,7 @@ object ColumnSelection extends Serializable {
 /**
  * Represents selecting subset of columns which have one of given names.
  */
-case class NameColumnSelection(names: List[String])
+case class NameColumnSelection(names: Set[String])
   extends ColumnSelection(NameColumnSelection.typeName) {
 
   override protected def valuesToJson: JsValue = names.toJson
@@ -67,13 +65,13 @@ object NameColumnSelection {
 
   def fromJson(jsValue: JsValue): NameColumnSelection = {
     import DefaultJsonProtocol._
-    NameColumnSelection(jsValue.convertTo[List[String]])
+    NameColumnSelection(jsValue.convertTo[Set[String]])
   }
 }
 /**
  * Represents selecting subset of columns which have one of given indexes.
  */
-case class IndexColumnSelection(indexes: List[Int])
+case class IndexColumnSelection(indexes: Set[Int])
   extends ColumnSelection(IndexColumnSelection.typeName) {
 
   override protected def valuesToJson: JsValue = indexes.toJson
@@ -84,32 +82,14 @@ object IndexColumnSelection {
 
   def fromJson(jsValue: JsValue): IndexColumnSelection = {
     import DefaultJsonProtocol._
-    IndexColumnSelection(jsValue.convertTo[List[Int]])
-  }
-}
-
-/**
- * Represents selecting subset of columns which have one of given roles.
- */
-case class RoleColumnSelection(roles: List[ColumnRole])
-  extends ColumnSelection(RoleColumnSelection.typeName) {
-
-  override protected def valuesToJson: JsValue = roles.map(_.toString).toJson
-}
-
-object RoleColumnSelection {
-  val typeName = "roleList"
-
-  def fromJson(jsValue: JsValue): RoleColumnSelection = {
-    import DefaultJsonProtocol._
-    RoleColumnSelection(jsValue.convertTo[List[String]].map(ColumnRole.withName))
+    IndexColumnSelection(jsValue.convertTo[Set[Int]])
   }
 }
 
 /**
  * Represents selecting subset of columns which have one of given types.
  */
-case class TypeColumnSelection(types: List[ColumnType])
+case class TypeColumnSelection(types: Set[ColumnType])
   extends ColumnSelection(TypeColumnSelection.typeName) {
 
   override protected def valuesToJson: JsValue = types.map(_.toString).toJson
@@ -121,6 +101,6 @@ object TypeColumnSelection {
 
   def fromJson(jsValue: JsValue): TypeColumnSelection = {
     import DefaultJsonProtocol._
-    TypeColumnSelection(jsValue.convertTo[List[String]].map(ColumnType.withName))
+    TypeColumnSelection(jsValue.convertTo[Set[String]].map(ColumnType.withName))
   }
 }

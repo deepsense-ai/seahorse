@@ -18,7 +18,10 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
-class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter with LazyLogging {
+class ReadDataFrameIntegSpec
+  extends SparkIntegTestSupport
+  with BeforeAndAfter
+  with LazyLogging {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
   val testDir = "/tests/ReadDataFrameTest"
@@ -44,10 +47,10 @@ class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter w
 
   def testDataFrame(builder: DataFrameBuilder): DataFrame = {
     val schema: StructType = StructType(List(
-      StructField("column1", StringType, true),
-      StructField("column2", LongType, true),
-      StructField("column3", DoubleType, true),
-      StructField("column4", TimestampType, true)))
+      StructField("column1", StringType),
+      StructField("column2", LongType),
+      StructField("column3", DoubleType),
+      StructField("column4", TimestampType)))
     val manualRowsSeq: Seq[Row] = Seq(
       Row("aaa", 1L, 1.2, timestamp),
       Row("bbb", 2L, 2.2, timestamp),
