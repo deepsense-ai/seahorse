@@ -47,7 +47,7 @@ trait GBTParams extends Params
     description = "Maximum depth of the tree. " +
       "E.g., depth 0 means 1 leaf node; depth 1 means 1 internal node + 2 leaf nodes.",
     sparkParamGetter = _.maxDepth,
-    RangeValidator.positiveIntegers)
+    RangeValidator(0, 30, step = Some(1.0)))
   setDefault(maxDepth, 5.0)
 
   val minInfoGain =

@@ -38,7 +38,7 @@ class RandomForestRegression
     name = "max depth",
     description = "Maximum depth of each tree in the forest.",
     sparkParamGetter = _.maxDepth,
-    validator = RangeValidator.positiveIntegers)
+    RangeValidator(0, 30, step = Some(1.0)))
   setDefault(maxDepth, 5.0)
 
   val maxBins = new IntParamWrapper[SparkRFR](
