@@ -66,12 +66,6 @@ every 10 iterations.</td>
 </tr>
 
 <tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
-</tr>
-
-<tr>
 <td><code>k</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The number of clusters to create.</td>
@@ -91,12 +85,6 @@ Online Variational Bayes, Expectation-Maximization. Possible values: <code>["onl
 </tr>
 
 <tr>
-<td><code>seed</code></td>
-<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The random seed.</td>
-</tr>
-
-<tr>
 <td><code>subsampling rate</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Fraction of the corpus to be sampled and used in each iteration of mini-batch gradient
@@ -112,6 +100,18 @@ entire corpus is used. Specifically, set both so that `max iterations` * `subsam
 <td>Output column with estimates of the topic mixture distribution for each document
 (often called \"theta\" in the literature). Returns a vector of zeros for
 an empty document.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>seed</code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
+<td>The random seed.</td>
 </tr>
 
 </tbody>

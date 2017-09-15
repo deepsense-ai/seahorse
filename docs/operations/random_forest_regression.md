@@ -57,23 +57,23 @@ This operation does not take any input.
 <tr>
 <td><code>max depth</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The maximum depth of each tree in the forest.</td>
+<td>The maximum depth of the tree. E.g., depth 0 means 1 leaf node; depth 1 means 1 internal node + 2 leaf nodes.</td>
 </tr>
 
 <tr>
 <td><code>max bins</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The maximum number of bins discretizing continuous features (>= 2 and >= number of categories for any categorical feature).</td>
+<td>The maximum number of bins used for discretizing continuous features and for choosing how to split on features at each node. More bins give higher granularity. Must be >= 2 and >= number of categories in any categorical feature.</td>
 </tr>
 
 <tr>
 <td><code>min instances per node</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The minimum number of instances each child must have after split.</td>
+<td>The minimum number of instances each child must have after split. If a split causes the left or right child to have fewer instances than the parameter's value, the split will be discarded as invalid.</td>
 </tr>
 
 <tr>
-<td><code>min info gain</code></td>
+<td><code>min information gain</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The minimum information gain for a split to be considered at a tree node.</td>
 </tr>
@@ -128,6 +128,12 @@ every 10 iterations.</td>
 </tr>
 
 <tr>
+<td><code>label column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The label column for model fitting.</td>
+</tr>
+
+<tr>
 <td><code>features column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>The features column for model fitting.</td>
@@ -137,12 +143,6 @@ every 10 iterations.</td>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>The prediction column created during model scoring.</td>
-</tr>
-
-<tr>
-<td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The label column for model fitting.</td>
 </tr>
 
 </tbody>

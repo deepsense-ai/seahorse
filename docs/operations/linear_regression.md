@@ -91,24 +91,6 @@ This operation does not take any input.
 </tr>
 
 <tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
-</tr>
-
-<tr>
-<td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The label column for model fitting.</td>
-</tr>
-
-<tr>
-<td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The prediction column created during model scoring.</td>
-</tr>
-
-<tr>
 <td><code>use custom weights</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>Whether to over-/under-sample training instances according to the given weights in
@@ -126,6 +108,24 @@ optimization method. "normal" denotes Normal Equation. It is an analytical
 solution to the linear regression problem.
 The default value is "auto" which means that the solver algorithm is
 selected automatically. Possible values: <code>["auto", "normal", "l-bfgs"]</code></td>
+</tr>
+
+<tr>
+<td><code>label column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The label column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 </tbody>
