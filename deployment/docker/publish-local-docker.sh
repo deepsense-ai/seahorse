@@ -1,6 +1,7 @@
 #!/bin/bash
 # Copyright (c) 2016, CodiLime Inc.
 #
+#
 # Publishes docker image from given project path and name.
 
 set -ex
