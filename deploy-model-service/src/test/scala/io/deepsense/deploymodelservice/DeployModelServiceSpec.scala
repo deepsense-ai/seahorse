@@ -71,5 +71,17 @@ class DeployModelServiceSpec extends StandardSpec {
         }
       }
     }
+
+    "return 200 for version request" in {
+      new {
+        override val repository: ModelRepository = new ModelRepository()
+      } with DeployModelService {
+        override implicit def actorRefFactory: ActorRefFactory = system
+        Get("/version") ~> myRoute ~> check {
+          status shouldBe StatusCodes.OK
+          responseAs[String] should include ("version:")
+        }
+      }
+    }
   }
 }

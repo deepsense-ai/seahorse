@@ -6,7 +6,8 @@ package io.deepsense.deploymodelservice
 
 import scala.collection.mutable
 
-import akka.actor.{ActorContext, Actor}
+import akka.actor.{Actor, ActorContext}
+import buildinfo.BuildInfo
 import spray.http.HttpHeaders
 import spray.routing._
 
@@ -61,6 +62,11 @@ trait DeployModelService extends HttpService with Logging {
         logger.debug("CreatedModel: {}", result)
         complete(result)
       }
+    }
+  } ~
+  path("version") {
+    get {
+      complete(BuildInfo.toString)
     }
   }
 }
