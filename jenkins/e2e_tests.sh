@@ -34,7 +34,6 @@ cleanup # in case something was already running
 
 ## Start Spark Standalone cluster dockers
 
-seahorse-workflow-executor/docker/spark-standalone-cluster/build-cluster-node-docker.sh
 $SPARK_STANDALONE_MANAGEMENT up
 
 ## Start Mesos Spark cluster dockers
