@@ -3,4 +3,4 @@ angular.module('ds.lab').constant('config', {
   'apiPort': '9080',
   'apiVersion': '0.9.0',
   'urlApiVersion': 'v1'
-}).constant('additionalControls', true);
+});
