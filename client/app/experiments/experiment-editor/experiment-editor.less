@@ -20,6 +20,25 @@
   margin-right: 5px;
   padding: 3px;
   height: 810px;
-  overflow-y: scroll;
-  width: 300px;
+  width: auto;
+}
+
+.mCS-deepsense {
+  &.mCSB_scrollTools {
+    width: 5px;
+  }
+
+  &.mCSB_inside {
+    > .mCSB_container {
+      margin-right: 10px;
+    }
+
+    .mCSB_dragger .mCSB_dragger_bar {
+      background-color: rgba(0,0,0,0.25);
+    }
+
+    .mCSB_draggerRail {
+      background-color: white;
+    }
+  }
 }

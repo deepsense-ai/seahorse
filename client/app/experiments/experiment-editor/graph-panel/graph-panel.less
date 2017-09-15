@@ -29,24 +29,25 @@ path,
   position: relative;
   border: 3px solid white;
   border-radius: 5px;
-}
+  flex: 1;
 
-.flowchart-box .active {
-  border: 1px solid green;
-}
+  .active {
+    border: 1px solid green;
+  }
 
-.flowchart-box .hover {
-  border: 1px solid red;
-}
+  .hover {
+    border: 1px solid red;
+  }
 
-.flowchart-box ._jsPlumb_connector {
-  z-index: 4;
-}
+  ._jsPlumb_connector {
+    z-index: 4;
+  }
 
-.flowchart-paint-area {
-  position: absolute;
-  width: 100%;
-  height: 800px;
+  .flowchart-paint-area {
+    position: absolute;
+    width: 100%;
+    height: 800px;
+  }
 }
 
 @import "./graph-panel-node/graph-panel-node.less";
