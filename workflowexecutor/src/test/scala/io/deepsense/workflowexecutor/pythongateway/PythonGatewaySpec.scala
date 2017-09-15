@@ -25,7 +25,6 @@ import scala.io.BufferedSource
 import scala.util.{Success, Try}
 
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SparkSession
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.Eventually._
@@ -35,6 +34,7 @@ import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang.DataFrameStorage
+import io.deepsense.sparkutils.SparkSQLSession
 import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
@@ -59,7 +59,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
-        mock[SparkSession],
+        mock[SparkSQLSession],
         mock[DataFrameStorage],
         mock[CustomCodeEntryPoint],
         localhost)
@@ -75,7 +75,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
-        mock[SparkSession],
+        mock[SparkSQLSession],
         mock[DataFrameStorage],
         mock[CustomCodeEntryPoint],
         localhost)
@@ -90,7 +90,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
-        mock[SparkSession],
+        mock[SparkSQLSession],
         mock[DataFrameStorage],
         mock[CustomCodeEntryPoint],
         localhost)
@@ -104,7 +104,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
-        mock[SparkSession],
+        mock[SparkSQLSession],
         mock[DataFrameStorage],
         customCodeEntryPoint,
         localhost)

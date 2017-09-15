@@ -31,8 +31,9 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
 import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvOptions
 import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
+import io.deepsense.sparkutils.SQL
 
-private[filestorage] object DriverFiles {
+object DriverFiles {
 
   def read(driverPath: String, fileFormat: InputFileFormatChoice)
           (implicit context: ExecutionContext): SparkDataFrame = fileFormat match {
@@ -58,13 +59,13 @@ private[filestorage] object DriverFiles {
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
-    RawCsvRDDToDataframe.parse(fileLinesRdd, context.sparkSession, params)
+    RawCsvRDDToDataframe.parse(fileLinesRdd, context.sparkSQLSession, params)
   }
 
   private def readJson(driverPath: String)(implicit context: ExecutionContext) = {
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
-    context.sparkSession.read.json(fileLinesRdd)
+    context.sparkSQLSession.read.json(fileLinesRdd)
   }
 
   private def writeCsv
@@ -72,20 +73,18 @@ private[filestorage] object DriverFiles {
       (implicit context: ExecutionContext): Unit = {
     val params = CsvOptions.map(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
 
-    val data = dataFrame.sparkDataFrame.rdd.collect()
-
     DataframeToDriverCsvFileWriter.write(
-      data,
+      dataFrame.sparkDataFrame,
       params,
       dataFrame.schema.get,
-      path
+      path.pathWithoutScheme
     )
   }
 
   private def writeJson(path: FilePath, dataFrame: DataFrame)
                        (implicit context: ExecutionContext): Unit = {
-    val rawJsonLines = dataFrame.sparkDataFrame.toJSON
-    writeRddToDriverFile(path.pathWithoutScheme, rawJsonLines.rdd)
+    val rawJsonLines: RDD[String] = SQL.dataFrameToJsonRDD(dataFrame.sparkDataFrame)
+    writeRddToDriverFile(path.pathWithoutScheme, rawJsonLines)
   }
 
   private def writeRddToDriverFile(driverPath: String, lines: RDD[String]): Unit = {

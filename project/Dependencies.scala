@@ -17,19 +17,21 @@
 import sbt._
 
 object Version {
-  val akka = "2.4.9"
+
+  import CommonSettingsPlugin.Versions
+  val akka = Versions.akka
+  val scala = Versions.scala
+  val hadoop = Versions.hadoop
+  val spark = Versions.spark
+
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
-  val guava = "19.0"
   val googleApi = "1.22.0"
-  val hadoop = "2.7.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
-  val scala = "2.11.8"
   val scalacheck = "1.12.2"
   val scalatest = "3.0.0"
   val scoverage = "1.0.4"
-  val spark = "2.0.0"
   val spray = "1.3.3"
   val sprayJson = "1.3.2"
   val wireMock = "1.57"
@@ -41,20 +43,19 @@ object Library {
     def excludeAkkaActor = m excludeAll ExclusionRule("com.typesafe.akka")
     def excludeScalatest = m excludeAll ExclusionRule("org.scalatest")
     def excludeJackson = m excludeAll ExclusionRule("com.fasterxml.jackson.core")
+    def excludeGuava = m excludeAll ExclusionRule("com.google.guava", "guava")
   }
 
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
-  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark excludeScalatest
+  val spark = (name: String) => (version: String) => "org.apache.spark" %% s"spark-$name" % version excludeScalatest
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
-  val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
-    Version.amazonS3 excludeJackson
+  val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" % Version.amazonS3 excludeJackson
   val apacheCommonsLang3 = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val apacheCommonsCsv = "org.apache.commons" % "commons-csv" % "1.1" // Also used by spark-csv
-  val guava = "com.google.guava" % "guava" % Version.guava
   val hadoopAWS = hadoop("aws")
   val hadoopClient = hadoop("client")
   val hadoopCommon = hadoop("common")
@@ -62,7 +63,7 @@ object Library {
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
-  val reflections = "org.reflections" % "reflections" % "0.9.10"
+  val reflections = "org.reflections" % "reflections" % "0.9.10" excludeGuava
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
   val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
@@ -77,6 +78,7 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
+  val sparkHive = spark("hive")
   val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock exclude (
     "com.google.guava", "guava") excludeJackson
   val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
@@ -94,12 +96,19 @@ object Dependencies {
     "central.maven.org" at "http://central.maven.org/maven2/"
   )
 
-  object Spark {
-    val components = Seq(
+  val sparkCSV: Seq[ModuleID] = Version.spark match {
+    case "1.6.1" => Seq("com.databricks" %% "spark-csv" % "1.4.0")
+    case "2.0.0" => Seq()
+  }
+
+  class Spark(version: String) {
+    private val unversionedComponents = Seq(
       sparkMLLib,
       sparkSql,
-      sparkCore
+      sparkCore,
+      sparkHive
     )
+    val components = unversionedComponents.map(_(version)) ++ sparkCSV
     val provided = components.map(_ % Provided)
     val test = components.map(_ % s"$Test,it")
     val onlyInTests = provided ++ test
@@ -124,7 +133,13 @@ object Dependencies {
     )
   }
 
-  val commons = Spark.onlyInTests ++ Seq(
+  val sparkutils_1_6_1 = new Spark("1.6.1").onlyInTests
+
+  val sparkutils_2_0_0 = new Spark("2.0.0").onlyInTests
+
+  val usedSpark = new Spark(Version.spark)
+
+  val commons = usedSpark.onlyInTests ++ Seq(
     apacheCommonsLang3,
     log4JExtras,
     nscalaTime,
@@ -135,33 +150,33 @@ object Dependencies {
     sprayJson
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
-  val deeplang = Spark.onlyInTests ++ Hadoop.onlyInTests ++ GoogleServicesApi.components ++ Seq(
+  val deeplang = usedSpark.onlyInTests ++ Hadoop.onlyInTests ++ GoogleServicesApi.components ++ Seq(
     apacheCommonsLang3,
     amazonS3,
     nscalaTime,
     scalaReflect,
     apacheCommonsCsv,
-    reflections
-  ) ++ Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
+    reflections) ++
+    sparkCSV ++
+    Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 
-  val docgen = Spark.components
+  val docgen = usedSpark.components
 
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val workflowJson = Spark.onlyInTests ++ Seq(
+  val workflowJson = usedSpark.onlyInTests ++ Seq(
     nscalaTime,
     sprayJson
   ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
-  val models = Spark.onlyInTests ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  val models = usedSpark.onlyInTests ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val reportlib = Spark.onlyInTests ++ Seq(
+  val reportlib = usedSpark.onlyInTests ++ Seq(
     sprayJson
   ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
-  val workflowexecutor = Spark.onlyInTests ++ Seq(
+  val workflowexecutor = usedSpark.onlyInTests ++ Seq(
     akkaActor,
-    guava,
     jsonLenses,
     scopt,
     sprayClient,

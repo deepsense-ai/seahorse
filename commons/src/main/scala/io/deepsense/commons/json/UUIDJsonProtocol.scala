@@ -18,8 +18,8 @@ package io.deepsense.commons.json
 
 import java.util.UUID
 
-import spray.json._
 import spray.httpx.SprayJsonSupport
+import spray.json._
 
 trait UUIDJsonProtocol {
 

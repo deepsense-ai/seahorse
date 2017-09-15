@@ -32,5 +32,7 @@ class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] w
       |In numeric column NaNs are considered as missing values.
     """.stripMargin
 
+  override lazy val tTagTO_1: TypeTag[MissingValuesHandler] = typeTag
+
   override val since: Version = Version(0, 4, 0)
 }

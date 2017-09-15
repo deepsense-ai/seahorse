@@ -18,10 +18,7 @@ package io.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-
-
-// TODO remove currying and make contexts parameters implicit
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 // code below is generated automatically
 // scalastyle:off

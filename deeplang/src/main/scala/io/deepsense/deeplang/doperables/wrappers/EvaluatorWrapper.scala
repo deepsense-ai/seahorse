@@ -25,13 +25,14 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.Evaluator
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
+import io.deepsense.sparkutils.ML
 
 class EvaluatorWrapper(
     context: ExecutionContext,
     evaluator: Evaluator)
-  extends evaluation.Evaluator {
+  extends ML.Evaluator {
 
-  override def evaluate(dataset: sql.Dataset[_]): Double = {
+  override def evaluateDF(dataset: sql.DataFrame): Double = {
     evaluator.evaluate(context)(())(DataFrame.fromSparkDataFrame(dataset.toDF())).value
   }
 

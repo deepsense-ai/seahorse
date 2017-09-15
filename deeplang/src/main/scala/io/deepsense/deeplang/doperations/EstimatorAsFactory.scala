@@ -23,10 +23,12 @@ import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Param
 
-abstract class EstimatorAsFactory[E <: Estimator[Transformer] : TypeTag]
+abstract class EstimatorAsFactory[E <: Estimator[Transformer]]
+  (implicit typeTagE: TypeTag[E])
   extends DOperation0To1[E] {
 
-  val estimator: E = TypeUtils.instanceOfType(typeTag[E])
+  val estimator: E = TypeUtils.instanceOfType(typeTagE)
+  override lazy val tTagTO_0: TypeTag[E] = typeTag[E]
   override val params: Array[Param[_]] = estimator.params
 
   setDefault(estimator.extractParamMap().toSeq: _*)

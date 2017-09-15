@@ -2,6 +2,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
 NAME=spark-2.0.0-bin-hadoop2.7
+
 ARCHIVE_FILE=$NAME.tgz
 TARGET_DIR=/opt
 

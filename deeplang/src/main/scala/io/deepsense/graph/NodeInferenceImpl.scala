@@ -23,8 +23,8 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
-import io.deepsense.graph.TypesAccordance.TypesAccordance
 import io.deepsense.graph.DefaultKnowledgeService._
+import io.deepsense.graph.TypesAccordance.TypesAccordance
 
 trait NodeInferenceImpl extends NodeInference {
   /**

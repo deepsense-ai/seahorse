@@ -46,6 +46,9 @@ class WriteDataFrame()
 
   override val since: Version = Version(0, 4, 0)
 
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+
   val storageType = ChoiceParam[OutputStorageTypeChoice](
     name = "data storage type",
     description = "Storage type.")
@@ -91,5 +94,4 @@ class WriteDataFrame()
     ParquetSupportedOnClusterOnly.validate(this)
     super.inferKnowledge(k0)(context)
   }
-
 }

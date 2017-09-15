@@ -31,6 +31,8 @@ class DCT extends TransformerAsOperation[DiscreteCosineTransformer]
   override val name: String = "DCT"
   override val description: String = "Applies discrete cosine transform (DCT) to vector columns"
 
+  override lazy val tTagTO_1: TypeTag[DiscreteCosineTransformer] = typeTag
+
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#discrete-cosine-transform-dct")
   override val since: Version = Version(1, 0, 0)

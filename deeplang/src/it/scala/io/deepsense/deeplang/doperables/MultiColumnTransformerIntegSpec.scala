@@ -115,8 +115,7 @@ class MultiColumnTransformerIntegSpec extends DeeplangIntegTestSupport {
     InputData(15, "ghi", 5, 89),
     InputData(29, "jkl", 5, 13))
 
-  val inputData = DataFrame.fromSparkDataFrame(
-    sparkSession.createDataFrame(sparkContext.parallelize(rawInputData)))
+  val inputData = createDataFrame(rawInputData)
 
   val inputSchema = inputData.schema
 

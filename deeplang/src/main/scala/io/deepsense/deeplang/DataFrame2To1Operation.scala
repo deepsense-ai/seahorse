@@ -16,9 +16,10 @@
 
 package io.deepsense.deeplang
 
+import org.apache.spark.sql.types.StructType
+
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import org.apache.spark.sql.types.StructType
 
 trait DataFrame2To1Operation { self: DOperation2To1[DataFrame, DataFrame, DataFrame] =>
   override protected final def inferKnowledge(

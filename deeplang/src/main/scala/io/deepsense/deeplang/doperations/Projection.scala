@@ -30,5 +30,7 @@ class Projection extends TransformerAsOperation[Projector] with OperationDocumen
   override val description: String =
     "Projects subset of columns in specified order and with (optional) new column names"
 
+  override lazy val tTagTO_1: TypeTag[Projector] = typeTag
+
   override val since: Version = Version(1, 2, 0)
 }

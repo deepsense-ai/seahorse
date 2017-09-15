@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperables.wrappers
 
-import org.apache.spark.ml.Model
 import org.apache.spark.ml.param.{Param, ParamMap}
 import org.apache.spark.ml.util.Identifiable
 import org.apache.spark.sql
@@ -26,11 +25,12 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
+import io.deepsense.sparkutils.ML
 
 class TransformerWrapper(
     executionContext: ExecutionContext,
     transformer: Transformer)
-  extends Model[TransformerWrapper] {
+  extends ML.Model[TransformerWrapper] {
 
   override def copy(extra: ParamMap): TransformerWrapper = {
     val params = ParamTransformer.transform(extra)
@@ -38,7 +38,7 @@ class TransformerWrapper(
     new TransformerWrapper(executionContext, transformerCopy)
   }
 
-  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
+  override def transformDF(dataset: sql.DataFrame): sql.DataFrame = {
     transformer._transform(executionContext, DataFrame.fromSparkDataFrame(dataset.toDF()))
       .sparkDataFrame
   }

@@ -21,6 +21,7 @@ import org.apache.spark.sql.types.StructType
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.{CodeSnippetParam, CodeSnippetLanguage, Param}
+import io.deepsense.sparkutils.SQL
 
 class RowsFilterer extends Transformer {
 
@@ -42,14 +43,14 @@ class RowsFilterer extends Transformer {
     logger.debug(s"RowsFilterer(expression = 'resultantExpression'," +
       s" uniqueDataFrameId = '$uniqueDataFrameId')")
 
-    df.sparkDataFrame.createOrReplaceTempView(uniqueDataFrameId)
+    SQL.registerTempTable(df.sparkDataFrame, uniqueDataFrameId)
     try {
       logger.debug(s"Table '$uniqueDataFrameId' registered. Executing the expression")
-      val sqlResult = df.sparkDataFrame.sparkSession.sql(resultantExpression)
+      val sqlResult = SQL.sparkSQLSession(df.sparkDataFrame).sql(resultantExpression)
       DataFrame.fromSparkDataFrame(sqlResult)
     } finally {
       logger.debug(s"Unregistering the temporary table '$uniqueDataFrameId'")
-      df.sparkDataFrame.sparkSession.catalog.dropTempView(uniqueDataFrameId)
+      SQL.sparkSQLSession(df.sparkDataFrame).dropTempTable(uniqueDataFrameId)
     }
   }
 

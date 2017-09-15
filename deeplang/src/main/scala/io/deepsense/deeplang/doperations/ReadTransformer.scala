@@ -51,6 +51,9 @@ case class ReadTransformer()
       case e: IOException => throw DeepSenseIOException(e)
     }
   }
+
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[Transformer] = ru.typeTag[Transformer]
 }
 
 object ReadTransformer {

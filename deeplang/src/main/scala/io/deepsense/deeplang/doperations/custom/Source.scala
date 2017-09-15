@@ -35,6 +35,9 @@ case class Source() extends DOperation0To1[DataFrame] with OperationDocumentatio
 
   override val params: Array[Param[_]] = Array()
 
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+
   override protected def execute()(context: ExecutionContext): DataFrame =
     throw new IllegalStateException("should not be executed")
 }

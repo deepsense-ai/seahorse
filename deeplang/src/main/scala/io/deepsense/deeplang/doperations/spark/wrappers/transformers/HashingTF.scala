@@ -32,6 +32,8 @@ class HashingTF extends TransformerAsOperation[HashingTFTransformer]
   override val description: String =
     "Maps a sequence of terms to term frequencies using the hashing trick"
 
+  override lazy val tTagTO_1: TypeTag[HashingTFTransformer] = typeTag
+
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#tf-idf")
   override val since: Version = Version(1, 0, 0)

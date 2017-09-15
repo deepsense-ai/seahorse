@@ -5,4 +5,6 @@ set -ex
 
 cd `dirname $0`
 
-docker build -t deepsense_io/docker-spark-standalone:local .
+SPARK_VERSION=$1
+
+docker build --build-arg SPARK_VERSION=${SPARK_VERSION} -t deepsense_io/docker-spark-standalone-${SPARK_VERSION}:local .

@@ -21,7 +21,6 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.RandomNodeFactory._
 

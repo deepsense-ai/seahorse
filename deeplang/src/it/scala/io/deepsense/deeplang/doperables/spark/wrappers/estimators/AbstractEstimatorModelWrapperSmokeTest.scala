@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml
-import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
@@ -26,6 +24,8 @@ import io.deepsense.deeplang.doperables.spark.wrappers.estimators.AbstractEstima
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.params.ParamPair
+import io.deepsense.sparkutils.Linalg
+import io.deepsense.sparkutils.Linalg.Vectors
 
 abstract class AbstractEstimatorModelWrapperSmokeTest
   extends DeeplangIntegTestSupport
@@ -51,8 +51,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest
       TestDataFrameRow(0.0, 1.0, Vectors.dense(32.0, 11.0, 9.0), 4, 3, 0.2, 0.0, 0.1,
         Seq("b", "d", "d", "f", "f", "g").toArray, Vectors.dense(0.1, 0.2, 0.1))
     )
-    val sparkDF = sparkSession.createDataFrame(rowSeq)
-    DataFrame.fromSparkDataFrame(sparkDF)
+    createDataFrame(rowSeq)
   }
 
   def assertTransformedDF(dataFrame: DataFrame): Unit = {}
@@ -128,12 +127,12 @@ object AbstractEstimatorModelWrapperSmokeTest {
   case class TestDataFrameRow(
     myLabel: Double,
     myWeight: Double,
-    myFeatures: ml.linalg.Vector,
+    myFeatures: Linalg.Vector,
     myItemId: Int,
     myUserId: Int,
     myRating: Double,
     myCensor: Double,
     myNoZeroLabel: Double,
     myStringFeatures: Array[String],
-    myStandardizedFeatures: ml.linalg.Vector)
+    myStandardizedFeatures: Linalg.Vector)
 }

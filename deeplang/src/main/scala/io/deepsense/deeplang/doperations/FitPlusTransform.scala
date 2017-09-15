@@ -38,6 +38,11 @@ class FitPlusTransform
 
   override val since: Version = Version(1, 0, 0)
 
+  override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
+  override lazy val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
+  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag[Estimator[Transformer]]
+
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
     description = "These parameters are rendered dynamically, depending on type of Estimator.",

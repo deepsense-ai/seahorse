@@ -14,7 +14,7 @@ print(code)
 rm(args)
 
 # R will install packages to first lib path in here. We will mount it as docker volume to persist packages.
-.libPaths(c(file.path("/opt/R_Libs"), file.path("/opt/spark-2.0.0/R/lib/"), .libPaths()))
+.libPaths(c(file.path("/opt/R_Libs"), file.path(Sys.getenv('SPARK_HOME'), 'R', 'lib'), .libPaths()))
 library(SparkR)
 
 SparkR:::connectBackend("localhost", backendPort)
@@ -25,8 +25,18 @@ entryPoint <- SparkR:::getJobj(entryPointId)
 
 assign(".sparkRjsc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = SparkR:::.sparkREnv)
 assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
-assign(".sparkRsession", SparkR:::callJMethod(entryPoint, "getNewSparkSession"), envir = SparkR:::.sparkREnv)
-assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+
+sparkSQLSession <- SparkR:::callJMethod(entryPoint, "getNewSparkSQLSession")
+
+sparkVersion <- SparkR:::callJMethod(sc, "version")
+if (sparkVersion == "2.0.0") {
+  assign(".sparkRsession", SparkR:::callJMethod(sparkSQLSession, "getSparkSession"), envir = SparkR:::.sparkREnv)
+  assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+} else {
+  assign(".sqlc", SparkR:::callJMethod(sparkSQLSession, "getSQLContext"), envir = SparkR:::.sparkREnv)
+  assign("sqlContext", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+  assign("spark", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+}
 
 sdf <- SparkR:::callJMethod(entryPoint, "retrieveInputDataFrame", workflowId, nodeId, as.integer(0))
 df <- SparkR:::dataFrame(SparkR:::callJMethod(spark,
@@ -37,8 +47,14 @@ df <- SparkR:::dataFrame(SparkR:::callJMethod(spark,
 tryCatch({
   eval(parse(text = code))
   transformedDF <- transform(df)
-  if (class(transformedDF) != "SparkDataFrame") {
-    transformedDF <- createDataFrame(data.frame(transformedDF))
+  if (sparkVersion == "2.0.0") {
+    if (class(transformedDF) != "SparkDataFrame") {
+      transformedDF <- createDataFrame(data.frame(transformedDF))
+    }
+  } else { # spark 1.6.1
+    if (class(transformedDF) != "DataFrame") {
+      transformedDF <- createDataFrame(spark, data.frame(transformedDF))
+    }
   }
 
   SparkR:::callJMethod(entryPoint, "registerOutputDataFrame", workflowId, nodeId, as.integer(0), transformedDF@sdf)

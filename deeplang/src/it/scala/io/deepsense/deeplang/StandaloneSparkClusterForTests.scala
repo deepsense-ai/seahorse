@@ -21,7 +21,6 @@ import java.util.UUID
 
 import scala.sys.process.Process
 
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.time.SpanSugar._
@@ -31,6 +30,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.sparkutils.SparkSQLSession
 
 object StandaloneSparkClusterForTests {
 
@@ -63,7 +63,7 @@ object StandaloneSparkClusterForTests {
   }
 
   def startDockerizedCluster(): Unit = {
-    Process(Seq(clusterManagementScript, "up"), None, clusterIdEnv).!!
+    Process(Seq(clusterManagementScript, "up", sparkVersion), None, clusterIdEnv).!!
 
     // We turn off the safe mode for hdfs - we don't need it for testing.
     // The loop is here because we don't have control over when the docker is ready
@@ -79,7 +79,7 @@ object StandaloneSparkClusterForTests {
   }
 
   def stopDockerizedCluster(): Unit =
-    Process(Seq(clusterManagementScript, "down"), None, clusterIdEnv).!!
+    Process(Seq(clusterManagementScript, "down", sparkVersion), None, clusterIdEnv).!!
 
   def generateSomeHdfsTmpPath(): String =
     FileScheme.HDFS.pathPrefix + s"$hdfsAddress/root/tmp/seahorse_tests/" + UUID.randomUUID()
@@ -93,8 +93,7 @@ object StandaloneSparkClusterForTests {
       .setMaster(s"spark://$sparkMasterAddress")
       .setAppName("TestApp")
       .setJars(Seq(
-        "./deeplang/target/scala-2.11/" +
-          "deepsense-seahorse-deeplang-assembly-1.3.0-LOCAL-SNAPSHOT.jar"
+        s"./deeplang/target/scala-$majorScalaVersion/deepsense-seahorse-deeplang-assembly-1.3.0-LOCAL-SNAPSHOT.jar"
       ))
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
@@ -103,9 +102,9 @@ object StandaloneSparkClusterForTests {
       .set("spark.executor.memory", "512m")
 
     val sparkContext = new SparkContext(sparkConf)
-    val sparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
+    val sparkSQLSession = new SparkSQLSession(sparkContext)
 
-    UserDefinedFunctions.registerFunctions(sparkSession.udf)
+    UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
 
     val dOperableCatalog = {
       val catalog = new DOperableCatalog
@@ -114,14 +113,14 @@ object StandaloneSparkClusterForTests {
     }
 
     val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
+      DataFrameBuilder(sparkSQLSession),
       "testTenantId",
       dOperableCatalog,
       mock[InnerWorkflowParser])
 
     new MockedExecutionContext(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       inferContext,
       LocalFileSystemClient(),
       "testTenantId",
@@ -130,4 +129,7 @@ object StandaloneSparkClusterForTests {
       new MockedContextualCodeExecutor)
   }
 
+  private lazy val majorScalaVersion: String = util.Properties.versionNumberString.split('.').dropRight(1).mkString(".")
+
+  private lazy val sparkVersion: String = org.apache.spark.SPARK_VERSION
 }

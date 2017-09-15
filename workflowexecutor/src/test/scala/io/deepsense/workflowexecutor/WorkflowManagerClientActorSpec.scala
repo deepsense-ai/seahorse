@@ -18,17 +18,20 @@ package io.deepsense.workflowexecutor
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
+import org.parboiled.common.Base64
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import spray.http.StatusCodes
 import spray.json._
+
 import io.deepsense.commons.StandardSpec
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -38,7 +41,6 @@ import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWorkflow, Request, SaveState, SaveWorkflow}
 import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
-import org.parboiled.common.Base64
 
 class WorkflowManagerClientActorSpec
   extends StandardSpec

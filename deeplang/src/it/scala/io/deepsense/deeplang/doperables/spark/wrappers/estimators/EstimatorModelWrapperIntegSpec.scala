@@ -28,8 +28,7 @@ class EstimatorModelWrapperIntegSpec extends DeeplangIntegTestSupport {
   val inputDF = {
     val rowSeq = Seq(Row(1), Row(2), Row(3))
     val schema = StructType(Seq(StructField("x", IntegerType, nullable = false)))
-    val sparkDF = sparkSession.createDataFrame(sparkContext.parallelize(rowSeq), schema)
-    DataFrame.fromSparkDataFrame(sparkDF)
+    createDataFrame(rowSeq, schema)
   }
 
   val estimatorPredictionParamValue = "estimatorPrediction"

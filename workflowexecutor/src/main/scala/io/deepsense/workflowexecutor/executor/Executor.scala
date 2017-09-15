@@ -16,7 +16,6 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.BuildInfo
@@ -28,6 +27,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.sparkutils.SparkSQLSession
 
 trait Executor extends Logging {
 
@@ -39,7 +39,7 @@ trait Executor extends Logging {
       dataFrameStorage: DataFrameStorage,
       customCodeExecutionProvider: CustomCodeExecutionProvider,
       sparkContext: SparkContext,
-      sparkSession: SparkSession,
+      sparkSQLSession: SparkSQLSession,
       tempPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
@@ -51,14 +51,14 @@ trait Executor extends Logging {
       new GraphReader(operationsCatalog))
 
     val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
+      DataFrameBuilder(sparkSQLSession),
       tenantId,
       operableCatalog,
       innerWorkflowExecutor)
 
     CommonExecutionContext(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       inferContext,
       FileSystemClientStub(), // temporarily mocked
       tempPath,
@@ -78,10 +78,10 @@ trait Executor extends Logging {
     sparkContext
   }
 
-  def createSparkSession(sparkContext: SparkContext): SparkSession = {
-    val sparkSession = SparkSession.builder().config(sparkContext.getConf).getOrCreate()
-    UserDefinedFunctions.registerFunctions(sparkSession.udf)
-    sparkSession
+  def createSparkSQLSession(sparkContext: SparkContext): SparkSQLSession = {
+    val sparkSQLSession = new SparkSQLSession(sparkContext)
+    UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
+    sparkSQLSession
   }
 
 }

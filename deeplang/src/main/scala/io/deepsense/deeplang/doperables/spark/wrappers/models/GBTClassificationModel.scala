@@ -20,14 +20,13 @@ import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTCla
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrapperModel
+import io.deepsense.deeplang.doperables.{LoadableWithFallback, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
+import io.deepsense.sparkutils.ML
 
 class GBTClassificationModel(vanilaModel: VanillaGBTClassificationModel)
   extends StringIndexingWrapperModel[SparkGBTClassificationModel, SparkGBTClassifier](vanilaModel) {
@@ -37,6 +36,7 @@ class GBTClassificationModel(vanilaModel: VanillaGBTClassificationModel)
 
 class VanillaGBTClassificationModel()
   extends SparkModelWrapper[SparkGBTClassificationModel, SparkGBTClassifier]
+  with LoadableWithFallback[SparkGBTClassificationModel, SparkGBTClassifier]
   with PredictorParams
   with Logging {
 
@@ -67,11 +67,9 @@ class VanillaGBTClassificationModel()
         2)
   }
 
-  override protected def loadModel(
-      ctx: ExecutionContext,
-      path: String): SerializableSparkModel[SparkGBTClassificationModel] = {
-    new SerializableSparkModel(SparkGBTClassificationModel.load(path))
-  }
-
   override protected def transformerName: String = classOf[GBTClassificationModel].getSimpleName
+
+  override def tryToLoadModel(path: String): Option[SparkGBTClassificationModel] = {
+    ML.ModelLoading.GBTClassification(path)
+  }
 }

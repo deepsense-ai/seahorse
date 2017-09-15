@@ -31,7 +31,7 @@ class OneHotEncodeExample extends AbstractOperationExample[OneHotEncode]{
   override def inputDataFrames: Seq[DataFrame] = {
     val data = "a a b c a b a a c".split(" ").map(Tuple1(_))
     val rawDataFrame =
-      DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features"))
+      DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("features"))
     val x = new StringIndexer()
       .setSingleColumn("features", "labels")
       .executeUntyped(Vector(rawDataFrame))(executionContext)

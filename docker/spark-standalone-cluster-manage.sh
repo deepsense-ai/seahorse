@@ -2,7 +2,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
 # This is a helper for managing the dockerized standalone spark cluster.
-# It accepts a single string parameter: up|down
+# It receives two parameters: ACTION (up/down) and SPARK_VERSION.
 # It's useful, because the docker-compose it manages requires an external network to exist.
 # This script handles the lifecycle of said network.
 # If there is a need to run multiple instances of the cluster,
@@ -37,9 +37,18 @@ function networkRm {
   docker network rm $1 || : # this fails if the network doesn't exist
 }
 
-case $1 in
+ACTION=$1
+SPARK_VERSION=$2
+export SPARK_VERSION=${SPARK_VERSION}
+if [ "$SPARK_VERSION" == "2.0.0" ]; then
+  export HADOOP_VERSION="2.7.1"
+else
+  export HADOOP_VERSION="2.6.0"
+fi
+
+case $ACTION in
   up)
-    spark-standalone-cluster/build-cluster-node-docker.sh
+    spark-standalone-cluster/build-cluster-node-docker.sh $SPARK_VERSION
     networkRm $NETWORK_NAME
     networkCreate $NETWORK_NAME
     docker-compose -f spark-standalone-cluster.dc.yml up -d
@@ -47,11 +56,10 @@ case $1 in
   down)
     docker-compose -f spark-standalone-cluster.dc.yml kill
     docker-compose -f spark-standalone-cluster.dc.yml down
-    networkRm $NETWORK_NAME
+    docker network rm $NETWORK_NAME || : # this may fail when down if called before up
     ;;
   *)
     echo 'Unknown action!'
     exit 1
     ;;
 esac
-

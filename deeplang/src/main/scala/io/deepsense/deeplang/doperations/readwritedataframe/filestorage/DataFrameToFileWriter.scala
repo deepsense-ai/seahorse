@@ -23,8 +23,8 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.WriteFileException
 import io.deepsense.deeplang.doperations.inout.OutputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout.OutputStorageTypeChoice
-import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvSchemaStringifierBeforeCsvWriting
 import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FilePathFromLibraryPath, FileScheme}
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvSchemaStringifierBeforeCsvWriting
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.{ExecutionContext, FileSystemClient}
 

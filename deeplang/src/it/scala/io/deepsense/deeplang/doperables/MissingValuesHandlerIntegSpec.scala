@@ -26,8 +26,7 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.MissingValuesHandler.EmptyColumnsStrategy
-import io.deepsense.deeplang.doperables.MissingValuesHandler.MissingValueIndicatorChoice
+import io.deepsense.deeplang.doperables.MissingValuesHandler.{EmptyColumnsStrategy, MissingValueIndicatorChoice}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, ValueConversionException}

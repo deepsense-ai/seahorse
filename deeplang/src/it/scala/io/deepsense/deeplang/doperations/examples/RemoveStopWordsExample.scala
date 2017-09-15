@@ -28,7 +28,7 @@ class RemoveStopWordsExample extends AbstractOperationExample[RemoveStopWords] {
   }
 
   override def inputDataFrames: Seq[DataFrame] = {
-    val sparkDataFrame = sparkSession.createDataFrame(Seq(
+    val sparkDataFrame = sparkSQLSession.createDataFrame(Seq(
       (0, Seq("I", "saw", "the", "red", "baloon")),
       (1, Seq("Mary", "had", "a", "little", "lamb"))
     )).toDF("id", "raw")

@@ -26,9 +26,9 @@ sealed trait InputFileFormatChoice extends Choice {
 
 object InputFileFormatChoice {
   class Csv()
-      extends InputFileFormatChoice
-      with CsvParameters
-      with HasShouldConvertToBooleanParam {
+    extends InputFileFormatChoice
+    with CsvParameters
+    with HasShouldConvertToBooleanParam {
 
     override val name: String = FileFormat.CSV.toString
     override val params: Array[Param[_]] =

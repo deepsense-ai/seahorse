@@ -25,6 +25,7 @@ import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
+import io.deepsense.sparkutils.ML
 
 class PCAModel
   extends SparkSingleColumnModelWrapper[SparkPCAModel, SparkPCA] {
@@ -36,7 +37,7 @@ class PCAModel
       .withAdditionalTable(CommonTablesGenerators.denseMatrix(
         name = "A Principal Components Matrix",
         description = "Each column is one principal component.",
-        matrix = sparkModel.pc))
+        matrix = ML.ModelParams.pcFromPCAModel(sparkModel)))
   }
 
   override protected def loadModel(

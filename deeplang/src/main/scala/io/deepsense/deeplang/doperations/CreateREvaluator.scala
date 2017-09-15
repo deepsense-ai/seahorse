@@ -30,5 +30,7 @@ class CreateREvaluator
   override val name: String = "R Evaluator"
   override val description: String = "Creates an R Evaluator"
 
+  override lazy val tTagTO_0: TypeTag[REvaluator] = typeTag
+
   override val since: Version = Version(1, 3, 0)
 }

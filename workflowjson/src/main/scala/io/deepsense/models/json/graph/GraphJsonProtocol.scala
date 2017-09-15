@@ -31,7 +31,7 @@ object GraphJsonProtocol {
 
   val Workflow = "workflow"
   val Nodes = "nodes"
-  val Edges = "connections"  // TODO rename in code: https://codilime.atlassian.net/browse/DS-1192
+  val Edges = "connections"
   val NodeId = "id"
 
   class GraphReader(catalog: DOperationsCatalog)

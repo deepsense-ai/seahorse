@@ -16,10 +16,10 @@
 
 package io.deepsense.graph
 
+import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
-
-import scala.reflect.runtime.{universe => ru}
 
 object DefaultKnowledgeService {
 

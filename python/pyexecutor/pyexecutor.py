@@ -2,14 +2,12 @@
 import argparse
 import os
 import time
-
 from py4j.java_gateway import JavaGateway, GatewayClient, CallbackServerParameters, java_import
 from py4j.protocol import Py4JError
+from pyspark import SparkContext, SparkConf
 
 from code_executor import CodeExecutor
 from simple_logging import log_debug, log_error
-from pyspark.sql import SparkSession
-from pyspark import SparkContext, SparkConf
 
 
 class PyExecutor(object):
@@ -24,8 +22,8 @@ class PyExecutor(object):
 
         # noinspection PyProtectedMember
         callback_server_port = gateway._callback_server.server_socket.getsockname()[1]
-        spark_context, spark_session = self._initialize_spark_contexts(gateway)
-        code_executor = CodeExecutor(spark_context, spark_session, gateway.entry_point)
+        spark_context, spark_sql_session = self._initialize_spark_contexts(gateway)
+        code_executor = CodeExecutor(spark_context, spark_sql_session, gateway.entry_point)
 
         try:
             gateway.entry_point.registerCallbackServerPort(callback_server_port)
@@ -57,9 +55,21 @@ class PyExecutor(object):
             gateway=gateway,
             jsc=java_spark_context)
 
-        spark_session = SparkSession(spark_context, gateway.entry_point.getSparkSession())
+        java_spark_sql_session = gateway.entry_point.getSparkSQLSession()
+        spark_version = spark_context.version
+        spark_sql_session = None
+        if spark_version == "1.6.1":
+            from pyspark import HiveContext
+            java_sql_context = java_spark_sql_session.getSQLContext()
+            spark_sql_session = HiveContext(spark_context, java_sql_context)
+        elif spark_version == "2.0.0":
+            from pyspark.sql import SparkSession
+            java_spark_session = java_spark_sql_session.getSparkSession()
+            spark_sql_session = SparkSession(spark_context, java_spark_session)
+        else:
+            raise ValueError("Spark version {} is not supported".format(spark_version))
 
-        return spark_context, spark_session
+        return spark_context, spark_sql_session
 
     @staticmethod
     def _initialize_gateway(gateway_address):
@@ -70,7 +80,7 @@ class PyExecutor(object):
         gateway = JavaGateway(GatewayClient(address=host, port=port),
                               start_callback_server=True,
                               auto_convert=True,
-                              callback_server_parameters = callback_params)
+                              callback_server_parameters=callback_params)
         try:
             java_import(gateway.jvm, "org.apache.spark.SparkEnv")
             java_import(gateway.jvm, "org.apache.spark.SparkConf")

@@ -41,7 +41,10 @@ class ProjectorIntegSpec
   import DeeplangIntegTestSupport._
   import TransformerSerialization._
 
-  val specialCharactersName = "a`a-z"
+  // val specialCharactersName = "a`a-z"
+  val specialCharactersName = "a'a-z"
+  // TODO forbid backticks in column names because they cannot be escaped in spark 1.6:
+  // https://issues.apache.org/jira/browse/SPARK-13297
 
   val columns = Seq(
     StructField("c", IntegerType),

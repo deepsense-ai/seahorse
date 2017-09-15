@@ -29,6 +29,7 @@ import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.{DeeplangTestSupport, ExecutionContext}
+import io.deepsense.sparkutils.ML
 
 object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupport {
 
@@ -52,7 +53,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
     override val params: Array[Param[_]] = Array(numericParamWrapper)
   }
 
-  class ExampleSparkEstimator extends ml.Estimator[ExampleSparkModel] {
+  class ExampleSparkEstimator extends ML.Estimator[ExampleSparkModel] {
 
     def this(id: String) = this()
 
@@ -62,7 +63,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
 
     def setNumericParam(value: Double): this.type = set(numericParam, value)
 
-    override def fit(dataset: Dataset[_]): ExampleSparkModel = {
+    override def fitDF(dataset: SparkDataFrame): ExampleSparkModel = {
       require($(numericParam) == paramValueToSet)
       fitModel
     }
@@ -86,7 +87,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
     }
   }
 
-  class ExampleSparkModel extends ml.Model[ExampleSparkModel] {
+  class ExampleSparkModel extends ML.Model[ExampleSparkModel] {
 
     override val uid: String = "modelId"
 
@@ -97,7 +98,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
     override def copy(extra: ParamMap): ExampleSparkModel =
       extra.toSeq.foldLeft(new ExampleSparkModel())((model, paramPair) => model.set(paramPair))
 
-    override def transform(dataset: Dataset[_]): SparkDataFrame = {
+    override def transformDF(dataset: SparkDataFrame): SparkDataFrame = {
       require($(numericParam) == paramValueToSet)
       fitDataFrame
     }

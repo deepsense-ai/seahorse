@@ -36,4 +36,7 @@ case class RNotebook()
   override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 
   override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = ()
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

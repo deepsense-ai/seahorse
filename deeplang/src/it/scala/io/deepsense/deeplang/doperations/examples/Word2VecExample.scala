@@ -36,6 +36,6 @@ class Word2VecExample extends AbstractOperationExample[Word2Vec] {
       "Nullam gravida non ipsum".split(" "),
       "Etiam at nunc lacinia".split(" ")
     ).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("words")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("words")))
   }
 }

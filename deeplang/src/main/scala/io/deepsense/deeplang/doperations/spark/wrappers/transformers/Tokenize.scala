@@ -31,6 +31,8 @@ class Tokenize extends TransformerAsOperation[StringTokenizer]
   override val name: String = "Tokenize"
   override val description: String = "Converts text to lowercase and splits it by spaces"
 
+  override lazy val tTagTO_1: TypeTag[StringTokenizer] = typeTag
+
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#tokenizer")
   override val since: Version = Version(1, 0, 0)

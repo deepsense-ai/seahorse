@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
+
 import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.utils.Version
@@ -47,6 +48,10 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
   def setTransformerParams(jsValue: JsValue): this.type = set(transformerParams, jsValue)
 
   override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(transformerParams)
+
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_1: TypeTag[Transformer] = typeTag
+  override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag
 
   override protected def execute(
       dataFrame: DataFrame,

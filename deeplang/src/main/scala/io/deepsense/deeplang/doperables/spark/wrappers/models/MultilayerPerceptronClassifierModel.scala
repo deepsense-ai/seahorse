@@ -18,16 +18,18 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{MultilayerPerceptronClassificationModel => SparkMultilayerPerceptronClassifierModel, MultilayerPerceptronClassifier => SparkMultilayerPerceptronClassifier}
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
+import io.deepsense.deeplang.doperables.{LoadableWithFallback, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
+import io.deepsense.sparkutils.ML
 
 class MultilayerPerceptronClassifierModel
   extends SparkModelWrapper[
+    SparkMultilayerPerceptronClassifierModel,
+    SparkMultilayerPerceptronClassifier]
+  with LoadableWithFallback[
     SparkMultilayerPerceptronClassifierModel,
     SparkMultilayerPerceptronClassifier]
   with PredictorParams {
@@ -65,9 +67,7 @@ class MultilayerPerceptronClassifierModel
           weights)))
   }
 
-  override protected def loadModel(
-      ctx: ExecutionContext,
-      path: String): SerializableSparkModel[SparkMultilayerPerceptronClassifierModel] = {
-    new SerializableSparkModel(SparkMultilayerPerceptronClassifierModel.load(path))
+  override def tryToLoadModel(path: String): Option[SparkMultilayerPerceptronClassifierModel] = {
+    ML.ModelLoading.multilayerPerceptronClassification(path)
   }
 }

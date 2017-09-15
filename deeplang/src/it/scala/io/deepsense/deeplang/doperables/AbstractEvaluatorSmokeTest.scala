@@ -16,13 +16,13 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
+import io.deepsense.sparkutils.Linalg.Vectors
 
 abstract class AbstractEvaluatorSmokeTest extends DeeplangIntegTestSupport {
 
@@ -35,7 +35,7 @@ abstract class AbstractEvaluatorSmokeTest extends DeeplangIntegTestSupport {
   val inputDataFrameSchema = StructType(Seq(
     StructField("s", StringType),
     StructField("prediction", DoubleType),
-    StructField("rawPrediction", new org.apache.spark.hacks.SparkVectors.VectorUDT),
+    StructField("rawPrediction", new io.deepsense.sparkutils.Linalg.VectorUDT),
     StructField("label", DoubleType)
   ))
 
@@ -44,9 +44,7 @@ abstract class AbstractEvaluatorSmokeTest extends DeeplangIntegTestSupport {
       Row("aAa bBb cCc dDd eEe f", 1.0, Vectors.dense(2.1, 2.2, 2.3), 3.0),
       Row("das99213 99721 8i!#@!", 4.0, Vectors.dense(5.1, 5.2, 5.3), 6.0)
     )
-    val sparkDF =
-      sparkSession.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
-    DataFrame.fromSparkDataFrame(sparkDF)
+    createDataFrame(rowSeq, inputDataFrameSchema)
   }
 
   def setUpStubs(): Unit = ()
@@ -59,7 +57,7 @@ abstract class AbstractEvaluatorSmokeTest extends DeeplangIntegTestSupport {
     "successfully run _infer()" in {
       evaluator.set(evaluatorParams: _*)._infer(DKnowledge(inputDataFrame))
     }
-    "succesfully run report" in {
+    "successfully run report" in {
       evaluator.set(evaluatorParams: _*).report
     }
   }

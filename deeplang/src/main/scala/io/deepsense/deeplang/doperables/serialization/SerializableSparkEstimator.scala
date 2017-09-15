@@ -20,16 +20,18 @@ package io.deepsense.deeplang.doperables.serialization
 import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.util.{MLWritable, MLWriter}
 import org.apache.spark.ml.{Estimator, Model}
-import org.apache.spark.sql.Dataset
+import org.apache.spark.sql
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.sparkutils.ML
+
 class SerializableSparkEstimator[T <: Model[T], E <: Estimator[T]](val sparkEstimator: E)
-  extends Estimator[SerializableSparkModel[T]]
+  extends ML.Estimator[SerializableSparkModel[T]]
   with MLWritable {
 
   override val uid: String = "e2a121fe-da6e-4ef2-9c5e-56ee558c14f0"
 
-  override def fit(dataset: Dataset[_]): SerializableSparkModel[T] = {
+  override def fitDF(dataset: sql.DataFrame): SerializableSparkModel[T] = {
     val result: T = sparkEstimator.fit(dataset)
     new SerializableSparkModel[T](result)
   }

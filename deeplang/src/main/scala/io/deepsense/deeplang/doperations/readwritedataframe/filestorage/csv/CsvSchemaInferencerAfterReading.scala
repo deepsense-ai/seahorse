@@ -55,7 +55,7 @@ object CsvSchemaInferencerAfterReading {
         }
       })
 
-    context.sparkSession.createDataFrame(convertedData, schema)
+    context.sparkSQLSession.createDataFrame(convertedData, schema)
   }
 
   private def inferTypes

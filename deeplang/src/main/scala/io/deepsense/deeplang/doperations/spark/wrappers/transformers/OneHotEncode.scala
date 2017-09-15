@@ -32,6 +32,8 @@ class OneHotEncode extends TransformerAsOperation[OneHotEncoder]
   override val description: String = "Maps a column of category indices to " +
     "a column of binary vectors"
 
+  override lazy val tTagTO_1: TypeTag[OneHotEncoder] = typeTag
+
   override protected[this] val docsGuideLocation =
     Some("ml-features.html#onehotencoder")
   override val since: Version = Version(1, 0, 0)

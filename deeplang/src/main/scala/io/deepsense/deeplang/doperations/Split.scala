@@ -33,6 +33,7 @@ import io.deepsense.deeplang.params.StorageType.{apply => _}
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.sparkutils.SQL
 
 case class Split()
   extends DOperation1To2[DataFrame, DataFrame, DataFrame]
@@ -101,7 +102,7 @@ case class Split()
     val inputDataFrameId =
       "split_conditional_" + java.util.UUID.randomUUID.toString.replace('-', '_')
 
-    df.sparkDataFrame.createOrReplaceTempView(inputDataFrameId)
+    SQL.registerTempTable(df.sparkDataFrame, inputDataFrameId)
     logger.debug(s"Table '$inputDataFrameId' registered. Executing the expression")
 
     val selectFromExpression = s"SELECT * FROM $inputDataFrameId"
@@ -112,7 +113,7 @@ case class Split()
        s"$selectFromExpression WHERE not ($condition)")
 
     def runExpression(expression: String): DataFrame = {
-      val sqlResult = df.sparkDataFrame.sparkSession.sql(expression)
+      val sqlResult = SQL.sparkSQLSession(df.sparkDataFrame).sql(expression)
       DataFrame.fromSparkDataFrame(sqlResult)
     }
 
@@ -126,7 +127,7 @@ case class Split()
     results.onComplete {
       _ =>
         logger.debug(s"Unregistering the temporary table '$inputDataFrameId'")
-        df.sparkDataFrame.sparkSession.catalog.dropTempView(inputDataFrameId)
+        SQL.sparkSQLSession(df.sparkDataFrame).dropTempTable(inputDataFrameId)
     }
 
     Await.result(results, Duration.Inf)
@@ -136,6 +137,13 @@ case class Split()
       : ((DKnowledge[DataFrame], DKnowledge[DataFrame]), InferenceWarnings) = {
     ((knowledge, knowledge), InferenceWarnings.empty)
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 sealed trait SplitModeChoice extends Choice {

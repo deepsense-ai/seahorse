@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 import org.apache.spark.sql.types.DataType
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
@@ -56,7 +56,7 @@ class NormalizerSmokeTest
     input.zip(inputAfterNormalize)
   }
 
-  override def inputType: DataType = new org.apache.spark.hacks.SparkVectors.VectorUDT
+  override def inputType: DataType = new io.deepsense.sparkutils.Linalg.VectorUDT
 
-  override def outputType: DataType = new org.apache.spark.hacks.SparkVectors.VectorUDT
+  override def outputType: DataType = new io.deepsense.sparkutils.Linalg.VectorUDT
 }

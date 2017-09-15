@@ -30,5 +30,7 @@ class GetFromVector extends TransformerAsOperation[GetFromVectorTransformer] wit
   override val description: String =
     "Extracts single number from vector column"
 
+  override lazy val tTagTO_1: TypeTag[GetFromVectorTransformer] = typeTag
+
   override val since: Version = Version(1, 2, 0)
 }

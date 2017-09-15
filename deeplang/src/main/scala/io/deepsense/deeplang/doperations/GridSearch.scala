@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
+
 import org.apache.spark.ml
 import org.apache.spark.ml.param.{Param, ParamMap}
 import org.apache.spark.ml.tuning.{CrossValidator, CrossValidatorModel, ParamGridBuilder}
@@ -81,6 +82,11 @@ case class GridSearch()
 
   override val params: Array[io.deepsense.deeplang.params.Param[_]] =
     Array(estimatorParams, evaluatorParams, numberOfFolds)
+
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag
+  override lazy val tTagTI_2: TypeTag[Evaluator] = typeTag
+  override lazy val tTagTO_0: TypeTag[Report] = typeTag
 
   override protected def execute(
       dataFrame: DataFrame,

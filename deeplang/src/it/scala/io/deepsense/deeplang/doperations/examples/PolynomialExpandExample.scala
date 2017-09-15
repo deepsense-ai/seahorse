@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.spark.wrappers.transformers.PolynomialExpand
@@ -36,6 +36,6 @@ class PolynomialExpandExample extends AbstractOperationExample[PolynomialExpand]
       Vectors.dense(0.0, 0.0, 0.0),
       Vectors.dense(0.6, -1.1, -3.0),
       Vectors.sparse(3, Seq()).toDense).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("input")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("input")))
   }
 }

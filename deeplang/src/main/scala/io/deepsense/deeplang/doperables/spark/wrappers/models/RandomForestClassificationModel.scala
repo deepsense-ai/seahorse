@@ -19,14 +19,13 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.classification.{RandomForestClassificationModel => SparkRandomForestClassificationModel, RandomForestClassifier => SparkRandomForestClassifier}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ProbabilisticClassifierParams
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrapperModel
+import io.deepsense.deeplang.doperables.{LoadableWithFallback, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
+import io.deepsense.sparkutils.ML
 
 class RandomForestClassificationModel(
     vanillaModel: VanillaRandomForestClassificationModel)
@@ -41,7 +40,10 @@ class VanillaRandomForestClassificationModel
   extends SparkModelWrapper[
     SparkRandomForestClassificationModel,
     SparkRandomForestClassifier]
-    with ProbabilisticClassifierParams {
+  with LoadableWithFallback[
+    SparkRandomForestClassificationModel,
+    SparkRandomForestClassifier]
+  with ProbabilisticClassifierParams {
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
     val predictionColumnName = $(predictionColumn)
@@ -49,8 +51,8 @@ class VanillaRandomForestClassificationModel
     val rawPredictionColumnName = $(rawPredictionColumn)
     Some(StructType(schema.fields ++ Seq(
       StructField(predictionColumnName, DoubleType),
-      StructField(probabilityColumnName, new org.apache.spark.hacks.SparkVectors.VectorUDT),
-      StructField(rawPredictionColumnName, new org.apache.spark.hacks.SparkVectors.VectorUDT)
+      StructField(probabilityColumnName, new io.deepsense.sparkutils.Linalg.VectorUDT),
+      StructField(rawPredictionColumnName, new io.deepsense.sparkutils.Linalg.VectorUDT)
     )))
   }
 
@@ -71,12 +73,10 @@ class VanillaRandomForestClassificationModel
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(treeWeight)))
   }
 
-  override protected def loadModel(
-      ctx: ExecutionContext,
-      path: String): SerializableSparkModel[SparkRandomForestClassificationModel] = {
-    new SerializableSparkModel(SparkRandomForestClassificationModel.load(path))
-  }
-
   override protected def transformerName: String =
     classOf[RandomForestClassificationModel].getSimpleName
+
+  override def tryToLoadModel(path: String): Option[SparkRandomForestClassificationModel] = {
+    ML.ModelLoading.randomForestClassification(path)
+  }
 }

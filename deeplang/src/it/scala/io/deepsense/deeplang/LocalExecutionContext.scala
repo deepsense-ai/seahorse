@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang
 
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar._
@@ -24,6 +23,7 @@ import org.scalatest.mockito.MockitoSugar._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.sparkutils.SparkSQLSession
 
 trait LocalExecutionContext { self: BeforeAndAfterAll =>
 
@@ -32,7 +32,7 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
 
   val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
   val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
-  val sparkSession: SparkSession = DeeplangIntegTestSupport.sparkSession
+  val sparkSQLSession: SparkSQLSession = DeeplangIntegTestSupport.sparkSQLSession
 
   val dOperableCatalog = {
     val catalog = new DOperableCatalog
@@ -47,14 +47,14 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
 
   protected def prepareCommonExecutionContext(): CommonExecutionContext = {
     val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
+      DataFrameBuilder(sparkSQLSession),
       "testTenantId",
       dOperableCatalog,
       mock[InnerWorkflowParser])
 
     new MockedCommonExecutionContext(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       inferContext,
       LocalFileSystemClient(),
       "testTenantId",
@@ -65,14 +65,14 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
 
   protected def prepareExecutionContext(): ExecutionContext = {
     val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
+      DataFrameBuilder(sparkSQLSession),
       "testTenantId",
       dOperableCatalog,
       mock[InnerWorkflowParser])
 
     new MockedExecutionContext(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       inferContext,
       LocalFileSystemClient(),
       "testTenantId",

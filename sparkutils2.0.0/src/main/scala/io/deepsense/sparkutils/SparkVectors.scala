@@ -16,10 +16,6 @@
 
 package org.apache.spark.hacks
 
-/**
- * This object necessary to make org.apache.spark.ml.linalg.VectorUDT visible
- * outside of org.apache.spark package
- */
 object SparkVectors {
   type VectorUDT = org.apache.spark.ml.linalg.VectorUDT
 }

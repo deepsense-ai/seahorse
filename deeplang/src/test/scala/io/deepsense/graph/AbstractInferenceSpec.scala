@@ -22,7 +22,7 @@ import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.exceptions.{DeepLangMultiException, DeepLangException}
+import io.deepsense.deeplang.exceptions.{DeepLangException, DeepLangMultiException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.params.exceptions.ValidationException
 import io.deepsense.graph.DClassesForDOperations._
@@ -89,6 +89,10 @@ class AbstractInferenceSpec
       }
       (k0, InferenceWarnings(warning))
     }
+
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
+    override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 
   object DOperationA1A2ToFirst {

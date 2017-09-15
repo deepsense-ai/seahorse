@@ -31,4 +31,5 @@ enablePlugins(DeepsenseBuildInfoPlugin)
 
 buildInfoPackage := "io.deepsense.workflowexecutor.buildinfo"
 
+target in assembly := new File("target")
 assemblyJarName in assembly := "workflowexecutor.jar"

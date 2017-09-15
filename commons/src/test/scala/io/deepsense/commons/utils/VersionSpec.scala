@@ -16,8 +16,9 @@
 
 package io.deepsense.commons.utils
 
+import org.scalatest.matchers.{BeMatcher, MatchResult}
+
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import org.scalatest.matchers.{MatchResult, BeMatcher}
 
 
 class VersionSpec extends StandardSpec with UnitTestSupport {

@@ -16,18 +16,22 @@
 
 // scalastyle:off
 
-lazy val rootProject = project.in(file("."))
-  .settings(name := "seahorse")
-  .settings(PublishSettings.disablePublishing)
-  .aggregate(commons, deeplang, docgen, graph, workflowjson, models,reportlib, workflowexecutormqprotocol,
-    workflowexecutor)
-
 lazy val settingsForPublished = CommonSettingsPlugin.assemblySettings ++
   LicenceReportSettings.settings ++ PublishSettings.enablePublishing
 lazy val settingsForNotPublished = CommonSettingsPlugin.assemblySettings ++
   LicenceReportSettings.settings ++ PublishSettings.disablePublishing
 
-lazy val commons                = project settings settingsForPublished
+lazy val sparkVersion = CommonSettingsPlugin.Versions.spark
+lazy val sparkUtils = project in file (s"sparkutils$sparkVersion") settings settingsForPublished
+
+lazy val rootProject = project.in(file("."))
+  .settings(name := "seahorse")
+  .settings(PublishSettings.disablePublishing)
+  .aggregate(sparkUtils, commons, deeplang, docgen, graph, workflowjson, models,reportlib, workflowexecutormqprotocol,
+    workflowexecutor)
+
+lazy val commons                = project dependsOn sparkUtils settings settingsForPublished
+
 lazy val deeplang               = project dependsOn (
   commons,
   commons % "test->test",

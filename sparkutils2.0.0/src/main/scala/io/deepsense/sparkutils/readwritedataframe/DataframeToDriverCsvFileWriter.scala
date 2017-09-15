@@ -18,24 +18,22 @@ package org.apache.spark.sql.execution.datasources.csv
 
 import java.io.PrintWriter
 
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.types._
 
-import io.deepsense.commons.resources.ManagedResource
-import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, FilePath}
+import io.deepsense.sparkutils.readwritedataframe.ManagedResource
 
 object DataframeToDriverCsvFileWriter {
 
   def write(
-      data: Array[Row],
-      options: Map[String, String],
-      dataSchema: StructType,
-      path: FilePath): Unit = {
-    path.verifyScheme(FileScheme.File)
+       dataFrame: DataFrame,
+       options: Map[String, String],
+       dataSchema: StructType,
+       pathWithoutScheme: String): Unit = {
+    val data = dataFrame.rdd.collect()
     val params = new CSVOptions(options)
-
     ManagedResource(
-      new LocalCsvOutputWriter(dataSchema, params, path.pathWithoutScheme)
+      new LocalCsvOutputWriter(dataSchema, params, pathWithoutScheme)
     ) { writer =>
       data.foreach(row => {
         writer.write(row.toSeq.map(_.asInstanceOf[String]))
@@ -50,9 +48,9 @@ object DataframeToDriverCsvFileWriter {
   * Instead of writing to Hadoop Text File it writes to local file system
   */
 class LocalCsvOutputWriter(
-    dataSchema: StructType,
-    params: CSVOptions,
-    driverPath: String) {
+      dataSchema: StructType,
+      params: CSVOptions,
+      driverPath: String) {
 
   private val driverFileWriter = new PrintWriter(driverPath)
 
@@ -79,5 +77,4 @@ class LocalCsvOutputWriter(
     flush()
     driverFileWriter.close()
   }
-
 }

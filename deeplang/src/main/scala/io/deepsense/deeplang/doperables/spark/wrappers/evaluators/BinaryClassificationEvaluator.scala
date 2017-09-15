@@ -17,7 +17,6 @@
 package io.deepsense.deeplang.doperables.spark.wrappers.evaluators
 
 import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, MulticlassMetrics}
-import org.apache.spark.ml.linalg.Vector
 import org.apache.spark.sql.Row
 
 import io.deepsense.commons.types.ColumnType
@@ -30,6 +29,7 @@ import io.deepsense.deeplang.params.selections.{NameSingleColumnSelection, Singl
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.params.{Param, Params, SingleColumnSelectorParam}
 import io.deepsense.deeplang.{DKnowledge, ExecutionContext}
+import io.deepsense.sparkutils.Linalg.Vector
 
 class BinaryClassificationEvaluator
   extends Evaluator

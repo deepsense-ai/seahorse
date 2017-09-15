@@ -20,7 +20,6 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, InputStorageTypeChoice}

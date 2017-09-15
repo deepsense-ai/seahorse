@@ -82,12 +82,15 @@ case class ReadDataFrame()
   private def readFromJdbc
       (jdbcChoice: InputStorageTypeChoice.Jdbc)
       (implicit context: ExecutionContext): SparkDataFrame =
-    context.sparkSession
+    context.sparkSQLSession
       .read.format("jdbc")
       .option("driver", jdbcChoice.getJdbcDriverClassName)
       .option("url", jdbcChoice.getJdbcUrl)
       .option("dbtable", jdbcChoice.getJdbcTableName)
       .load()
+
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object ReadDataFrame {

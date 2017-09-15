@@ -36,8 +36,8 @@ private[filestorage] object ClusterFiles {
     val clusterPath = path.fullPath
     fileFormat match {
       case csv: InputFileFormatChoice.Csv => readCsv(clusterPath, csv)
-      case json: InputFileFormatChoice.Json => context.sparkSession.read.json(clusterPath)
-      case parquet: InputFileFormatChoice.Parquet => context.sparkSession.read.parquet(clusterPath)
+      case json: InputFileFormatChoice.Json => context.sparkSQLSession.read.json(clusterPath)
+      case parquet: InputFileFormatChoice.Parquet => context.sparkSQLSession.read.parquet(clusterPath)
     }
   }
 
@@ -50,7 +50,7 @@ private[filestorage] object ClusterFiles {
         dataFrame
           .sparkDataFrame
           .write.format("com.databricks.spark.csv")
-          .setCsvOptions(namesIncluded, csvChoice.getCsvColumnSeparator())
+          .options(CsvOptions.map(namesIncluded, csvChoice.getCsvColumnSeparator()))
       case _: OutputFileFormatChoice.Parquet =>
         // TODO: DS-1480 Writing DF in parquet format when column names contain forbidden chars
         dataFrame.sparkDataFrame.write.format("parquet")
@@ -62,7 +62,7 @@ private[filestorage] object ClusterFiles {
 
   private def readCsv(clusterPath: String, csvChoice: InputFileFormatChoice.Csv)
                      (implicit context: ExecutionContext) =
-    context.sparkSession.read
+    context.sparkSQLSession.read
       .format("com.databricks.spark.csv")
       .setCsvOptions(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
       .load(clusterPath)

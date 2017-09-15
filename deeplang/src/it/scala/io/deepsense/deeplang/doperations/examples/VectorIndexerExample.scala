@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.VectorIndexer
@@ -36,6 +36,6 @@ class VectorIndexerExample extends AbstractOperationExample[VectorIndexer] {
       Vectors.dense(1.0, 1.0, 0.0, 1.0),
       Vectors.dense(0.0, 1.0, 1.0, 1.0),
       Vectors.dense(-1.0, 1.0, 2.0, 0.0)).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("vectors")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("vectors")))
   }
 }

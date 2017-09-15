@@ -16,26 +16,25 @@
 
 package io.deepsense.workflowexecutor.partialexecution
 
+import org.mockito.Matchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.mockito.Matchers._
 import org.scalatest.{GivenWhenThen, Inspectors}
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.{DOperation, DOperable}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph.RandomNodeFactory._
+import io.deepsense.graph._
 import io.deepsense.graph.graphstate._
 import io.deepsense.graph.nodestate.NodeStatus
-import io.deepsense.graph._
 import io.deepsense.models.workflows.{EntitiesMap, NodeState, NodeStateWithResults}
-import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.partialexecution.StatefulGraphSpec.TestException
 
@@ -256,7 +255,7 @@ class StatefulGraphSpec
       graphIn shouldBe graph
       val operation = graphIn.node(id).value.asInstanceOf[DOperationAToALogging]
       operation.trace("Logging just to clarify that it works after deserialization!")
-      operation.inPortTypes.foreach(typeTag => typeTag.tpe should not be null)
+      operation.tTagTI_0.tpe should not be null
     }
     "allow to update status using another StatefulGraph" in {
       val states: Map[Id, NodeStateWithResults] = Map(

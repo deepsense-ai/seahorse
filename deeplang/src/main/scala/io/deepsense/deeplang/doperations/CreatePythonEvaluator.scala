@@ -31,5 +31,7 @@ class CreatePythonEvaluator
   override val description: String =
     "Creates a Python Evaluator"
 
+  override lazy val tTagTO_0: TypeTag[PythonEvaluator] = typeTag
+
   override val since: Version = Version(1, 2, 0)
 }

@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -34,7 +34,7 @@ class BinaryClassificationEvaluatorIntegSpec extends DeeplangIntegTestSupport {
     def simpleSchema: StructType = StructType(Seq(
       StructField("label", DoubleType),
       StructField("prediction", DoubleType),
-      StructField("rawPrediction", new org.apache.spark.hacks.SparkVectors.VectorUDT())))
+      StructField("rawPrediction", new io.deepsense.sparkutils.Linalg.VectorUDT())))
     val simpleData = Seq(
       Seq(0.0, 1.0, Vectors.dense(-0.001, 0.001)),
       Seq(1.0, 1.0, Vectors.dense(-0.001, 0.001)),

@@ -27,6 +27,7 @@ import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
+import io.deepsense.sparkutils.SQL
 
 case class Union()
     extends DOperation2To1[DataFrame, DataFrame, DataFrame]
@@ -51,7 +52,7 @@ case class Union()
 
     context.dataFrameBuilder.buildDataFrame(
       first.schema.get,
-      first.sparkDataFrame.union(second.sparkDataFrame).rdd)
+      SQL.union(first.sparkDataFrame, second.sparkDataFrame).rdd)
   }
 
   protected override def inferSchema(
@@ -65,4 +66,11 @@ case class Union()
     }
     (leftSchema, InferenceWarnings.empty)
   }
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

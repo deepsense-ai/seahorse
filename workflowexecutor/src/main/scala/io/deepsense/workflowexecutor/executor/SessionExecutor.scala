@@ -28,13 +28,13 @@ import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SparkSession
 
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.{CatalogRecorder, CustomCodeExecutionProvider, OperationExecutionDispatcher}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.sparkutils.SparkSQLSession
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
@@ -84,8 +84,7 @@ case class SessionExecutor(
   def execute(): Unit = {
     logger.info(s"SessionExecutor for '$workflowId' starts...")
     val sparkContext = createSparkContext()
-    val sparkSession = createSparkSession(sparkContext)
-
+    val sparkSQLSession = createSparkSQLSession(sparkContext)
     val dataFrameStorage = new DataFrameStorageImpl
 
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
@@ -106,14 +105,14 @@ case class SessionExecutor(
     val operationExecutionDispatcher = new OperationExecutionDispatcher
 
     val customCodeEntryPoint = new CustomCodeEntryPoint(sparkContext,
-      sparkSession, dataFrameStorage, operationExecutionDispatcher)
+      sparkSQLSession, dataFrameStorage, operationExecutionDispatcher)
 
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       s"$tempPath/pyexecutor/pyexecutor.py",
       pythonPathGenerator,
       pythonBinary,
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       dataFrameStorage,
       customCodeEntryPoint,
       hostAddress)
@@ -144,7 +143,7 @@ case class SessionExecutor(
 
     val workflowsSubscriberActor: ActorRef = createWorkflowsSubscriberActor(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       dOperableCatalog,
       dataFrameStorage,
       customCodeExecutionProvider,
@@ -182,7 +181,7 @@ case class SessionExecutor(
     logger.info(s"Sending Init() to WorkflowsSubscriberActor")
     workflowsSubscriberActor ! Init()
 
-    Await.result(system.whenTerminated, Duration.Inf)
+    system.awaitTermination()
     cleanup(system, sparkContext, pythonExecutionCaretaker, kernelManagerCaretaker)
     logger.debug("SessionExecutor ends")
     System.exit(0)
@@ -190,7 +189,7 @@ case class SessionExecutor(
 
   private def createWorkflowsSubscriberActor(
       sparkContext: SparkContext,
-      sparkSession: SparkSession,
+      sparkSQLSession: SparkSQLSession,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorageImpl,
       customCodeExecutionProvider: CustomCodeExecutionProvider,
@@ -234,7 +233,7 @@ case class SessionExecutor(
       dataFrameStorage,
       customCodeExecutionProvider,
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       tempPath,
       dOperableCatalog = Some(dOperableCatalog))
 
@@ -310,7 +309,7 @@ case class SessionExecutor(
     kernelManagerCaretaker.stop()
     sparkContext.stop()
     logger.debug("Spark terminated!")
-    system.terminate()
+    system.shutdown()
     logger.debug("Akka terminated!")
   }
 }

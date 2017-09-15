@@ -19,16 +19,17 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.ml
 import org.apache.spark.ml.evaluation
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
-import org.apache.spark.ml.linalg
-import org.apache.spark.ml.linalg.Vectors
 import spray.json._
 
+import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LinearRegression
 import io.deepsense.deeplang.doperables.spark.wrappers.evaluators.RegressionEvaluator
 import io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
+import io.deepsense.sparkutils.Linalg
+import io.deepsense.sparkutils.Linalg.Vectors
 
 class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProtocol {
 
@@ -48,18 +49,21 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
 
       val tables = report.content.tables
 
+      val expectedMetrics: Array[Double] = pureSparkImplementation()
+      val expectedBestMetric = expectedMetrics.toList.min
+
       val bestMetricsTable = tables.head
       bestMetricsTable.values.size shouldBe 1
       bestMetricsTable.values shouldBe
-        List(List(Some("10.0"), Some("5.0"), Some("86517.9")))
+        List(List(Some("10.0"), Some("5.0"), doubleToCell(expectedBestMetric)))
 
-      val expectedMetrics = List(
-        List(Some("10.0"), Some("5.0"), Some("86517.9")),
-        List(Some("10.0"), Some("0.5"), Some("86518.4")),
-        List(Some("10.0"), Some("0.01"), Some("86518.5")))
+      val expectedMetricsTable = List(
+        List(Some("10.0"), Some("5.0"), doubleToCell(expectedMetrics(2))),
+        List(Some("10.0"), Some("0.5"), doubleToCell(expectedMetrics(1))),
+        List(Some("10.0"), Some("0.01"), doubleToCell(expectedMetrics(0))))
       val metricsTable = tables(1)
       metricsTable.values.size shouldBe 3
-      metricsTable.values shouldBe expectedMetrics
+      metricsTable.values shouldBe expectedMetricsTable
     }
 
     "throw an exception in inference" when {
@@ -134,11 +138,10 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
         Vectors.dense(flatSize, districtFactor),
         (flatSize * districtFactor * priceForMeterSq).toLong)
     }
-    DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(apartments))
+    DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(apartments))
   }
 
-  // Pure spark implementation which can be used to validate deeplang GridSearch results
-  private def executePureSparkImplementation(): Array[Double] = {
+  private def pureSparkImplementation(): Array[Double] = {
     val lr = new ml.regression.LinearRegression()
     val paramGrid = new ParamGridBuilder()
       .addGrid(lr.regParam, regularizationParams)
@@ -151,6 +154,8 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
     val cvModel = cv.fit(buildDataFrame().sparkDataFrame)
     cvModel.avgMetrics
   }
+
+  private def doubleToCell(d: Double) = Some(DoubleUtils.double2String(d))
 }
 
-private case class Apartment(features: linalg.Vector, label: Double)
+private case class Apartment(features: Linalg.Vector, label: Double)

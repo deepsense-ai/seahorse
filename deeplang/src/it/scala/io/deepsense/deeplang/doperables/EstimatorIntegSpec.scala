@@ -16,12 +16,11 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.types.StructType
 import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.{DeeplangTestSupport, DKnowledge, ExecutionContext, UnitSpec}
+import io.deepsense.deeplang.{DKnowledge, DeeplangTestSupport, ExecutionContext, UnitSpec}
 
 class EstimatorIntegSpec extends UnitSpec with DeeplangTestSupport {
 

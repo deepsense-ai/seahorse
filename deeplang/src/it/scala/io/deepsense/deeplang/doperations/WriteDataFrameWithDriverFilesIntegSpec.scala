@@ -30,6 +30,7 @@ import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.ParquetNotSupported
 import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, UnknownFileSchemaForPath}
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport, TestFiles}
+import io.deepsense.sparkutils
 
 class WriteDataFrameWithDriverFilesIntegSpec
   extends DeeplangIntegTestSupport
@@ -56,7 +57,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
 
   def quote(value: String, sep: String): String = {
     def escapeQuotes(x: Any): String =
-      s"$x".replace(quoteChar, "\\" + quoteChar)
+      s"$x".replace(quoteChar, sparkutils.CSV.EscapeQuoteChar + quoteChar)
 
     def optionallyQuote(x: String): String = {
       if (x.contains(sep) || x.contains(quoteChar)) {
@@ -76,7 +77,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
       Seq("0", "3.14159", "Hello, world!", DateTimeConverter.toString(dateTime)),
       Seq("", "", "", "")
     ).map { row => row.map(quote(_, sep)).mkString(sep) }
-    rows
+    rows.map(sparkutils.CSV.additionalEscapings(sep))
   }
 
   lazy val dataframe = createDataFrame(rows, schema)

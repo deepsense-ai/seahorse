@@ -68,7 +68,7 @@ case class WorkflowExecutor(
     val dataFrameStorage = new DataFrameStorageImpl
 
     val sparkContext = createSparkContext()
-    val sparkSession = createSparkSession(sparkContext)
+    val sparkSQLSession = createSparkSQLSession(sparkContext)
 
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
     logger.info("HOST ADDRESS: {}", hostAddress.getHostAddress)
@@ -80,7 +80,7 @@ case class WorkflowExecutor(
 
     val customCodeEntryPoint = new CustomCodeEntryPoint(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       dataFrameStorage,
       operationExecutionDispatcher)
 
@@ -89,7 +89,7 @@ case class WorkflowExecutor(
       pythonPathGenerator,
       pythonBinary,
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       dataFrameStorage,
       customCodeEntryPoint,
       hostAddress)
@@ -107,7 +107,7 @@ case class WorkflowExecutor(
       dataFrameStorage,
       customCodeExecutionProvider,
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       tempPath)
 
     val actorSystem = ActorSystem(actorSystemName)
@@ -129,7 +129,7 @@ case class WorkflowExecutor(
     workflowExecutorActor ! Launch(workflow.graph.nodes.map(_.id))
 
     logger.debug("Awaiting execution end...")
-    Await.result(actorSystem.whenTerminated, Duration.Inf)
+    actorSystem.awaitTermination()
 
     val report: ExecutionReport = finishedExecutionStatus.future.value.get match {
       case Failure(exception) => // WEA failed with an exception
@@ -151,7 +151,7 @@ case class WorkflowExecutor(
     logger.debug("Cleaning up...")
     pythonExecutionCaretaker.stop()
     logger.debug("PythonExecutionCaretaker terminated!")
-    actorSystem.terminate()
+    actorSystem.shutdown()
     logger.debug("Akka terminated!")
     executionContext.sparkContext.stop()
     logger.debug("Spark terminated!")

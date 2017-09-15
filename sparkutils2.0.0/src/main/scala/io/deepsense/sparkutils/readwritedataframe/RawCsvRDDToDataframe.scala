@@ -19,7 +19,9 @@ package org.apache.spark.sql.execution.datasources.csv
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.execution.LogicalRDD
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.{StructType, _}
+
+import io.deepsense.sparkutils.SparkSQLSession
 
 /**
   * Heavily based on org.apache.spark.sql.execution.datasources.csv.CSVFileFormat
@@ -28,7 +30,7 @@ object RawCsvRDDToDataframe {
 
   def parse(
       rdd: RDD[String],
-      sparkSession: SparkSession,
+      sparkSQLSession: SparkSQLSession,
       options: Map[String, String]): DataFrame = {
     val csvOptions = new CSVOptions(options)
     val lineCsvReader = new LineCsvReader(csvOptions)
@@ -43,7 +45,7 @@ object RawCsvRDDToDataframe {
       firstRow.zipWithIndex.map { case (value, index) => s"_c$index" }
     }
 
-    val parsedRdd = tokenRdd(sparkSession, rdd, csvOptions, header)
+    val parsedRdd = tokenRdd(rdd, csvOptions, header)
 
     // TODO Migrate to Spark's schema inferencer eventually
     // val schema = CSVInferSchema.infer(parsedRdd, header, csvOptions)
@@ -60,6 +62,7 @@ object RawCsvRDDToDataframe {
       parser(row, ignoreMalformedRows)
     }
 
+    val sparkSession = sparkSQLSession.getSparkSession
     Dataset.ofRows(
       sparkSession,
       LogicalRDD(
@@ -68,7 +71,6 @@ object RawCsvRDDToDataframe {
   }
 
   private def tokenRdd(
-      sparkSession: SparkSession,
       rdd: RDD[String],
       options: CSVOptions,
       header: Array[String]): RDD[Array[String]] = {

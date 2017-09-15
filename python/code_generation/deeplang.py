@@ -22,6 +22,7 @@ warnings_class = "InferenceWarnings"
 in_prefix = "TI_"
 out_prefix = "TO_"
 default_inference_warnings = "{}.empty".format(warnings_class)
+typetag_fields_prefix = "tTag"
 
 def bounded_parameters(number, prefix, variance):
   return ["{}{}{} <: {} : ru.TypeTag".format(variance, prefix, i, operable_class)
@@ -29,6 +30,10 @@ def bounded_parameters(number, prefix, variance):
 
 def unbounded_parameters(number, prefix):
   return ["{}{} <: {}".format(prefix, i, operable_class)
+          for i in xrange(number)]
+
+def typetag_fields(number, prefix):
+  return ["def {}{}{}: ru.TypeTag[{}{}]".format(typetag_fields_prefix, prefix, i, prefix, i)
           for i in xrange(number)]
 
 def return_signature_from_list(l):
@@ -66,8 +71,8 @@ def infer_return(number):
 def knowledge_from_context(i, pass_type_tag):
   additional_arg = ""
   if pass_type_tag:
-    additional_arg = "(ru.typeTag[{pref}{i}])"\
-                     .format(pref=out_prefix, i=i)
+    additional_arg = "({tag_prefix}{pref}{i})"\
+                     .format(pref=out_prefix, i=i, tag_prefix=typetag_fields_prefix)
 
   return ("{knowledge_class}({infer_context_name}" +\
             ".dOperableCatalog.concreteSubclassesInstances[{pref}{i}]{additional_arg})")\
@@ -94,8 +99,8 @@ def print_operation(in_arity, out_arity):
   arguments = "arguments"
   knowledge = "knowledge"
 
-  generics_list = bounded_parameters(in_arity, in_prefix, "") + \
-                    bounded_parameters(out_arity, out_prefix, "")
+  generics_list = unbounded_parameters(in_arity, in_prefix) + \
+                    unbounded_parameters(out_arity, out_prefix)
   casted_arguments = ["{args}({i}).asInstanceOf[{pref}{i}]"
                       .format(args=arguments, i=i, pref=in_prefix)
                       for i in xrange(in_arity)]
@@ -105,13 +110,14 @@ def print_operation(in_arity, out_arity):
                               i=i,
                               pref=in_prefix)
                       for i in xrange(in_arity)]
-  in_port_types = ["ru.typeTag[{pref}{i}]"
-                      .format(i=i, pref=in_prefix)
+  in_port_types = ["ru.typeTag[{pref}{i}]({tag_prefix}{pref}{i})"
+                      .format(i=i, pref=in_prefix, tag_prefix=typetag_fields_prefix)
                       for i in xrange(in_arity)]
-  out_port_types = ["ru.typeTag[{pref}{i}]"
-                      .format(i=i, pref=out_prefix)
+  out_port_types = ["ru.typeTag[{pref}{i}]({tag_prefix}{pref}{i})"
+                      .format(i=i, pref=out_prefix, tag_prefix=typetag_fields_prefix)
                       for i in xrange(out_arity)]
 
+  typetag_fields_list = typetag_fields(in_arity, in_prefix) + typetag_fields(out_arity, out_prefix)
   exec_arguments_list = exec_arguments(in_arity)
   infer_arguments_list = infer_arguments(in_arity)
   inferred_argument_names = infer_argument_names(in_arity)
@@ -131,6 +137,8 @@ def print_operation(in_arity, out_arity):
       extends DOperation {{
       override final val inArity = {in_arity}
       override final val outArity = {out_arity}
+
+      {typetag_fields}
 
       @transient
       override final lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector({in_port_types})
@@ -158,6 +166,7 @@ def print_operation(in_arity, out_arity):
     }}""".format(
       in_arity=in_arity,
       out_arity=out_arity,
+      typetag_fields=one_per_line(typetag_fields_list, tab_length=6, separator="\n"),
       operable_class=operable_class,
       operation_class=operation_class,
       knowledge_class=knowledge_class,

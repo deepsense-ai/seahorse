@@ -80,7 +80,7 @@ case class DatetimeComposer() extends Transformer {
 
     // have to create dataFrame using schema for timestamp column to be nullable
     val appendedFrame = sparkDataFrame.withColumn(getOutputColumn(), newColumn)
-    DataFrame.fromSparkDataFrame(context.sparkSession.createDataFrame(appendedFrame.rdd, newSchema))
+    DataFrame.fromSparkDataFrame(context.sparkSQLSession.createDataFrame(appendedFrame.rdd, newSchema))
   }
 
   override def _transformSchema(schema: StructType): Option[StructType] = {

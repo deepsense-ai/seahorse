@@ -37,7 +37,7 @@ object TypeUtils {
 
   def isParametrized(t: ru.Type): Boolean = t.typeSymbol.asClass.typeParams.nonEmpty
 
-  def isAbstract(c: Class[_]): Boolean = classToType(c).typeSymbol.asClass.isAbstract
+  def isAbstract(c: Class[_]): Boolean = classToType(c).typeSymbol.asClass.isAbstractClass
 
   def constructorForClass(c: Class[_]): Option[Constructor[_]] = {
     val constructors = c.getConstructors

@@ -30,5 +30,7 @@ class FilterColumns extends TransformerAsOperation[ColumnsFilterer] with Operati
   override val description: String =
     "Creates a DataFrame containing only selected columns"
 
+  override lazy val tTagTO_1: TypeTag[ColumnsFilterer] = typeTag
+
   override val since: Version = Version(0, 4, 0)
 }

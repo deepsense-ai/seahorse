@@ -34,6 +34,8 @@ object CsvOptions {
     )
   }
 
+  // Unfortunately, making analogous RichDataFrameWriter is awkward, if not impossible.
+  // This is because between Spark 1.6 and 2.0 DataFrameWriter became parametrized
   implicit class RichDataFrameReader(self: DataFrameReader) {
     def setCsvOptions(
         namesIncluded: Boolean,
@@ -45,16 +47,5 @@ object CsvOptions {
     }
   }
 
-  implicit class RichDataframeWriter(self: DataFrameWriter[Row]) {
-    def setCsvOptions(
-      namesIncluded: Boolean,
-      columnSeparator: ColumnSeparatorChoice
-    ): DataFrameWriter[Row] = {
-      val paramMap = map(namesIncluded, columnSeparator)
-      paramMap.foldLeft(self) { case (writer, (key, value)) =>
-        writer.option(key, value)
-      }
-    }
-  }
 
 }

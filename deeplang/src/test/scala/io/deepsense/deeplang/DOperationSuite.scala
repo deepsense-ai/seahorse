@@ -17,6 +17,7 @@
 package io.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
+
 import org.scalatest.FunSuite
 
 import io.deepsense.commons.utils.Version
@@ -40,6 +41,8 @@ object DOperationForPortTypes {
     override val name: String = ""
     override val description: String = ""
     override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 }
 
@@ -61,6 +64,10 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       }
       override val name: String = "Some name"
       override val description: String = "Some description"
+
+      override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+      override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
+      override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
     }
 
     val firstPicker = new PickOne
@@ -101,6 +108,8 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       override val description: String = ""
 
       val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
+
+      override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
     }
 
     val generator: DOperation = new GeneratorOfA
