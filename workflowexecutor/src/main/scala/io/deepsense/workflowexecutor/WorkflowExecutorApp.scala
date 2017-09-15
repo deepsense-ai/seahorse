@@ -90,9 +90,9 @@ object WorkflowExecutorApp
       "output directory path; directory will be created if it does not exists; " +
         "execution fails if any file is to be overwritten"
 
-    opt[String]('d', "workflow-id") valueName "WORKFLOW_ID" action {
+    opt[String]('d', "download-workflow") valueName "ID" action {
       (x, c) => c.copy(workflowId = Some(x))
-    } text "workflow ID; workflow will be downloaded from Seahorse Editor"
+    } text "download workflow; workflow with passed ID will be downloaded from Seahorse Editor"
 
     opt[Unit]('u', "upload-report") action {
       (_, c) => c.copy(uploadReport = true)
