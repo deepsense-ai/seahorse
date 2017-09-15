@@ -3,15 +3,19 @@
   */
 package io.deepsense.batche2etests
 
-import java.io.File
+import java.io.{File, PrintWriter}
 
+import scala.concurrent.Await
 import scala.sys.process._
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
 import io.deepsense.batche2etests.JsonWorkflowsBatchTest.{ProcExitError, ProcExitSuccessful}
 import io.deepsense.commons.models.ClusterDetails
-import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator}
+import io.deepsense.commons.utils.FileOpts._
+import io.deepsense.commons.utils.OptionOpts._
+import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator, WorkflowParser}
+import io.deepsense.models.workflows.WorkflowWithVariables
 
 class JsonWorkflowsBatchTest
   extends WordSpec
@@ -19,72 +23,90 @@ class JsonWorkflowsBatchTest
   with BatchTestSupport
   with BeforeAndAfterAll {
 
-  val resultFilePath = "result.json"
-  val sparkVersion = org.apache.spark.SPARK_VERSION
-  val hadoopVersion = "2.7"
-  override val mesosSparkExecutorConf =
-    s"spark.mesos.executor.home=/spark-$sparkVersion/spark-$sparkVersion-bin-hadoop$hadoopVersion/"
-  val dockerComposePath = "../deployment/docker-compose/"
+  import scala.concurrent.ExecutionContext.Implicits.global
 
-  TestWorkflowsIterator.foreach { case TestWorkflowsIterator.Input(modifiedFilename, _) =>
-    val path = getOriginalPath(modifiedFilename)
-    s"Workflow loaded from '$path'" should {
+  private val testsDir = new File("target", "test-batch")
+
+  private val resultsDir = new File(testsDir, "results")
+
+  private val dockerComposePath = "../deployment/docker-compose/"
+
+  ensureSeahorseIsRunning()
+
+  insertDatasourcesForTest()
+
+  TestWorkflowsIterator.foreach { case TestWorkflowsIterator.Input(uri, file, fileContents) =>
+    s"Workflow loaded from '$uri'" should {
       "should complete successfully in batch mode" when {
         for (cluster <- TestClusters.allAvailableClusters) {
           s"run on ${cluster.clusterType} cluster" in {
-            clearExecutionResult(resultFilePath)
-            runWorkflow(cluster, path)
-            try {
-              assertSuccessfulExecution(resultFilePath)
-            } finally {
-              clearExecutionResult(resultFilePath)
+            val future = for {
+              workflowInfo <- uploadWorkflow(fileContents)
+              workflowId = workflowInfo.id
+              workflowWithVariablesOpt <- wmclient.downloadWorkflow(workflowId)
+              workflowWithVariables <- workflowWithVariablesOpt.asFuture
+              _ <- wmclient.deleteWorkflow(workflowId)
+            } yield {
+              val downloadedFile = new File(testsDir, uri.toString)
+              saveWorkflowToFile(downloadedFile, workflowWithVariables)
+              logger.info(s"Saved downloaded workflow under $downloadedFile")
+              val resultFile = new File(resultsDir, s"${workflowId}_${file.getName}")
+              resultFile.createPathToFile()
+              runWorkflow(cluster, downloadedFile, resultFile)
+              logger.info(s"Saved result under $resultFile")
+              copyWorkflowExecutorLogs(s"workflowexecutor_$workflowId.log")
+              assertSuccessfulExecution(resultFile)
             }
+            Await.result(future, workflowTimeout)
           }
         }
       }
     }
+
   }
 
-  val sessionmanagerDockerId = getContainerId("sessionmanager", s"$dockerComposePath/docker-compose.yml")
+  private val sessionmanagerDockerId = getContainerId("sessionmanager", s"$dockerComposePath/docker-compose.yml")
 
-  override def afterAll(): Unit = {
+  private def copyWorkflowExecutorLogs(fileName: String): Unit = {
     reportProcessExecution(executeProcessGatherOutput(bashExecutionOnDockerCommand(
       sessionmanagerDockerId,
-      "cp workflowexecutor_seahorse*.log /spark_applications_logs"
+      s"cp workflowexecutor_seahorse*.log /spark_applications_logs/$fileName"
     )))
   }
 
-  private def runWorkflow(cluster: ClusterDetails,
-                          path: String): Unit = {
+  private def runWorkflow(
+      cluster: ClusterDetails,
+      inputFile: File,
+      resultFile: File): Unit = {
 
     val envSettings = getEnvSettings(cluster)
     val specialFlags = getSpecialFlags(cluster)
     val masterString = getMasterUri(cluster)
 
-    val dockerBaseDir = "/opt/docker/"
+    val dockerBaseDir = new File("/opt/docker/")
 
-    val workflowPath = dockerBaseDir + "test-workflow.json"
-    val weJarPath = dockerBaseDir + "we.jar"
-    val outputDirectory = dockerBaseDir + "test-output/"
-    val dockerResultFilePath = outputDirectory + "result.json"
+    val workflowPath = new File(dockerBaseDir, "test-workflow.json")
+    val weJarPath = new File(dockerBaseDir, "we.jar")
+
+    val localJarsDir = new File(dockerComposePath, "jars")
+    val localJarPaths = getJarsFrom(localJarsDir)
+    val jarsInDockerPaths = localJarPaths.map { case f => new File("/resources/jars", f.getName)}
+    val outputDirectory = new File(dockerBaseDir, "test-output/")
+    val dockerResultFilePath = new File(outputDirectory, "result.json")
     val sparkSubmitPath = "$SPARK_HOME/bin/spark-submit"
-
-
-    val localWorkflowsDirectory = "src/test/resources/workflows/"
-    val localResultFilePath = resultFilePath
 
     val workflowToDockerCommand = Seq(
       "docker",
       "cp",
-      localWorkflowsDirectory + path,
+      inputFile.getPath,
       s"$sessionmanagerDockerId:$workflowPath"
     )
 
-    val workflowFromDockerCommand = Seq(
+    val resultFromDockerCommand = Seq(
       "docker",
       "cp",
       s"$sessionmanagerDockerId:$dockerResultFilePath",
-      localResultFilePath
+      resultFile.getPath
     )
 
     val submitCommand = prepareSubmitCommand(
@@ -94,8 +116,11 @@ class JsonWorkflowsBatchTest
       specialFlags,
       workflowPath,
       weJarPath,
+      jarsInDockerPaths,
       outputDirectory
     )
+
+    logger.info(s"Submit command: $submitCommand")
 
     val workflowExecutionCommand =
       bashExecutionOnDockerCommand(sessionmanagerDockerId, submitCommand)
@@ -103,7 +128,7 @@ class JsonWorkflowsBatchTest
     val runLogs: Either[ProcExitError, ProcExitSuccessful] = for {
       p1 <- executeProcessGatherOutput(workflowToDockerCommand).right
       p2 <- executeProcessGatherOutput(workflowExecutionCommand).right
-      p3 <- executeProcessGatherOutput(workflowFromDockerCommand).right
+      p3 <- executeProcessGatherOutput(resultFromDockerCommand).right
     } yield {
       p1 + p2 + p3
     }
@@ -143,18 +168,23 @@ class JsonWorkflowsBatchTest
     Seq("docker", "exec", dockerName, "bash", "-c", command)
   }
 
-  private def clearExecutionResult(resultFilePath: String): Unit = {
-    val file = new File(resultFilePath)
-    if (file.exists) {
-      file.delete()
-    }
-  }
-
   private def getContainerId(serviceName: String, dockerComposeFilePath: String): String = {
     Seq("docker-compose", "-f", dockerComposeFilePath, "ps", "-q", serviceName).!!.trim
   }
 
-  private def getOriginalPath(path: String) = path.replace("%20", " ")
+  private def saveWorkflowToFile(file: File, workflowWithVariables: WorkflowWithVariables): Unit = {
+    file.createPathToFile()
+    file.createNewFile()
+    val raw = WorkflowParser.printWorkflow(workflowWithVariables, prettyPrint = true)
+    new PrintWriter(file) {
+      write(raw)
+      close()
+    }
+  }
+
+  private def getJarsFrom(dir: File): Seq[File] = {
+    dir.listFiles.filter(f => f.isFile && f.getName.endsWith(".jar"))
+  }
 }
 
 object JsonWorkflowsBatchTest {

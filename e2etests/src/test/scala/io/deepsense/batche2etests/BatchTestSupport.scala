@@ -1,36 +1,45 @@
 package io.deepsense.batche2etests
 
+import java.io.File
+
 import io.deepsense.commons.models.ClusterDetails
-import io.deepsense.e2etests.SeahorseIntegrationTestDSL
+import io.deepsense.e2etests.{SeahorseIntegrationTestDSL, TestDatasourcesInserter}
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
 import io.deepsense.models.workflows.WorkflowWithResults
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.ClusterType
-
 import scala.io.Source
 import scalaz.{Failure, Success}
+
 import spray.json._
 
-trait BatchTestSupport extends SeahorseIntegrationTestDSL
-  with WorkflowWithResultsJsonProtocol{
+trait BatchTestSupport
+  extends SeahorseIntegrationTestDSL
+  with TestDatasourcesInserter
+  with WorkflowWithResultsJsonProtocol {
 
   val mesosSparkExecutorConf =
     "spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz"
 
-  def prepareSubmitCommand(sparkSubmitPath: String,
-                           envSettings: Map[String, String],
-                           masterString: String,
-                           specialFlags: Seq[String],
-                           workflowPath: String,
-                           weJarPath: String,
-                           outputDirectory: String): String = {
+  def prepareSubmitCommand(
+      sparkSubmitPath: String,
+      envSettings: Map[String, String],
+      masterString: String,
+      specialFlags: Seq[String],
+      workflowPath: File,
+      weJarPath: File,
+      extraJarsPath: Seq[File],
+      outputDirectory: File): String = {
+
     val exportsCommandFlat = envSettings.map{
       case(k, v) => s"export $k=$v"
     }.toSeq.mkString(" && ")
 
+    val driverClassPath = (extraJarsPath :+ weJarPath).mkString(":")
+
     val submitCommandFlat = (
       Seq(
         sparkSubmitPath,
-        "--driver-class-path", weJarPath,
+        "--driver-class-path", driverClassPath,
         "--class", "io.deepsense.workflowexecutor.WorkflowExecutorApp",
         "--master", masterString,
         "--files", workflowPath
@@ -46,20 +55,20 @@ trait BatchTestSupport extends SeahorseIntegrationTestDSL
     exportsCommandFlat + " && " + submitCommandFlat
   }
 
-  def assertSuccessfulExecution(resultFilePath: String): Unit = {
-    val fileContents = Source.fromFile(resultFilePath).mkString
+  def assertSuccessfulExecution(resultFile: File): Unit = {
+    val fileContents = Source.fromFile(resultFile).mkString
     val workflow = fileContents.parseJson.convertTo[WorkflowWithResults]
     val workflowId = workflow.id
     val workflowName = workflow.workflowInfo.name
     val nodesStatuses = workflow.executionReport.nodesStatuses
     val failedNodes = nodesStatuses.count({ case (k, v) => v.isFailed })
     val completedNodes = nodesStatuses.count({ case (k, v) => v.isCompleted })
-    val totalnodes = workflow.graph.nodes.size
+    val totalNodes = workflow.graph.nodes.size
 
     checkCompletedNodesNumber(
       failedNodes,
       completedNodes,
-      totalnodes,
+      totalNodes,
       workflowId,
       workflowName
     ) match {

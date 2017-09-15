@@ -24,17 +24,22 @@ import spray.http.HttpResponse
 import io.deepsense.api.datasourcemanager.model.DatasourceParams
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.utils.OptionOpts._
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.graph.nodestate.name.NodeStatusName
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.WorkflowJsonProtocol
-import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
+import io.deepsense.models.json.workflow.WorkflowWithVariablesJsonProtocol
+import io.deepsense.models.workflows.{Workflow, WorkflowInfo, WorkflowWithVariables}
 import io.deepsense.sessionmanager.rest.client.SessionManagerClient
 import io.deepsense.sessionmanager.service.Status
 import io.deepsense.workflowmanager.client.WorkflowManagerClient
 
-trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging with WorkflowJsonProtocol {
+trait SeahorseIntegrationTestDSL
+    extends Matchers
+    with Eventually
+    with Logging
+    with WorkflowWithVariablesJsonProtocol {
 
   val CatalogPair(operablesCatalog, operationsCatalog) = CatalogRecorder.catalogs
 
@@ -90,7 +95,17 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     }
   }
 
-  def runAndCleanupWorkflow(workflow: WorkflowInfo, cluster: ClusterDetails): Future[Unit] = {
+  protected def uploadWorkflow(fileContents: String): Future[WorkflowInfo] = {
+    for {
+      id <- wmclient.uploadWorkflow(fileContents)
+      workflows <- wmclient.fetchWorkflows()
+      workflow <- workflows.find(_.id == id).asFuture
+    } yield {
+      workflow
+    }
+  }
+
+  protected def runAndCleanupWorkflow(workflow: WorkflowInfo, cluster: ClusterDetails): Future[Unit] = {
     for {
       _ <- launchWorkflow(TestClusters.local(), workflow)
       validation = assertAllNodesCompletedSuccessfully(workflow)
@@ -119,7 +134,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     smclient.launchSession(id)
   }
 
-  def createSessionSynchronously(id: Workflow.Id, clusterDetails: ClusterDetails): Unit = {
+  protected def createSessionSynchronously(id: Workflow.Id, clusterDetails: ClusterDetails): Unit = {
     smclient.createSession(id, clusterDetails)
 
     eventually {
@@ -130,7 +145,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     }
   }
 
-  def assertAllNodesCompletedSuccessfully(workflow: WorkflowInfo): Validation[String, String] = {
+  protected def assertAllNodesCompletedSuccessfully(workflow: WorkflowInfo): Validation[String, String] = {
     val numberOfNodesFut = calculateNumberOfNodes(workflow.id)
 
     val nodesResult: Validation[String, String] = eventually {
@@ -156,7 +171,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     nodesResult
   }
 
-  def checkCompletedNodesNumber(
+  protected def checkCompletedNodesNumber(
       errorNodeStatuses: Int,
       completedNodes: Int,
       numberOfNodes: Int,

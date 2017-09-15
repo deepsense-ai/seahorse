@@ -7,20 +7,20 @@ package io.deepsense.workflowmanager.client
 import java.net.URL
 import java.util.UUID
 
+import scala.concurrent.Future
+import scala.language.postfixOps
+
 import akka.actor.ActorSystem
 import akka.util.Timeout
 import spray.client.pipelining._
 import spray.http._
 import spray.json.RootJsonFormat
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
-
 import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
 import io.deepsense.commons.rest.client.RestClient
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.workflow.WorkflowInfoJsonProtocol
-import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
+import io.deepsense.models.workflows.{Workflow, WorkflowInfo, WorkflowWithVariables}
 import io.deepsense.workflowmanager.model.{WorkflowDescription, WorkflowDescriptionJsonProtocol}
 
 class WorkflowManagerClient(
@@ -30,9 +30,10 @@ class WorkflowManagerClient(
     override val credentials: Option[HttpCredentials])(
     implicit override val as: ActorSystem,
     override val timeout: Timeout)
-  extends RestClient with WorkflowInfoJsonProtocol
-    with WorkflowDescriptionJsonProtocol
-    with Logging {
+  extends RestClient
+  with WorkflowInfoJsonProtocol
+  with WorkflowDescriptionJsonProtocol
+  with Logging {
 
   override def userId: Option[UUID] = Some(mandatoryUserId)
   override def userName: Option[String] = Some(mandatoryUserName)
@@ -67,8 +68,13 @@ class WorkflowManagerClient(
   }
 
   def uploadWorkflow(workflow: Workflow)
-    (implicit rootJsonWorklow: RootJsonFormat[Workflow]): Future[Workflow.Id] = {
-    uploadWorkflow(rootJsonWorklow.write(workflow).toString())
+    (implicit rootJsonWorkflow: RootJsonFormat[Workflow]): Future[Workflow.Id] = {
+    uploadWorkflow(rootJsonWorkflow.write(workflow).toString())
+  }
+
+  def downloadWorkflow(workflowId: Workflow.Id)
+    (implicit jsonFormat: RootJsonFormat[WorkflowWithVariables]): Future[Option[WorkflowWithVariables]] = {
+    fetchResponse[Option[WorkflowWithVariables]](Get(endpointPath(s"$workflowId/download")))
   }
 
   def uploadWorkflow(workflow: String): Future[Workflow.Id] = {
@@ -76,5 +82,4 @@ class WorkflowManagerClient(
       endpointPath(s"upload"),
       MultipartFormData(Seq(BodyPart(HttpEntity(workflow), "workflowFile"))))).map(_.content)
   }
-
 }

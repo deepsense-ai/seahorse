@@ -36,12 +36,12 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
         }), httpTimeout)
   }
 
-  def cloneWorkflow(wflow: WorkflowInfo): Future[WorkflowInfo] = {
+  def cloneWorkflow(workflow: WorkflowInfo): Future[WorkflowInfo] = {
     val cloneDescription = WorkflowDescription(
-      name = s"CLONE - ${wflow.name}",
-      description = wflow.description
+      name = s"CLONE - ${workflow.name}",
+      description = workflow.description
     )
-    val clonedWorkflowIdFut = wmclient.cloneWorkflow(wflow.id, cloneDescription)
+    val clonedWorkflowIdFut = wmclient.cloneWorkflow(workflow.id, cloneDescription)
 
     for {
       id <- clonedWorkflowIdFut
