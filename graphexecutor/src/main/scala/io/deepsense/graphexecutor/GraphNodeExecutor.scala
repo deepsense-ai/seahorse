@@ -35,7 +35,7 @@ class GraphNodeExecutor(
       Thread.sleep(10 * 1000)
 
       graphExecutor.graphGuard.synchronized {
-        graphExecutor.graph.get.markAsCompleted(node.id, List[UUID]())
+        graphExecutor.graph = Some(graphExecutor.graph.get.markAsCompleted(node.id, List[UUID]()))
       }
     } catch {
       case e: Exception => {
@@ -45,8 +45,10 @@ class GraphNodeExecutor(
           // TODO: Exception should be relayed to graph
           // TODO: To decision: exception in single node should result in abortion of:
           // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
-          graphExecutor.graph.get.markAsFailed(node.id)
+          graphExecutor.graph = Some(graphExecutor.graph.get.markAsFailed(node.id))
         }
+        // TODO: proper logging
+        e.printStackTrace()
       }
     } finally {
       // Exception thrown here could result in slightly delayed graph execution

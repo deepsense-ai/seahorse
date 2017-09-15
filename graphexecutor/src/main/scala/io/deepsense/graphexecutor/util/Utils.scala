@@ -18,7 +18,7 @@ import org.apache.hadoop.yarn.api.ApplicationConstants
 import org.apache.hadoop.yarn.api.ApplicationConstants.Environment
 import org.apache.hadoop.yarn.api.records.{LocalResource, LocalResourceType, LocalResourceVisibility}
 import org.apache.hadoop.yarn.conf.YarnConfiguration
-import org.apache.hadoop.yarn.util.{Records, Apps, ConverterUtils}
+import org.apache.hadoop.yarn.util.{Apps, ConverterUtils, Records}
 
 object Utils {
   private val logDir = ApplicationConstants.LOG_DIR_EXPANSION_VAR

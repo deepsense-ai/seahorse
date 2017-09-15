@@ -39,11 +39,23 @@ object Constants {
   val EMControlInterval = 2 * 1000
 
   /** Time in ms that Experiment Manager mock will wait for start of Graph Executor */
-  val EMWaitForGraphExecutorClientInitDelay = 20 * 1000
+  val WaitForGraphExecutorClientInitDelay = 20 * 1000
 
   /** Time interval in ms that Experiment Manager mock will check for start of Graph Executor */
   val EMGraphExecutorClientInitInterval = 100
 
-  /** Location of Graph Executor library on cluster HDFS */
+  /**
+   * Location of Graph Executor library on cluster HDFS
+   */
   val GraphExecutorLibraryLocation = "/graphexecutor-assembly-0.1.0.jar"
+
+  /**
+   * Hostname of cluster master node
+   */
+  val MasterHostname = "ds-test-env-master"
+
+  /**
+   * HDFS NameNode port
+   */
+  val HdfsNameNodePort = 8020
 }

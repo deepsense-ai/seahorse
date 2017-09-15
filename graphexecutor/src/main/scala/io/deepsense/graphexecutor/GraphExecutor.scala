@@ -85,13 +85,11 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
         graph = Some(Graph(graph.get.nodes.map(_.markQueued), graph.get.edges))
       }
       val executionContext = new ExecutionContext()
-
       // Loop until there are nodes in graph that are ready to or during execution
       while (graphGuard.synchronized {
         graph.get.readyNodes.nonEmpty ||
           graph.get.nodes.filter(n => n.state.status == Status.Running).nonEmpty
       }) {
-
         // Retrieve list of nodes ready for execution in synchronized manner and use this list:
         // Put its elements into RUNNING status and schedule their execution in executorPool.
         graphGuard.synchronized {
@@ -101,7 +99,8 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
             // executorPool won't throw RejectedExecutionException thanks to comprehensive
             // synchronization in GraphExecutorAvroRpcImpl.terminateExecution().
             // NOTE: Threads executing graph nodes are created in main thread for thread-safety.
-            executorsPool.execute(new GraphNodeExecutor(executionContext, this, node))
+            executorsPool
+              .execute(new GraphNodeExecutor(executionContext, this, graph.get.node(node.id)))
           }
         }
         // Waiting for change in graph (completed or failed nodes).
@@ -158,8 +157,8 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
    * @param rpcServer Avro RPC server
    */
   private def cleanup(
-              rmClient: AMRMClientAsyncImpl[ContainerRequest],
-              rpcServer: NettyServer): Unit = {
+      rmClient: AMRMClientAsyncImpl[ContainerRequest],
+      rpcServer: NettyServer): Unit = {
     // TODO: don't print anything
     println("cleanup start" + System.currentTimeMillis)
     rmClient.unregisterApplicationMaster(FinalApplicationStatus.SUCCEEDED, "", "")

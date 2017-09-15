@@ -93,7 +93,7 @@ object Dependencies {
     hadoopClient,
     avroCore,
     avroRpc
-  ) ++ Seq(sparkCore).map(_ % "provided")
+  ) ++ Seq(sparkCore).map(_ % "provided") ++ Seq(scalatest).map(_ % "test")
 
   val graphJson = Seq(
     nscalaTime,

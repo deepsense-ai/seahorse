@@ -91,6 +91,16 @@ class GraphExecutorClient extends Closeable {
   }
 
   /**
+   * Checks if Graph Executor is in finished state.
+   * @return true if Graph Executor is in finished state and false otherwise
+   */
+  def isGraphExecutorFinished(): Boolean = {
+    // TODO: Application report cache could save some time and cluster resources
+    val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
+    applicationReport.getYarnApplicationState == YarnApplicationState.FINISHED
+  }
+
+  /**
    * Checks if Graph Executor has finished its running.
    * @return true if Graph Executor is in end state and false otherwise
    */
@@ -112,7 +122,7 @@ class GraphExecutorClient extends Closeable {
    * @return true on success and false on fail (possibly timeout exceed)
    * @throws Exception if RPC client has been successfully prepared before
    */
-  def init(timeout: Int): Boolean = {
+  def waitForSpawn(timeout: Int): Boolean = {
     var startOfWaitingForGraphExecutor = System.currentTimeMillis
     while (!isGraphExecutorRunning() && !hasGraphExecutorEndedRunning()
       && System.currentTimeMillis - startOfWaitingForGraphExecutor < timeout) {
@@ -148,7 +158,7 @@ class GraphExecutorClient extends Closeable {
    * Graph Executor starts with few seconds delay after this method call due to cluster overhead,
    * or even longer delay if cluster is short of resources.
    */
-  def start(): Unit = {
+  def spawnOnCluster(geUberJarLocation: String = Constants.GraphExecutorLibraryLocation): Unit = {
     implicit val conf = new YarnConfiguration()
     // TODO: Configuration resource access should follow proper configuration access convention
     // or should be changed to simple configuration string access following proper convention
@@ -167,13 +177,12 @@ class GraphExecutorClient extends Closeable {
     amContainer.setCommands(List(
       // TODO: Move spark-master string to configuration file
       "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
-        " --master spark://ds-dev-env-master:7077  --executor-memory 512m " +
-        " /vagrant/graphexecutor-assembly-0.1.0.jar " +
+        " --master spark://" + Constants.MasterHostname + ":7077  --executor-memory 512m " +
+        " ./graphexecutor.jar " +
         Utils.logRedirection
     ).asJava)
 
-    import Constants.GraphExecutorLibraryLocation
-    val appMasterJar = Utils.getConfiguredLocalResource(new Path(GraphExecutorLibraryLocation))
+    val appMasterJar = Utils.getConfiguredLocalResource(new Path(geUberJarLocation))
     amContainer.setLocalResources(Collections.singletonMap("graphexecutor.jar", appMasterJar))
 
     // Setup env to get all yarn and hadoop classes in classpath
@@ -221,7 +230,6 @@ class GraphExecutorClient extends Closeable {
 object GraphExecutorClient {
   def apply() = {
     val ret = new GraphExecutorClient()
-    ret.start()
     ret
   }
 }
