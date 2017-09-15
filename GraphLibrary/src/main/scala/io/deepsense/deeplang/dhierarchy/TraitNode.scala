@@ -11,7 +11,7 @@ import io.deepsense.deeplang.dhierarchy.exceptions.TraitInheritingFromClassExcep
 /**
  * Represents Trait in DHierarchy graph.
  */
-private[dhierarchy] class TraitNode(protected override val typeInfo: Class[_]) extends Node {
+private[dhierarchy] class TraitNode(protected override val javaType: Class[_]) extends Node {
 
   private[dhierarchy] override def addParent(node: Node): Unit = {
     throw new TraitInheritingFromClassException(this, node)
@@ -25,5 +25,5 @@ private[dhierarchy] class TraitNode(protected override val typeInfo: Class[_]) e
 }
 
 private[dhierarchy] object TraitNode {
-  def apply(typeInfo: Class[_]): TraitNode = new TraitNode(typeInfo)
+  def apply(javaType: Class[_]): TraitNode = new TraitNode(javaType)
 }

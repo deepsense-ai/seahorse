@@ -28,9 +28,9 @@ class DHierarchy {
   /**
    * Tries to register type in hierarchy.
    * Returns Some(node) if succeed and None otherwise.
-   * Value t and typeInfo should be describing the same type.
+   * Value t and javaType should be describing the same type.
    */
-  private def register(t: ru.Type, typeInfo: Class[_]): Option[Node] = {
+  private def register(t: ru.Type, javaType: Class[_]): Option[Node] = {
     if (!(t <:< baseType)) {
       return None
     }
@@ -39,17 +39,17 @@ class DHierarchy {
       throw new ParametrizedTypeException(t)
     }
 
-    val node = Node(typeInfo)
+    val node = Node(javaType)
 
     val registeredNode = nodes.get(node.fullName)
     if (registeredNode.isDefined)
       return registeredNode
 
-    val superTraits = typeInfo.getInterfaces.map(register).flatten
+    val superTraits = javaType.getInterfaces.map(register).flatten
     superTraits.foreach(_.addSuccessor(node))
     superTraits.foreach(node.addSupertrait)
 
-    val parentClass = register(typeInfo.getSuperclass)
+    val parentClass = register(javaType.getSuperclass)
     if (parentClass.isDefined) {
       parentClass.get.addSuccessor(node)
       node.addParent(parentClass.get)
@@ -59,9 +59,9 @@ class DHierarchy {
     Some(node)
   }
 
-  private def register(typeInfo: Class[_]): Option[Node] = {
-    if (typeInfo == null) return None
-    register(DHierarchy.classToType(typeInfo), typeInfo)
+  private def register(javaType: Class[_]): Option[Node] = {
+    if (javaType == null) return None
+    register(DHierarchy.classToType(javaType), javaType)
   }
 
   private def register(t: ru.Type): Option[Node] = {

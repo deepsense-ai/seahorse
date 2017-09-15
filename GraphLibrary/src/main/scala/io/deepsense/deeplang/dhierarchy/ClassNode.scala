@@ -11,7 +11,7 @@ import scala.reflect.runtime.{universe => ru}
 /**
  * Represents Class in DHierarchy graph.
  */
-private[dhierarchy] class ClassNode(protected override val typeInfo: Class[_]) extends Node {
+private[dhierarchy] class ClassNode(protected override val javaType: Class[_]) extends Node {
 
   private[dhierarchy] override def info: TypeInfo = {
     val parentName = if (parent.isDefined) Some(parent.get.displayName) else None
@@ -22,10 +22,10 @@ private[dhierarchy] class ClassNode(protected override val typeInfo: Class[_]) e
 }
 
 private[dhierarchy] object ClassNode {
-  def apply(typeInfo: Class[_]): ClassNode = {
-    if (DHierarchy.isAbstract(typeInfo))
-      new ClassNode(typeInfo)
+  def apply(javaType: Class[_]): ClassNode = {
+    if (DHierarchy.isAbstract(javaType))
+      new ClassNode(javaType)
     else
-      new ConcreteClassNode(typeInfo)
+      new ConcreteClassNode(javaType)
   }
 }

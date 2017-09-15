@@ -13,9 +13,9 @@ import scala.collection.mutable
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.dhierarchy.exceptions.NoParameterLessConstructorException
 
-private[dhierarchy] class ConcreteClassNode(typeInfo: Class[_]) extends ClassNode(typeInfo) {
+private[dhierarchy] class ConcreteClassNode(javaType: Class[_]) extends ClassNode(javaType) {
   val constructor: Constructor[_] = {
-    val constructors = typeInfo.getConstructors
+    val constructors = javaType.getConstructors
     val isParameterLess: (Constructor[_] => Boolean) = constructor =>
       constructor.getParameterTypes.length == 0
     constructors.find(isParameterLess) match {

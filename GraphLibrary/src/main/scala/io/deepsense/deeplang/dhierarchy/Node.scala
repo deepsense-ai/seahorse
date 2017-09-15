@@ -13,8 +13,8 @@ import scala.reflect.runtime.{universe => ru}
  * Node that represents type in DHierarchy graph.
  */
 private[dhierarchy] abstract class Node {
-  protected val typeInfo: Class[_]
-  private[dhierarchy] val isTrait: Boolean = typeInfo.isInterface
+  protected val javaType: Class[_]
+  private[dhierarchy] val isTrait: Boolean = javaType.isInterface
 
   protected var parent: Option[Node] = None
   protected val supertraits: mutable.Map[String, Node] = mutable.Map()
@@ -22,7 +22,7 @@ private[dhierarchy] abstract class Node {
   protected val subtraits: mutable.Map[String, Node] = mutable.Map()
 
   /** Name that unambiguously defines underlying type. */
-  private[dhierarchy] val fullName: String = typeInfo.getName.replaceAllLiterally("$", ".")
+  private[dhierarchy] val fullName: String = javaType.getName.replaceAllLiterally("$", ".")
   /** The part of the full name after the last '.' */
   private[dhierarchy] val displayName: String = fullName.substring(fullName.lastIndexOf('.') + 1)
 
@@ -53,12 +53,8 @@ private[dhierarchy] abstract class Node {
 }
 
 private[dhierarchy] object Node {
-  def apply(typeInfo: Class[_]): Node = {
-    if (typeInfo.isInterface) {
-      TraitNode(typeInfo)
-    } else {
-      ClassNode(typeInfo)
-    }
+  def apply(javaType: Class[_]): Node = {
+    if (javaType.isInterface) TraitNode(javaType) else ClassNode(javaType)
   }
 }
 
