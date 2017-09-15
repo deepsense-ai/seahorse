@@ -85,7 +85,6 @@ class DKnowledgeSuite extends FunSuite with Matchers {
     val actualKnowledgeSum = knowledge1 ++ knowledge2
 
     actualKnowledgeSum shouldBe expectedKnowledgeSum
-    assert(actualKnowledgeSum.isInstanceOf[DKnowledge[DOperable]])
   }
 
   test("DKnowledge can be constructed of traversable of DKnowledges") {

@@ -31,9 +31,10 @@ import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDes
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.parameters.{FileFormat, StorageType}
+import io.deepsense.deeplang.params.{FileFormat, StorageType}
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
@@ -643,10 +644,18 @@ class WorkflowExecutorActorSpec
     TestActorRef(new TestWMClientActor(workflows))
   }
 
-  val node1 = Node(Node.Id.randomId, ReadDataFrame.apply(FileFormat.JSON, "/whatever"))
+  val inputFile = InputStorageTypeChoice.File()
+    .setFileFormat(InputFileFormatChoice.Json())
+    .setSourceFile("/whatever")
+  val outputFile = OutputStorageTypeChoice.File()
+    .setFileFormat(OutputFileFormatChoice.Json())
+    .setOutputFile("/output")
+  val node1 = Node(
+    Node.Id.randomId,
+    ReadDataFrame().setStorageType(inputFile))
   val node2 = Node(
     Node.Id.randomId,
-    WriteDataFrame.apply(StorageType.FILE, FileFormat.JSON, "/output"))
+    WriteDataFrame().setStorageType(outputFile))
   val invalidNode = Node(Node.Id.randomId, new WriteDataFrame())
   def workflowWithResults(id: Workflow.Id): WorkflowWithResults = WorkflowWithResults(
     id,

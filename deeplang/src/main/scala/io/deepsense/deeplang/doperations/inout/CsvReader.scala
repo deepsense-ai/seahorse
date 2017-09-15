@@ -23,39 +23,45 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame, Row, types}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperations.{CategoricalExtraction, ReadDataFrameParameters}
+import io.deepsense.deeplang.doperations.ReadDataFrame.ReadDataFrameParameters
 
 trait CsvReader {
-  self: ReadDataFrameParameters with CategoricalExtraction =>
+  self: ReadDataFrameParameters =>
 
   import CsvReader._
 
-  def inferAndConvert(sparkDataFrame: SparkDataFrame)(
-      implicit context: ExecutionContext): SparkDataFrame = {
+  def inferAndConvert
+    (csvChoice: InputFileFormatChoice.Csv)
+    (sparkDataFrame: SparkDataFrame)
+    (implicit context: ExecutionContext): SparkDataFrame = {
+
     val rawStringData = sparkDataFrame.map {
       row => Row.fromSeq(row.toSeq.map(Option(_).getOrElse("")))
     }
 
-    val inferredTypes = inferTypes(rawStringData)
-    val columnNames = determineColumnNames(sparkDataFrame.schema)
+    val inferredTypes = inferTypes(csvChoice)(rawStringData)
+    val columnNames = determineColumnNames(csvChoice)(sparkDataFrame.schema)
     val schema = buildSchema(columnNames, inferredTypes)
-    val categoricals = getCategoricalColumns(schema, categoricalColumnsParameter.value)
 
     val convertedData = rawStringData.map(row =>
       Row.fromSeq {
         row.toSeq.zipWithIndex.zip(inferredTypes).map {
-          case ((cell: String, index), inferredType) =>
-            convertCell(cell, inferredType, isCategorical = categoricals.contain(index))
+          case ((cell: String, index), inferredType) => convertCell(cell, inferredType)
         }
       })
 
     context.sqlContext.createDataFrame(convertedData, schema)
   }
 
-  private def inferTypes(data: RDD[Row]): Seq[DataType] = {
+  private def inferTypes
+    (csvChoice: InputFileFormatChoice.Csv)
+    (data: RDD[Row]): Seq[DataType] = {
+
+    val shouldConvertToBoolean = csvChoice.getShouldConvertToBoolean
+
     val linesInferences =
       data.map(_.toSeq.map {
-        case cell: String => cellTypeInference(cell, csvShouldConvertToBooleanParameter.value)
+        case cell: String => cellTypeInference(cell, shouldConvertToBoolean)
       })
 
     linesInferences.reduce { (
@@ -63,10 +69,13 @@ trait CsvReader {
     }.map(_.toType)
   }
 
-  private def determineColumnNames(schema: StructType): Seq[String] = {
+  private def determineColumnNames
+    (csvChoice: InputFileFormatChoice.Csv)
+    (schema: StructType): Seq[String] = {
+
     val sanitizedNames = schema map { field =>
       // TODO: remove replace when spark upgraded to 1.4. DS-635
-      if (csvNamesIncludedParameter.value) {
+      if (csvChoice.getCsvNamesIncluded) {
         field.name.trim.replace(".", "_")
       } else {
         ""
@@ -132,21 +141,13 @@ object CsvReader {
     }.get
   }
 
-  private def convertCell(cell: String, cellType: types.DataType, isCategorical: Boolean): Any = {
+  private def convertCell(cell: String, cellType: types.DataType): Any = {
     val trimmedCell = cell.trim
 
-    if (isCategorical) {
-      // For categoricals, even if their underlying value is string,
-      // empty cell is the only way to pass a null value.
-      // In other words, we don't want categoricals of value "".
-      if (cell.isEmpty) { null } else { cell }
-
-    } else if (cellType == types.StringType) {
+    if (cellType == types.StringType) {
       cell
-
     } else if (trimmedCell.isEmpty) {
       null
-
     } else {
       cellType match {
         case types.BooleanType => trimmedCell.toDouble == 1

@@ -33,9 +33,7 @@ object SampleInheritance {
   trait T3 extends T1
   trait T extends DOperable
   abstract class A extends T3 {
-    override def toInferrable: DOperable = ???
     override def report(executionContext: ExecutionContext): Report = ???
-    override def save(executionContext: ExecutionContext)(path: String): Unit = ???
   }
   case class B() extends A with T
   case class C() extends A with T2
@@ -136,28 +134,22 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
     descriptor.classes should contain theSameElementsAs classes
   }
 
-  test("Registering class extending parametrized class should produce exception") {
-    intercept[ParametrizedTypeException] {
-      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
-      val p = new DOperableCatalog
-      p.registerDOperable[B]()
-    }
+  test("Registering class extending parametrized class") {
+    import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+    val p = new DOperableCatalog
+    p.registerDOperable[B]()
   }
 
-  test("Registering parametrized class should produce exception") {
-    intercept[ParametrizedTypeException] {
-      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
-      val p = new DOperableCatalog
-      p.registerDOperable[A[Int]]()
-    }
+  test("Registering parametrized class") {
+    import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+    val p = new DOperableCatalog
+    p.registerDOperable[A[Int]]()
   }
 
-  test("Registering parametrized trait should produce exception") {
-    intercept[ParametrizedTypeException] {
-      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
-      val p = new DOperableCatalog
-      p.registerDOperable[T[Int]]()
-    }
+  test("Registering parametrized trait") {
+    import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+    val p = new DOperableCatalog
+    p.registerDOperable[T[Int]]()
   }
 
   test("Registering concrete class with no parameter-less constructor should produce exception") {

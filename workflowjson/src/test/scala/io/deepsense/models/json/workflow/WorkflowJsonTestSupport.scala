@@ -24,12 +24,10 @@ import org.mockito.Mockito._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferenceWarnings
-import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
-
 
 trait WorkflowJsonTestSupport
   extends StandardSpec
@@ -91,14 +89,11 @@ trait WorkflowJsonTestSupport
     when(knowledge.filterTypes(any())).thenReturn(knowledge)
     when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
       (Vector.fill(outArity)(knowledge), InferenceWarnings.empty))
-    val parametersSchema = new ParametersSchema() {}
-    when(dOperation.parameters).thenReturn(parametersSchema)
     dOperation
   }
 
   def mockOperable(): DOperable = {
     val dOperable = mock[DOperable]
-    when(dOperable.inferredMetadata).thenReturn(None)
     dOperable
   }
 }

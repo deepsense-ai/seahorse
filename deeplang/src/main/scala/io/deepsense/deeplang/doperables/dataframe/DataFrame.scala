@@ -24,37 +24,27 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report}
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
-import ColumnType.ColumnType
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
 /**
  * @param sparkDataFrame Spark representation of data.
  *                       User of this class has to assure that
  *                       sparkDataFrame data fulfills its internal schema.
- * @param inferredMetadata Used only if this instance is used for inference.
- *                         Contains metadata inferred so far for this instance.
+ * @param schema Schema of the DataFrame. Usually it is schema of sparkDataFrame,
+ *               but for inference, DataFrame may be not set but schema is known.
  */
 case class DataFrame private[dataframe] (
     sparkDataFrame: sql.DataFrame,
-    override val inferredMetadata: Option[DataFrameMetadata] = Some(DataFrameMetadata.empty))
+    schema: Option[StructType])
   extends DOperable
   with DataFrameReportGenerator
   with DataFrameColumnsGetter {
 
-  type M = DataFrameMetadata
-
-  def this() = this(null)
-
-  override def metadata: Option[DataFrameMetadata] =
-    Option(DataFrameMetadata.fromSchema(sparkDataFrame.schema))
-
-  override def save(context: ExecutionContext)(path: String): Unit =
-    sparkDataFrame.write.parquet(path)
-
-  override def toInferrable: DOperable = DataFrame(null, metadata)
+  def this() = this(null, None)
 
   /**
    * Creates new DataFrame with new columns added.
@@ -62,97 +52,27 @@ case class DataFrame private[dataframe] (
   def withColumns(context: ExecutionContext, newColumns: Traversable[sql.Column]): DataFrame = {
     val columns: List[sql.Column] = new sql.ColumnName("*") :: newColumns.toList
     val newSparkDataFrame = sparkDataFrame.select(columns: _*)
-    context.dataFrameBuilder.buildDataFrame(newSparkDataFrame)
-  }
-
-  /**
-   * Returns an RDD of Double
-   * after checking the conformance of selected column type with provided predicate.
-   *
-   * throws [[WrongColumnTypeException]]
-   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
-   */
-  def selectDoubleRDD(column: String, predicate: ColumnTypesPredicates.Predicate): RDD[Double] = {
-    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, Seq(column))
-
-    val selected = sparkDataFrame.select(column)
-    predicate(selected.schema.fields.head).get
-
-    selected.map(rowToDoubles(_).head)
-  }
-
-  /**
-   * Returns an RDD of SparkVector
-   * after checking the conformance of selected column types with provided predicate.
-   *
-   * throws [[WrongColumnTypeException]]
-   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
-   */
-  def selectSparkVectorRDD(
-      columns: Seq[String], predicate: ColumnTypesPredicates.Predicate): RDD[SparkVector] = {
-    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
-
-    val selected = sparkDataFrame.select(columns.head, columns.tail: _*)
-    selected.schema.fields.foreach(predicate(_).get)
-
-    selected.map { row => Vectors.dense(rowToDoubles(row).toArray) }
-  }
-
-  /**
-   * Returns an RDD of LabeledPoint(label, features: _*)
-   * after checking the conformance of selected column types with provided predicates.
-   *
-   * throws [[WrongColumnTypeException]]
-   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
-   */
-  def selectAsSparkLabeledPointRDD(
-      labelColumn: String,
-      featureColumns: Seq[String],
-      labelPredicate: ColumnTypesPredicates.Predicate,
-      featurePredicate: ColumnTypesPredicates.Predicate): RDD[LabeledPoint] = {
-
-    val selectedLabel = selectDoubleRDD(labelColumn, labelPredicate)
-    val selectedFeatures = selectSparkVectorRDD(featureColumns, featurePredicate)
-
-    selectedLabel zip selectedFeatures map {
-      case (label, features) => LabeledPoint(label, features)
-    }
-  }
-
-  /**
-   * Returns an RDD of (prediction, label) pairs
-   * after checking the conformance of selected column types with provided predicates.
-   *
-   * throws [[WrongColumnTypeException]]
-   * throws [[io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException]]
-   */
-  def selectPredictionsAndLabelsRDD(
-      labelColumn: String,
-      predictionColumn: String,
-      labelPredicate: ColumnTypesPredicates.Predicate,
-      predictionPredicate: ColumnTypesPredicates.Predicate): RDD[(Double, Double)] = {
-
-    val selectedPrediction = selectDoubleRDD(predictionColumn, predictionPredicate)
-    val selectedLabel = selectDoubleRDD(labelColumn, labelPredicate)
-    selectedPrediction zip selectedLabel
+    DataFrame.fromSparkDataFrame(newSparkDataFrame)
   }
 
   override def report(executionContext: ExecutionContext): Report = {
     report(executionContext, sparkDataFrame)
   }
-
-  private def rowToDoubles(row: Row): Seq[Double] = {
-    row.toSeq.map {
-      case null => 0.0
-      case b: Boolean => if (b) 1.0 else 0.0
-      case d: Double => d
-      case i: Int => i.toDouble
-      case _ => ???
-    }
-  }
 }
 
 object DataFrame {
+
+  /**
+   * @return DataFrame object that can be used _only_ for inference,
+   *         i.e. it contains only schema of this DataFrame.
+   */
+  def forInference(schema: StructType): DataFrame = forInference(Some(schema))
+
+  /**
+   * @return DataFrame object that can be used _only_ for inference,
+   *         i.e. it contains only schema of this DataFrame.
+   */
+  def forInference(schema: Option[StructType] = None): DataFrame = DataFrame(null, schema)
 
   /**
    * Throws [[WrongColumnTypeException]]
@@ -180,11 +100,15 @@ object DataFrame {
   def empty(context: ExecutionContext): DataFrame = {
     val emptyRdd = context.sqlContext.sparkContext.parallelize(Seq[Row]())
     val emptySparkDataFrame = context.sqlContext.createDataFrame(emptyRdd, StructType(Seq.empty))
-    context.dataFrameBuilder.buildDataFrame(emptySparkDataFrame)
+    fromSparkDataFrame(emptySparkDataFrame)
   }
 
   def loadFromFs(context: ExecutionContext)(path: String): DataFrame = {
     val dataFrame = context.sqlContext.read.parquet(path)
-    context.dataFrameBuilder.buildDataFrame(dataFrame)
+    fromSparkDataFrame(dataFrame)
+  }
+
+  def fromSparkDataFrame(sparkDataFrame: sql.DataFrame): DataFrame = {
+    DataFrame(sparkDataFrame, Some(sparkDataFrame.schema))
   }
 }

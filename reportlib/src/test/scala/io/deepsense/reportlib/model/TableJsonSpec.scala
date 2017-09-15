@@ -30,7 +30,7 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
     "serialize" when {
       val rowNames: List[String] = List("rowName1", "rowName2")
       val columnNames: List[String] = List("A", "B")
-      val columnTypes: List[ColumnType] = List(ColumnType.string, ColumnType.categorical)
+      val columnTypes: List[ColumnType] = List(ColumnType.string, ColumnType.numeric)
       val values: List[List[Option[String]]] = List(List(Some("11"), None), List(None, Some("34")))
       "columnsNames specified" in {
         val json = testTableWithLabels(Some(columnNames), columnTypes, None, values).toJson

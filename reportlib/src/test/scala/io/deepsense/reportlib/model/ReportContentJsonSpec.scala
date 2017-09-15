@@ -16,10 +16,9 @@
 
 package io.deepsense.reportlib.model
 
+import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import org.scalatest.{Matchers, WordSpec}
 import spray.json._
-
-import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 
 class ReportContentJsonSpec
   extends WordSpec
@@ -28,18 +27,37 @@ class ReportContentJsonSpec
   with ReportJsonProtocol {
 
   "ReportContent" should {
+
     val reportName = ReportContentTestFactory.reportContentName
     val emptyReportJson: JsObject = JsObject(
       "name" -> JsString(reportName),
       "tables" -> JsObject(),
-      "distributions" -> JsObject()
+      "distributions" -> JsObject(),
+      "schema" -> JsNull
     )
     val report = testReport
     val reportJson: JsObject = JsObject(
       "name" -> JsString(reportName),
       "tables" -> JsObject(report.tables.mapValues(_.toJson)),
-      "distributions" -> JsObject(report.distributions.mapValues(_.toJson))
+      "distributions" -> JsObject(report.distributions.mapValues(_.toJson)),
+      "schema" -> JsObject(
+        "fields" -> JsArray(
+          JsObject(
+            "name" -> JsString("x"),
+            "dataType" -> JsString("integer"),
+            "nullable" -> JsTrue,
+            "metadata" -> JsObject()
+          ),
+          JsObject(
+            "name" -> JsString("y"),
+            "dataType" -> JsString("double"),
+            "nullable" -> JsFalse,
+            "metadata" -> JsObject()
+          )
+        )
+      )
     )
+
     "serialize" when {
       "empty" in {
         val report = ReportContent(reportName, Map(), Map())

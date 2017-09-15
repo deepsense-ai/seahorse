@@ -16,22 +16,21 @@
 
 package io.deepsense.reportlib.model
 
+import io.deepsense.commons.types.ColumnType
 import spray.json._
 
-import io.deepsense.commons.types.ColumnType
+trait ReportJsonProtocol
+  extends DefaultJsonProtocol
+  with StructTypeJsonProtocol
+  with ProductFormatsInstances
+  with NullOptions {
 
-trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstances with NullOptions {
-  implicit val statisticsFormat = jsonFormat7(
-    Statistics.apply(
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Seq[String]))
+  type maybeStats = Option[String]
+  val statisticsConstructor: ((maybeStats, maybeStats, maybeStats) => Statistics) = Statistics.apply
+  implicit val statisticsFormat = jsonFormat3(statisticsConstructor)
+
   implicit val categoricalDistributionFormat = jsonFormat(
-    CategoricalDistribution.apply,
+    DiscreteDistribution.apply,
     DistributionJsonProtocol.nameKey,
     DistributionJsonProtocol.descriptionKey,
     DistributionJsonProtocol.missingValuesKey,
@@ -39,6 +38,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
     DistributionJsonProtocol.countsKey,
     DistributionJsonProtocol.subtypeKey,
     DistributionJsonProtocol.typeKey)
+
   implicit val continuousDistributionFormat = jsonFormat(
     ContinuousDistribution.apply,
     DistributionJsonProtocol.nameKey,
@@ -57,7 +57,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
       Some(JsString(DistributionJsonProtocol.typeName)))
       val subtype: String = fields.get(DistributionJsonProtocol.subtypeKey).get.convertTo[String]
       subtype match {
-        case CategoricalDistribution.subtype => json.convertTo[CategoricalDistribution]
+        case DiscreteDistribution.subtype => json.convertTo[DiscreteDistribution]
         case ContinuousDistribution.subtype => json.convertTo[ContinuousDistribution]
       }
     }
@@ -75,14 +75,15 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
           DistributionJsonProtocol.countsKey -> d.counts.toJson,
           DistributionJsonProtocol.statisticsKey -> d.statistics.toJson
         ))
-        case d: CategoricalDistribution => JsObject(basicFields ++ Map(
+        case d: DiscreteDistribution => JsObject(basicFields ++ Map(
           DistributionJsonProtocol.countsKey -> d.counts.toJson,
           DistributionJsonProtocol.bucketsKey -> d.buckets.toJson
         ))
       }
     }
   }
-  implicit val columntTypeFormat = new RootJsonFormat[ColumnType.ColumnType] {
+
+  implicit val columnTypeFormat = new RootJsonFormat[ColumnType.ColumnType] {
     override def write(obj: ColumnType.ColumnType): JsValue = {
       JsString(obj.toString)
     }
@@ -92,8 +93,9 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
       case _ => throw new DeserializationException("Enum string expected")
     }
   }
+
   implicit val tableFormat = jsonFormat7(Table.apply)
-  implicit val reportFormat = jsonFormat3(ReportContent.apply)
+  implicit val reportFormat = jsonFormat4(ReportContent.apply)
 }
 
 object ReportJsonProtocol extends ReportJsonProtocol

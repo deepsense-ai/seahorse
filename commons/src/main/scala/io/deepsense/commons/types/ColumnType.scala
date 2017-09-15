@@ -23,7 +23,8 @@ object ColumnType extends Enumeration {
   type ColumnType = Value
   val numeric = Value("numeric")
   val boolean = Value("boolean")
-  val categorical = Value("categorical")
   val string = Value("string")
   val timestamp = Value("timestamp")
+
+  val other = Value("other")
 }

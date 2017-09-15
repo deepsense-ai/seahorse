@@ -24,7 +24,7 @@ import spray.json._
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.DOperable
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.UntrainedRandomForestClassification
+import io.deepsense.deeplang.doperables.ColumnsFilterer
 import io.deepsense.graph.{GraphKnowledge, DirectedGraph, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol, ExecutionReportJsonProtocol}
@@ -51,7 +51,7 @@ class ProtocolJsonSerializerSpec
         Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft()),
         EntitiesMap(
           Map[Entity.Id, DOperable](
-            Entity.Id.randomId -> new UntrainedRandomForestClassification()),
+            Entity.Id.randomId -> new ColumnsFilterer),
           Map(Entity.Id.randomId -> ReportContent("whatever", List.empty))),
         None)
 

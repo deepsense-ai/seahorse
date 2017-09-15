@@ -19,7 +19,5 @@ package io.deepsense.deeplang.doperables
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
 trait DOperableMock extends DOperable {
-  override def toInferrable: DOperable = ???
   override def report(executionContext: ExecutionContext): Report = ???
-  override def save(executionContext: ExecutionContext)(path: String): Unit = ???
 }

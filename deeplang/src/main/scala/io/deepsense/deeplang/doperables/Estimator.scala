@@ -16,6 +16,40 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.DOperable
+import org.apache.spark.sql.types.StructType
 
-abstract class Estimator extends DOperable
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
+
+/**
+ * Can create a Transformer based on a DataFrame.
+ */
+abstract class Estimator extends DOperable with Params {
+
+  /**
+   * Creates a Transformer based on a DataFrame.
+   */
+  private[deeplang] def _fit(df: DataFrame): Transformer
+
+  /**
+   * Creates an instance of Transformer for inference.
+   * @param schema the schema for inference, or None if it's unknown.
+   */
+  private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer
+
+  def fit: DMethod1To1[Unit, DataFrame, Transformer] = {
+    new DMethod1To1[Unit, DataFrame, Transformer] {
+      override def apply(ctx: ExecutionContext)(p: Unit)(df: DataFrame): Transformer = {
+        _fit(df)
+      }
+
+      override def infer(ctx: InferContext)(p: Unit)(k: DKnowledge[DataFrame])
+      : (DKnowledge[Transformer], InferenceWarnings) = {
+        val transformer = _fit_infer(k.single.schema)
+        (DKnowledge(transformer), InferenceWarnings.empty)
+      }
+    }
+  }
+}

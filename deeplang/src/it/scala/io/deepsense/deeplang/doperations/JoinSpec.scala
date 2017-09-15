@@ -21,9 +21,9 @@ import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection}
 
 class JoinSpec extends DeeplangIntegTestSupport {
 
@@ -122,14 +122,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
         assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
-      "using categorical column" in {
-        val (ldf, rdf, expected, joinColumns) = categoricalFixture()
-
-        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
-        val joinDF = executeOperation(join, ldf, rdf)
-
-        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
-      }
       "with null values only in left DataFrame" in {
         val (ldf, rdf, expected, joinColumns) = nullValuesInLeftDataFrameFixture()
 
@@ -192,6 +184,165 @@ class JoinSpec extends DeeplangIntegTestSupport {
             Set.empty
           )
           executeOperation(join, ldf, rdf)
+        }
+      }
+    }
+  }
+
+  it should {
+    "infer DataFrame schema" when {
+      "based upon a single column selection by name" in {
+        val (ldf, rdf, expected, joinColumns) = oneColumnFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon a single column selection by index" in {
+        val (ldf, rdf, expected, joinColumnIds) = oneColumnByIndicesFixture()
+
+        val join = joinWithMultipleColumnSelection(Set.empty, joinColumnIds)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon a single column selection with colliding join column" in {
+        val (ldf, rdf, expected, joinColumns) = oneColumnFixture(None, None)
+
+        val join = joinWithMultipleColumnSelection(
+          joinColumns, Set.empty, leftPrefix = None, rightPrefix = None)
+
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon two columns" in {
+        val (ldf, rdf, expected, joinColumns) = twoColumnsFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon two columns with different column names" in {
+        val (ldf, rdf, expected, leftJoinColumns, rightJoinColumns) =
+          twoColumnsDifferentNamesFixture()
+
+        val join = joinWithMultipleColumnSelection(
+          leftJoinColumns,
+          Vector.empty,
+          rightJoinColumns,
+          Vector.empty,
+          leftPrefix = None,
+          rightPrefix = None)
+
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon two columns with different column indices" in {
+        val (ldf, rdf, expected, leftJoinIndices, rightJoinIndices) =
+          twoColumnsDifferentIndicesFixture()
+
+        val join = joinWithMultipleColumnSelection(
+          Vector.empty,
+          leftJoinIndices,
+          Vector.empty,
+          rightJoinIndices,
+          leftPrefix = None,
+          rightPrefix = None)
+
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "some rows from left dataframe have no corresponding values in the right one" in {
+        val (ldf, rdf, expected, joinColumns) = noSomeRightValuesFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "dataframes have no matching values" in {
+        val (ldf, rdf, expected, joinColumns) = noMatchingValuesFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "some column values are null" in {
+        val (ldf, rdf, expected, joinColumns) = nullFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "with null values only in left DataFrame" in {
+        val (ldf, rdf, expected, joinColumns) = nullValuesInLeftDataFrameFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "with null values only in both DataFrames" is pending
+      "with empty join column selection" is pending
+    }
+    "throw an exception during inference" when {
+      "with columns of the same name in both and no join on them" in {
+        an[Exception] should be thrownBy {
+          val (ldf, rdf, expected, joinColumns) = sameColumnNamesFixture()
+
+          val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+          val joinDF = inferSchema(join, ldf, rdf)
+
+          joinDF shouldBe expected.sparkDataFrame.schema
+        }
+      }
+      "the columns selected by name does not exist" in {
+        an[ColumnDoesNotExistException] should be thrownBy {
+          val nonExistingColumnName = "thisColumnDoesNotExist"
+          val join = joinWithMultipleColumnSelection(
+            Set(nonExistingColumnName),
+            Set.empty
+          )
+          val (ldf, rdf, _, _) = oneColumnFixture()
+          inferSchema(join, ldf, rdf)
+        }
+      }
+      "the columns selected by index does not exist" in {
+        an[ColumnDoesNotExistException] should be thrownBy {
+          val nonExistingColumnIndex = 1000
+          val join = joinWithMultipleColumnSelection(
+            Set.empty,
+            Set(nonExistingColumnIndex)
+          )
+          val (ldf, rdf, _, _) = oneColumnFixture()
+          inferSchema(join, ldf, rdf)
+        }
+      }
+      "the columns selected by name are of different types" in {
+        an[WrongColumnTypeException] should be thrownBy {
+          val (ldf, rdf, _, wrongTypeColumnNames) = differentTypesFixture()
+          val join = joinWithMultipleColumnSelection(
+            wrongTypeColumnNames,
+            Set.empty
+          )
+          inferSchema(join, ldf, rdf)
+        }
+      }
+      "the joinColumns MultipleColumnSelector is empty" in {
+        an[ColumnsDoNotExistException] should be thrownBy {
+          val (ldf, rdf, _, wrongTypeColumnNames) = joinColumnsIsEmptyFixture()
+          val join = joinWithMultipleColumnSelection(
+            wrongTypeColumnNames,
+            Set.empty
+          )
+          inferSchema(join, ldf, rdf)
         }
       }
     }
@@ -660,68 +811,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
     (ldf, rdf, edf, joinColumns)
   }
 
-  def categoricalFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
-    val column1 = "categorical"
-    val joinColumns = Set(column1)
-
-    // Left dataframe
-    val colsL = Vector(column1, "age")
-    val schemaL = StructType(Seq(
-      StructField(colsL(0), StringType),
-      StructField(colsL(1), DoubleType)
-    ))
-    val rowsL = Seq(
-      ("pies", 3.0),
-      ("kot", 5.0),
-      ("krowa", 7.0),
-      ("pies", 1.0)
-    ).map(Row.fromTuple)
-    val ldf = createDataFrame(rowsL, schemaL)
-    val ldfCategorized =
-      CategoricalMapper(ldf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val lcm = CategoricalMetadata(ldfCategorized)
-    val lMapping = lcm.mapping(column1)
-
-    // Right dataframe
-    val colsR = Vector(column1, "owner")
-    val schemaR = StructType(Seq(
-      StructField(colsL(0), StringType),
-      StructField(colsR(1), StringType)
-    ))
-    val rowsR = Seq(
-      ("kot", "Wojtek"),
-      ("wiewiorka", "Jacek"),
-      ("pies", "Rafal")
-    ).map(Row.fromTuple)
-    val rdf = createDataFrame(rowsR, schemaR)
-    val rdfCategorized =
-      CategoricalMapper(rdf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val rcm = CategoricalMetadata(rdfCategorized)
-    val rMapping = rcm.mapping(column1)
-
-    val merged = lMapping.mergeWith(rMapping)
-    val finalMapping = merged.finalMapping
-
-    // join dataframe
-    val joinRows = Seq(
-      (finalMapping.valueToId("pies"), 3.0, "Rafal"),
-      (finalMapping.valueToId("kot"), 5.0, "Wojtek"),
-      (finalMapping.valueToId("krowa"), 7.0, null),
-      (finalMapping.valueToId("pies"), 1.0, "Rafal")
-    ).map(Row.fromTuple)
-    val joinSchema = StructType(
-      appendPrefix(
-        Seq(StructField(colsL(0), IntegerType)) ++ schemaL.fields.tail, leftTablePrefix) ++
-      appendPrefix(
-        schemaR.fields.filterNot(_.name == column1), rightTablePrefix)
-    )
-    val edf = createDataFrame(joinRows, joinSchema)
-
-    (ldfCategorized, rdfCategorized, edf, joinColumns)
-  }
-
   def nullValuesInLeftDataFrameFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
     val column1 = "nulls"
     val joinColumns = Set(column1)
@@ -735,11 +824,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
       null
     ).map(Seq(_)).map(Row.fromSeq)
     val ldf = createDataFrame(rowsL, schemaL)
-    val ldfCategorized =
-      CategoricalMapper(ldf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val lcm = CategoricalMetadata(ldfCategorized)
-    val lMapping = lcm.mapping(0)
 
     // Right dataframe
     val colsR = Vector(column1, "owner")
@@ -753,14 +837,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
       ("pies", "Rafal")
     ).map(Row.fromTuple)
     val rdf = createDataFrame(rowsR, schemaR)
-    val rdfCategorized =
-      CategoricalMapper(rdf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val rcm = CategoricalMetadata(rdfCategorized)
-    val rMapping = rcm.mapping(column1)
-
-    val merged = lMapping.mergeWith(rMapping)
-    val finalMapping = merged.finalMapping
 
     // join dataframe
     val joinRows = Seq(
@@ -768,13 +844,13 @@ class JoinSpec extends DeeplangIntegTestSupport {
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       appendPrefix(
-        Seq(StructField(colsL(0), IntegerType)) ++ schemaL.fields.tail, leftTablePrefix) ++
+        Seq(StructField(colsL(0), StringType)) ++ schemaL.fields.tail, leftTablePrefix) ++
       appendPrefix(
         schemaR.fields.filterNot(_.name == column1), rightTablePrefix)
     )
     val edf = createDataFrame(joinRows, joinSchema)
 
-    (ldfCategorized, rdfCategorized, edf, joinColumns)
+    (ldf, rdf, edf, joinColumns)
   }
 
   private def sameColumnNamesFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
@@ -836,27 +912,22 @@ class JoinSpec extends DeeplangIntegTestSupport {
       rightPrefix: Option[String]): Join = {
     val operation = new Join
 
-    val paramsByName = namesLeft.zip(namesRight).map({ case (leftColName, rightColName) =>
-      val replicatedSchema = operation.joinColumnsParam.replicateSchema
-      replicatedSchema.getSingleColumnSelectorParameter(Join.leftColumnParamKey).value =
-        Some(NameSingleColumnSelection(leftColName))
-      replicatedSchema.getSingleColumnSelectorParameter(Join.rightColumnParamKey).value =
-        Some(NameSingleColumnSelection(rightColName))
-      replicatedSchema
-    })
+    val paramsByName: Seq[Join.ColumnPair] =
+      namesLeft.zip(namesRight).map({ case (leftColName, rightColName) =>
+        Join.ColumnPair()
+          .setLeftColumn(NameSingleColumnSelection(leftColName))
+          .setRightColumn(NameSingleColumnSelection(rightColName))
+      })
 
     val paramsById = idsLeft.zip(idsRight).map({ case (leftColId, rightColId) =>
-      val replicatedSchema = operation.joinColumnsParam.replicateSchema
-      replicatedSchema.getSingleColumnSelectorParameter(Join.leftColumnParamKey).value =
-        Some(IndexSingleColumnSelection(leftColId))
-      replicatedSchema.getSingleColumnSelectorParameter(Join.rightColumnParamKey).value =
-        Some(IndexSingleColumnSelection(rightColId))
-      replicatedSchema
+      Join.ColumnPair()
+        .setLeftColumn(IndexSingleColumnSelection(leftColId))
+        .setRightColumn(IndexSingleColumnSelection(rightColId))
     })
 
-    operation.joinColumnsParam.value = Some(paramsByName ++ paramsById)
-    operation.leftTablePrefixParam.value = leftPrefix
-    operation.rightTablePrefixParam.value = rightPrefix
+    operation.setJoinColumns(paramsByName ++ paramsById)
+    leftPrefix.foreach(p => operation.setLeftPrefix(p))
+    rightPrefix.foreach(p => operation.setRightPrefix(p))
 
     operation
   }
@@ -874,4 +945,17 @@ class JoinSpec extends DeeplangIntegTestSupport {
     schema.map(field => field.copy(name = prefix.getOrElse("") + field.name))
   }
 
+  private def inferSchema(
+      operation: Join,
+      leftDataFrame: DataFrame,
+      rightDataFrame: DataFrame): StructType = {
+
+    val (knowledge, _) = operation.inferKnowledge(mock[InferContext])(Vector(
+      DKnowledge(DataFrame.forInference(leftDataFrame.sparkDataFrame.schema)),
+      DKnowledge(DataFrame.forInference(rightDataFrame.sparkDataFrame.schema))
+    ))
+
+    val dataFrameKnowledge = knowledge.head.single.asInstanceOf[DataFrame]
+    dataFrameKnowledge.schema.get
+  }
 }

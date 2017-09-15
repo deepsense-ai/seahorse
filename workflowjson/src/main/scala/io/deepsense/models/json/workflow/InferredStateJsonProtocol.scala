@@ -19,7 +19,7 @@ package io.deepsense.models.json.workflow
 import spray.json._
 
 import io.deepsense.graph.NodeInferenceResult
-import io.deepsense.models.json.graph.GraphKnowledgeJsonProtocol
+import io.deepsense.models.json.graph.DKnowledgeJsonProtocol
 import io.deepsense.models.workflows.InferredState
 
 /**
@@ -27,18 +27,19 @@ import io.deepsense.models.workflows.InferredState
  */
 trait InferredStateJsonProtocol
   extends WorkflowJsonProtocol
-  with GraphKnowledgeJsonProtocol
-  with ExecutionReportJsonProtocol {
+  with DKnowledgeJsonProtocol
+  with ExecutionReportJsonProtocol
+  with InferenceWarningsJsonProtocol {
 
   implicit val nodeInferenceResultFormat = jsonFormat3(NodeInferenceResult.apply)
 
-  implicit val knowledgeFormat: RootJsonWriter[InferredState] =
+  implicit val inferredStateWriter: RootJsonWriter[InferredState] =
     new RootJsonWriter[InferredState] {
-      override def write(knowledge: InferredState): JsValue = {
+      override def write(inferredState: InferredState): JsValue = {
         JsObject(
-          "id" -> knowledge.id.toJson,
-          "knowledge" -> knowledge.graphKnowledge.results.toJson,
-          "states" -> knowledge.states.toJson)
+          "id" -> inferredState.id.toJson,
+          "knowledge" -> inferredState.graphKnowledge.results.toJson,
+          "states" -> inferredState.states.toJson)
       }
     }
 }

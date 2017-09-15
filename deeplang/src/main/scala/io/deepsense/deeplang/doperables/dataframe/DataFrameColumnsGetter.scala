@@ -16,15 +16,16 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
+import java.util.UUID
+
 import scala.annotation.tailrec
 
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
-import ColumnType.ColumnType
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections._
 
 trait DataFrameColumnsGetter {
 
@@ -36,21 +37,7 @@ trait DataFrameColumnsGetter {
    * or non-existing column name is selected.
    */
   def getColumnName(singleColumnSelection: SingleColumnSelection): String =
-    tryGetColumnName(singleColumnSelection).getOrElse {
-      throw ColumnDoesNotExistException(singleColumnSelection, this.metadata.get)
-    }
-
-  private def tryGetColumnName(singleColumnSelection: SingleColumnSelection): Option[String] =
-    singleColumnSelection match {
-      case NameSingleColumnSelection(name) =>
-        if (sparkDataFrame.schema.fieldNames.contains(name)) Some(name) else None
-      case IndexSingleColumnSelection(index) =>
-        if (index >= 0 && index < sparkDataFrame.schema.length) {
-          Some(sparkDataFrame.schema.fieldNames(index))
-        } else {
-          None
-        }
-    }
+    DataFrameColumnsGetter.getColumnName(sparkDataFrame.schema, singleColumnSelection)
 
   /**
    * Names of columns selected by provided selections.
@@ -59,77 +46,39 @@ trait DataFrameColumnsGetter {
    * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
    * or non-existing column names are selected.
    */
-  def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] = {
+  def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] =
     DataFrameColumnsGetter.getColumnNames(sparkDataFrame.schema, multipleColumnSelection)
-  }
-
-  /**
-   * Column type by column name.
-   */
-  def columnType(columnName: String): ColumnType =
-    SparkConversions.sparkColumnTypeToColumnType(sparkDataFrame.schema(columnName).dataType)
-
-
-  /**
-   * Method useful for generating names for new columns. When we want to add new columns
-   * to a dataframe, we need to generate a new name for them assuring that this name is not already
-   * used in the dataframe. Common use case is when we generate new columns' names based on
-   * existing column name by adding some sort of extension. When new name generated using base
-   * column name and extension is already used, we want to add level number.
-   * E. g. assume that we have column named 'xyz' and we want to add two new columns, with
-   * suffixes '_a' and '_b', so 'xyz_a' and 'xyz_b'. But if there already is column 'xyz_a' in
-   * dataframe, we want new columns to be named 'xyz_a_1' and 'xyz_b_1'.
-   * This method allows to compute lowest unoccupied level provided original column name
-   * ('xyz' from example) and extensions ({'a', 'b'} from example).
-   * @param originalColumnName Name of the column which is a base for a new column.
-   * @param newColumnNameExtensions Extensions of base name for generating new columns.
-   * @return Lowest unoccupied level that can be used to generate a new name for columns.
-   */
-  def getFirstFreeNamesLevel(
-    originalColumnName: String,
-    newColumnNameExtensions: Set[String]): Int = {
-
-    val existingColumnsNames = sparkDataFrame.schema.fieldNames.toSet
-
-    @tailrec
-    def getFirstFreeNamesLevel(level: Int): Int = {
-      val levelTaken: Boolean = newColumnNameExtensions.exists(
-        ext => existingColumnsNames.contains(DataFrameColumnsGetter.createColumnName(
-          originalColumnName, ext, level))
-      )
-      if (levelTaken) getFirstFreeNamesLevel(level + 1) else level
-    }
-
-    getFirstFreeNamesLevel(0)
-  }
-
-  /**
-   * Generates unique column name created of some other column's name, suffix and optionally
-   * integer appended.
-   * E. g. uniqueColumnName('xyz', 'a') returns 'xyz_a' if there is no such name in dataframe yet,
-   * and it returns 'xyz_a_2' if there already are columns 'xyz_a' and 'xyz_a_1' in dataframe.
-   */
-  def uniqueColumnName(originalColumnName: String, columnNameSuffix: String): String = {
-    val level = getFirstFreeNamesLevel(originalColumnName, Set(columnNameSuffix))
-    DataFrameColumnsGetter.createColumnName(originalColumnName, columnNameSuffix, level)
-  }
 }
 
 object DataFrameColumnsGetter {
+
+  def uniqueSuffixedColumnName(column: String): String = column + "_" + UUID.randomUUID().toString
+
   /**
-   * Creates column name by adding some suffix to base column name. Appends integer if it is
-   * not equal to 0. Parts of name are separated by underscore.
-   * E. g. createColumnName('xyz', 'a', 3) returns 'xyz_a_3',
-   * and createColumnName('xyz', 'a', 0) returns 'xyz_a'.
+   * Returns name of column based on selection.
+   * Throws [[ColumnDoesNotExistException]] if out-of-range index
+   * or non-existing column name is selected.
    */
-  private[deeplang] def createColumnName(
-    baseColumnName: String,
-    addedPart: String,
-    level: Int): String = {
-    val levelSuffix = if (level > 0) "_" + level else ""
-    (baseColumnName + "_" + addedPart + levelSuffix).replace(".", "_")
-    // TODO: 'replace' should be removed after spark upgrade to 1.4 version. DS-635
-  }
+  def getColumnName(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection): String =
+    tryGetColumnName(schema, singleColumnSelection).getOrElse {
+      throw ColumnDoesNotExistException(singleColumnSelection, schema)
+    }
+
+  private def tryGetColumnName(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection): Option[String] =
+    singleColumnSelection match {
+      case NameSingleColumnSelection(name) =>
+        if (schema.fieldNames.contains(name)) Some(name) else None
+      case IndexSingleColumnSelection(index) =>
+        if (index >= 0 && index < schema.length) {
+          Some(schema.fieldNames(index))
+        } else {
+          None
+        }
+    }
 
   /**
    * Names of columns selected by provided selections.
@@ -170,8 +119,8 @@ object DataFrameColumnsGetter {
   }
 
   def assertColumnNamesValid(schema: StructType, columns: Seq[String]): Unit = {
-    assertColumnSelectionsValid(
-      schema, MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet)), false))
+    assertColumnSelectionsValid(schema,
+      MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet)), excluding = false))
   }
 
   /**

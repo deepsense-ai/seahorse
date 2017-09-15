@@ -25,8 +25,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
-import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.parameters.exceptions.ValidationException
+import io.deepsense.deeplang.params.exceptions.ValidationException
 
 
 class AbstractInferenceSpec
@@ -54,16 +53,20 @@ class AbstractInferenceSpec
    *  - throw inference errors
    * By default it infers A1 on its output port.
    */
-  case class DOperationA1A2ToFirst() extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
+  case class DOperationA1A2ToFirst()
+      extends DOperation2To1[A1, A2, A]
+      with DOperationBaseFields {
     import DOperationA1A2ToFirst._
-
-    override val parameters = mock[ParametersSchema]
 
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
 
-    def setParamsValid(): Unit = doReturn(Vector.empty).when(parameters).validate
+    override def validateParams: Vector[DeepLangException] = {
+      if (paramsValid) Vector.empty else Vector(parameterInvalidError)
+    }
 
-    def setParamsInvalid(): Unit = doReturn(Vector(parameterInvalidError)).when(parameters).validate
+    private var paramsValid: Boolean = _
+    def setParamsValid(): Unit = paramsValid = true
+    def setParamsInvalid(): Unit = paramsValid = false
 
     private var inferenceShouldThrow = false
 

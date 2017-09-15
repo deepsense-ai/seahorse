@@ -17,12 +17,14 @@
 package io.deepsense.models.json.workflow
 
 import org.joda.time.DateTime
+import org.mockito.Mockito._
 import spray.json._
 
 import io.deepsense.commons.models.Entity
-import io.deepsense.deeplang.DKnowledge
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
+import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.{DKnowledge, DOperable}
 import io.deepsense.graph.{GraphKnowledge, NodeInferenceResult}
 import io.deepsense.models.workflows._
 
@@ -30,14 +32,14 @@ class InferredStateJsonProtocolSpec
     extends WorkflowJsonTestSupport
     with InferredStateJsonProtocol {
 
-  "WorkflowWithKnowledge" should {
-    "be serialized to json" in {
-      val (workflow, json) = workflowWithKnowledgeFixture
-      workflow.toJson shouldBe json
+  "InferredState" should {
+    "be serializable to json" in {
+      val (inferredState, json) = inferredStateFixture
+      inferredState.toJson shouldBe json
     }
   }
 
-  def workflowWithKnowledgeFixture: (InferredState, JsObject) = {
+  def inferredStateFixture: (InferredState, JsObject) = {
     val workflowId = Workflow.Id.randomId
     val (graphKnowledge, graphKnowledgeJson) = graphKnowledgeFixture
 
@@ -54,12 +56,20 @@ class InferredStateJsonProtocolSpec
   }
 
   def graphKnowledgeFixture: (GraphKnowledge, JsObject) = {
+    val parametricOperable = mock[ParametricOperable]
+    val paramSchema: JsString = JsString("Js with ParamSchema")
+    val paramValues: JsString = JsString("Js with ParamValues")
+    when(parametricOperable.paramsToJson).thenReturn(paramSchema)
+    when(parametricOperable.paramValuesToJson).thenReturn(paramValues)
+
     val graphKnowledge = GraphKnowledge().addInference(
       node1.id,
       NodeInferenceResult(
         Vector(
           DKnowledge(Set(operable)),
-          DKnowledge(Set(operable))),
+          DKnowledge(Set(operable, parametricOperable)),
+          DKnowledge(Set[DOperable](parametricOperable))
+        ),
         InferenceWarnings(
           new InferenceWarning("warning1") {},
           new InferenceWarning("warning2") {}),
@@ -73,8 +83,23 @@ class InferredStateJsonProtocolSpec
     val knowledgeJson = JsObject(
       node1.id.toString -> JsObject(
         "ports" -> JsArray(
-          JsArray(JsString(operable.getClass.getCanonicalName)),
-          JsArray(JsString(operable.getClass.getCanonicalName))
+          JsObject(
+            "types" -> JsArray(JsString(operable.getClass.getCanonicalName)),
+            "params" -> JsNull
+          ),
+          JsObject(
+            "types" -> JsArray(
+              JsString(operable.getClass.getCanonicalName),
+              JsString(parametricOperable.getClass.getCanonicalName)),
+            "params" -> JsNull
+          ),
+          JsObject(
+            "types" -> JsArray(JsString(parametricOperable.getClass.getCanonicalName)),
+            "params" -> JsObject(
+              "schema" -> paramSchema,
+              "values" -> paramValues
+            )
+          )
         ),
         "warnings" -> JsArray(
           JsString("warning1"),
@@ -128,4 +153,5 @@ class InferredStateJsonProtocolSpec
     (executionStates, executionStatesJson)
   }
 
+  abstract class ParametricOperable extends DOperable with Params
 }

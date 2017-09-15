@@ -94,7 +94,8 @@ trait DOperationDescriptorJsonProtocol
    */
   object DOperationDescriptorFullFormat extends DOperationDescriptorBaseFormat {
     override def write(obj: DOperationDescriptor): JsValue = {
-      JsObject(super.write(obj).asJsObject.fields.updated("parameters", obj.parameters.toJson))
+      JsObject(super.write(obj).asJsObject.fields.updated(
+        "parameters", obj.parametersJsonDescription))
     }
   }
 }

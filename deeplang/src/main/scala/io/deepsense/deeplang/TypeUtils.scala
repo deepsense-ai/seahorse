@@ -20,6 +20,8 @@ import java.lang.reflect.Constructor
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
+
 /**
  * Holds methods used for manipulating objects representing types.
  */
@@ -39,7 +41,7 @@ private[deeplang] object TypeUtils {
   def constructorForClass(c: Class[_]): Option[Constructor[_]] = {
     val constructors = c.getConstructors
     val isParameterLess: (Constructor[_] => Boolean) = constructor =>
-      constructor.getParameterTypes.length == 0
+      constructor.getParameterTypes.isEmpty
     constructors.find(isParameterLess)
   }
 
@@ -49,5 +51,12 @@ private[deeplang] object TypeUtils {
 
   def createInstance[T](constructor: Constructor[_]): T = {
     constructor.newInstance().asInstanceOf[T]
+  }
+
+  def instanceOfType[T](typeTag: ru.TypeTag[T]): T = {
+    val constructorT = constructorForType(typeTag.tpe).getOrElse {
+      throw NoArgumentConstructorRequiredException(typeTag.tpe.typeSymbol.asClass.name.decoded)
+    }
+    createInstance(constructorT).asInstanceOf[T]
   }
 }

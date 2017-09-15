@@ -17,9 +17,10 @@
 package io.deepsense.deeplang.doperations.exceptions
 
 case class MathematicalTransformationExecutionException(
+    inputColumnName: String,
     formula: String,
-    columnName: String,
+    outputColumnName: String,
     rootCause: Option[Throwable])
   extends DOperationExecutionException(
-    s"Problem while executing MathematicalTransformation with the following formula: $formula",
+    s"Problem while executing MathematicalTransformation with the following formula: '$formula'",
     rootCause)
