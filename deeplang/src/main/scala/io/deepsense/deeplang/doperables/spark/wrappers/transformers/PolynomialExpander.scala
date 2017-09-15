@@ -26,6 +26,7 @@ import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 class PolynomialExpander extends SparkTransformerAsMultiColumnTransformer[PolynomialExpansion] {
 
   override def convertInputNumericToVector: Boolean = true
+  override def convertOutputVectorToDouble: Boolean = false
 
   val degree = new IntParamWrapper[PolynomialExpansion](
     name = "degree",

@@ -61,11 +61,11 @@ class AutomaticNumericToVectorConversionIntegSpec
   val singleInPlace = SingleColumnChoice()
     .setInputColumn(NameSingleColumnSelection("c"))
 
-  val expectedInPlaceSchema =
-    schema.copy(schema.fields.updated(0, StructField("c", new VectorUDT(), nullable = false)))
-  val expectedNoInPlaceSchema = schema
+  private def expectedInPlaceSchema(outputDataType: DataType) = schema
+    .copy(schema.fields.updated(0, StructField("c", outputDataType, nullable = false)))
+  private def expectedNoInPlaceSchema(outputDataType: DataType) = schema
     .copy(schema.fields.updated(0, StructField("c", DoubleType, nullable = schema("c").nullable)))
-    .add(StructField("transformed", new VectorUDT(), nullable = false))
+    .add(StructField("transformed", outputDataType, nullable = false))
 
 
   "Normalizer" should {
@@ -76,12 +76,12 @@ class AutomaticNumericToVectorConversionIntegSpec
     "work correctly on double type column in noInPlace mode" in {
       transformer.setSingleOrMultiChoice(singleNoInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedNoInPlaceSchema.treeString
+      transformed.schema.get.treeString shouldBe expectedNoInPlaceSchema(DoubleType).treeString
     }
     "work correctly on double type column in inPlace mode" in {
       transformer.setSingleOrMultiChoice(singleInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedInPlaceSchema.treeString
+      transformed.schema.get.treeString shouldBe expectedInPlaceSchema(DoubleType).treeString
     }
   }
 
@@ -93,12 +93,12 @@ class AutomaticNumericToVectorConversionIntegSpec
     "work correctly on double type column in noInPlace mode" in {
       transformer.setSingleOrMultiChoice(singleNoInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedNoInPlaceSchema.treeString
+      transformed.schema.get.treeString shouldBe expectedNoInPlaceSchema(DoubleType).treeString
     }
     "work correctly on double type column in inPlace mode" in {
       transformer.setSingleOrMultiChoice(singleInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedInPlaceSchema.treeString
+      transformed.schema.get.treeString shouldBe expectedInPlaceSchema(DoubleType).treeString
     }
   }
 
@@ -110,12 +110,12 @@ class AutomaticNumericToVectorConversionIntegSpec
     "work correctly on double type column in noInPlace mode" in {
       transformer.setSingleOrMultiChoice(singleNoInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedNoInPlaceSchema.treeString
+      transformed.schema.get.treeString shouldBe expectedNoInPlaceSchema(new VectorUDT).treeString
     }
     "work correctly on double type column in inPlace mode" in {
       transformer.setSingleOrMultiChoice(singleInPlace)
       val transformed = transformer._transform(executionContext, dataFrame)
-      transformed.schema.get.treeString shouldBe expectedInPlaceSchema.treeString
+      transformed.schema.get.treeString shouldBe expectedInPlaceSchema(new VectorUDT).treeString
     }
   }
 }
