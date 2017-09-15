@@ -2,6 +2,7 @@
 
 /* @ngInject */
 function Toggle() {
+
   return {
     restrict: 'A',
     link: (scope, element, attrs) => {
@@ -9,21 +10,35 @@ function Toggle() {
       let classesOn = `${attrs.toggleAnimateIn}`;
       let classesOff = `${attrs.toggleAnimateOut}`;
 
-      attrs.toggleOn.split(' ').forEach((eventName) => {
-        scope.$on(eventName, () => {
-          element
-            .removeClass(classesOn)
-            .addClass(classesOff)
-            .one('animationend', function() {
-              $(this).removeClass(classesOn);
-            });
-        });
-      });
+      function toggleOn() {
+        element
+          .removeClass(classesOn)
+          .addClass(classesOff)
+          .one('animationend', function() {
+            $(this).removeClass(classesOn);
+          });
+      }
 
-      scope.$on(attrs.toggleOff, () => {
+      function toggleOff() {
         element
           .removeClass(classesOff)
           .addClass(classesOn);
+      }
+
+      if (!_.isUndefined(attrs.toggleInit) && !scope.$eval(attrs.toggleInit)) {
+        toggleOff();
+      }
+
+      attrs.toggleOn.split(' ').forEach((eventName) => {
+        scope.$on(eventName, () => {
+          toggleOn();
+        });
+      });
+
+      attrs.toggleOff.split(' ').forEach((eventName) => {
+        scope.$on(eventName, () => {
+          toggleOff();
+        });
       });
     }
   };

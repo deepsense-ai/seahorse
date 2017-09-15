@@ -80,6 +80,9 @@ class WorkflowsEditorController {
     this.GraphPanelRendererService.setZoom(1.0);
     this.CopyPasteService.registerCopyPasteVisitor(this.nodeCopyPasteVisitor);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
+    if (this.WorkflowService.isWorkflowRunning()) {
+      this.changeToRunningMode();
+    }
     this.initListeners();
     this._loadReports(workflowWithResults.executionReport);
   }
@@ -120,10 +123,7 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('StatusBar.RUN', () => {
-      this.unbindListeners();
-      this.isReportMode = true;
-      this.isRunning = true;
-      this.CopyPasteService.setEnabled(false);
+      this.changeToRunningMode();
       let nodesToExecute = this.MultiSelectionService.getSelectedNodeIds();
       this.ServerCommunication.sendLaunchToWorkflowExchange(nodesToExecute);
     });
@@ -144,15 +144,11 @@ class WorkflowsEditorController {
 
     this.$scope.$on('ServerCommunication.EXECUTION_FINISHED', () => {
       this.restoreEditableMode();
-      this.isRunning = false;
-      this.CopyPasteService.setEnabled(true);
     });
 
     this.$scope.$on('StatusBar.ABORT', () => {
       this.ServerCommunication.sendAbortToWorkflowExchange();
       this.restoreEditableMode();
-      this.isRunning = false;
-      this.CopyPasteService.setEnabled(true);
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
@@ -266,10 +262,20 @@ class WorkflowsEditorController {
     });
   }
 
+  changeToRunningMode() {
+    this.unbindListeners();
+    this.isReportMode = true;
+    this.WorkflowStatusBarService.createAbortButton();
+    this.CopyPasteService.setEnabled(false);
+    this.isRunning = true;
+  }
+
   restoreEditableMode() {
     this.initUnbindableListeners();
     this.isReportMode = false;
     this.WorkflowStatusBarService.createRunButton();
+    this.CopyPasteService.setEnabled(true);
+    this.isRunning = false;
   }
 
   unbindListeners() {
