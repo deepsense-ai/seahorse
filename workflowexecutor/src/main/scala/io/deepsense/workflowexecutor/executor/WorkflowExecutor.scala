@@ -55,7 +55,7 @@ case class WorkflowExecutor(
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
   private val actorSystemName = "WorkflowExecutor"
 
-  def execute(): Try[ExecutionReport] = {
+  def execute(): Try[ExecutionReport] = Try {
 
     if (workflow.graph.containsCycle) {
       val cyclicGraphException = new CyclicGraphException
@@ -99,13 +99,13 @@ case class WorkflowExecutor(
     logger.debug("Awaiting execution end...")
     actorSystem.awaitTermination()
 
-    val report: Try[ExecutionReport] = finishedExecutionStatus.future.value.get match {
+    val report: ExecutionReport = finishedExecutionStatus.future.value.get match {
       case Failure(exception) => // WEA failed with an exception
         logger.error("WorkflowExecutorActor failed: ", exception)
         throw exception
       case Success(ExecutionStatus(executionReport)) =>
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
-        Try(executionReport)
+        executionReport
     }
 
     cleanup(actorSystem, executionContext, pythonExecutionCaretaker)
@@ -148,11 +148,14 @@ object WorkflowExecutor extends Logging {
     val workflow = loadWorkflow(params)
 
     val executionReport = workflow.map(w => {
-      executeWorkflow(w, params.pyExecutorPath.get).get
+      executeWorkflow(w, params.pyExecutorPath.get)
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
-        .map(r => WorkflowWithResults(w.id, w.metadata, w.graph, w.thirdPartyData, r))
+        .map {
+          case Success(r) => WorkflowWithResults(w.id, w.metadata, w.graph, w.thirdPartyData, r)
+          case Failure(ex) => throw ex;
+        }
     )
 
     // Await for workflow execution
