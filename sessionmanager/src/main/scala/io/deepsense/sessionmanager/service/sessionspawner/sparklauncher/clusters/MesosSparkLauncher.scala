@@ -34,7 +34,7 @@ private [clusters] object MesosSparkLauncher {
   }
 
   private def env(clusterConfig: ClusterDetails) = Map(
-    "MESOS_NATIVE_JAVA_LIBRARY" -> "/usr/local/lib/libmesos.so",
+    "MESOS_NATIVE_JAVA_LIBRARY" -> "/usr/lib/libmesos.so",
     "LIBPROCESS_IP" -> clusterConfig.userIP,
     "LIBPROCESS_ADVERTISE_IP" -> clusterConfig.userIP
   )
