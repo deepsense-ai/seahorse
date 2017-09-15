@@ -1,9 +1,15 @@
 <div id="node-{{ ::node.id }}"
      class="flowchart-node {{ node.state.status }}"
      ng-style="{'left': node.x + 'px', 'top': node.y + 'px'}">
-  <span class="name">
-    <i class="fa {{ ::node.icon }}"></i> {{ ::node.name }}
-  </span>
+  <aside class="flowchart-node__icon">
+    <i class="fa {{ ::node.icon }}"></i>
+  </aside>
+  <p class="name name--custom">
+     {{ node.uiName }}
+  </p>
+  <p class="name" ng-class="{'name--no-custom': !node.uiName}">
+    {{ node.name }}
+  </p>
   <i class="fa fa-exclamation-circle error-icon"
      ng-if="node.knowledgeErrors.length > 0"
      tooltip-placement="right"

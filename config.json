@@ -70,6 +70,7 @@
           "./node_modules/ng-file-upload/dist/ng-file-upload.js",
           "./node_modules/ng-file-upload/dist/ng-file-upload-shim.js",
           "./node_modules/icheck/icheck.min.js",
+          "./node_modules/angular-xeditable/xeditable.min.js",
           "./node_modules/moment/moment.js"
         ],
         "css": [
@@ -116,6 +117,7 @@
           "./node_modules/ng-file-upload/dist/ng-file-upload.min.js",
           "./node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js",
           "./node_modules/icheck/icheck.min.js",
+          "./node_modules/angular-xeditable/xeditable.min.js",
           "./node_modules/moment/moment.min.js"
         ],
         "css": [

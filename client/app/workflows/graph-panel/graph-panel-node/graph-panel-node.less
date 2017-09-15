@@ -13,14 +13,37 @@
   border-radius: 5px;
   position: absolute;
   color: #333;
+  height: 50px;
   padding: 1px 21px;
   width: 200px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  line-height: 50px;
   transition: background-color 200ms;
   box-shadow: inset 0 0 8px @highlighted-graph-node-color;
+
+  &__icon {
+    left: 5px;
+    top: 15px;
+    position: absolute;
+  }
+
+  .name {
+    font-size: 10px;
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+
+    &--custom {
+      margin: 3px 0;
+      font-size: inherit;
+    }
+
+    &--no-custom {
+      line-height: 32px;
+      font-size: inherit;
+    }
+  }
 }
 
 .flowchart-node .fa {
@@ -28,8 +51,8 @@
 
   &.error-icon {
     position: absolute;
-    right: 2px;
-    top: 19px;
+    right: 5px;
+    top: 15px;
     color: darkorange;
   }
 }
