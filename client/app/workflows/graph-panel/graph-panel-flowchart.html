@@ -1,5 +1,5 @@
 <div context-menu-blocker flowchart-box-undraggable class="flowchart-box no-selection">
-  <div ng-if="!flowChartBoxCtrl.reportMode">
+  <div ng-if="!flowChartBoxCtrl.reportMode" class="flowchart-mask">
     <div class="flowchart-paint-area"
          multi-selection
          deepsense-interactive
@@ -17,7 +17,7 @@
       </graph-node>
     </div>
   </div>
-  <div ng-if="flowChartBoxCtrl.reportMode">
+  <div ng-if="flowChartBoxCtrl.reportMode" class="flowchart-mask">
     <div class="flowchart-paint-area"
          deepsense-interactive
          zoom-id="flowchart-box"

@@ -18,4 +18,7 @@ require('./workflows-execution-report/workflows-execution-report.module.js').inj
 require('./workflows-status-bar/workflows-status-bar.drv.js').inject(workflows);
 require('./workflows-status-bar/workflows-status-bar.ctrl.js').inject(workflows);
 
+require('./general-data-panel/general-data-panel.js').inject(workflows);
+require('./general-data-panel/general-data-panel.ctrl.js').inject(workflows);
+
 module.exports = workflows;

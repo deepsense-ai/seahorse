@@ -66,6 +66,10 @@ function WorkflowsEditorController(
     internal.selectedNode = null;
   };
 
+  that.getGUIData = function getGUIData () {
+    return workflow.thirdPartyData.gui;
+  };
+
   $scope.$on(GraphNode.CLICK, (event, data) => {
     let node = data.selectedNode;
 
@@ -198,8 +202,6 @@ function WorkflowsEditorController(
 
   return that;
 }
-
-exports.function = WorkflowsEditorController;
 
 exports.inject = function (module) {
   module.controller('WorkflowsEditorController', WorkflowsEditorController);

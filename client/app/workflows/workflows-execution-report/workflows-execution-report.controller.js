@@ -15,7 +15,13 @@ function WorkflowsReportController(
 
   _.assign(that, {
     getWorkflow: WorkflowService.getWorkflow,
-    getSelectedNode: () => internal.selectedNode
+    getSelectedNode: () => internal.selectedNode,
+    get GUIData () {
+      return report.thirdPartyData.gui;
+    },
+    get reportData () {
+      return report.executionReport;
+    }
   });
 
   internal.init = function init() {

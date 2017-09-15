@@ -1,4 +1,4 @@
-<div class="workflow-container">
+<div class="c-workflow-container">
   <flow-chart-box
     nodes="workflow.getWorkflow().getNodes()"
     selected-node="workflow.getSelectedNode()"
@@ -8,10 +8,19 @@
   <deepsense-operation-attributes
     node="workflow.getSelectedNode()"
     ng-if="workflow.getSelectedNode()"
-    disabled-mode="true">
+    disabled-mode="true"
+    class="animated fadeInRight o-panel o-panel--scroll-right
+      o-panel--absolute o-panel--dynamic-top">
   </deepsense-operation-attributes>
 
   <aside class="o-read-only text-warning">
     <p>This is read only view</p>
   </aside>
+
+  <general-data-panel
+    data="workflow.GUIData"
+    additional-data="workflow.reportData"
+    ng-if="!workflow.getSelectedNode()"
+    class="o-panel--absolute o-panel--dynamic-top">
+  </general-data-panel>
 </div>
