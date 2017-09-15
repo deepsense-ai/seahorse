@@ -1,11 +1,11 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
+function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalService, SessionManagerApi,
               WorkflowCloneService, ServerCommunication, SessionManager, config, UserService) {
   this.init = () => {
-    PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
+    $rootScope.pageTitle = 'Workflows';
     ServerCommunication.unsubscribeFromAllExchanges();
     this._isWorkflowLoading = false;
     this.isWorkflowListEmpty = false;

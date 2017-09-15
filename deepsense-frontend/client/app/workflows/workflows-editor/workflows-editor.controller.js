@@ -4,7 +4,7 @@ class WorkflowsEditorController {
 
   /* @ngInject */
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations, WorkflowCloneService,
-              GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
+              GraphNode, Edge, config, Report, MultiSelectionService, Operations, GraphPanelRendererService,
               WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
               ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus, UserService) {
 
@@ -12,10 +12,14 @@ class WorkflowsEditorController {
 
     _.assign(this, {
       $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
-      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations,
+      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, Operations,
       GraphPanelRendererService, WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
       GraphNodesService, NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService,
       NodeCopyPasteVisitorService, SessionStatus, UserService
+    });
+
+    $rootScope.$watch(() => this.WorkflowService.getCurrentWorkflow().name, (newValue) => {
+      $rootScope.pageTitle = newValue;
     });
 
     this.BottomBarData = BottomBarService.tabsState;
@@ -64,7 +68,6 @@ class WorkflowsEditorController {
   }
 
   init(workflowWithResults) {
-    this.PageService.setTitle('Workflow editor');
     this.GraphPanelRendererService.setZoom(1.0);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
@@ -337,7 +340,7 @@ class WorkflowsEditorController {
     return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && this._isOwner();
   }
 
-  _isOwner(){
+  _isOwner() {
     const workflow = this.WorkflowService.getCurrentWorkflow();
     return workflow.owner.id === this.UserService.getSeahorseUser().id;
   }
