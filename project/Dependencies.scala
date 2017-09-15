@@ -17,7 +17,7 @@ object Version {
   val spark = "1.6.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
-  val seahorse = "1.2.0-BDU-SNAPSHOT"
+  val seahorse = "1.2.0-DESKTOP-SNAPSHOT"
   val wiremock = "1.57"
   val flyway = "4.0"
 }

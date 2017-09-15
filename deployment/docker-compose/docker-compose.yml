@@ -1,7 +1,7 @@
 version: '2'
 services:
   proxy:
-    image: quay.io/deepsense_io/deepsense-proxy:seahorse_on_bdu-latest
+    image: quay.io/deepsense_io/deepsense-proxy:master-latest
     ports:
       - "${SEAHORSE_PORT}:8080"
     environment:
@@ -23,7 +23,7 @@ services:
       - rabbitmq
       - frontend
   frontend:
-    image: quay.io/deepsense_io/deepsense-frontend:seahorse_on_bdu-latest
+    image: quay.io/deepsense_io/deepsense-frontend:master-latest
     environment:
       - "API_HOST=http://${SEAHORSE_HOST}"
       - "API_PORT=${SEAHORSE_PORT}"
@@ -43,7 +43,7 @@ services:
       - sessionmanager
       - notebooks
   sessionmanager:
-    image: quay.io/deepsense_io/deepsense-sessionmanager:seahorse_on_bdu-latest
+    image: quay.io/deepsense_io/deepsense-sessionmanager:master-latest
     hostname: sessionmanager
     environment:
       - "MQ_HOST=rabbitmq"
@@ -70,7 +70,7 @@ services:
       - rabbitmq
       - workflowmanager
   notebooks:
-    image: quay.io/deepsense_io/deepsense-notebooks:seahorse_on_bdu-latest
+    image: quay.io/deepsense_io/deepsense-notebooks:master-latest
     environment:
       - "WM_URL=http://workflowmanager:9080"
       - "WM_AUTH_USER=oJkTZ8BV"
@@ -88,19 +88,19 @@ services:
       - rabbitmq
       - workflowmanager
   workflowmanager:
-    image: quay.io/deepsense_io/deepsense-workflowmanager:seahorse_on_bdu-latest
+    image: quay.io/deepsense_io/deepsense-workflowmanager:master-latest
     environment:
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
     links:
       - database
   rabbitmq:
-    image: quay.io/deepsense_io/deepsense-rabbitmq:seahorse_on_bdu-latest
+    image: quay.io/deepsense_io/deepsense-rabbitmq:master-latest
     environment:
      - "RABBITMQ_USER=yNNp7VJS"
      - "RABBITMQ_PASS=1ElYfGNW"
   database:
-    image: quay.io/deepsense_io/deepsense-h2:seahorse_on_bdu-latest
+    image: quay.io/deepsense_io/deepsense-h2:master-latest
     ports:
       - "1521:1521"
     volumes:
