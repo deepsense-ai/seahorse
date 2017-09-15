@@ -215,12 +215,13 @@ object ReadDataFrame {
   }
 
   def apply(
-    filePath: String,
-    lineSeparator: (LineSeparator.LineSeparator, Option[String]),
-    source: FileSource.FileSource,
-    csvColumnSeparator: String,
-    csvNamesIncluded: Boolean,
-    csvCategoricalColumns: Option[MultipleColumnSelection] = None): ReadDataFrame = {
+      filePath: String,
+      lineSeparator: (LineSeparator.LineSeparator, Option[String]),
+      source: FileSource.FileSource,
+      csvColumnSeparator: String,
+      csvNamesIncluded: Boolean,
+      csvCategoricalColumns: Option[MultipleColumnSelection] = None): ReadDataFrame = {
+
     val operation = new ReadDataFrame()
 
     operation.pathParameter.value = Some(filePath)
