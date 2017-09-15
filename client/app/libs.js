@@ -13,7 +13,7 @@ require("font-awesome-webpack!./font-awesome.config.js");
 require('jsplumb');
 require('jquery');
 require('lodash');
-require('malihu-custom-scrollbar-plugin');
+require('imports?this=>window!script!malihu-custom-scrollbar-plugin');
 require('ng-file-upload');
 require('imports?this=>window!script!../../node_modules/ng-switchery/dist/ng-switchery.js');
 require('sockjs-client');
