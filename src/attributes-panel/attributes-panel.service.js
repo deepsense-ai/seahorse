@@ -26,9 +26,12 @@ class AttributesPanelService {
     if (this.getDisabledMode()) {
       jQuery(':input:not(.o-error-btn), textarea', container)
         .attr('disabled', 'disabled');
-      jQuery('.close-link', container)
-        .css('display', 'none');
     }
+  }
+
+  enableElements (container) {
+    jQuery(':input:not(.o-error-btn), textarea', container)
+      .removeAttr('disabled');
   }
 }
 

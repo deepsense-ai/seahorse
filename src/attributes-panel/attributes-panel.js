@@ -2,6 +2,18 @@
 
 /*@ngInject*/
 function OperationAttributes($rootScope, AttributesPanelService ,config) {
+  function setCorrectHeight (container) {
+    let heightOfOthers = _.reduce(jQuery(
+      '> .ibox-title--main, > .c-attributes-tabs',
+      container
+    ).map((index, el) => $(el).outerHeight(true)), (prev, next) => {
+      return prev + next;
+    });
+    let body = container.querySelector('.ibox-content');
+
+    angular.element(body).css('height', 'calc(100% - ' + heightOfOthers + 'px)');
+  }
+
   return {
     restrict: 'E',
     scope: {
@@ -14,27 +26,22 @@ function OperationAttributes($rootScope, AttributesPanelService ,config) {
     link: (scope, element) => {
       scope.selected = 'parameters';
       scope.$watch('node', function() {
-        scope.$applyAsync(() => {
-          let container = element[0];
-          let heightOfOthers = _.reduce(jQuery(
-              '> .ibox-title--main, > .c-attributes-tabs',
-              container
-            ).map((index, el) => $(el).outerHeight(true)), (prev, next) => {
-              return prev + next;
-            });
-          let body = container.querySelector('.ibox-content');
+        scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
+      });
 
-          angular.element(body).css('height', 'calc(100% - ' + heightOfOthers + 'px)');
+      scope.$watch('disabledMode', function() {
+        if (scope.disabledMode) {
+          AttributesPanelService.setDisabledMode();
+          AttributesPanelService.disableElements(element[0]);
+        } else {
+          AttributesPanelService.enableElements(element[0]);
+          AttributesPanelService.setEnabledMode();
+        }
 
-          if (scope.disabledMode) {
-            AttributesPanelService.setDisabledMode();
-            AttributesPanelService.disableElements(container);
-          } else {
-            AttributesPanelService.setEnabledMode();
-          }
-        });
+        scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
     },
+
     controller: function ($scope, $element, $timeout, $uibModal) {
       this.getDocsHost = () => config.docsHost;
       this.showErrorMessage = function showErrorMessage () {
