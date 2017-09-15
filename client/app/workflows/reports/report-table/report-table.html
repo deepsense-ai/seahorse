@@ -5,8 +5,7 @@
       <th ng-repeat="columnName in table.columnNames"
           ng-click="controller.showDistribution(columnName)"
           ng-class="{'has-distribution': getDistributionType(columnName)}">
-        <span data-column-name="{{columnName}}" class="col-name">{{ columnName }}
-        </span>
+        <span data-column-name="{{columnName}}" class="col-name">{{ columnName }}</span>
         <span ng-if="datatypesVisible" class="col-type">({{getColumnType(columnName)}})</span>
         <span class="col-icon" ng-switch="getDistributionType(columnName)">
           <i ng-switch-when="discrete" class="fa fa-pie-chart"></i>
@@ -17,7 +16,12 @@
     </thead>
     <tbody>
     <tr ng-repeat="row in table.values">
-      <td ng-repeat="value in row track by $index">{{ value }}</td>
+      <td ng-repeat="value in row track by $index">
+        <span ng-switch="value === null">
+          <i ng-switch-when="true" class="null-value">(null)</i>
+          <i ng-switch-default>{{value}}</i>
+        </span>
+      </td>
     </tr>
     </tbody>
   </table>
