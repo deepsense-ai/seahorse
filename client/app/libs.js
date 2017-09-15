@@ -9,7 +9,7 @@ require('angular-ui-bootstrap');
 require('angular-xeditable');
 require('angucomplete-alt');
 require('ace-webapp');
-require("font-awesome-webpack");
+require("font-awesome-webpack!./font-awesome.config.js");
 require('jsplumb');
 require('jquery');
 require('lodash');

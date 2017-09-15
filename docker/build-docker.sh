@@ -11,13 +11,13 @@ TAG_VERSION="$DOCKER_REGISTRY/tap/$NAME:tap-$TIMESTAMP-$COMMIT_HASH"
 TAG_LATEST="$DOCKER_REGISTRY/tap/$NAME:latest"
 
 echo "Removing old build"
-[ -d build ] && rm -rf build
+[ -d dist ] && rm -rf dist
 
 echo "Building $NAME"
 (cd ../; ./build.sh)
 
 echo "Copying build"
-cp -r ../build .
+cp -r ../dist .
 
 echo "Building docker and tagging it for repository $DOCKER_REGISTRY"
 docker build -t "$TAG_VERSION" -t "$TAG_LATEST" .

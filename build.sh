@@ -12,20 +12,14 @@ function prepare_environment() {
   npmrc codilime
   npm set registry $NPM_REGISTRY_URL
 
-  sudo npm install -g gulp
+  sudo npm install -g webpack
   sudo npm install -g npmrc
-
-  #install all components dependencies
-  (cd ../deepsense-components && ./install_all.sh)
-  #build all components
-  (cd ../deepsense-components && ./build_all.sh)
   npm install
 }
 
 function build() {
   echo "** Building package **"
-  gulp clean
-  gulp build
+  npm run dist
 }
 
 prepare_environment

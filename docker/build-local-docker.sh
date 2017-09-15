@@ -40,17 +40,13 @@ fi
 
 cd $PROJECT_PATH
 
-# Remove old build
-echo ">>> Removing old build"
-[ -d build ] && rm -rf build
-
 # Build project if needed
 if [ -f ../build.sh ]; then
   echo ">>> Building $PROJECT_NAME"
   (cd ../; ./build.sh)
   # Copy build
   echo ">>> Copying build"
-  cp -r ../build .
+  cp -r ../dist .
 fi
 
 # Build and tag docker image

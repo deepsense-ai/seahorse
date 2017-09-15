@@ -138,8 +138,6 @@ module.exports = function (_path) {
       }),
       new webpack.optimize.CommonsChunkPlugin({
         name: 'common',
-        async: true,
-        children: true,
         minChunks: 2
       }),
       new HtmlWebpackPlugin({
@@ -152,11 +150,7 @@ module.exports = function (_path) {
 
   if (NODE_ENV !== 'development') {
     webpackConfig.plugins = webpackConfig.plugins.concat([
-      new webpack.optimize.UglifyJsPlugin({
-        minimize: true,
-        warnings: false,
-        sourceMap: true
-      })
+      new webpack.optimize.UglifyJsPlugin()
     ]);
   }
 

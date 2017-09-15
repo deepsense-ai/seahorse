@@ -46,20 +46,14 @@ function prepare_environment() {
   npmrc codilime
   npm set registry $NPM_REGISTRY_URL
 
-  sudo npm install -g gulp
+  sudo npm install -g webpack
   sudo npm install -g npmrc
-
-  #install all components dependencies
-  (cd ../deepsense-components && ./install_all.sh)
-  #build all components
-  (cd ../deepsense-components && ./build_all.sh)
   npm install
 }
 
 function build() {
   echo "** Building package **"
-  gulp clean
-  gulp build
+  npm run dist
 }
 
 function calculate_full_version() {
@@ -78,19 +72,19 @@ function calculate_full_version() {
 function add_build_info_file() {
   GIT_SHA=`git rev-parse HEAD`
   BUILD_DATE=`date`
-  RESULT_FILE="build/build-info.txt"
+  RESULT_FILE="dist/build-info.txt"
   echo "API VERSION: "$FULL_VERSION > $RESULT_FILE
   echo "BUILD DATE: "$BUILD_DATE >> $RESULT_FILE
   echo "GIT SHA: "$GIT_SHA >> $RESULT_FILE
 }
 
 function add_version_file() {
-  echo $FULL_VERSION > build/FULL_VERSION
+  echo $FULL_VERSION > dist/FULL_VERSION
 }
 
 function package() {
   echo "** Preparing zip package **"
-  zip -r -q "${FULL_VERSION}.zip" build
+  zip -r -q "${FULL_VERSION}.zip" dist
 }
 
 #Publishes zip file (first parameter) with given version (second parameter)
