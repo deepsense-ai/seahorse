@@ -33,6 +33,10 @@ df <- SparkR:::dataFrame(sdf, isCached = FALSE)
 tryCatch({
   eval(parse(text = code))
   transformedDF <- transform(df)
+  if (class(transformedDF) != "DataFrame") {
+    transformedDF <- createDataFrame(sqlContext, data.frame(transformedDF))
+  }
+
   SparkR:::callJMethod(entryPoint, "registerOutputDataFrame", workflowId, nodeId, as.integer(0), transformedDF@sdf)
   SparkR:::callJMethod(entryPoint, "executionCompleted", workflowId, nodeId)
 }, error = function(err) {
@@ -49,4 +53,3 @@ for(objId in valid) {
 }
 
 rm(list = valid, envir = SparkR:::.validJobjs)
-
