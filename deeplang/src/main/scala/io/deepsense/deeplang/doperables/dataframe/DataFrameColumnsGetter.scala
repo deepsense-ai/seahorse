@@ -81,6 +81,20 @@ object DataFrameColumnsGetter {
     }
 
   /**
+   * Throws [[WrongColumnTypeException]] if column has type different than one of expected.
+   */
+  def assertExpectedColumnType(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection,
+      expectedTypes: ColumnType*): Unit = {
+    val columnName = DataFrameColumnsGetter.getColumnName(schema, singleColumnSelection)
+    DataFrame.assertExpectedColumnType(
+      schema.fields.filter(_.name == columnName).head,
+      expectedTypes: _*)
+  }
+
+
+  /**
    * Names of columns selected by provided selections.
    * Order of returned columns is the same as in schema.
    * If a column will occur in many selections, it won't be duplicated in result.

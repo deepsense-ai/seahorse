@@ -30,7 +30,7 @@ abstract class Param[T] {
 
   val description: String
 
-  val constraints: String = ""
+  def constraints: String = ""
 
   val parameterType: ParameterType
 

@@ -32,7 +32,7 @@ class MulticlassClassificationEvaluator
   import MulticlassClassificationEvaluator._
 
   val metricName = new ChoiceParamWrapper[SparkMulticlassClassificationEvaluator, Metric](
-    name = "metric",
+    name = "multiclass metric",
     description = "The metric used in evaluation.",
     sparkParamGetter = _.metricName)
   setDefault(metricName, F1())

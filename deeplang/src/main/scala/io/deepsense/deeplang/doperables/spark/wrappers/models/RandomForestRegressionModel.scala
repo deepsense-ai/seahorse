@@ -18,10 +18,12 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{RandomForestRegressionModel => SparkRFRModel, RandomForestRegressor => SparkRFR}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, SerializableSparkModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
+import io.deepsense.deeplang.doperables.{SparkModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
 class RandomForestRegressionModel
@@ -37,17 +39,29 @@ class RandomForestRegressionModel
       List(
         SparkSummaryEntry(
           name = "number of features",
-          value = model.numFeatures,
+          value = sparkModel.numFeatures,
           description = "Number of features the model was trained on."),
         SparkSummaryEntry(
           name = "feature importances",
-          value = model.featureImportances,
+          value = sparkModel.featureImportances,
           description = "Estimate of the importance of each feature."
         ))
 
     super.report
-      .withReportName(s"${this.getClass.getSimpleName} with ${model.numTrees} trees")
+      .withReportName(
+        s"${this.getClass.getSimpleName} with ${sparkModel.numTrees} trees")
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
-      .withAdditionalTable(CommonTablesGenerators.decisionTree(model.treeWeights, model.trees), 2)
+      .withAdditionalTable(
+        CommonTablesGenerators.decisionTree(
+          sparkModel.treeWeights,
+          sparkModel.trees),
+        2)
+  }
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkRFRModel] = {
+    val modelPath = Transformer.modelFilePath(path)
+    CustomPersistence.load[SerializableSparkModel[SparkRFRModel]](ctx.sparkContext, modelPath)
   }
 }

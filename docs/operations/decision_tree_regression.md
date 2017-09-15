@@ -6,7 +6,7 @@ description: Decision Tree Regression
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Creates a decision tree regression. It supports both continuous and categorical features.
+Creates a decision tree regression model. It supports both continuous and categorical features.
 
 This operation is ported from Spark ML.
 
@@ -104,21 +104,21 @@ every 10 iterations.</td>
 </tr>
 
 <tr>
-<td><code>impurity</code></td>
+<td><code>regression impurity</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The criterion used for information gain calculation. Possible values: <code>["variance"]</code></td>
-</tr>
-
-<tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>The label column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
 </tr>
 
 <tr>

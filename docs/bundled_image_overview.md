@@ -48,7 +48,7 @@ see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> p
 	</div>
 	<div class="contact-block-container">
 		<div class="contact-block-button">
-			<a target="_blank" href="http://deepsense.io/about-us/contact/">
+			<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
 			Contact us for details!
 			</a>
 		</div>
@@ -139,7 +139,7 @@ There are at least two ways to overcome the problem:
 * Change user name to one with ASCII characters only
 * Change Vagrant home directory to one with ASCII characters only:
 
-        setx VAGRANT_HOME=c:\.vagrant.d
+        setx VAGRANT_HOME c:\.vagrant.d
 
 ## Upgrading Seahorse Desktop To the Latest Version
 If you want to replace your Seahorse with the newest version you need to invoke

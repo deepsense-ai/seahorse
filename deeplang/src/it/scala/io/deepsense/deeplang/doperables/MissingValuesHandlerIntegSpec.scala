@@ -27,12 +27,17 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
 import io.deepsense.deeplang.params.selections.{IndexRangeColumnSelection, MultipleColumnSelection, TypeColumnSelection}
 
 class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
-  with Matchers {
+  with Matchers
+  with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   "MissingValuesHandler" should {
     "remove rows with empty values while using REMOVE_ROW strategy" in {
@@ -530,7 +535,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
     transformation._transformSchema(schema) shouldBe None
   }
 
-  def executeTransformer(op: MissingValuesHandler, df: DataFrame): DataFrame =
-    op._transform(executionContext, df)
-
+  def executeTransformer(op: MissingValuesHandler, df: DataFrame): DataFrame = {
+    op.applyTransformationAndSerialization(tempDir, df)
+  }
 }

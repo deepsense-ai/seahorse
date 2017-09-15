@@ -27,6 +27,7 @@ import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, Name
 
 class JoinSpec extends DeeplangIntegTestSupport {
 
+  import DeeplangIntegTestSupport._
   val defaultJoinType = JoinTypeChoice.LeftOuter()
   val leftTablePrefix = Some("leftTable_")
   val rightTablePrefix = Some("rightTable_")

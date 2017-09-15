@@ -31,10 +31,10 @@ trait HasMinTermsFrequencyParam
     name = "min term frequency",
     description =
       """A filter to ignore rare words in a document. For each document, terms with
-        |frequency/count less than the given threshold are ignored. If this is an integer >= 1,
+        |a frequency/count less than the given threshold are ignored. If this is an integer >= 1,
         |then this specifies a count (of times the term must appear in the document); if this is
-        |a double in [0,1), then this specifies a fraction (out of the document's token count).
-        |Note that the parameter is only used in transform of CountVectorizerModel and does not
+        |a double in [0,1), then it specifies a fraction (out of the document's token count).
+        |Note that the parameter is only used in transform of CountVectorizer model and does not
         |affect fitting.""".stripMargin,
     sparkParamGetter = _.minTF,
     RangeValidator(0.0, Double.MaxValue))

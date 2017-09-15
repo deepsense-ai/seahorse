@@ -20,7 +20,7 @@ object Version {
   val akka = "2.3.11"
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
-  val guava = "19.0"
+  val guava = "16.0"
   val hadoop = "2.6.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
@@ -30,15 +30,15 @@ object Version {
   val scoverage = "1.0.4"
   val spark = "1.6.1"
   val spray = "1.3.3"
-  val sprayJson = "1.3.1"
+  val sprayJson = "1.3.2"
   val wireMock = "1.57"
 }
 
 object Library {
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
+  val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
-  val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
 
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
@@ -49,7 +49,7 @@ object Library {
   val hadoopAWS = hadoop("aws")
   val hadoopClient = hadoop("client")
   val hadoopCommon = hadoop("common")
-  val log4JExtras = "log4j"                             % "apache-log4j-extras"       % "1.2.17"
+  val log4JExtras = "log4j" % "apache-log4j-extras" % "1.2.17"
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2"
@@ -68,8 +68,10 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
-  val wireMock = "com.github.tomakehurst" % "wiremock" %
-    Version.wireMock exclude("com.fasterxml.jackson.core", "jackson-databind")
+  val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock exclude(
+    "com.fasterxml.jackson.core", "jackson-databind") exclude (
+    "com.google.guava", "guava")
+  val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
 }
 
 object Dependencies {
@@ -123,7 +125,7 @@ object Dependencies {
     nscalaTime,
     scalaReflect,
     sparkCSV
-  ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)
+  ) ++ Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 
   val docgen = Spark.components
 
@@ -132,17 +134,18 @@ object Dependencies {
   val workflowJson = Spark.onlyInTests ++ Seq(
     nscalaTime,
     sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
   val models = Spark.onlyInTests ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val reportlib = Spark.onlyInTests ++ Seq(
     sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
   val workflowexecutor = Spark.onlyInTests ++ Seq(
     akkaActor,
     guava,
+    jsonLenses,
     scopt,
     sprayClient,
     rabbitmq

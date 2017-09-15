@@ -22,7 +22,6 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.doperations.MockTransformers._
-import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
 import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamsMatchers._
@@ -92,17 +91,19 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
       transformer should have (theSameParamsAs (originalTransformer))
     }
 
-    "throw Exception" when {
-      "there is more than one Transformer in input Knowledge" in {
-        val inputDF = DataFrame.forInference(createSchema())
-        val transformers = Set[DOperable](new MockTransformer, new MockTransformer)
+    "infer knowledge even if there is more than one Transformer in input Knowledge" in {
+      val inputDF = DataFrame.forInference(createSchema())
+      val transformers = Set[DOperable](new MockTransformer, new MockTransformer)
 
-        val op = Transform()
-        a [TooManyPossibleTypesException] shouldBe thrownBy {
-          op.inferKnowledge(mock[InferContext])(
-            Vector(DKnowledge(inputDF), DKnowledge(transformers)))
-        }
-      }
+      val op = Transform()
+      val (knowledge, warnings) =
+        op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(transformers)))
+
+      knowledge shouldBe Vector(DKnowledge(DataFrame.forInference()))
+      warnings shouldBe InferenceWarnings.empty
+    }
+
+    "throw Exception" when {
       "Transformer's dynamic parameters are invalid" in {
         val inputDF = DataFrame.forInference(createSchema())
         val transformer = new MockTransformer

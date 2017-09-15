@@ -55,6 +55,7 @@ class WorkflowNodeExecutorActor(
         val nodeExecutionResults = nodeExecutionResultsFrom(resultVector)
         sendCompleted(nodeExecutionResults)
       } catch {
+        case SparkExceptionAsDeeplangException(deeplangEx) => sendFailed(deeplangEx)
         case e: Exception =>
           sendFailed(e)
         case NonFatal(e) =>

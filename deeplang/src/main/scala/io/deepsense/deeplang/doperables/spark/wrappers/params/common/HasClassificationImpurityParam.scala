@@ -21,16 +21,15 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ClassificationImpurity._
-import io.deepsense.deeplang.params.choice.Choice
+import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
-import io.deepsense.deeplang.params.{Param, Params}
 
 trait HasClassificationImpurityParam extends Params {
 
   val impurity =
     new ChoiceParamWrapper[ml.param.Params {val impurity: ml.param.Param[String]},
       ClassificationImpurity](
-      name = "impurity",
+      name = "classification impurity",
       description = "The criterion used for information gain calculation.",
       sparkParamGetter = _.impurity)
   setDefault(impurity, Gini())

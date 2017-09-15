@@ -125,14 +125,21 @@ object CatalogRecorder {
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
+    catalog.registerDOperation[Notebook](
+      DOperationCategories.IO)
+
     catalog.registerDOperation[ReadDataFrame](
+      DOperationCategories.IO)
+
+    catalog.registerDOperation[ReadTransformer](
       DOperationCategories.IO)
 
     catalog.registerDOperation[WriteDataFrame](
       DOperationCategories.IO)
 
-    catalog.registerDOperation[Notebook](
+    catalog.registerDOperation[WriteTransformer](
       DOperationCategories.IO)
+
 
     // Operations API uses catalog to fetch data even for operation/{id} calls.
     // To make Source and Sink accessible with this call they are added here.
@@ -142,16 +149,16 @@ object CatalogRecorder {
     catalog.registerDOperation[Source](DOperationCategories.IO)
     catalog.registerDOperation[Sink](DOperationCategories.IO)
 
-    catalog.registerDOperation[Fit](
+    catalog.registerDOperation[Evaluate](
       DOperationCategories.Action)
 
-    catalog.registerDOperation[Transform](
+    catalog.registerDOperation[Fit](
       DOperationCategories.Action)
 
     catalog.registerDOperation[FitPlusTransform](
       DOperationCategories.Action)
 
-    catalog.registerDOperation[Evaluate](
+    catalog.registerDOperation[Transform](
       DOperationCategories.Action)
 
     catalog.registerDOperation[Join](
@@ -175,35 +182,31 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateCustomTransformer](
       DOperationCategories.Transformation.Custom)
 
-    catalog.registerDOperation[SqlTransformation](
-      DOperationCategories.Transformation.Custom.SQL)
-
     catalog.registerDOperation[SqlColumnTransformation](
       DOperationCategories.Transformation.Custom.SQL)
 
-    catalog.registerDOperation[PythonTransformation](
-      DOperationCategories.Transformation.Custom.Python)
+    catalog.registerDOperation[SqlTransformation](
+      DOperationCategories.Transformation.Custom.SQL)
 
     catalog.registerDOperation[PythonColumnTransformation](
       DOperationCategories.Transformation.Custom.Python)
 
-    catalog.registerDOperation[ConvertType](
-      DOperationCategories.Transformation.FeatureConversion)
+    catalog.registerDOperation[PythonTransformation](
+      DOperationCategories.Transformation.Custom.Python)
 
-    catalog.registerDOperation[DecomposeDatetime](
-      DOperationCategories.Transformation.FeatureConversion)
-
-    // operations generated from Spark transformers
     catalog.registerDOperation[AssembleVector](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[Binarize](
       DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[StringIndexer](
+    catalog.registerDOperation[ConvertType](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[DCT](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[DecomposeDatetime](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[Normalize](
@@ -215,38 +218,40 @@ object CatalogRecorder {
     catalog.registerDOperation[PolynomialExpand](
       DOperationCategories.Transformation.FeatureConversion)
 
+    catalog.registerDOperation[QuantileDiscretizer](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[StringIndexer](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[VectorIndexer](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[MinMaxScaler](
+      DOperationCategories.Transformation.FeatureScaling)
+
+    catalog.registerDOperation[StandardScaler](
+      DOperationCategories.Transformation.FeatureScaling)
+
     catalog.registerDOperation[ConvertToNGrams](
       DOperationCategories.Transformation.TextProcessing)
 
+    catalog.registerDOperation[CountVectorizer](
+      DOperationCategories.Transformation.TextProcessing)
+
     catalog.registerDOperation[HashingTF](
+      DOperationCategories.Transformation.TextProcessing)
+
+    catalog.registerDOperation[IDF](
+      DOperationCategories.Transformation.TextProcessing)
+
+    catalog.registerDOperation[RemoveStopWords](
       DOperationCategories.Transformation.TextProcessing)
 
     catalog.registerDOperation[Tokenize](
       DOperationCategories.Transformation.TextProcessing)
 
     catalog.registerDOperation[TokenizeWithRegex](
-      DOperationCategories.Transformation.TextProcessing)
-
-    catalog.registerDOperation[RemoveStopWords](
-      DOperationCategories.Transformation.TextProcessing)
-
-    // operations generated from Spark estimators
-    catalog.registerDOperation[VectorIndexer](
-      DOperationCategories.Transformation.FeatureConversion)
-
-    catalog.registerDOperation[QuantileDiscretizer](
-      DOperationCategories.Transformation.FeatureConversion)
-
-    catalog.registerDOperation[StandardScaler](
-      DOperationCategories.Transformation.FeatureScaling)
-
-    catalog.registerDOperation[MinMaxScaler](
-      DOperationCategories.Transformation.FeatureScaling)
-
-    catalog.registerDOperation[IDF](
-      DOperationCategories.Transformation.TextProcessing)
-
-    catalog.registerDOperation[CountVectorizer](
       DOperationCategories.Transformation.TextProcessing)
 
     catalog.registerDOperation[Word2Vec](
@@ -258,28 +263,25 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateAFTSurvivalRegression](
       DOperationCategories.ML.Regression)
 
-    catalog.registerDOperation[CreateLinearRegression](
-      DOperationCategories.ML.Regression)
-
-    catalog.registerDOperation[CreateIsotonicRegression](
-      DOperationCategories.ML.Regression)
-
-    catalog.registerDOperation[CreateRandomForestRegression](
-      DOperationCategories.ML.Regression)
-
     catalog.registerDOperation[CreateDecisionTreeRegression](
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateGBTRegression](
       DOperationCategories.ML.Regression)
 
-    catalog.registerDOperation[CreateGBTClassifier](
-      DOperationCategories.ML.Classification)
+    catalog.registerDOperation[CreateIsotonicRegression](
+      DOperationCategories.ML.Regression)
 
-    catalog.registerDOperation[CreateRandomForestClassifier](
-      DOperationCategories.ML.Classification)
+    catalog.registerDOperation[CreateLinearRegression](
+      DOperationCategories.ML.Regression)
+
+    catalog.registerDOperation[CreateRandomForestRegression](
+      DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateDecisionTreeClassifier](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateGBTClassifier](
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateLogisticRegression](
@@ -289,6 +291,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateNaiveBayes](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateRandomForestClassifier](
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateKMeans](

@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.exceptions
+package io.deepsense.deeplang.doperables.serialization
 
-case class InvalidDataFrameException(override val message: String)
-  extends DOperationExecutionException(s"Invalid DataFrame: $message", None)
+import org.apache.hadoop.fs.Path
+
+object PathsUtils {
+
+  def combinePaths(path1: String, path2: String): String = {
+    new Path(path1, path2).toString
+  }
+}

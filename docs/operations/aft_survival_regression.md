@@ -73,21 +73,9 @@ This operation does not take any input.
 </tr>
 
 <tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
-</tr>
-
-<tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>The label column for model fitting.</td>
-</tr>
-
-<tr>
-<td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The prediction column created during model scoring.</td>
 </tr>
 
 <tr>
@@ -97,6 +85,18 @@ This operation does not take any input.
 The value of this column could be 0 or 1.
 If the value is 1, it means the event has occurred i.e. uncensored;
 otherwise censored.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 <tr>

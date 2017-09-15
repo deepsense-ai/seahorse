@@ -25,9 +25,15 @@ import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
 abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
-    extends DeeplangIntegTestSupport {
+    extends DeeplangIntegTestSupport
+    with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   def transformerWithParams: T
+  def deserializedTransformer: Transformer =
+    transformerWithParams.loadSerializedTransformer(tempDir)
 
   final def className: String = transformerWithParams.getClass.getSimpleName
 
@@ -51,13 +57,22 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
 
   className should {
     "successfully run _transform()" in {
-      transformerWithParams._transform(executionContext, inputDataFrame)
+      val transformed = transformerWithParams._transform(executionContext, inputDataFrame)
+      val transformedBySerializedTransformer =
+        deserializedTransformer._transform(executionContext, inputDataFrame)
+      assertDataFramesEqual(transformed, transformedBySerializedTransformer)
     }
     "successfully run _transformSchema()" in {
-      transformerWithParams._transformSchema(inputDataFrame.sparkDataFrame.schema)
+      val transformedSchema =
+        transformerWithParams._transformSchema(inputDataFrame.sparkDataFrame.schema)
+      val transformedSchema2 =
+        deserializedTransformer._transformSchema(inputDataFrame.sparkDataFrame.schema)
+      assertSchemaEqual(transformedSchema.get, transformedSchema2.get)
     }
     "succesfully run report" in {
-      transformerWithParams.report
+      val report = transformerWithParams.report
+      val report2 = deserializedTransformer.report
+      report shouldBe report2
     }
   }
 }

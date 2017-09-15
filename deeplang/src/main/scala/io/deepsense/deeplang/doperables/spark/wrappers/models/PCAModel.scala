@@ -18,27 +18,30 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import scala.language.reflectiveCalls
 
-import org.apache.spark.ml
 import org.apache.spark.ml.feature.{PCA => SparkPCA, PCAModel => SparkPCAModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 class PCAModel
   extends SparkSingleColumnModelWrapper[SparkPCAModel, SparkPCA] {
-  val k = new IntParamWrapper[ml.param.Params { val k: ml.param.IntParam }](
-    name = "k",
-    description = "Number of principal components.",
-    sparkParamGetter = _.k,
-    validator = RangeValidator.positiveIntegers)
 
-  override protected def getSpecificParams: Array[Param[_]] = Array(k)
+  override protected def getSpecificParams: Array[Param[_]] = Array()
 
   override def report: Report = {
     super.report
-      .withAdditionalTable(CommonTablesGenerators.denseMatrix(model.pc))
+      .withAdditionalTable(CommonTablesGenerators.denseMatrix(
+        name = "A Principal Components Matrix",
+        description = "Each column is one principal component.",
+        matrix = sparkModel.pc))
+  }
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkPCAModel] = {
+    new SerializableSparkModel(SparkPCAModel.load(path))
   }
 }

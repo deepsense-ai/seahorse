@@ -27,7 +27,8 @@ class CreateKMeans extends EstimatorAsFactory[KMeans]
 
   override val id: Id = "2ecdd789-695d-4efa-98ad-63c80ae70f71"
   override val name: String = "K-Means"
-  override val description: String = "Creates a k-means model"
+  override val description: String =
+    "Creates a k-means model. Note: Trained k-means model does not have any parameters."
 
   override protected[this] val docsGuideLocation =
     Some("ml-clustering.html#k-means")

@@ -103,7 +103,7 @@ class WriteDataFrameIntegSpec
   before {
     fileSystemClient.delete(testsDir)
     new java.io.File(testsDir + "/id").getParentFile.mkdirs()
-    executionContext.fsClient.copyLocalFile(getClass.getResource("/csv/").getPath, testsDir)
+    fileSystemClient.copyLocalFile(getClass.getResource("/csv/").getPath, testsDir)
   }
 
   "WriteDataFrame" should {

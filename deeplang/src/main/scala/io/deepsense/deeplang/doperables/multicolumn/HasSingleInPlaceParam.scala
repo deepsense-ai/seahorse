@@ -26,4 +26,5 @@ trait HasSingleInPlaceParam extends Params {
     name = "output",
     description = "Output generation mode."
   )
+  setDefault(singleInPlaceChoice -> YesInPlaceChoice())
 }

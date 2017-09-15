@@ -22,7 +22,7 @@ import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.LDAModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.choice.Choice
-import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.validators.{ArrayLengthValidator, ComplexArrayValidator, RangeValidator}
 import io.deepsense.deeplang.params.wrappers.spark._
 
 class LDA extends SparkEstimatorWrapper[SparkLDAModel, SparkLDA, LDAModel]
@@ -78,7 +78,9 @@ class LDA extends SparkEstimatorWrapper[SparkLDAModel, SparkLDA, LDAModel]
 
 object LDA {
 
-  class DocConcentrationParam(override val name: String, override val validator: RangeValidator)
+  class DocConcentrationParam(
+      override val name: String,
+      override val validator: ComplexArrayValidator)
     extends DoubleArrayParamWrapper[SparkLDA](
       name = name,
       description =
@@ -128,7 +130,9 @@ object LDA {
     override def createDocumentConcentrationParam(): DocConcentrationParam =
       new DocConcentrationParam(
         name = "doc concentration",
-        validator = RangeValidator(0.0, Double.MaxValue))
+        validator = ComplexArrayValidator(
+          rangeValidator = RangeValidator(0.0, Double.MaxValue),
+          lengthValidator = ArrayLengthValidator.withAtLeast(1)))
     setDefault(docConcentration, Array(0.5, 0.5))
 
     override def createTopicConcentrationParam(): TopicConcentrationParam =
@@ -144,7 +148,9 @@ object LDA {
     override def createDocumentConcentrationParam(): DocConcentrationParam =
       new DocConcentrationParam(
         name = "doc concentration",
-        validator = RangeValidator(1.0, Double.MaxValue, beginIncluded = false))
+        validator = ComplexArrayValidator(
+          rangeValidator = RangeValidator(1.0, Double.MaxValue, beginIncluded = false),
+          lengthValidator = ArrayLengthValidator.withAtLeast(1)))
     setDefault(docConcentration, Array(26.0, 26.0))
 
     override def createTopicConcentrationParam(): TopicConcentrationParam =

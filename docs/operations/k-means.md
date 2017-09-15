@@ -6,7 +6,7 @@ description: K-Means
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Creates a k-means model.
+Creates a k-means model. Note: Trained k-means model does not have any parameters.
 
 This operation is ported from Spark ML.
 
@@ -55,12 +55,6 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
-</tr>
-
-<tr>
 <td><code>k</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The number of clusters to create.</td>
@@ -70,12 +64,6 @@ This operation does not take any input.
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The maximum number of iterations.</td>
-</tr>
-
-<tr>
-<td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The prediction column created during model scoring.</td>
 </tr>
 
 <tr>
@@ -100,6 +88,18 @@ This operation does not take any input.
 <td><code>init steps</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The number of steps for the k-means|| initialization mode. It will be ignored when other initialization modes are chosen.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 </tbody>

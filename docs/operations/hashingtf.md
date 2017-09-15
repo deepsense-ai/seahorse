@@ -32,7 +32,7 @@ For scala docs details, see
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input <code>DataFrame</code>.</td></tr>
 </tbody>
 </table>
 

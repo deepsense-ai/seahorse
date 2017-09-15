@@ -29,10 +29,22 @@ object ValidatorsJsonProtocol extends DefaultJsonProtocol {
      * for writing inside [[regexValidatorFormat]].
      */
     override def read(json: JsValue): Regex = ???
-
   }
 
-  val rangeValidatorFormat = jsonFormat(
+  implicit val rangeValidatorFormat = jsonFormat(
     RangeValidator.apply, "begin", "end", "beginIncluded", "endIncluded", "step")
-  val regexValidatorFormat = jsonFormat(RegexValidator, "regex")
+
+  implicit val regexValidatorFormat = jsonFormat(RegexValidator, "regex")
+
+  implicit val arrayLengthValidator = jsonFormat(ArrayLengthValidator.apply, "min", "max")
+
+  implicit val complexArrayValidator = new JsonFormat[ComplexArrayValidator] {
+    def write(v: ComplexArrayValidator): JsValue = {
+      v.rangeValidator.configurationToJson
+    }
+    def read(json: JsValue): ComplexArrayValidator = ???
+  }
+//  TODO DS-3225 Complex Array Validator serialization
+//  implicit val complexArrayValidator =
+//    jsonFormat(ComplexArrayValidator.apply, "rangeValidator", "arrayLengthValidator")
 }

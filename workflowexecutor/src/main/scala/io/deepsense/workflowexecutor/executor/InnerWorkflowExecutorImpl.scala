@@ -40,6 +40,10 @@ class InnerWorkflowExecutorImpl(override val graphReader: GraphReader)
     workflow.convertTo[InnerWorkflow]
   }
 
+  override def toJson(innerWorkflow: InnerWorkflow): JsObject = {
+    innerWorkflow.toJson.asJsObject
+  }
+
   override def execute(
       executionContext: CommonExecutionContext,
       innerWorkflow: InnerWorkflow,

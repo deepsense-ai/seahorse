@@ -32,6 +32,7 @@ import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport, ExecutionCon
 class MultiColumnTransformerIntegSpec extends DeeplangIntegTestSupport {
 
   val magicConstant: Double = 1337d
+  import DeeplangIntegTestSupport._
 
   "MultiColumnTransformer" should {
     "return also operation specific params in json" in {

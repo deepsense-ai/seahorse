@@ -16,21 +16,25 @@
 
 package io.deepsense.commons.utils
 
-import java.math.RoundingMode
-import java.text.{DecimalFormat, DecimalFormatSymbols}
-import java.util.Locale
+import java.math.{MathContext, RoundingMode}
 
 object DoubleUtils {
-
+  private val significantFigures = 6
+  private val mathContext = new MathContext(significantFigures, RoundingMode.HALF_UP)
   def double2String(d: Double): String = {
-    val formatter: DecimalFormat =
-      new DecimalFormat("#.######", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    formatter.setRoundingMode(RoundingMode.HALF_UP)
-
-    if (d.isNaN) {
-      "NaN"
+    if (d.isNaN || d.isInfinity) {
+      d.toString
     } else {
-      formatter.format(d)
+      val decimal = BigDecimal(d)
+        .round(mathContext)
+        .toString()
+      if (decimal.contains("E")) {
+        decimal.replaceAll("\\.?0*E", "e")
+      } else if (decimal.contains(".")) {
+        decimal.replaceAll("\\.?0*$", "")
+      } else {
+        decimal
+      }
     }
   }
 }

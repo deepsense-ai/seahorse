@@ -17,8 +17,11 @@
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.recommendation.{ALS => SparkALS, ALSModel => SparkALSModel}
+import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.dataframe.DataFrameColumnsGetter
 import io.deepsense.deeplang.doperables.spark.wrappers.models.ALSModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param
@@ -53,7 +56,7 @@ class ALS
     name = "nonnegative",
     description = "Whether to apply nonnegativity constraints.",
     sparkParamGetter = _.nonnegative)
-  setDefault(nonnegative, false)
+  setDefault(nonnegative, true)
 
   val numItemBlocks = new IntParamWrapper[SparkALS](
     name = "num item blocks",
@@ -98,4 +101,14 @@ class ALS
     itemColumn,
     predictionColumn,
     userColumn)
+
+  override private[deeplang] def _fit_infer(maybeSchema: Option[StructType]): ALSModel = {
+    maybeSchema.map {
+      schema =>
+        DataFrameColumnsGetter.assertExpectedColumnType(schema, $(itemColumn), ColumnType.numeric)
+        DataFrameColumnsGetter.assertExpectedColumnType(schema, $(userColumn), ColumnType.numeric)
+        DataFrameColumnsGetter.assertExpectedColumnType(schema, $(ratingColumn), ColumnType.numeric)
+    }
+    super._fit_infer(maybeSchema)
+  }
 }

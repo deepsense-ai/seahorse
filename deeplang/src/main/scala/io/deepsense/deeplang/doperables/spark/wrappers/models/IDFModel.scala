@@ -18,9 +18,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
 
 class IDFModel
@@ -33,11 +35,16 @@ class IDFModel
       List(
         SparkSummaryEntry(
           name = "IDF vector",
-          value = model.idf,
+          value = sparkModel.idf,
           description = "The inverse document frequency vector."))
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkIDFModel] = {
+    new SerializableSparkModel(SparkIDFModel.load(path))
+  }
 }

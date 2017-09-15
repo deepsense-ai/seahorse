@@ -16,9 +16,9 @@
 
 package io.deepsense.models.json.workflow
 
-import org.joda.time.DateTime
 import spray.json._
 
+import io.deepsense.commons.datetime.DateTimeConverter.{dateTime, toString => dateToString}
 import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
@@ -71,8 +71,10 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
 
   private def executionReportFixture: (ExecutionReport, JsObject) = {
 
-    val startTimestamp = "2015-05-12T21:11:09.000Z"
-    val finishTimestamp = "2015-05-12T21:12:50.000Z"
+    val startDateTime = dateTime(2015, 5, 12, 21, 11, 9)
+    val finishDateTime = dateTime(2015, 5, 12, 21, 12, 50)
+    val startTimestamp = dateToString(startDateTime)
+    val finishTimestamp = dateToString(finishDateTime)
 
     val entity1Id = Entity.Id.randomId
     val entity2Id = Entity.Id.randomId
@@ -80,8 +82,8 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     val executionReport = ExecutionReport(
       Map(
         node1.id -> nodestate.Completed(
-          DateTime.parse(startTimestamp),
-          DateTime.parse(finishTimestamp),
+          startDateTime,
+          finishDateTime,
           Seq(entity1Id, entity2Id)
         )
       ),

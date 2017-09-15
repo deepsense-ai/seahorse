@@ -10,17 +10,19 @@
     </li>
     <li class="menu-group"><a><strong>Input/Output</strong></a>
       <ul class="lvl-2">
-        <li><a href="{{base}}/operations/read_dataframe.html">Read DataFrame</a></li>
-        <li><a href="{{base}}/operations/write_dataframe.html">Write DataFrame</a></li>
         <li><a href="{{base}}/operations/notebook.html">Notebook</a></li>
+        <li><a href="{{base}}/operations/read_dataframe.html">Read DataFrame</a></li>
+        <li><a href="{{base}}/operations/read_transformer.html">Read Transformer</a></li>
+        <li><a href="{{base}}/operations/write_dataframe.html">Write DataFrame</a></li>
+        <li><a href="{{base}}/operations/write_transformer.html">Write Transformer</a></li>
       </ul>
     </li>
     <li class="menu-group"><a><strong>Action</strong></a>
       <ul class="lvl-2">
-        <li><a href="{{base}}/operations/fit.html">Fit</a></li>
-        <li><a href="{{base}}/operations/transform.html">Transform</a></li>
-        <li><a href="{{base}}/operations/fit_plus_transform.html">Fit + Transform</a></li>
         <li><a href="{{base}}/operations/evaluate.html">Evaluate</a></li>
+        <li><a href="{{base}}/operations/fit.html">Fit</a></li>
+        <li><a href="{{base}}/operations/fit_plus_transform.html">Fit + Transform</a></li>
+        <li><a href="{{base}}/operations/transform.html">Transform</a></li>
       </ul>
     </li>
     <li class="menu-group"><a><strong>Set Operation</strong></a>
@@ -44,14 +46,14 @@
             <li><a href="{{base}}/operations/create_custom_transformer.html">Create Custom Transformer</a></li>
             <li class="menu-group"><a>SQL</a>
               <ul class="lvl-4">
-                <li><a href="{{base}}/operations/sql_transformation.html">SQL Transformation</a></li>
                 <li><a href="{{base}}/operations/sql_column_transformation.html">SQL Column Transformation</a></li>
+                <li><a href="{{base}}/operations/sql_transformation.html">SQL Transformation</a></li>
               </ul>
             </li>
             <li class="menu-group"><a>Python</a>
               <ul class="lvl-4">
-                <li><a href="{{base}}/operations/python_transformation.html">Python Transformation</a></li>
                 <li><a href="{{base}}/operations/python_column_transformation.html">Python Column Transformation</a></li>
+                <li><a href="{{base}}/operations/python_transformation.html">Python Transformation</a></li>
               </ul>
             </li>
           </ul>
@@ -93,24 +95,29 @@
     </li>
     <li class="menu-group"><a><strong>Machine Learning</strong></a>
       <ul class="lvl-2">
-        <li class="menu-group"><a>Classification</a>
+        <li class="menu-group"><a>Hyper Optimization</a>
           <ul class="lvl-3">
-            <li><a href="{{base}}/operations/gbt_classifier.html">GBT Classifier</a></li>
-            <li><a href="{{base}}/operations/random_forest_classifier.html">Random Forest Classifier</a></li>
-            <li><a href="{{base}}/operations/decision_tree_classifier.html">Decision Tree Classifier</a></li>
-            <li><a href="{{base}}/operations/logistic_regression.html">Logistic Regression</a></li>
-            <li><a href="{{base}}/operations/multilayer_perceptron_classifier.html">Multilayer Perceptron Classifier</a></li>
-            <li><a href="{{base}}/operations/naive_bayes.html">Naive Bayes</a></li>
+            <li><a href="{{base}}/operations/grid_search.html">Grid Search</a></li>
           </ul>
         </li>
         <li class="menu-group"><a>Regression</a>
           <ul class="lvl-3">
             <li><a href="{{base}}/operations/aft_survival_regression.html">AFT Survival Regression</a></li>
+            <li><a href="{{base}}/operations/decision_tree_regression.html">Decision Tree Regression</a></li>
             <li><a href="{{base}}/operations/gbt_regression.html">GBT Regression</a></li>
             <li><a href="{{base}}/operations/isotonic_regression.html">Isotonic Regression</a></li>
             <li><a href="{{base}}/operations/linear_regression.html">Linear Regression</a></li>
             <li><a href="{{base}}/operations/random_forest_regression.html">Random Forest Regression</a></li>
-            <li><a href="{{base}}/operations/decision_tree_regression.html">Decision Tree Regression</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Classification</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/decision_tree_classifier.html">Decision Tree Classifier</a></li>
+            <li><a href="{{base}}/operations/gbt_classifier.html">GBT Classifier</a></li>
+            <li><a href="{{base}}/operations/logistic_regression.html">Logistic Regression</a></li>
+            <li><a href="{{base}}/operations/multilayer_perceptron_classifier.html">Multilayer Perceptron Classifier</a></li>
+            <li><a href="{{base}}/operations/naive_bayes.html">Naive Bayes</a></li>
+            <li><a href="{{base}}/operations/random_forest_classifier.html">Random Forest Classifier</a></li>
           </ul>
         </li>
         <li class="menu-group"><a>Clustering</a>
@@ -119,14 +126,14 @@
             <li><a href="{{base}}/operations/lda.html">LDA</a></li>
           </ul>
         </li>
-        <li class="menu-group"><a>Recommendation</a>
-          <ul class="lvl-3">
-            <li><a href="{{base}}/operations/als.html">ALS</a></li>
-          </ul>
-        </li>
         <li class="menu-group"><a>Feature Selection</a>
           <ul class="lvl-3">
             <li><a href="{{base}}/operations/chi-squared_selector.html">Chi-Squared Selector</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Recommendation</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/als.html">ALS</a></li>
           </ul>
         </li>
         <li class="menu-group"><a>Dimensionality Reduction</a>
@@ -134,14 +141,13 @@
             <li><a href="{{base}}/operations/pca.html">PCA</a></li>
           </ul>
         </li>
-        <li class="menu-group"><a>Evaluation</a>
+        <li class="menu-group"><a>Model Evaluation</a>
           <ul class="lvl-3">
             <li><a href="{{base}}/operations/binary_classification_evaluator.html">Binary Classification Evaluator</a></li>
             <li><a href="{{base}}/operations/multiclass_classification_evaluator.html">Multiclass Classification Evaluator</a></li>
             <li><a href="{{base}}/operations/regression_evaluator.html">Regression Evaluator</a></li>
           </ul>
         </li>
-        <li><a href="{{base}}/operations/grid_search.html">Grid Search</a></li>
       </ul>
     </li>
   </ul>

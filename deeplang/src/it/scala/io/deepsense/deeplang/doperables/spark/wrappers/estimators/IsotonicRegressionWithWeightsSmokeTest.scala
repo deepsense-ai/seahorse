@@ -49,7 +49,8 @@ class IsotonicRegressionWithWeightsSmokeTest
       val sparkParamMap = estimatorWithParams.sparkParamMap(
         sparkEstimator,
         dataFrame.sparkDataFrame.schema)
-      sparkParamMap.get(estimator.sparkEstimator.weightCol) shouldBe Some(weightColumnName)
+      sparkParamMap.get(
+        estimator.sparkEstimator.weightCol) shouldBe Some(weightColumnName)
     }
   }
 }

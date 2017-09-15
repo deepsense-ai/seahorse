@@ -55,36 +55,6 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
-</tr>
-
-<tr>
-<td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The prediction column created during model scoring.</td>
-</tr>
-
-<tr>
-<td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The label column for model fitting.</td>
-</tr>
-
-<tr>
-<td><code>probability column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The column for predicted class conditional probabilities.</td>
-</tr>
-
-<tr>
-<td><code>raw prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The raw prediction (confidence) column.</td>
-</tr>
-
-<tr>
 <td><code>max depth</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The maximum depth of the tree. E.g., depth 0 means 1 leaf node; depth 1 means 1 internal node + 2 leaf nodes.</td>
@@ -123,11 +93,12 @@ This operation does not take any input.
 <tr>
 <td><code>checkpoint interval</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The checkpoint interval.</td>
+<td>The checkpoint interval. E.g. 10 means that the cache will get checkpointed
+every 10 iterations.</td>
 </tr>
 
 <tr>
-<td><code>impurity</code></td>
+<td><code>classification impurity</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The criterion used for information gain calculation. Possible values: <code>["entropy", "gini"]</code></td>
 </tr>
@@ -154,6 +125,36 @@ This operation does not take any input.
 <td><code>feature subset strategy</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The number of features to consider for splits at each tree node. Possible values: <code>["auto", "onethird", "sqrt", "log2"]</code></td>
+</tr>
+
+<tr>
+<td><code>label column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The label column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>probability column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The column for predicted class conditional probabilities.</td>
+</tr>
+
+<tr>
+<td><code>raw prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The raw prediction (confidence) column.</td>
+</tr>
+
+<tr>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 </tbody>

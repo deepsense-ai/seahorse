@@ -55,18 +55,6 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
-</tr>
-
-<tr>
-<td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The label column for model fitting.</td>
-</tr>
-
-<tr>
 <td><code>layers</code></td>
 <td><code><a href="../parameter_types.html#multiple-numeric">MultipleNumeric</a></code></td>
 <td>The list of layer sizes that includes the input layer size as the first number and the
@@ -83,12 +71,6 @@ total number of labels.</td>
 </tr>
 
 <tr>
-<td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The prediction column created during model scoring.</td>
-</tr>
-
-<tr>
 <td><code>seed</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The random seed.</td>
@@ -98,6 +80,24 @@ total number of labels.</td>
 <td><code>tolerance</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The convergence tolerance for iterative algorithms.</td>
+</tr>
+
+<tr>
+<td><code>label column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The label column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 </tbody>

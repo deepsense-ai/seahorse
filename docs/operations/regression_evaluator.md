@@ -55,7 +55,7 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>metric</code></td>
+<td><code>regression metric</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The metric used in evaluation. Possible values: <code>["mse", "rmse", "r2", "mae"]</code></td>
 </tr>

@@ -29,8 +29,6 @@ case class NumericParam(
 
   override val parameterType = ParameterType.Numeric
 
-  override val constraints = validator.toHumanReadable(name)
-
   override val isGriddable: Boolean = true
 
   override def replicate(name: String): NumericParam = copy(name = name)

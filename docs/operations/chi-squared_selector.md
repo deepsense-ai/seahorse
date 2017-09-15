@@ -32,7 +32,7 @@ For scala docs details, see
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input <code>DataFrame</code>.</td></tr>
 </tbody>
 </table>
 
@@ -49,7 +49,7 @@ For scala docs details, see
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other<code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other <code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 
@@ -68,9 +68,9 @@ For scala docs details, see
 <tbody>
 
 <tr>
-<td><code>numTopFeatures</code></td>
+<td><code>num top features</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of features that selector will select, ordered by statistics value descending. If the number of features is < numTopFeatures, then this will select all features.</td>
+<td>Number of features that selector will select, ordered by statistics value descending. If the real number of features is lower, then this will select all features.</td>
 </tr>
 
 <tr>

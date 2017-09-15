@@ -61,4 +61,6 @@ class VanillaDecisionTreeClassifier
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn)
+
+  override protected def estimatorName: String = classOf[DecisionTreeClassifier].getSimpleName
 }

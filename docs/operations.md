@@ -15,14 +15,16 @@ Detailed description of operations can be found [here](deeplang_overview.html#op
 List of all currently supported operations:
 
 * Input/Output
-  * [Read DataFrame](operations/read_dataframe.html)
-  * [Write DataFrame](operations/write_dataframe.html)
   * [Notebook](operations/notebook.html)
+  * [Read DataFrame](operations/read_dataframe.html)
+  * [Read Transformer](operations/read_transformer.html)
+  * [Write DataFrame](operations/write_dataframe.html)
+  * [Write Transformer](operations/write_transformer.html)
 * Action
-  * [Fit](operations/fit.html)
-  * [Transform](operations/transform.html)
-  * [Fit + Transform](operations/fit_plus_transform.html)
   * [Evaluate](operations/evaluate.html)
+  * [Fit](operations/fit.html)
+  * [Fit + Transform](operations/fit_plus_transform.html)
+  * [Transform](operations/transform.html)
 * Set Operation
   * [Join](operations/join.html)
   * [Split](operations/split.html)
@@ -35,11 +37,11 @@ List of all currently supported operations:
   * Custom
     * [Create Custom Transformer](operations/create_custom_transformer.html)
     * SQL
-      * [SQL Transformation](operations/sql_transformation.html)
       * [SQL Column Transformation](operations/sql_column_transformation.html)
+      * [SQL Transformation](operations/sql_transformation.html)
     * Python
-      * [Python Transformation](operations/python_transformation.html)
       * [Python Column Transformation](operations/python_column_transformation.html)
+      * [Python Transformation](operations/python_transformation.html)
   * Feature Conversion
     * [Assemble Vector](operations/assemble_vector.html)
     * [Binarize](operations/binarize.html)
@@ -65,31 +67,32 @@ List of all currently supported operations:
     * [Tokenize with Regex](operations/tokenize_with_regex.html)
     * [Word2Vec](operations/word2vec.html)
 * Machine Learning
-  * Classification
-    * [GBT Classifier](operations/gbt_classifier.html)
-    * [Random Forest Classifier](operations/random_forest_classifier.html)
-    * [Decision Tree Classifier](operations/decision_tree_classifier.html)
-    * [Logistic Regression](operations/logistic_regression.html)
-    * [Multilayer Perceptron Classifier](operations/multilayer_perceptron_classifier.html)
-    * [Naive Bayes](operations/naive_bayes.html)
+  * Hyper Optimization
+    * [Grid Search](operations/grid_search.html)
   * Regression
     * [AFT Survival Regression](operations/aft_survival_regression.html)
+    * [Decision Tree Regression](operations/decision_tree_regression.html)
     * [GBT Regression](operations/gbt_regression.html)
     * [Isotonic Regression](operations/isotonic_regression.html)
     * [Linear Regression](operations/linear_regression.html)
     * [Random Forest Regression](operations/random_forest_regression.html)
-    * [Decision Tree Regression](operations/decision_tree_regression.html)
+  * Classification
+    * [Decision Tree Classifier](operations/decision_tree_classifier.html)
+    * [GBT Classifier](operations/gbt_classifier.html)
+    * [Logistic Regression](operations/logistic_regression.html)
+    * [Multilayer Perceptron Classifier](operations/multilayer_perceptron_classifier.html)
+    * [Naive Bayes](operations/naive_bayes.html)
+    * [Random Forest Classifier](operations/random_forest_classifier.html)
   * Clustering
     * [K-Means](operations/k-means.html)
     * [LDA](operations/lda.html)
   * Feature Selection
     * [Chi-Squared Selector](operations/chi-squared_selector.html)
-  * Dimensionality Reduction
-    * [PCA](operations/pca.html)
   * Recommendation
     * [ALS](operations/als.html)
+  * Dimensionality Reduction
+    * [PCA](operations/pca.html)
   * Model Evaluation
     * [Binary Classification Evaluator](operations/binary_classification_evaluator.html)
     * [Multiclass Classification Evaluator](operations/multiclass_classification_evaluator.html)
     * [Regression Evaluator](operations/regression_evaluator.html)
-  * [Grid Search](operations/grid_search.html)

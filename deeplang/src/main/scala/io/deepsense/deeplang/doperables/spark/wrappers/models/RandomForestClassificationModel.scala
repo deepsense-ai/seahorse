@@ -16,21 +16,24 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.models
 
-import org.apache.spark.ml.PipelineModel
 import org.apache.spark.ml.classification.{RandomForestClassificationModel => SparkRandomForestClassificationModel, RandomForestClassifier => SparkRandomForestClassifier}
 import org.apache.spark.mllib.linalg.VectorUDT
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasLabelColumnParam, ProbabilisticClassifierParams}
+import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, SerializableSparkModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ProbabilisticClassifierParams
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrapperModel
+import io.deepsense.deeplang.doperables.{SparkModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
 class RandomForestClassificationModel(
     vanillaModel: VanillaRandomForestClassificationModel)
-  extends StringIndexingWrapperModel(vanillaModel) {
+  extends StringIndexingWrapperModel[
+    SparkRandomForestClassificationModel,
+    SparkRandomForestClassifier](vanillaModel) {
 
   def this() = this(new VanillaRandomForestClassificationModel())
 }
@@ -61,11 +64,23 @@ class VanillaRandomForestClassificationModel
   override def report: Report = {
     val treeWeight = SparkSummaryEntry(
       name = "tree weights",
-      value = model.treeWeights,
+      value = sparkModel.treeWeights,
       description = "Weights for each tree."
     )
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(treeWeight)))
   }
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkRandomForestClassificationModel] = {
+    val modelPath = Transformer.modelFilePath(path)
+    CustomPersistence.load[SerializableSparkModel[SparkRandomForestClassificationModel]](
+      ctx.sparkContext,
+      modelPath)
+  }
+
+  override protected def transformerName: String =
+    classOf[RandomForestClassificationModel].getSimpleName
 }

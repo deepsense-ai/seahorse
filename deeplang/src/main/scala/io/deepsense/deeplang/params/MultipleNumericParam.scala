@@ -20,12 +20,12 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
+import io.deepsense.deeplang.params.validators.{ComplexArrayValidator, Validator}
 
 case class MultipleNumericParam(
     name: String,
     description: String,
-    validator: Validator[Double] = RangeValidator.all)
+    validator: Validator[Array[Double]] = ComplexArrayValidator.all)
   extends Param[Array[Double]] {
 
   override val parameterType = ParameterType.MultipleNumeric
@@ -60,8 +60,6 @@ case class MultipleNumericParam(
     super.extraJsFields ++ Map("validator" -> validator.toJson)
 
   override def validate(values: Array[Double]): Vector[DeepLangException] = {
-    values.foldLeft(Vector[DeepLangException]())(
-      (acc: Vector[DeepLangException], value: Double) =>
-        acc ++ validator.validate(name, value))
+    validator.validate(name, values)
   }
 }

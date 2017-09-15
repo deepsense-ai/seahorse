@@ -21,11 +21,13 @@ import scala.language.reflectiveCalls
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml
 import org.apache.spark.ml.Estimator
-import org.apache.spark.ml.param.{Param => SparkParam, ParamMap}
+import org.apache.spark.ml.param.{ParamMap, Param => SparkParam}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.report.Report
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.{SparkEstimatorWrapper, SparkModelWrapper}
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
@@ -90,6 +92,10 @@ object EstimatorModelWrapperFixtures {
 
     override val params: Array[Param[_]] = declareParams(predictionColumn)
     override def report: Report = ???
+
+    override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SimpleSparkModel] = ???
   }
 
   class SimpleSparkEstimatorWrapper

@@ -32,5 +32,5 @@ case class SqlColumnTransformation()
 
   override lazy val tTagTO_1: TypeTag[SqlColumnTransformer] = typeTag
 
-  override val since: Version = Version(0, 4, 0)
+  override val since: Version = Version(1, 1, 0)
 }

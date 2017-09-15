@@ -7,12 +7,12 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-A `Fit` operation is used to fit an [Estimator](../classes/estimator.html)
+The `Fit` operation is used to fit an [Estimator](../classes/estimator.html)
 (such as a [Logistic Regression](../operations/logistic_regression.html)) on a
 [DataFrame](../classes/dataframe.html). It produces a [Transformer](../classes/transformer.html).
 
 **Usage example**:
-![Fit example](../img/estimator_example.png){: .img-responsive}
+![Fit example](../img/estimator_example.png){: .img-responsive .spacer .centered-image}
 
 **Since**: Seahorse 1.0.0
 

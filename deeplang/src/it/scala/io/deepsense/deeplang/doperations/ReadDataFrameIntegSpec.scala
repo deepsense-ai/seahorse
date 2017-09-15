@@ -28,10 +28,11 @@ import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
 class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
 
+  import DeeplangIntegTestSupport._
   before {
     fileSystemClient.delete(testsDir)
     new java.io.File(testsDir + "/id").getParentFile.mkdirs()
-    executionContext.fsClient.copyLocalFile(getClass.getResource("/csv/").getPath, testsDir)
+    fileSystemClient.copyLocalFile(getClass.getResource("/csv/").getPath, testsDir)
   }
 
   val csvContent = Seq(

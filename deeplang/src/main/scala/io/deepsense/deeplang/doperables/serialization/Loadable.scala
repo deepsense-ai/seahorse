@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.exceptions
+package io.deepsense.deeplang.doperables.serialization
 
-import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.ExecutionContext
 
-case class InvalidFileException(filename: String, reason: String)
-  extends DeepLangException(s"File $filename is invalid: $reason")
+trait Loadable {
+
+  def load(ctx: ExecutionContext, path: String): this.type
+}

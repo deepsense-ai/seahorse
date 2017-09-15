@@ -28,7 +28,10 @@ class CreateMulticlassClassificationEvaluator
 
   override val id: Id = "3129848c-8a1c-449e-b006-340fec5b42ae"
   override val name: String = "Multiclass Classification Evaluator"
-  override val description: String = "Creates a multiclass classification evaluator"
+  override val description: String = "Creates a multiclass classification evaluator. " +
+    "Multiclass classification evaluator does not assume any label class is special, " +
+    "thus it cannot be used for calculation of metrics specific for binary classification " +
+    "(where this assumption is taken into account)."
 
   override protected[this] val docsGuideLocation =
     Some("mllib-evaluation-metrics.html#multiclass-classification")

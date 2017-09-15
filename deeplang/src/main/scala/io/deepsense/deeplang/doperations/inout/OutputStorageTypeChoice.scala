@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperations.inout
 
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
-import io.deepsense.deeplang.params.{StorageType, Param, StringParam}
+import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
 
 sealed trait OutputStorageTypeChoice extends Choice {
   import OutputStorageTypeChoice._
@@ -34,7 +34,7 @@ object OutputStorageTypeChoice {
     override val name: String = StorageType.FILE.toString
 
     val outputFile = StringParam(
-      name = "outputFile",
+      name = "output file",
       description = "Output file path.")
 
     def getOutputFile: String = $(outputFile)
@@ -42,7 +42,7 @@ object OutputStorageTypeChoice {
 
     val fileFormat = ChoiceParam[OutputFileFormatChoice](
       name = "format",
-      description = "Format of the input file.")
+      description = "Format of the output file.")
     setDefault(fileFormat, OutputFileFormatChoice.Csv())
 
     def getFileFormat: OutputFileFormatChoice = $(fileFormat)

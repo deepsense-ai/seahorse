@@ -6,7 +6,7 @@ description: Multiclass Classification Evaluator
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Creates a multiclass classification evaluator.
+Creates a multiclass classification evaluator. Multiclass classification evaluator does not assume any label class is special, thus it cannot be used for calculation of metrics specific for binary classification (where this assumption is taken into account).
 
 This operation is ported from Spark ML.
 
@@ -55,7 +55,7 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>metric</code></td>
+<td><code>multiclass metric</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The metric used in evaluation. Possible values: <code>["f1", "precision", "recall", "weightedPrecision", "weightedRecall"]</code></td>
 </tr>

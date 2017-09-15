@@ -26,11 +26,11 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.CustomTransformer
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.custom.PublicParam
 import io.deepsense.deeplang.params.{Param, WorkflowParam}
+import io.deepsense.deeplang.utils.CustomTransformerFactory
 import io.deepsense.graph.{GraphKnowledge, Node}
 
-case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
+case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransformer] {
 
   import DefaultCustomTransformerWorkflow._
 
@@ -78,15 +78,7 @@ case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
   }
 
   private def customTransformer(innerWorkflowParser: InnerWorkflowParser): CustomTransformer = {
-    val workflow = innerWorkflowParser.parse($(innerWorkflow))
-    val selectedParams = workflow.publicParams.flatMap {
-      case PublicParam(nodeId, paramName, publicName) =>
-        workflow.graph.nodes.find(_.id == nodeId)
-          .flatMap(node => node.value.params.find(_.name == paramName))
-          .map(_.replicate(publicName))
-    }.toArray
-
-    CustomTransformer(workflow, selectedParams)
+    CustomTransformerFactory.createCustomTransformer(innerWorkflowParser, $(innerWorkflow))
   }
 }
 

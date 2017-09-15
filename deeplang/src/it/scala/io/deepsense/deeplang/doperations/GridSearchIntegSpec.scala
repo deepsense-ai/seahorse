@@ -23,12 +23,12 @@ import org.apache.spark.mllib.linalg
 import org.apache.spark.mllib.linalg.Vectors
 import spray.json._
 
-import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LinearRegression
 import io.deepsense.deeplang.doperables.spark.wrappers.evaluators.RegressionEvaluator
 import io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
 class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProtocol {
 
@@ -50,12 +50,13 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
 
       val bestMetricsTable = tables.head
       bestMetricsTable.values.size shouldBe 1
-      bestMetricsTable.values shouldBe List(List(Some("10.0"), Some("5.0"), Some("95104.573311")))
+      bestMetricsTable.values shouldBe
+        List(List(Some("10.0"), Some("5.0"), Some("95104.6")))
 
       val expectedMetrics = List(
-        List(Some("10.0"), Some("5.0"), Some("95104.573311")),
-        List(Some("10.0"), Some("0.5"), Some("95105.477058")),
-        List(Some("10.0"), Some("0.01"), Some("95105.575481")))
+        List(Some("10.0"), Some("5.0"), Some("95104.6")),
+        List(Some("10.0"), Some("0.5"), Some("95105.5")),
+        List(Some("10.0"), Some("0.01"), Some("95105.6")))
       val metricsTable = tables(1)
       metricsTable.values.size shouldBe 3
       metricsTable.values shouldBe expectedMetrics

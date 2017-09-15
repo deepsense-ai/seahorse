@@ -23,8 +23,8 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
-import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param}
 import io.deepsense.deeplang.params.choice.ChoiceParam
+import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param}
 
 case class PythonColumnTransformer() extends MultiColumnTransformer {
 
@@ -38,7 +38,7 @@ case class PythonColumnTransformer() extends MultiColumnTransformer {
   def setTargetType(value: TargetTypeChoice): this.type = set(targetType, value)
 
   val codeParameter = CodeSnippetParam(
-    name = "code",
+    name = "column operation code",
     description = "Column operation source code",
     language = CodeSnippetLanguage(CodeSnippetLanguage.python)
   )

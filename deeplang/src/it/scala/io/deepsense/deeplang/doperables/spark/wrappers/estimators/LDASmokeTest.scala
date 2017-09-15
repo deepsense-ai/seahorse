@@ -39,4 +39,6 @@ class LDASmokeTest extends AbstractEstimatorModelWrapperSmokeTest {
     seed -> 123.0,
     subsamplingRate -> 0.1,
     topicDistributionColumn -> "cluster")
+
+  override def isAlgorithmDeterministic: Boolean = false
 }

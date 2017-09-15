@@ -19,12 +19,12 @@ package io.deepsense.workflowexecutor
 import org.apache.log4j.xml.DOMConfigurator
 import scopt.OptionParser
 
-import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
+import io.deepsense.workflowexecutor.buildinfo.BuildInfo
 import io.deepsense.workflowexecutor.executor.{SessionExecutor, WorkflowExecutor}
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 

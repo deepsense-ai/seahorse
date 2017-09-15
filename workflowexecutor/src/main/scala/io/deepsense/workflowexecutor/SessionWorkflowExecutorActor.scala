@@ -18,6 +18,7 @@ package io.deepsense.workflowexecutor
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
+import scala.language.postfixOps
 
 import akka.actor.Status.Failure
 import akka.actor._

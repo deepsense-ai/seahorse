@@ -72,11 +72,12 @@ case class DatetimeDecomposer() extends Transformer {
     timestampColumnParam, timestampPartsParam, timestampPrefixParam)
 
   override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
-    val decomposedColumnName: String = dataFrame.getColumnName(getTimestampColumn)
-
-    DataFrame.assertExpectedColumnType(
-      dataFrame.sparkDataFrame.schema.fields.filter(_.name == decomposedColumnName).head,
+    DataFrameColumnsGetter.assertExpectedColumnType(
+      dataFrame.sparkDataFrame.schema,
+      getTimestampColumn,
       ColumnType.timestamp)
+
+    val decomposedColumnName: String = dataFrame.getColumnName(getTimestampColumn)
 
     val newColumns = for {
       range <- DatetimeDecomposer.timestampPartRanges
@@ -98,11 +99,9 @@ case class DatetimeDecomposer() extends Transformer {
   }
 
   override def _transformSchema(schema: StructType): Option[StructType] = {
-    val decomposedColumnName: String =
-      DataFrameColumnsGetter.getColumnName(schema, getTimestampColumn)
-
-    DataFrame.assertExpectedColumnType(
-      schema.fields.filter(_.name == decomposedColumnName).head,
+    DataFrameColumnsGetter.assertExpectedColumnType(
+      schema,
+      getTimestampColumn,
       ColumnType.timestamp)
 
     val newColumns = for {

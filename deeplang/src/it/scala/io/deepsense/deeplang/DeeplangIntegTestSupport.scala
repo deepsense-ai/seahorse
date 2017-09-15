@@ -23,18 +23,16 @@ import scala.reflect.runtime.universe.TypeTag
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
-import org.apache.spark.{SparkConf, SparkContext, sql}
+import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
+import org.scalatest.mock.MockitoSugar._
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.CustomOperationExecutor.Result
-import io.deepsense.deeplang.DataFrameStorage.DataFrameName
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
-
-import org.scalatest.mock.MockitoSugar._
 
 /**
  * Adds features to facilitate integration testing using Spark
@@ -44,7 +42,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   val testsDir = "target/tests"
   val absoluteTestsDirPath = new java.io.File(testsDir).getAbsoluteFile.toString
   var commonExecutionContext: CommonExecutionContext = _
-  var executionContext: ExecutionContext = _
+  implicit var executionContext: ExecutionContext = _
 
   val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
   val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
@@ -99,7 +97,38 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       new MockedContextualCodeExecutor)
   }
 
-  protected def assertDataFramesEqual(
+  protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
+    val rdd: RDD[Row] = sparkContext.parallelize(rows)
+    val sparkDataFrame = sqlContext.createDataFrame(rdd, schema)
+    DataFrame.fromSparkDataFrame(sparkDataFrame)
+  }
+
+  def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
+    op.execute(executionContext)(dfs.toVector).head.asInstanceOf[DataFrame]
+
+  def createDir(path: String): Unit = {
+    new java.io.File(path + "/id").getParentFile.mkdirs()
+  }
+
+  def createDataFrame[T <: Product : TypeTag : ClassTag](seq: Seq[T]): DataFrame = {
+    DataFrame.fromSparkDataFrame(
+      sqlContext.createDataFrame(sparkContext.parallelize(seq)))
+  }
+
+}
+
+object DeeplangIntegTestSupport extends UnitSpec {
+  val sparkConf: SparkConf = new SparkConf()
+    .setMaster("local[4]")
+    .setAppName("TestApp")
+    .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    .registerKryoClasses(Array())
+  val sparkContext: SparkContext = new SparkContext(sparkConf)
+  val sqlContext: SQLContext = new SQLContext(sparkContext)
+
+  UserDefinedFunctions.registerFunctions(sqlContext.udf)
+
+  def assertDataFramesEqual(
       actualDf: DataFrame,
       expectedDf: DataFrame,
       checkRowOrder: Boolean = true,
@@ -133,37 +162,6 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   def assertSchemaEqual(actualSchema: StructType, expectedSchema: StructType): Unit = {
     actualSchema.treeString shouldBe expectedSchema.treeString
   }
-
-  protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
-    val rdd: RDD[Row] = sparkContext.parallelize(rows)
-    val sparkDataFrame = sqlContext.createDataFrame(rdd, schema)
-    DataFrame.fromSparkDataFrame(sparkDataFrame)
-  }
-
-  def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
-    op.execute(executionContext)(dfs.toVector).head.asInstanceOf[DataFrame]
-
-  def createDir(path: String): Unit = {
-    new java.io.File(path + "/id").getParentFile.mkdirs()
-  }
-
-  def createDataFrame[T <: Product : TypeTag : ClassTag](seq: Seq[T]): DataFrame = {
-    DataFrame.fromSparkDataFrame(
-      sqlContext.createDataFrame(sparkContext.parallelize(seq)))
-  }
-
-}
-
-object DeeplangIntegTestSupport {
-  val sparkConf: SparkConf = new SparkConf()
-    .setMaster("local[4]")
-    .setAppName("TestApp")
-    .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    .registerKryoClasses(Array())
-  val sparkContext: SparkContext = new SparkContext(sparkConf)
-  val sqlContext: SQLContext = new SQLContext(sparkContext)
-
-  UserDefinedFunctions.registerFunctions(sqlContext.udf)
 }
 
 private class MockedCommonExecutionContext(

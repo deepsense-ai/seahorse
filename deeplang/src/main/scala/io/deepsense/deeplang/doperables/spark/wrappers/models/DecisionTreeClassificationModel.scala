@@ -18,14 +18,18 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{DecisionTreeClassificationModel => SparkDecisionTreeClassificationModel, DecisionTreeClassifier => SparkDecisionTreeClassifier}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, SerializableSparkModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ProbabilisticClassifierParams
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrapperModel
+import io.deepsense.deeplang.doperables.{SparkModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
 class DecisionTreeClassificationModel(
     vanillaModel: VanillaDecisionTreeClassificationModel)
-  extends StringIndexingWrapperModel(vanillaModel) {
+  extends StringIndexingWrapperModel[
+    SparkDecisionTreeClassificationModel,
+    SparkDecisionTreeClassifier](vanillaModel) {
 
   def this() = this(new VanillaDecisionTreeClassificationModel())
 }
@@ -41,4 +45,16 @@ class VanillaDecisionTreeClassificationModel
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn)
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkDecisionTreeClassificationModel] = {
+    val modelPath = Transformer.modelFilePath(path)
+    CustomPersistence.load[SerializableSparkModel[SparkDecisionTreeClassificationModel]](
+      ctx.sparkContext,
+      modelPath)
+  }
+
+  override protected def transformerName: String =
+    classOf[DecisionTreeClassificationModel].getSimpleName
 }

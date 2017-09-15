@@ -22,7 +22,7 @@ import org.apache.spark.ml
 
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.validators.{ArrayLengthValidator, ComplexArrayValidator, RangeValidator}
 import io.deepsense.deeplang.params.wrappers.spark.DoubleArrayParamWrapper
 
 trait AFTSurvivalRegressionParams extends Params
@@ -37,6 +37,9 @@ trait AFTSurvivalRegressionParams extends Params
                       |Values of the quantile probabilities array should be in the range (0, 1)
                       |and the array should be non-empty.""".stripMargin,
       sparkParamGetter = _.quantileProbabilities,
-      validator = RangeValidator(0, 1, beginIncluded = false, endIncluded = false))
+      validator = ComplexArrayValidator(
+        rangeValidator = RangeValidator(0, 1, beginIncluded = false, endIncluded = false),
+        lengthValidator = ArrayLengthValidator.withAtLeast(1)
+      ))
   setDefault(quantileProbabilities, Array(0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99))
 }

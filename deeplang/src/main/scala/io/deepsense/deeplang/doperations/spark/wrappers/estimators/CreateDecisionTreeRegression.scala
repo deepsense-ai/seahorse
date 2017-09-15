@@ -29,7 +29,8 @@ class CreateDecisionTreeRegression
   override val id: Id = "a88db4fb-695e-4f44-8435-4999ccde36de"
   override val name: String = "Decision Tree Regression"
   override val description: String =
-    "Creates a decision tree regression. It supports both continuous and categorical features."
+    """Creates a decision tree regression model.
+      |It supports both continuous and categorical features.""".stripMargin
 
   override protected[this] val docsGuideLocation =
     Some("ml-classification-regression.html#decision-tree-regression")

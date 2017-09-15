@@ -7,14 +7,15 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-A `Write DataFrame` operation saves a [DataFrame](../classes/dataframe.html) to a specified data storage.
+The `Write DataFrame` operation saves a [DataFrame](../classes/dataframe.html) to a specified data
+storage.
 
-It supports writing files (CSV, JSON or PARQUET) to the local file system, Amazon S3 and HDFS.
-The output will be a Hadoop-compatible partitioned file.
+It supports writing files (in CSV, JSON or PARQUET formats) both to the local file system and HDFS.
+The output is a Hadoop-compatible partitioned file.
 It is possible to customize the file format (e.g. the values separator in CSV format)
 by setting appropriate parameters.
 
-It also supports writing data to JDBC compatible databases.
+It also supports writing data to JDBC-compatible databases.
 For more detailed information on using JDBC drivers in the Batch Workflow Executor, visit
 [Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
 If you are using Seahorse Desktop please read about
@@ -27,12 +28,12 @@ If you are using Seahorse Desktop please read about
 <a target="_blank" href="https://en.wikipedia.org/wiki/Comma-separated_values">Comma-separated values</a>
 
 ### `PARQUET`
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet Files</a>
-do not allow using characters "` ,;{}()\n\t=`" in column names.
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet</a>
+format does not allow using characters ``, ;{}()\n\t=`` in column names.
 
 ### `JSON`
 <a target="_blank" href="https://en.wikipedia.org/wiki/JSON">JSON</a>
-file format does not preserve column order.
+file format does not preserve the order of columns.
 
 `Null` values in JSON are omitted. This might result in schema mismatch if all values in particular
 column are `null` (that column will be omitted in output JSON file).
@@ -91,14 +92,14 @@ The `Write DataFrame` operation does not produce any output.
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
       </td>
-      <td>The input data storage type. Possible values are:
+      <td>The output data storage type. Possible values are:
         <code>FILE</code>, <code>JDBC</code>.
       </td>
     </tr>
 
     <tr>
       <td>
-        <code id="output-file">outputFile</code>
+        <code id="output-file">output file</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -144,6 +145,18 @@ The `Write DataFrame` operation does not produce any output.
       </td>
       <td>Valid only if <code>column separator = Custom</code>.
         A custom column separator.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <code id="names-included">names included</code>
+      </td>
+      <td>
+        <code><a href="../parameter_types.html#boolean">Boolean</a></code>
+      </td>
+      <td>Valid only if <code>format = CSV</code>.
+        If <code>true</code> then the first row of the output file will contain columns' names.
       </td>
     </tr>
 
