@@ -32,7 +32,7 @@ class BinaryClassificationEvaluator
   import BinaryClassificationEvaluator._
 
   val metricName = new ChoiceParamWrapper[SparkBinaryClassificationEvaluator, Metric](
-    name = "metric",
+    name = "binary metric",
     description = "The metric used in evaluation.",
     sparkParamGetter = _.metricName)
   setDefault(metricName, AreaUnderROC())

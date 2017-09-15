@@ -30,7 +30,7 @@ trait HasClassificationImpurityParam extends Params {
   val impurity =
     new ChoiceParamWrapper[ml.param.Params {val impurity: ml.param.Param[String]},
       ClassificationImpurity](
-      name = "impurity",
+      name = "classification impurity",
       description = "The criterion used for information gain calculation.",
       sparkParamGetter = _.impurity)
   setDefault(impurity, Gini())

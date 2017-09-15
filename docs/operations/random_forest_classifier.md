@@ -98,7 +98,7 @@ every 10 iterations.</td>
 </tr>
 
 <tr>
-<td><code>impurity</code></td>
+<td><code>classification impurity</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The criterion used for information gain calculation. Possible values: <code>["entropy", "gini"]</code></td>
 </tr>

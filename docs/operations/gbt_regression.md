@@ -56,7 +56,7 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>impurity</code></td>
+<td><code>regression impurity</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The criterion used for information gain calculation. Possible values: <code>["variance"]</code></td>
 </tr>

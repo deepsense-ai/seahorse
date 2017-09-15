@@ -28,7 +28,7 @@ trait HasRegressionImpurityParam extends Params {
 
   val impurity = new ChoiceParamWrapper[
     ml.param.Params { val impurity: ml.param.Param[String] }, RegressionImpurity](
-    name = "impurity",
+    name = "regression impurity",
     description = "The criterion used for information gain calculation.",
     sparkParamGetter = _.impurity)
   setDefault(impurity, RegressionImpurity.Variance())
