@@ -40,9 +40,9 @@ The operation assumes that each row in file has the same number of fields.
 In other case, behavior of operation is undefined.
 
 If the file defines column names, they will be used in the output DataFrame.
-If a name is missing (or is empty) for some column then the column will
+If a name is missing (or it's empty) for some column then the column will
 be named ``unnamed_X`` (where ``X`` is the smallest non-negative number so that
-column names are unique). In case names are not included in the input file
+column names are unique). If names are not included in the input file
 or are all empty then the columns will be named ``unnamed_X`` where ``X`` are
 consecutive integers beginning from 0.
 
