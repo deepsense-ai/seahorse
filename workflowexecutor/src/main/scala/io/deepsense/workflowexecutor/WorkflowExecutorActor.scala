@@ -88,7 +88,8 @@ abstract class WorkflowExecutorActor(
 
   private def updateStruct(workflow: Workflow): Unit = {
     val inferredState = statefulWorkflow.updateStructure(workflow)
-    workflowManagerClientActor.foreach(_ ! SaveWorkflow(statefulWorkflow.workflowWithResults))
+    val workflowWithResults: WorkflowWithResults = statefulWorkflow.workflowWithResults
+    workflowManagerClientActor.foreach(_ ! SaveWorkflow(workflowWithResults))
     publisher.foreach(_ ! inferredState)
   }
 
@@ -105,6 +106,7 @@ abstract class WorkflowExecutorActor(
     } else {
       nodes
     }
+    logger.debug("Launching nodes: {}", nodesToExecute)
     statefulWorkflow.launch(nodesToExecute)
     updateExecutionState(startingPointExecution)
   }

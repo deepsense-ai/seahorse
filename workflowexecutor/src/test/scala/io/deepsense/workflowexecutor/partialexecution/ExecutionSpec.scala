@@ -23,11 +23,11 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
-import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.{DOperable, DOperation}
 import io.deepsense.graph._
-import io.deepsense.graph.nodestate.{NodeStatus, Queued}
+import io.deepsense.graph.nodestate.{Completed, NodeStatus, Queued}
 import io.deepsense.models.workflows.{EntitiesMap, NodeState, NodeStateWithResults}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -257,6 +257,31 @@ class ExecutionSpec
       }
       "was empty and enqueud" in {
         Execution.empty.enqueue shouldBe an[IdleExecution]
+      }
+      "draft disconnected node" in {
+        val op1 = mock[DOperation]
+        when(op1.inArity).thenReturn(0)
+        when(op1.outArity).thenReturn(1)
+        val op2 = mock[DOperation]
+        when(op2.inArity).thenReturn(1)
+        when(op2.outArity).thenReturn(0)
+        val node1 = Node(Node.Id.randomId, op1)
+        val node2 = Node(Node.Id.randomId, op2)
+        val node3 = Node(Node.Id.randomId, op1)
+        val edge = Edge(node1, 0, node2, 0)
+        val graph = DirectedGraph(Set(node1, node2), Set(edge))
+        val statefulGraph = StatefulGraph(
+          graph,
+          Map(node1.id -> nodeCompletedState, node2.id -> nodeCompletedState),
+          None)
+        val execution = IdleExecution(statefulGraph)
+        val newStructure = DirectedGraph(Set(node1, node2, node3), Set())
+
+        val updatedExecution = execution.updateStructure(newStructure)
+
+        updatedExecution.states(node1.id).nodeState.nodeStatus shouldBe a[Completed]
+        updatedExecution.states(node2.id).nodeState.nodeStatus shouldBe a[nodestate.Draft.type]
+        updatedExecution.states(node3.id).nodeState.nodeStatus shouldBe a[nodestate.Draft.type]
       }
     }
   }

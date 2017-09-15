@@ -89,7 +89,7 @@ class StatefulWorkflow(
   def updateStructure(workflow: Workflow): InferredState = {
     execution = execution.updateStructure(workflow.graph)
     additionalData = workflow.additionalData
-    createInferredState
+    createInferredState()
   }
 
   private def getChangedNodes(startingPointExecution: Execution): Map[Id, NodeState] = {
@@ -99,7 +99,7 @@ class StatefulWorkflow(
     }.mapValues(_.nodeState)
   }
 
-  private def createInferredState: InferredState = {
+  private def createInferredState(): InferredState = {
     val knowledge = execution.inferKnowledge(executionContext.inferContext)
     InferredState(workflowId, knowledge, executionReport)
   }

@@ -152,13 +152,18 @@ case class IdleExecution(
       noMissingStates.mapValues(_.draft)
     } else {
       val wholeGraph = StatefulGraph(newStructure, noMissingStates, None)
+
       val newNodes = newStructure.nodes.diff(graph.directedGraph.nodes).map(_.id)
 
       val nodesToExecute = substructure.nodes.filter { case Node(id, _) =>
         nodes.contains(id) || !wholeGraph.states(id).isCompleted
       }.map(_.id)
 
-      val nodesNeedingDrafting = newNodes ++ nodesToExecute
+      val changedNodes = newStructure.nodes.map(_.id).diff(newNodes).filter { id =>
+        newStructure.predecessors(id) != graph.predecessors(id)
+      }
+
+      val nodesNeedingDrafting = newNodes ++ nodesToExecute ++ changedNodes
 
       nodesNeedingDrafting.foldLeft(wholeGraph) {
         case (g, id) => g.draft(id)
