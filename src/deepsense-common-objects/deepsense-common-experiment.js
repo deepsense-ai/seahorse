@@ -50,6 +50,13 @@ angular.module('deepsense.graph-model').
         return internal.edges[edgeId];
       };
 
+      that.getNeightbours = function getNeightbours(nodeId) {
+        return _.map(
+          _.filter(that.getEdgesByNodeId(nodeId), (neibourEdge) => neibourEdge.startNodeId === nodeId),
+          (neibourEdge) => neibourEdge.endNodeId
+        );
+      };
+
       /**
        * Creates graph node.
        *
