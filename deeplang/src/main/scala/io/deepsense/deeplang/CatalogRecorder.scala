@@ -57,6 +57,9 @@ object CatalogRecorder {
     catalog.registerDOperable[StandardScalerModel]()
     catalog.registerDOperable[VectorIndexer]()
     catalog.registerDOperable[VectorIndexerModel]()
+    catalog.registerDOperable[StringIndexer]()
+    catalog.registerDOperable[StringIndexerModel]()
+    catalog.registerDOperable[SingleStringIndexerModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()

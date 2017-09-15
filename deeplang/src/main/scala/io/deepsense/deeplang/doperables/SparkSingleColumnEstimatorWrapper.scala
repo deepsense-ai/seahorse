@@ -20,23 +20,28 @@ import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.ml
 
-import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.{HasSingleInPlaceParam, HasSpecificParams}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
 abstract class SparkSingleColumnEstimatorWrapper[
     MD <: ml.Model[MD],
-    E <: ml.Estimator[MD],
+    E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
     MW <: SparkSingleColumnModelWrapper[MD, E]]
 (override implicit val modelWrapperTag: TypeTag[MW], override implicit val estimatorTag: TypeTag[E])
   extends SparkEstimatorWrapper[MD, E, MW]
   with ParamsWithSparkWrappers
   with HasInputColumn
-  with HasOutputColumn
+  with HasSingleInPlaceParam
   with HasSpecificParams {
 
   override lazy val params: Array[Param[_]] =
-    declareParams(Array(inputColumn, outputColumn) ++ getSpecificParams: _*)
+    Array(inputColumn, singleInPlaceParam) ++ getSpecificParams
+
+  def setSingleInPlaceParam(value: SingleColumnInPlaceChoice): this.type = {
+    set(singleInPlaceParam -> value)
+  }
 }
 

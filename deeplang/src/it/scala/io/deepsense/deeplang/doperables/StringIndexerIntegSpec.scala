@@ -16,28 +16,23 @@
 
 package io.deepsense.deeplang.doperables
 
+import io.deepsense.deeplang.doperables.StringIndexerIntegSpec.{IndexedR, MultiIndexedR, R}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
-import io.deepsense.deeplang.doperables.StringIndexerIntegSpec.{MultiIndexedR, IndexedR, R}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasOutputColumn, HasInputColumn}
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
 class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
 
   "StringIndexer" should {
     "convert single column" in {
       val si = new StringIndexer()
-      si.setSingleColumn("a", "out")
+      si.setSingleColumn("a", "overriddenBelow")
       val t = si.fit(executionContext)(())(inputDataFrame)
-        .asInstanceOf[Transformer with HasInputColumn with HasOutputColumn]
+        .asInstanceOf[SingleStringIndexerModel]
 
-      import t._
-      t.set(Seq(
-        inputColumn -> NameSingleColumnSelection("c"),
-        outputColumn -> "out"
-      ): _*)
-
+      t.setInputColumn("c")
+      t.setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn("out"))
 
       val transformed = t.transform(executionContext)(())(inputDataFrame)
       assertDataFramesEqual(
@@ -67,17 +62,13 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
 
       val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
       val (transformerKnowledge, _) = si.fit.infer(mock[InferContext])(())(inputKnowledge)
-      val inf = transformerKnowledge.single
-        .asInstanceOf[Transformer with HasInputColumn with HasOutputColumn]
+      val t = transformerKnowledge.single
+        .asInstanceOf[SingleStringIndexerModel]
 
-      import inf._
-      inf.set(Seq(
-        inputColumn -> NameSingleColumnSelection("c"),
-        outputColumn -> "out"
-      ): _*)
+      t.setInputColumn("c")
+      t.setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn("out"))
 
-
-      val (outputKnowledge, _) = inf.transform.infer(mock[InferContext])(())(inputKnowledge)
+      val (outputKnowledge, _) = t.transform.infer(mock[InferContext])(())(inputKnowledge)
       val inferredSchema = outputKnowledge.single.schema.get
       assertSchemaEqual(inferredSchema, outputDataFrame.schema.get)
     }

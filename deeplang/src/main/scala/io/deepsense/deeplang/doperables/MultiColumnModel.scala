@@ -22,7 +22,10 @@ import org.apache.spark.sql.types.StructType
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnEstimatorParams.SingleOrMultiColumnEstimatorChoices.MultiColumnEstimatorChoice
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.MultiColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.inference.exceptions.SelectedIncorrectColumnsNumber
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
@@ -36,7 +39,7 @@ import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
  */
 abstract class MultiColumnModel[
     MD <: ml.Model[MD],
-    E <: ml.Estimator[MD],
+    E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
     SCW <: SparkSingleColumnModelWrapper[MD, E]]
   extends SparkModelWrapper[MD, E]
   with ParamsWithSparkWrappers
@@ -44,23 +47,38 @@ abstract class MultiColumnModel[
 
   var models: Seq[SCW] = _
 
-  private val multiColumnChoice = MultiColumnEstimatorChoice()
+  private val multiColumnChoice = MultiColumnChoice()
 
   override lazy val params: Array[Param[_]] =
     declareParams(
       getSpecificParams :+
         multiColumnChoice.inputColumnsParam :+
-        multiColumnChoice.outputColumnsPrefixParam: _*)
+        multiColumnChoice.multiInPlaceChoiceParam: _*)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val inputColumnNames = df.getColumnNames($(multiColumnChoice.inputColumnsParam))
-    val prefix = $(multiColumnChoice.outputColumnsPrefixParam)
 
-    models.zip(inputColumnNames).foldLeft(df){ case (partialResult, (m, inputColumnName)) =>
-      replicateWithParent(m)
-        .setInputColumn(inputColumnName)
-        .setOutputColumn(DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix))
-        ._transform(ctx, partialResult)
+    $(multiColumnChoice.multiInPlaceChoiceParam) match {
+      case MultiColumnYesInPlace() =>
+        models.zip(inputColumnNames).foldLeft(df) { case (partialResult, (m, inputColumnName)) =>
+          replicateWithParent(m)
+            .setInputColumn(inputColumnName)
+            .setSingleInPlaceParam(YesInPlaceChoice())
+            ._transform(ctx, partialResult)
+
+        }
+      case no: MultiColumnNoInPlace =>
+        val prefix = no.getColumnsPrefix
+
+        models.zip(inputColumnNames).foldLeft(df){
+          case (partialResult, (m, inputColumnName)) =>
+            val outputColumnName =
+              DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix)
+            replicateWithParent(m)
+              .setInputColumn(inputColumnName)
+              .setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn(outputColumnName))
+              ._transform(ctx, partialResult)
+        }
     }
   }
 
@@ -70,26 +88,41 @@ abstract class MultiColumnModel[
     } else {
       val inputColumnNames =
         DataFrameColumnsGetter.getColumnNames(schema, $(multiColumnChoice.inputColumnsParam))
-      val prefix = $(multiColumnChoice.outputColumnsPrefixParam)
 
-      if (inputColumnNames.size == models.size) {
-        models.zip(inputColumnNames).foldLeft[Option[StructType]](Some(schema)) {
-          case (partialResult, (m, inputColumnName)) =>
-            partialResult.flatMap {
-              case s =>
-                val prefixedColumnName =
-                  DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix)
-                replicateWithParent(m)
-                  .setInputColumn(inputColumnName)
-                  .setOutputColumn(prefixedColumnName)
-                  ._transformSchema(s)
-            }
-        }
-      } else {
+      if(inputColumnNames.size != models.size) {
         throw SelectedIncorrectColumnsNumber(
           $(multiColumnChoice.inputColumnsParam),
           inputColumnNames,
           models.size)
+      }
+
+      $(multiColumnChoice.multiInPlaceChoiceParam) match {
+        case MultiColumnYesInPlace() =>
+          models.zip(inputColumnNames).foldLeft[Option[StructType]](Some(schema)) {
+            case (partialResult, (m, inputColumnName)) =>
+              partialResult.flatMap {
+                case s =>
+                  replicateWithParent(m)
+                    .setInputColumn(inputColumnName)
+                    .setSingleInPlaceParam(YesInPlaceChoice())
+                    ._transformSchema(s)
+              }
+          }
+
+        case no: MultiColumnNoInPlace =>
+          val prefix = no.getColumnsPrefix
+          models.zip(inputColumnNames).foldLeft[Option[StructType]](Some(schema)) {
+            case (partialResult, (m, inputColumnName)) =>
+              partialResult.flatMap {
+                case s =>
+                  val prefixedColumnName =
+                    DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix)
+                  replicateWithParent(m)
+                    .setInputColumn(inputColumnName)
+                    .setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn(prefixedColumnName))
+                    ._transformSchema(s)
+              }
+          }
       }
     }
   }
@@ -109,9 +142,7 @@ abstract class MultiColumnModel[
     set(multiColumnChoice.inputColumnsParam -> selection)
   }
 
-  def setOutputColumnsPrefix(prefix: String): this.type = {
-    set(multiColumnChoice.outputColumnsPrefixParam -> prefix)
+  def setInPlace(choice: MultiColumnInPlaceChoice): this.type = {
+    set(multiColumnChoice.multiInPlaceChoiceParam -> choice)
   }
-
-
 }

@@ -22,15 +22,18 @@ import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnEstimatorParams.SingleOrMultiColumnEstimatorChoices.{MultiColumnEstimatorChoice, SingleColumnEstimatorChoice}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
 abstract class SparkMultiColumnEstimatorWrapper[
   MD <: ml.Model[MD],
-  E <: ml.Estimator[MD],
+  E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
   MW <: SparkSingleColumnModelWrapper[MD, E],
   EW <: SparkSingleColumnEstimatorWrapper[MD, E, MW],
   MMW <: MultiColumnModel[MD, E, MW]]
@@ -43,77 +46,83 @@ abstract class SparkMultiColumnEstimatorWrapper[
 
   val sparkEstimatorWrapper: EW = createEstimatorWrapperInstance()
 
-
   override def handleSingleColumnChoice(
       df: DataFrame,
-      single: SingleColumnEstimatorChoice): MW = {
+      single: SingleColumnChoice): MW = {
 
     import sparkEstimatorWrapper._
 
     val estimator = sparkEstimatorWrapper.replicate()
       .set(inputColumn -> single.getInputColumn)
-      .set(outputColumn -> single.getOutputColumn)
+      .setSingleInPlaceParam(single.getInPlace)
 
     estimator._fit(df).asInstanceOf[MW]
+      .setSingleInPlaceParam(single.getInPlace)
   }
 
 
   override def handleMultiColumnChoice(
       df: DataFrame,
-      multi: MultiColumnEstimatorChoice): MMW = {
-    val inputColumns = df.getColumnNames(multi.getInputColumns)
-    val prefix = multi.getOutputColumnsPrefix
+      multi: MultiColumnChoice): MMW = {
+    val inputColumns = df.getColumnNames(multi.getMultiInputColumnSelection)
+    val multiToSingleDecoder = multiInPlaceToSingleInPlace(multi) _
 
     val models = inputColumns.map {
       case inputColumnName =>
         import sparkEstimatorWrapper._
         val estimator = sparkEstimatorWrapper.replicate()
           .set(inputColumn -> NameSingleColumnSelection(inputColumnName))
-          .set(outputColumn -> DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix))
-        estimator._fit(df).asInstanceOf[MW]
+          .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
+        estimator.
+          _fit(df)
+          .asInstanceOf[MW]
+          .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
     }
 
     createMultiColumnModel()
       .setModels(models)
-      .setInputColumns(multi.getInputColumns)
-      .setOutputColumnsPrefix(multi.getOutputColumnsPrefix)
+      .setInputColumns(multi.getMultiInputColumnSelection)
+      .setInPlace(multi.getMultiInPlaceChoice)
   }
 
 
   override def handleSingleColumnChoiceInfer(
       schema: Option[StructType],
-      single: SingleColumnEstimatorChoice): Transformer with HasInputColumn with HasOutputColumn = {
+      single: SingleColumnChoice): Transformer with HasInputColumn = {
 
     import sparkEstimatorWrapper._
 
     sparkEstimatorWrapper.replicate()
       .set(inputColumn -> single.getInputColumn)
-      .set(outputColumn -> single.getOutputColumn)
-      ._fit_infer(schema).asInstanceOf[Transformer  with HasInputColumn with HasOutputColumn]
+      .setSingleInPlaceParam(single.getInPlace)
+      ._fit_infer(schema).asInstanceOf[SparkSingleColumnModelWrapper[MD, E]]
+      .setSingleInPlaceParam(single.getInPlace)
   }
 
   override def handleMultiColumnChoiceInfer(
       schema: Option[StructType],
-     multi: MultiColumnEstimatorChoice): MMW = {
+     multi: MultiColumnChoice): MMW = {
 
     schema.map { s =>
+      val inputColumns =
+        DataFrameColumnsGetter.getColumnNames(s, multi.getMultiInputColumnSelection)
 
-      val inputColumns = DataFrameColumnsGetter.getColumnNames(s, multi.getInputColumns)
-      val prefix = multi.getOutputColumnsPrefix
+      val multiToSingleDecoder = multiInPlaceToSingleInPlace(multi) _
 
       val models = inputColumns.map {
         case inputColumnName =>
           import sparkEstimatorWrapper._
           sparkEstimatorWrapper.replicate()
             .set(inputColumn -> NameSingleColumnSelection(inputColumnName))
-            .set(outputColumn -> DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix))
+            .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
             ._fit_infer(Some(s)).asInstanceOf[MW]
+            .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
       }
 
       createMultiColumnModel()
         .setModels(models)
-        .setInputColumns(multi.getInputColumns)
-        .setOutputColumnsPrefix(multi.getOutputColumnsPrefix)
+        .setInputColumns(multi.getMultiInputColumnSelection)
+        .setInPlace(multi.getMultiInPlaceChoice)
     }.getOrElse(createMultiColumnModel()
       .setModels(Seq.empty))
   }
@@ -124,4 +133,15 @@ abstract class SparkMultiColumnEstimatorWrapper[
 
   def createMultiColumnModel(): MMW = TypeUtils.instanceOfType(multiColumnModelTag)
 
+
+  private def multiInPlaceToSingleInPlace(multi: MultiColumnChoice)
+      (inputColumnName: String): SingleColumnInPlaceChoice = {
+    multi.getMultiInPlaceChoice match {
+      case MultiColumnYesInPlace() => YesInPlaceChoice()
+      case no: MultiColumnNoInPlace =>
+        val outputColumnName =
+          DataFrameColumnsGetter.prefixedColumnName(inputColumnName, no.getColumnsPrefix)
+        NoInPlaceChoice().setOutputColumn(outputColumnName)
+    }
+  }
 }
