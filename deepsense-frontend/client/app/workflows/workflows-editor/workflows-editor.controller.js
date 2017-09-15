@@ -80,10 +80,10 @@ class WorkflowsEditorController {
     this.GraphPanelRendererService.setZoom(1.0);
     this.CopyPasteService.registerCopyPasteVisitor(this.nodeCopyPasteVisitor);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
+    this.initListeners();
     if (this.WorkflowService.isWorkflowRunning()) {
       this.changeToRunningMode();
     }
-    this.initListeners();
     this._loadReports(workflowWithResults.executionReport);
   }
 
