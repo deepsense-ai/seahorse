@@ -6,7 +6,7 @@
 
 package io.deepsense.experimentmanager.config
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 object TestInjectable {
   case class Params(

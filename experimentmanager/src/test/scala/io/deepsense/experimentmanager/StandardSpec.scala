@@ -6,9 +6,10 @@
 
 package io.deepsense.experimentmanager
 
+import scala.concurrent.duration._
+
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{Matchers, WordSpec}
-import scala.concurrent.duration._
 import spray.testkit.ScalatestRouteTest
 
 /**

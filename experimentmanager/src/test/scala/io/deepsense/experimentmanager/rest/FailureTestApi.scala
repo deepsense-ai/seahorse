@@ -6,9 +6,9 @@
 
 package io.deepsense.experimentmanager.rest
 
-import spray.routing.Directives
-
 import scala.concurrent.{ExecutionContext, Future}
+
+import spray.routing.Directives
 
 /**
  * A simple REST API that uses a failing service.

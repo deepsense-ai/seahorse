@@ -6,9 +6,10 @@
 
 package io.deepsense.experimentmanager.rest
 
-import io.deepsense.experimentmanager.StandardSpec
 import spray.http.StatusCodes
 import spray.testkit.ScalatestRouteTest
+
+import io.deepsense.experimentmanager.StandardSpec
 
 class RestServiceFailureHandlingSpec
   extends StandardSpec
