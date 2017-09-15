@@ -18,6 +18,7 @@ require('./experiment-editor/graph-panel/graph-panel-flowchart.js').inject(exper
 require('./experiment-editor/graph-panel/graph-panel-node.js').inject(experiments);
 require('./experiment-editor/graph-panel/graph-panel-renderer.js').inject(experiments);
 require('./experiment-editor/catalog-panel/catalog-panel.js').inject(experiments);
+require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-panel.js').inject(experiments);
 
 module.exports = experiments;
