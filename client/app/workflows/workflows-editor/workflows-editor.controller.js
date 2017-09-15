@@ -170,6 +170,7 @@ class WorkflowsEditorController {
       this.EventsService.on(this.EventsService.EVENTS.WORKFLOW_DELETE_SELECTED_ELEMENT, this._handleDelete.bind(this)),
 
       this.$scope.$on('$destroy', () => {
+        this.AdapterService.reset();
         this.NotificationService.clearToasts();
         this._unbindEditorListeners();
       })
