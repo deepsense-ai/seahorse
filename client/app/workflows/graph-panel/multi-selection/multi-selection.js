@@ -176,7 +176,7 @@ class MultiSelection {
         that.calculate('x', diff);
         that.calculate('y', diff);
 
-        if (event.ctrlKey) {
+        if (internal.MouseEvent.isModKeyDown(event)) {
           that.filterNodes(selectionElementDimensions, CTRL_KEY);
         } else {
           that.selectNodes(selectionElementDimensions);
@@ -225,7 +225,7 @@ class MultiSelection {
       };
 
       that.clearNodes = (event) => {
-        if (!event.ctrlKey) {
+        if (!internal.MouseEvent.isModKeyDown(event)) {
           internal.MultiSelectionService.clearSelection();
           that.clearAllFromSelection();
           that.viewFix();
@@ -233,7 +233,7 @@ class MultiSelection {
       };
 
       that.graphNodeMouseDownHandler = (event, data) => {
-        if (data.originalEvent.ctrlKey) {
+        if (internal.MouseEvent.isModKeyDown(data.originalEvent)) {
           if (internal.MultiSelectionService.isAlreadyAddedToSelection(data.selectedNode)) {
             internal.MultiSelectionService.removeNodeIdsFromSelection([data.selectedNode.id]);
             that.removeFromSelection([data.selectedNode.id]);
