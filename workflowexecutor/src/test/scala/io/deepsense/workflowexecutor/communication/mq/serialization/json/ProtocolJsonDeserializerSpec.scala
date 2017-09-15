@@ -26,9 +26,10 @@ import spray.json._
 import io.deepsense.commons.StandardSpec
 import io.deepsense.graph.DirectedGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.models.workflows.{ThirdPartyData, WorkflowType, WorkflowMetadata, Workflow}
 import io.deepsense.workflowexecutor.communication.message.global.Connect
-import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch}
+import io.deepsense.workflowexecutor.communication.message.workflow.{UpdateWorkflow, Abort, Init, Launch}
+import io.deepsense.workflowexecutor.executor.Executor
 
 class ProtocolJsonDeserializerSpec
   extends StandardSpec
@@ -105,6 +106,29 @@ class ProtocolJsonDeserializerSpec
 
       val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe Init(workflowId)
+    }
+    "deserialize UpdateWorkflow messages" in {
+      val graphReader = new GraphReader(Executor.createDOperationsCatalog())
+      val protocolDeserializer = ProtocolJsonDeserializer(graphReader)
+
+      val rawMessage = JsObject(
+        "messageType" -> JsString("updateWorkflow"),
+        "messageBody" -> JsObject(
+          "metadata" -> JsObject(
+            "type" -> JsString("batch"),
+            "apiVersion" -> JsString("1.0.0")
+          ),
+          "workflow" -> JsObject(
+            "nodes" -> JsArray(),
+            "connections" -> JsArray()
+          ),
+          "thirdPartyData" -> JsObject()
+        )
+      )
+
+      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
+      readMessage shouldBe UpdateWorkflow(
+        Workflow(WorkflowMetadata(WorkflowType.Batch, "1.0.0"), DirectedGraph(), ThirdPartyData()))
     }
   }
 

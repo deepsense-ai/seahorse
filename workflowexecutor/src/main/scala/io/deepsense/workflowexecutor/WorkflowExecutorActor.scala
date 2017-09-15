@@ -28,6 +28,7 @@ import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContex
 import io.deepsense.graph._
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.SaveWorkflow
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.partialexecution._
 
@@ -80,24 +81,13 @@ abstract class WorkflowExecutorActor(
     sendWorkflowWithResults()
   }
 
-  def finished(): Receive = {
-    case Launch(nodes) => launch(nodes.toSet)
-    case Init() => sendWorkflowWithResults()
-  }
-
   def sendWorkflowWithResults(): Unit = {
     publisher.foreach(_ ! statefulWorkflow.workflowWithResults)
   }
 
-  def updateStructure(workflow: Workflow): Unit = {
-    val startingPointExecution = statefulWorkflow.currentExecution
-    statefulWorkflow.updateStructure(workflow)
-    updateExecutionState(startingPointExecution)
-  }
-
-
   private def updateStruct(workflow: Workflow): Unit = {
     val inferredState = statefulWorkflow.updateStructure(workflow)
+    workflowManagerClientActor.foreach(_ ! SaveWorkflow(statefulWorkflow.workflowWithResults))
     publisher.foreach(_ ! inferredState)
   }
 
@@ -124,7 +114,7 @@ abstract class WorkflowExecutorActor(
         logger.debug(s"End of execution")
         terminationListener.foreach(_ ! getExecutionStatus)
         context.unbecome()
-        context.become(finished())
+        context.become(ready())
       case running: RunningExecution =>
         launchReadyNodes()
         context.unbecome()

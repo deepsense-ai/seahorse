@@ -41,7 +41,7 @@ import io.deepsense.graph.nodestate.{Aborted, NodeStatus, Queued, Running}
 import io.deepsense.models.workflows.{EntitiesMap, Workflow, _}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
-import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.GetWorkflow
+import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{SaveWorkflow, GetWorkflow}
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.executor.Executor
@@ -245,6 +245,40 @@ class WorkflowExecutorActorSpec
         }
       }
     }
+    "receive StructUpdate" should {
+      "update state, send update to WM and to editor" in {
+        val statefulWorkflow: StatefulWorkflow = mock[StatefulWorkflow]
+        val wmClient = TestProbe()
+        val publisher = TestProbe()
+        val probe = TestProbe()
+        val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(
+          SessionWorkflowExecutorActor.props(
+            mock[CommonExecutionContext],
+            wmClient.ref,
+            system.actorSelection(publisher.ref.path),
+            3), Workflow.Id.randomId.toString)
+        wea.underlyingActor.statefulWorkflow = statefulWorkflow
+        wea.underlyingActor.context.become(wea.underlyingActor.ready())
+        val workflow: Workflow = mock[Workflow]
+        val workflowWithResults: WorkflowWithResults = mock[WorkflowWithResults]
+        val inferredState = mock[InferredState]
+        when(statefulWorkflow.updateStructure(workflow)).thenReturn(inferredState)
+        when(statefulWorkflow.workflowWithResults).thenReturn(workflowWithResults)
+
+        probe.send(wea, UpdateStruct(workflow))
+
+        eventually {
+          verify(statefulWorkflow).updateStructure(workflow)
+          verify(statefulWorkflow).workflowWithResults
+
+          val saveWorkflow = wmClient.expectMsgClass(classOf[SaveWorkflow])
+          saveWorkflow shouldBe SaveWorkflow(workflowWithResults)
+
+          val inferred = publisher.expectMsgClass(classOf[InferredState])
+          inferred shouldBe inferredState
+        }
+      }
+    }
   }
 
   private def nodeState(status: NodeStatus): NodeStateWithResults = {
@@ -308,7 +342,7 @@ class WorkflowExecutorActorSpec
       )
     )
     wea.underlyingActor.statefulWorkflow = statefulWorkflow
-    wea.underlyingActor.context.become(wea.underlyingActor.finished())
+    wea.underlyingActor.context.become(wea.underlyingActor.ready())
   }
 
   val executionContext = {

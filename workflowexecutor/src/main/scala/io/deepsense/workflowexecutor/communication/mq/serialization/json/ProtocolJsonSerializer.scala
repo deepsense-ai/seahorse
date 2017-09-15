@@ -21,8 +21,8 @@ import java.nio.charset.Charset
 import spray.json._
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, WorkflowWithResultsJsonProtocol}
-import io.deepsense.models.workflows.WorkflowWithResults
+import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, ExecutionReportJsonProtocol, WorkflowWithResultsJsonProtocol}
+import io.deepsense.models.workflows.{InferredState, WorkflowWithResults}
 import io.deepsense.workflowexecutor.communication.message.global.{PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQSerializer
@@ -31,7 +31,8 @@ case class ProtocolJsonSerializer(graphReader: GraphReader)
   extends MessageMQSerializer
   with ExecutionReportJsonProtocol
   with PythonGatewayAddressJsonProtocol
-  with WorkflowWithResultsJsonProtocol {
+  with WorkflowWithResultsJsonProtocol
+  with InferredStateJsonProtocol {
 
   import JsonSerialization._
 
@@ -43,8 +44,8 @@ case class ProtocolJsonSerializer(graphReader: GraphReader)
     message match {
       case m: ExecutionStatus =>
         toJsonMQMessage(OutMessages.executionStatus, m.executionReport.toJson)
-      case m: WorkflowWithResults =>
-        toJsonMQMessage(OutMessages.workflowWithResults, m.toJson)
+      case m: WorkflowWithResults => toJsonMQMessage(OutMessages.workflowWithResults, m.toJson)
+      case m: InferredState => toJsonMQMessage(OutMessages.inferredState, m.toJson)
       case m: PythonGatewayAddress => toJsonMQMessage(OutMessages.pythonGatewayAddress, m.toJson)
     }
   }

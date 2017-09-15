@@ -25,7 +25,6 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
-import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 
 case class SeahorseChannelSubscriber(
   executionDispatcher: ActorRef,
@@ -40,8 +39,8 @@ case class SeahorseChannelSubscriber(
     case c @ Connect(workflowId) =>
       val workflowIdString = workflowId.toString
       if (!publishers.contains(workflowId)) {
-        val subscriberActor =
-          context.actorOf(Props(WorkflowChannelSubscriber(executionDispatcher)), workflowIdString)
+        val subscriberActor = context.actorOf(
+          Props(WorkflowChannelSubscriber(workflowId, executionDispatcher)), workflowIdString)
         val publisher: MQPublisher =
           communicationFactory.createCommunicationChannel(workflowIdString, subscriberActor)
         val internalPublisher =

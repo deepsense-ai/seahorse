@@ -27,11 +27,13 @@ object JsonSerialization {
     val abort = "abort"
     val init = "init"
     val launch = "launch"
+    val updateWorkflow = "updateWorkflow"
   }
 
   object OutMessages {
     val pythonGatewayAddress = "pythonGatewayAddress"
     val executionStatus = "executionStatus"
     val workflowWithResults = "workflowWithResults"
+    val inferredState = "inferredState"
   }
 }

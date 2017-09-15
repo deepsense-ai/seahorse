@@ -22,6 +22,7 @@ import spray.json._
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowJsonProtocol
+import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQDeserializer
@@ -54,6 +55,7 @@ case class ProtocolJsonDeserializer(override val graphReader: GraphReader)
       case InMessageType.abort => body.convertTo[Abort]
       case InMessageType.init => body.convertTo[Init]
       case InMessageType.getPythonGatewayAddress => body.convertTo[GetPythonGatewayAddress]
+      case InMessageType.updateWorkflow => UpdateWorkflow(body.convertTo[Workflow])
     }
   }
 
