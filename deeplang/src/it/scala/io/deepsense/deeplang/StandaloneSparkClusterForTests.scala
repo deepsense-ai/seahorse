@@ -91,7 +91,7 @@ object StandaloneSparkClusterForTests {
       .setMaster(s"spark://$sparkMasterAddress")
       .setAppName("TestApp")
       .setJars(Seq(
-        s"./deeplang/target/scala-$majorScalaVersion/deepsense-seahorse-deeplang-assembly-1.4.0-RC1-SNAPSHOT.jar"
+        s"./deeplang/target/scala-$majorScalaVersion/deepsense-seahorse-deeplang-assembly-1.4.0.jar"
       ))
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
