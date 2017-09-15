@@ -13,7 +13,6 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.models.workflows._
@@ -31,7 +30,6 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val authorizatorProvider: AuthorizatorProvider = mock[AuthorizatorProvider]
   when(authorizatorProvider.forContext(any(classOf[Future[UserContext]]))).thenReturn(authorizator)
 
-  val inferContext: InferContext = mock[InferContext]
   val graph = mock[DeeplangGraph]
   when(graph.nodes).thenReturn(Set[DeeplangNode]())
   val metadata = mock[WorkflowMetadata]
@@ -60,7 +58,6 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     workflowStorage,
     workflowStateStorage,
     notebookStorage,
-    inferContext,
     userContextFuture,
     roleForAll,
     roleForAll,

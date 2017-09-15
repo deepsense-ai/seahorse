@@ -15,7 +15,6 @@ import io.deepsense.commons.auth.usercontext.UserContext
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.Node
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
@@ -29,7 +28,6 @@ class WorkflowManagerImpl @Inject()(
     workflowStorage: WorkflowStorage,
     workflowStateStorage: WorkflowStateStorage,
     notebookStorage: NotebookStorage,
-    inferContext: InferContext,
     @Assisted userContextFuture: Future[UserContext],
     @Named("roles.workflows.get") roleGet: String,
     @Named("roles.workflows.update") roleUpdate: String,

@@ -17,7 +17,6 @@ import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
@@ -36,7 +35,6 @@ class WorkflowDaoCassandraImplIntegSpec
   var workflowsDao: WorkflowDaoCassandraImpl = _
   val catalog = mock[DOperationsCatalog]
   val graphReader: GraphReader = new GraphReader(catalog)
-  val inferContext: InferContext = mock[InferContext]
   val rowMapper = new WorkflowRowMapper(graphReader)
 
   val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1")
