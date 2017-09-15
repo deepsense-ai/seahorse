@@ -7,9 +7,6 @@ var defaults = require('./default-config.json');
 var thr = require('throw');
 
 var vcapServices = JSON.parse(process.env.VCAP_SERVICES || thr('VCAP_SERVICES env is required'));
-var domain = process.env.DOMAIN || thr('DOMAIN env is required');
-var organizationId = process.env.ORGANIZATION_ID || thr('ORGANIZATION_ID env is required');
-var checkOrganization = process.env.CHECK_ORGANIZATION || thr('CHECK_ORGANIZATION env is required');
 
 var userProvided = vcapServices['user-provided'] || [];
 
@@ -31,9 +28,6 @@ function getVariable(name) {
 
 module.exports = {
   getUserProvidedSerice: getUserProvidedSerice,
-  domain,
-  organizationId,
-  checkOrganization,
   getSso: _.partial(getUserProvidedSerice, 'sso'),
   get: getVariable
 };

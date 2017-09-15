@@ -34,10 +34,6 @@ auth.init(app);
 
 app.use(userCookieHandler);
 
-if (config.checkOrganization == 'true') {
-  app.use(require('./organization-checker/organization-checker').organizationChecker);
-}
-
 app.get('/',
   auth.login,
   reverseProxy.forward
