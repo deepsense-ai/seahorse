@@ -47,7 +47,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         val schema: StructType = StructType(List(
           StructField(nameColumnName, StringType),
           StructField(birthDateColumnName, TimestampType)))
-        val dataFrame = executionContext.dataFrameBuilder.buildDataFrame(schema, rdd)
+        val dataFrame =
+          executionContext.dataFrameBuilder.buildDataFrame(schema, rdd, Seq(nameColumnName))
 
         val report = dataFrame.report
 
@@ -86,6 +87,12 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         1L,
         Seq("false", "true"),
         Seq(5, 4))
+      testCategoricalDistribution(
+        report,
+        DataFrameTestFactory.categoricalColumnName,
+        1L,
+        Seq("summer", "winter", "autumn", "spring"),
+        Seq(5, 1, 1, 2))
       testContinuousDistribution(
         report,
         DataFrameTestFactory.longColumnName,
@@ -128,6 +135,12 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         0L,
         Seq("false", "true"),
         Seq(10, 0))
+      testCategoricalDistribution(
+        report,
+        DataFrameTestFactory.categoricalColumnName,
+        0L,
+        Seq("summer"),
+        Seq(10))
       testContinuousDistribution(
         report,
         DataFrameTestFactory.longColumnName,

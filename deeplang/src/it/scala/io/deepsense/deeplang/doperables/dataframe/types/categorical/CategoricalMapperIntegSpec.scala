@@ -34,7 +34,7 @@ class CategoricalMapperIntegSpec extends DeeplangIntegTestSupport {
       val categorized = CategoricalMapper(df, executionContext.dataFrameBuilder)
         .categorized(cat1, cat2)
 
-      val categoricalMetadata = CategoricalMetadata(categorized)
+      val categoricalMetadata = CategoricalMetadata(categorized.sparkDataFrame)
       categoricalMetadata.isCategorical(name) shouldBe false
       categoricalMetadata.isCategorical(cat1) shouldBe true
       categoricalMetadata.isCategorical(cat2) shouldBe true

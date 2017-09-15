@@ -11,6 +11,8 @@ import org.apache.spark.sql
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{Row, SQLContext}
 
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
+
 /**
  * DeepSense DataFrame builder. Builder performs basic schema validation.
  * @param sqlContext Spark sql context.
@@ -22,6 +24,16 @@ class DataFrameBuilder private (sqlContext: SQLContext) extends HasSchemaValidat
     validateSchema(schema)
     val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
     DataFrame(Some(dataFrame))
+  }
+
+  def buildDataFrame(
+      schema: StructType,
+      data: RDD[Row],
+      categoricalColumns: Seq[String]): DataFrame = {
+    // TODO: validation will be removed. Just for testing purposes.
+    validateSchema(schema)
+    val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
+    CategoricalMapper(buildDataFrame(dataFrame), this).categorized(categoricalColumns:_*)
   }
 
   def buildDataFrame(sparkDataFrame: sql.DataFrame): DataFrame = {

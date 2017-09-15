@@ -17,6 +17,7 @@ import org.apache.spark.sql.{ColumnName, Row}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.reportlib.model
 import io.deepsense.reportlib.model._
 
@@ -32,9 +33,10 @@ trait DataFrameReportGenerator {
     val columnsSubset: List[String] =
       sparkDataFrame.columns.toList.take(DataFrameReportGenerator.maxColumnsNumberInReport)
     val limitedDataFrame = sparkDataFrame.select(columnsSubset.map(new ColumnName(_)):_*)
+    val categoricalMetadata = CategoricalMetadata(sparkDataFrame)
 
-    val (distributions, dataFrameSize) = columnsDistributions(limitedDataFrame)
-    val sampleTable = dataSampleTable(limitedDataFrame)
+    val (distributions, dataFrameSize) = columnsDistributions(limitedDataFrame, categoricalMetadata)
+    val sampleTable = dataSampleTable(limitedDataFrame, categoricalMetadata)
     val sizeTable = dataFrameSizeTable(sparkDataFrame.schema, dataFrameSize)
     Report(ReportContent(
       "DataFrame Report",
@@ -42,12 +44,14 @@ trait DataFrameReportGenerator {
       distributions))
   }
 
-  private def dataSampleTable(sparkDataFrame: org.apache.spark.sql.DataFrame): Table = {
+  private def dataSampleTable(
+      sparkDataFrame: org.apache.spark.sql.DataFrame,
+      categoricalMetadata: CategoricalMetadata): Table = {
     val columnsNames:List[String] = sparkDataFrame.schema.fieldNames.toList
     val columnsNumber = columnsNames.size
     val rows: Array[Row] = sparkDataFrame.take(DataFrameReportGenerator.maxRowsNumberInReport)
     val values: List[List[String]] = rows.map(row =>
-      (0 until columnsNumber).map(cell2String(row, _)).toList).toList
+      (0 until columnsNumber).map(cell2String(row, _, categoricalMetadata)).toList).toList
     Table(
       DataFrameReportGenerator.dataSampleTableName,
       s"${DataFrameReportGenerator.dataSampleTableName}. " +
@@ -73,22 +77,25 @@ trait DataFrameReportGenerator {
    * (up to 100 columns).
    */
   private def columnsDistributions(
-      sparkDataFrame: org.apache.spark.sql.DataFrame): (Map[String, Distribution], Long) = {
+      sparkDataFrame: org.apache.spark.sql.DataFrame,
+      categoricalMetadata: CategoricalMetadata): (Map[String, Distribution], Long) = {
     val basicStats: MultivariateStatisticalSummary =
-      Statistics.colStats(sparkDataFrame.rdd.map(row2DoubleVector))
+      Statistics.colStats(sparkDataFrame.rdd.map(row2DoubleVector(categoricalMetadata)))
     val distributions = sparkDataFrame.schema.zipWithIndex.map(p => {
-      val rdd: RDD[Double] = columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, p._2)
+      val rdd: RDD[Double] =
+        columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, categoricalMetadata, p._2)
       val rddSize = rdd.count()
       val missingValues: Long = basicStats.count - rddSize
-      distributionType(p._1.dataType) match {
+      distributionType(p._1, categoricalMetadata) match {
         case Continuous => continuousDistribution(
           p._1,
           rdd,
           basicStats.min(p._2),
           basicStats.max(p._2),
           rddSize,
-          missingValues)
-        case Categorical => categoricalDistribution(p._1, rdd, missingValues)
+          missingValues,
+          categoricalMetadata)
+        case Categorical => categoricalDistribution(p._1, rdd, missingValues, categoricalMetadata)
       }
     })
     (distributions.map(d => d.name -> d).toMap, basicStats.count)
@@ -96,25 +103,23 @@ trait DataFrameReportGenerator {
 
   private def columnAsDoubleRDDWithoutMissingValues(
       sparkDataFrame: org.apache.spark.sql.DataFrame,
+      categoricalMetadata: CategoricalMetadata,
       columnIndex: Int): RDD[Double] = {
-    sparkDataFrame.rdd.map(cell2Double(_, columnIndex)).filter(!_.isNaN)
+    sparkDataFrame.rdd.map(cell2Double(categoricalMetadata)(_, columnIndex)).filter(!_.isNaN)
   }
 
   private def categoricalDistribution(
       structField: StructField,
       rdd: RDD[Double],
-      missingValues: Long): CategoricalDistribution = {
-    val possibleValues: IndexedSeq[String] = possibleValuesForCategoricalColumn(structField)
-    val buckets: IndexedSeq[Double] =
-      if (possibleValues.nonEmpty ) 0.0 to possibleValues.size.toDouble by 1.0 else IndexedSeq()
+      missingValues: Long,
+      categoricalMetadata: CategoricalMetadata): CategoricalDistribution = {
+    val (labels, buckets) = bucketsForCategoricalColumn(structField, categoricalMetadata)
     val counts: Array[Long] = if (buckets.size > 1) rdd.histogram(buckets.toArray) else Array()
-    val bucketsLabels: IndexedSeq[String] =
-      buckets.take(buckets.size - 1).map(a => possibleValues(a.toInt))
     CategoricalDistribution(
       structField.name,
       s"Categorical distribution for ${structField.name} column",
       missingValues,
-      bucketsLabels,
+      labels,
       counts)
   }
 
@@ -124,15 +129,16 @@ trait DataFrameReportGenerator {
       min: Double,
       max: Double,
       rddSize: Long,
-      missingValues: Long): ContinuousDistribution = {
-    val columnType = structField.dataType
-    val (buckets, counts) = histogram(rdd, min, max, columnType)
-    val quartiles = calculateQuartiles(rdd, rddSize, columnType)
+      missingValues: Long,
+      categoricalMetadata: CategoricalMetadata): ContinuousDistribution = {
+    val (buckets, counts) = histogram(rdd, min, max, structField, categoricalMetadata)
+    val quartiles = calculateQuartiles(rdd, rddSize, structField, categoricalMetadata)
+    val d2L = double2Label(categoricalMetadata)(structField)_
     val stats = model.Statistics(
       quartiles.median,
-      double2Label(max, columnType),
-      double2Label(min, columnType),
-      double2Label(rdd.mean(), columnType),
+      d2L(max),
+      d2L(min),
+      d2L(rdd.mean()),
       quartiles.first,
       quartiles.third,
       quartiles.outliers)
@@ -145,21 +151,30 @@ trait DataFrameReportGenerator {
       stats)
   }
 
-  private def possibleValuesForCategoricalColumn(structField: StructField): IndexedSeq[String] =
+  private def bucketsForCategoricalColumn(
+      structField: StructField,
+      categoricalMetadata: CategoricalMetadata): (IndexedSeq[String], IndexedSeq[Double]) =
     structField.dataType match {
-      case BooleanType => IndexedSeq(false.toString, true.toString)
-      case StringType => IndexedSeq()
-      // TODO: Categorical
+      case BooleanType =>
+        (IndexedSeq(false.toString, true.toString), IndexedSeq(0.0, 1.0, 1.1))
+      case IntegerType if categoricalMetadata.isCategorical(structField.name) =>
+        val mapping = categoricalMetadata.mapping(structField.name)
+        val sortedIds: IndexedSeq[Int] = mapping.ids.sortWith(_ < _).toIndexedSeq
+        (sortedIds.map(mapping.idToValue),
+          sortedIds.map(_.toDouble) ++ IndexedSeq(sortedIds.last.toDouble + 0.1))
+      case StringType => (IndexedSeq(), IndexedSeq())
     }
 
   private def histogram(
       rdd: RDD[Double],
       min: Double,
       max: Double,
-      dataType: DataType): (Seq[String], Seq[Long]) = {
-    val steps: Int = numberOfSteps(min, max, dataType)
+      structField: StructField,
+      categoricalMetadata: CategoricalMetadata): (Seq[String], Seq[Long]) = {
+    val steps: Int = numberOfSteps(min, max, structField.dataType)
     val buckets: Array[Double] = customRange(min, max, steps)
-    (buckets2Labels(buckets.toList.take(buckets.length - 1), dataType), rdd.histogram(buckets))
+    (buckets2Labels(buckets.toList.take(buckets.length - 1), structField, categoricalMetadata),
+      rdd.histogram(buckets))
   }
 
   private def numberOfSteps(min: Double, max: Double, dataType: DataType): Int =
@@ -171,21 +186,26 @@ trait DataFrameReportGenerator {
       DataFrameReportGenerator.defaultBucketsNumber
     }
 
-  private def calculateQuartiles(rdd: RDD[Double], size: Long, columnType: DataType): Quartiles =
+  private def calculateQuartiles(
+      rdd: RDD[Double],
+      size: Long,
+      structField: StructField,
+      categoricalMetadata: CategoricalMetadata): Quartiles =
     if (size > 0) {
       val sortedRdd = rdd.sortBy(identity).zipWithIndex().map {
         case (v, idx) => (idx, v)
       }
-      val secondQuartile: String = double2Label(median(sortedRdd, 0, size), columnType)
+      val d2L = double2Label(categoricalMetadata)(structField)_
+      val secondQuartile: String = d2L(median(sortedRdd, 0, size))
       if (size >= 4) {
         val firstQuartile: Double = median(sortedRdd, 0, size / 2)
         val thirdQuartile: Double = median(sortedRdd, size / 2 + size % 2, size)
         val outliers: Array[Double] = findOutliers(rdd, firstQuartile, thirdQuartile)
         Quartiles(
-          double2Label(firstQuartile, columnType),
+          d2L(firstQuartile),
           secondQuartile,
-          double2Label(thirdQuartile, columnType),
-          outliers.map(double2Label(_, columnType)))
+          d2L(thirdQuartile),
+          outliers.map(d2L))
       } else {
         Quartiles(null, secondQuartile, null, Seq())
       }
@@ -219,11 +239,11 @@ trait DataFrameReportGenerator {
     (Range.Int(0, steps, 1).map(s => min + (s * span) / steps) :+ max).toArray
   }
 
-  private def row2DoubleVector(row: Row): Vector = {
-    Vectors.dense((0 until row.size).map(cell2Double(row, _)).toArray)
+  private def row2DoubleVector(categoricalMetadata: CategoricalMetadata)(row: Row): Vector = {
+    Vectors.dense((0 until row.size).map(cell2Double(categoricalMetadata)(row, _)).toArray)
   }
 
-  private def cell2Double(row: Row, index: Int): Double =
+  private def cell2Double(categoricalMetadata: CategoricalMetadata)(row: Row, index: Int): Double =
     if (row.isNullAt(index)) {
       Double.NaN
     } else {
@@ -235,35 +255,47 @@ trait DataFrameReportGenerator {
           row.getBoolean(index).toString,
           List(false.toString, true.toString))
         case DoubleType => row.getDouble(index)
-        //    TODO: case categorical
+        case IntegerType if categoricalMetadata.isCategorical(index) => row.getInt(index).toDouble
       }
     }
 
-  private def buckets2Labels(buckets: Seq[Double], dataType: DataType): Seq[String] =
-    buckets.map(double2Label(_, dataType))
+  private def buckets2Labels(
+      buckets: Seq[Double],
+      structField: StructField,
+      categoricalMetadata: CategoricalMetadata): Seq[String] =
+    buckets.map(double2Label(categoricalMetadata)(structField))
 
-  private def double2Label(d: Double, dataType: DataType): String = dataType match {
+  private def double2Label(
+      categoricalMetadata: CategoricalMetadata)(
+      structField: StructField)(
+      d: Double): String = structField.dataType match {
     case BooleanType => if (d == 0D) false.toString else true.toString
     case LongType => double2String(d)
     case DoubleType => double2String(d)
     case TimestampType =>
       DateTimeConverter.toString(DateTimeConverter.fromMillis(d.toLong))
-    // TODO: categorical
+    case IntegerType if categoricalMetadata.isCategorical(structField.name) =>
+      categoricalMetadata.mapping(structField.name).idToValue(d.toInt)
   }
 
-  private def distributionType(dataType: DataType): StatType = dataType match {
+  private def distributionType(
+      structField: StructField,
+      categoricalMetadata: CategoricalMetadata): StatType = structField.dataType match {
     case LongType => Continuous
     case TimestampType => Continuous
     case DoubleType => Continuous
     case StringType => Categorical
     case BooleanType => Categorical
-    //    TODO: case categorical
+    case IntegerType if categoricalMetadata.isCategorical(structField.name)  => Categorical
   }
 
   private def categorical2Double(value: String, possibleValues: List[String]): Double =
     possibleValues.indexOf(value).toDouble
 
-  private def cell2String(row: Row, index: Int): String = {
+  private def cell2String(
+      row: Row,
+      index: Int,
+      categoricalMetadata: CategoricalMetadata): String = {
     val structField: StructField = row.schema.apply(index)
     if (row.isNullAt(index)) {
       null
@@ -272,6 +304,8 @@ trait DataFrameReportGenerator {
         case TimestampType => DateTimeConverter.toString(
           DateTimeConverter.fromMillis(row.get(index).asInstanceOf[Timestamp].getTime))
         case DoubleType => double2String(row.getDouble(index))
+        case IntegerType if categoricalMetadata.isCategorical(index) =>
+          categoricalMetadata.mapping(index).idToValue(row.getInt(index))
         case _ => row(index).toString
       }
     }

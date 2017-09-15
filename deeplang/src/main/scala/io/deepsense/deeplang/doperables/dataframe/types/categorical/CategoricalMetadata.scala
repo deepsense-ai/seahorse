@@ -4,11 +4,9 @@
 
 package io.deepsense.deeplang.doperables.dataframe.types.categorical
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-
-case class CategoricalMetadata(dataFrame: DataFrame) {
+case class CategoricalMetadata(sparkDataFrame: org.apache.spark.sql.DataFrame) {
   import MappingMetadataConverter._
-  private val schema = dataFrame.sparkDataFrame.schema
+  private val schema = sparkDataFrame.schema
   private val mappingTriplets = schema.fieldNames.zipWithIndex.flatMap {
     case (name, index) =>
       val fieldMetadata = schema.apply(index).metadata
