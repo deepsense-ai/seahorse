@@ -96,6 +96,7 @@ trait BatchTestSupport
           "--custom-code-executors-path", weJarPath
         )
       ).mkString(" ")
+
     if (exportsCommandFlat == "") {
       submitCommandFlat
     } else {
