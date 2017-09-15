@@ -13,12 +13,10 @@ function TypeListSelectorItem(options) {
 
   this.types = {
     'numeric': false,
-    'ordinal': false,
     'boolean': false,
     'categorical': false,
     'string': false,
-    'timestamp': false,
-    'time interval': false
+    'timestamp': false
   };
 
   let types = options.item.values;
