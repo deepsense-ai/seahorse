@@ -19,9 +19,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 import org.apache.spark.ml.feature.Tokenizer
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.{SparkUnaryTransformerAsMultiColumnTransformer, Report, SparkTransformerWrapper}
+import io.deepsense.deeplang.doperables.{SparkTransformerAsMultiColumnTransformer, Report, SparkTransformerWrapper}
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.{Params, SingleColumnSelectorParam, Param}
 import io.deepsense.deeplang.params.wrappers.spark.{SingleColumnCreatorParamWrapper, SingleColumnSelectorParamWrapper}
 
-class StringTokenizer extends SparkUnaryTransformerAsMultiColumnTransformer[Tokenizer]
+class StringTokenizer extends SparkTransformerAsMultiColumnTransformer[Tokenizer]

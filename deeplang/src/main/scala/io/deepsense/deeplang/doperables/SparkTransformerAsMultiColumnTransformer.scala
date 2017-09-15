@@ -17,8 +17,9 @@
 package io.deepsense.deeplang.doperables
 
 import scala.reflect.runtime.universe._
+import scala.language.reflectiveCalls
 
-import org.apache.spark.ml.UnaryTransformer
+import org.apache.spark.ml.{Transformer => SparkTransformer}
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -27,14 +28,16 @@ import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
 /**
- * This class creates a Deeplang MultiColumnTransformer
- * from a Spark ML UnaryTransformer.
- * We assume that every Spark UnaryTransformer has a no-arg constructor.
+ * This class creates a Deeplang MultiColumnTransformer from a Spark ML Transformer
+ * that has inputCol and outputCol parameters.
+ * We assume that every Spark Transformer has a no-arg constructor.
  *
- * @tparam T Wrapped Spark UnaryTransformer type
+ * @tparam T Wrapped Spark Transformer type
  */
-abstract class SparkUnaryTransformerAsMultiColumnTransformer[T <: UnaryTransformer[_, _, T]]
-    (implicit tag: TypeTag[T])
+abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
+    def setInputCol(value: String): T
+    def setOutputCol(value: String): T
+  }](implicit tag: TypeTag[T])
   extends MultiColumnTransformer {
 
   lazy val sparkTransformer: T = TypeUtils.instanceOfType(tag)
@@ -67,8 +70,7 @@ abstract class SparkUnaryTransformerAsMultiColumnTransformer[T <: UnaryTransform
     }
   }
 
-
   def transformerCopy(): T = {
-    sparkTransformer.copy(sparkTransformer.extractParamMap())
+    sparkTransformer.copy(sparkTransformer.extractParamMap()).asInstanceOf[T]
   }
 }
