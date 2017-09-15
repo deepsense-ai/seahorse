@@ -5,9 +5,9 @@
 
 /* @ngInject */
 function ExperimentController(
-  $http, $modal, $timeout, $stateParams, $scope,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient,
-  OperationsHierarchyService, UUIDGenerator
+  experiment,
+  $http, $modal, $timeout, $scope,
+  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -18,26 +18,17 @@ function ExperimentController(
   var Edge = require('./common-objects/common-edge.js');
 
   internal.selectedNode = null;
-  internal.isDataLoaded = false;
 
   /**
    * Loads all view-specific data.
    */
   internal.init = function init() {
-    Operations.load().
-      then(OperationsHierarchyService.load).
-      then(() => ExperimentAPIClient.getData($stateParams.id)).
-      then((data) => {
-        console.log('Experiment downloaded successfully');
+    PageService.setTitle('Experiment: ' + experiment.experiment.name);
 
-        PageService.setTitle('Experiment: ' + data.experiment.name);
-        ExperimentService.setExperiment(ExperimentService.createExperiment(data, Operations.getData()));
-        GraphPanelRendererService.setExperiment(ExperimentService.getExperiment());
+    ExperimentService.setExperiment(ExperimentService.createExperiment(experiment, Operations.getData()));
+    GraphPanelRendererService.setExperiment(ExperimentService.getExperiment());
 
-        internal.updateAndRerenderEdges(data);
-
-        internal.isDataLoaded = true;
-      });
+    internal.updateAndRerenderEdges(experiment);
   };
 
   /**
@@ -132,9 +123,7 @@ function ExperimentController(
     }
   };
 
-  that.getCatalog = function getCatalog() {
-    return internal.isDataLoaded ? Operations.getCatalog() : undefined;
-  };
+  that.getCatalog = Operations.getCatalog;
 
   that.getExperiment = ExperimentService.getExperiment;
 

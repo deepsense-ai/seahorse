@@ -8,8 +8,10 @@ var angular = require('angular');
 
 var experiments = angular.module('ds.experiments', []);
 
-require('./experiment.controller.js').inject(experiments);
+require('./experiment.config.js').inject(experiments);
 require('./experiments.config.js').inject(experiments);
+
+require('./experiment.controller.js').inject(experiments);
 require('./experiment.service.js').inject(experiments);
 require('./experiment-browser/experiment-browser.js').inject(experiments);
 require('./common-behaviours/common-draggable.js').inject(experiments);

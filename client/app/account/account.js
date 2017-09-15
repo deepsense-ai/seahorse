@@ -4,9 +4,12 @@
 'use strict';
 
 /* @ngInject */
-function Account(PageService) {
-  this.label = 'Account info / settings page';
+function Account($rootScope, PageService) {
   PageService.setTitle('My account');
+
+  $rootScope.stateData.dataIsLoaded = true;
+
+  this.label = 'Account info / settings page';
 }
 exports.function = Account;
 

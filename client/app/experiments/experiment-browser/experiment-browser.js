@@ -5,10 +5,8 @@
 
 
 /* @ngInject */
-function ExperimentListController(PageService, ExperimentAPIClient) {
-  ExperimentAPIClient.getList().then((data) => {
-    this.experiments = data.experiments;
-  });
+function ExperimentListController(experiments, PageService) {
+  this.experiments = experiments.experiments;
 
   PageService.setTitle('My experiments');
 }

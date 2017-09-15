@@ -1,27 +1,21 @@
 <div class="report">
-  <div ng-if="!report.messageError">
-    <div ng-if="::report.getTables()" ng-switch="::report.getReportName()">
-      <report-dataframe
-        ng-switch-when="DataFrame Report"
-        data="::report.getTables()"
-        distributions-types="::report.getDistributionsTypes()">
-      </report-dataframe>
-      <report-cross-validate-regressor
-        ng-switch-when="CrossValidateRegressor"
-        data="::report.getTables()">
-      </report-cross-validate-regressor>
-      <report-evaluate-scoring
-        ng-switch-when="EvaluateScoring report"
-        data="::report.getTables()">
-      </report-evaluate-scoring>
-      <report-evaluate-classification
-        ng-switch-when="Evaluate Classification"
-        data="::report.getTables()">
-      </report-evaluate-classification>
-    </div>
-    <loading-spinner ng-if="!report.getTables()"></loading-spinner>
-  </div>
-  <div ng-if="report.messageError" class="lead">
-    {{ ::report.messageError }}
+  <div ng-if="::report.getTables()" ng-switch="::report.getReportName()">
+    <report-dataframe
+      ng-switch-when="DataFrame Report"
+      data="::report.getTables()"
+      distributions-types="::report.getDistributionsTypes()">
+    </report-dataframe>
+    <report-cross-validate-regressor
+      ng-switch-when="CrossValidateRegressor"
+      data="::report.getTables()">
+    </report-cross-validate-regressor>
+    <report-evaluate-scoring
+      ng-switch-when="EvaluateScoring report"
+      data="::report.getTables()">
+    </report-evaluate-scoring>
+    <report-evaluate-classification
+      ng-switch-when="Evaluate Classification"
+      data="::report.getTables()">
+    </report-evaluate-classification>
   </div>
 </div>

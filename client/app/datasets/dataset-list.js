@@ -4,9 +4,12 @@
 'use strict';
 
 /* @ngInject */
-function DatasetList(PageService) {
-  this.setsLabel = 'You do not have any datasets!';
+function DatasetList($rootScope, PageService) {
   PageService.setTitle('Datasets');
+
+  $rootScope.stateData.dataIsLoaded = true;
+
+  this.setsLabel = 'You do not have any datasets!';
 }
 exports.function = DatasetList;
 

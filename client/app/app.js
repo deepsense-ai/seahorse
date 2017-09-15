@@ -23,3 +23,4 @@ var lab = angular.module('ds.lab', [
 ]);
 
 require('./app.config.js').inject(lab);
+require('./app.run.js').inject(lab);

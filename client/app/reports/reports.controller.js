@@ -9,33 +9,26 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function Report(PageService, $scope, $stateParams, $modal, EntitiesAPIClient) {
+function Report(report, $scope, $modal, PageService) {
+  PageService.setTitle(`Report: ${report.name}`);
+
   let that = this;
   let internal = {};
-  let entityId = $stateParams.id;
 
-  that.messageError = '';
-
-  EntitiesAPIClient.getReport(entityId).then((data) => {
-    internal.name = data.name;
-    internal.tables = data.tables;
-    internal.distributions = data.distributions || {};
-    internal.distributionsTypes = _.reduce(
-      internal.distributions,
-      function (acc, distObj, name) {
-        let re = /[a-zA-Z0-9]+/.exec(name);
-        if (re) {
-          acc[re[0]] = distObj.subtype;
-        }
-        return acc;
-      },
-      {}
-    );
-
-    PageService.setTitle(`Report: ${data.name}`);
-  }, () => {
-    that.messageError = `The report with id equals to ${entityId} does not exist!`;
-  });
+  internal.name = report.name;
+  internal.tables = report.tables;
+  internal.distributions = report.distributions || {};
+  internal.distributionsTypes = _.reduce(
+    internal.distributions,
+    function (acc, distObj, name) {
+      let re = /[a-zA-Z0-9]+/.exec(name);
+      if (re) {
+        acc[re[0]] = distObj.subtype;
+      }
+      return acc;
+    },
+    {}
+  );
 
   that.getTables = function getTables() {
     return internal.tables;

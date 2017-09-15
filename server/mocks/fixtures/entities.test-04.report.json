@@ -1,29 +1,33 @@
 {
-  "name": "EvaluateScoring report",
-  "tables": {
-    "EvaluateRegression": {
-      "name": "EvaluateRegression",
-      "description": "Evaluate regression report table",
-      "columnNames": [
-        "setSize",
-        "explainedVariance",
-        "meanAbsoluteError",
-        "meanSquaredError",
-        "r2",
-        "rootMeanSquaredError"
-      ],
-      "rowNames": null,
-      "blockType": "table",
-      "values": [
-        [
-          "7",
-          "1.0",
-          "2.854859206178974E-16",
-          "2.887794385184061E-31",
-          "1.0",
-          "5.373820228835405E-16"
-        ]
-      ]
+  "entity": {
+    "report": {
+      "name": "EvaluateScoring report",
+      "tables": {
+        "EvaluateRegression": {
+          "name": "EvaluateRegression",
+          "description": "Evaluate regression report table",
+          "columnNames": [
+            "setSize",
+            "explainedVariance",
+            "meanAbsoluteError",
+            "meanSquaredError",
+            "r2",
+            "rootMeanSquaredError"
+          ],
+          "rowNames": null,
+          "blockType": "table",
+          "values": [
+            [
+              "7",
+              "1.0",
+              "2.854859206178974E-16",
+              "2.887794385184061E-31",
+              "1.0",
+              "5.373820228835405E-16"
+            ]
+          ]
+        }
+      }
     }
   }
 }

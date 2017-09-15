@@ -9,7 +9,25 @@ function ReportsConfig($stateProvider) {
       url: '/report/:id',
       templateUrl: 'app/reports/reports.html',
       controller: 'Report',
-      controllerAs: 'report'
+      controllerAs: 'report',
+      resolve: {
+        /* @ngInject */
+        report: ($q, $stateParams, $rootScope, EntitiesAPIClient) => {
+          let deferred = $q.defer();
+
+          EntitiesAPIClient.getReport($stateParams.id).
+            then((data) => {
+              $rootScope.stateData.dataIsLoaded = true;
+              deferred.resolve(data.entity.report);
+            }).
+            catch(() => {
+              $rootScope.stateData.errorMessage = 'Could not load the report';
+              deferred.reject();
+            });
+
+          return deferred.promise;
+        }
+      }
   });
 }
 exports.function = ReportsConfig;

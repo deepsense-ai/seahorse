@@ -1,8 +1,8 @@
 <div class="operations-tree no-selection">
   <script type="text/ng-template" id="catalog-panel">
     <span class="operations-name" ng-click="category.collapsed = ! category.collapsed">
-        <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i> {{::category.name}}
-      </span>
+      <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i> {{::category.name}}
+    </span>
     <ul ng-hide="category.collapsed">
       <li class="operations-category"
           ng-repeat="category in ::category.catalog"
@@ -14,7 +14,6 @@
     </ul>
   </script>
   <ul class="root">
-    <loading-spinner-sm ng-if="!experiment.getCatalog()"></loading-spinner-sm>
     <li class="operations-category"
         ng-repeat="category in ::experiment.getCatalog()"
         ng-include="'catalog-panel'"></li>
