@@ -89,12 +89,11 @@ class MvpCase3IntegSuite extends ExperimentExecutionSpec {
     Edge(Endpoint(scoreRId, 0), Endpoint(evaluateRId, 0))
   )
 
-  // TODO: Use apply
   private def joinOperation: Join = {
-    val operation = new Join
-    val valueParam = operation.parameters.getColumnSelectorParameter(Join.joinColumnsParamKey)
-    valueParam.value = Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("datetime")))))
-    operation
+    Join(
+      Join.joinColumnsParameter(Seq(("datetime", "datetime"))),
+      prefixLeft = None,
+      prefixRight = None)
   }
 
   private def timestampDecomposer: DecomposeDatetime = {

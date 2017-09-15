@@ -204,6 +204,8 @@ case class ParametersSequence(
 
   val parameterType = ParameterType.Multiplier
 
+  def replicateSchema: ParametersSchema = predefinedSchema.replicate
+
   /**
    * Validates each filled schema.
    * Does not check if all filled schemas conform to predefined schema.
