@@ -25,13 +25,10 @@ services:
   frontend:
     image: $DOCKER_REPOSITORY/deepsense-frontend:master-$DOCKER_TAG
     environment:
-      - "API_HOST=http://localhost"
       - "API_PORT=8080"
       - "SESSION_API_PORT=8080"
       - "MQ_USER=yNNp7VJS"
       - "MQ_PASS=1ElYfGNW"
-      - "SOCKETS_ADDRESS=http://localhost:8080/"
-      - "NOTEBOOKS_HOST=http://localhost:8080/jupyter"
     links:
       - rabbitmq
       - workflowmanager
