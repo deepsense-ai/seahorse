@@ -4,7 +4,7 @@
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.JsObject
+import spray.json.{JsValue, JsObject}
 
 /**
  * Represents ParameterHolder with validator.
@@ -16,7 +16,7 @@ trait HasValidator extends Parameter {
     validator.validate(definedValue)
   }
 
-  override def toJson: JsObject = {
-    JsObject(super.toJson.fields + ("validator" -> validator.toJson))
+  override def jsDescription: Map[String, JsValue] = {
+    super.jsDescription + ("validator" -> validator.toJson)
   }
 }

@@ -3,6 +3,7 @@
  */
 package io.deepsense.deeplang.doperations
 
+import scala.collection.immutable.ListMap
 import scala.collection.mutable
 
 import org.apache.spark.mllib.evaluation.RegressionMetrics
@@ -32,7 +33,7 @@ class CrossValidateRegressor
         "Perform shuffle",
         Some(CrossValidateRegressor.shuffleYes),
         required = true,
-        Map(
+        options = ListMap(
           CrossValidateRegressor.shuffleNo -> ParametersSchema(),
           CrossValidateRegressor.shuffleYes ->
             ParametersSchema(CrossValidateRegressor.seedParamKey ->

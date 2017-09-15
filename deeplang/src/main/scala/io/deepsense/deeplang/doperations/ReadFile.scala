@@ -6,6 +6,8 @@ package io.deepsense.deeplang.doperations
 
 import java.io.FileNotFoundException
 
+import scala.collection.immutable.ListMap
+
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.protocol.HdfsFileStatus
 import org.apache.hadoop.io.{LongWritable, Text}
@@ -29,7 +31,7 @@ class ReadFile extends DOperation0To1[File] {
     ReadFile.pathParam -> StringParameter(
       "HDFS path to file", None, true, new AcceptAllRegexValidator),
     ReadFile.lineSeparatorParam ->
-      ChoiceParameter("Line separator", Some(ReadFile.unixSeparatorLabel), true, Map(
+      ChoiceParameter("Line separator", Some(ReadFile.unixSeparatorLabel), true, ListMap(
         ReadFile.unixSeparatorLabel -> ParametersSchema(),
         ReadFile.windowsSeparatorLabel -> ParametersSchema(),
         ReadFile.customLineSeparatorLabel -> ParametersSchema(ReadFile.customLineSeparatorParam ->
@@ -56,7 +58,7 @@ class ReadFile extends DOperation0To1[File] {
     File(Some(lines), Some(ReadFile.buildReportMap(fileInfo)))
   }
 
-  def chosenLineSeparatorValue(): String = {
+  def chosenLineSeparatorValue: String = {
     val chosenParam = parameters.getChoice(ReadFile.lineSeparatorParam).get
     chosenParam.label match {
       case ReadFile.windowsSeparatorLabel => ReadFile.windowsSeparatorValue

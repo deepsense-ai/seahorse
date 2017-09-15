@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import scala.collection.immutable.ListMap
+
 import org.mockito.Mockito._
 import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
@@ -88,7 +90,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of choice parameter should validate chosen schema") {
     val mockSchema = mock[ParametersSchema]
-    val possibleChoices = Map("onlyChoice" -> mockSchema)
+    val possibleChoices = ListMap("onlyChoice" -> mockSchema)
     val choice = ChoiceParameter("choice", None, true, possibleChoices)
     choice.value = Some("onlyChoice")
     choice.validate
@@ -98,7 +100,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   test("Validation of multipleChoice parameter should validate chosen schemas") {
     val mockSchema1 = mock[ParametersSchema]
     val mockSchema2 = mock[ParametersSchema]
-    val possibleChoices = Map("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
+    val possibleChoices = ListMap("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
     val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
     multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
     multipleChoices.validate

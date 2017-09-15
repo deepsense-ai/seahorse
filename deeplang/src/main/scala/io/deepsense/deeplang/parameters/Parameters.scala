@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import scala.collection.immutable.ListMap
+
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
@@ -87,7 +89,7 @@ case class ChoiceParameter(
     description: String,
     default: Option[String],
     required: Boolean,
-    options: Map[String, ParametersSchema])
+    options: ListMap[String, ParametersSchema])
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -137,7 +139,7 @@ case class MultipleChoiceParameter(
     description: String,
     default: Option[Traversable[String]],
     required: Boolean,
-    options: Map[String, ParametersSchema])
+    options: ListMap[String, ParametersSchema])
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -206,9 +208,8 @@ case class ParametersSequence(
 
   private[parameters] def replicate: Parameter = copy()
 
-  override def toJson: JsObject = {
-    JsObject(basicJsonFields + ("values" -> predefinedSchema.toJson))
-  }
+  override def jsDescription: Map[String, JsValue] =
+    super.jsDescription + ("values" -> predefinedSchema.toJson)
 
   override protected def definedValueToJson(definedValue: Vector[ParametersSchema]): JsValue = {
     val fields = for (schema <- definedValue) yield schema.valueToJson
@@ -242,9 +243,8 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
   /** Tells if this selectors selects single column or many. */
   protected val isSingle: Boolean
 
-  override def toJson: JsObject = {
-    JsObject(basicJsonFields + ("isSingle" -> isSingle.toJson))
-  }
+  override def jsDescription: Map[String, JsValue] =
+    super.jsDescription + ("isSingle" -> isSingle.toJson)
 }
 
 /**

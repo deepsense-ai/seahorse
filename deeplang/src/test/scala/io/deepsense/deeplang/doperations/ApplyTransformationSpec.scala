@@ -4,8 +4,7 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.mockito.Mockito
-import org.mockito.Mockito.{when, times, verify}
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 

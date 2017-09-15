@@ -55,14 +55,11 @@ abstract class Parameter extends Serializable {
   protected def validateDefined(definedValue: HeldValue): Unit = { }
 
   /**
-   * Json representation describing this parameter.
-   */
-  def toJson: JsObject = JsObject(basicJsonFields)
-
-  /**
    * Map of fields that should be used in each parameter's Json representation.
+   * ParametersSchema containing this parameter will use these fields along with parameters name
+   * to describe its contents.
    */
-  final protected def basicJsonFields: Map[String, JsValue] = {
+  private[deeplang] def jsDescription: Map[String, JsValue] = {
     Map(
       "type" -> parameterType.toString.toJson,
       "description" -> description.toJson,

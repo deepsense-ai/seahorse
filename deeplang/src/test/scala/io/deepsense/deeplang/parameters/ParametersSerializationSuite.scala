@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import scala.collection.immutable.ListMap
+
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
@@ -66,13 +68,13 @@ class ParametersSerializationSuite
   }
 
   test("ChoiceParameter and it's value should be serializable") {
-    val param = ChoiceParameter("", None, required = false, options = Map.empty)
+    val param = ChoiceParameter("", None, required = false, options = ListMap.empty)
     param.value = Some("some selection")
     testParameterSerialization(param)
   }
 
   test("MultipleChoiceParameter and it's value should be serializable") {
-    val param = MultipleChoiceParameter("", None, required = false, options = Map.empty)
+    val param = MultipleChoiceParameter("", None, required = false, options = ListMap.empty)
     param.value = Some(Seq("first selection", "second selection"))
     testParameterSerialization(param)
   }

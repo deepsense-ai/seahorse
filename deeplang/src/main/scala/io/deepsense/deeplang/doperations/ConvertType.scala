@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.collection.immutable.ListMap
+
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
 import io.deepsense.deeplang.DOperation.Id
@@ -27,7 +29,7 @@ class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
       "Target type of the columns",
       None,
       required = true,
-      options = ColumnType.values.map(v => v.toString -> ParametersSchema()).toMap
+      options = ListMap(ColumnType.values.toList.map(v => v.toString -> ParametersSchema()):_*)
     )
   )
 

@@ -4,6 +4,7 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
@@ -26,7 +27,7 @@ class FileToDataFrame extends DOperation1To1[File, DataFrame] {
       "Format of the input file",
       Some(CSV.name),
       required = true,
-      Map(CSV.name -> ParametersSchema(
+      ListMap(CSV.name -> ParametersSchema(
         separatorParameter -> StringParameter(
           "Column separator",
           Some(","),
