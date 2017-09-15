@@ -46,7 +46,7 @@ Order of the columns is preserved.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The DataFrame without rows not satisfying given condition.</td>
+<td>The DataFrame containing only rows satisfying given condition.</td>
 </tr>
 </tbody>
 </table>
