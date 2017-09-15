@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Maps a string column of labels to a column of label indices.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#io.deepsense.deeplang.doperables.SingleStringIndexer">io.deepsense.deeplang.doperables.SingleStringIndexer documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.StringIndexer">org.apache.spark.ml.feature.StringIndexer documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

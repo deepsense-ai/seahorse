@@ -29,7 +29,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>DataFrame to process</td>
+<td>DataFrame to process.</td>
 </tr>
 </tbody>
 </table>
@@ -48,7 +48,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>Output DataFrame with processed missing values</td>
+<td>Output DataFrame with processed missing values.</td>
 </tr>
 <tr>
 <td><code>1</code></td><td>

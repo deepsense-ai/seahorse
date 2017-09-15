@@ -8,8 +8,8 @@ includeOperationsMenu: true
 ---
 
 Applies a mathematical formula to a [DataFrame](../classes/dataframe.html) and produces
-a Transformation that represents the mathematical formula.
-Later on, the Transformation can be applied to a [DataFrame](../classes/dataframe.html)
+a [Transformer](../classes/transformer.html) that represents the mathematical formula.
+Later on, the `Transformer` can be applied to a [DataFrame](../classes/dataframe.html)
 with [Transform](transform.html) operation.
 
 

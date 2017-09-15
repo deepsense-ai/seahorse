@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Creates a DataFrame containing only rows satisfying given condition.
+Creates a [DataFrame](../classes/dataframe.html) containing only rows satisfying given condition.
 Condition should be simple SQL condition (as used in `WHERE` condition).
 Order of the columns is preserved.
 
@@ -27,7 +27,7 @@ Order of the columns is preserved.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame to filter rows on.</td>
+<td>A <code>DataFrame</code> to filter rows on.</td>
 </tr>
 </tbody>
 </table>
@@ -46,7 +46,7 @@ Order of the columns is preserved.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The DataFrame containing only rows satisfying given condition.</td>
+<td>The <code>DataFrame</code> containing only rows satisfying given condition.</td>
 </tr>
 </tbody>
 </table>
@@ -66,7 +66,7 @@ Order of the columns is preserved.
 <td><code>condition</code></td>
 <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
 <td>The filtering condition. Rows not satisfying given condition will be excluded from output
-DataFrame. It should be simple SQL condition (as used in `WHERE` condition).</td>
+DataFrame. It should be simple SQL condition (as used in <code>WHERE</code> condition).</td>
 </tr>
 </tbody>
 </table>

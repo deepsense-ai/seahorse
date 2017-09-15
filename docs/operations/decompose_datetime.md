@@ -8,8 +8,8 @@ includeOperationsMenu: true
 ---
 
 Extracts parts of a timestamp from a specified timestamp column to newly created columns.
-For example for timestamp column: ``'Birthdate'`` when extracting year part new
-column will be created with name: ``year`` and Numeric type.
+For example, for the timestamp column: ``'Birthdate'`` when extracting year part, a new
+column will be created with a name ``year`` and Numeric type.
 If the value for parameter ``prefix`` is provided, it will be prepended to
 generated columns' names, according to the pattern: ``prefix + timestampPartName``.
 
