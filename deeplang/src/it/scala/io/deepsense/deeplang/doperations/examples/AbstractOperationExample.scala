@@ -57,11 +57,9 @@ abstract class AbstractOperationExample[T <: DOperation]
       val html =
         ExampleHtmlFormatter.exampleHtml(op, inputDataFrames, outputDfs)
 
-      // If this is run from root path (ex: run from InteliJ) it will
-      // fail, because ../ points out of project directory.
       // TODO Make it not rely on relative path it's run from
       val examplePageFile = new File(
-        "../docs/internal/operations/examples/" + className + ".md")
+        "docs/operations/examples/" + className + ".md")
 
       examplePageFile.getParentFile.mkdirs()
       examplePageFile.createNewFile()
