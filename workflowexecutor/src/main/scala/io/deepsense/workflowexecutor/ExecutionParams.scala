@@ -22,6 +22,7 @@ case class ExecutionParams(
   extraVars: Map[String, String] = Map.empty,
   interactiveMode: Boolean = false,
   messageQueueHost: Option[String] = None,
+  messageQueuePort: Option[Int] = None,
   pyExecutorPath: Option[String] = None,
   jobId: Option[String] = None,
   pySparkPath: Option[String] = None)

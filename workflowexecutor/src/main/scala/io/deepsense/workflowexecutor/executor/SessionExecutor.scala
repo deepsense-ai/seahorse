@@ -45,6 +45,7 @@ import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, Work
  */
 case class SessionExecutor(
     messageQueueHost: String,
+    messageQueuePort: Int,
     pythonExecutorPath: String,
     sessionId: String,
     pySparkPath: String)
@@ -190,6 +191,7 @@ case class SessionExecutor(
   private def createConnection(system: ActorSystem): ActorRef = {
     val factory = new ConnectionFactory()
     factory.setHost(messageQueueHost)
+    factory.setPort(messageQueuePort)
 
     val connection = system.actorOf(
       ConnectionActor.props(factory),

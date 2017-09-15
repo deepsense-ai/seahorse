@@ -71,6 +71,11 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     } text "message queue host"
 
     // Hidden option:
+    opt[Int]("message-queue-port") hidden() valueName "PORT" action {
+      (x, c) => c.copy(messageQueuePort = Some(x))
+    } text "message queue port"
+
+    // Hidden option:
     opt[String]('j', "job-id") hidden() valueName "JOB" action {
       (x, c) => c.copy(jobId = Some(x))
     } text "job id"
@@ -96,6 +101,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
 
       val interactiveRequirements: Requirements = Seq(
         (config.messageQueueHost.isEmpty, "--message-queue-host is required in interactive mode"),
+        (config.messageQueuePort.isEmpty, "--message-queue-port is required in interactive mode"),
         (config.jobId.isEmpty, "--job-id is required in interactive mode")
       )
 
@@ -140,6 +146,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
           // Interactive mode (SessionExecutor)
           SessionExecutor(
             params.messageQueueHost.get,
+            params.messageQueuePort.get,
             params.pyExecutorPath.get,
             params.jobId.get,
             path
