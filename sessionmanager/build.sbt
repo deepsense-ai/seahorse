@@ -1,5 +1,7 @@
 // Copyright (c) 2016, CodiLime Inc.
 
+import com.typesafe.sbt.packager.docker._
+
 name := "deepsense-sessionmanager"
 
 libraryDependencies ++= Dependencies.sessionmanager
@@ -37,3 +39,7 @@ mappings in Universal += downloadWeJar.value -> "we.jar"
 dockerBaseImage := "quay.io/deepsense_io/deepsense-spark-krb:1.6.1"
 dockerExposedPorts := Seq(9082)
 dockerUpdateLatest := true
+dockerCommands ++= Seq(
+  ExecCmd("ENTRYPOINT", "/opt/docker/startup.sh"),
+  ExecCmd("CMD", "bin/deepsense-sessionmanager")
+)
