@@ -73,7 +73,8 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
-  val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock
+  val wireMock = "com.github.tomakehurst" % "wiremock" %
+    Version.wireMock exclude("com.fasterxml.jackson.core", "jackson-databind")
 }
 
 object Dependencies {

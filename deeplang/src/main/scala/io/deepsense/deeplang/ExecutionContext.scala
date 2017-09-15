@@ -36,6 +36,7 @@ case class CommonExecutionContext(
     fsClient: FileSystemClient,
     reportLevel: ReportLevel,
     tenantId: String,
+    innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: DataFrameStorage,
     pythonExecutionProvider: PythonExecutionProvider) extends Logging {
 
@@ -47,12 +48,38 @@ case class CommonExecutionContext(
       fsClient,
       reportLevel,
       tenantId,
+      innerWorkflowExecutor,
       ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
       ContextualPythonCodeExecutor(
         pythonExecutionProvider.pythonCodeExecutor,
         pythonExecutionProvider.customOperationExecutor,
         workflowId,
         nodeId))
+}
+
+object CommonExecutionContext {
+
+  def apply(context: ExecutionContext): CommonExecutionContext =
+    CommonExecutionContext(
+      context.sparkContext,
+      context.sqlContext,
+      context.inferContext,
+      context.fsClient,
+      context.reportLevel,
+      context.tenantId,
+      context.innerWorkflowExecutor,
+      context.dataFrameStorage.dataFrameStorage,
+      ContextualPythonExecutorWrapper(context.pythonCodeExecutor))
+}
+
+case class ContextualPythonExecutorWrapper(contextualExecutor: ContextualPythonCodeExecutor)
+  extends PythonExecutionProvider {
+
+  override def customOperationExecutor: CustomOperationExecutor =
+    contextualExecutor.customOperationExecutor
+
+  override def pythonCodeExecutor: PythonCodeExecutor =
+    contextualExecutor.pythonCodeExecutor
 }
 
 /** Holds information needed by DOperations and DMethods during execution. */
@@ -63,6 +90,7 @@ case class ExecutionContext(
     fsClient: FileSystemClient,
     reportLevel: ReportLevel,
     tenantId: String,
+    innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,
     pythonCodeExecutor: ContextualPythonCodeExecutor) extends Logging {
 

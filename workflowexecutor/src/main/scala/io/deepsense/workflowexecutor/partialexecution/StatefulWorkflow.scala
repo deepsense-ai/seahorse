@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor.partialexecution
 
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{DOperation, CommonExecutionContext, DOperable}
+import io.deepsense.deeplang.{CommonExecutionContext, DOperable}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 import io.deepsense.graph.Node._
@@ -43,7 +43,6 @@ class StatefulWorkflow(
   }
 
   def startReadyNodes(): Seq[ReadyNode] = {
-    logger.debug("startReadyNodes")
     val readyNodes = execution.readyNodes
     execution = readyNodes.foldLeft(execution) {
       case (runningExecution, readyNode) => runningExecution.nodeStarted(readyNode.node.id)
@@ -69,6 +68,10 @@ class StatefulWorkflow(
   )
 
   def node(id: Node.Id): DeeplangNode = execution.node(id)
+
+  def nodeStarted(id: Node.Id): Unit = {
+    execution = execution.nodeStarted(id)
+  }
 
   def nodeFinished(
       id: Node.Id,

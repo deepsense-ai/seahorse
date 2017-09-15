@@ -27,7 +27,9 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 trait Executor extends Logging {
 
@@ -46,10 +48,14 @@ trait Executor extends Logging {
 
     val tenantId = ""
 
+    val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
+      new GraphReader(createDOperationsCatalogForCustom()))
+
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
       tenantId,
-      catalog)
+      catalog,
+      innerWorkflowExecutor)
 
     CommonExecutionContext(
       sparkContext,
@@ -58,6 +64,7 @@ trait Executor extends Logging {
       FileSystemClientStub(), // temporarily mocked
       reportLevel,
       tenantId,
+      innerWorkflowExecutor,
       dataFrameStorage,
       new PythonExecutionProvider {
         override def pythonCodeExecutor: PythonCodeExecutor =
@@ -92,6 +99,17 @@ trait Executor extends Logging {
   def createDOperationsCatalog(): DOperationsCatalog = {
     val catalog = DOperationsCatalog()
     CatalogRecorder.registerDOperations(catalog)
+    catalog
+  }
+
+  def createDOperationsCatalogForCustom(): DOperationsCatalog = {
+    val catalog = DOperationsCatalog()
+    CatalogRecorder.registerDOperations(catalog)
+
+    // register additional operations for custom transformers and estimators
+    catalog.registerDOperation[Source](DOperationCategories.IO)
+    catalog.registerDOperation[Sink](DOperationCategories.IO)
+
     catalog
   }
 }

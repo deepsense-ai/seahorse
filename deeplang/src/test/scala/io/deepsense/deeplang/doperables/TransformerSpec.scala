@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.types.StructType
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -28,6 +29,7 @@ class TransformerSpec extends UnitSpec {
   private def transformer = {
     val t = mock[Transformer]
     when(t.transform) thenCallRealMethod()
+    when(t._transformSchema(any(), any())) thenCallRealMethod()
     t
   }
 

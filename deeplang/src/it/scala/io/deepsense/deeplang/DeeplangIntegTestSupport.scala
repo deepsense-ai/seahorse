@@ -30,6 +30,7 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.DataFrameStorage.DataFrameName
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
@@ -50,6 +51,12 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   val sqlContext: SQLContext = DeeplangIntegTestSupport.sqlContext
   var fileSystemClient: FileSystemClient = _
 
+  val dOperableCatalog = {
+    val catalog = new DOperableCatalog
+    CatalogRecorder.registerDOperables(catalog)
+    catalog
+  }
+
   override def beforeAll(): Unit = {
     fileSystemClient = LocalFileSystemClient()
     commonExecutionContext = prepareCommonExecutionContext()
@@ -60,7 +67,8 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
       "testTenantId",
-      dOperableCatalog = null)
+      dOperableCatalog,
+      mock[InnerWorkflowParser])
 
     new MockedCommonExecutionContext(
       sparkContext,
@@ -69,6 +77,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       fileSystemClient,
       ReportLevel.HIGH,
       "testTenantId",
+      mock[InnerWorkflowExecutor],
       new MockedDataFrameStorage,
       mock[PythonExecutionProvider])
   }
@@ -77,7 +86,8 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
       "testTenantId",
-      dOperableCatalog = null)
+      dOperableCatalog,
+      mock[InnerWorkflowParser])
 
     new MockedExecutionContext(
       sparkContext,
@@ -86,6 +96,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       fileSystemClient,
       ReportLevel.HIGH,
       "testTenantId",
+      mock[InnerWorkflowExecutor],
       new MockedContextualDataFrameStorage,
       new MockedContextualCodeExecutor)
   }
@@ -168,6 +179,7 @@ private class MockedCommonExecutionContext(
     override val fsClient: FileSystemClient,
     override val reportLevel: ReportLevel,
     override val tenantId: String,
+    override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: DataFrameStorage,
     override val pythonExecutionProvider: PythonExecutionProvider)
   extends CommonExecutionContext(
@@ -177,16 +189,18 @@ private class MockedCommonExecutionContext(
     fsClient,
     reportLevel,
     tenantId,
+    innerWorkflowExecutor,
     dataFrameStorage,
     pythonExecutionProvider) {
 
-  override def createExecutionContext(workflowId: Id, nodeId: Id) =
+  override def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
     new MockedExecutionContext(sparkContext,
       sqlContext,
       inferContext,
       fsClient,
       reportLevel,
       tenantId,
+      innerWorkflowExecutor,
       new MockedContextualDataFrameStorage,
       new MockedContextualCodeExecutor)
 }
@@ -198,6 +212,7 @@ private class MockedExecutionContext(
     override val fsClient: FileSystemClient,
     override val reportLevel: ReportLevel,
     override val tenantId: String,
+    override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: ContextualDataFrameStorage,
     override val pythonCodeExecutor: ContextualPythonCodeExecutor)
   extends ExecutionContext(
@@ -207,9 +222,9 @@ private class MockedExecutionContext(
     fsClient,
     reportLevel,
     tenantId,
+    innerWorkflowExecutor,
     dataFrameStorage,
-    pythonCodeExecutor) {
-}
+    pythonCodeExecutor)
 
 private class MockedDataFrameStorage extends DataFrameStorage {
 

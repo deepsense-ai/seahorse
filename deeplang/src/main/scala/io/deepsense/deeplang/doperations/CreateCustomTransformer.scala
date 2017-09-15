@@ -16,18 +16,12 @@
 
 package io.deepsense.deeplang.doperations
 
-import scala.reflect.runtime.universe.TypeTag
-
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.MathematicalTransformation
+import io.deepsense.deeplang.doperables.CustomTransformer
 
-case class ExecuteMathematicalTransformation()
-    extends TransformerAsOperation[MathematicalTransformation] {
+case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransformer] {
 
-  override val name: String = "Execute Mathematical Transformation"
-  override val id: Id = "012876d9-7a72-47f9-98e4-8ed26db14d6d"
-  override val description: String =
-    "Executes a mathematical transformation on a column of a DataFrame"
-
-  override lazy val tTagTO_1: TypeTag[MathematicalTransformation] = typeTag
+  override val id: Id = "65240399-2987-41bd-ba7e-2944d60a3404"
+  override val name: String = "Create custom transformer"
+  override val description: String = "Create custom transformer"
 }

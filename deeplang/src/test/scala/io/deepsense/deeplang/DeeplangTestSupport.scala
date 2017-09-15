@@ -31,5 +31,6 @@ trait DeeplangTestSupport extends MockitoSugar {
       mock[DataFrameBuilder],
       "testTenantId",
       dOperableCatalog,
+      mock[InnerWorkflowParser],
       fullInference = fullInference)
 }

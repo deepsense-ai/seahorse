@@ -33,6 +33,7 @@ lazy val workflowexecutor       = project dependsOn (
   commons % "test->test",
   deeplang,
   deeplang % "test->test",
+  deeplang % "test->it",
   models,
   workflowjson)
 

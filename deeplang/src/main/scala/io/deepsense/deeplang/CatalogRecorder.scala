@@ -44,6 +44,7 @@ object CatalogRecorder {
     catalog.registerDOperable[MissingValuesHandler]()
     catalog.registerDOperable[SqlExpression]()
     catalog.registerDOperable[TypeConverter]()
+    catalog.registerDOperable[CustomTransformer]()
 
     // wrapped Spark ML estimators & models
     catalog.registerDOperable[LogisticRegression]()
@@ -101,6 +102,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[Transform](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[CreateCustomTransformer](
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[Fit](

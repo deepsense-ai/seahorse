@@ -42,6 +42,15 @@ abstract class Transformer extends DOperable with Params with Logging {
    */
   private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = None
 
+  /**
+    * Can be implemented in a subclass, if access to infer context is required.
+    * For known schema of input DataFrame, infers schema of output DataFrame.
+    * If it is not able to do it for some reasons, it returns None.
+    */
+  private[deeplang] def _transformSchema(
+      schema: StructType,
+      inferContext: InferContext): Option[StructType] = _transformSchema(schema)
+
   def transform: DMethod1To1[Unit, DataFrame, DataFrame] = {
     new DMethod1To1[Unit, DataFrame, DataFrame] {
       override def apply(ctx: ExecutionContext)(p: Unit)(df: DataFrame): DataFrame = {
@@ -52,7 +61,7 @@ abstract class Transformer extends DOperable with Params with Logging {
         ctx: InferContext)(
         p: Unit)(
         k: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
-        val df = DataFrame.forInference(k.single.schema.flatMap(_transformSchema))
+        val df = DataFrame.forInference(k.single.schema.flatMap(s => _transformSchema(s, ctx)))
         (DKnowledge(df), InferenceWarnings.empty)
       }
     }

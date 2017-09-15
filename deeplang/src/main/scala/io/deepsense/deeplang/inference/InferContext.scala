@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.inference
 
+import io.deepsense.deeplang.InnerWorkflowParser
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 
@@ -30,10 +31,5 @@ case class InferContext(
     dataFrameBuilder: DataFrameBuilder,
     tenantId: String,
     dOperableCatalog: DOperableCatalog,
+    innerWorkflowParser: InnerWorkflowParser,
     fullInference: Boolean = false)
-
-object InferContext {
-  // This is a temporary solution. See DS-1924.
-  def forTypeInference(dOperableCatalog: DOperableCatalog): InferContext =
-    InferContext(null, "", dOperableCatalog, fullInference = false)
-}
