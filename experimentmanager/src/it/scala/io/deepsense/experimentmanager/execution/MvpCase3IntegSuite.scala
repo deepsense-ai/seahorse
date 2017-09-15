@@ -1,19 +1,22 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
-package io.deepsense.graphexecutor
+package io.deepsense.experimentmanager.execution
 
 import org.scalatest.Ignore
 
 import io.deepsense.deeplang.doperations._
 import io.deepsense.deeplang.parameters._
 import io.deepsense.graph.{Edge, Endpoint, Node}
+import io.deepsense.graphexecutor.BikesIntegSuiteEntities
 
 // TODO: Currently this test takes too long time to execute (>15min),
 // even for RegressorTrainingIterations = 1
 // Un-ignore this test when performance improvements allow this test to finish after few minutes
 @Ignore
-class MvpCase3IntegSuite extends GraphExecutionIntegSuite {
+class MvpCase3IntegSuite extends ExperimentExecutionSpec {
+
+  override def executionTimeLimitSeconds = 120L
 
   // TODO: Increase constant if performance allows (up to 100)
   private val RegressorTrainingIterations = 1
@@ -27,7 +30,7 @@ class MvpCase3IntegSuite extends GraphExecutionIntegSuite {
 
   override def tenantId = BikesIntegSuiteEntities.bikesTenantId
 
-  override protected def requiredFiles: Map[String, String] = Map(
+  override def requiredFiles: Map[String, String] = Map(
     "/BikesDemandDataFrame" -> BikesIntegSuiteEntities.demandLocation,
     "/BikesWeatherDataFrame" -> BikesIntegSuiteEntities.weatherLocation
   )

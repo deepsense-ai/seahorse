@@ -2,13 +2,16 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.graphexecutor
+package io.deepsense.experimentmanager.execution
 
-import io.deepsense.deeplang.doperations.{LoadDataFrame, DecomposeDatetime, SaveDataFrame}
+import io.deepsense.deeplang.doperations.{DecomposeDatetime, LoadDataFrame, SaveDataFrame}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.graph._
+import io.deepsense.graphexecutor.SimpleGraphExecutionIntegSuiteEntities
 
-class GraphWithTimestampDecomposeIntegSuite extends GraphExecutionIntegSuite {
+class GraphWithTimestampDecomposeIntegSuite extends ExperimentExecutionSpec {
+
+  override def executionTimeLimitSeconds = 120L
 
   override def experimentName = "(LoadDF, DecomposeTimestamp, SaveDF)"
 

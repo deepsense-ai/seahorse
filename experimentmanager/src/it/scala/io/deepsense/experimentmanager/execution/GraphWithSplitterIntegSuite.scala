@@ -2,12 +2,15 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.graphexecutor
+package io.deepsense.experimentmanager.execution
 
-import io.deepsense.deeplang.doperations.{Split, LoadDataFrame, SaveDataFrame}
+import io.deepsense.deeplang.doperations.{LoadDataFrame, SaveDataFrame, Split}
 import io.deepsense.graph.Edge
+import io.deepsense.graphexecutor.SimpleGraphExecutionIntegSuiteEntities
 
-class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
+class GraphWithSplitterIntegSuite extends ExperimentExecutionSpec {
+
+  override def executionTimeLimitSeconds = 120L
 
   override def experimentName = "(LoadDF, Split, 2xSaveDF)"
 
@@ -17,6 +20,7 @@ class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
 
   override def requiredFiles: Map[String, String] =
     Map("/SimpleDataFrame" -> SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
+
 
   import io.deepsense.deeplang.doperations.LoadDataFrame._
   val loadOp = new LoadDataFrame
