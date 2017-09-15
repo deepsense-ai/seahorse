@@ -87,7 +87,7 @@ abstract class Transformer
   }
 
   override def load(ctx: ExecutionContext, path: String): this.type = {
-    loadObjectWithParams(ctx, path).loadTransformer(ctx, path)
+    loadTransformer(ctx, path).loadAndSetParams(ctx, path)
   }
 
   protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {}
@@ -97,7 +97,7 @@ abstract class Transformer
   }
 }
 
-object Transformer {
+object Transformer extends Logging {
 
   private val modelFilePath = "deepsenseModel"
   private val transformerFilePath = "deepsenseTransformer"
@@ -106,6 +106,7 @@ object Transformer {
   private val wrappedModelFilePath = "deepsenseWrappedModel"
 
   def load(ctx: ExecutionContext, path: String): Transformer = {
+    logger.debug("Loading transformer from: {}", path)
     ParamsSerialization.load(ctx, path).asInstanceOf[Transformer]
   }
 

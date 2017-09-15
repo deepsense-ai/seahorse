@@ -22,9 +22,9 @@ import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml.feature.{IndexToString, StringIndexer}
 import org.apache.spark.ml.param.Params
 import org.apache.spark.ml.util._
-import org.apache.spark.ml.{Estimator => SparkEstimator, Pipeline}
+import org.apache.spark.ml.{Pipeline, Estimator => SparkEstimator}
 import org.apache.spark.sql.types.{DataType, StructType}
-import org.apache.spark.{SparkContext, ml, sql}
+import org.apache.spark.{ml, sql}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.serialization.{DefaultMLReader, DefaultMLWriter}
@@ -56,7 +56,6 @@ private [stringindexingwrapper] object StringIndexingPipeline {
 
     val tempLabelsColumnName = UUID.randomUUID().toString
     val predictionColumnType = sparkDataFrame.schema(labelColumnName).dataType
-    val sparkContext: SparkContext = dataFrame.sparkDataFrame.sqlContext.sparkContext
     new Pipeline().setStages(Array(
       stringIndexer,
       new RenameColumnTransformer(labelColumnName, tempLabelsColumnName),

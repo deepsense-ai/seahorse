@@ -31,8 +31,8 @@ trait ParamsSerialization {
     saveParams(ctx, path)
   }
 
-  def loadObjectWithParams(ctx: ExecutionContext, path: String): this.type = {
-    loadAndSetParams(ctx, path)
+  def loadAndSetParams(ctx: ExecutionContext, path: String): this.type = {
+    setParams(loadParams(ctx, path))
   }
 
   protected def saveMetadata(ctx: ExecutionContext, path: String) = {
@@ -46,10 +46,6 @@ trait ParamsSerialization {
   protected def saveParams(ctx: ExecutionContext, path: String): Unit = {
     val paramsFilePath = ParamsSerialization.paramsFilePath(path)
     JsonObjectPersistence.saveJsonToFile(ctx, paramsFilePath, paramValuesToJson)
-  }
-
-  private def loadAndSetParams(ctx: ExecutionContext, path: String): this.type = {
-    setParams(loadParams(ctx, path))
   }
 
   protected def loadParams(ctx: ExecutionContext, path: String): JsValue = {

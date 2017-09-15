@@ -22,12 +22,13 @@ import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTra
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.StringIndexerEstimator
 import io.deepsense.deeplang.doperables.spark.wrappers.models.{MultiColumnStringIndexerModel, SingleColumnStringIndexerModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization._
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
 class StringIndexerEstimatorIntegSpec
-    extends DeeplangIntegTestSupport
-    with TransformerSerialization {
+  extends DeeplangIntegTestSupport
+  with TransformerSerialization {
 
   import DeeplangIntegTestSupport._
 
@@ -132,21 +133,19 @@ class StringIndexerEstimatorIntegSpec
   private def executeTransformation(
       transformer: Transformer,
       inputDataFrame: DataFrame): DataFrame = {
-    // TODO: https://codilime.atlassian.net/browse/DS-3082
-    // There is no serialization here
-    transformer.transform(executionContext)(())(inputDataFrame)
+    transformer.applyTransformationAndSerialization(tempDir, inputDataFrame)
   }
 
-  val rs = Seq(
-    R("a",   "bb",  "a"),
-    R("aa",  "b",   "a"),
-    R("a",   "b",   "a"),
-    R("aaa", "b",   "aa"),
-    R("aa",  "bbb", "aaa"),
-    R("aa",  "b",   "aaa")
+  val testRows = Seq(
+    TestRow("a",   "bb",  "a"),
+    TestRow("aa",  "b",   "a"),
+    TestRow("a",   "b",   "a"),
+    TestRow("aaa", "b",   "aa"),
+    TestRow("aa",  "bbb", "aaa"),
+    TestRow("aa",  "b",   "aaa")
   )
 
-  val inputDataFrame = createDataFrame(rs)
+  val inputDataFrame = createDataFrame(testRows)
 
   val indexesA: Map[String, Double] = Map(
     ("a", 1),
@@ -154,17 +153,17 @@ class StringIndexerEstimatorIntegSpec
     ("aaa", 2))
 
   val outputDataFrame = {
-    val indexedRs = rs.map {
-      case R(a, b, c) =>
-        IndexedR(a, b, c, indexesA(c))
+    val indexedRs = testRows.map {
+      case TestRow(a, b, c) =>
+        IndexedRow(a, b, c, indexesA(c))
     }
     createDataFrame(indexedRs)
   }
 
   val outputDataFrameInPlace = {
-    val indexedRs = rs.map {
-      case R(a, b, c) =>
-        IndexedRInPlace(a, b, indexesA(c))
+    val indexedRs = testRows.map {
+      case TestRow(a, b, c) =>
+        IndexedRowInPlace(a, b, indexesA(c))
     }
     createDataFrame(indexedRs)
   }
@@ -176,9 +175,9 @@ class StringIndexerEstimatorIntegSpec
       ("bbb", 2)
     )
 
-    val indexedRs = rs.map {
-      case R(a, b, c) =>
-        MultiIndexedR(a, b, c, indexesA(a), indexesB(b))
+    val indexedRs = testRows.map {
+      case TestRow(a, b, c) =>
+        MultiIndexedRow(a, b, c, indexesA(a), indexesB(b))
     }
 
     createDataFrame(indexedRs)
@@ -191,9 +190,9 @@ class StringIndexerEstimatorIntegSpec
       ("bbb", 2)
     )
 
-    val indexedRs = rs.map {
-      case R(a, b, c) =>
-        MultiIndexedInPlaceR(indexesA(a), indexesB(b), c)
+    val indexedRs = testRows.map {
+      case TestRow(a, b, c) =>
+        MultiIndexedInPlaceRow(indexesA(a), indexesB(b), c)
     }
 
     createDataFrame(indexedRs)
@@ -201,9 +200,9 @@ class StringIndexerEstimatorIntegSpec
 }
 
 object StringIndexerEstimatorIntegSpec {
-  case class R(a: String, b: String, c: String)
-  case class IndexedR(a: String, b: String, c: String, out: Double)
-  case class IndexedRInPlace(a: String, b: String, c: Double)
-  case class MultiIndexedR(a: String, b: String, c: String, idx_a: Double, idx_b: Double)
-  case class MultiIndexedInPlaceR(a: Double, b: Double, c: String)
+  case class TestRow(a: String, b: String, c: String)
+  case class IndexedRow(a: String, b: String, c: String, out: Double)
+  case class IndexedRowInPlace(a: String, b: String, c: Double)
+  case class MultiIndexedRow(a: String, b: String, c: String, idx_a: Double, idx_b: Double)
+  case class MultiIndexedInPlaceRow(a: Double, b: Double, c: String)
 }
