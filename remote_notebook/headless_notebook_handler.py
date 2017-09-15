@@ -97,9 +97,13 @@ def load_jupyter_server_extension(nb_server_app):
     host_pattern = '.*$'
     base_url = web_app.settings['base_url']
     route_pattern = url_path_join(base_url, '/HeadlessNotebook')
+
     web_app.add_handlers(host_pattern, [(route_pattern, HeadlessNotebookHandler)])
+
+    # regex excludes dot character to prevent '/OfflineNotebook/workflowid/nodeid/custom.css' from being processed
     web_app.add_handlers(host_pattern, [(url_path_join(base_url,
-        '/OfflineNotebook/(?P<seahorse_notebook_path>.+)'), HeadlessNotebookHandler)])
+        '/OfflineNotebook/(?P<seahorse_notebook_path>[^.]+)'), HeadlessNotebookHandler)])
+
     route_pattern_with_workflow_id = url_path_join(base_url, '/HeadlessNotebook/([^/]+)')
     web_app.add_handlers(host_pattern,
                          [(route_pattern_with_workflow_id, web.StaticFileHandler, {"path": "/home/jovyan/work/"})])
