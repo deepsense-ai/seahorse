@@ -49,7 +49,25 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
     },
 
     controller: function ($scope, $sce, $element, $timeout, $uibModal) {
-      this.getNotebookUrl = () => $sce.trustAsResourceUrl(config.notebookHost + '/notebooks/' + $scope.workflow + "/" + $scope.node.id);
+      let getDataFrameSource = () => {
+        let node_id_port_separator = ',';
+        let incomingEdge = $scope.node.getIncomingEdge(0);
+        if (incomingEdge) {
+          let {startPortId, startNodeId} = incomingEdge;
+          return startNodeId + node_id_port_separator + startPortId;
+        }
+        return '';
+      };
+
+      let ids_params_separator = '___';
+      let ids_separator = '/';
+
+      this.getNotebookUrl = () => $sce.trustAsResourceUrl(
+        config.notebookHost + '/notebooks/'
+        + $scope.workflow + ids_separator + $scope.node.id
+        + ids_params_separator
+        + getDataFrameSource());
+
       this.getDocsHost = () => config.docsHost;
 
       this.hasCodeEdit = () => $scope.hasCodeEdit;

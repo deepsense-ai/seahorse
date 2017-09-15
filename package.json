@@ -1,6 +1,6 @@
 {
   "name": "deepsense-attributes-panel",
-  "version": "0.0.72",
+  "version": "0.0.73",
   "main": "attributes-panel.js",
   "description": "Attributes panel",
   "license": "ISC",
@@ -14,6 +14,7 @@
     "bootstrap": "^3.3.4",
     "deepsense-loading-spinner": "^1.0.2",
     "deepsense-node-parameters": "0.0.26",
+    "deepsense-graph-model": "0.0.33",
     "font-awesome": "^4.3.0",
     "jquery": "^2.1.4",
     "lodash": "^3.9.3",
