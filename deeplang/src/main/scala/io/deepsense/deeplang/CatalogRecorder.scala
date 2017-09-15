@@ -62,6 +62,8 @@ object CatalogRecorder {
     catalog.registerDOperable[SingleStringIndexerModel]()
     catalog.registerDOperable[Word2Vec]()
     catalog.registerDOperable[Word2VecModel]()
+    catalog.registerDOperable[CountVectorizer]()
+    catalog.registerDOperable[CountVectorizerModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -152,6 +154,9 @@ object CatalogRecorder {
       DOperationCategories.ML)
 
     catalog.registerDOperation[CreateWord2Vec](
+      DOperationCategories.ML)
+
+    catalog.registerDOperation[CreateCountVectorizer](
       DOperationCategories.ML)
 
     // operations generated from Spark transformers
