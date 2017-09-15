@@ -10,7 +10,7 @@ const SUPPORTED_BROWSERS = {
   },
   Chrome :{
     fullName: 'Google Chrome',
-    minVersion: 50
+    minVersion: 51
   }
 };
 
