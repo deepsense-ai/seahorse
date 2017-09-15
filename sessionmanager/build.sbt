@@ -22,6 +22,7 @@ val weSparkVersion = DeepsenseUniversalSettingsPlugin.weSparkVersion
 
 unmanagedResourceDirectories in Runtime += CommonSettingsPlugin.globalResources
 unmanagedResourceDirectories in Compile += CommonSettingsPlugin.globalResources
+unmanagedResourceDirectories in Test += CommonSettingsPlugin.globalResources
 
 weJar := {
   val jar =

@@ -8,6 +8,7 @@ import scala.concurrent.{Future, Promise}
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.mockito.Matchers
 import spray.http.{HttpRequest, StatusCodes}
 import spray.httpx.SprayJsonSupport
 import spray.json._
@@ -19,6 +20,7 @@ import io.deepsense.commons.models.{ClusterDetails, Id}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
+import io.deepsense.sessionmanager.service.SessionService.FutureOpt
 import io.deepsense.sessionmanager.service._
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 
@@ -63,8 +65,8 @@ class SessionsApiSpec
       )
 
       val service = mock[SessionService]
-      when(service.listSessions())
-        .thenReturn(Future.successful(ListSessionsResponse(sessions)))
+      when(service.listSessions(someUserId))
+        .thenReturn(Future.successful(sessions))
 
       Get(s"/$apiPrefix").withUserId(someUserId) ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
@@ -99,7 +101,7 @@ class SessionsApiSpec
         val sessionStatus: Status.Value = Status.Error
         val s = Session(workflowId, sessionStatus, cluster)
         val service = mock[SessionService]
-        when(service.getSession(workflowId)).thenReturn(Future.successful(Some(s)))
+        when(service.getSession(someUserId, workflowId)).thenReturn(futureOpt(s))
 
         Get(s"/$apiPrefix/$workflowId").withUserId(someUserId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.OK
@@ -112,7 +114,7 @@ class SessionsApiSpec
     "return NotFound" when {
       "session does not exist" in {
         val service = mock[SessionService]
-        when(service.getSession(any())).thenReturn(Future.successful(None))
+        when(service.getSession(Matchers.eq(someUserId), any())).thenReturn(futureNone[Session])
 
         Get(s"/$apiPrefix/${Id.randomId}").withUserId(someUserId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.NotFound
@@ -173,11 +175,11 @@ class SessionsApiSpec
     "pass killing request to the service" in {
       val workflowId: Id = Id.randomId
       val service = mock[SessionService]
-      when(service.killSession(workflowId)).thenReturn(Future.successful(()))
+      when(service.killSession(someUserId, workflowId)).thenReturn(futureOpt(()))
 
       Delete(s"/$apiPrefix/$workflowId").withUserId(someUserId)  ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
-        verify(service, times(1)).killSession(workflowId)
+        verify(service, times(1)).killSession(someUserId, workflowId)
       }
     }
     "return ServiceUnavailable" when {
@@ -190,6 +192,8 @@ class SessionsApiSpec
     }
   }
 
+  private def futureOpt[A](a: A): FutureOpt[A] = new FutureOpt(Future(Some(a)))
+  private def futureNone[A]: FutureOpt[A] = new FutureOpt(Future(None))
 
   private lazy val someSessionConfig = SessionConfig(
     workflowId = someWorkflowId,

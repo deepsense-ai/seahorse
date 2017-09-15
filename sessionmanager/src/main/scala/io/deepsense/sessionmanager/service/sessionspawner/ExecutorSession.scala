@@ -16,7 +16,7 @@ case class ExecutorSession(
     sessionConfig: SessionConfig,
     clusterDetails: ClusterDetails,
     private val sparkAppHandleOpt: Option[SparkAppHandle],
-    state: StateInferencer,
+    private val state: StateInferencer,
     private val outputInterceptorHandle: OutputInterceptorHandle) {
 
   def sessionForApi(): Session = {
@@ -31,7 +31,7 @@ case class ExecutorSession(
     )
   }
 
-  def handleHeartbeat() = this.copy(
+  def handleHeartbeat(): ExecutorSession = this.copy(
     state = state.handleHeartbeat(Instant.now())
   )
 

@@ -5,6 +5,7 @@
 package io.deepsense.sessionmanager.rest
 
 import scala.concurrent.{ExecutionContext, Future}
+import scalaz.std.scalaFuture._
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
@@ -18,8 +19,9 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{Cors, RestComponent}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.rest.requests.CreateSession
+import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
-import io.deepsense.sessionmanager.service.{Session, SessionService}
+import io.deepsense.sessionmanager.service.{Session, SessionService, UnauthorizedOperationException}
 
 class SessionsApi @Inject()(
   @Named("session-api.prefix") private val sessionsApiPrefix: String,
@@ -55,23 +57,25 @@ class SessionsApi @Inject()(
                   pathPrefix("status") {
                     pathEndOrSingleSlash {
                       get {
-                        complete(sessionService.nodeStatusesQuery(sessionId))
+                        complete {
+                          sessionService.nodeStatusesQuery(userId, sessionId).run
+                        }
                       }}} ~
                     pathEndOrSingleSlash {
                       get {
                         complete {
-                          val session = sessionService.getSession(sessionId)
-                          session.map(_.map(Envelope(_)))
+                          val session = sessionService.getSession(userId, sessionId)
+                          session.map(Envelope[Session]).run
                         }
                       } ~
                         post {
-                          onSuccess(sessionService.launchSession(sessionId)) { _ =>
-                            complete(StatusCodes.OK)
+                          complete {
+                            sessionService.launchSession(userId, sessionId).run.map { _ => StatusCodes.OK }
                           }
                         } ~
                         delete {
-                          onSuccess(sessionService.killSession(sessionId)) { _ =>
-                            complete(StatusCodes.OK)
+                          complete {
+                            sessionService.killSession(userId, sessionId).run.map { _ => StatusCodes.OK }
                           }
                         }
                     }
@@ -87,7 +91,7 @@ class SessionsApi @Inject()(
                       }
                     } ~
                       get {
-                        complete(sessionService.listSessions())
+                        complete(sessionService.listSessions(userId).map(ListSessionsResponse))
                       }
                   }
               }
@@ -117,6 +121,10 @@ class SessionsApi @Inject()(
     case t: IllegalArgumentException =>
       complete {
         (StatusCodes.BadRequest, t.getMessage)
+      }
+    case t: UnauthorizedOperationException =>
+      complete {
+        (StatusCodes.Forbidden, t.getMessage)
       }
   }
 

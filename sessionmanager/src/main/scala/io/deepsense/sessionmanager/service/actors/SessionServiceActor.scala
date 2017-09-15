@@ -12,7 +12,6 @@ import scala.util.{Failure, Success, Try}
 import akka.actor.{Actor, ActorRef}
 import akka.pattern.pipe
 import com.google.inject.Inject
-import com.rabbitmq.client.Channel
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
@@ -34,7 +33,7 @@ class SessionServiceActor @Inject()(
   implicit val ec: ExecutionContext = context.system.dispatcher
 
   // NOTE! No synchronising is needed because all mutations are in `receive` method call scope.
-  // When modified from outside `receive` (possible throught futures!) scope add synchronization
+  // When modified from outside `receive` (possible through futures!) scope add synchronization
   val sessionStateByWorkflowId = mutable.Map.empty[Id, ExecutorSession]
   val workflowExecutionReportSubscribers = mutable.Map.empty[Id, (ActorRef, String, ActorRef)]
 
@@ -120,12 +119,9 @@ class SessionServiceActor @Inject()(
     }
   }
 
-  private def handleGet(id: Id): Option[Session] =
-    sessionStateByWorkflowId.get(id).map(_.sessionForApi())
+  private def handleGet(id: Id): Option[ExecutorSession] = sessionStateByWorkflowId.get(id)
 
-  private def handleList(): List[Session] = {
-    sessionStateByWorkflowId.values.map(_.sessionForApi())
-  }.toList
+  private def handleList(): List[ExecutorSession] = sessionStateByWorkflowId.values.toList
 
   private def handleNodeStatusRequest(id: Id, whoAsks: ActorRef) = {
     if (!sessionStateByWorkflowId.contains(id)) {
