@@ -14,6 +14,11 @@ function AppRun($rootScope, $state, PageService) {
     dataIsLoaded: undefined
   };
 
+  $rootScope.transitToErrorState = (errorMessage) => {
+    $rootScope.stateData.errorMessage = errorMessage;
+    $state.go('lab.errorState');
+  };
+
   $rootScope.$on('$stateChangeStart', (event, toState) => {
     _.assign($rootScope.stateData, {
       dataIsLoaded: undefined,

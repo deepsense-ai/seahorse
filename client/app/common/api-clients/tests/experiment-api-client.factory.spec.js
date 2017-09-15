@@ -7,8 +7,8 @@
 
 
 describe('ExperimentApiClient', () => {
-  var module,
-      ExperimentApiClient;
+  let module;
+  let ExperimentApiClient;
 
   beforeEach(() => {
     module = angular.module('test', []);
@@ -480,6 +480,18 @@ describe('ExperimentApiClient', () => {
       $httpBackend.flush();
     });
 
+  });
+
+  describe('should have createExperiment method', () => {
+    // TODO
+  });
+
+  describe('should have modifyExperiment method', () => {
+    // TODO
+  });
+
+  describe('should have deleteExperiment method', () => {
+    // TODO
   });
 
 });

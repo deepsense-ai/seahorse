@@ -3,7 +3,7 @@
  */
 'use strict';
 
-function StatusBar() {
+function ExperimentEditorStatusBar() {
   return {
     restrict: 'E',
     templateUrl: 'app/experiments/experiment-editor/status-bar/status-bar.html',
@@ -30,5 +30,5 @@ function StatusBar() {
 }
 
 exports.inject = function (module) {
-  module.directive('statusBar', StatusBar);
+  module.directive('experimentEditorStatusBar', ExperimentEditorStatusBar);
 };

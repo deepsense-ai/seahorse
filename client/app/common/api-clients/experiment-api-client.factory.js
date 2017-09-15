@@ -99,6 +99,70 @@ function ExperimentApiClientFactory(BaseApiClient) {
     );
   };
 
+  /**
+   * Creates a new experiment.
+   *
+   * @param {object} params
+   *
+   * @return {Promise}
+   */
+  ExperimentApiClient.prototype.createExperiment = function(params) {
+    let data = {
+      'experiment': {
+        'name': params.name,
+        'description': params.description,
+        'graph': {
+          'nodes': [],
+          'edges': []
+        }
+      }
+    };
+
+    return this.makeRequest(
+      this.METHOD_POST,
+      this.API_URL + PATH_EXPERIMENTS,
+      data
+    );
+  };
+
+  /**
+   * Modifies an existing experiment.
+   *
+   * @param {string} id
+   * @param {object} params
+   *
+   * @return {Promise}
+   */
+  ExperimentApiClient.prototype.modifyExperiment = function(id, params) {
+    let data = {
+      'experiment': {
+        'name': params.name,
+        'description': params.description,
+        'graph': params.graph
+      }
+    };
+
+    return this.makeRequest(
+      this.METHOD_PUT,
+      this.API_URL + PATH_EXPERIMENTS + '/' + id,
+      data
+    );
+  };
+
+  /**
+   * Deletes an existing experiment.
+   *
+   * @param {string} id
+   *
+   * @return {Promise}
+   */
+  ExperimentApiClient.prototype.deleteExperiment = function(id) {
+    return this.makeRequest(
+      this.METHOD_DELETE,
+      this.API_URL + PATH_EXPERIMENTS + '/' + id
+    );
+  };
+
   return new ExperimentApiClient();
 }
 

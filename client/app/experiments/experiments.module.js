@@ -13,7 +13,7 @@ require('./experiments.config.js').inject(experiments);
 require('./experiment.controller.js').inject(experiments);
 require('./experiment.service.js').inject(experiments);
 
-require('./experiment-browser/experiment-browser.js').inject(experiments);
+require('./experiment-browser/experiment-browser.module.js').inject(experiments);
 
 require('./utils/uuid-generator.js').inject(experiments);
 

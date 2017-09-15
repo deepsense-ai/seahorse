@@ -1,0 +1,18 @@
+<div class="inmodal">
+  <div class="modal-header">
+    <i class="fa fa fa-remove modal-icon"></i>
+    <h4 class="modal-title">Delete experiment</h4>
+  </div>
+
+  <div class="modal-body">
+    <deepsense-loading-spinner-sm ng-if="deleteExprModal.loading"></deepsense-loading-spinner-sm>
+    <h2 ng-if="!deleteExprModal.loading" class="lead">
+      Are you sure?
+    </h2>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" ng-click="deleteExprModal.cancel()">Close</button>
+    <button type="button" class="btn btn-primary" ng-click="deleteExprModal.delete()">Delete</button>
+  </div>
+</div>
