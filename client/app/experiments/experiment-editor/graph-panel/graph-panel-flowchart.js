@@ -112,6 +112,7 @@ function FlowChartBoxController($scope, $element, $window,
 
   $scope.$on('ZOOM.ZOOM_PERFORMED', (event, data) => {
     GraphPanelRendererService.setZoom(data.zoomRatio);
+    internal.closeContextMenu();
   });
 
   $scope.$on('Model.DEPLOY', (event, data) => {
