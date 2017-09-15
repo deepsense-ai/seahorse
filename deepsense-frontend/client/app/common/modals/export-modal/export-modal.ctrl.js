@@ -5,9 +5,20 @@ function ExportModalController($uibModalInstance, $stateParams, WorkflowsApiClie
 
   const vm = this;
 
-  vm.downloadLink = WorkflowsApiClient.getDownloadWorkflowMethodUrl($stateParams.id);
-
   vm.close = close;
+  vm.download = download;
+
+  function download() {
+    /**
+     * Iframe is needed because Firefox on download link click closes all WebSocket connection.
+     * By using iframe, we remove the bug of "Reconnecting" message appearing while exporting workflow
+     */
+    $('body')
+      .append(angular.element(`
+          <iframe style="display: none" src="${WorkflowsApiClient.getDownloadWorkflowMethodUrl($stateParams.id)}"></iframe>
+        `));
+    close();
+  }
 
   function close() {
     $uibModalInstance.dismiss();
