@@ -44,6 +44,13 @@ function OperationsCategory(RecursionHelper) {
   return {
     templateUrl: "catalogue-panel-operations-category/catalogue-panel-operations-category.html",
     replace: "true",
+    scope: {
+      search: '=',
+      category: '='
+    },
+    controllerAs: 'ocCtrl',
+    controller: function() {
+    },
     compile: function(element, scope) {
       // Use the compile function from the RecursionHelper,
       // And return the linking function(s) which it returns

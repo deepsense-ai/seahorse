@@ -3,8 +3,20 @@ function OperationCatalogue () {
     scope: {
       catalogCollection: '='
     },
-    templateUrl: "catalogue-panel/catalogue-panel.html",
-    replace: "true"
+    templateUrl: 'catalogue-panel/catalogue-panel.html',
+    replace: 'true',
+    controllerAs: 'cpCtrl',
+    controller: function() {
+
+      var cpCtrl = this;
+      cpCtrl.search = '';
+
+      cpCtrl.clearSearch = function() {
+        cpCtrl.search = '';
+      }
+
+
+    }
   };
 }
 

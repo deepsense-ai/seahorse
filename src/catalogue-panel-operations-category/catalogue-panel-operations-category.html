@@ -4,14 +4,19 @@
       <span class="btn btn-info btn-xs pull-left">
         <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i>
       </span>
-      <span class="text">{{::category.name}}</span>
+      <span class="text">{{category.name}}</span>
     </span>
   <ul ng-hide="category.collapsed">
     <operations-category
-        ng-repeat="category in ::category.catalog"></operations-category>
-    <operation-item ng-repeat="item in ::category.items"
-                    id="{{::item.id}}"
-                    icon="{{::category.icon}}"
-                    name="{{::item.name}}"></operation-item>
+        ng-repeat="category in category.catalog"
+        category="category"
+        search="search"
+    >
+    </operations-category>
+    <operation-item ng-repeat="item in category.items | filter:search"
+                    id="{{item.id}}"
+                    icon="{{category.icon}}"
+                    name="{{item.name}}">
+    </operation-item>
   </ul>
 </li>

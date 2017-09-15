@@ -17,7 +17,7 @@ function OperationItemView() {
       scope.$on('ConnectionHinter.DISABLE_HIGHLIGHTINGS', () => {
         scope.highlight = false;
         scope.$digest();
-      })
+      });
     }
   };
 }
