@@ -99,7 +99,6 @@ class MultiSelection {
           });
         });
         workflowNodes = null;
-
         internal.$document.off('mousemove', that.paint);
         internal.$document.off('mouseup', that.endPainting);
       };
@@ -155,15 +154,11 @@ class MultiSelection {
       }, 50, true);
 
       that.paint = (event) => {
-        let currentPoint;
-
-        currentPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
-
+        let currentPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
         var diff = {
           x: currentPoint.x - startPoint.x,
           y: currentPoint.y - startPoint.y
         };
-
         var selectionElementDimensions = {
           width: diff.x,
           height: diff.y
@@ -186,23 +181,25 @@ class MultiSelection {
         that.viewFix();
       };
 
-      that.addToSelection = (nodes) => {
-        let DOMNodes = _.map(nodes, (nodeId) => {
+      that.addToSelection = (nodeIDs) => {
+        let DOMNodes = _.map(nodeIDs, (nodeId) => {
           let DOMNode = that.findDOMNodeById(nodeId);
           DOMNode.classList.add('flowchart-node--active');
           jsPlumb.addToDragSelection(DOMNode);
           return DOMNode;
         });
+        internal.MultiSelectionService.addNodeIdsToSelection(nodeIDs);
         inSelection = _.union(inSelection, DOMNodes);
       };
 
-      that.removeFromSelection = (nodes) => {
-        let DOMNodes = _.map(nodes, (nodeId) => {
+      that.removeFromSelection = (nodeIDs) => {
+        let DOMNodes = _.map(nodeIDs, (nodeId) => {
           let DOMNode = that.findDOMNodeById(nodeId);
           DOMNode.classList.remove('flowchart-node--active');
           jsPlumb.removeFromDragSelection(DOMNode);
           return DOMNode;
         });
+        internal.MultiSelectionService.removeNodeIdsFromSelection(nodeIDs);
         inSelection = _.difference(inSelection, DOMNodes);
       };
 
@@ -210,6 +207,7 @@ class MultiSelection {
         _.each(inSelection, (DOMNode) => {
           DOMNode.classList.remove('flowchart-node--active');
         });
+        internal.MultiSelectionService.clearSelection();
         jsPlumb.clearDragSelection();
         inSelection = [];
       };
@@ -231,7 +229,6 @@ class MultiSelection {
       };
 
       that.graphNodeMouseDownHandler = (event, data) => {
-
         if (data.originalEvent.ctrlKey) {
           if (internal.MultiSelectionService.isAlreadyAddedToSelection(data.selectedNode)) {
             internal.MultiSelectionService.removeNodeIdsFromSelection([data.selectedNode.id]);

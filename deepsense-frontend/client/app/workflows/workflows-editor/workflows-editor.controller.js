@@ -141,7 +141,7 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
-      this.unselectNode();
+      this.selectedNode = null;
       this.$scope.$digest();
     });
 
@@ -227,11 +227,10 @@ class WorkflowsEditorController {
         }
         let nodeIdsToBeRemoved = _.difference(selectedNodeIds, sinkOrSourceNodeIds);
         this.getWorkflow().removeNodes(nodeIdsToBeRemoved);
-        this.GraphPanelRendererService.removeNodes(nodeIdsToBeRemoved);
         this.MultiSelectionService.clearSelection();
         this.unselectNode();
-        this.$scope.$apply();
         this.selectedPortObject = null;
+        this.GraphPanelRendererService.removeNodes(nodeIdsToBeRemoved);
       }),
 
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {

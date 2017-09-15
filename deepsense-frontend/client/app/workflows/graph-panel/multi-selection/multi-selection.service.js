@@ -5,8 +5,6 @@ class MultiSelectionService {
   /* @ngInject */
   constructor($rootScope) {
     this.$rootScope = $rootScope;
-
-    window.multi = this;
   }
 
   addNodeIdsToSelection(nodeIds) {
@@ -18,7 +16,6 @@ class MultiSelectionService {
   }
 
   clearSelection() {
-    this.$rootScope.$broadcast('MultiSelection.CLEAR_ALL');
     selectedNodes = [];
   }
 
