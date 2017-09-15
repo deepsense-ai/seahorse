@@ -25,8 +25,7 @@ services:
   frontend:
     image: $DOCKER_REPOSITORY/deepsense-frontend:master-$DOCKER_TAG
     environment:
-      - "API_PORT=8080"
-      - "SESSION_API_PORT=8080"
+      - "SESSION_POLLING_INTERVAL=1000"
       - "MQ_USER=yNNp7VJS"
       - "MQ_PASS=1ElYfGNW"
     links:
