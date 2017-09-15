@@ -1,7 +1,7 @@
 boto==2.38.0
 docutils==0.12
 hdfs==2.0.1
+robotframework-databaselibrary==0.6
 robotframework==2.8.7
 requests==2.2.1
-robotframework-databaselibrary==0.6
 PyMySQL==0.6
