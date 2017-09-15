@@ -1,0 +1,15 @@
+{
+  "display_name": "SparkR",
+  "language": "R",
+  "argv": [
+    "/usr/bin/python",
+    "-m",
+    "forwarding_kernel",
+    "-f",
+    "{connection_file}"
+  ],
+  "env": {
+    "PYTHONPATH": "/usr/local/share/jupyter/kernels/pyspark",
+    "KERNEL_NAME": "RExecutingKernel"
+  }
+}

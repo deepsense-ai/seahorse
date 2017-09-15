@@ -3,12 +3,7 @@
 # Copyright (c) 2016, CodiLime, Inc.
 #
 # Installs Notebooks dependencies.
-# Takes parameters (all parameters are required):
-# --working-dir
-# --mq-host
-# --mq-port
-# --workflow-id
-# --session-id
+# Takes parameters (all parameters are required).
 
 while [[ $# > 1 ]]
 do
@@ -33,6 +28,14 @@ case $key in
   ;;
   --gateway-port)
   GATEWAY_PORT="$2"
+  shift # past argument
+  ;;
+  --r-backend-host)
+  R_BACKEND_HOST="$2"
+  shift # past argument
+  ;;
+  --r-backend-port)
+  R_BACKEND_PORT="$2"
   shift # past argument
   ;;
   -h|--mq-host)
@@ -73,6 +76,8 @@ if [ -z "$PYTHON_BINARY" ]; then echo "Parameter --python-binary is required"; e
 if [ -z "$ADDITIONAL_PYTHON_PATH" ]; then echo "Parameter --additional-python-path is required"; exit -1; fi
 if [ -z "$GATEWAY_HOST" ]; then echo "Parameter --gateway-host is required"; exit -1; fi
 if [ -z "$GATEWAY_PORT" ]; then echo "Parameter --gateway-port is required"; exit -1; fi
+if [ -z "$R_BACKEND_HOST" ]; then echo "Parameter --r-backend-host is required"; exit -1; fi
+if [ -z "$R_BACKEND_PORT" ]; then echo "Parameter --r-backend-port is required"; exit -1; fi
 if [ -z "$MQ_HOST" ];      then echo "Parameter --mq-host is required"; exit -1; fi
 if [ -z "$MQ_PORT" ];      then echo "Parameter --mq-port is required"; exit -1; fi
 if [ -z "$MQ_USER" ];      then echo "Parameter --mq-user is required"; exit -1; fi
@@ -96,12 +101,14 @@ pip install --root $LOCAL_PATH pika-0.10.0.tar.gz
 export PYTHONPATH="$LOCAL_PATH/$PYTHON_DIRECTORY/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
 echo "PYTHONPATH=$PYTHONPATH"
 
-sed -i s#PYTHON_BINARY#"$PYTHON_BINARY"# executing_kernel/kernel.json
+sed -i s#PYTHON_BINARY#"$PYTHON_BINARY"# executing_kernels/python/kernel.json
 
 echo "start executing_kernel_manager"
-exec $PYTHON_BINARY executing_kernel/executing_kernel_manager.py \
+exec $PYTHON_BINARY executing_kernels/executing_kernel_manager.py \
   --gateway-host "$GATEWAY_HOST" \
   --gateway-port "$GATEWAY_PORT" \
+  --r-backend-host "$R_BACKEND_HOST" \
+  --r-backend-port "$R_BACKEND_PORT" \
   --mq-host "$MQ_HOST" \
   --mq-port "$MQ_PORT" \
   --mq-user "$MQ_USER" \

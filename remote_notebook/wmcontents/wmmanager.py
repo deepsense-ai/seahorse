@@ -8,6 +8,7 @@ from datetime import datetime
 from .wmcheckpoints import WMCheckpoints
 import re
 import base64
+import json
 
 try:
     from urllib.request import urlopen, Request
@@ -22,32 +23,48 @@ DUMMY_CREATED_DATE = datetime.fromtimestamp(0)
 
 class WMContentsManager(ContentsManager):
 
-    class Path(object):
+    KERNEL_TYPES = {
+        'r': {
+            'display_name': 'SparkR',
+            'name': 'forwarding_kernel_r',
+            'version': '3.2.3'
+        },
+        'python': {
+            'display_name': 'PySpark',
+            'name': 'forwarding_kernel_py',
+            'version': '2.7.10'
+        }
+    }
+
+    class NotebookInfo(object):
         class DeserializationFailed(Exception):
             def __init__(self, path):
-                super(WMContentsManager.Path.DeserializationFailed, self).__init__(
+                super(WMContentsManager.NotebookInfo.DeserializationFailed, self).__init__(
                         "Deserialization of Path '{}' failed".format(path))
 
-        IDS_PARAMS_SEPARATOR = '___'
-
-        def __init__(self, workflow_id, node_id, params):
+        def __init__(self, workflow_id, node_id, language, params):
             self.workflow_id = workflow_id
             self.node_id = node_id
+            self.language = language
             self.params = params
 
         def serialize(self):
-            return self.workflow_id + "/" + self.node_id + self.IDS_PARAMS_SEPARATOR + self.params
+            return '/'.join([self.workflow_id, self.node_id, self.params])
 
         @classmethod
         def deserialize(cls, str_path):
             assert isinstance(str_path, str)
 
-            uuid_pattern = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-            m = re.match(".*({})/({}){}(.*)".format(uuid_pattern, uuid_pattern, cls.IDS_PARAMS_SEPARATOR), str_path)
-            if m is None or len(m.groups()) < 3:
-                raise cls.DeserializationFailed(str_path)
+            if str_path.startswith('/'):
+                str_path = str_path[1:]
 
-            return cls(*m.group(1, 2, 3))
+            try:
+                workflow_id, node_id, params = str_path.split('/')
+                deserialized_params = json.loads(base64.decodestring(params.encode()).decode('utf-8'))
+                return cls(workflow_id, node_id,
+                           language=deserialized_params['language'], params=params)
+            except ValueError:
+                raise cls.DeserializationFailed(str_path)
 
     workflow_manager_url = Unicode(
         default_value="http://localhost:9080",
@@ -70,27 +87,6 @@ class WMContentsManager(ContentsManager):
         help="Workflow Manager auth pass",
     )
 
-    kernel_name = Unicode(
-        default_value="pyspark",
-        allow_none=False,
-        config=True,
-        help="Default kernel name",
-    )
-
-    kernel_display_name = Unicode(
-        default_value="Python (Spark)",
-        allow_none=False,
-        config=True,
-        help="Default kernel display name",
-    )
-
-    kernel_python_version = Unicode(
-        default_value="2.7.10",
-        allow_none=False,
-        config=True,
-        help="Default kernel python version",
-    )
-
     def _checkpoints_class_default(self):
         return WMCheckpoints
 
@@ -103,7 +99,7 @@ class WMContentsManager(ContentsManager):
         username = self.workflow_manager_user
         password = self.workflow_manager_pass
         credentials = '%s:%s' % (username, password)
-        base64string = base64.encodestring(bytes(credentials, "utf-8")).decode("utf-8").replace('\n', '')
+        base64string = base64.encodestring(credentials.encode()).decode('utf-8').replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
         req.add_header("X-Seahorse-UserId", "notebook")
         req.add_header("X-Seahorse-UserName", "notebook")
@@ -122,18 +118,19 @@ class WMContentsManager(ContentsManager):
             "mimetype": None,
         }
 
-    def _create_notebook(self):
+    def _create_notebook(self, notebook_info):
+
         return {
             "cells": [],
             "metadata": {
                 "kernelspec": {
-                    "display_name": self.kernel_display_name,
-                    "language": "python",
-                    "name": self.kernel_name
+                    "display_name": self.KERNEL_TYPES[notebook_info.language]['display_name'],
+                    "name": self.KERNEL_TYPES[notebook_info.language]['name'],
+                    "language": notebook_info.language
                 },
                 "language_info": {
-                    "name": "python",
-                    "version": self.kernel_python_version
+                    "name": notebook_info.language,
+                    "version": self.KERNEL_TYPES[notebook_info.language]['version']
                 }
             },
             "nbformat": NBFORMAT_VERSION,
@@ -157,23 +154,23 @@ class WMContentsManager(ContentsManager):
     def get(self, path, content=True, type=None, format=None):
         assert isinstance(path, str)
         try:
-            path = self.Path.deserialize(path)
-        except self.Path.DeserializationFailed as e:
+            notebook_info = self.NotebookInfo.deserialize(path)
+        except self.NotebookInfo.DeserializationFailed as e:
             raise web.HTTPError(400, e.message)
 
         try:
-            response = urlopen(self._create_request(self._get_wm_notebook_url(path)))
+            response = urlopen(self._create_request(self._get_wm_notebook_url(notebook_info)))
             if response.getcode() == 200:
                 content_json = response.read().decode("utf-8")
-                return self.create_model(content_json if content else None, path)
+                return self.create_model(content_json if content else None, notebook_info)
             else:
                 raise web.HTTPError(response.status, response.msg)
         except web.HTTPError:
             raise
         except HTTPError as e:
             if e.code == 404:
-                content_json = writes(from_dict(self._create_notebook()), NBFORMAT_VERSION)
-                return self._save_notebook(path, content_json, content)
+                content_json = writes(from_dict(self._create_notebook(notebook_info)), NBFORMAT_VERSION)
+                return self._save_notebook(notebook_info, content_json, content)
             else:
                 raise web.HTTPError(e.code, e.msg)
         except Exception as e:
@@ -182,8 +179,8 @@ class WMContentsManager(ContentsManager):
     def save(self, model, path):
         assert isinstance(path, str)
         try:
-            path = self.Path.deserialize(path)
-        except self.Path.DeserializationFailed as e:
+            notebook_info = self.NotebookInfo.deserialize(path)
+        except self.NotebookInfo.DeserializationFailed as e:
             raise web.HTTPError(400, e.message)
 
         if model['type'] != "notebook":
@@ -191,7 +188,7 @@ class WMContentsManager(ContentsManager):
             return model
 
         content_json = writes(from_dict(model['content']), NBFORMAT_VERSION)
-        return self._save_notebook(path, content_json, False)
+        return self._save_notebook(notebook_info, content_json, False)
 
     def delete_file(self, path):
         raise web.HTTPError(400, "Unsupported: delete_file {}".format(path))

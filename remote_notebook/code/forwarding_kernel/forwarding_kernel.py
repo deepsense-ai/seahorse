@@ -24,6 +24,7 @@ RABBIT_MQ_ADDRESS = None
 RABBIT_MQ_CREDENTIALS = None
 HEARTBEAT_INTERVAL = None
 MISSED_HEARTBEAT_LIMIT = None
+KERNEL_NAME = None
 
 
 class ForwardingKernel(IPythonKernel, Logging):
@@ -131,6 +132,7 @@ class ForwardingKernel(IPythonKernel, Logging):
         self._rabbit_management_sender_client.send({
             'type': 'start_kernel',
             'kernel_id': self._kernel_id,
+            'kernel_name': KERNEL_NAME,
             'signature_key': self._signature_key,
             'node_id': self._node_id,
             'port_number': self._port_number
@@ -193,6 +195,7 @@ if __name__ == '__main__':
     RABBIT_MQ_CREDENTIALS = (os.environ['MQ_USER'], os.environ['MQ_PASS'])
     MISSED_HEARTBEAT_LIMIT = int(os.environ['MISSED_HEARTBEAT_LIMIT'])
     HEARTBEAT_INTERVAL = float(os.environ['HEARTBEAT_INTERVAL'])
+    KERNEL_NAME = os.environ['KERNEL_NAME']
 
     app = ForwardingKernelApp.instance()
     app.initialize()

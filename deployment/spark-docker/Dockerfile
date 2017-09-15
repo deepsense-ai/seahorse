@@ -2,10 +2,16 @@
 FROM ubuntu:16.04
 
 # Install packages
+# libcurl4-openssl-dev and libssl-dev are needed for IRkernel dependencies
 RUN apt-get update && \
-    apt-get install -y openjdk-8-jre wget curl bzip2 openssh-server openssh-client libsm6 && \
+    apt-get install -y openjdk-8-jre wget curl bzip2 openssh-server openssh-client libsm6 \
+    r-base libcurl4-openssl-dev  libssl-dev && \
     apt-get clean && \
+    apt-get autoremove && \
     rm -rf /var/lib/apt/lists/*
+
+RUN R --slave -e  "install.packages(c('repr', 'IRdisplay', 'pbdZMQ', 'devtools'), repos='http://cran.uni-muenster.de/')"
+RUN R --slave -e  "devtools::install_github('IRkernel/IRkernel', ref='66e4fdda2e3cba3763bb45ac8b649dc73a3fa4bc')"
 
 # Setup passwordless SSH
 RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
@@ -21,17 +27,19 @@ RUN wget -q -O - \
   | gunzip \
   | tar x -C /tmp/ \
   && mv /tmp/$SPARK_PACKAGE $SPARK_HOME \
-  && rm -rf $SPARK_HOME/examples $SPARK_HOME/ec2
+  && rm -rf $SPARK_HOME/examples $SPARK_HOME/ec2 \
+  && rm -rf $SPARK_HOME/lib/spark-examples-1.6.1-hadoop2.6.0.jar
 
 # Install conda
 RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \
     https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh && \
     bash /tmp/Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/conda && \
-    rm /tmp/Miniconda2-latest-Linux-x86_64.sh
-
+    rm /tmp/Miniconda2-latest-Linux-x86_64.sh && \
 # Install python packages
-RUN /opt/conda/bin/conda install --yes notebook terminado \
-    'ipython=4.0*' 'ipywidgets=4.0*' 'pandas=0.16*' 'matplotlib=1.4*' 'scipy=0.15*' 'seaborn=0.6*' 'scikit-learn=0.16*' pyzmq
+    /opt/conda/bin/conda install --yes \
+    'ipykernel=4.3.1' 'jupyter_client=4.3.0' 'pandas=0.16*' 'matplotlib=1.4*' \
+    'scipy=0.15*' 'seaborn=0.6*' 'scikit-learn=0.16*' && \
+    /opt/conda/bin/conda clean --all --yes
 
 COPY startup.sh /opt/
 RUN chown root.root /opt/startup.sh && chmod 700 /opt/startup.sh

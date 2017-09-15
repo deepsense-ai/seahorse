@@ -13,10 +13,12 @@ from utils import Logging
 
 
 class ExecutingKernelClientSettings:
-    def __init__(self, gateway_address, rabbit_mq_address, rabbit_mq_credentials,
+    def __init__(self, gateway_address, r_backend_address,
+                 rabbit_mq_address, rabbit_mq_credentials,
                  session_id, workflow_id, node_id=None, port_number=None):
 
         self._gateway_address = gateway_address
+        self._r_backend_address = r_backend_address
         self._rabbit_mq_address = rabbit_mq_address
         self._rabbit_mq_credentials = rabbit_mq_credentials
         self._session_id = session_id
@@ -31,6 +33,10 @@ class ExecutingKernelClientSettings:
     @property
     def gateway_address(self):
         return self._gateway_address
+
+    @property
+    def r_backend_address(self):
+        return self._r_backend_address
 
     @property
     def rabbit_mq_address(self):
@@ -68,23 +74,26 @@ class ExecutingKernelClient(Logging):
         self._init_kernel()
 
     def _init_kernel(self):
-        gateway_host, gateway_port = self.client_settings.gateway_address
-
+        connection_dict = self.get_connection_file_dict()
+        kernel_name = connection_dict['kernel_name']
         workflow_id, node_id, port_number = self.client_settings.dataframe_source
+        gateway_host, gateway_port = self.client_settings.gateway_address
+        r_backend_host, r_backend_port = self.client_settings.r_backend_address
 
-        self._execute_code('kernel_id = "{}"'.format(self.kernel_id))
+        # The following work both in Python and R
         self._execute_code('workflow_id = "{}"'.format(workflow_id))
-        if node_id:
-            self._execute_code('node_id = "{}"'.format(node_id))
-        else:
-            self._execute_code('node_id = None')
+        self._execute_code('node_id = {}'.format(
+            '"{}"'.format(node_id) if node_id is not None else None))
         self._execute_code('port_number = {}'.format(port_number))
-
         self._execute_code('gateway_address = "{}"'.format(gateway_host))
         self._execute_code('gateway_port = {}'.format(gateway_port))
+        self._execute_code('r_backend_host = "{}"'.format(r_backend_host))
+        self._execute_code('r_backend_port = {}'.format(r_backend_port))
 
-        kernel_init_file = os.path.join(os.getcwd(), "executing_kernel/kernel_init.py")
-        self._execute_code(open(kernel_init_file, "r").read())
+        if kernel_name == 'PythonExecutingKernel':
+            self._execute_file(os.path.join(os.getcwd(), 'executing_kernels/python/kernel_init.py'))
+        elif kernel_name == 'RExecutingKernel':
+            self._execute_file(os.path.join(os.getcwd(), 'executing_kernels/r/kernel_init.R'))
 
     def _send_zmq_forward_to_rabbit(self, stream_name, message):
         if not isinstance(message, list):
@@ -117,7 +126,12 @@ class ExecutingKernelClient(Logging):
                        user_expressions={}, allow_stdin=False)
         msg = self.session.msg('execute_request', content)
         ser = self.session.serialize(msg)
+
         self._socket_forwarders['shell'].forward_to_zmq(ser)
+
+    def _execute_file(self, filename):
+        with open(filename, 'r') as f:
+            self._execute_code(f.read())
 
     def _exit(self, msg):
         self.logger.debug(msg)
@@ -133,12 +147,10 @@ class ExecutingKernelClient(Logging):
         return sender, listener
 
     def get_connection_file_dict(self):
-        self.logger.debug("Reading connection file {}".format(os.getcwd()))
+        self.logger.debug('Reading connection file {}'.format(os.getcwd()))
         try:
-            json_file = open("kernel-"+self.kernel_id+".json", "r")
-            data = json.load(json_file)
-            json_file.close()
-            return data
+            with open('kernel-' + self.kernel_id + '.json', 'r') as json_file:
+                return json.load(json_file)
         except IOError as e:
             self.logger.error(os.strerror(e.errno))
             raise
@@ -157,13 +169,13 @@ class ExecutingKernelClient(Logging):
 
         # iopub is PUB socket, we treat it differently and have to set SUBSCRIPTION topic
         self.subscriber['iopub'] = self.context.socket(zmq.SUB)
-        self.subscriber['iopub'].setsockopt(zmq.SUBSCRIBE, "")
+        self.subscriber['iopub'].setsockopt(zmq.SUBSCRIBE, b'')
 
         for (socket, zmq_socket) in self.subscriber.iteritems():
-            zmq_socket.connect("tcp://localhost:"+str(kernel_json[socket+'_port']))
+            zmq_socket.connect('tcp://localhost:' + str(kernel_json[socket + '_port']))
             forwarders[socket] = SocketForwarder(
-                    stream_name=socket,
-                    zmq_socket=zmq_socket,
-                    to_rabbit_sender=make_sender(socket))
+                stream_name=socket,
+                zmq_socket=zmq_socket,
+                to_rabbit_sender=make_sender(socket))
 
         return forwarders

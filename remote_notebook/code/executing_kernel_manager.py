@@ -29,10 +29,14 @@ class ExecutingKernelManager(Logging):
     SX_EXCHANGE = 'seahorse'
     SX_PUBLISHING_TOPIC = 'kernelmanager.{session_id}.{workflow_id}.from'
 
-    EXECUTING_KERNEL_NAME = 'ExecutingKernel'
+    PYTHON_EXECUTING_KERNEL_NAME = 'PythonExecutingKernel'
+    R_EXECUTING_KERNEL_NAME = 'RExecutingKernel'
 
-    def __init__(self, gateway_address, rabbit_mq_address, rabbit_mq_credentials,
-                 session_id, workflow_id, executing_kernel_source_dir):
+    def __init__(self, gateway_address, r_backend_address,
+                 rabbit_mq_address, rabbit_mq_credentials,
+                 session_id, workflow_id, kernels_source_dir,
+                 py_executing_kernel_source_dir,
+                 r_executing_kernel_source_dir):
         super(ExecutingKernelManager, self).__init__()
 
         signal.signal(signal.SIGINT, self.exit_gracefully)
@@ -40,8 +44,11 @@ class ExecutingKernelManager(Logging):
 
         self.executing_kernel_clients = {}
 
-        self._executing_kernel_source_dir = executing_kernel_source_dir
+        self._kernels_source_dir = kernels_source_dir
+        self._py_executing_kernel_source_dir = py_executing_kernel_source_dir
+        self._r_executing_kernel_source_dir = r_executing_kernel_source_dir
         self._gateway_address = gateway_address
+        self._r_backend_address = r_backend_address
         self._rabbit_mq_address = rabbit_mq_address
         self._rabbit_mq_credentials = rabbit_mq_credentials
         self._session_id = session_id
@@ -65,8 +72,8 @@ class ExecutingKernelManager(Logging):
 
         # Send ready notification
         self._sx_sender.send({
-            "messageType": "kernelManagerReady",
-            "messageBody": {}
+            'messageType': 'kernelManagerReady',
+            'messageBody': {}
         })
 
         # Without the timeout, this is un-interruptable.
@@ -93,67 +100,44 @@ class ExecutingKernelManager(Logging):
         if message['type'] == 'start_kernel':
             node_id = message['node_id'] if 'node_id' in message else None
             port_number = message['port_number'] if 'port_number' in message else None
+            kernel_name = message['kernel_name']
             self.start_kernel(kernel_id=message['kernel_id'],
                               signature_key=message['signature_key'],
                               node_id=node_id,
-                              port_number=port_number)
+                              port_number=port_number,
+                              kernel_name=kernel_name)
 
         elif message['type'] == 'shutdown_kernel':
             self.shutdown_kernel(kernel_id=message['kernel_id'])
 
-    def start_kernel(self, kernel_id, signature_key, node_id, port_number):
+    def start_kernel(self, kernel_id, signature_key, node_id, port_number, kernel_name):
         self.logger.debug('kernel_id {}, signature key {}'.format(kernel_id, signature_key))
 
         if kernel_id in self._multi_kernel_manager.list_kernel_ids():
             self.logger.debug('kernel_id {}. Shutting down before restart.'.format(kernel_id))
             self._multi_kernel_manager.shutdown_kernel(kernel_id, now=True)
 
-        extra_arguments = ['--',
-                           '--signature-key', signature_key,
-                           '--kernel-id', kernel_id,
-                           '--gateway-host', self._gateway_address[0],
-                           '--gateway-port', str(self._gateway_address[1]),
-                           '--mq-host', self._rabbit_mq_address[0],
-                           '--mq-port', str(self._rabbit_mq_address[1]),
-                           '--mq-user', self._rabbit_mq_credentials[0],
-                           '--mq-pass', str(self._rabbit_mq_credentials[1]),
-                           '--workflow-id', self._workflow_id
-                           ]
+        def with_replaced_key(real_factory):
+            def hacked_factory(**kwargs):
+                km = real_factory(**kwargs)
+                km.session.key = signature_key
+                return km
 
-        if node_id is not None:
-            extra_arguments.extend(['--node-id', node_id])
+            return hacked_factory
 
-        if port_number is not None:
-            extra_arguments.extend(['--port-number', str(port_number)])
+        self._multi_kernel_manager.kernel_manager_factory = with_replaced_key(
+            self._multi_kernel_manager.kernel_manager_factory)
 
-        self.logger.debug('extra_arguments = {}'.format(extra_arguments))
+        self._multi_kernel_manager.start_kernel(kernel_name=kernel_name,
+                                                kernel_id=kernel_id)
 
-        self._multi_kernel_manager.start_kernel(kernel_name=self.EXECUTING_KERNEL_NAME,
-                                                kernel_id=kernel_id,
-                                                extra_arguments=extra_arguments)
-
-        # TODO: check if not an interweave
-        ExecutingKernelManager.change_key(kernel_id, signature_key)
-
-        settings = ExecutingKernelClientSettings(self._gateway_address, self._rabbit_mq_address,
+        settings = ExecutingKernelClientSettings(self._gateway_address, self._r_backend_address,
+                                                 self._rabbit_mq_address,
                                                  self._rabbit_mq_credentials, self._session_id,
                                                  self._workflow_id, node_id, port_number)
         executing_kernel_client = ExecutingKernelClient(kernel_id, signature_key, settings)
         executing_kernel_client.start()
         self.executing_kernel_clients[kernel_id] = executing_kernel_client
-
-    @staticmethod
-    def change_key(kernel_id, signature_key):
-        connection_filename = "kernel-"+kernel_id+".json"
-        json_file = open(connection_filename, "r")
-        data = json.load(json_file)
-        json_file.close()
-
-        data["key"] = signature_key
-
-        json_file = open(connection_filename, "w+")
-        json_file.write(json.dumps(data))
-        json_file.close()
 
     def shutdown_kernel(self, kernel_id):
         self.logger.debug('kernel_id {}'.format(kernel_id))
@@ -170,10 +154,15 @@ class ExecutingKernelManager(Logging):
         mkm = MultiKernelManager()
         mkm.log_level = 'DEBUG'
         mkm.kernel_spec_manager = KernelSpecManager()
-        mkm.kernel_spec_manager.kernel_dirs.append(self._executing_kernel_source_dir + '/share/jupyter/kernels')
-        mkm.kernel_spec_manager.install_kernel_spec(source_dir=self._executing_kernel_source_dir,
-                                                    kernel_name=self.EXECUTING_KERNEL_NAME,
-                                                    prefix=self._executing_kernel_source_dir)
+        mkm.kernel_spec_manager.kernel_dirs.append(
+          self._kernels_source_dir + '/share/jupyter/kernels')
+        mkm.kernel_spec_manager.install_kernel_spec(source_dir=self._py_executing_kernel_source_dir,
+                                                    kernel_name=self.PYTHON_EXECUTING_KERNEL_NAME,
+                                                    prefix=self._kernels_source_dir)
+
+        mkm.kernel_spec_manager.install_kernel_spec(source_dir=self._r_executing_kernel_source_dir,
+                                                    kernel_name=self.R_EXECUTING_KERNEL_NAME,
+                                                    prefix=self._kernels_source_dir)
         return mkm
 
 
@@ -183,6 +172,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gateway-host', action='store', dest='gateway_host')
     parser.add_argument('--gateway-port', action='store', dest='gateway_port')
+    parser.add_argument('--r-backend-host', action='store', dest='r_backend_host')
+    parser.add_argument('--r-backend-port', action='store', dest='r_backend_port')
     parser.add_argument('--mq-host', action='store', dest='mq_host')
     parser.add_argument('--mq-port', action='store', dest='mq_port')
     parser.add_argument('--mq-user', action='store', dest='mq_user')
@@ -192,10 +183,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     gateway_address = (args.gateway_host, int(args.gateway_port))
+    r_backend_address = (args.r_backend_host, int(args.r_backend_port))
     mq_address = (args.mq_host, int(args.mq_port))
     mq_credentials = (args.mq_user, args.mq_pass)
 
-    kernel_source_dir = os.path.join(os.getcwd(), 'executing_kernel')
-    ekm = ExecutingKernelManager(gateway_address, mq_address, mq_credentials, args.session_id,
-                                 args.workflow_id, executing_kernel_source_dir=kernel_source_dir)
+    kernels_source_dir = os.path.join(os.getcwd(), 'executing_kernels')
+    py_kernel_source_dir = os.path.join(kernels_source_dir, 'python')
+    r_kernel_source_dir = os.path.join(kernels_source_dir, 'r')
+    ekm = ExecutingKernelManager(gateway_address, r_backend_address,
+                                 mq_address, mq_credentials,
+                                 args.session_id, args.workflow_id,
+                                 kernels_source_dir=kernels_source_dir,
+                                 py_executing_kernel_source_dir=py_kernel_source_dir,
+                                 r_executing_kernel_source_dir=r_kernel_source_dir)
     ekm.run()

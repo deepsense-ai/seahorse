@@ -22,11 +22,6 @@ class ExecutingKernel(IPythonKernel):
     def __init__(self, **kwargs):
         super(ExecutingKernel, self).__init__(**kwargs)
 
-    def _exit(self, msg):
-        self.logger.debug(msg)
-        sys.exit(1)
-
-
 class ExecutingKernelApp(IPKernelApp):
     kernel_class = Type(ExecutingKernel, config=True)
     log_level = 'DEBUG'
