@@ -6,8 +6,6 @@
 
 package io.deepsense.deeplang.parameters
 
-import io.deepsense.deeplang.parameters.exceptions.IllegalChoiceException
-
 case class BooleanParameterHolder(
     description: String,
     default: Option[BooleanParameter],
@@ -122,5 +120,28 @@ case class MultipleChoiceParameterHolder(
   override def validate: Unit = {
     super.validate
     validateChoices(value.get.values)
+  }
+}
+
+/**
+ * Holds multiplicator parameter - schema of its values and value list.
+ * Its value is a list of filled schemas which all conform to the given values schema.
+ *
+ * @param valuesSchema schema of the values of the parameter
+ */
+case class MultiplicatorParameterHolder(
+    description: String,
+    default: Option[MultiplicatorParameter],
+    required: Boolean,
+    valuesSchema: ParametersSchema)
+  extends ParameterHolder {
+  type HeldParameter = MultiplicatorParameter
+
+  val parameterType = ParameterType.Multiplicator
+
+  /** Validates each filled schema with parameters */
+  override def validate: Unit = {
+    super.validate
+    value.get.value.foreach(_.validate)
   }
 }

@@ -59,4 +59,10 @@ object ParameterConversions {
       case parameter: MultipleChoiceParameter => parameter
     }
   }
+
+  implicit object ToMultiplicatorParameter extends ParameterConverter[MultiplicatorParameter] {
+    def convertPF = {
+      case parameter: MultiplicatorParameter => parameter
+    }
+  }
 }

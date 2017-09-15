@@ -34,6 +34,10 @@ class ParametersSchema protected (schemaMap: Map[String, ParameterHolder] = Map.
   def getMultipleChoiceParameter(name: String): Option[MultipleChoiceParameter] = {
     get[MultipleChoiceParameter](name)
   }
+
+  def getMultiplicatorParameter(name: String): Option[MultiplicatorParameter] = {
+    get[MultiplicatorParameter](name)
+  }
   // TODO: add get method for other parameter types
 }
 

@@ -71,6 +71,25 @@ class ParametersSuite extends FunSuite with Matchers {
       case MultipleChoiceParameter(chosen) =>
         assert(chosen.size == 1)
         chosen should contain theSameElementsAs chosenParameters
+    }
+  }
+
+  test("Getting Parameters from Multiplicator") {
+    val holder = BooleanParameterHolder("example", None, true)
+    val schema = ParametersSchema("x" -> holder)
+    val multiplicator = MultiplicatorParameterHolder("description", None, true, schema)
+
+    val holderIn1 = BooleanParameterHolder("example", None, true)
+    val holderIn2 = BooleanParameterHolder("example", None, true)
+    holderIn1.value = Some(BooleanParameter(true))
+    holderIn2.value = Some(BooleanParameter(true))
+    val schemaIn1 = ParametersSchema("x" -> holderIn1)
+    val schemaIn2 = ParametersSchema("x" -> holderIn2)
+    val values = List(schemaIn1, schemaIn2)
+    multiplicator.value = Some(MultiplicatorParameter(values))
+
+    multiplicator.value.get.value.foreach {
+      case s: ParametersSchema => assert(s.getBooleanParameter("x").get.value == true)
       case _ => throw new IllegalStateException
     }
   }

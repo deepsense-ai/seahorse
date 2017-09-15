@@ -131,4 +131,20 @@ class ParametersValidationSuite extends FunSuite {
       multipleChoices.validate
     }
   }
+
+  test("Validation of multiplicator parameter with invalid parameter should throw an exception") {
+    intercept[ValidationException] {
+      val holder = MockParameterHolder("example", None, true)
+      val schema = ParametersSchema("x" -> holder)
+      val multiplicator = MultiplicatorParameterHolder("description", None, true, schema)
+
+      val holderIn1 = MockParameterHolder("example", None, true)
+      val holderIn2 = MockParameterHolder("example", None, true)
+      val schemaIn1 = ParametersSchema("x" -> holderIn1)
+      val schemaIn2 = ParametersSchema("x" -> holderIn2)
+      multiplicator.value = Some(MultiplicatorParameter(List(schemaIn1, schemaIn2)))
+
+      multiplicator.validate
+    }
+  }
 }
