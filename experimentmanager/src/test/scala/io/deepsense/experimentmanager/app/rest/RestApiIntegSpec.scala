@@ -27,7 +27,6 @@ import io.deepsense.experimentmanager.app.storage.ExperimentStorage
 import io.deepsense.experimentmanager.auth.HasTenantId
 
 class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndAfter {
-  suite: IntegTestSupport =>
 
   var experimentA: Experiment = null
   var experimentB: Experiment = null
@@ -52,6 +51,8 @@ class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndA
   override def validAuthTokenTenantB: String = validAuthToken("userB")
 
   override protected def testRoute: Route = getRestServiceInstance
+
+  override def apiPrefix: String = getConfig.getString("experiments.api.prefix")
 
   before {
     experimentA = Experiment(

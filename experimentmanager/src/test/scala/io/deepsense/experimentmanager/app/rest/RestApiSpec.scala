@@ -66,6 +66,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     tenantBId,
     "Experiment of Tenant B")
 
+  def apiPrefix: String = "v1/experiments"
+
   // roles mock
   private val rolesForTenantA = Set(
       new Role("experiments:get"),
@@ -103,16 +105,15 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       }
     })
 
-    new RestApi(tokenTranslator, experimentManagerProvider).route
+    new RestApi(tokenTranslator, experimentManagerProvider, apiPrefix).route
   }
 
   // TODO Test errors in Json
-
   "GET /experiments" should {
     // TODO Test pagination + filtering
     "return a list of experiments" when {
       "valid auth token was send" in {
-        Get("/experiments") ~>
+        Get(s"/$apiPrefix") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           responseAs[List[Experiment]]
@@ -121,53 +122,53 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Get("/experiments") ~>
+        Get(s"/$apiPrefix") ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Get("/experiments") ~>
+        Get(s"/$apiPrefix") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Get("/experiments") ~> testRoute ~> check {
+        Get(s"/$apiPrefix") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
     }
   }
-  "GET /experiments/:id" should {
+  s"GET /experiments/:id" should {
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Get("/experiments/" + UUID.randomUUID()) ~>
+        Get(s"/$apiPrefix/${UUID.randomUUID()}") ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Get("/experiments/" + UUID.randomUUID()) ~>
+        Get(s"/$apiPrefix/${UUID.randomUUID()}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Get("/experiments/" + UUID.randomUUID()) ~> testRoute ~> check {
+        Get(s"/$apiPrefix/${UUID.randomUUID()}") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
     }
     "return Not found" when {
       "asked for Experiment from other tenant" in {
-        Get("/experiments/" + experimentOfTenantB.id.toString) ~>
+        Get(s"/$apiPrefix/${experimentOfTenantB.id.toString}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "asked for non existing Experiment" in {
-        Get("/experiments/" + UUID.randomUUID()) ~>
+        Get(s"/$apiPrefix/${UUID.randomUUID()}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -175,7 +176,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
     "return an experiment" when {
       "auth token is correct, user has roles and the experiment belongs to him" in {
-        Get("/experiments/" + experimentOfTenantA.id) ~>
+        Get(s"/$apiPrefix/${experimentOfTenantA.id}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           val response = responseAs[Experiment]
@@ -185,16 +186,16 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
   }
 
-  "DELETE /experiments/:id" should {
+  s"DELETE /experiments/:id" should {
     "return Not found" when {
       "experiment does not exists" in {
-        Delete("/experiments/" + UUID.randomUUID()) ~>
+        Delete(s"/$apiPrefix/${UUID.randomUUID()}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "tried to delete others' experiment" in {
-        Delete("/experiments/" + experimentOfTenantB.id) ~>
+        Delete(s"/$apiPrefix/${experimentOfTenantB.id}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -202,7 +203,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
     "return Ok" when {
       "experiment existed and is deleted now" in {
-        Delete("/experiments/" + experimentOfTenantA.id) ~>
+        Delete(s"/$apiPrefix/${experimentOfTenantA.id}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
@@ -210,19 +211,19 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Delete("/experiments/" + UUID.randomUUID()) ~>
+        Delete(s"/$apiPrefix/${UUID.randomUUID()}") ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Delete("/experiments/" + UUID.randomUUID()) ~>
+        Delete(s"/$apiPrefix/${UUID.randomUUID()}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Delete("/experiments/" + UUID.randomUUID()) ~> testRoute ~> check {
+        Delete(s"/$apiPrefix/${UUID.randomUUID()}") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -232,7 +233,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
   "POST /experiments" should {
     "return created" when {
       "inputExperiment was send" in {
-        Post("/experiments", inputExperiment) ~>
+        Post(s"/$apiPrefix", inputExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
           val savedExperiment = responseAs[Experiment]
@@ -247,44 +248,42 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Post("/experiments", inputExperiment) ~>
+        Post(s"/$apiPrefix", inputExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Post("/experiments", inputExperiment) ~>
+        Post(s"/$apiPrefix", inputExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post("/experiments", inputExperiment) ~> testRoute ~> check {
+        Post(s"/$apiPrefix", inputExperiment) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
     }
   }
 
-  "POST /experiments/:id/action (with LaunchAction)" should {
+  s"POST /experiments/:id/action (with LaunchAction)" should {
     "return Unauthorized" when {
       def launchAction = LaunchActionWrapper(LaunchAction(Some(List(experimentOfTenantA.id))))
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Post(s"/experiments/${experimentOfTenantA.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Post(s"/experiments/${experimentOfTenantA.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post(
-          s"/experiments/${experimentOfTenantA.id}/action",
-          launchAction) ~> testRoute ~> check {
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -293,14 +292,14 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       "experiment does not exist" in {
         val randomId = Id(UUID.randomUUID())
         val launchAction = LaunchActionWrapper(LaunchAction(Some(List(UUID.randomUUID()))))
-        Post(s"/experiments/$randomId/action", launchAction) ~>
+        Post(s"/$apiPrefix/$randomId/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "experiment belongs to other tenant" in {
         val launchAction = LaunchActionWrapper(LaunchAction(Some(List(UUID.randomUUID()))))
-        Post(s"/experiments/${experimentOfTenantB.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantB.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -309,7 +308,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     "return Accepted" when {
       "experiments belongs to the user" in {
         val launchAction = LaunchActionWrapper(LaunchAction(Some(List(UUID.randomUUID()))))
-        Post(s"/experiments/${experimentOfTenantA.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.Accepted)
           val response = responseAs[Experiment]
@@ -323,19 +322,19 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     "return Unauthorized" when {
       val abortAction = AbortActionWrapper(AbortAction(Some(List(UUID.randomUUID()))))
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Post(s"/experiments/${experimentOfTenantA.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Post(s"/experiments/${experimentOfTenantA.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post(s"/experiments/${experimentOfTenantA.id}/action", abortAction) ~> testRoute ~> check {
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -344,14 +343,13 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       "experiment does not exist" in {
         val randomId = Id(UUID.randomUUID())
         val abortAction = AbortActionWrapper(AbortAction(Some(List(UUID.randomUUID()))))
-        Post(s"/experiments/$randomId/action", abortAction) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        Post(s"/$apiPrefix/$randomId/action", abortAction) ~> addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "experiment belongs to other tenant" in {
         val abortAction = AbortActionWrapper(AbortAction(Some(List(UUID.randomUUID()))))
-        Post(s"/experiments/${experimentOfTenantB.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantB.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -360,7 +358,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     "return Accepted" when {
       "experiments belongs to the user" in {
         val abortAction = AbortActionWrapper(AbortAction(Some(List(UUID.randomUUID()))))
-        Post(s"/experiments/${experimentOfTenantA.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.Accepted)
           val response = responseAs[Experiment]
@@ -369,7 +367,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       }
     }
   }
-  "PUT /experiments/:id" should {
+
+  s"PUT /experiments/:id" should {
     "update the experiment and return Ok" when {
       "user updates his experiment" in {
         val newExperiment = Experiment(
@@ -379,7 +378,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           "New Desc",
           Graph())
 
-        Put(s"/experiments/${experimentOfTenantA.id}", newExperiment) ~>
+        Put(s"/$apiPrefix/${experimentOfTenantA.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           val response = responseAs[Experiment]
@@ -401,12 +400,13 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           "New Desc",
           Graph())
 
-        Put(s"/experiments/${newExperiment.id}", newExperiment) ~>
+        Put(s"/$apiPrefix/${newExperiment.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "the user has no right to that experiment" in {
+
         val newExperiment = Experiment(
           experimentOfTenantB.id,
           tenantBId,
@@ -414,7 +414,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           "New Desc",
           Graph())
 
-        Put(s"/experiments/${experimentOfTenantB.id}", newExperiment) ~>
+        Put(s"/$apiPrefix/${experimentOfTenantB.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -423,19 +423,19 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     "return Unauthorized" when {
       val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", "New Desc", Graph())
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Put("/experiments/" + newExperiment.id, newExperiment) ~>
+        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Put("/experiments/" + newExperiment.id, newExperiment) ~>
+        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Put("/experiments/" + newExperiment.id, newExperiment) ~> testRoute ~> check {
+        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -443,7 +443,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     "return BadRequest" when {
       val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", "New Desc", Graph())
       "Experiment's Id from Json does not match Id from request's URL" in {
-        Put("/experiments/" + newExperiment.id, newExperiment) ~>
+        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
