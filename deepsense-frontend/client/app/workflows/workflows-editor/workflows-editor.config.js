@@ -5,9 +5,6 @@ function WorkflowsConfig($stateProvider) {
   $stateProvider.state('workflows.editor', {
     url: '/:id/editor',
     views: {
-      'navBar': {
-        template: '<workflow-editor-status-bar ng-show="stateData.dataIsLoaded"></workflow-editor-status-bar>'
-      },
       'reportView': {
         templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
         controller: 'WorkflowsEditorController as workflow'
