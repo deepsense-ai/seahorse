@@ -23,6 +23,7 @@ lazy val enableRelayFromHosts = "sed -i 's|^[^#]*hostlist \\+relay_from_hosts *=
 
 dockerCommands ++= Seq(
   Cmd("USER", "root"),
+  Cmd("ENV", "SMTP_PORT", "60111"),
   Cmd("RUN", addApkRepos),
   Cmd("RUN", s"$installExim && $configureInit && $enableRelayFromHosts"),
   ExecCmd("ENTRYPOINT", "/sbin/init")

@@ -131,6 +131,7 @@ services:
       - database
       - sessionmanager
       - workflowmanager
+      - mail
   rabbitmq:
     image: $DOCKER_REPOSITORY/deepsense-rabbitmq:$BACKEND_TAG
     restart: always
@@ -164,5 +165,11 @@ services:
       - "./uaa:/uaa:rw"
     links:
       - database
+  mail:
+    image: deepsense-mail:latest
+#   image: $DOCKER_REPOSITORY/deepsense-mail:$BACKEND_TAG
+    restart: always
+    ports:
+      - "127.0.0.1:$EXPOSED_SMTP_PORT:25"
 volumes:
   library:
