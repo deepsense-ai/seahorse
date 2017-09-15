@@ -12,4 +12,5 @@ Contents:
    doperations/write_data_frame
    doperations/timestamp_decomposer
    doperations/dataframe_splitter
+   doperations/project_columns
    doperations/score_regressor
