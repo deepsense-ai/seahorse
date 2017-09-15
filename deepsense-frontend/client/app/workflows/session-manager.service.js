@@ -9,22 +9,26 @@ function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
     statusForWorkflowId: (workflowId) => {
       const session = _.find(service.sessions, (s) => s.workflowId === workflowId);
       if(_.isUndefined(session)) {
-        return SessionStatus.NOT_RUNNING
+        return SessionStatus.NOT_RUNNING;
       } else {
         return session.status;
       }
+    },
+    clusterInfoForWorkflowId: (workflowId) => {
+      const session = _.find(service.sessions, (s) => s.workflowId === workflowId);
+      return session.cluster;
     }
   };
 
   function pollSessionManager() {
     SessionManagerApi.downloadSessions().
-      then((result) => {
-        service.sessions = result;
-        service.isReady = true;
-      }).
-      catch(() => {
-        service.isReady = false;
-      })
+    then((result) => {
+      service.sessions = result;
+      service.isReady = true;
+    }).
+    catch(() => {
+      service.isReady = false;
+    });
   }
 
   pollSessionManager();

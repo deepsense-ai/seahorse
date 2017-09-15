@@ -2,10 +2,11 @@
 
 /* @ngInject */
 class ExecutorErrorCtrl {
-  constructor(WorkflowService, SessionManagerApi) {
+  constructor($rootScope, WorkflowService, SessionManagerApi) {
     this.visible = true;
     this.WorkflowService = WorkflowService;
     this.SessionManagerApi = SessionManagerApi;
+    this.$rootScope = $rootScope;
     this.workflow = this.WorkflowService.getCurrentWorkflow();
     this.currentTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
   }
@@ -18,7 +19,7 @@ class ExecutorErrorCtrl {
     this.visible = false;
     this.SessionManagerApi.deleteSessionById(this.workflow.id)
       .then(() => {
-        return this.SessionManagerApi.startSession(this.workflow.id);
+        return this.$rootScope.$broadcast('StatusBar.START_EDITING');
       });
   }
 

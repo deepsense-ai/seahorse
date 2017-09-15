@@ -9,6 +9,7 @@ class WorkflowsEditorController {
               ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus,
               EventsService, UserService) {
 
+
     WorkflowService.initRootWorkflow(workflowWithResults);
 
     _.assign(this, {

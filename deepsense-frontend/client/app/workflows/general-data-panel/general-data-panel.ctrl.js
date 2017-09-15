@@ -1,24 +1,7 @@
 'use strict';
 
-/* @ngInject */
-function GeneralDataPanel() {
-  return {
-    restrict: 'E',
-    templateUrl: 'app/workflows/general-data-panel/general-data-panel.html',
-    replace: true,
-    scope: true,
-    controller: 'GeneralDataPanelCtrl',
-    controllerAs: 'controller',
-    bindToController: {
-      'name': '=',
-      'workflow': '=',
-      'description': '=',
-      'publicParams': '=',
-      'disabledMode': '=',
-      'state': '='
-    }
-  };
-}
+const ENTER_KEY_CODE = 13;
+const ESCAPE_KEY_CODE = 27;
 
 /* @ngInject */
 function GeneralDataPanelCtrl() {
@@ -47,10 +30,10 @@ function GeneralDataPanelCtrl() {
   };
 
   this.saveNewValue = (event, input) => {
-    if (event.keyCode === 13) { // Enter key code
+    if (event.keyCode === ENTER_KEY_CODE) {
       this[input] = this.buffer[input];
       this.hideInput(input);
-    } else if (event.keyCode === 27) { // Escape key code
+    } else if (event.keyCode === ESCAPE_KEY_CODE) {
       this.hideInput(input);
     }
   };
@@ -58,6 +41,5 @@ function GeneralDataPanelCtrl() {
 }
 
 exports.inject = function (module) {
-  module.directive('generalDataPanel', GeneralDataPanel);
   module.controller('GeneralDataPanelCtrl', GeneralDataPanelCtrl);
 };

@@ -20,8 +20,7 @@ require('./workflows-status-bar/documentation-link/documentation-link.directive.
 require('./workflows-status-bar/selection-items/delete.modal.controller.js').inject(workflows);
 require('./workflows-status-bar/selection-items/selection-items.controller.js').inject(workflows);
 require('./workflows-status-bar/selection-items/selection-items.directive.js').inject(workflows);
-require('./general-data-panel/general-data-panel.js').inject(workflows);
-require('./general-data-panel/general-data-text-area.js').inject(workflows);
+require('./general-data-panel/general-data-panel.module.js').inject(workflows);
 require('./copy-paste/copy-paste.js').inject(workflows);
 require('./workflows-status-bar/menu-item/menu-item.directive.js').inject(workflows);
 require('./workflows-status-bar/menu-item/menu-item.controller.js').inject(workflows);
@@ -36,5 +35,9 @@ require('./workflows-editor/bottom-bar/bottom-bar.controller.js').inject(workflo
 require('./workflows-editor/bottom-bar/bottom-bar.service.js').inject(workflows);
 require('./session-manager.service.js').inject(workflows);
 require('./navigation-bar/navigation-bar.module.js').inject(workflows);
+require('./cluster-settings-modals/choose-cluster-modal.ctrl.js').inject(workflows);
+require('./cluster-settings-modals/cluster-modal.srv.js').inject(workflows);
+require('./cluster-settings-modals/preset-modal/preset-modal.ctrl.js').inject(workflows);
+require('./cluster-settings-modals/preset-modal/preset-modal-labels.js').inject(workflows);
 
 module.exports = workflows;

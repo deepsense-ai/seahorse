@@ -40,6 +40,7 @@
     "font-awesome": "~4.5.0",
     "icheck": "~1.0.2",
     "ionicons": "~2.0.1",
+    "jsen": "~0.6.1",
     "moment": "~2.11.2",
     "ng-debounce": "~1.0.1",
     "ng-file-upload": "~7.0.17",

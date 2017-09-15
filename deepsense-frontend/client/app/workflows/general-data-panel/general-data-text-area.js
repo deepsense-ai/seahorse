@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function AutoTextArea(WorkflowService) {
+function AutoTextArea() {
   return {
     restrict: 'E',
     scope: {

@@ -1,0 +1,129 @@
+@import "../../../../css/variables";
+
+@border-grey: #cfcfcf;
+@code-color-grey: #666;
+@button-cancel: #f2f2f2;
+
+.preset-modal {
+  textarea.cluster-input:focus,
+  input.cluster-input:focus {
+    border: 1px solid @border-grey;
+  }
+
+  ::-webkit-input-placeholder,
+  ::-moz-placeholder {
+    font-style: italic;
+  }
+
+  .title-input {
+    height: 45px;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .error,
+  input.error,
+  input.error:focus {
+    border: 1px solid @seahorse-light-blue;
+  }
+
+  .form-row {
+    margin: 10px 0;
+  }
+
+  &__header {
+    background-color: @color-light-grey;
+
+    .editing-blocked {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .title {
+      height: 45px;
+      display: flex;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .change-cluster-btn-section {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .error-highlight {
+      font-size: 16px;
+      font-weight: bold;
+      color: @seahorse-light-blue;
+    }
+  }
+
+  &__body {
+    .instructions {
+      line-height: 18px;
+      padding-top: 5px;
+      padding-bottom: 15px;
+
+      .instructions-text {
+        font-size: 14px;
+
+        code {
+          color: @code-color-grey;
+        }
+
+        div {
+          margin: 10px 0;
+        }
+      }
+    }
+
+    .input-validation-error {
+      font-weight: bold;
+      margin-top: 5px;
+      color: @seahorse-light-blue;
+      font-size: 14px;
+    }
+
+    .main-form-row {
+      min-height: 45px;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .label-main {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .label-additional {
+      font-size: 13px;
+      font-weight: normal;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    background-color: @color-light-grey;
+  }
+
+  .cluster-btn {
+    min-width: 100px;
+    padding: 4px 20px;
+    font-weight: bold;
+    border-color: @border-grey;
+
+    &__light {
+      background-color: @button-cancel;
+    }
+
+    &__blue {
+      background-color: @seahorse-light-blue;
+      color: @color-white;
+    }
+  }
+
+}

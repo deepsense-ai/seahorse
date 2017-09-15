@@ -1,0 +1,168 @@
+<div class="preset-modal" ng-form="controller.presetForm">
+
+  <div class="modal-header preset-modal__header">
+    <div class="row form-row" ng-if="!controller.isEditingEnabled() && !controller.preset.isDefault">
+      <div class="col-md-7 editing-blocked">
+        <b>Editing is blocked.</b>
+        <span>In order to edit this preset, please stop editing your workflow first. </span>
+      </div>
+    </div>
+    <div class="row form-row" ng-if="controller.preset.isDefault">
+      <div class="col-md-7 editing-blocked">
+        <b>This preset is default.</b>
+        <span>You cannot edit preset which is set as default. </span>
+      </div>
+    </div>
+    <div class="row form-row">
+      <div class="col-md-3 title">
+        {{controller.labels.main}}
+      </div>
+      <div class="col-md-9">
+        <div>
+          <input class="form-control cluster-input title-input"
+                 placeholder="Settings name (required)"
+                 ng-model="controller.preset.name"
+                 ng-disabled="!controller.isEditingEnabled()"
+                 ng-class="{'error': controller.nameInNameInputUsed() || controller.nameInputInvalid()}"
+                 name="presetName"
+                 maxlength="30"
+                 required
+          />
+        </div>
+        <div class="change-cluster-btn-section">
+          <div>
+            <div class="error-highlight" ng-if="controller.isPresetNameUsed()">
+              Name already exists, choose another one
+            </div>
+            <div class="error-highlight" ng-if="controller.isNameInputInvalid()">
+              Settings name is required
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-body preset-modal__body">
+    <div class="row form-row" ng-if="controller.labels.instruction">
+      <div class="col-md-12">
+        <div class="label-main">How to provide configuration directory?</div>
+      </div>
+    </div>
+    <div class="row form-row instructions" ng-if="controller.labels.instruction">
+      <div class="col-md-12">
+        <div class="instructions-text" ng-bind-html="controller.labels.instruction"></div>
+      </div>
+    </div>
+
+    <div class="row main-form-row" ng-if="controller.labels.uri">
+      <div class="col-md-4">
+        <div class="label-main">{{controller.labels.uri}}</div>
+      </div>
+      <div class="col-md-8">
+        <input class="form-control cluster-input"
+               placeholder="http://path/to/mesos/cluster (required)"
+               ng-model="controller.preset.uri"
+               ng-disabled="!controller.isEditingEnabled() || controller.preset.isDefault"
+               ng-class="{'highlight': controller.uriInputInvalid()}"
+               name="uri"
+               required
+        />
+        <div class="input-validation-error" >
+          <span ng-if="controller.uriInputInvalid()">This field is required.</span>
+          <span ng-if="controller.errors.uri">{{controller.errors.uri}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row form-row" ng-if="controller.labels.executorMemory">
+      <div class="col-md-4">
+        <div class="label-main">{{controller.labels.executorMemory}}</div>
+        <div class="label-additional">(GB)</div>
+      </div>
+      <div class="col-md-5">
+        <input class="form-control cluster-input"
+               placeholder="e.g. 3"
+               ng-model="controller.preset.executorMemory"
+               ng-disabled="!controller.isEditingEnabled()"
+               type="number" min="0"
+        />
+      </div>
+    </div>
+
+    <div class="row main-form-row" ng-if="controller.labels.totalExecutorCores">
+      <div class="col-md-4">
+        <div class="label-main">{{controller.labels.totalExecutorCores}}</div>
+      </div>
+      <div class="col-md-5">
+        <input class="form-control cluster-input"
+               placeholder="e.g 2"
+               ng-model="controller.preset.totalExecutorCores"
+               ng-disabled="!controller.isEditingEnabled()"
+               type="number" min="0"
+        />
+      </div>
+    </div>
+
+    <div class="row main-form-row" ng-if="controller.labels.executorCores">
+      <div class="col-md-4">
+        <div class="label-main">{{controller.labels.executorCores}}</div>
+      </div>
+      <div class="col-md-5">
+        <input class="form-control cluster-input"
+               placeholder="e.g 2"
+               ng-model="controller.preset.executorCores"
+               ng-disabled="!controller.isEditingEnabled()"
+               type="number" min="0"
+        />
+      </div>
+    </div>
+
+    <div class="row main-form-row" ng-if="controller.labels.numExecutors">
+      <div class="col-md-4">
+        <div class="label-main">{{controller.labels.numExecutors}}</div>
+      </div>
+      <div class="col-md-5">
+        <input class="form-control cluster-input"
+               placeholder="e.g 2"
+               ng-model="controller.preset.numExecutors"
+               ng-disabled="!controller.isEditingEnabled()"
+               type="number" min="0"
+        />
+      </div>
+    </div>
+
+
+    <hr/>
+    <div class="row form-row">
+      <div class="col-md-12">
+        <div class="label-main">Custom settings</div>
+      </div>
+    </div>
+    <div class="row form-row">
+      <div class="col-md-12 cluster-textarea">
+        <textarea class="form-control cluster-input" rows="6"
+                  ng-disabled="!controller.isEditingEnabled()"
+                  ng-model="controller.preset.params"
+                  placeholder="-- key value"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-footer preset-modal__footer">
+    <button type="button" class="btn cluster-btn cluster-btn__light"
+            ng-click="controller.cancel()">
+      Cancel
+    </button>
+    <button type="button" class="btn cluster-btn cluster-btn__blue"
+            ng-click="controller.ok()"
+            ng-if="controller.isEditingEnabled()"
+            ng-disabled="controller.presetForm.$invalid || controller.preset.isDefault">
+      Save
+    </button>
+  </div>
+
+</div>

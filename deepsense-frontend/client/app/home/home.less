@@ -1,4 +1,5 @@
 @import "../../css/variables";
+@import "../mixins";
 
 @font-face {
   font-family: 'open_sanslight';
@@ -117,9 +118,7 @@
 
     &__truncate {
       width: 250px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      .text-elipsis();
     }
 
     &__logged-user {
@@ -190,9 +189,7 @@
     display: block;
     margin-right: 15px;
     max-width: 350px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    .text-elipsis();
   }
 }
 

@@ -34,8 +34,8 @@ function SessionManagerApi($http, config) {
     });
   }
 
-  function startSession(workflowId) {
-    return $http.post(URL, {workflowId: workflowId}).then(function processResult(result) {
+  function startSession(config) {
+    return $http.post(URL, config).then(function processResult(result) {
       return result;
     });
   }

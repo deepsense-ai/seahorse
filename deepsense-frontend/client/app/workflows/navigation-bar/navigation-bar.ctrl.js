@@ -1,15 +1,16 @@
 'use strict';
 
 /* @ngInject */
-function NavigationController(config, WorkflowService) {
-  _.assign(this, {
-      getAPIVersion() {
-        return config.editorVersion;
-      },
-      getCurrentWorkflow() {
-        return WorkflowService.getCurrentWorkflow();
-      }
-  });
+function NavigationController(config) {
+
+  const vm = this;
+
+  vm.getAPIVersion = getAPIVersion;
+
+  function getAPIVersion() {
+    return config.editorVersion;
+  }
+
 }
 
 exports.inject = function(module) {

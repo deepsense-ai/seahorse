@@ -1,0 +1,17 @@
+@import "../css/variables";
+
+.height-with-nav-offset(@additionalDecrease: 0) {
+  @bar-height: @navigation-bar-height + @additionalDecrease;
+  //noinspection CssInvalidPropertyValue
+  height: ~"calc(100% - @{bar-height})";
+}
+
+.top-with-nav-offset() {
+  top: @navigation-bar-height;
+}
+
+.text-elipsis() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

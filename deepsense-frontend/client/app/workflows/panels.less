@@ -5,7 +5,7 @@
 @general-panel-padding: 14px 15px 7px 5px;
 
 // Mixins
-@import "./mixins.less";
+@import "../mixins.less";
 
 .panelsMinWidth() {
   min-width: @panel-main-width;
@@ -107,7 +107,7 @@
   }
 
   &--absolute {
-    .heightWithNavOffset();
+    .height-with-nav-offset();
 
     position: absolute;
     z-index: 1;
@@ -115,7 +115,7 @@
   }
 
   &--dynamic-top {
-    .topWithNavOffset();
+    .top-with-nav-offset();
   }
 
   &--scroll-right {

@@ -2,7 +2,8 @@
 
 /* @ngInject */
 function WorkflowService($rootScope, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, ConfirmationModalService,
-  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager, ServerCommunication) {
+  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager, ServerCommunication,
+  ClusterService) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -51,7 +52,8 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
 
       $rootScope.$on('StatusBar.START_EDITING', () => {
         const workflow = this.getRootWorkflow();
-        SessionManagerApi.startSession(workflow.id);
+        const config = ClusterService.getPresetConfigObject(workflow.id);
+        SessionManagerApi.startSession(config);
       });
 
       $rootScope.$on('StatusBar.STOP_EDITING', () => {
@@ -167,6 +169,11 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
       });
 
       return idx !== -1;
+    }
+    
+    isExecutorForCurrentWorkflowRunning() {
+      const status = this.getCurrentWorkflow().sessionStatus;
+      return status === SessionStatus.RUNNING || status === SessionStatus.CREATING;
     }
 
     getCurrentWorkflow() {

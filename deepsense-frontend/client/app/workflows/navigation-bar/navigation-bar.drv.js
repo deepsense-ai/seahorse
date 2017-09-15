@@ -3,10 +3,11 @@
 /* @ngInject */
 function NavigationBar() {
   return {
-    templateUrl: 'app/workflows/navigation-bar/navigation-bar.html'
+    templateUrl: 'app/workflows/navigation-bar/navigation-bar.html',
+    controllerAs: 'controller',
+    controller: 'NavigationController'
   };
 }
-exports.function = NavigationBar;
 
 exports.inject = function(module) {
   module.directive('navigationBar', NavigationBar);

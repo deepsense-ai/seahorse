@@ -6,9 +6,6 @@ function WorkflowEditorStatusBar() {
     restrict: 'E',
     templateUrl: 'app/workflows/workflows-status-bar/workflows-editor-status-bar.html',
     replace: true,
-    scope: {
-      workflow: '='
-    },
     controllerAs: 'controller',
     controller: 'WorkflowStatusBarController'
   };

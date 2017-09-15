@@ -1,7 +1,7 @@
 'use strict';
 
 /* ngInject */
-function WorkflowStatusBarService($rootScope, config, version, WorkflowService, SessionStatus, UserService) {
+function WorkflowStatusBarService($rootScope, WorkflowService, SessionStatus, UserService) {
 
   const service = this;
 
@@ -81,10 +81,10 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   const _menuItemViews = {
     editorExecutorRunning: [menuItems.stopEditing, menuItems.clone, menuItems.run, menuItems.export],
     editorExecutorCreating: [menuItems.startingEditing, menuItems.clone, menuItems.disabledRun, menuItems.export],
-    editorExecutorNotRunning: [menuItems.startEditing, menuItems.clone, menuItems.disabledRun,  menuItems.export],
+    editorExecutorNotRunning: [menuItems.startEditing, menuItems.clone, menuItems.disabledRun, menuItems.export],
     editorExecutorError: [menuItems.executorError, menuItems.clone, menuItems.disabledRun, menuItems.export],
-    editorReadOnlyForNotOwner: [menuItems.disabledStartEditing, menuItems.clone,  menuItems.disabledRun, menuItems.export],
-    running: [menuItems.disabledStopEditing, menuItems.clone, menuItems.abort,  menuItems.export],
+    editorReadOnlyForNotOwner: [menuItems.disabledStartEditing, menuItems.clone, menuItems.disabledRun, menuItems.export],
+    running: [menuItems.disabledStopEditing, menuItems.clone, menuItems.abort, menuItems.export],
     aborting: [menuItems.disabledStopEditing, menuItems.disabledClone, menuItems.aborting, menuItems.disabledExport],
     editInnerWorkflow: [menuItems.closeInnerWorkflow]
   };

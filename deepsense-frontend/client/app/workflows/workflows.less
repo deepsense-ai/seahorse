@@ -1,5 +1,5 @@
 @import "../../css/variables";
-@import "./mixins.less";
+@import "../mixins.less";
 @import "./workflows-editor/workflows-editor.less";
 @import "../common/custom-scrollbar/common-custom-scrollbar.less";
 @import "./common-behaviours/common-stick-onscroll.less";
@@ -12,6 +12,8 @@
 @import "./reports/reports.less";
 @import "./panels.less";
 @import "./general-data-panel/general-data-panel.less";
+@import "./cluster-settings-modals/choose-cluster-modal.less";
+@import "./cluster-settings-modals/preset-modal/preset-modal.less";
 
 .o-color-picker--inline {
   display: inline-block;
@@ -22,7 +24,7 @@
 }
 
 .c-dynamic-part {
-  .heightWithNavOffset();
+  .height-with-nav-offset();
 
   display: block;
 }
