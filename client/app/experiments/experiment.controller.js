@@ -220,20 +220,16 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   // TODO: remove when it won't be needed anymore
   $scope.$on('Model.DEPLOY', (event, data) => {
     $modal.open({
-      template: '<div class="inmodal"><div class="modal-header"><h4 class="modal-title">Deploy model</h4></div><div class="modal-body" style="height:75px;"><div class="progress-striped progress active" style="width:100%;margin-top:7px;" ng-hide="linkValue!==undefined || error===true"><div style="width:100%;" class="progress-bar"></div></div><p ng-hide="linkValue===undefined"><input type="text" class="form-control" value="{{::linkValue}}" ng-focus="linkValue!==undefined" readonly="true"></p><p ng-hide="error!==true" style="color:red;margin-top:10px;">Error occurred while deploying model!</p></div><div class="modal-footer"><button type="button" class="btn btn-white" ng-click="close()">Close</button></div></div>',
+      template: '<div class="inmodal"><div class="modal-header"><h4 class="modal-title">Deploy model</h4></div><div class="modal-body" style="height:75px;"><loading-spinner-sm ng-if="!linkValue && !error" style="font-size:10px;position:relative;top:-23px;"></loading-spinner-sm><p ng-hide="linkValue===undefined"><input type="text" class="form-control" value="{{::linkValue}}" ng-focus="linkValue!==undefined" readonly="true"></p><p ng-hide="error!==true" style="color:red;margin-top:10px;">Error occurred while deploying model!</p></div><div class="modal-footer"><button type="button" class="btn btn-white" ng-click="close()">Close</button></div></div>',
       controller: ($scope, $modalInstance) => {
         $scope.close = function () {
           $modalInstance.close();
         };
         $http.get('/api/models/' + data.id + '/deploy').then((response) => {
-          $timeout(() => {
-            $scope.linkValue = response.data.link;
-          }, 500);
+          $scope.linkValue = response.data.link;
         }, (error) => {
           console.error('deploy api call error', error);
-          $timeout(() => {
-            $scope.error = true;
-          }, 500);
+          $scope.error = true;
         });
       },
     });
