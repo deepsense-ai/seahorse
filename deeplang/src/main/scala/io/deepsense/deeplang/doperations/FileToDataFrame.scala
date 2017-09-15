@@ -67,7 +67,8 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
     val firstLine = lines.first()
     val columnsNo = firstLine.length
     val (columnNames, dataLines) = if (namesIncluded) {
-      (safeColumnNames(firstLine), removeFirstLine(lines).cache())
+      val processedFirstLine = firstLine.map(removeQuotes).map(safeColumnName)
+      (processedFirstLine, removeFirstLine(lines).cache())
     } else {
       (generateColumnNames(columnsNo), lines)
     }
@@ -101,10 +102,8 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
     context.dataFrameBuilder.buildDataFrame(convertedSchema, convertedData, categoricalColumnNames)
   }
 
-  private def safeColumnNames(firstLine: Seq[String]): Seq[String] = {
-    firstLine.map(_.replace(".", "_"))
-    // TODO: remove replace when spark upgraded to 1.4. DS-635
-  }
+  // TODO: remove replace when spark upgraded to 1.4. DS-635
+  private def safeColumnName(name: String): String = name.replace(".", "_")
 
   /**
    * Designates indices and names of columns selected to be categorized.

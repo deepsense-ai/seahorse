@@ -121,8 +121,12 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
   private def generateName(i: Int) = s"column_$i"
 
   val namesFromFile = Seq(
+    categoricalDoubleName, q("Msg"), "Val", categoricalName,
+    q("Enabled"), "Null.Only", q(q("SomeDate")), "Mixed")
+
+  val expectedNamesFromFile = Seq(
     categoricalDoubleName, "Msg", "Val", categoricalName,
-    "Enabled", "Null.Only", "SomeDate", "Mixed")
+    "Enabled", "Null.Only", q("SomeDate"), "Mixed")
 
   val columnsIndices = 0 until namesFromFile.size
   val namesGenerated = columnsIndices.map(generateName)
@@ -163,7 +167,7 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
   val typesPreparedToBeCategorized = StringType +: types.tail
 
   private def fixture(namedColumns: Boolean, mappedCategory: Boolean): (File, DataFrame) = {
-    val names = if (namedColumns) namesFromFile else namesGenerated
+    val names = if (namedColumns) expectedNamesFromFile else namesGenerated
     val inputData = if (namedColumns) namedLines else lines
     val outputData = if (mappedCategory) rowsPreparedToBeCategorized else rows
     val outputTypes = if (mappedCategory) typesPreparedToBeCategorized else types
