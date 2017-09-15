@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException
 import scala.concurrent.duration._
 
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
@@ -76,7 +76,7 @@ class PythonCustomCodeEntryPointTest extends WordSpec with MockitoSugar with Mat
   private def createEntryPoint: CustomCodeEntryPoint =
     new CustomCodeEntryPoint(
       mock[SparkContext],
-      mock[SQLContext],
+      mock[SparkSession],
       mock[DataFrameStorage],
       mock[OperationExecutionDispatcher])
 }

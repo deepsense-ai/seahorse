@@ -19,11 +19,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.classification.{MultilayerPerceptronClassificationModel => SparkMultilayerPerceptronClassifierModel, MultilayerPerceptronClassifier => SparkMultilayerPerceptronClassifier}
 
 import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, SerializableSparkModel}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
-import io.deepsense.deeplang.doperables.{SparkModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
 class MultilayerPerceptronClassifierModel
@@ -68,9 +68,6 @@ class MultilayerPerceptronClassifierModel
   override protected def loadModel(
       ctx: ExecutionContext,
       path: String): SerializableSparkModel[SparkMultilayerPerceptronClassifierModel] = {
-    val modelPath = Transformer.modelFilePath(path)
-    CustomPersistence.load[SerializableSparkModel[SparkMultilayerPerceptronClassifierModel]](
-      ctx.sparkContext,
-      modelPath)
+    new SerializableSparkModel(SparkMultilayerPerceptronClassifierModel.load(path))
   }
 }

@@ -23,7 +23,6 @@ import org.joda.time.{DateTime, LocalDate}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.DoubleUtils
 
-
 /**
  * Provides converters from java types returned by Spark.
  * Check @{link Row.get()} for possible types of Any returned by Spark

@@ -80,7 +80,7 @@ class StatisticsForContinuousIntegSpec extends DeeplangIntegTestSupport with Dat
     val rows = data.map(v => Row(v))
     val rdd = sparkContext.parallelize(rows)
 
-    val sparkDataFrame: sql.DataFrame = sqlContext.createDataFrame(rdd, schema)
+    val sparkDataFrame: sql.DataFrame = sparkSession.createDataFrame(rdd, schema)
     val dataFrame = DataFrame.fromSparkDataFrame(sparkDataFrame)
 
     val report = dataFrame.report
@@ -88,7 +88,7 @@ class StatisticsForContinuousIntegSpec extends DeeplangIntegTestSupport with Dat
   }
 
   def buildDataFrame(schema: StructType, data: RDD[Row]): DataFrame = {
-    val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
+    val dataFrame: sql.DataFrame = sparkSession.createDataFrame(data, schema)
     DataFrame.fromSparkDataFrame(dataFrame)
   }
 

@@ -46,7 +46,7 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
 
     context.dataFrameBuilder.buildDataFrame(
       first.schema.get,
-      first.sparkDataFrame.unionAll(second.sparkDataFrame).rdd)
+      first.sparkDataFrame.union(second.sparkDataFrame).rdd)
   }
 
   override protected def _inferKnowledge

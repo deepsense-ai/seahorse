@@ -19,7 +19,7 @@ The R function that will be executed must:
 
 * take exactly one argument of type `DataFrame`,
 
-* return a SparkR `DataFrame`, an R `data.frame`, or data that can be converted to R `data.frame` using `data.frame()` function (single value, vector etc).
+* return a SparkR `SparkDataFrame`, an R `data.frame`, or data that can be converted to R `data.frame` using `data.frame()` function (single value, vector etc).
 
 #### Example R code:
 {% highlight r %}
@@ -28,7 +28,7 @@ transform <- function(dataframe) {
   c2 <- collect(d1)
   fun <- function(x){ return(-x) }
   d3 <- lapply(c2, fun)
-  d4 <- createDataFrame(sqlContext, as.data.frame(d3))
+  d4 <- createDataFrame(sparkSession, as.data.frame(d3))
   return(d4)
 }
 {% endhighlight %}

@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -55,7 +55,7 @@ object NumericToVectorUtils {
    * Converts schema by changing `inputColumn` type to vector
    */
   def convertSchema(schema: StructType, inputColumn: String): StructType = {
-    updateSchema(schema, inputColumn, new VectorUDT())
+    updateSchema(schema, inputColumn, new org.apache.spark.hacks.SparkVectors.VectorUDT())
   }
 
   /**
@@ -85,7 +85,7 @@ object NumericToVectorUtils {
       // outputColumn: String,
       context: ExecutionContext): org.apache.spark.sql.DataFrame = {
     val inputColumnIdx = dataFrame.schema.get.fieldIndex(inputColumn)
-    val convertedRdd = dataFrame.sparkDataFrame.map { r =>
+    val convertedRdd = dataFrame.sparkDataFrame.rdd.map { r =>
       val value = r.get(inputColumnIdx)
       if (value != null) {
         Row.fromSeq(r.toSeq.updated(inputColumnIdx, Vectors.dense(value.asInstanceOf[Double])))
@@ -94,7 +94,7 @@ object NumericToVectorUtils {
       }
     }
     val convertedSchema = NumericToVectorUtils.convertSchema(dataFrame.schema.get, inputColumn)
-    val convertedDf = context.sqlContext.createDataFrame(convertedRdd, convertedSchema)
+    val convertedDf = context.sparkSession.createDataFrame(convertedRdd, convertedSchema)
     convertedDf
   }
 
@@ -116,7 +116,7 @@ object NumericToVectorUtils {
       if (vector != null) {
         Row.fromSeq(r.toSeq.updated(
           columnIdx,
-          vector.asInstanceOf[org.apache.spark.mllib.linalg.Vector].apply(0)))
+          vector.asInstanceOf[org.apache.spark.ml.linalg.Vector].apply(0)))
       } else {
         Row.fromSeq(r.toSeq.updated(columnIdx, null))
       }
@@ -128,6 +128,6 @@ object NumericToVectorUtils {
       } else {
         transformedInputColumnRdd
       }
-    context.sqlContext.createDataFrame(transformedRdd, expectedSchema)
+    context.sparkSession.createDataFrame(transformedRdd, expectedSchema)
   }
 }

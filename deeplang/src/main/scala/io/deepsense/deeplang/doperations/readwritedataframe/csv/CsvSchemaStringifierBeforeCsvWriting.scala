@@ -49,7 +49,7 @@ object CsvSchemaStringifierBeforeCsvWriting {
 
     context.dataFrameBuilder.buildDataFrame(
       stringifySelectedTypes(schema),
-      dataFrame.sparkDataFrame.map(stringifySelectedCells(schema)))
+      dataFrame.sparkDataFrame.rdd.map(stringifySelectedCells(schema)))
   }
 
   private def requireNoComplexTypes(dataFrame: DataFrame): Unit = {

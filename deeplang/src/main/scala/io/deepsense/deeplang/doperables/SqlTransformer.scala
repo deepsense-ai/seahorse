@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
@@ -46,20 +46,20 @@ class SqlTransformer extends Transformer {
     logger.debug(s"SqlExpression(expression = '$getExpression'," +
       s" dataFrameId = '$getDataFrameId')")
 
-    val localSqlContext = ctx.sqlContext.newSession()
-    val localDataFrame = moveToSqlContext(df.sparkDataFrame, localSqlContext)
+    val localSparkSession = ctx.sparkSession.newSession()
+    val localDataFrame = moveToSparkSession(df.sparkDataFrame, localSparkSession)
 
-    localDataFrame.registerTempTable(getDataFrameId)
+    localDataFrame.createOrReplaceTempView(getDataFrameId)
     try {
       logger.debug(s"Table '$dataFrameId' registered. Executing the expression")
-      val sqlResult = moveToSqlContext(localSqlContext.sql(getExpression), ctx.sqlContext)
+      val sqlResult = moveToSparkSession(localSparkSession.sql(getExpression), ctx.sparkSession)
       DataFrame.fromSparkDataFrame(sqlResult)
     } finally {
       logger.debug("Unregistering the temporary table" + getDataFrameId)
-      localSqlContext.dropTempTable(getDataFrameId)
+      localSparkSession.catalog.dropTempView(getDataFrameId)
     }
   }
 
-  private def moveToSqlContext(df: sql.DataFrame, destinationCtx: SQLContext): sql.DataFrame =
+  private def moveToSparkSession(df: sql.DataFrame, destinationCtx: SparkSession): sql.DataFrame =
     destinationCtx.createDataFrame(df.rdd, df.schema)
 }

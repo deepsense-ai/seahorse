@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.Matchers
@@ -40,7 +40,7 @@ class GetFromVectorTransformerIntegSpec
 
   val columns = Seq(
     StructField("id", IntegerType),
-    StructField("data", new VectorUDT()))
+    StructField("data", new org.apache.spark.hacks.SparkVectors.VectorUDT()))
   def schema: StructType = StructType(columns)
 
   //         "id"/0  "a"/1
@@ -68,7 +68,7 @@ class GetFromVectorTransformerIntegSpec
       val expectedData = data.map { r =>
         val vec = r(1)
         if (vec != null) {
-          Seq(r.head, vec.asInstanceOf[org.apache.spark.mllib.linalg.Vector](1))
+          Seq(r.head, vec.asInstanceOf[org.apache.spark.ml.linalg.Vector](1))
         } else {
           Seq(r.head, null)
         }

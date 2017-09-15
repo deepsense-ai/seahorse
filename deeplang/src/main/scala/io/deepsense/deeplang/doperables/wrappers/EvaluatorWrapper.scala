@@ -31,8 +31,8 @@ class EvaluatorWrapper(
     evaluator: Evaluator)
   extends evaluation.Evaluator {
 
-  override def evaluate(dataset: sql.DataFrame): Double = {
-    evaluator.evaluate(context)(())(DataFrame.fromSparkDataFrame(dataset)).value
+  override def evaluate(dataset: sql.Dataset[_]): Double = {
+    evaluator.evaluate(context)(())(DataFrame.fromSparkDataFrame(dataset.toDF())).value
   }
 
   override def copy(extra: ParamMap): evaluation.Evaluator = {

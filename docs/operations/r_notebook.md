@@ -30,7 +30,7 @@ Everytime the input `DataFrame` changes, the `dataframe()` returns the updated `
 
 * `sc` - Spark Context
 
-* `sqlContext` - SQL Context
+* `spark` - Spark Session
 
 **Since**: Seahorse 1.3.0
 

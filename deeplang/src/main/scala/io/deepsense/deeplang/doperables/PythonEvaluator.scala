@@ -34,7 +34,7 @@ case class PythonEvaluator() extends CustomCodeEvaluator {
       |    # Example Root-Mean-Square Error implementation
       |    n = dataframe.count()
       |    row_to_sq_error = lambda row: (row['label'] - row['prediction'])**2
-      |    sum_sq_error = dataframe.map(row_to_sq_error).reduce(add)
+      |    sum_sq_error = dataframe.rdd.map(row_to_sq_error).reduce(add)
       |    rmse = sqrt(sum_sq_error / n)
       |    return rmse""".stripMargin
   )
@@ -63,7 +63,7 @@ case class PythonEvaluator() extends CustomCodeEvaluator {
        |        raise Exception("Invalid result type of `evaluate` function. " +
        |                        "Type " + str(type(result)) +
        |                        " cannot be cast to float.")
-       |    result_df = sqlContext.createDataFrame([[float_result]])
+       |    result_df = sparkSession.createDataFrame([[float_result]])
        |    return result_df
       """.stripMargin
   }

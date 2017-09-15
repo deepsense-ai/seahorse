@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperables.dataframe.report.distribution
 
-import org.apache.spark.mllib.linalg._
 import org.apache.spark.sql.types._
 
 private[distribution] object DistributionType extends Enumeration {
@@ -27,6 +26,6 @@ private[distribution] object DistributionType extends Enumeration {
     case TimestampType | DateType | _: NumericType => Continuous
     case StringType | BooleanType => Discrete
     case BinaryType | _: ArrayType | _: MapType |
-         _: StructType | _: VectorUDT => NotApplicable
+         _: StructType | _: org.apache.spark.hacks.SparkVectors.VectorUDT => NotApplicable
   }
 }

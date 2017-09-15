@@ -68,7 +68,7 @@ case class WorkflowExecutor(
     val dataFrameStorage = new DataFrameStorageImpl
 
     val sparkContext = createSparkContext()
-    val sqlContext = createSqlContext(sparkContext)
+    val sparkSession = createSparkSession(sparkContext)
 
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
     logger.info("HOST ADDRESS: {}", hostAddress.getHostAddress)
@@ -80,7 +80,7 @@ case class WorkflowExecutor(
 
     val customCodeEntryPoint = new CustomCodeEntryPoint(
       sparkContext,
-      sqlContext,
+      sparkSession,
       dataFrameStorage,
       operationExecutionDispatcher)
 
@@ -89,7 +89,7 @@ case class WorkflowExecutor(
       pythonPathGenerator,
       pythonBinary,
       sparkContext,
-      sqlContext,
+      sparkSession,
       dataFrameStorage,
       customCodeEntryPoint,
       hostAddress)
@@ -107,7 +107,7 @@ case class WorkflowExecutor(
       dataFrameStorage,
       customCodeExecutionProvider,
       sparkContext,
-      sqlContext,
+      sparkSession,
       tempPath)
 
     val actorSystem = ActorSystem(actorSystemName)

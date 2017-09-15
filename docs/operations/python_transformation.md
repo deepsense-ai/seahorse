@@ -27,7 +27,7 @@ pandas.DataFrame, single value, tuple/list of single values, tuple/list of tuple
 from pyspark.sql.types import Row
 
 def transform(dataframe):
-    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers_column*2)))
+    return sparkSession.createDataFrame(dataframe.map(lambda row: Row(row.numbers_column*2)))
 {% endhighlight %}
 
 **Since**: Seahorse 1.0.0

@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.serialization
 import org.apache.spark.ml.Model
 import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.util.{MLReadable, MLReader, MLWritable, MLWriter}
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, Dataset}
 import org.apache.spark.sql.types.StructType
 
 class SerializableSparkModel[M <: Model[M]](val sparkModel: M)
@@ -36,7 +36,7 @@ class SerializableSparkModel[M <: Model[M]](val sparkModel: M)
     }
   }
 
-  override def transform(dataset: DataFrame): DataFrame = sparkModel.transform(dataset)
+  override def transform(dataset: Dataset[_]): DataFrame = sparkModel.transform(dataset)
 
   override def transformSchema(schema: StructType): StructType = sparkModel.transformSchema(schema)
 
