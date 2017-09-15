@@ -141,15 +141,17 @@ object ViewingTestResources extends MockitoSugar {
   catalog.registerDOperation[DOperationC](categoryC)
   catalog.registerDOperation[DOperationD](categoryD)
 
-  val expectedA = DOperationDescriptor(
-    idA, nameA, descriptionA, categoryA, DOperationA().paramsToJson, Nil, Nil)
-  val expectedB = DOperationDescriptor(
-    idB, nameB, descriptionB, categoryB, DOperationB().paramsToJson, Nil, Nil)
-  val expectedC = DOperationDescriptor(
-    idC, nameC, descriptionC, categoryC, DOperationC().paramsToJson, Nil, Nil)
-  val expectedD = DOperationDescriptor(
-    idD, nameD, descriptionD, categoryD, DOperationD().paramsToJson,
-    List(XTypeTag.tpe, YTypeTag.tpe), List(XTypeTag.tpe))
+  val operationD = catalog.createDOperation(idD)
+
+  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA,
+    DOperationA().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
+  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB,
+    DOperationB().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
+  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC,
+    DOperationC().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
+  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD,
+    DOperationD().paramsToJson, List(XTypeTag.tpe, YTypeTag.tpe), operationD.inPortsLayout,
+    List(XTypeTag.tpe), operationD.outPortsLayout)
 }
 
 class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {

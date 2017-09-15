@@ -21,6 +21,7 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
+import io.deepsense.deeplang.DPortPosition._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasSeedParam
@@ -51,6 +52,9 @@ case class Split()
   def setSeed(value: Int): this.type = set(seed, value.toDouble)
 
   val params = declareParams(splitRatio, seed)
+
+  override def outPortsLayout: Vector[DPortPosition] =
+    Vector(DPortPosition.Left, DPortPosition.Right)
 
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {

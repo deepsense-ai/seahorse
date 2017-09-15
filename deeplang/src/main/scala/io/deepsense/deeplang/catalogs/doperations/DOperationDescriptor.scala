@@ -21,6 +21,7 @@ import scala.reflect.runtime.universe.Type
 import spray.json.JsValue
 
 import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.DPortPosition.DPortPosition
 
 /**
  * Represents a registered DOperation and stores its name and i/o port types.
@@ -32,7 +33,9 @@ case class DOperationDescriptor(
     category: DOperationCategory,
     parametersJsonDescription: JsValue,
     inPorts: Seq[Type],
-    outPorts: Seq[Type]) {
+    inPortsLayout: Vector[DPortPosition],
+    outPorts: Seq[Type],
+    outPortsLayout: Vector[DPortPosition]) {
 
   override def toString: String = {
     def portsToString(ports: Seq[Type]): String = {

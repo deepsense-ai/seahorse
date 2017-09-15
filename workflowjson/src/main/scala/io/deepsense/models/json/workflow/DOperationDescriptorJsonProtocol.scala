@@ -21,7 +21,9 @@ import scala.reflect.runtime.universe.Type
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.commons.json.{EnumerationSerializer, IdJsonProtocol}
+import io.deepsense.deeplang.DPortPosition
+import io.deepsense.deeplang.DPortPosition._
 import io.deepsense.deeplang.catalogs.doperations.DOperationDescriptor
 
 /**
@@ -58,25 +60,37 @@ trait DOperationDescriptorJsonProtocol
         "description" -> obj.description.toJson,
         "deterministic" -> false.toJson,  // TODO use real value as soon as it is supported
         "ports" -> JsObject(
-          "input" -> portTypesToJson(obj.inPorts, addRequiredField = true),
-          "output" -> portTypesToJson(obj.outPorts, addRequiredField = false)
+          "input" -> portTypesToJson(obj.inPorts, addRequiredField = true, obj.inPortsLayout),
+          "output" -> portTypesToJson(obj.outPorts, addRequiredField = false, obj.outPortsLayout)
         )
       ))
     }
 
-    private def portTypesToJson(portTypes: Seq[Type], addRequiredField: Boolean): JsValue = {
+    private def portTypesToJson(
+      portTypes: Seq[Type],
+      addRequiredField: Boolean,
+      portsLayout: Vector[DPortPosition]): JsValue = {
       val required = if (addRequiredField) Some(true) else None
       // TODO use real value as soon as it is supported
 
-      val fields = for ((portType, index) <- portTypes.zipWithIndex)
-      yield portToJson(index, required, portType)
-      fields.toJson
+      val fields = for (
+        (portType, positioning, index) <- (portTypes, portsLayout, Stream.from(0)).zipped)
+        yield portToJson(index, required, portType, positioning)
+
+      fields.toList.toJson
     }
 
-    private def portToJson(index: Int, required: Option[Boolean], portType: Type): JsValue = {
+    private implicit val positionSerializer = EnumerationSerializer.jsonEnumFormat(DPortPosition)
+
+    private def portToJson(
+      index: Int,
+      required: Option[Boolean],
+      portType: Type,
+      position: DPortPosition): JsValue = {
       val fields = Map(
         "portIndex" -> index.toJson,
-        "typeQualifier" -> DOperationDescriptor.describeType(portType).toJson
+        "typeQualifier" -> DOperationDescriptor.describeType(portType).toJson,
+        "portPosition" -> position.toJson
       )
       JsObject(required match {
         case Some(value) => fields.updated("required", value.toJson)

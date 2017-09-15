@@ -76,6 +76,7 @@ object DOperationsCatalog {
       val operationType = ru.typeOf[T]
       val constructor = constructorForType(operationType)
       val operationInstance = DOperationsCatalog.createDOperation(constructor)
+      operationInstance.validate()
       val id = operationInstance.id
       val name = operationInstance.name
       val description = operationInstance.description
@@ -83,7 +84,9 @@ object DOperationsCatalog {
       val outPortTypes = operationInstance.outPortTypes.map(_.tpe)
       val parameterDescription = operationInstance.paramsToJson
       val operationDescriptor = DOperationDescriptor(
-          id, name, description, category, parameterDescription, inPortTypes, outPortTypes)
+        id, name, description, category, parameterDescription, inPortTypes,
+        operationInstance.inPortsLayout, outPortTypes, operationInstance.outPortsLayout
+      )
 
       if (operations.contains(id)) {
         val alreadyRegisteredOperationName = operations(id).name

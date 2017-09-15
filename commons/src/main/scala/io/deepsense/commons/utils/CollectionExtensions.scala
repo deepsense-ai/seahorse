@@ -16,6 +16,8 @@
 
 package io.deepsense.commons.utils
 
+import scala.math.Ordering
+
 object CollectionExtensions {
 
   implicit class RichSeq[T](seq: Seq[T]) {
@@ -34,6 +36,9 @@ object CollectionExtensions {
         "Function f must be injective, otherwise we would override some key")
       mapEntries.toMap
     }
+
+    def isSorted(implicit ord: Ordering[T]): Boolean = seq == seq.sorted
+
   }
 
 }

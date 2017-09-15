@@ -23,7 +23,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 import spray.json._
 
-import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.{DPortPosition, DOperation}
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationDescriptor}
 import io.deepsense.deeplang.params.Params
 
@@ -70,7 +70,9 @@ class DOperationDescriptorJsonProtocolSpec
       category,
       parameters.paramsToJson,
       Seq(typeOf[A], typeOf[A with T1]),
-      Seq(typeOf[B], typeOf[B with T2]))
+      Vector(DPortPosition.Left, DPortPosition.Center),
+      Seq(typeOf[B], typeOf[B with T2]),
+      Vector(DPortPosition.Right, DPortPosition.Center))
 
     def name[T: TypeTag]: String = typeOf[T].typeSymbol.fullName
 
@@ -86,19 +88,27 @@ class DOperationDescriptorJsonProtocolSpec
           JsObject(
             "portIndex" -> JsNumber(0),
             "required" -> JsBoolean(true),
-            "typeQualifier" -> JsArray(JsString(name[A]))),
+            "typeQualifier" -> JsArray(JsString(name[A])),
+            "portPosition" -> JsString("left")
+          ),
           JsObject(
             "portIndex" -> JsNumber(1),
             "required" -> JsBoolean(true),
-            "typeQualifier" -> JsArray(JsString(name[A]), JsString(name[T1])))
+            "typeQualifier" -> JsArray(JsString(name[A]), JsString(name[T1])),
+            "portPosition" -> JsString("center")
+          )
         ),
         "output" -> JsArray(
           JsObject(
             "portIndex" -> JsNumber(0),
-            "typeQualifier" -> JsArray(JsString(name[B]))),
+            "typeQualifier" -> JsArray(JsString(name[B])),
+            "portPosition" -> JsString("right")
+          ),
           JsObject(
             "portIndex" -> JsNumber(1),
-            "typeQualifier" -> JsArray(JsString(name[B]), JsString(name[T2])))
+            "typeQualifier" -> JsArray(JsString(name[B]), JsString(name[T2])),
+            "portPosition" -> JsString("center")
+          )
         )
       )
     )
