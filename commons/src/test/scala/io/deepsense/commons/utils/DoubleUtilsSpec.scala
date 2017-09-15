@@ -25,5 +25,34 @@ class DoubleUtilsSpec extends StandardSpec with UnitTestSupport {
       DoubleUtils.double2String(Double.NaN) shouldBe "NaN"
       DoubleUtils.double2String(1.0) should not be "NaN"
     }
+    "return default formatting within precision" in {
+      val numbers = List(
+        (0.0, "0"),
+        (0.5, "0.5"),
+        (1D, "1"),
+        (5.5, "5.5"),
+        (1000D, "1000"),
+        (-1001D, "-1001")
+      )
+      for {
+        (d, s) <- numbers
+      } DoubleUtils.double2String(d) shouldBe s
+    }
+    "return decimal rounded formatting to rounded 4 significant figures" in {
+      val numbers = List(
+        (0.0000001, "1E-7"),
+        (0.00000012345, "1.235E-7"),
+        (0.12345, "0.1235"),
+        (12.345, "12.35"),
+        (1234.5, "1235"),
+        (0.55454545, "0.5545"),
+        (100.55454545, "100.6"),
+        (1000000.999999999D, "1E+6"),
+        (77777777777.7777777, "7.778E+10")
+      )
+      for {
+        (d, s) <- numbers
+      } DoubleUtils.double2String(d) shouldBe s
+    }
   }
 }

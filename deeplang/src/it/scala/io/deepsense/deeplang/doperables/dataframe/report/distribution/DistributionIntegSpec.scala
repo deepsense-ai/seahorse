@@ -216,9 +216,9 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
     report.content.distributions
   }
 
-  val doubleTypeBuckets: Array[String] = Array("1.307", "1.34825", "1.3895", "1.43075", "1.472",
-    "1.51325", "1.5545", "1.59575", "1.637", "1.67825", "1.7195", "1.76075", "1.802", "1.84325",
-    "1.8845", "1.92575", "1.967", "2.00825", "2.0495", "2.09075", "2.132")
+  val doubleTypeBuckets: Array[String] = Array("1.307", "1.348", "1.39", "1.431", "1.472", "1.513",
+    "1.555", "1.596", "1.637", "1.678", "1.72", "1.761", "1.802", "1.843", "1.885", "1.926",
+    "1.967", "2.008", "2.05", "2.091", "2.132")
 
   val integerTypeBuckets: Array[String] = Array("0", "0", "1", "2", "3")
 
