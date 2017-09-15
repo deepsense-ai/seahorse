@@ -32,12 +32,17 @@ description: Seahorse Release Notes
 
 Seahorse works with YARN, Mesos, Spark Standalone and Local clusters.
 
-When run with Local luster following limitations apply:
+Seahorse running on bundled Local cluster was tested with datasets of the following shape:
 
-* Max DataFrame size: 500 MB
-* Max number of rows in a DataFrame: 4 M
-* Max number of columns in a DataFrame: 100
-* Max row size: 1 MB
+* DataFrame size: 500 MB
+* Number of rows in a DataFrame: 4 M
+* Number of columns in a DataFrame: 100
+* Row size: 1 MB
+
+This is just a reference point. Depending on the exact dataset,
+Local cluster may handle more data.
+It's recommended to run a single session at a time.
+This guarantees that multiple sessions don't compete for limited resources.
 
 To learn more about scaling up and using Seahorse in production,
 see the <a href="./deployment/enterprise.html">Enterprise</a> page.
