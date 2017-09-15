@@ -149,6 +149,7 @@ case class SessionExecutor(
     system.awaitTermination()
     cleanup(system, sparkContext, pythonExecutionCaretaker, kernelManagerCaretaker)
     logger.debug("SessionExecutor ends")
+    System.exit(0)
   }
 
   private def createWorkflowsSubscriberActor(
