@@ -150,6 +150,11 @@ gulp.task('fonts', function () {
     .pipe(gulp.dest(build.path + build.fonts));
 });
 
+gulp.task('copy:fonts', function () {
+  return gulp.src('./node_modules/font-awesome/fonts/**/*.{otf,eot,svg,ttf,woff,woff2}')
+    .pipe(gulp.dest('./fonts'));
+});
+
 gulp.task('less', function () {
   return gulp.src(client.path + client.less)
     .pipe(less())
@@ -231,7 +236,7 @@ gulp.task('browserify:external', function () {
 
 gulp.task('build', function (callback) {
   runSequence(
-    'clean', 'style',
+    'clean', 'style', 'copy:fonts',
     [
       'fonts', 'images', 'html:index', 'html:partials', 'config', 'copy:images', 'copy:scripts', 'favicon', 'assets', 'less',
       'libs:css'
