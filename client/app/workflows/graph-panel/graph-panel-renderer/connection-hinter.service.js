@@ -11,6 +11,7 @@ from './graph-panel-styler.js';
 
 class ConnectionHinterService extends GraphPanelRendererBase {
 
+  /* @ngInject */
   constructor($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report) {
     super();
     this.$rootScope = $rootScope;
@@ -132,7 +133,5 @@ class ConnectionHinterService extends GraphPanelRendererBase {
 }
 
 exports.inject = function(module) {
-  module.factory('ConnectionHinterService', /* @ngInject */ ($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report) => {
-    return new ConnectionHinterService($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report);
-  });
+  module.service('ConnectionHinterService', ConnectionHinterService);
 };
