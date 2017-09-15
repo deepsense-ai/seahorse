@@ -95,7 +95,7 @@ case class SessionStorageImpl (
   }
 
   val WorkflowId = "id"
-  val BatchId = "batchId"
+  val BatchId = "batch_id"
   val Version = "version"
 
   private class Sessions(tag: Tag)

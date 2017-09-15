@@ -30,3 +30,8 @@
         database: "{{ wm_install_dir }}/workflowmanager",
         module: "workflowmanager"
       }
+    - { role: h2_migration,
+        sql_dir: "{{ sm_sql_dir }}",
+        database: "{{ sm_install_dir }}/sessionmanager",
+        module: "sessionmanager"
+      }

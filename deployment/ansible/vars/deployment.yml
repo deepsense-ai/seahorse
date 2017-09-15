@@ -12,6 +12,7 @@ deepsense_deployment_directory: /deepsense
 wm_install_dir: "{{deepsense_deployment_directory}}/wm"
 wm_cql_dir: "{{wm_install_dir}}/cql"
 wm_sql_dir: "{{wm_install_dir}}/sql"
+sm_sql_dir: "{{sm_install_dir}}/sql"
 
 sm_install_dir: "{{deepsense_deployment_directory}}/sm"
 
