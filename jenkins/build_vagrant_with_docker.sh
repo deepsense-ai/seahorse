@@ -36,15 +36,14 @@ mv $ARTIFACT_NAME docker-compose.yml
 docker-compose pull
 
 echo "Save docker images to files"
-DOCKER_IMAGES=$(grep image: docker-compose.yml | cut -d "/" -f 3)
-     
-for DOCKER_IMAGE in $DOCKER_IMAGES
+DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d" " -f 6 | tr " " "\n"`)
+for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
-  IMAGE_NAME=$(rev <<<$DOCKER_IMAGE | cut -d ":" -f 2 | rev)  
-  IMAGE_FILE_NAME="$IMAGE_NAME.tar"
-  echo "Save docker image to $IMAGE_FILE_NAME"
-  rm -f $IMAGE_FILE_NAME
-  docker save --output $IMAGE_FILE_NAME $DOCKER_IMAGE
+  # Strip docker repository and docker tag from image.
+  IMAGE_FILE_NAME=`echo "$DOCKER_IMAGE" | cut -d "/" -f 3 | rev | cut -d ":" -f 2 | rev`
+  echo "Save docker image to $IMAGE_FILE_NAME.tar"
+  rm -f $IMAGE_FILE_NAME.tar
+  docker save --output $IMAGE_FILE_NAME.tar $DOCKER_IMAGE
 done
 
 # Create Vagrant box
