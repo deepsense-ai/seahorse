@@ -207,11 +207,11 @@
           "validator": {
             "type": "range",
             "configuration": {
-              "begin": 1,
-              "end": 10,
+              "begin": 10.1,
+              "end": 12.3,
               "beginIncluded": true,
               "endIncluded": true,
-              "step": 1
+              "step": 1.1
             }
           }
         }
