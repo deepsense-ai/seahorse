@@ -138,8 +138,8 @@ class ExecutingKernel(IPythonKernel, Logging):
 
     @property
     def _rabbit_mq_credentials(self):
-        user = self._extract_argument(self.parent.argv, '--mq-user')
-        password = self._extract_argument(self.parent.argv, '--mq-pass')
+        user = extract_argument(self.parent.argv, '--mq-user')
+        password = extract_argument(self.parent.argv, '--mq-pass')
         return user, password
 
     def _init_rabbit_clients(self):

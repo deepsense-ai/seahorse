@@ -140,6 +140,7 @@ class ForwardingKernel(IPythonKernel, Logging):
                                         handler=self._handle_execution_message_from_rabbit)
 
         while not any([f.received_message_from_rabbit for f in self._socket_forwarders.itervalues()]):
+            self.logger.debug('Still waiting for executing kernel')
             time.sleep(.1)
 
         for forwarder in self._socket_forwarders.itervalues():
