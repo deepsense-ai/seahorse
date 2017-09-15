@@ -744,6 +744,12 @@ object WorkflowsApiSpec {
     override val params = Array[Param[_]]()
     override val since: Version = Version(0, 0, 0)
 
+    @transient
+    override lazy val tTagTI_0: TypeTag[DOperable] = typeTag[DOperable]
+
+    @transient
+    override lazy val tTagTO_0: TypeTag[DOperable] = typeTag[DOperable]
+
     override protected def _execute(ctx: deeplang.ExecutionContext)(t0: DOperable): DOperable = ???
   }
 }

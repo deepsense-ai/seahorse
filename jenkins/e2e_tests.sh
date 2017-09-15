@@ -16,9 +16,11 @@ FRONTEND_TAG="${FRONTEND_TAG:-master-latest}" # If it's still undefined fallback
 SPARK_STANDALONE_MANAGEMENT="./seahorse-workflow-executor/docker/spark-standalone-cluster-manage.sh"
 MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
 
+SPARK_VERSION="2.0.0"
+
 ## Make sure that when job is aborted/killed all dockers will be turned off
 function cleanup {
-    $SPARK_STANDALONE_MANAGEMENT down
+    $SPARK_STANDALONE_MANAGEMENT down $SPARK_VERSION
     docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
     (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG logs > docker-compose.log)
     (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
@@ -34,7 +36,7 @@ cleanup # in case something was already running
 
 ## Start Spark Standalone cluster dockers
 
-$SPARK_STANDALONE_MANAGEMENT up
+$SPARK_STANDALONE_MANAGEMENT up $SPARK_VERSION
 
 ## Start Mesos Spark cluster dockers
 

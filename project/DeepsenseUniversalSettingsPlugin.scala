@@ -14,6 +14,8 @@ import sbt._
 
 object DeepsenseUniversalSettingsPlugin extends AutoPlugin {
 
+  val weSparkVersion = System.getProperty("weSparkVersion", "2.0.0")
+
   val gitVersion = taskKey[String]("Git version")
 
   val gitVersionFile = taskKey[File]("Git version file")

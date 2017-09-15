@@ -18,12 +18,13 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 mainClass in Compile := Some("io.deepsense.sessionmanager.SessionManagerApp")
 
 val weJar = taskKey[File]("Workflow executor runnable jar")
+val weSparkVersion = DeepsenseUniversalSettingsPlugin.weSparkVersion
 
 weJar := {
   val jar =
-    new File("seahorse-workflow-executor/workflowexecutor/target/scala-2.11/workflowexecutor.jar")
+    new File(s"seahorse-workflow-executor/target/workflowexecutor.jar")
 
-  val assemblyCmd = "sbt workflowexecutor/assembly"
+  val assemblyCmd = s"sbt -DsparkVersion=$weSparkVersion workflowexecutor/assembly"
 
   if(jar.exists()) {
     println(
@@ -45,7 +46,7 @@ mappings in Universal += weJar.value -> "we.jar"
 val preparePythonDeps = taskKey[File]("Generates we_deps.zip file with python dependencies")
 
 preparePythonDeps := {
-  "sessionmanager/prepare-deps.sh" !
+  Seq("sessionmanager/prepare-deps.sh", weSparkVersion) !
 
   target.value / "we-deps.zip"
 }
@@ -63,7 +64,7 @@ dockerBaseImage := {
       s"${SbtGit.GitKeys.gitCurrentBranch.value}-latest"
     }
   }
-  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$seahorseBuildTag"
+  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$seahorseBuildTag" // TODO set image with proper spark version
 }
 
 val tiniVersion = "v0.10.0"
