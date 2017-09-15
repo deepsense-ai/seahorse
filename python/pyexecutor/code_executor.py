@@ -6,7 +6,7 @@ from threading import Thread
 import traceback
 
 from pyspark.sql.dataframe import DataFrame
-
+from pyspark import SQLContext
 
 class CodeExecutor(object):
     """
@@ -19,10 +19,11 @@ class CodeExecutor(object):
     INPUT_PORT_NUMBER = 0
     OUTPUT_PORT_NUMBER = 0
 
-    def __init__(self, spark_context, sql_context, entry_point):
+    def __init__(self, spark_context, spark_session, entry_point):
         self.entry_point = entry_point
         self.spark_context = spark_context
-        self.sql_context = sql_context
+        self.spark_session = spark_session
+        self.sql_context = SQLContext(spark_context, spark_session)
 
         self.threads = []
 
@@ -46,7 +47,7 @@ class CodeExecutor(object):
             self.entry_point.executionFailed(workflow_id, node_id, stacktrace)
 
     def _convert_data_to_data_frame(self, data):
-        sparkSession = self.sql_context
+        sparkSession = self.spark_session
         sc = self.spark_context
         try:
             import pandas
@@ -84,7 +85,8 @@ class CodeExecutor(object):
 
         context = {
             'sc': self.spark_context,
-            'sparkSession': self.sql_context
+            'spark': self.spark_session,
+            'sqlContext': self.sql_context
         }
 
         exec custom_operation_code in context

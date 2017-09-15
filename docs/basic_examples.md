@@ -232,7 +232,7 @@ to interactively analyze data.
 
 * Set the source of your data:
   * Drag [Read DataFrame](operations/read_dataframe.html) operation onto your canvas.
-  * Put <code style="word-break: break-all;">https://s3.amazonaws.com/workflowexecutor/examples/data/grades.csv</code>
+  * Put <code style="word-break: break-all;">https://s3.amazonaws.com/workflowexecutor/examples/data/grades_2_0.csv</code>
     in the `SOURCE` parameter - the dataset will be downloaded from this location.
 
 * Process the dataset before opening the notebook:
