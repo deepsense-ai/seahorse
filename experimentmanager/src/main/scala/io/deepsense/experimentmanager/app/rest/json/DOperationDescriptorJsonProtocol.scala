@@ -17,12 +17,12 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationDescriptor
  * Exposes various json formats of DOperationDescription.
  * Reading from json is not supported.
  */
-object DOperationDescriptorJsonProtocol extends DefaultJsonProtocol {
+object DOperationDescriptorJsonProtocol extends DefaultJsonProtocol with UUIDJsonProtocol {
 
-  class ShortFormat extends JsonFormat[DOperationDescriptor] {
+  class ShortFormat extends RootJsonFormat[DOperationDescriptor] {
     override def write(obj: DOperationDescriptor): JsValue = {
       JsObject(
-        "id" -> obj.id.toString.toJson,
+        "id" -> obj.id.toJson,
         "name" -> obj.name.toJson)
     }
 
@@ -39,7 +39,7 @@ object DOperationDescriptorJsonProtocol extends DefaultJsonProtocol {
   class BaseFormat extends ShortFormat {
     override def write(obj: DOperationDescriptor): JsValue = {
       JsObject(super.write(obj).asJsObject.fields ++ Map(
-        "category" -> obj.category.id.toString.toJson,
+        "category" -> obj.category.id.toJson,
         "description" -> obj.description.toJson,
         "deterministic" -> false.toJson,  // TODO use real value as soon as it is supported
         "ports" -> JsObject(

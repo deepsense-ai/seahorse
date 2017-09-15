@@ -158,7 +158,11 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("It is possible to view list of registered DOperations descriptors") {
     import ViewingTestResources._
-    assert(catalog.operations == Set(expectedA, expectedB, expectedC, expectedD))
+    catalog.operations shouldBe Map(
+      idA -> expectedA,
+      idB -> expectedB,
+      idC -> expectedC,
+      idD -> expectedD)
   }
 
   test("It is possible to get tree of registered categories and DOperations") {

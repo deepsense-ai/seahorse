@@ -6,6 +6,8 @@
 
 package io.deepsense.experimentmanager.app.rest
 
+import java.util.UUID
+
 import scala.concurrent._
 
 import spray.http.StatusCodes
@@ -67,7 +69,7 @@ class OperationsApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSu
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           implicit val expectedDescriptorsFormat = DOperationDescriptorJsonProtocol.BaseFormat
-          responseAs[Seq[DOperationDescriptor]]
+          responseAs[Map[UUID, DOperationDescriptor]]
         }
       }
 

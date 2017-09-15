@@ -24,8 +24,8 @@ abstract class DOperationsCatalog {
   /** Tree describing categories structure. */
   def categoryTree: DOperationCategoryNode
 
-  /** Set of all registered operations. */
-  def operations: Set[DOperationDescriptor]
+  /** Map of all registered operation descriptors, where their ids are keys. */
+  def operations: Map[UUID, DOperationDescriptor]
 
   /**
    * Creates instance of requested DOperation class.
@@ -57,7 +57,7 @@ object DOperationsCatalog {
 
   private class DOperationsCatalogImpl() extends DOperationsCatalog {
     var categoryTree = DOperationCategoryNode()
-    var operations = Set.empty[DOperationDescriptor]
+    var operations = Map.empty[UUID, DOperationDescriptor]
     private val operationsConstructors = mutable.Map.empty[String, Constructor[_]]
 
     private def constructorForType(operationType: ru.Type) = {
@@ -81,7 +81,7 @@ object DOperationsCatalog {
       val operationDescriptor = DOperationDescriptor(
           id, name, description, category, parameters, inPortTypes, outPortTypes)
 
-      operations += operationDescriptor
+      operations += id -> operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)
       operationsConstructors(name) = constructor
     }

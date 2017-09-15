@@ -65,5 +65,4 @@ object RestJsonProtocol
       JsObject()
     }
   }
-
 }

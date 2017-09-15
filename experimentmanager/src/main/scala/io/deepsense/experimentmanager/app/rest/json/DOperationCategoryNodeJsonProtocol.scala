@@ -6,13 +6,12 @@
 
 package io.deepsense.experimentmanager.app.rest.json
 
-import spray.httpx.SprayJsonSupport
-import spray.json.{DefaultJsonProtocol, JsObject, JsValue, JsonFormat}
+import spray.json.{DefaultJsonProtocol, JsObject, JsValue}
 import spray.json._
 
 import io.deepsense.deeplang.catalogs.doperations.DOperationCategoryNode
 
-trait DOperationCategoryNodeJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+trait DOperationCategoryNodeJsonProtocol extends DefaultJsonProtocol with UUIDJsonProtocol {
 
   implicit object DOperationCategoryNodeFormat extends RootJsonFormat[DOperationCategoryNode] {
     private implicit val operationFormat = DOperationDescriptorJsonProtocol.ShortFormat
@@ -23,7 +22,7 @@ trait DOperationCategoryNodeJsonProtocol extends DefaultJsonProtocol with SprayJ
         "catalog" -> obj.successors.values.toJson)
       val allFields = obj.category match {
         case Some(value) => fields ++ Map(
-          "id" -> obj.category.get.id.toString.toJson,
+          "id" -> obj.category.get.id.toJson,
           "name" -> obj.category.get.name.toJson)
         case None => fields
       }
