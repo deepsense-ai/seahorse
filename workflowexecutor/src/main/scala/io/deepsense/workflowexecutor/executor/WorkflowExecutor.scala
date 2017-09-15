@@ -106,12 +106,17 @@ case class WorkflowExecutor(
         Try(executionReport)
     }
 
-    cleanup(actorSystem, executionContext)
+    cleanup(actorSystem, executionContext, pythonExecutionCaretaker)
     report
   }
 
-  private def cleanup(actorSystem: ActorSystem, executionContext: CommonExecutionContext): Unit = {
+  private def cleanup(
+      actorSystem: ActorSystem,
+      executionContext: CommonExecutionContext,
+      pythonExecutionCaretaker: PythonExecutionCaretaker): Unit = {
     logger.debug("Cleaning up...")
+    pythonExecutionCaretaker.stop()
+    logger.debug("PythonExecutionCaretaker terminated!")
     actorSystem.shutdown()
     logger.debug("Akka terminated!")
     executionContext.sparkContext.stop()

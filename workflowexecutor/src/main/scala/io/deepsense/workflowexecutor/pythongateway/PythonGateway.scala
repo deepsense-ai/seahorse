@@ -126,7 +126,10 @@ object PythonGateway {
       updateAndGet().sendCommand(command)
     }
 
-    override def shutdown(): Unit = clientRef.get.shutdown()
+    override def shutdown(): Unit = {
+      clientRef.get.shutdown()
+      super.shutdown()
+    }
   }
 
   class GatewayEventListener extends DefaultGatewayServerListener with Logging {
