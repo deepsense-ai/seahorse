@@ -29,7 +29,6 @@ fi
 ARTIFACTORY_CREDENTIALS=$HOME/.artifactory_credentials
 ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 
-SEAHORSE_WORKFLOWEXECUTOR_REPOSITORY="seahorse-workflowexecutor"
 SEAHORSE_DISTRIBUTION_REPOSITORY="seahorse-distribution"
 
 echo "Publish docker images to quay.io and generate docker-compose.yml"
@@ -46,8 +45,9 @@ echo "RELEASE_TO_S3 equals to $RELEASE_TO_S3, continue job and Release artifacts
 echo "Publish to S3 workflowexecutor uber-jars"
 rm -f workflowexecutor.jar
 
-wget "${ARTIFACTORY_URL}/${SEAHORSE_WORKFLOWEXECUTOR_REPOSITORY}/io/deepsense/deepsense-seahorse-workflowexecutor_2.11/${SEAHORSE_BUILD_TAG}/workflowexecutor.jar"
+wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/workflowexecutor/workflowexecutor-2.11-2.0.0.jar
 aws s3 cp workflowexecutor.jar s3://${WE_RELEASE_PATH}/workflowexecutor_2.11-${API_VERSION}.jar --acl public-read
+
 
 DOCKER_COMPOSE_YML="docker-compose.yml"
 echo "Publish to S3 $DOCKER_COMPOSE_YML"
