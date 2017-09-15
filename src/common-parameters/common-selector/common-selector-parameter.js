@@ -6,7 +6,8 @@ let SelectorItemFactory = require('./common-selector-items/common-selector-item-
 function SelectorParameter(options, node) {
   this.factoryItem = SelectorItemFactory;
   this.name = options.name;
-  this.items = this.initItems(options.value, options.schema);
+  let value = this.initValue(options.value, options.schema);
+  this.items = this.initItems(value, options.schema);
   this.schema = options.schema;
   this.dataFrameSchema = options.dataFrameSchema;
 
@@ -23,7 +24,6 @@ SelectorParameter.prototype = new GenericParameter();
 SelectorParameter.prototype.constructor = GenericParameter;
 
 SelectorParameter.prototype.initItems = function(value, schema) {
-  // TODO if we have dataFrameSchema, we should convert values to single ColumnSelection.
   let isSingle = schema.isSingle;
   let result = [];
 
