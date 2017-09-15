@@ -67,9 +67,9 @@ class EntitiesApiSpec
     }
   }
 
-  "GET /entities/:id" should {
+  "GET /entities/:id/report" should {
     "return entities" in {
-      Get(s"/$apiPrefix/${addedEntity.id}") ~>
+      Get(s"/$apiPrefix/${addedEntity.id}/report") ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
 
@@ -81,7 +81,7 @@ class EntitiesApiSpec
     }
     "return NotFound" when {
       "entity does not exists" in {
-        Get(s"/$apiPrefix/${notAddedEntity.id}") ~>
+        Get(s"/$apiPrefix/${notAddedEntity.id}/report") ~>
           addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }

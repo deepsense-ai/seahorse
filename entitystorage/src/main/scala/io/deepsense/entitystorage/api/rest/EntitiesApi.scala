@@ -42,7 +42,7 @@ class EntitiesApi @Inject() (
   def route = handleRejections(rejectionHandler) {
     handleExceptions(exceptionHandler) {
       pathPrefix(pathPrefixMatcher) {
-        path(JavaUUID) { idParameter =>
+        path(JavaUUID / "report") { idParameter =>
           val entityId: Entity.Id = idParameter
           get {
             withUserContext { userContext =>
@@ -55,7 +55,10 @@ class EntitiesApi @Inject() (
                 }
               )
             }
-          } ~
+          }
+        } ~
+        path(JavaUUID) { idParameter =>
+          val entityId: Entity.Id = idParameter
           put {
             withUserContext { userContext =>
               entity(as[UserEntityDescriptor]) { entityDescription =>
