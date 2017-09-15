@@ -75,7 +75,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
                 parameter.valueFromJson(value)))
             }
           case (None, _) => {
-            // Currently frontend might ocassionaly send invalid params
+            // Currently frontend might occasionally send invalid params
             // (like removing public param from custom transformer or DS-2671)
             // In that case we are doing nothing.
             logger.info(s"Field $label is not defined in schema. Ignoring...")
@@ -90,7 +90,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
 
   /**
    * Sequence of params without values for this class, parsed from Json.
-   * If a name of a parameter is unknown, an exception will be thrown.
+   * If a name of a parameter is unknown, it's ignored
    * JsNull is treated as empty object.
    * JsNull as a value of a parameter unsets param's value.
    */
@@ -100,7 +100,13 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
         (paramsByName.get(label), value) match {
           case (p @ Some(parameter), JsNull) => p
           case (Some(parameter), _) => None
-          case (None, _) => throw unknownParamLabelException(jsValue, label)
+          case (None, _) => {
+            // Currently frontend might occasionally send invalid params
+            // (like removing public param from custom transformer or DS-2671)
+            // In that case we are doing nothing.
+            logger.info(s"Field $label is not defined in schema. Ignoring...")
+            None
+          }
         }
       }
       pairs.flatten.toSeq
@@ -133,7 +139,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
 
   /**
    * Sets param values based on provided json.
-   * If a name of a parameter is unknown, an exception will be thrown.
+   * If a name of a parameter is unknown, it's ignored
    * JsNull is treated as empty object.
    * JsNull as a value of a parameter unsets param's value.
    */

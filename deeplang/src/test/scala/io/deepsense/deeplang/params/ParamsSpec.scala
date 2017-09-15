@@ -83,14 +83,12 @@ class ParamsSpec extends UnitSpec {
       }
     }
     "throw Deserialization exception" when {
-      "unknown param name is used" in {
+      "unknown param name is used it should be ignored" in {
         val p = WithParams()
-        a [DeserializationException] shouldBe thrownBy {
-          p.setParamsFromJson(JsObject(
-            "unknownName" -> 5.toJson,
-            p.param2.name -> 6.toJson
-          ))
-        }
+        p.setParamsFromJson(JsObject(
+          "unknownName" -> 5.toJson,
+          p.param2.name -> 6.toJson))
+        p.get1 shouldBe defaultForParam1
       }
     }
   }
