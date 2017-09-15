@@ -108,8 +108,27 @@ export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster con
   --driver-class-path workflowexecutor.jar \
   --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
   --master yarn \
-  --deploy-mode client \  # can be cluster for cluster mode
+  --deploy-mode client \
   --files workflow.json \
+  workflowexecutor.jar \
+    --workflow-filename workflow.json \
+    --output-directory test-output \
+    --custom-code-executors-path workflowexecutor.jar
+{% endhighlight %}
+
+#### Mesos Cluster
+{% highlight bash %}
+# Run on Mesos Cluster
+export LIBPROCESS_ADVERTISE_IP={user-machine-IP}   # IP addres of user's machine, visible from Mesos cluster
+export LIBPROCESS_IP={user-machine-IP}   # IP addres of user's machine, visible from Mesos cluster
+./bin/spark-submit \
+  --driver-class-path workflowexecutor.jar \
+  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --master mesos://207.184.161.138:5050 \
+  --deploy-mode client \
+  --supervise \
+  --files workflow.json \
+  --conf spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz \
   workflowexecutor.jar \
     --workflow-filename workflow.json \
     --output-directory test-output \
