@@ -2,7 +2,7 @@
  * Copyright (c) 2016, CodiLime Inc.
  */
 
-import scala.languageFeature.postfixOps
+import scala.language.postfixOps
 
 import sbt.Keys._
 import sbt._
@@ -19,8 +19,13 @@ object WorkflowExamples {
     val outFileDir = outFile.getParentFile
     outFileDir.mkdirs()
 
-    Seq("/bin/bash", "-c",
-      s"cd ${scriptDir.getCanonicalPath}; python $scriptFile > ${outFile.getCanonicalPath}") !
+    val exitCode = Seq("/bin/bash", "-c",
+      s"cd '${scriptDir.getCanonicalPath}'; " +
+        s"python '$scriptFile' > '${outFile.getCanonicalPath}'") !
+
+    if (exitCode != 0) {
+      throw new RuntimeException(s"Unable to generate workflow examples sql file, script exited with code: $exitCode")
+    }
 
     Seq(outFile)
 

@@ -2,7 +2,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
 # This script is idempotent and lazy. You can safely call it from other scripts to ensure dockers are built.
-
+# TODO Before updating $BRANCH-latest, we could fetch and check if it is up-to date with remote
 cd `dirname $0`"/../../"
 
 if [[ -n $(git status --porcelain) ]]; then
@@ -20,6 +20,11 @@ fi
 
 GIT_SHA=`git rev-parse HEAD`
 
+# Without it SM dockers SbtGit.GitKeys.gitCurrentBranch will resolve to git hash instead of branch
+# and fail with $GIT_SHA-latest doesnt exists.
+# TODO Fix SM docker building process and get rid of SEAHORSE_BUILD_TAG here
+export SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG:-$GIT_SHA}" # SET if SEAHORSE_BUILD_TAG not set
+
 function pullOrBuild {
   DOCKER_IMAGE=$1
   BUILD_SCRIPT=$2
@@ -35,6 +40,7 @@ function pullOrBuild {
   fi
 }
 
+pullOrBuild "deepsense-proxy" "./jenkins/proxy-publish.sh"
 pullOrBuild "deepsense-rabbitmq" "./jenkins/rabbitmq-publish.sh"
 pullOrBuild "deepsense-h2" "./jenkins/h2-docker-publish.sh"
 pullOrBuild "deepsense-spark" "./jenkins/publish_spark_docker.sh"
@@ -45,3 +51,4 @@ pullOrBuild "deepsense-datasourcemanager" "./jenkins/datasourcemanager-publish.s
 pullOrBuild "deepsense-schedulingmanager" "./jenkins/schedulingmanager-publish.sh"
 pullOrBuild "deepsense-libraryservice" "./jenkins/libraryservice-publish.sh"
 pullOrBuild "deepsense-notebooks" "./jenkins/notebooks-publish.sh"
+pullOrBuild "deepsense-authorization" "./jenkins/authorization-publish.sh"

@@ -8,8 +8,8 @@
 # $RELEASE_TO_S3
 
 SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
-API_VERSION="${API_VERSION?Need to set API_VERSION. For example setting it to 1.3.0"
-RELEASE_TO_S3="${RELEASE_TO_S3?Need to set RELEASE_TO_S3 to \"false\" for not releasing to S3. Set RELEASE_TO_S3 to anything else for releasing to S3."
+API_VERSION="${API_VERSION?Need to set API_VERSION. For example setting it to 1.3.0}"
+RELEASE_TO_S3="${RELEASE_TO_S3?Need to set RELEASE_TO_S3 to \"false\" for not releasing to S3. Set RELEASE_TO_S3 to anything else for releasing to S3.}"
 
 
 # Set working directory to project root file
@@ -77,4 +77,3 @@ echo "Publish to S3 $SEAHORSE_VM_BOX_FILE"
 rm -f $SEAHORSE_VM_BOX_FILE
 wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/$SEAHORSE_VM_BOX_FILE"
 aws s3 cp $SEAHORSE_VM_BOX_FILE s3://${RELEASE_PATH}/$SEAHORSE_VM_BOX_FILE --acl public-read
-

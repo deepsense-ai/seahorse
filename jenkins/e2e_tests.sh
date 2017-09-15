@@ -6,16 +6,10 @@ set -ex
 
 cd `dirname $0`"/../"
 
-if [ -z ${SEAHORSE_BUILD_TAG+x} ]; then # SEAHORSE_BUILD_TAG is not defined
-  FRONTEND_TAG="master-latest"
-  BACKEND_TAG=`git rev-parse HEAD`
+BACKEND_TAG=`git rev-parse HEAD`
 
-  # SEAHORSE_BUILD_TAG is set for backward compability - some scripts require it
-  export SEAHORSE_BUILD_TAG=$BACKEND_TAG
-else # SEAHORSE_BUILD_TAG is defined
-  FRONTEND_TAG=$SEAHORSE_BUILD_TAG
-  BACKEND_TAG=$SEAHORSE_BUILD_TAG
-fi
+FRONTEND_TAG="${FRONTEND_TAG:-$SEAHORSE_BUILD_TAG}" # If FRONTEND_TAG not defined try to use SEAHORSE_BUILD_TAG
+FRONTEND_TAG="${FRONTEND_TAG:-master-latest}" # If it's still undefined fallback to master-latest
 
 ./jenkins/scripts/sync_up_docker_images_with_git_repo.sh
 
@@ -26,6 +20,7 @@ MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
 function cleanup {
     $SPARK_STANDALONE_MANAGEMENT down
     docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
+    (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG logs > docker-compose.log)
     (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
 }
 trap cleanup EXIT
@@ -39,7 +34,6 @@ cleanup # in case something was already running
 
 ## Start Spark Standalone cluster dockers
 
-seahorse-workflow-executor/docker/spark-standalone-cluster/build-cluster-node-docker.sh
 $SPARK_STANDALONE_MANAGEMENT up
 
 ## Start Mesos Spark cluster dockers
