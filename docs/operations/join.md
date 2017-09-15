@@ -7,11 +7,13 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Joins two [DataFrames](../classes/dataframe.html).
+Joins two [DataFrames](../classes/dataframe.html) by performing an SQL join operation.
+Depending on set parameters inner, outer, left outer or right outer join operation will be performed.
+
 Creates a new `DataFrame` that consists of the values from all the columns of the left `DataFrame`
 and the columns not used in the join conditions from the right `DataFrame`.
 Two rows match when the all of equality conditions created by ``join columns`` are satisfied.
-That is, the values are in the rows are equal. The order of the columns is preserved.
+That is, the values in the rows are equal. The order of the columns is preserved.
 
 The operation joins two `DataFrames` by the column pairs given in ``join columns`` parameter.
 For each given pair, both columns must be of the same type. If the column pairs in ``join columns``
