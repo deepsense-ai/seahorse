@@ -40,6 +40,8 @@ trait DeployModelService extends HttpService {
       entity(as[Model]) { model =>
         val uuid = UUID.randomUUID()
         repository.put(uuid, model)
+        println(model)
+        println(CreateResult(uuid.toString))
         complete(CreateResult(uuid.toString))
       }
     }

@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import scala.concurrent.Future
+
 import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.RidgeRegressionModel
@@ -15,6 +17,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
+import io.deepsense.deploymodelservice.{CreateResult, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedRidgeRegression(
@@ -86,6 +89,9 @@ case class TrainedRidgeRegressionDescriptor(
   targetColumn: String,
   scaleStd: Vector,
   scalerMean: Vector) extends Deployable {
-  override def deploy(destination: String): AnyRef = destination
-  // TODO: replace dummy implementation and write more meaningful test: ModelDeploymentIntegSpec
+  override def deploy(f:(Model)=>Future[CreateResult]): Future[CreateResult] = {
+    val model = new Model(false, modelIntercept, modelWeights.toArray.toSeq,
+      scalerMean.toArray.toSeq, scaleStd.toArray.toSeq)
+      f(model)
+  }
 }

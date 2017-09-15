@@ -4,10 +4,13 @@
 
 package io.deepsense.deeplang.doperables
 
+import scala.concurrent.Future
+
 import io.deepsense.deeplang.DSHdfsClient
+import io.deepsense.deploymodelservice.{Model, CreateResult}
 
 trait Deployable extends Serializable {
-  def deploy(destination: String): AnyRef
+  def deploy(f:(Model)=>Future[CreateResult]): Future[CreateResult]
 }
 
 object DeployableLoader {

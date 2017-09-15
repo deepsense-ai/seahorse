@@ -11,6 +11,7 @@ lazy val `deploy-model-service` = project dependsOn (
 lazy val models                 = project dependsOn graph
 lazy val deeplang               = project dependsOn (
   commons,
+  `deploy-model-service`,
   `entitystorage-model`,
   `entitystorage-client`,
   reportlib)
@@ -29,7 +30,8 @@ lazy val experimentmanager      = project dependsOn (
   graphexecutor,
   graphexecutor % "it->it",
   graphjson,
-  models)
+  models,
+  `deploy-model-service`)
 lazy val graph         = project dependsOn (commons, deeplang)
 lazy val graphexecutor = project dependsOn (
   commons,

@@ -65,6 +65,7 @@ object Library {
   val sprayCan           = spray("can")
   val sprayRouting       = spray("routing")
   val sprayTestkit       = spray("testkit")
+  val sprayClient       = spray("client")
   val sprayJson          = "io.spray"                    %% "spray-json"          % Version.sprayJson
 }
 
@@ -117,17 +118,18 @@ object Dependencies {
 
   val deeplang = Seq(
     nscalaTime,
+    sprayClient,
     scalaReflect,
     sparkSql,
     sparkMLLib,
-    sparkCore,
-    sprayJson
+    sparkCore
   ) ++ Seq(scalatest, mockitoCore, scalacheck).map(_ % Test)
 
   val experimentmanager = Seq(
     guice,
     guiceMultibindings,
     sprayCan,
+    sprayClient,
     sprayRouting,
     sprayJson,
     akkaActor,

@@ -4,12 +4,17 @@
 
 package io.deepsense.deeplang.doperables
 
+import scala.concurrent.Future
+import scala.util.Success
+
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.factories.TrainedRidgeRegressionTestFactory
+import io.deepsense.deploymodelservice.{CreateResult, Model}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 import io.deepsense.models.entities.{DataObjectReference, Entity, InputEntity}
+
 
 class ModelDeploymentIntegSpec
   extends DeeplangIntegTestSupport
@@ -39,15 +44,22 @@ class ModelDeploymentIntegSpec
         inputEntity)
       val id: Entity.Id = executionContext.entityStorageClient
         .asInstanceOf[EntityStorageClientTestInMemoryImpl].storage.keys.head._2
-      val deploymentType = "blah"
 
       val retrieved: Deployable = DOperableLoader.load(
         executionContext.entityStorageClient)(
         DeployableLoader.loadFromHdfs(executionContext.hdfsClient))(
         executionContext.tenantId, id)
-      val deploymentResult = retrieved.deploy(deploymentType)
-
-      deploymentResult shouldBe deploymentType
+      val response = CreateResult("testId")
+      val toService = (model: Model) => {
+        import scala.concurrent.ExecutionContext.Implicits.global
+        Future(response)
+      }
+      val deploymentResult = retrieved.deploy(toService)
+      import scala.concurrent.ExecutionContext.Implicits.global
+      deploymentResult.onComplete {
+        case Success(value) =>value shouldBe response
+        case _ =>
+      }
     }
   }
 

@@ -14,7 +14,7 @@ import io.deepsense.commons.auth.AuthModule
 import io.deepsense.commons.rest.RestComponent
 import io.deepsense.experimentmanager.deeplang.DeepLangModule
 import io.deepsense.experimentmanager.rest.json.GraphReaderModule
-import io.deepsense.experimentmanager.rest.{ExperimentsApi, OperationsApi}
+import io.deepsense.experimentmanager.rest._
 
 /**
  * Configures all existing APIs.
@@ -32,5 +32,6 @@ class ApisModule extends AbstractModule {
     install(new DeepLangModule)
     bindApi.to(classOf[ExperimentsApi])
     bindApi.to(classOf[OperationsApi])
+    bindApi.to(classOf[ModelsApi])
   }
 }
