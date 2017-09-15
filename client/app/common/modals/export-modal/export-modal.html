@@ -2,16 +2,28 @@
   <div class="modal-header">
     <h4 class="modal-title">Export workflow</h4>
   </div>
-  <div class="modal-body">
-    <div>The downloaded file will contain your entire workflow.</div>
-    <br>
-    <footer class="text-center">
+  <div class="modal-body export-modal__body">
+    <div class="include-datasources">
+      <label class="custom-checkbox">
+        <input type="checkbox" ng-model="controller.includeDatasources">
+        <span class="label-wrapper">
+          <span>
+            Export with definitions of the datasources.
+          </span>
+          <br/>
+          <span>
+            Note that those definitions may contain sensitive information (e.g. database credentials).
+          </span>
+        </span>
+      </label>
+    </div>
+    <div>
       <a ng-click="controller.download()" >
         <button type="button" class="btn btn-info no-selection">
-          Download Workflow
+          Export Workflow
         </button>
       </a>
-    </footer>
+    </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-white" ng-click="controller.close()">

@@ -66,8 +66,8 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config, $
       this.ServerCommunication.sendUpdateWorkflowToWorkflowExchange(data);
     }
 
-    getDownloadWorkflowMethodUrl(workflowId) {
-      return `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/download?format=json`;
+    getDownloadWorkflowMethodUrl(workflowId, includeDatasources) {
+      return `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/download?format=json&export-datasources=${!!includeDatasources}`;
     }
 
     getUploadWorkflowMethodUrl() {
