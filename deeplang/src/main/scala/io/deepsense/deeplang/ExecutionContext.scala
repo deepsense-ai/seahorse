@@ -117,8 +117,10 @@ case class ContextualCustomCodeExecutor(
     nodeId: Id) extends Logging {
 
   def isPythonValid: (String) => Boolean = customCodeExecutionProvider.pythonCodeExecutor.isValid
+  def isRValid: (String) => Boolean = customCodeExecutionProvider.rCodeExecutor.isValid
 
   def runPython: (String) => Result = run(_, customCodeExecutionProvider.pythonCodeExecutor)
+  def runR: (String) => Result = run(_, customCodeExecutionProvider.rCodeExecutor)
 
   private def run(code: String, executor: CustomCodeExecutor): Result = {
     val result =

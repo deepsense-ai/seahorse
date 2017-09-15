@@ -49,7 +49,7 @@ import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
  */
 case class WorkflowExecutor(
     workflow: WorkflowWithVariables,
-    pythonExecutorPath: String,
+    customCodeExecutorsPath: String,
     pythonPathGenerator: PythonPathGenerator,
     tempPath: String)
   extends Executor {
@@ -85,7 +85,7 @@ case class WorkflowExecutor(
       operationExecutionDispatcher)
 
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
-      pythonExecutorPath,
+      customCodeExecutorsPath,
       pythonPathGenerator,
       pythonBinary,
       sparkContext,
@@ -95,8 +95,12 @@ case class WorkflowExecutor(
       hostAddress)
     pythonExecutionCaretaker.start()
 
+    val rExecutionCaretaker = new RExecutionCaretaker(customCodeExecutorsPath, customCodeEntryPoint)
+    rExecutionCaretaker.start()
+
     val customCodeExecutionProvider = CustomCodeExecutionProvider(
       pythonExecutionCaretaker.pythonCodeExecutor,
+      rExecutionCaretaker.rCodeExecutor,
       operationExecutionDispatcher)
 
     val executionContext = createExecutionContext(
@@ -163,8 +167,8 @@ object WorkflowExecutor extends Logging {
       pythonPathGenerator: PythonPathGenerator): Unit = {
     val workflow = loadWorkflow(params)
 
-    val executionReport = workflow.map(w => {
-      executeWorkflow(w, params.pyExecutorPath.get, pythonPathGenerator, params.tempPath.get)
+    val executionReport = workflow.map(w => {executeWorkflow(w, params.customCodeExecutorsPath.get,
+      pythonPathGenerator, params.tempPath.get)
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -247,14 +251,14 @@ object WorkflowExecutor extends Logging {
 
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
-      pythonExecutorPath: String,
+      customCodeExecutorsPath: String,
       pythonPathGenerator: PythonPathGenerator,
       tempPath: String): Try[ExecutionReport] = {
 
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, pythonExecutorPath, pythonPathGenerator, tempPath).execute()
+    WorkflowExecutor(workflow, customCodeExecutorsPath, pythonPathGenerator, tempPath).execute()
   }
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {

@@ -111,9 +111,9 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(wmPassword = Some(x))
     } text "password for accessing Workflow Manager API"
 
-    opt[String]('p', "python-executor-path") optional() valueName "PATH" action {
-      (x, c) => c.copy(pyExecutorPath = Some(x))
-    } text "PyExecutor code (included in workflowexecutor.jar) path"
+    opt[String]('x', "custom-code-executors-path") optional() valueName "PATH" action {
+      (x, c) => c.copy(customCodeExecutorsPath = Some(x))
+    } text "Custom code executors (included in workflowexecutor.jar) path"
 
     opt[String]("python-binary") optional() valueName "PATH" action {
       (x, c) => c.copy(pythonBinaryPath = Some(x))
@@ -145,14 +145,18 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.wmUsername.isEmpty, "--wm-username is required in interactive mode"),
         (config.wmPassword.isEmpty, "--wm-password is required in interactive mode"),
         (config.userId.isEmpty, "--user-id is required in interactive mode"),
-        (config.tempPath.isEmpty, "--temp-dir is required in interactive mode")
+        (config.tempPath.isEmpty, "--temp-dir is required in interactive mode"),
+        (config.customCodeExecutorsPath.isDefined,
+          "--custom-code-executors-path is forbidden in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
         (config.workflowFilename.isEmpty,
           "--workflow-filename is required by Seahorse Batch Workflow Executor"),
         (config.outputDirectoryPath.isEmpty,
-          "--output-directory is required by Seahorse Batch Workflow Executor"))
+          "--output-directory is required by Seahorse Batch Workflow Executor"),
+        (config.customCodeExecutorsPath.isEmpty,
+          "--custom-code-executors-path is required by Seahorse Batch Workflow Executor"))
 
       def check(requirements: Requirements) = {
         requirements.foldLeft(success) {

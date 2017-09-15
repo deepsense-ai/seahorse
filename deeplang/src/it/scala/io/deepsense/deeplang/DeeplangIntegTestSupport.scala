@@ -224,7 +224,8 @@ private class MockedCodeExecutor extends CustomCodeExecutor {
 }
 
 private class MockedCustomCodeExecutionProvider
-  extends CustomCodeExecutionProvider(new MockedCodeExecutor, new MockedCustomOperationExecutor)
+  extends CustomCodeExecutionProvider(
+    new MockedCodeExecutor, new MockedCodeExecutor, new MockedCustomOperationExecutor)
 
 private class MockedContextualCodeExecutor
   extends ContextualCustomCodeExecutor(

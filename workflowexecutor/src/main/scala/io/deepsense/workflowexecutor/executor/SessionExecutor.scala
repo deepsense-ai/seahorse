@@ -117,8 +117,13 @@ case class SessionExecutor(
       hostAddress)
     pythonExecutionCaretaker.start()
 
+    val rExecutionCaretaker = new RExecutionCaretaker(s"$tempPath/r_executor.R",
+      customCodeEntryPoint)
+    rExecutionCaretaker.start()
+
     val customCodeExecutionProvider = CustomCodeExecutionProvider(
       pythonExecutionCaretaker.pythonCodeExecutor,
+      rExecutionCaretaker.rCodeExecutor,
       operationExecutionDispatcher)
 
     implicit val system = ActorSystem()

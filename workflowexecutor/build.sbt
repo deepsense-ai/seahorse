@@ -39,6 +39,8 @@ test in assembly := {}
 // Include PyExecutor code in assembled uber-jar (under path inside jar: /pyexecutor)
 unmanagedResourceDirectories in Compile += { baseDirectory.value / "../python" }
 
+unmanagedResourceDirectories in Compile += { baseDirectory.value / "./rexecutor" }
+
 enablePlugins(DeepsenseBuildInfoPlugin)
 
 buildInfoPackage := "io.deepsense.workflowexecutor.buildinfo"
