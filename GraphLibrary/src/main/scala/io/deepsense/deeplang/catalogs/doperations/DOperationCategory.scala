@@ -18,7 +18,7 @@ abstract class DOperationCategory(val name: String, val parent: Option[DOperatio
   /** List of categories on path from this category to some top-level category. */
   private[doperations] def pathToRoot: List[DOperationCategory] = parent match {
     case Some(category) => this :: category.pathToRoot
-    case None => List()
+    case None => List(this)
   }
 
   /** List of categories on path from some top-level category to this category. */

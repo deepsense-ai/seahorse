@@ -7,7 +7,6 @@
 package io.deepsense.deeplang.catalogs.doperable.exceptions
 
 import io.deepsense.deeplang.catalogs.doperable.ConcreteClassNode
-import io.deepsense.deeplang.catalogs.doperable.exceptions.DOperableCatalogException
 
 case class NoParameterLessConstructorInClassException(classNode: ConcreteClassNode)
   extends DOperableCatalogException(s"Concrete class registered in DHierarchy has to have" +
