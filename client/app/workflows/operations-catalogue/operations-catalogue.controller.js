@@ -7,16 +7,11 @@ class OperationsCatalogueController {
       if (this.isSearchMode) {
         const tree = {catalog: this.categories, items: []};
         this.filteredCategories = this.filterCatalog(tree, this.query);
-
-        if (this.filteredCategories && this.filteredCategories.catalog.length > 0) {
-          this.message = '';
-        } else {
-          this.message = 'There are no operations matching query';
-        }
       }
     });
   }
 
+  //TODO use Operation.filterCatalog(fn)
   filterCatalog(tree, filterQuery) {
     const newTree = angular.copy(tree);
     newTree.catalog = _
@@ -25,7 +20,7 @@ class OperationsCatalogueController {
       .filter(c => !_.isNull(c))
       .value();
     newTree.items = _.filter(newTree.items, (item) => {
-      return item.name.toLowerCase().indexOf(filterQuery.toLowerCase()) > -1;
+      return item.name.toLowerCase().includes(filterQuery.toLowerCase());
     });
     if (newTree.catalog.length === 0 && newTree.items.length === 0) {
       return null;
@@ -34,6 +29,13 @@ class OperationsCatalogueController {
     }
   }
 
+  $onChanges(change) {
+    if (change.categories) {
+      this.categories = change.categories.currentValue.map((category) => {
+        return Object.assign({}, category, {type: 'category'});
+      });
+    }
+  }
 }
 
 export default OperationsCatalogueController;

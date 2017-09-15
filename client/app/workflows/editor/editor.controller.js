@@ -1,7 +1,7 @@
 'use strict';
 
-const NEW_NODE_ELEMENT_WIDTH = 240;
-const ZOOM_STEP = 0.1;
+const NEW_NODE_ELEMENT_WIDTH = 200;
+const ZOOM_STEP = 0.05;
 const TRANSITION_TIME = 0.5;
 
 class EditorController {
@@ -59,7 +59,7 @@ class EditorController {
       }
     };
 
-    this.$canvas.bind('mousedown', () => {
+    this.$canvas.bind('mousedown', (event) => {
       if (this.MouseEvent.isModKeyDown(event)) {
         this.$canvas.bind('mousemove', moveHandler);
       }

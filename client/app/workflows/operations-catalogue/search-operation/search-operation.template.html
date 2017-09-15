@@ -1,8 +1,8 @@
 <div class="search-operation">
-  <div ng-if="$ctrl.message"
+  <div ng-if="!$ctrl.searchResults"
        class="message"
   >
-    {{$ctrl.message}}
+    There are no operations matching query
   </div>
 
   <div ng-if="!$ctrl.message"
