@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
+var revAppend = require('gulp-rev-append');
 var runSequence = require('run-sequence');
 var nodemon = require('gulp-nodemon');
 var browserSync = require('browser-sync');
@@ -127,6 +128,12 @@ gulp.task('replace', function () {
     .pipe(gulp.dest(build.path));
 });
 
+gulp.task('uncache', function () {
+  return gulp.src(build.path + '/index.html')
+    .pipe( revAppend() )
+    .pipe( gulp.dest(build.path) );
+});
+
 gulp.task('copy:images', function () {
   return gulp.src([client.path + client.icheckImages])
     .pipe(gulp.dest(build.path + build.css));
@@ -248,7 +255,7 @@ gulp.task('build', function (callback) {
     ],
     'browserify:external',
     ['libs:js', 'jshint', 'browserify'],
-    'version', 'replace', callback);
+    'version', 'replace', 'uncache', callback);
 });
 
 gulp.task('watch', function () {
