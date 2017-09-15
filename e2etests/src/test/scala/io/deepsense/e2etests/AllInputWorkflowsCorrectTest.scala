@@ -7,12 +7,13 @@ package io.deepsense.e2etests
 import org.scalatest.WordSpec
 import spray.json._
 
+import io.deepsense.commons.json.DatasourceListJsonProtocol
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang.CatalogRecorder
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowVersionUtil
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.models.workflows.WorkflowWithVariables
+import io.deepsense.workflowexecutor.executor.WorkflowExecutor
 import io.deepsense.workflowmanager.rest.CurrentBuild
 
 
@@ -21,7 +22,8 @@ class AllInputWorkflowsCorrectTest extends WordSpec {
   TestWorkflowsIterator.foreach { case TestWorkflowsIterator.Input(path, fileContents) =>
     s"Workflow from '$path'" should {
       "be correctly formatted" in {
-        WorkflowParser.parseWorkflow(fileContents)
+        val workflow = WorkflowParser.parseWorkflow(fileContents)
+        val datasources = WorkflowExecutor.datasourcesFrom(workflow)
       }
     }
   }
@@ -34,7 +36,7 @@ object WorkflowParser extends Logging with WorkflowVersionUtil {
     new GraphReader(CatalogRecorder.catalogs.dOperationsCatalog)
   }
 
-  def parseWorkflow(raw: String): Unit = {
-    raw.parseJson.convertTo[Workflow](versionedWorkflowReader)
+  def parseWorkflow(raw: String): WorkflowWithVariables = {
+    raw.parseJson.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader)
   }
 }
