@@ -26,6 +26,7 @@ import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
 class UnionIntegSpec extends DeeplangIntegTestSupport {
 
+  import DeeplangIntegTestSupport._
   val schema1 = StructType(List(
     StructField("column1", DoubleType),
     StructField("column2", DoubleType)))

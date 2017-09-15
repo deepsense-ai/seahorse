@@ -62,6 +62,10 @@ object MockTransformers extends UnitSpec with DeeplangTestSupport {
         case -2 | 2 => outputSchema2
       })
     }
+
+    override def load(ctx: ExecutionContext, path: String): this.type = ???
+
+    override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = ???
   }
 }
 

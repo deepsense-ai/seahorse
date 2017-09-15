@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.catalogs.doperable.exceptions
 
-import io.deepsense.deeplang.catalogs.doperable.ConcreteClassNode
-
-case class NoParameterlessConstructorInClassException(classNode: ConcreteClassNode)
+case class NoParameterlessConstructorInClassException(classCanonicalName: String)
   extends DOperableCatalogException(s"Concrete class registered in hierarchy has to have" +
-    s" parameterless constructor (${classNode.javaTypeName} has no parameterless constructor)")
+    s" parameterless constructor ($classCanonicalName has no parameterless constructor)")

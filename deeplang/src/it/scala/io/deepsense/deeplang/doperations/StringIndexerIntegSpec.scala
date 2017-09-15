@@ -23,7 +23,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.MultiColumnNoInPlace
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
-import io.deepsense.deeplang.doperables.spark.wrappers.models.{SingleColumnStringIndexerModel, MultiColumnStringIndexerModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{MultiColumnStringIndexerModel, SingleColumnStringIndexerModel}
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.StringIndexer
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection

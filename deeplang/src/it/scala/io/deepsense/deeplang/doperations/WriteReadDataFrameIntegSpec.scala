@@ -30,6 +30,7 @@ class WriteReadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter {
 
+  import DeeplangIntegTestSupport._
   val absoluteWriteReadDataFrameTestPath = absoluteTestsDirPath + "/WriteReadDataFrameTest"
 
   val timestamp = new Timestamp(System.currentTimeMillis())

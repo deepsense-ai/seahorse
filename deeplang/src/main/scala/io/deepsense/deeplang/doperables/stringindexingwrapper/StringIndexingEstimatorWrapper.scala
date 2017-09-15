@@ -24,6 +24,7 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
+import io.deepsense.deeplang.doperables.serialization.{SerializableSparkEstimator, SerializableSparkModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasLabelColumnParam, HasPredictionColumnCreatorParam}
 import io.deepsense.deeplang.doperables.{Estimator, SparkEstimatorWrapper, SparkModelWrapper}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
@@ -39,14 +40,16 @@ import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
   * by reverting string indexing with labelConverter.
   */
 abstract class StringIndexingEstimatorWrapper
-  [MD <: ml.Model[MD], E <: ml.Estimator[MD],
-   MW <: SparkModelWrapper[MD, E], SIWP <: StringIndexingWrapperModel[MD, E]]
-  (private var wrappedEstimator: SparkEstimatorWrapper[MD, E, MW]
+  [M <: ml.Model[M],
+   E <: ml.Estimator[M],
+   MW <: SparkModelWrapper[M, E],
+   SIWP <: StringIndexingWrapperModel[M, E]]
+  (private var wrappedEstimator: SparkEstimatorWrapper[M, E, MW]
     with HasLabelColumnParam with HasPredictionColumnCreatorParam)
-  (implicit val sparkModelClassTag: ClassTag[MD],
+  (implicit val sparkModelClassTag: ClassTag[M],
    val modelWrapperTag: TypeTag[MW],
    val estimatorTag: TypeTag[E],
-   val sparkModelTag: TypeTag[MD],
+   val sparkModelTag: TypeTag[M],
    val stringIndexingWrapperModelTag: TypeTag[SIWP])
   extends Estimator[SIWP] with ParamsWithSparkWrappers  {
 
@@ -56,10 +59,10 @@ abstract class StringIndexingEstimatorWrapper
   final override def report: Report = wrappedEstimator.report
 
   final def sparkClassCanonicalName: String =
-    wrappedEstimator.sparkEstimator.getClass.getCanonicalName
+    wrappedEstimator.serializableEstimator.getClass.getCanonicalName
 
   private def setWrappedEstimator(
-    wrappedEstimator: SparkEstimatorWrapper[MD, E, MW]
+    wrappedEstimator: SparkEstimatorWrapper[M, E, MW]
       with HasLabelColumnParam with HasPredictionColumnCreatorParam): this.type = {
     this.wrappedEstimator = wrappedEstimator
     this
@@ -77,21 +80,29 @@ abstract class StringIndexingEstimatorWrapper
     val labelColumnName = df.getColumnName($(wrappedEstimator.labelColumn))
     val predictionColumnName: String = $(wrappedEstimator.predictionColumn)
 
+    val serializableSparkEstimator = new SerializableSparkEstimator[M, E](
+      wrappedEstimator.sparkEstimator)
+
     val pipeline = StringIndexingPipeline(
-      df, wrappedEstimator.sparkEstimator, labelColumnName, predictionColumnName
-    )
+      df,
+      serializableSparkEstimator,
+      labelColumnName,
+      predictionColumnName)
 
     val sparkDataFrame = df.sparkDataFrame
 
     val paramMap = sparkParamMap(
-      wrappedEstimator.sparkEstimator, sparkDataFrame.schema)
+      wrappedEstimator.sparkEstimator,
+      sparkDataFrame.schema)
     val pipelineModel = pipeline.fit(sparkDataFrame, paramMap)
 
     val sparkModel = {
-      val transformer = pipelineModel.stages.find(
-        t => sparkModelClassTag.runtimeClass.isInstance(t)
-      ).get
-      transformer.asInstanceOf[MD]
+      val transformer = pipelineModel.stages.find {
+        case s: SerializableSparkModel[_] =>
+          sparkModelClassTag.runtimeClass.isInstance(s.sparkModel)
+        case t => sparkModelClassTag.runtimeClass.isInstance(t)
+      }.get
+      transformer.asInstanceOf[SerializableSparkModel[M]]
     }
 
     val sparkModelWrapper = TypeUtils.instanceOfType(modelWrapperTag)

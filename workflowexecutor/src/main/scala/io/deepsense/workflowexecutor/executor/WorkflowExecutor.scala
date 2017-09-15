@@ -27,22 +27,20 @@ import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 import akka.actor.ActorSystem
-import com.typesafe.config.ConfigFactory
 import spray.json._
 
-import io.deepsense.commons.models.{Entity, Id}
+import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang._
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
+import io.deepsense.workflowexecutor._
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
-import io.deepsense.workflowexecutor._
 
 /**
  * WorkflowExecutor creates an execution context and then executes a workflow on Spark.
@@ -135,21 +133,7 @@ case class WorkflowExecutor(
 
 object WorkflowExecutor extends Logging {
 
-  private val config = ConfigFactory.load
-
-  private val workflowManagerConfig = WorkflowManagerConfig(
-    defaultAddress = config.getString("workflow-manager.address"),
-    path = config.getString("workflow-manager.workflows.path"),
-    timeout = config.getInt("workflow-manager.timeout")
-  )
-
-  private val reportPreviewConfig = ReportPreviewConfig(
-    defaultAddress = config.getString("editor.address"),
-    path = config.getString("editor.report-preview.path")
-  )
-
   private val outputFile = "result.json"
-
 
   def runInNoninteractiveMode(params: ExecutionParams): Unit = {
     val workflow = loadWorkflow(params)
@@ -246,15 +230,9 @@ object WorkflowExecutor extends Logging {
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {
     val content = Future(Source.fromFile(params.workflowFilename.get).mkString)
-    content.map(_.parseJson.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader))
-  }
-
-  private def downloadWorkflow(editorAddress: String, workflowId: String): Future[String] = {
-    new WorkflowDownloadClient(
-      editorAddress,
-      workflowManagerConfig.path,
-      workflowManagerConfig.timeout
-    ).downloadWorkflow(workflowId)
+    content.map(_.parseJson)
+      .map(w => WorkflowJsonParamsOverrider.overrideParams(w, params.extraVars))
+      .map(_.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader))
   }
 
   private def saveWorkflowToFile(
@@ -289,16 +267,6 @@ object WorkflowExecutor extends Logging {
         Future.failed(e)
     }
   }
-
-  private case class WorkflowManagerConfig(
-      defaultAddress: String,
-      path: String,
-      timeout: Int) {
-
-    def address(address: Option[String]): String = address.getOrElse(defaultAddress)
-  }
-
-  private case class ReportPreviewConfig(defaultAddress: String, path: String)
 }
 
 private case class FileSystemClientStub() extends FileSystemClient {
@@ -318,15 +286,4 @@ private case class FileSystemClientStub() extends FileSystemClient {
 
   override def readFileAsObject[T <: Serializable](path: String): T =
     throw new UnsupportedOperationException
-}
-
-private case class PythonCodeExecutorStub() extends PythonCodeExecutor {
-
-  override def isValid(code: String): Boolean = ???
-
-  override def run(workflowId: String, nodeId: String, code: String): Unit = ???
-}
-
-private case class CustomOperationExecutorStub() extends CustomOperationExecutor {
-  override def execute(workflowId: Id, nodeId: Id): Future[Result] = Future.successful(Right())
 }

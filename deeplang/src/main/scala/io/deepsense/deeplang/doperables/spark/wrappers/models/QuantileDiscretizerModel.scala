@@ -19,9 +19,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml
 import org.apache.spark.ml.feature.{Bucketizer => SparkQuantileDiscretizerModel, QuantileDiscretizer => SparkQuantileDiscretizer}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.DoubleArrayParamWrapper
 
@@ -42,10 +44,17 @@ class QuantileDiscretizerModel
       List(
         SparkSummaryEntry(
           name = "splits",
-          value = model.splits,
+          value = sparkModel.splits,
           description = "Split points for mapping continuous features into buckets."))
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SerializableSparkModel[SparkQuantileDiscretizerModel] = {
+    new SerializableSparkModel(SparkQuantileDiscretizerModel.load(path))
+  }
+
 }

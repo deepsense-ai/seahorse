@@ -24,7 +24,6 @@ import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
@@ -66,10 +65,11 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
       transformerKnowledge: DKnowledge[Transformer]): (DKnowledge[DataFrame], InferenceWarnings) = {
 
     if (transformerKnowledge.size > 1) {
-      throw TooManyPossibleTypesException()
+      (DKnowledge(DataFrame.forInference()), InferenceWarnings.empty)
+    } else {
+      val transformer = transformerKnowledge.single
+      transformerWithParams(transformer).transform.infer(context)(())(dataFrameKnowledge)
     }
-    val transformer = transformerKnowledge.single
-    transformerWithParams(transformer).transform.infer(context)(())(dataFrameKnowledge)
   }
 
   private def transformerWithParams(transformer: Transformer): Transformer = {

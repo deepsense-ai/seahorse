@@ -21,10 +21,16 @@ import org.apache.spark.sql.types._
 import org.scalatest.Matchers
 
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 
 class RowsFiltererIntegSpec
   extends DeeplangIntegTestSupport
-  with Matchers {
+  with Matchers
+  with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   val columns = Seq(
     StructField("a", DoubleType),
@@ -43,8 +49,9 @@ class RowsFiltererIntegSpec
     "select correct rows based on the condition" in {
       val filterer = new RowsFilterer().setCondition("a > 1 AND c = TRUE")
 
-      val result = filterer._transform(
-        executionContext, createDataFrame(data.map(Row.fromSeq), schema))
+      val dataFrame: DataFrame = createDataFrame(data.map(Row.fromSeq), schema)
+      val result =
+        filterer.applyTransformationAndSerialization(tempDir, dataFrame)
       val expectedDataFrame = createDataFrame(Seq(row3).map(Row.fromSeq), schema)
       assertDataFramesEqual(result, expectedDataFrame)
     }

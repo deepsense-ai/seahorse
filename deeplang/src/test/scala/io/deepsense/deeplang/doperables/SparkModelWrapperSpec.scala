@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperables
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.ParamMap
 import io.deepsense.deeplang.{DeeplangTestSupport, ExecutionContext, UnitSpec}
@@ -43,7 +44,8 @@ class SparkModelWrapperSpec extends UnitSpec with DeeplangTestSupport{
     "forward an exception thrown by transformSchema wrapped in DeepLangException" in {
       val inputSchema = createSchema()
       val wrapper = prepareWrapperWithParams()
-      wrapper.parentEstimator.sparkEstimator.setTransformSchemaShouldThrow(true)
+      wrapper.parentEstimator.sparkEstimator
+        .setTransformSchemaShouldThrow(true)
       val e = intercept[SparkTransformSchemaException] {
         wrapper._transformSchema(inputSchema)
       }
@@ -52,7 +54,7 @@ class SparkModelWrapperSpec extends UnitSpec with DeeplangTestSupport{
   }
 
   private def prepareWrapperWithParams(): ExampleSparkModelWrapper = {
-    val model = new ExampleSparkModel()
+    val model = new SerializableSparkModel(new ExampleSparkModel())
     val wrapper = new ExampleSparkModelWrapper().setModel(model)
     val parentEstimator = new ExampleSparkEstimatorWrapper()
     wrapper.setParent(parentEstimator).setNumericParamWrapper(paramValueToSet)

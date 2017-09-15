@@ -17,13 +17,16 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.types.StructType
+import spray.json.JsObject
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.serialization.{JsonObjectPersistence, PathsUtils}
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.{ParamMap, Param}
-import io.deepsense.deeplang.params.custom.{PublicParam, InnerWorkflow}
+import io.deepsense.deeplang.params.custom.{InnerWorkflow, PublicParam}
+import io.deepsense.deeplang.params.{Param, ParamMap}
+import io.deepsense.deeplang.utils.CustomTransformerFactory
 import io.deepsense.graph._
 
 case class CustomTransformer(
@@ -73,6 +76,32 @@ case class CustomTransformer(
     innerWorkflow
   }
 
-  private def getParam(params: Array[Param[_]], name: String): Param[_] =
+  private def getParam(params: Array[Param[_]], name: String): Param[_] = {
     params.find(_.name == name).get
+  }
+
+  override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {
+    val innerWorkflowPath: String = CustomTransformer.innerWorkflowPath(path)
+    val innerWorkflowJson: JsObject = ctx.innerWorkflowExecutor.toJson(innerWorkflow)
+    JsonObjectPersistence.saveJsonToFile(ctx, innerWorkflowPath, innerWorkflowJson)
+  }
+
+  override protected def loadTransformer(
+      ctx: ExecutionContext,
+      path: String): CustomTransformer.this.type = {
+    val innerWorkflowPath: String = CustomTransformer.innerWorkflowPath(path)
+    val innerWorkflowJson = JsonObjectPersistence.loadJsonFromFile(ctx, innerWorkflowPath)
+    CustomTransformerFactory.createCustomTransformer(
+      ctx.innerWorkflowExecutor,
+      innerWorkflowJson.asJsObject).asInstanceOf[this.type]
+  }
+}
+
+object CustomTransformer {
+
+  private val innerWorkflow = "innerWorkflow"
+
+  def innerWorkflowPath(path: String): String = {
+    PathsUtils.combinePaths(path, innerWorkflow)
+  }
 }

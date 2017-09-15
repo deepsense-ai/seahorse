@@ -29,18 +29,20 @@ class SparkEstimatorWrapperSpec extends UnitSpec with DeeplangTestSupport {
 
       val modelWrapper =
         wrapper._fit(mock[ExecutionContext], inputDataFrame)
-      modelWrapper.model shouldBe fitModel
+      modelWrapper.sparkModel shouldBe fitModel
     }
     "infer knowledge when schema is provided" in {
       val wrapper = new ExampleSparkEstimatorWrapper().setNumericParamWrapper(paramValueToSet)
       val inferredModelWrapper = wrapper._fit_infer(Some(createSchema()))
         .asInstanceOf[ExampleSparkModelWrapper]
-      inferredModelWrapper.parentEstimator.sparkEstimator shouldBe wrapper.sparkEstimator
+      inferredModelWrapper.parentEstimator.serializableEstimator shouldBe (
+        wrapper.serializableEstimator)
     }
     "infer knowledge when schema isn't provided" in {
       val wrapper = new ExampleSparkEstimatorWrapper()
       val inferredModelWrapper = wrapper._fit_infer(None)
-      inferredModelWrapper.parentEstimator.sparkEstimator shouldBe wrapper.sparkEstimator
+      inferredModelWrapper.parentEstimator.serializableEstimator shouldBe (
+        wrapper.serializableEstimator)
     }
   }
 }

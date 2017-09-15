@@ -18,7 +18,7 @@ package io.deepsense.models.json.workflow
 
 import spray.httpx.SprayJsonSupport
 import spray.json._
-import io.deepsense.models.actions.{Action, AbortAction, LaunchAction}
+import io.deepsense.models.actions.{AbortAction, Action, LaunchAction}
 import io.deepsense.models.json.graph.NodeJsonProtocol
 
 trait ActionsJsonProtocol

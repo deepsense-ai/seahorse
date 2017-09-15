@@ -39,6 +39,8 @@ class InnerWorkflowExecutorSpec
   extends DeeplangIntegTestSupport
   with InnerWorkflowJsonProtocol {
 
+  import DeeplangIntegTestSupport._
+
   val sourceNodeId = "2603a7b5-aaa9-40ad-9598-23f234ec5c32"
   val sinkNodeId = "d7798d5e-b1c6-4027-873e-a6d653957418"
   val innerNodeId = "b22bd79e-337d-4223-b9ee-84c2526a1b75"

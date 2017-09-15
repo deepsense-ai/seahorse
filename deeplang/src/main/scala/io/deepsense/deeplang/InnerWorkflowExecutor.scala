@@ -30,6 +30,14 @@ trait InnerWorkflowParser {
    * @return inner workflow as object.
    */
   def parse(workflow: JsObject): InnerWorkflow
+
+  /**
+   * Serializes inner workflow to json.
+   *
+   * @param innerWorkflow to serialize.
+   * @return json representation of the inner workflow.
+   */
+  def toJson(innerWorkflow: InnerWorkflow): JsObject
 }
 
 trait InnerWorkflowExecutor extends InnerWorkflowParser {

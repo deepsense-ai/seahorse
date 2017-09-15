@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.VectorUDT
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.params.choice.Choice

@@ -16,17 +16,22 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions._
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class SqlColumnTransformationIntegSpec extends DeeplangIntegTestSupport {
+class SqlColumnTransformationIntegSpec
+    extends DeeplangIntegTestSupport
+    with TransformerSerialization {
+
+  import TransformerSerialization._
 
   val resultColumn = 3
   val delta = 0.01
@@ -252,7 +257,7 @@ class SqlColumnTransformationIntegSpec extends DeeplangIntegTestSupport {
   }
 
   def applyTransformation(transformation: SqlColumnTransformer, df: DataFrame): DataFrame = {
-    transformation.transform.apply(executionContext)(())(df)
+    transformation.applyTransformationAndSerialization(tempDir, df)
   }
 
   def prepareTransformation(

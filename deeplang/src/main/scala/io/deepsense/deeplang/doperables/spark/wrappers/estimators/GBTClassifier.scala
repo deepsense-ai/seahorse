@@ -25,7 +25,7 @@ import io.deepsense.deeplang.TypeUtils
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.{GBTClassificationModel, VanillaGBTClassificationModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasClassificationImpurityParam, ClassificationImpurity}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasClassificationImpurityParam
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingEstimatorWrapper
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
@@ -43,14 +43,16 @@ class GBTClassifier private (val vanillaGBTClassifier: VanillaGBTClassifier)
 
 class VanillaGBTClassifier()
   extends SparkEstimatorWrapper[
-    SparkGBTClassificationModel, SparkGBTClassifier, VanillaGBTClassificationModel]
-    with GBTParams
-    with HasClassificationImpurityParam
-    with Logging {
+    SparkGBTClassificationModel,
+    SparkGBTClassifier,
+    VanillaGBTClassificationModel]
+  with GBTParams
+  with HasClassificationImpurityParam
+  with Logging {
 
   import GBTClassifier._
 
-  override lazy val maxIterationsDefault = 20.0
+  override lazy val maxIterationsDefault = 10.0
 
   val estimator = TypeUtils.instanceOfType(typeTag[SparkGBTClassifier])
 

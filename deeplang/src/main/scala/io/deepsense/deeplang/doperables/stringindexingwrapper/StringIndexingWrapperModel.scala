@@ -28,13 +28,13 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.{Param, ParamMap}
 
 /**
-  * Model wrapper adding 'string indexing' bevaviour.
+  * Model wrapper adding 'string indexing' behaviour.
   *
   * Concrete models (like GBTClassificationModel) must be concrete classes (leaves in hierarchy).
-  * Thats why this class must be abstract.
+  * That's why this class must be abstract.
   */
-abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[MD]](
-    private var wrappedModel: SparkModelWrapper[MD, E]) extends Transformer {
+abstract class StringIndexingWrapperModel[M <: ml.Model[M], E <: ml.Estimator[M]](
+    private var wrappedModel: SparkModelWrapper[M, E]) extends Transformer {
 
   private var pipelinedModel: PipelineModel = null
 
@@ -45,7 +45,7 @@ abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[
   }
 
   private[stringindexingwrapper] def setWrappedModel(
-      wrappedModel: SparkModelWrapper[MD, E]): this.type = {
+      wrappedModel: SparkModelWrapper[M, E]): this.type = {
     this.wrappedModel = wrappedModel
     this
   }
@@ -74,4 +74,22 @@ abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[
 
   override def params: Array[Param[_]] = wrappedModel.params
 
+  override protected def loadTransformer(ctx: ExecutionContext, path: String): this.type = {
+    val pipelineModelPath = Transformer.stringIndexerPipelineFilePath(path)
+    val wrappedModelPath = Transformer.stringIndexerWrappedModelFilePath(path)
+    val loadedPipelineModel = PipelineModel.load(pipelineModelPath)
+    val loadedWrappedModel = Transformer.load(ctx, wrappedModelPath)
+
+    this
+      .setPipelinedModel(loadedPipelineModel)
+      .setWrappedModel(loadedWrappedModel.asInstanceOf[SparkModelWrapper[M, E]])
+      .setParamsFromJson(loadedWrappedModel.paramValuesToJson)
+  }
+
+  override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {
+    val pipelineModelPath = Transformer.stringIndexerPipelineFilePath(path)
+    val wrappedModelPath = Transformer.stringIndexerWrappedModelFilePath(path)
+    pipelinedModel.save(pipelineModelPath)
+    wrappedModel.save(ctx, wrappedModelPath)
+  }
 }

@@ -47,9 +47,9 @@ trait SparkOperationsExtractor {
       case e: (EstimatorAsFactory[_]) =>
         e.estimator match {
           case (se: SparkEstimatorWrapper[_, _, _]) =>
-            Some(se.sparkEstimator.getClass.getCanonicalName)
+            Some(se.serializableEstimator.getClass.getCanonicalName)
           case (se: SparkMultiColumnEstimatorWrapper[_, _, _, _, _, _]) =>
-            Some(se.sparkEstimatorWrapper.sparkEstimator.getClass.getCanonicalName)
+            Some(se.sparkEstimatorWrapper.serializableEstimator.getClass.getCanonicalName)
           case (siw: StringIndexingEstimatorWrapper[_, _, _, _]) =>
             Some(siw.sparkClassCanonicalName)
           case _ => None
@@ -63,9 +63,9 @@ trait SparkOperationsExtractor {
       case es: (EstimatorAsOperation[_, _]) =>
         es.estimator match {
           case (ses: SparkMultiColumnEstimatorWrapper[_, _, _, _, _, _]) =>
-            Some(ses.sparkEstimatorWrapper.sparkEstimator.getClass.getCanonicalName)
+            Some(ses.sparkEstimatorWrapper.serializableEstimator.getClass.getCanonicalName)
           case (ses: SparkEstimatorWrapper[_, _, _]) =>
-            Some(ses.sparkEstimator.getClass.getCanonicalName)
+            Some(ses.serializableEstimator.getClass.getCanonicalName)
           case (siw: StringIndexingEstimatorWrapper[_, _, _, _]) =>
             Some(siw.sparkClassCanonicalName)
           case _ => None

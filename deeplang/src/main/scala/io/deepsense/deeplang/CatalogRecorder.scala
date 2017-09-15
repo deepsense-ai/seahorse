@@ -131,6 +131,12 @@ object CatalogRecorder {
     catalog.registerDOperation[WriteDataFrame](
       DOperationCategories.IO)
 
+    catalog.registerDOperation[ReadTransformer](
+        DOperationCategories.IO)
+
+    catalog.registerDOperation[WriteTransformer](
+      DOperationCategories.IO)
+
     catalog.registerDOperation[Notebook](
       DOperationCategories.IO)
 
