@@ -24,6 +24,13 @@
 
 .flowchart-node .fa {
   font-size: 125%;
+
+  &.error-icon {
+    position: absolute;
+    right: 2px;
+    top: 19px;
+    color: darkorange;
+  }
 }
 
 .flowchart-node:after {
@@ -31,7 +38,7 @@
   position: absolute;
   right: 4px;
   font-family: FontAwesome;
-  font-weight: normal;;
+  font-weight: normal;
 }
 
 .flowchart-node.status_queued {
