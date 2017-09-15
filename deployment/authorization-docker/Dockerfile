@@ -8,7 +8,7 @@ ENV H2_VERSION 1.4.192
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y ruby ruby-dev rubygems mailutils build-essential openssl zip && \
     gem install cf-uaac && \
-    apt-get install moreutils && \
+    apt-get install -y moreutils && \
     apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/*
