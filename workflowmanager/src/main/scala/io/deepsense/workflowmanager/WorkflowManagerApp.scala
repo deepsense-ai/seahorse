@@ -24,19 +24,10 @@ object WorkflowManagerApp extends App with Logging {
 
   val insecure: Boolean = args.headOption.forall("insecure".equalsIgnoreCase)
 
-  def injectAndInitCatalogs(injector: Injector): Unit = {
-    val dOperableCatalog = injector.getInstance(classOf[DOperableCatalog])
-    val dOperationsCatalog = injector.getInstance(classOf[DOperationsCatalog])
-    CatalogRecorder.registerDOperables(dOperableCatalog)
-    CatalogRecorder.registerDOperations(dOperationsCatalog)
-    CatalogScanner.scanAndRegister(dOperableCatalog, dOperationsCatalog)
-  }
-
   try {
     FlywayMigration.run()
 
     val injector = Guice.createInjector(Stage.PRODUCTION, new WorkflowManagerAppModule(insecure))
-    injectAndInitCatalogs(injector)
     injector.getInstance(classOf[RestServer]).start()
     Await.result(injector.getInstance(classOf[ActorSystem]).whenTerminated, Duration.Inf)
   } catch {

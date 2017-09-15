@@ -4,8 +4,9 @@
 
 package io.deepsense.workflowmanager.deeplang
 
-import com.google.inject.{AbstractModule, Provides, Scopes, Singleton}
+import com.google.inject.{AbstractModule, Provides, Singleton}
 
+import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 
@@ -17,13 +18,20 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
  * objects are registered in them.
  */
 class DeepLangModule extends AbstractModule {
+
   override def configure(): Unit = {
-    bind(classOf[DOperableCatalog]).in(Scopes.SINGLETON)
+
   }
 
   @Singleton
   @Provides
   def provideDOperationsCatalog(): DOperationsCatalog = {
-    DOperationsCatalog()
+    CatalogRecorder.catalogs.dOperationsCatalog
+  }
+
+  @Singleton
+  @Provides
+  def provideDOperablesCatalog(): DOperableCatalog = {
+    CatalogRecorder.catalogs.dOperableCatalog
   }
 }

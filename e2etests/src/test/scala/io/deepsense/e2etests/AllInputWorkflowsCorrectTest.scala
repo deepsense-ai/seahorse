@@ -31,9 +31,7 @@ object WorkflowParser extends Logging with WorkflowVersionUtil {
   override def currentVersion: Version = CurrentBuild.version
 
   override val graphReader: GraphReader = {
-    val dOperationsCatalog = DOperationsCatalog()
-    CatalogRecorder.registerDOperations(dOperationsCatalog)
-    new GraphReader(dOperationsCatalog)
+    new GraphReader(CatalogRecorder.catalogs.dOperationsCatalog)
   }
 
   def parseWorkflow(raw: String): Unit = {

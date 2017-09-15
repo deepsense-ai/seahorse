@@ -12,6 +12,7 @@ import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scalaz.Scalaz._
 import scalaz._
+
 import akka.actor.ActorSystem
 import akka.util.Timeout
 import org.scalactic.source.Position
@@ -21,6 +22,7 @@ import org.scalatest.time.{Seconds, Span}
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CatalogRecorder
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.nodestate.name.NodeStatusName
@@ -34,11 +36,7 @@ import io.deepsense.workflowmanager.client.WorkflowManagerClient
 
 trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging with WorkflowJsonProtocol {
 
-  val operablesCatalog = new DOperableCatalog
-  val operationsCatalog = DOperationsCatalog()
-
-  CatalogRecorder.registerDOperables(operablesCatalog)
-  CatalogRecorder.registerDOperations(operationsCatalog)
+  val CatalogPair(operablesCatalog, operationsCatalog) = CatalogRecorder.catalogs
 
   override val graphReader = new GraphReader(operationsCatalog)
 
