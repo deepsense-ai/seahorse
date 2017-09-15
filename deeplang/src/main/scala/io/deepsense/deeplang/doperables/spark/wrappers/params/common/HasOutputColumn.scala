@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.spark.wrappers.estimators
+package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
-import org.apache.spark.ml.feature.{PCA => SparkPCA}
+import scala.language.reflectiveCalls
 
-import io.deepsense.deeplang.params.ParamPair
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+import org.apache.spark.ml
 
-class PCASmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkPCA] {
+import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
 
-  override def className: String = "PCA"
+trait HasOutputColumn extends Params {
 
-  override val estimatorWrapper = new PCA()
-
-  import estimatorWrapper._
-
-  override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    k -> 2,
-    inputColumn -> NameSingleColumnSelection("myFeatures"),
-    outputColumn -> "testOutputColumn"
-  )
+  val outputColumn = new SingleColumnCreatorParamWrapper[
+      ml.param.Params { val outputCol: ml.param.Param[String] }](
+    name = "output column",
+    description = "Output column name",
+    sparkParamGetter = _.outputCol)
 }

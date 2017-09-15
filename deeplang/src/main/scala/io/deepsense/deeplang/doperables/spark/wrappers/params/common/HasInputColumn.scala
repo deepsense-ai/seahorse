@@ -23,11 +23,11 @@ import org.apache.spark.ml
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
 
-trait HasInputCol extends Params {
+trait HasInputColumn extends Params {
 
-  val inputCol = new SingleColumnSelectorParamWrapper[
+  val inputColumn = new SingleColumnSelectorParamWrapper[
       ml.param.Params { val inputCol: ml.param.Param[String] }](
-    name = "input col",
+    name = "input column",
     description = "Input column name",
     sparkParamGetter = _.inputCol,
     portIndex = 0)

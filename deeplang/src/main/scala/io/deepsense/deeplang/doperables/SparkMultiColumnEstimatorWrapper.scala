@@ -23,7 +23,7 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnEstimatorParams.SingleOrMultiColumnEstimatorChoices.{MultiColumnEstimatorChoice, SingleColumnEstimatorChoice}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputCol, HasOutputCol}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
@@ -51,8 +51,8 @@ abstract class SparkMultiColumnEstimatorWrapper[
     import sparkEstimatorWrapper._
 
     val estimator = sparkEstimatorWrapper.replicate()
-      .set(inputCol -> single.getInputColumn)
-      .set(outputCol -> single.getOutputColumn)
+      .set(inputColumn -> single.getInputColumn)
+      .set(outputColumn -> single.getOutputColumn)
 
     estimator._fit(df).asInstanceOf[MW]
   }
@@ -68,8 +68,8 @@ abstract class SparkMultiColumnEstimatorWrapper[
       case inputColumnName =>
         import sparkEstimatorWrapper._
         val estimator = sparkEstimatorWrapper.replicate()
-          .set(inputCol -> NameSingleColumnSelection(inputColumnName))
-          .set(outputCol -> DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix))
+          .set(inputColumn -> NameSingleColumnSelection(inputColumnName))
+          .set(outputColumn -> DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix))
         estimator._fit(df).asInstanceOf[MW]
     }
 
@@ -82,14 +82,14 @@ abstract class SparkMultiColumnEstimatorWrapper[
 
   override def handleSingleColumnChoiceInfer(
       schema: Option[StructType],
-      single: SingleColumnEstimatorChoice): Transformer with HasInputCol with HasOutputCol = {
+      single: SingleColumnEstimatorChoice): Transformer with HasInputColumn with HasOutputColumn = {
 
     import sparkEstimatorWrapper._
 
     sparkEstimatorWrapper.replicate()
-      .set(inputCol -> single.getInputColumn)
-      .set(outputCol -> single.getOutputColumn)
-      ._fit_infer(schema).asInstanceOf[Transformer  with HasInputCol with HasOutputCol]
+      .set(inputColumn -> single.getInputColumn)
+      .set(outputColumn -> single.getOutputColumn)
+      ._fit_infer(schema).asInstanceOf[Transformer  with HasInputColumn with HasOutputColumn]
   }
 
   override def handleMultiColumnChoiceInfer(
@@ -105,8 +105,8 @@ abstract class SparkMultiColumnEstimatorWrapper[
         case inputColumnName =>
           import sparkEstimatorWrapper._
           sparkEstimatorWrapper.replicate()
-            .set(inputCol -> NameSingleColumnSelection(inputColumnName))
-            .set(outputCol -> DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix))
+            .set(inputColumn -> NameSingleColumnSelection(inputColumnName))
+            .set(outputColumn -> DataFrameColumnsGetter.prefixedColumnName(inputColumnName, prefix))
             ._fit_infer(Some(s)).asInstanceOf[MW]
       }
 

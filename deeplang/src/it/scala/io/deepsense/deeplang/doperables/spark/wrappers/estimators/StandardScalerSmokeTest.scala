@@ -16,22 +16,23 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{PCA => SparkPCA}
+import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler}
 
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class PCASmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkPCA] {
+class StandardScalerSmokeTest
+  extends AbstractEstimatorModelWrapperSmokeTest[SparkStandardScaler] {
 
-  override def className: String = "PCA"
+  override def className: String = "StandardScaler"
 
-  override val estimatorWrapper = new PCA()
+  override val estimatorWrapper = new StandardScaler()
 
   import estimatorWrapper._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    k -> 2,
+    withMean -> false,
+    withStd -> true,
     inputColumn -> NameSingleColumnSelection("myFeatures"),
     outputColumn -> "testOutputColumn"
   )

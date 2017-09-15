@@ -16,28 +16,21 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{PCA => SparkPCA, PCAModel => SparkPCAModel}
+import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.models.{PCAModel, LogisticRegressionModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.StandardScalerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.wrappers.spark._
 
-class PCA
-  extends SparkEstimatorWrapper[SparkPCAModel, SparkPCA, PCAModel]
+class StandardScaler
+  extends SparkEstimatorWrapper[SparkStandardScalerModel, SparkStandardScaler, StandardScalerModel]
+  with StandardScalerCommonParams
   with HasInputColumn
   with HasOutputColumn {
 
-  val k = new IntParamWrapper[SparkPCA](
-    name = "k",
-    description = "Number of principal components",
-    sparkParamGetter = _.k,
-    validator = RangeValidator.positiveIntegers)
-
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(k, inputColumn, outputColumn)
+  override val params: Array[Param[_]] = declareParams(withMean, withStd, inputColumn, outputColumn)
 }

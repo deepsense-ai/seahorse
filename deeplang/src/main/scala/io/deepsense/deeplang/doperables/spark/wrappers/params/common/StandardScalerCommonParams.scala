@@ -21,13 +21,19 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
+import io.deepsense.deeplang.params.wrappers.spark.BooleanParamWrapper
 
-trait HasOutputCol extends Params {
+trait StandardScalerCommonParams extends Params {
 
-  val outputCol = new SingleColumnCreatorParamWrapper[
-      ml.param.Params { val outputCol: ml.param.Param[String] }](
-    name = "output col",
-    description = "Output column name",
-    sparkParamGetter = _.outputCol)
+  val withMean = new BooleanParamWrapper[ml.param.Params { val withMean: ml.param.BooleanParam }](
+    name = "with mean",
+    description = "Centers the data with mean before scaling",
+    sparkParamGetter = _.withMean)
+  setDefault(withMean, false)
+
+  val withStd = new BooleanParamWrapper[ml.param.Params { val withStd: ml.param.BooleanParam }](
+    name = "with std",
+    description = "Scales the data to unit standard deviation",
+    sparkParamGetter = _.withStd)
+  setDefault(withStd, true)
 }

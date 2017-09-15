@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.StringIndexerIntegSpec.{MultiIndexedR, IndexedR, R}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasOutputCol, HasInputCol}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasOutputColumn, HasInputColumn}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -30,12 +30,12 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
       val si = new StringIndexer()
       si.setSingleColumn("a", "out")
       val t = si.fit(executionContext)(())(inputDataFrame)
-        .asInstanceOf[Transformer with HasInputCol with HasOutputCol]
+        .asInstanceOf[Transformer with HasInputColumn with HasOutputColumn]
 
       import t._
       t.set(Seq(
-        inputCol -> NameSingleColumnSelection("c"),
-        outputCol -> "out"
+        inputColumn -> NameSingleColumnSelection("c"),
+        outputColumn -> "out"
       ): _*)
 
 
@@ -68,12 +68,12 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
       val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
       val (transformerKnowledge, _) = si.fit.infer(mock[InferContext])(())(inputKnowledge)
       val inf = transformerKnowledge.single
-        .asInstanceOf[Transformer with HasInputCol with HasOutputCol]
+        .asInstanceOf[Transformer with HasInputColumn with HasOutputColumn]
 
       import inf._
       inf.set(Seq(
-        inputCol -> NameSingleColumnSelection("c"),
-        outputCol -> "out"
+        inputColumn -> NameSingleColumnSelection("c"),
+        outputColumn -> "out"
       ): _*)
 
 

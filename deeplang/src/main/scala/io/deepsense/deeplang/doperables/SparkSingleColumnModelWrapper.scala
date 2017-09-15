@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputCol, HasOutputCol}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasOutputColumn, HasInputColumn}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
@@ -29,18 +29,18 @@ abstract class SparkSingleColumnModelWrapper[
     E <: ml.Estimator[MD]]
   extends SparkModelWrapper[MD, E]
   with ParamsWithSparkWrappers
-  with HasInputCol
-  with HasOutputCol
+  with HasInputColumn
+  with HasOutputColumn
   with HasSpecificParams {
 
   override lazy val params: Array[Param[_]] =
-    declareParams(Array(inputCol, outputCol) ++ getSpecificParams: _*)
+    declareParams(Array(inputColumn, outputColumn) ++ getSpecificParams: _*)
 
   def setInputColumn(name: String): this.type = {
-    set(inputCol -> NameSingleColumnSelection(name))
+    set(inputColumn -> NameSingleColumnSelection(name))
   }
 
   def setOutputColumn(name: String): this.type = {
-    set(outputCol -> name)
+    set(outputColumn -> name)
   }
 }

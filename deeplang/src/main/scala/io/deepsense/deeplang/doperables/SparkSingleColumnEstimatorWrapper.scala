@@ -21,7 +21,7 @@ import scala.reflect.runtime.universe.TypeTag
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputCol, HasOutputCol}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
@@ -32,11 +32,11 @@ abstract class SparkSingleColumnEstimatorWrapper[
 (override implicit val modelWrapperTag: TypeTag[MW], override implicit val estimatorTag: TypeTag[E])
   extends SparkEstimatorWrapper[MD, E, MW]
   with ParamsWithSparkWrappers
-  with HasInputCol
-  with HasOutputCol
+  with HasInputColumn
+  with HasOutputColumn
   with HasSpecificParams {
 
   override lazy val params: Array[Param[_]] =
-    declareParams(Array(inputCol, outputCol) ++ getSpecificParams: _*)
+    declareParams(Array(inputColumn, outputColumn) ++ getSpecificParams: _*)
 }
 

@@ -24,7 +24,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnEstimatorParams.SingleOrMultiColumnEstimatorChoice
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnEstimatorParams.SingleOrMultiColumnEstimatorChoices.{MultiColumnEstimatorChoice, SingleColumnEstimatorChoice}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputCol, HasOutputCol}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
@@ -63,7 +63,7 @@ abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
 
   def handleSingleColumnChoice(
     df: DataFrame,
-    single: SingleColumnEstimatorChoice): Transformer with HasInputCol with HasOutputCol
+    single: SingleColumnEstimatorChoice): Transformer with HasInputColumn with HasOutputColumn
 
   def handleMultiColumnChoice(
     df: DataFrame,
@@ -83,7 +83,7 @@ abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
 
   def handleSingleColumnChoiceInfer(
     schema: Option[StructType],
-    single: SingleColumnEstimatorChoice): Transformer with HasInputCol with HasOutputCol
+    single: SingleColumnEstimatorChoice): Transformer with HasInputColumn with HasOutputColumn
 
   def handleMultiColumnChoiceInfer(
     schema: Option[StructType],
