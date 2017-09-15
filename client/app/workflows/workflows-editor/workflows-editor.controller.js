@@ -20,7 +20,16 @@ function WorkflowsController(
   });
 
   internal.init = function init() {
-    PageService.setTitle('Workflow: ' + workflow.thirdPartyData.gui.name);
+    const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
+    let getTitle = () => {
+      try {
+        return workflow.thirdPartyData.gui.name;
+      } catch (e) {
+        return DEFAULT_WORKFLOW_NAME;
+      }
+    };
+
+    PageService.setTitle('Workflow: ' + getTitle());
 
     WorkflowService.createWorkflow(workflow, Operations.getData());
     GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
