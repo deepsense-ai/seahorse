@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="">
+
+{% include base.html %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }}</title>
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{base}}/css/style.css">
+  <link rel="stylesheet" href="{{base}}/css/pygments-default.css">
+
+  <script src="{{base}}/js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+  <script src="{{base}}/js/vendor/jquery-1.8.0.min.js"></script>
+  <script src="{{base}}/js/layout-setup.js"></script>
+  <script src="{{base}}/js/collapsable-content.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  {% if page.usesMathJax %}
+  <script src="//cdn.mathjax.org/mathjax/0.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  {% endif %}
+  {% include google_analytics.html %}
+</head>
+
+<body cz-shortcut-listen="true">
+  <header>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container head-of-page">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/index.html"><img src="{{base}}/img/seahorse_logo.png" alt="deepsense.io Seahorse"></a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="{% if page.menuTab == 'overview' %}active{% endif %}"><a href="{{base}}/index.html">Technical Overview</a></li>
+            <li class="{% if page.menuTab == 'quickstart' %}active{% endif %}"><a href="{{base}}/quickstart.html">Quick Start</a></li>
+            <li class="{% if page.menuTab == 'documentation' or page.docTab or page.includeOperationsMenu or page.includeOperablesMenu %}active{% endif %} dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Components<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li class="{% if page.docTab == 'deeplang' %}active{% endif %}"><a href="{{base}}/deeplang.html">Deeplang</a></li>
+                <li class="{% if page.docTab == 'parameters' %}active{% endif %}"><a href="{{base}}/parameters.html">Parameters</a></li>
+                <li class="{% if page.docTab == 'operations' or page.includeOperationsMenu %}active{% endif %}"><a href="{{base}}/operations.html">Operations</a></li>
+                <li class="{% if page.docTab == 'entities' or page.includeOperablesMenu %}active{% endif %}"><a href="{{base}}/classes.html">Classes and Traits</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="{% if page.docTab == 'workflow_executor' %}active{% endif %}"><a href="{{base}}/workflowexecutor.html">Workflow Executor</a></li>
+                <li class="{% if page.docTab == 'workflow_file' %}active{% endif %}"><a href="{{base}}/workflowfile.html">Workflow File</a></li>
+              </ul>
+            </li>
+            <li class="{% if page.menuTab == 'examples' %}active{% endif %}"><a href="{{base}}/examples.html">Examples</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+  {% if page.includeOperationsMenu %}
+  {% include operationsmenu.html %}
+  {% endif %}
+
+  {% if page.includeOperablesMenu %}
+  {% include operablesmenu.html %}
+  {% endif %}
+
+  <script>
+  $(document).ready(function() {
+    $(".links").click(function() {
+      $(".sidemenu").toggleClass("sidemenu-unactive show");
+      $(this).toggleClass("links-unactive");
+    });
+  });
+  </script>
+
+  <div class="container">
+
+    <section style="padding-bottom: 100px;" class="documentation-content">
+      {% if page.displayTitle %}
+      <h1 class="title">{{ page.displayTitle }}</h1>
+      {% else %}
+      <h1 class="title">{{ page.title }}</h1>
+      {% endif %}
+      {{ content }}
+    </section>
+  </div>
+
+  <footer class="col-sm-12">
+    <p class="text-center footer-text">Seahorse by <a href="http://deepsense.io/" target="_blank"><span>deep</span>sense<span>.io</span></a> | 2015</p>
+  </footer>
+</body>
+
+</html>
