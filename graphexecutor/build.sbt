@@ -27,4 +27,6 @@ assemblyOption in assembly :=
 
 unmanagedClasspath in Runtime += (baseDirectory.value / "conf")
 
-enablePlugins(BuildInfoPlugin)
+mainClass in Compile := Some("io.deepsense.graphexecutor.GraphExecutor")
+
+enablePlugins(BuildInfoPlugin, JavaAppPackaging, GitVersioning, UniversalDeployPlugin)

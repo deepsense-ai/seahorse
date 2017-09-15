@@ -8,5 +8,4 @@ unmanagedClasspath in Runtime += (baseDirectory.value / "conf")
 
 Revolver.settings
 
-enablePlugins(JavaAppPackaging)
-
+enablePlugins(JavaAppPackaging, GitVersioning, UniversalDeployPlugin)
