@@ -58,7 +58,7 @@ type and Seahorse API version.
 {% highlight json %}
 "metadata": {
   "type": "batch",
-  "apiVersion": "1.0.0"
+  "apiVersion": "1.1.0"
 }
 {% endhighlight %}
 
@@ -253,7 +253,7 @@ but used by other applications including Seahorse Editor.
   "id": "3b7b6aee-0fe4-4136-8de3-d06a68fbc059",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.0.0"
+    "apiVersion": "1.1.0"
   },
   "workflow": {
     "nodes": [{
