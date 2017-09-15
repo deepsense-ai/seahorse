@@ -22,7 +22,7 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
-import io.deepsense.experimentmanager.exceptions.{ExperimentRunningException, ExperimentNotFoundException}
+import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.rest.actions.Action
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -62,8 +62,8 @@ class ExperimentsApi @Inject() (
               }
             } ~
             put {
-              entity(as[Experiment]) { experiment =>
-                validate(
+              withUserContext { userContext =>
+                entity(as[Experiment]) { experiment => validate(
                   experiment.id.equals(experimentId), // TODO Return Json
                   // For now, when you PUT an experiment on a UUID other than the specified
                   // in the URL there will be a validation exception. As a result a "Bad request"
@@ -72,7 +72,6 @@ class ExperimentsApi @Inject() (
                   // second argument of validate(...)). If we do not want this kind of
                   // behavior then we have to implement own Rejection Handler (in sense of Spray).
                   "Experiment's Id from Json does not match Id from request's URL") {
-                  withUserContext { userContext =>
                     complete {
                       experimentManagerProvider
                         .forContext(userContext)
@@ -100,8 +99,8 @@ class ExperimentsApi @Inject() (
           path(JavaUUID / "action") { idParameter =>
             val experimentId = Id(idParameter)
             post {
-              entity(as[Action]) { action =>
-                withUserContext { userContext =>
+              withUserContext { userContext =>
+                entity(as[Action]) { action =>
                   onComplete(action.run(experimentId, experimentManagerProvider
                     .forContext(userContext))) {
                     case Success(experiment) => complete(StatusCodes.Accepted, experiment)
@@ -113,8 +112,8 @@ class ExperimentsApi @Inject() (
           } ~
           pathEndOrSingleSlash {
             post {
-              entity(as[InputExperiment]) { inputExperiment =>
-                withUserContext { userContext =>
+              withUserContext { userContext =>
+                entity(as[InputExperiment]) { inputExperiment =>
                   onComplete(experimentManagerProvider
                     .forContext(userContext).create(inputExperiment)) {
                     case Success(experiment) => complete(StatusCodes.Created, experiment)

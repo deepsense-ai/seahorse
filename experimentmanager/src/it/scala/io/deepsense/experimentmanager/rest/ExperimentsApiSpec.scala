@@ -15,6 +15,7 @@ import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import spray.http.StatusCodes
+import spray.json.JsObject
 import spray.routing.Route
 
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
@@ -236,6 +237,12 @@ class ExperimentsApiSpec
   }
 
   "POST /experiments" should {
+    "process authorization before reading POST content" in {
+      val invalidContent = JsObject()
+      Post(s"/$apiPrefix", inputExperiment) ~> testRoute ~> check {
+        status should be(StatusCodes.Unauthorized)
+      }
+    }
     "return created" when {
       "inputExperiment was send" in {
         Post(s"/$apiPrefix", inputExperiment) ~>
@@ -268,6 +275,15 @@ class ExperimentsApiSpec
         Post(s"/$apiPrefix", inputExperiment) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
+      }
+    }
+  }
+
+  s"POST /experiments/:id/action" should {
+    "process authorization before reading POST content" in {
+      val invalidContent = JsObject()
+      Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", invalidContent) ~> testRoute ~> check {
+        status should be(StatusCodes.Unauthorized)
       }
     }
   }
@@ -378,6 +394,12 @@ class ExperimentsApiSpec
   }
 
   s"PUT /experiments/:id" should {
+    "process authorization before reading PUT content" in {
+      val invalidContent = JsObject()
+      Put(s"/$apiPrefix/" + Experiment.Id.randomId, invalidContent) ~> testRoute ~> check {
+        status should be(StatusCodes.Unauthorized)
+      }
+    }
     "update the experiment and return Ok" when {
       "user updates his experiment" in {
         val newExperiment = Experiment(
@@ -415,7 +437,6 @@ class ExperimentsApiSpec
         }
       }
       "the user has no right to that experiment" in {
-
         val newExperiment = Experiment(
           experimentOfTenantB.id,
           tenantBId,
