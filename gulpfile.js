@@ -1,15 +1,8 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 08.06.15.
- */
-
 var del = require('del');
 var gulp = require('gulp');
 var runSequence = require('run-sequence');
 var plugins = require('gulp-load-plugins')({lazy: false});
 var templateCache = require('gulp-angular-templatecache');
-
 var config = require('./config.json');
 
 gulp.task('clean', function () {
@@ -31,9 +24,9 @@ gulp.task('html', function () {
 
 gulp.task('jshint', function () {
   return gulp.src(config.src + '**/*.js').
-    pipe(plugins.jshint()).
-    pipe(plugins.jshint.reporter('jshint-stylish')).
-    pipe(plugins.jshint.reporter('fail'));
+  pipe(plugins.jshint()).
+  pipe(plugins.jshint.reporter('jshint-stylish')).
+  pipe(plugins.jshint.reporter('fail'));
 });
 
 gulp.task('js', function () {
