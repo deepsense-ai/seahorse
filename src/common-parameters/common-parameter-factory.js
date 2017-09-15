@@ -11,6 +11,7 @@ let SelectorParameterConstructor = require('./common-selector/common-selector-pa
 let MultiplierParameterConstructor = require('./common-multiplier-parameter.js');
 let CreatorParameterConstructor = require('./common-creator-parameter.js');
 let PrefixBasedCreatorParameterConstructor = require('./common-prefix-based-creator-parameter.js');
+let DynamicParameterConstructor = require('./common-dynamic-parameter.js');
 
 /*
  * (API parameter's type value) => (constructor)
@@ -25,11 +26,13 @@ let parameterConstructors = {
   'selector': SelectorParameterConstructor,
   'multiplier': MultiplierParameterConstructor,
   'creator': CreatorParameterConstructor,
-  'prefixBasedCreator': PrefixBasedCreatorParameterConstructor
+  'prefixBasedCreator': PrefixBasedCreatorParameterConstructor,
+  'dynamic': DynamicParameterConstructor
 };
 
 let ParameterFactory = {
-  createParametersList(paramValues, paramSchemas) {
+
+  createParametersList(paramValues, paramSchemas, node) {
     let parametersList = [];
 
     if (!_.isNull(paramSchemas)) {
@@ -58,6 +61,27 @@ let ParameterFactory = {
               );
             });
 
+            break;
+          case 'dynamic':
+            let inputPort = paramSchema.inputPort;
+            let incomingKnowledge = node.getIncomingKnowledge(inputPort);
+            if (incomingKnowledge) {
+              let inferredResultDetails = incomingKnowledge.result;
+              if (inferredResultDetails) {
+                // We assume that if dynamic params is declared, inferred result details have 'params' field.
+                let inferredParams = inferredResultDetails.params;
+
+                // Here we overwrite inferred values with values specified by user.
+                // If at any point we wish to present information which values was overwritten,
+                // here is the place to get this information.
+                angular.merge(inferredParams.values, paramValue);
+
+                options.internalParams = ParameterFactory.createParametersList(
+                  inferredParams.values,
+                  inferredParams.schema
+                );
+              }
+            }
             break;
           case 'multiplier':
             options.parametersLists = [];
