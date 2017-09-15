@@ -8,8 +8,6 @@ echo 'export SPARK_MASTER_OPTS="-Dspark.deploy.defaultCores=1"' >> $SPARK_HOME/c
 
 service ssh restart
 
-$SPARK_HOME/sbin/start-all.sh
-
 # Docker ready checkers might hook to `SPARK_DOCKER_READY` string from log output
 echo 'SPARK_DOCKER_READY'
 

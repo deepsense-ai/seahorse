@@ -11,6 +11,9 @@ Revolver.settings
 
 enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 
+// If there are many `App` objects in project, docker image will crash with cryptic message
+mainClass in Compile := Some("io.deepsense.sessionmanager.SessionManagerApp")
+
 // TODO Introduce new sbt task to generate we-deps.zip
 
 val downloadWeJar = taskKey[File]("Downloads the latest we.jar")
@@ -49,8 +52,7 @@ preparePythonDeps <<= preparePythonDeps dependsOn downloadWeJar
 
 mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
 
-dockerBaseImage := "quay.io/deepsense_io/deepsense-spark:1.6.1"
-dockerExposedPorts := Seq(9082)
+dockerBaseImage := "docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark"
 dockerCommands ++= Seq(
   Cmd("USER", "root"),
   ExecCmd("RUN", "apt-get", "update"),

@@ -1,11 +1,30 @@
 #!/bin/bash
 # Copyright (c) 2016, CodiLime Inc.
-#
-
-rm -f docker-compose.yml
 
 DOCKER_REPOSITORY="docker-repo.deepsense.codilime.com/deepsense_io"
 DOCKER_TAG="master-latest"
-sed 's|\$DOCKER_REPOSITORY|'"$DOCKER_REPOSITORY"'|g ; s|\$DOCKER_TAG|'"$DOCKER_TAG"'|g' docker-compose.tmpl.yml >> docker-compose.yml
+
+EXPOSED_SM_PORT=60100
+EXPOSED_MQ_PORT=60101
+EXPOSED_MQ_WEBSOCKET_PORT=60102
+EXPOSED_WM_PORT=60103
+EXPOSED_DB_PORT=60104
+EXPOSED_NOTEBOOK_PORT=60105
+EXPOSED_FRONTEND_PORT=60106
+EXPOSED_LIBRARY_PORT=60107
+
+rm -f docker-compose.yml
+cp docker-compose.tmpl.yml docker-compose.yml
+
+sed -i 's|\$DOCKER_REPOSITORY|'"$DOCKER_REPOSITORY"'|g' docker-compose.yml
+sed -i 's|\$DOCKER_TAG|'"$DOCKER_TAG"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_SM_PORT|'"$EXPOSED_SM_PORT"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_MQ_PORT|'"$EXPOSED_MQ_PORT"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_MQ_WEBSOCKET_PORT|'"$EXPOSED_MQ_WEBSOCKET_PORT"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_WM_PORT|'"$EXPOSED_WM_PORT"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_DB_PORT|'"$EXPOSED_DB_PORT"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_NOTEBOOK_PORT|'"$EXPOSED_NOTEBOOK_PORT"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_FRONTEND_PORT|'"$EXPOSED_FRONTEND_PORT"'|g' docker-compose.yml
+sed -i 's|\$EXPOSED_LIBRARY_PORT|'"$EXPOSED_LIBRARY_PORT"'|g' docker-compose.yml
 
 exec docker-compose "$@"

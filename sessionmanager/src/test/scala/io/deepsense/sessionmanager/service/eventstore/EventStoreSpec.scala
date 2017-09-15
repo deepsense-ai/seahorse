@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
-import io.deepsense.sessionmanager.service.EventStore
+import io.deepsense.sessionmanager.service.{TestData, EventStore}
 import io.deepsense.sessionmanager.service.EventStore._
 
 abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
@@ -67,7 +67,7 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
       "there was a Started event" should {
         def fixture: Fixture[Either[SessionExists, Unit]] = {
           val store = eventStore()
-          val cluster = createClusterDetails()
+          val cluster = TestData.someClusterDetails
           val (_, lastStarted) = lastEvents(store)
           recordStartedAndGetLastEvent(store, lastStarted, startedId, cluster) _
         }
@@ -83,7 +83,7 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
       "there was a Heartbeat event" should {
         def fixture: Fixture[Either[SessionExists, Unit]] = {
           val store = eventStore()
-          val cluster = createClusterDetails()
+          val cluster = TestData.someClusterDetails
           val (lastHeartbeat, _) = lastEvents(store)
           recordStartedAndGetLastEvent(store, lastHeartbeat, heartbeatId, cluster) _
         }
@@ -97,7 +97,7 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
 
       "there was no event" should {
         val someId = Id.randomId
-        val cluster = createClusterDetails()
+        val cluster = TestData.someClusterDetails
         def fixture: Fixture[Either[SessionExists, Unit]] =
           recordStartedAndGetLastEvent(
             eventStoreNoEvents(),
@@ -144,7 +144,7 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
   protected def eventStoreNoEvents(): EventStore
   private def eventStore(): EventStore = {
     val store = eventStoreNoEvents()
-    val cluster = createClusterDetails()
+    val cluster = TestData.someClusterDetails
     val eventuallySavedEvents = for {
       _ <- store.started(startedId, cluster)
       _ <- store.started(heartbeatId, cluster)
@@ -199,10 +199,6 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
         }
       }
     }
-  }
-
-  private def createClusterDetails(): ClusterDetails = {
-    ClusterDetails("id", "name", "yarn", "localhost")
   }
 
   private type Fixture[T] =

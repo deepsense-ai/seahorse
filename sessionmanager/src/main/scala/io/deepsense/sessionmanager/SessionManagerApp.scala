@@ -14,6 +14,9 @@ object SessionManagerApp extends App with Logging {
   try {
     FlywayMigration.run()
 
+    // FIXME Guice modules have side effect. Simply getting instance starts actor system responsible
+    // for listening heartbeats. Rework so module declarations are pure and side effects start here.
+
     val injector = Guice.createInjector(Stage.PRODUCTION, new SessionManagerAppModule)
     injector.getInstance(classOf[RestServer]).start()
     injector.getInstance(classOf[ActorSystem]).awaitTermination()

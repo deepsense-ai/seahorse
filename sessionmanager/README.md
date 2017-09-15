@@ -13,6 +13,3 @@ Publish docker
 ```
 sbt sessionmanager/docker:publishLocal
 ```
-
-TODO - use sbt-docker and use assembly task to add we.jar instead of manually placing it in this catalog.
-TODO - add sbt task for generating we-deps.zip

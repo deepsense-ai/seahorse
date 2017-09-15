@@ -17,10 +17,10 @@ import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.sessionmanager.rest.requests.CreateSession
+import io.deepsense.sessionmanager.rest.requests.{ClusterDetails, CreateSession}
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service._
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 
 class SessionsApiSpec
   extends StandardSpec
@@ -29,8 +29,12 @@ class SessionsApiSpec
     with SprayJsonSupport
     with IdJsonProtocol
     with SessionsJsonProtocol {
+  import TestData._
+
   val apiPrefix: String = "sessions"
-  val cluster = ClusterDetails(name = "name", id = "id", clusterType = "yarn", uri = "localhost")
+  val cluster = ClusterDetails(
+    name = "name", id = "id", clusterType = "yarn", uri = "localhost", userIP = "127.0.0.1"
+  )
 
   def testRoute(
       service: SessionService,
@@ -43,8 +47,6 @@ class SessionsApiSpec
 
   implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
   implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
-
-  val userId: String = Id.randomId.toString
 
   "GET /sessions" should {
     "list all sessions" in {
@@ -64,7 +66,7 @@ class SessionsApiSpec
       when(service.listSessions())
         .thenReturn(Future.successful(ListSessionsResponse(sessions)))
 
-      Get(s"/$apiPrefix").withUserId(userId) ~> testRoute(service) ~> check {
+      Get(s"/$apiPrefix").withUserId(someUserId) ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         responseAs[ListSessionsResponse]
           sessions.map(s => (s.workflowId, s.status)) should contain theSameElementsAs
@@ -81,7 +83,7 @@ class SessionsApiSpec
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Get(s"/$apiPrefix").withUserId(userId) ~>
+        Get(s"/$apiPrefix").withUserId(someUserId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
@@ -99,7 +101,7 @@ class SessionsApiSpec
         val service = mock[SessionService]
         when(service.getSession(workflowId)).thenReturn(Future.successful(Some(s)))
 
-        Get(s"/$apiPrefix/$workflowId").withUserId(userId) ~> testRoute(service) ~> check {
+        Get(s"/$apiPrefix/$workflowId").withUserId(someUserId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.OK
           val returnedSession = responseAs[Envelope[Session]].content
           returnedSession.workflowId shouldBe workflowId
@@ -112,14 +114,14 @@ class SessionsApiSpec
         val service = mock[SessionService]
         when(service.getSession(any())).thenReturn(Future.successful(None))
 
-        Get(s"/$apiPrefix/${Id.randomId}").withUserId(userId) ~> testRoute(service) ~> check {
+        Get(s"/$apiPrefix/${Id.randomId}").withUserId(someUserId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.NotFound
         }
       }
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Get(s"/$apiPrefix/${Id.randomId}").withUserId(userId) ~>
+        Get(s"/$apiPrefix/${Id.randomId}").withUserId(someUserId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
@@ -134,25 +136,24 @@ class SessionsApiSpec
 
   "POST /sessions" should {
     "return a session" in {
-      val workflowId: Id = Id.randomId
-      val s = workflowId
       val service = mock[SessionService]
 
-      when(service.createSession(workflowId, userId, cluster)).thenReturn(Future.successful(s))
+      when(service.createSession(
+        someSessionConfig, someClusterDetails
+      )).thenReturn(Future.successful(someWorkflowId))
 
-      Post(s"/$apiPrefix", CreateSession(workflowId, cluster))
-        .withUserId(userId) ~> testRoute(service) ~> check {
-
+      Post(s"/$apiPrefix", CreateSession(someWorkflowId, someClusterDetails))
+        .withUserId(someUserId) ~> testRoute(service) ~> check {
 
         status shouldBe StatusCodes.OK
         val returnedSessionId = responseAs[Envelope[Id]].content
-        returnedSessionId shouldBe workflowId
+        returnedSessionId shouldBe someWorkflowId
       }
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Post(s"/$apiPrefix", CreateSession(Id.randomId, cluster))
-          .withUserId(userId) ~>
+        Post(s"/$apiPrefix", CreateSession(Id.randomId, someClusterDetails))
+          .withUserId(someUserId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
@@ -160,7 +161,7 @@ class SessionsApiSpec
     }
     "return 400 Bad Request" when {
       "X-Seahorse-UserId is not present" in {
-        Post(s"/$apiPrefix", CreateSession(Id.randomId, cluster)) ~>
+        Post(s"/$apiPrefix", CreateSession(Id.randomId, someClusterDetails)) ~>
           testRoute(mock[SessionService]) ~> check {
           status shouldBe StatusCodes.BadRequest
         }
@@ -174,20 +175,28 @@ class SessionsApiSpec
       val service = mock[SessionService]
       when(service.killSession(workflowId)).thenReturn(Future.successful(()))
 
-      Delete(s"/$apiPrefix/$workflowId").withUserId(userId)  ~> testRoute(service) ~> check {
+      Delete(s"/$apiPrefix/$workflowId").withUserId(someUserId)  ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         verify(service, times(1)).killSession(workflowId)
       }
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Delete(s"/$apiPrefix/${Id.randomId}").withUserId(userId) ~>
+        Delete(s"/$apiPrefix/${Id.randomId}").withUserId(someUserId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
       }
     }
   }
+
+
+  private lazy val someSessionConfig = SessionConfig(
+    workflowId = someWorkflowId,
+    userId = someUserId
+  )
+  private lazy val someUserId = Id.randomId.toString
+  private lazy val someWorkflowId = Id.randomId
 
   private implicit class RichHttpRequest(httpRequest: HttpRequest) {
     def withUserId(userId: String): HttpRequest =

@@ -2,21 +2,15 @@ version: '2'
 services:
   proxy:
     image: $DOCKER_REPOSITORY/deepsense-proxy:$DOCKER_TAG
-    ports:
-      - "33321:8080"
+    network_mode: "host"
     environment:
-      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://workflowmanager:9080\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://sessionmanager:9082\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://library:9083\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://notebooks:8888\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://rabbitmq:15674\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://frontend:80\"},\"name\":\"frontend\"}]}"
+      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_WM_PORT\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_LIBRARY_PORT\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_SM_PORT\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_NOTEBOOK_PORT\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_FRONTEND_PORT\"},\"name\":\"frontend\"}]}"
+      HOST: "127.0.0.1"
+      PORT: "33321"
       DISABLE_OAUTH: "true"
       FORCE_HTTPS: "false"
       WM_AUTH_USER: "oJkTZ8BV"
       WM_AUTH_PASS: "8Ep9GqRr"
-    links:
-      - workflowmanager
-      - sessionmanager
-      - library
-      - notebooks
-      - rabbitmq
-      - frontend
     depends_on:
       - workflowmanager
       - sessionmanager
@@ -26,14 +20,16 @@ services:
       - frontend
   frontend:
     image: $DOCKER_REPOSITORY/deepsense-frontend:$DOCKER_TAG
+    ports:
+      - "127.0.0.1:$EXPOSED_FRONTEND_PORT:80"
     environment:
+      - "PORT=80"
       - "SESSION_POLLING_INTERVAL=1000"
       - "MQ_USER=yNNp7VJS"
       - "MQ_PASS=1ElYfGNW"
     links:
       - rabbitmq
       - workflowmanager
-      - sessionmanager
       - library
       - notebooks
     depends_on:
@@ -44,35 +40,36 @@ services:
       - notebooks
   sessionmanager:
     image: $DOCKER_REPOSITORY/deepsense-sessionmanager:$DOCKER_TAG
-    hostname: sessionmanager
+    network_mode: "host"
     environment:
-      - "MQ_HOST=rabbitmq"
-      - "MQ_PORT=5672"
+      - "SM_HOST=127.0.0.1"
+      - "SM_PORT=$EXPOSED_SM_PORT"
+      - "SM_MQ_HOST=127.0.0.1"
+      - "SM_MQ_PORT=$EXPOSED_MQ_PORT"
+      - "MQ_PORT=$EXPOSED_MQ_PORT"
       - "MQ_USER=yNNp7VJS"
       - "MQ_PASS=1ElYfGNW"
-      - "WM_HOST=workflowmanager"
-      - "WM_PORT=9080"
+      - "WM_PORT=$EXPOSED_WM_PORT"
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
+      - "PYTHON_BINARY=/opt/conda/bin/python"
       - "SESSION_EXECUTOR_PATH=/opt/docker/we.jar"
       - "SESSION_EXECUTOR_DEPS_PATH=/opt/docker/we-deps.zip"
-      - "HADOOP_CONF_DIR=/opt/docker/yarn-remote-client"
-      - "SM_MQ_HOST=rabbitmq"
-      - "SM_MQ_PORT=5672"
       - "TEMP_DIR=/tmp/seahorse/download"
+      - "JDBC_URL=jdbc:h2:tcp://127.0.0.1:$EXPOSED_DB_PORT/sessionmanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
+      - "MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so"
     volumes:
       - "./data:/resources/data"
       - "library:/library"
-    links:
-      - rabbitmq
-      - workflowmanager
-      - database
     depends_on:
       - rabbitmq
       - workflowmanager
       - library
+      - database
   notebooks:
     image: $DOCKER_REPOSITORY/deepsense-notebooks:$DOCKER_TAG
+    ports:
+      - "127.0.0.1:$EXPOSED_NOTEBOOK_PORT:8888"
     environment:
       - "WM_URL=http://workflowmanager:9080"
       - "WM_AUTH_USER=oJkTZ8BV"
@@ -91,6 +88,8 @@ services:
       - workflowmanager
   workflowmanager:
     image: $DOCKER_REPOSITORY/deepsense-workflowmanager:$DOCKER_TAG
+    ports:
+     - "0.0.0.0:$EXPOSED_WM_PORT:9080"
     environment:
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
@@ -98,15 +97,22 @@ services:
       - database
   rabbitmq:
     image: $DOCKER_REPOSITORY/deepsense-rabbitmq:$DOCKER_TAG
+    ports:
+     - "0.0.0.0:$EXPOSED_MQ_PORT:5672"
+     - "127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT:15674"
     environment:
      - "RABBITMQ_USER=yNNp7VJS"
      - "RABBITMQ_PASS=1ElYfGNW"
   database:
     image: $DOCKER_REPOSITORY/deepsense-h2:$DOCKER_TAG
+    ports:
+     - "127.0.0.1:$EXPOSED_DB_PORT:1521"
     volumes:
       - "./h2-data:/opt/h2-data:rw"
   library:
     image: $DOCKER_REPOSITORY/deepsense-libraryservice:$DOCKER_TAG
+    ports:
+     - "127.0.0.1:$EXPOSED_LIBRARY_PORT:9083"
     volumes:
       - "library:/library"
 volumes:

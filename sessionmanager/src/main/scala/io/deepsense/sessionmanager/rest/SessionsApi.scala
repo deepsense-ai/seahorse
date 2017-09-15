@@ -18,6 +18,7 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{Cors, RestComponent}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.rest.requests.CreateSession
+import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.{Session, SessionService}
 
 class SessionsApi @Inject()(
@@ -65,10 +66,9 @@ class SessionsApi @Inject()(
               pathEndOrSingleSlash {
                 post {
                   entity(as[CreateSession]) { request =>
-                    val session = sessionService.createSession(
-                      request.workflowId,
-                      userId,
-                      request.cluster)
+                    val sessionConfig = SessionConfig(request.workflowId, userId)
+                    val clusterDetails = request.cluster
+                    val session = sessionService.createSession(sessionConfig, clusterDetails)
                     val enveloped = session.map(Envelope(_))
                     complete(enveloped)
                   }

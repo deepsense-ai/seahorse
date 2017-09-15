@@ -11,13 +11,13 @@ case class CreateSession(workflowId: Id, cluster: ClusterDetails)
 case class ClusterDetails(
     name: String,
     id: String,
-    clusterType: String,
+    clusterType: String, // TODO Enum
     uri: String,
-    userIP: Option[String] = None,
+    userIP: String,
     hadoopUser: Option[String] = None,
     isEditable: Boolean = true,
     isDefault: Boolean = false,
-    executorMemory: Option[Double] = None,
+    executorMemory: Option[String] = None,
     totalExecutorCores: Option[Int] = None,
     executorCores: Option[Int] = None,
     numExecutors: Option[Int] = None,

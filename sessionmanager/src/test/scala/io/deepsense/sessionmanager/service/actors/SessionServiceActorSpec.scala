@@ -6,6 +6,7 @@ package io.deepsense.sessionmanager.service.actors
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.testkit.{ImplicitSender, TestKit}
@@ -16,15 +17,15 @@ import org.mockito.{Matchers => matchers}
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore.{Event, InvalidWorkflowId, SessionExists}
-import io.deepsense.sessionmanager.service.{_}
+import io.deepsense.sessionmanager.service._
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{CreateRequest, GetRequest, KillRequest, ListRequest}
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
-import io.deepsense.sessionmanager.service.sessionspawner.SessionSpawner
+import io.deepsense.sessionmanager.service.sessionspawner.{SessionConfig, SessionSpawner}
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 
 class SessionServiceActorSpec(_system: ActorSystem)
   extends TestKit(_system)
@@ -36,6 +37,8 @@ class SessionServiceActorSpec(_system: ActorSystem)
     with BeforeAndAfterAll
     with Eventually {
 
+  import TestData._
+
   def this() = this(ActorSystem("SessionServiceActorSpec"))
 
   implicit val patience = PatienceConfig(timeout = 5.seconds)
@@ -45,13 +48,6 @@ class SessionServiceActorSpec(_system: ActorSystem)
   }
 
   implicit val timeout: Timeout = 5.seconds
-  val cluster = ClusterDetails("name", "id", "yarn", "localhost")
-
-
-  // TODO: Currently sessionId == workflowId
-  val existingSessionId, existingWorkflowId = Id.randomId
-  // TODO: Currently sessionId == workflowId
-  val notExistingSessionId, notExistingWorkflowId = Id.randomId
 
   "SessionServiceActor" when {
     "received a Heartbeat" when {
@@ -84,15 +80,16 @@ class SessionServiceActorSpec(_system: ActorSystem)
       "the session exists" should {
         val eventStore = mock[EventStore]
         val event = mock[Event]
-        when(eventStore.getLastEvent(existingSessionId)).thenReturn(Future.successful(Some(event)))
+        when(eventStore.getLastEvent(existingWorkflowId)).thenReturn(Future.successful(Some(event)))
         val statusInferencer = mock[StatusInferencer]
 
         "use StatusInferencer to calculate SessionState" in
           fixture(eventStore, statusInferencer) { p =>
-            val status = mock[Status.Value]
+            val status = Status.Creating
             when(statusInferencer.statusFromEvent(matchers.eq(event), any()))
               .thenReturn(status)
-            val session = sendGetRequest(p, existingSessionId)
+
+            val session = sendGetRequest(p, existingWorkflowId)
 
             eventually {
               verify(statusInferencer, times(1))
@@ -100,17 +97,17 @@ class SessionServiceActorSpec(_system: ActorSystem)
             }
             whenReady(session) { s =>
               s should matchPattern {
-                case Some(Session(existingSessionId, status, _)) =>
+                case Some(Session(existingSessionId, `status`, _)) =>
               }
             }
-        }
+          }
       }
 
       "the session does not exist" should {
         val eventStore = mock[EventStore]
-        when(eventStore.getLastEvent(notExistingSessionId)).thenReturn(Future.successful(None))
+        when(eventStore.getLastEvent(notExistingWorkflowId)).thenReturn(Future.successful(None))
         "return None" in fixture(eventStore) { p =>
-          val session = sendGetRequest(p, notExistingSessionId)
+          val session = sendGetRequest(p, notExistingWorkflowId)
           whenReady(session) { _ shouldBe None }
         }
       }
@@ -119,12 +116,12 @@ class SessionServiceActorSpec(_system: ActorSystem)
     "received a CreateRequest" when {
       "the session exists" should {
         val eventStore = mock[EventStore]
-        when(eventStore.started(existingSessionId, cluster))
+        when(eventStore.started(existingWorkflowId, someClusterDetails))
           .thenReturn(Future.successful(Left(SessionExists())))
         "return it's Id" in
           fixture(eventStore) { p =>
-            whenReady(sendCreateRequest(p, existingSessionId, Id.randomId.toString, cluster)) {
-              _ shouldBe existingSessionId
+            whenReady(sendCreateRequest(p, existingWorkflowId, Id.randomId.toString)) {
+              _ shouldBe existingWorkflowId
             }
           }
       }
@@ -132,29 +129,32 @@ class SessionServiceActorSpec(_system: ActorSystem)
 
         def eventStore: EventStore = {
           val m = mock[EventStore]
-          when(m.started(notExistingSessionId, cluster)).thenReturn(Future.successful(Right(())))
+          when(
+            m.started(notExistingWorkflowId, someClusterDetails)
+          ).thenReturn(Future.successful(Right(())))
           m
         }
 
         def sessionSpawner: SessionSpawner = {
           val m = mock[SessionSpawner]
-          when(m.createSession(matchers.eq(notExistingSessionId), any(), any()))
+          when(m.createSession(matchers.eq(notExistingWorkflowSessionConfig), any()))
             .thenReturn(Future.successful(()))
           m
         }
 
         "use session spawner to create a session" in fixture(eventStore, sessionSpawner) { p =>
           val userId = Id.randomId.toString
-          sendCreateRequest(p, notExistingSessionId, userId, cluster)
+          sendCreateRequest(p, notExistingWorkflowId, userId)
           eventually {
-            verify(p.sessionSpawner, times(1)).createSession(notExistingSessionId, userId, cluster)
+            verify(p.sessionSpawner, times(1))
+              .createSession(notExistingWorkflowSessionConfig, someClusterDetails)
           }
         }
 
         "put 'Created' event to EventStore" in fixture(eventStore, sessionSpawner) { p =>
-          sendCreateRequest(p, notExistingSessionId, Id.randomId.toString, cluster)
+          sendCreateRequest(p, notExistingWorkflowId, Id.randomId.toString)
           eventually {
-            verify(p.eventStore, times(1)).started(notExistingSessionId, cluster)
+            verify(p.eventStore, times(1)).started(notExistingWorkflowId, someClusterDetails)
           }
         }
       }
@@ -215,14 +215,18 @@ class SessionServiceActorSpec(_system: ActorSystem)
       .mapTo[Option[Session]]
   }
 
+  private def sendCreateRequest(p: TestParams, workflowId: Id, userId: String): Future[Id] = {
+    val sessionConfig = SessionConfig(workflowId, someUserId)
+    (p.sessionServiceActor ? CreateRequest(sessionConfig, someClusterDetails)).mapTo[Id]
+  }
 
-  private def sendCreateRequest(
-      p: TestParams,
-      workflowId: Id,
-      userId: String,
-      cluster: ClusterDetails): Future[Id] =
-    (p.sessionServiceActor ? CreateRequest(workflowId, userId, cluster)).mapTo[Id]
+  private lazy val notExistingWorkflowSessionConfig = SessionConfig(
+    notExistingWorkflowId, someUserId
+  )
+  private lazy val someUserId = Id.randomId.toString()
 
+  private lazy val existingWorkflowId = Id.randomId
+  private lazy val notExistingWorkflowId = Id.randomId
 
   private def fixture[T](eventStore: EventStore)
     (test: (TestParams) => T): T =

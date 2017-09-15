@@ -7,16 +7,19 @@ package io.deepsense.sessionmanager.service
 import java.util.concurrent.TimeUnit
 
 import scala.concurrent.{ExecutionContext, Future}
+
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import com.google.inject.Inject
 import com.google.inject.name.Named
+
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor
+import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 
 class SessionService @Inject() (
   @Named("SessionService.Actor") private val serviceActor: ActorRef,
@@ -30,12 +33,9 @@ class SessionService @Inject() (
     (serviceActor ? SessionServiceActor.GetRequest(workflowId)).mapTo[Option[Session]]
   }
 
-  def createSession(
-      workflowId: Id,
-      userId: String,
-      cluster: ClusterDetails): Future[Id] = {
-    logger.info(s"Creating session '$workflowId'")
-    (serviceActor ? SessionServiceActor.CreateRequest(workflowId, userId, cluster)).mapTo[Id]
+  def createSession(sessionConfig: SessionConfig, clusterConfig: ClusterDetails): Future[Id] = {
+    logger.info(s"Creating session with config $sessionConfig")
+    (serviceActor ? SessionServiceActor.CreateRequest(sessionConfig, clusterConfig)).mapTo[Id]
   }
 
   def listSessions(): Future[ListSessionsResponse] = {
