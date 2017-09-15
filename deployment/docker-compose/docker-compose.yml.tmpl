@@ -57,6 +57,8 @@ services:
       - "9999:8888"
     environment:
       - WM_URL=http://workflowmanager:9080
+      - WM_AUTH_USER=Some_User
+      - WM_AUTH_PASS=Some_Password
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
       - HEARTBEAT_INTERVAL=2.0
