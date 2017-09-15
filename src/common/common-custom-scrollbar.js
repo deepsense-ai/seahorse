@@ -1,6 +1,5 @@
 'use strict';
 
-/* @ngInject */
 function CustomScrollBar() {
   return {
     restrict: 'A',

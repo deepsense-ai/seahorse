@@ -8,6 +8,7 @@ angular.module('test').
         id: '88f560a9-97e3-4fa2-93ce-edad4cab7ea9',
         name: 'Sql Reader',
         uiName: 'Sql Reader',
+        color: '#00B1EB',
         operationId: '342342-123123-434234-234234',
         parameters: null,
         state: {
@@ -27,6 +28,7 @@ angular.module('test').
         id: '210ce781-0a9f-477d-99a7-5be31f7bfc02',
         name: 'Row Filter',
         uiName: 'Row Filter',
+        color: '#00B1EB',
         operationId: '342342-123123-434234-12334',
         parameters: null,
         state: {
@@ -39,6 +41,7 @@ angular.module('test').
         description: 'Neural networks inspired by biological STARTS test of description length message, hey hey hey this is a test so please welcome',
         id: 'edc02822-b8ee-4225-b070-f892a87dbf11',
         name: 'Neural Network',
+        color: '#00B1EB',
         operationId: '11111-111111-44444',
         parameters: null,
         state: null
@@ -48,6 +51,7 @@ angular.module('test').
         id: 'e61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
         name: 'File To DataFrame',
         uiName: 'File To DataFrame',
+        color: '#00B1EB',
         operationId: '11111-111111-33333',
         parameters: null,
         state: {
@@ -72,6 +76,7 @@ angular.module('test').
         id: 'a61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
         name: 'Test draft',
         uiName: 'Test draft',
+        color: '#00B1EB',
         operationId: '11111-111111-33333',
         parameters: null,
         state: {
@@ -189,6 +194,7 @@ angular.module('test').
         id: 'a61a311f-ffc0-71b8-736c-3fb1e3cf8e77',
         name: 'Test draft',
         uiName: '',
+        color: '#00B1EB',
         operationId: '11111-111111-33333',
         parameters: null,
         state: {

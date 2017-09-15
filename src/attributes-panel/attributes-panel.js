@@ -6,7 +6,8 @@ function OperationAttributes($rootScope, AttributesPanelService) {
     restrict: 'E',
     scope: {
       node: '=',
-      disabledMode: '='
+      disabledMode: '=',
+      predefColors: '='
     },
     templateUrl: 'attributes-panel/attributes-panel.html',
     replace: true,

@@ -21,10 +21,52 @@
 
 .c-color-picker {
   position: absolute;
-  width: 350px;
-  height: 200px;
-  background-color: white;
+  width: 355px;
+  min-height: 200px;
+  background-color: rgba(255, 255, 255, 0.75);
   border: 1px solid lightgray;
+  padding: @main-space;
+  border-radius: 5px;
+
+  &__head {
+    margin: 0 0 @main-space 0;
+  }
+
+  &__input {
+    width: 50px;
+    height: 50px;
+  }
+
+  &__save-indicator {
+    color: lightgreen;
+  }
+}
+
+.c-predefined-colors {
+  display: flex;
+  flex-wrap: wrap;
+
+  &__color {
+    width: 25px;
+    height: 25px;
+    margin: 0 5px 5px 0;
+    position: relative;
+
+    &:hover {
+      .c-predefined-colors__remove-color {
+        display: block;
+      }
+    }
+  }
+
+  &__remove-color {
+    display: none;
+    width: 10px;
+    line-height: 0;
+    right: -5px;
+    top: -7px;
+    position: absolute;
+  }
 }
 
 .o-state {
@@ -109,7 +151,6 @@
   display: block;
   margin: @main-space / 2 @main-space 0 0;
   align-self: flex-start;
-  cursor: pointer;
 
   &:hover {
     outline: 1px solid lightblue;

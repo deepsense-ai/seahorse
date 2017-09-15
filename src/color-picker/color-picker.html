@@ -1,6 +1,8 @@
-<section class="o-color-picker lazur-bg"
-         ng-click="colorPicker.open()"
+<section class="o-color-picker u-cursor-pointer"
+         ng-style="{'background-color': node.color}"
+         ng-click="colorPicker.open($event)"
          tooltip-placement="left"
          tooltip="Click to change color of this node"
          tooltip-trigger="mouseenter"
-         tooltip-append-to-body="true"></section>
+         tooltip-append-to-body="true"
+         data-close="false"></section>
