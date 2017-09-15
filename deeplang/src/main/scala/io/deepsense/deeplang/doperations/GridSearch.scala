@@ -37,6 +37,7 @@ import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
 import io.deepsense.deeplang.params.{DynamicParam, NumericParam, ParamPair}
 import io.deepsense.deeplang.{DKnowledge, DOperation3To1, ExecutionContext}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.reportlib.model.{ReportContent, ReportType, Table}
 
 case class GridSearch()
@@ -94,9 +95,10 @@ case class GridSearch()
       evaluator: Evaluator)(
       context: ExecutionContext): Report = {
 
-    val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams)
+    val graphReader = context.inferContext.graphReader
+    val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams, graphReader)
     val estimatorWithParams = createEstimatorWithParams(estimator, estimatorParams)
-    val evaluatorWithParams = createEvaluatorWithParams(evaluator)
+    val evaluatorWithParams = createEvaluatorWithParams(evaluator, graphReader)
     validateDynamicParams(estimatorWithParams, evaluatorWithParams)
 
     val estimatorWrapper: EstimatorWrapper = new EstimatorWrapper(context, estimatorWithParams)
@@ -120,10 +122,10 @@ case class GridSearch()
 
     val estimator = estimatorKnowledge.single
     val evaluator = evaluatorKnowledge.single
-
-    val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams)
+    val graphReader = context.graphReader
+    val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams, graphReader)
     val estimatorWithParams = createEstimatorWithParams(estimator, estimatorParams)
-    val evaluatorWithParams = createEvaluatorWithParams(evaluator)
+    val evaluatorWithParams = createEvaluatorWithParams(evaluator, graphReader)
 
     validateDynamicParams(estimatorWithParams, evaluatorWithParams)
 
@@ -218,8 +220,8 @@ case class GridSearch()
     estimator.replicate().set(estimatorParams: _*)
   }
 
-  private def createEvaluatorWithParams(evaluator: Evaluator): Evaluator = {
-    evaluator.replicate().setParamsFromJson($(evaluatorParams), ignoreNulls = true)
+  private def createEvaluatorWithParams(evaluator: Evaluator, graphReader: GraphReader): Evaluator = {
+    evaluator.replicate().setParamsFromJson($(evaluatorParams), graphReader, ignoreNulls = true)
   }
 
   private def createGridSearchParams(

@@ -19,10 +19,13 @@ package io.deepsense.deeplang.params
 import java.lang.reflect.Constructor
 
 import scala.reflect.runtime.universe._
+
 import spray.json._
+
 import io.deepsense.deeplang.TypeUtils
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 case class ParamsSequence[T <: Params](
     override val name: String,
@@ -43,10 +46,10 @@ case class ParamsSequence[T <: Params](
 
   private def innerParamsInstance: T = constructor.newInstance().asInstanceOf[T]
 
-  override def valueFromJson(jsValue: JsValue): Seq[T] = jsValue match {
+  override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): Seq[T] = jsValue match {
     case JsArray(vector) =>
       for (innerJsValue <- vector) yield {
-        innerParamsInstance.setParamsFromJson(innerJsValue)
+        innerParamsInstance.setParamsFromJson(innerJsValue, graphReader)
       }
     case _ => throw new DeserializationException(s"Cannot fill parameters sequence" +
       s"with $jsValue: array expected.")

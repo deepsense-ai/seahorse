@@ -30,6 +30,7 @@ import io.deepsense.deeplang.doperations.layout.SmallBlockLayout2To1
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 case class Fit()
   extends DOperation2To1[Estimator[Transformer], DataFrame, Transformer]
@@ -61,7 +62,7 @@ case class Fit()
       estimator: Estimator[Transformer],
       dataFrame: DataFrame)(
       ctx: ExecutionContext): Transformer = {
-    estimatorWithParams(estimator).fit(ctx)(())(dataFrame)
+    estimatorWithParams(estimator, ctx.inferContext.graphReader).fit(ctx)(())(dataFrame)
   }
 
   override protected def inferKnowledge(
@@ -74,16 +75,17 @@ case class Fit()
       throw TooManyPossibleTypesException()
     }
     val estimator = estimatorKnowledge.single
-    estimatorWithParams(estimator).fit.infer(ctx)(())(dataFrameKnowledge)
+    estimatorWithParams(estimator, ctx.graphReader).fit.infer(ctx)(())(dataFrameKnowledge)
   }
 
   /**
    * Note that DOperation should never mutate input DOperable.
    * This method copies input estimator and sets parameters in copy.
    */
-  private def estimatorWithParams(estimator: Estimator[Transformer]): Estimator[Transformer] = {
+  private def estimatorWithParams(estimator: Estimator[Transformer], graphReader: GraphReader):
+  Estimator[Transformer] = {
     val estimatorWithParams = estimator.replicate()
-      .setParamsFromJson($(estimatorParams), ignoreNulls = true)
+      .setParamsFromJson($(estimatorParams), graphReader, ignoreNulls = true)
     validateDynamicParams(estimatorWithParams)
     estimatorWithParams
   }

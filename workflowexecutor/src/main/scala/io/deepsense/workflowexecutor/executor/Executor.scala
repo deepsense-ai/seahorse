@@ -60,8 +60,7 @@ trait Executor extends Logging {
 
     val inferContext = InferContext(
       DataFrameBuilder(sparkSQLSession),
-      operableCatalog,
-      innerWorkflowExecutor,
+      CatalogRecorder.fromSparkContext(sparkContext).catalogs,
       datasourceClientFactory.createClient
     )
 

@@ -18,6 +18,8 @@ package io.deepsense.deeplang.params
 
 import spray.json._
 
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+
 class DynamicParamSpec extends AbstractParamSpec[JsValue, DynamicParam] {
 
   override def className: String = "DynamicParam"
@@ -48,7 +50,8 @@ class DynamicParamSpec extends AbstractParamSpec[JsValue, DynamicParam] {
       val (param, _) = paramFixture
       val input = JsObject("a" -> JsNumber(3), "b" -> JsNull)
       val expected = JsObject("a" -> JsNumber(3))
-      param.valueFromJson(input) shouldBe expected
+      val graphReader = mock[GraphReader]
+      param.valueFromJson(input, graphReader) shouldBe expected
     }
   }
 }

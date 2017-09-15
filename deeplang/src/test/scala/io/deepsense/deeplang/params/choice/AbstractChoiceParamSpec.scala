@@ -22,6 +22,7 @@ import spray.json.{DeserializationException, JsObject}
 
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import io.deepsense.deeplang.params.{AbstractParamSpec, Param}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 abstract class AbstractChoiceParamSpec[T, U <: Param[T]] extends AbstractParamSpec[T, U] {
 
@@ -34,11 +35,13 @@ abstract class AbstractChoiceParamSpec[T, U <: Param[T]] extends AbstractParamSp
         createChoiceParam[BaseChoice]("name", "description")
     }
     "throw an exception when unsupported choice is given" in {
+      val graphReader = mock[GraphReader]
       a[DeserializationException] should be thrownBy
         createChoiceParam[ChoiceABC]("name", "description").valueFromJson(
           JsObject(
             "unsupportedClass" -> JsObject()
-          )
+          ),
+          graphReader
         )
     }
     "throw an exception when not all choices are declared" in {

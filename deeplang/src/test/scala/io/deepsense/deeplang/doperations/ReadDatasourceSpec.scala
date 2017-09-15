@@ -34,13 +34,13 @@ class ReadDatasourceSpec extends UnitSpec {
       "datasource param is defined" in {
         val someDatasourceId = UUID.randomUUID()
         val rds = ReadDatasource().setDatasourceId(someDatasourceId)
-        rds.getDatasourcesId shouldBe Set(someDatasourceId)
+        rds.getDatasourcesIds shouldBe Set(someDatasourceId)
       }
     }
     "return empty set" when {
       "datasource param is not defined" in {
         val rds = ReadDatasource()
-        rds.getDatasourcesId shouldBe empty
+        rds.getDatasourcesIds shouldBe empty
       }
     }
   }

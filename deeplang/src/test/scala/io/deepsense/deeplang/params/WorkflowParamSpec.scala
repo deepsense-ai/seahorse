@@ -16,11 +16,24 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json._
+import spray.json.{JsString, _}
 
-class WorkflowParamSpec extends AbstractParamSpec[JsObject, WorkflowParam] {
+import io.deepsense.deeplang.DOperationCategories
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.doperations.custom.{Sink, Source}
+import io.deepsense.deeplang.params.custom.InnerWorkflow
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+
+class WorkflowParamSpec extends AbstractParamSpec[InnerWorkflow, WorkflowParam] {
 
   override def className: String = "WorkflowParam"
+
+  override def graphReader: GraphReader = {
+    val catalog = DOperationsCatalog()
+    catalog.registerDOperation(DOperationCategories.IO, () => Source())
+    catalog.registerDOperation(DOperationCategories.IO, () => Sink())
+    new GraphReader(catalog)
+  }
 
   override def paramFixture: (WorkflowParam, JsValue) = {
     val description = "Workflow parameter description"
@@ -37,18 +50,33 @@ class WorkflowParamSpec extends AbstractParamSpec[JsObject, WorkflowParam] {
     (param, expectedJson)
   }
 
-  override def valueFixture: (JsObject, JsValue) = {
-    val value = JsObject(
-      "field" -> JsString("value"),
-      "array" -> JsArray(
-        JsString("one"),
-        JsString("two"),
-        JsString("three")
+  override def valueFixture: (InnerWorkflow, JsValue) = {
+    val innerWorkflow = InnerWorkflow.empty
+    val sourceNode = JsObject(
+      "id" -> JsString(innerWorkflow.source.id.toString),
+      "operation" -> JsObject(
+        "id" -> JsString(Source.id.toString),
+        "name" -> JsString("Source")
       ),
-      "object" -> JsObject(
-        "inner" -> JsString("value")
-      )
+    "parameters" -> JsObject()
     )
-    (value, value.copy())
+    val sinkNode = JsObject(
+      "id" -> JsString(innerWorkflow.sink.id.toString),
+      "operation" -> JsObject(
+        "id" -> JsString(Sink.id.toString),
+        "name" -> JsString("Sink")
+      ),
+      "parameters" -> JsObject()
+    )
+    val workflow = JsObject(
+      "nodes" -> JsArray(sourceNode, sinkNode),
+      "connections" -> JsArray()
+    )
+    val value = JsObject(
+      "workflow" -> workflow,
+      "thirdPartyData" -> JsObject(),
+      "publicParams" -> JsArray()
+    )
+    (innerWorkflow, value)
   }
 }

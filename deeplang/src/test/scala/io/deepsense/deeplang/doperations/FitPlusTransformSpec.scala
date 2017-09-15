@@ -24,9 +24,9 @@ import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
 import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
+import io.deepsense.deeplang._
 
-class FitPlusTransformSpec extends UnitSpec {
+class FitPlusTransformSpec extends UnitSpec with DeeplangTestSupport {
 
   "FitPlusTransform" when {
     "executed" should {
@@ -39,7 +39,7 @@ class FitPlusTransformSpec extends UnitSpec {
           op: FitPlusTransform,
           expectedDataFrame: DataFrame,
           expectedTransformer: Transformer): Unit = {
-          val results = op.executeUntyped(Vector(estimator, mock[DataFrame]))(mock[ExecutionContext])
+          val results = op.executeUntyped(Vector(estimator, mock[DataFrame]))(createExecutionContext)
           val outputDataFrame = results(0).asInstanceOf[DataFrame]
           val outputTransformer = results(1).asInstanceOf[Transformer]
 

@@ -37,12 +37,11 @@ import io.deepsense.deeplang.{DOperation, DOperationCategories, TypeUtils}
 class CatalogScanner(jarsUrls: Seq[URL]) extends Logging {
 
   /**
-    * Scans jars on classpath for classes annotated with [[io.deepsense.deeplang.refl.Register
-    * Register]]
-    * annotation and at the same time implementing [[io.deepsense.deeplang.DOperation DOperation]]
+    * Scans jars on classpath for classes annotated with [[io.deepsense.deeplang.refl.Register]]
+    * annotation and at the same time implementing [[io.deepsense.deeplang.DOperation]]
     * interface. Found classes are then registered in appropriate catalogs.
     *
-    * @see [[io.deepsense.deeplang.refl.Register Register]]
+    * @see [[io.deepsense.deeplang.refl.Register]]
     */
   def scanAndRegister(
       dOperableCatalog: DOperableCatalog,

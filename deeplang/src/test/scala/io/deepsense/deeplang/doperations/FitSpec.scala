@@ -35,7 +35,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
 
       def testFit(op: Fit, expectedTransformer: Transformer): Unit = {
         val Vector(outputTransformer: Transformer) =
-          op.executeUntyped(Vector(estimator, mock[DataFrame]))(mock[ExecutionContext])
+          op.executeUntyped(Vector(estimator, mock[DataFrame]))(createExecutionContext)
         outputTransformer shouldBe expectedTransformer
       }
       val op1 = Fit()
@@ -51,7 +51,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
 
       val paramsForEstimator = JsObject(estimator.paramA.name -> JsNumber(2))
       val op = Fit().setEstimatorParams(paramsForEstimator)
-      op.executeUntyped(Vector(estimator, mock[DataFrame]))(mock[ExecutionContext])
+      op.executeUntyped(Vector(estimator, mock[DataFrame]))(createExecutionContext)
 
       estimator should have (theSameParamsAs (originalEstimator))
     }

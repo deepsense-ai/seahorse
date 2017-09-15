@@ -30,6 +30,13 @@ trait DeeplangTestSupport extends MockitoSugar {
   protected def createInferContext(
       dOperableCatalog: DOperableCatalog): InferContext = MockedInferContext(dOperableCatalog)
 
+  protected def createExecutionContext: ExecutionContext = {
+    val mockedExecutionContext = mock[ExecutionContext]
+    val mockedInferContext = mock[InferContext]
+    when(mockedExecutionContext.inferContext).thenReturn(mockedInferContext)
+    mockedExecutionContext
+  }
+
   protected def createSchema(fields: Array[String] = Array[String]()): StructType = {
     val schemaMock = mock[StructType]
     when(schemaMock.fieldNames).thenReturn(fields)

@@ -113,9 +113,9 @@ class GraphReaderSpec extends GraphJsonTestSupport {
   "GraphReader" should {
     "create Graph from JSON and fill parameters with values from Json" in {
       graphsSimilar(exampleJson.convertTo[DeeplangGraph], expectedGraph) shouldBe true
-      verify(operation1).setParamsFromJson(parameters1)
-      verify(operation2).setParamsFromJson(parameters2)
-      verify(operation3).setParamsFromJson(parameters3)
+      verify(operation1).setParamsFromJson(parameters1, graphReader)
+      verify(operation2).setParamsFromJson(parameters2, graphReader)
+      verify(operation3).setParamsFromJson(parameters3, graphReader)
     }
   }
 

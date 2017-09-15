@@ -17,9 +17,11 @@
 package io.deepsense.sparkutils
 
 
+import scala.concurrent.Future
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 import scala.reflect.api.Symbols
+import scala.util.Try
 
 import akka.actor.ActorSystem
 import org.apache.spark.{ml, SparkContext}
@@ -140,4 +142,9 @@ object TypeUtils {
 object AkkaUtils {
   def terminate(as: ActorSystem): Unit = as.shutdown()
   def awaitTermination(as: ActorSystem): Unit = as.awaitTermination()
+}
+
+object ScalaUtils {
+  import scala.concurrent.ExecutionContext.Implicits.global
+  def futureFromTry[T](t: Try[T]): Future[T] = Future(t.get)
 }

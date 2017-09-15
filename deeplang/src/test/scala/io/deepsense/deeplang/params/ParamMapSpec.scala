@@ -20,6 +20,7 @@ import spray.json.JsValue
 
 import io.deepsense.deeplang.UnitSpec
 import ParameterType.ParameterType
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class ParamMapSpec extends UnitSpec {
 
@@ -30,7 +31,7 @@ class ParamMapSpec extends UnitSpec {
     override val parameterType: ParameterType = mock[ParameterType]
 
     override def valueToJson(value: T): JsValue = ???
-    override def valueFromJson(jsValue: JsValue): T = ???
+    override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): T = ???
 
     override def replicate(name: String): MockParam[T] = new MockParam[T]
   }

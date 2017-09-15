@@ -20,14 +20,12 @@ import spray.json.JsObject
 
 import io.deepsense.deeplang.InnerWorkflowParser
 import io.deepsense.deeplang.doperables.{CustomTransformer, ParamWithValues}
-import io.deepsense.deeplang.params.custom.PublicParam
+import io.deepsense.deeplang.params.custom.{InnerWorkflow, PublicParam}
 
 object CustomTransformerFactory {
 
   def createCustomTransformer(
-      innerWorkflowParser: InnerWorkflowParser,
-      innerWorkflowJson: JsObject): CustomTransformer = {
-    val innerWorkflow = innerWorkflowParser.parse(innerWorkflowJson)
+      innerWorkflow: InnerWorkflow): CustomTransformer = {
     val selectedParams: Seq[ParamWithValues[_]] =
         innerWorkflow.publicParams.flatMap {
       case PublicParam(nodeId, paramName, publicName) =>

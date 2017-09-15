@@ -16,24 +16,30 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.{JsValue, JsObject}
+import spray.json._
+import spray.json.DefaultJsonProtocol._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.params.custom.InnerWorkflow
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.{InnerWorkflowJsonReader, WriteInnerWorkflowJsonProtocol}
 
 case class WorkflowParam(
     override val name: String,
     override val description: Option[String])
-  extends Param[JsObject] {
+  extends Param[InnerWorkflow]
+  with WriteInnerWorkflowJsonProtocol {
 
   override val parameterType = ParameterType.Workflow
 
-  override def valueToJson(value: JsObject): JsValue = value
+  override def valueToJson(value: InnerWorkflow): JsValue = value.toJson
 
-  override def valueFromJson(jsValue: JsValue): JsObject = jsValue.asJsObject
 
-  override def validate(value: JsObject): Vector[DeepLangException] = {
+  override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): InnerWorkflow =
+    InnerWorkflowJsonReader.toInner(jsValue, graphReader)
+
+  override def validate(value: InnerWorkflow): Vector[DeepLangException] = {
     super.validate(value)
-    // TODO: validate if json is a valid workflow representation.
   }
 
   override def replicate(name: String): WorkflowParam = copy(name = name)

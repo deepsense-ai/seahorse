@@ -30,6 +30,7 @@ import io.deepsense.deeplang.doperations.layout.SmallBlockLayout2To1
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 case class Evaluate()
   extends DOperation2To1[Evaluator, DataFrame, MetricValue]
@@ -59,7 +60,7 @@ case class Evaluate()
   override lazy val tTagTO_0: TypeTag[MetricValue] = typeTag
 
   override protected def execute(evaluator: Evaluator, dataFrame: DataFrame)(context: ExecutionContext): MetricValue = {
-    evaluatorWithParams(evaluator).evaluate(context)(())(dataFrame)
+    evaluatorWithParams(evaluator, context.inferContext.graphReader).evaluate(context)(())(dataFrame)
   }
 
   override protected def inferKnowledge(
@@ -71,12 +72,12 @@ case class Evaluate()
       throw TooManyPossibleTypesException()
     }
     val evaluator = evaluatorKnowledge.single
-    evaluatorWithParams(evaluator).evaluate.infer(context)(())(dataFrameKnowledge)
+    evaluatorWithParams(evaluator, context.graphReader).evaluate.infer(context)(())(dataFrameKnowledge)
   }
 
-  private def evaluatorWithParams(evaluator: Evaluator): Evaluator = {
+  private def evaluatorWithParams(evaluator: Evaluator, graphReader: GraphReader): Evaluator = {
     val evaluatorWithParams = evaluator.replicate()
-      .setParamsFromJson(getEvaluatorParams, ignoreNulls = true)
+      .setParamsFromJson(getEvaluatorParams, graphReader, ignoreNulls = true)
     validateDynamicParams(evaluatorWithParams)
     evaluatorWithParams
   }

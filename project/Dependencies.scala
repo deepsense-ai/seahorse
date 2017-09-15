@@ -18,14 +18,14 @@ import sbt._
 
 object Version {
 
-  val spark = sys.props.getOrElse("SPARK_VERSION", "2.0.0")  // TEMPORAL
-  val (scala, java, hadoop, akka) = spark match {
-    case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "1.8", "2.7.1", "2.4.9")
-    case "1.6.1" => ("2.10.5", "1.7", "2.6.0", "2.3.11")
+  val spark = sys.props.getOrElse("SPARK_VERSION", "2.1.1")
+  val (scala, java, hadoop, akka, apacheCommons) = spark match {
+    case "2.1.0" | "2.1.1" => ("2.11.8", "1.8", "2.7.3", "2.4.9", "3.5")
+    case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "1.8", "2.7.1", "2.4.9", "3.3.+")
+    case "1.6.1" => ("2.10.5", "1.7", "2.6.0", "2.3.11", "3.3.+")
   }
 
   val amazonS3 = "1.10.16"
-  val apacheCommons = "3.3.+"
   val googleApi = "1.22.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
@@ -110,7 +110,7 @@ object Dependencies {
 
   val sparkCSV: Seq[ModuleID] = Version.spark match {
     case "1.6.1" => Seq("com.databricks" %% "spark-csv" % "1.4.0")
-    case "2.0.0" | "2.0.1" | "2.0.2" => Seq()
+    case "2.0.0" | "2.0.1" | "2.0.2" | "2.1.0" | "2.1.1" => Seq()
   }
 
   class Spark(version: String) {

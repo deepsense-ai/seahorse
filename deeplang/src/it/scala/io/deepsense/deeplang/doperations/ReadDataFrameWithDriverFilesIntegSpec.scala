@@ -189,7 +189,17 @@ class ReadDataFrameWithDriverFilesIntegSpec
         csvNamesIncluded = false,
         csvConvertToBoolean = true
       )
-      dataFrame.report shouldBe an[Report]
+      dataFrame.report shouldBe a[Report]
+    }
+
+    "read CSV file with escaped quotes without throwing an exception" in {
+      val dataFrame = readDataFrame(
+        fileName = "with_escaped_quotes.csv",
+        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
+        csvNamesIncluded = true,
+        csvConvertToBoolean = false
+      )
+      dataFrame.sparkDataFrame.count() shouldEqual 2
     }
 
     "throw exception at inference time when using parquet with local driver files" in {

@@ -42,7 +42,12 @@ function networkRm {
 ACTION=$1
 SPARK_VERSION=$2
 export SPARK_VERSION=${SPARK_VERSION}
-if [ "$SPARK_VERSION" == "2.0.0" ] || [ "$SPARK_VERSION" == "2.0.1" ] || [ "$SPARK_VERSION" == "2.0.2" ]; then
+if  [ "$SPARK_VERSION" == "2.1.0" ] || [ "$SPARK_VERSION" == "2.1.1" ]; then
+  export HADOOP_VERSION="2.7"
+  # We use 2.7.1 for Spark 2.1.x despite the fact that the latter depends on 2.7.3, but 2.7.3
+  # doesn't have docker image released yet.
+  export HADOOP_VERSION_FULL="2.7.1"
+elif [ "$SPARK_VERSION" == "2.0.0" ] || [ "$SPARK_VERSION" == "2.0.1" ] || [ "$SPARK_VERSION" == "2.0.2" ]; then
   export HADOOP_VERSION="2.7"
   export HADOOP_VERSION_FULL="2.7.1"
 elif [ "$SPARK_VERSION" == "1.6.1" ]; then

@@ -79,11 +79,10 @@ abstract class StringIndexingWrapperModel[M <: ml.Model[M], E <: ml.Estimator[M]
     val wrappedModelPath = Transformer.stringIndexerWrappedModelFilePath(path)
     val loadedPipelineModel = PipelineModel.load(pipelineModelPath)
     val loadedWrappedModel = Transformer.load(ctx, wrappedModelPath)
-
     this
       .setPipelinedModel(loadedPipelineModel)
       .setWrappedModel(loadedWrappedModel.asInstanceOf[SparkModelWrapper[M, E]])
-      .setParamsFromJson(loadedWrappedModel.paramValuesToJson)
+      .setParamsFromJson(loadedWrappedModel.paramValuesToJson, ctx.inferContext.graphReader)
   }
 
   override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {

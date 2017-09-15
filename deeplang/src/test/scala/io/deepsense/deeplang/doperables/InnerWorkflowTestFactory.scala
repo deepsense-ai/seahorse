@@ -24,6 +24,7 @@ import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.params.custom.{InnerWorkflow, PublicParam}
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 object InnerWorkflowTestFactory {
 
@@ -34,26 +35,24 @@ object InnerWorkflowTestFactory {
   val sourceNode = Node(sourceNodeId, Source())
   val sinkNode = Node(sinkNodeId, Sink())
 
-  private def createInnerNodeOperation(targetType: TargetTypeChoice): ConvertType = {
+  private def createInnerNodeOperation(targetType: TargetTypeChoice, graphReader: GraphReader): ConvertType = {
+
     val params = TypeConverter()
       .setTargetType(targetType)
       .setSelectedColumns(MultipleColumnSelection(Vector(NameColumnSelection(Set("column1")))))
       .paramValuesToJson
-    new ConvertType().setParamsFromJson(params)
+    new ConvertType().setParamsFromJson(params, graphReader)
   }
 
-  private def createInnerNode(targetType: TargetTypeChoice): Node[DOperation] =
-    Node(innerNodeId, createInnerNodeOperation(targetType))
+  private def createInnerNode(targetType: TargetTypeChoice, graphReader: GraphReader): Node[DOperation] =
+    Node(innerNodeId, createInnerNodeOperation(targetType, graphReader))
 
-  def simpleGraph(
+  def simpleGraph(graphReader: GraphReader,
     targetType: TargetTypeChoice = TargetTypeChoices.StringTargetTypeChoice()): DeeplangGraph = {
-    val innerNode = createInnerNode(targetType)
+    val innerNode = createInnerNode(targetType, graphReader)
     DeeplangGraph(
       Set(sourceNode, sinkNode, innerNode),
       Set(Edge(sourceNode, 0, innerNode, 0), Edge(innerNode, 0, sinkNode, 0)))
   }
 
-  def simpleInnerWorkflow(publicParams: List[PublicParam] = List.empty): InnerWorkflow = {
-    InnerWorkflow(simpleGraph(), JsObject(), publicParams)
-  }
 }

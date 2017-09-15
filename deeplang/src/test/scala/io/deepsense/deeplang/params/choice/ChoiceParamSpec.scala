@@ -17,8 +17,9 @@
 package io.deepsense.deeplang.params.choice
 
 import spray.json._
-
 import scala.reflect.runtime.universe._
+
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class ChoiceParamSpec extends AbstractChoiceParamSpec[ChoiceABC, ChoiceParam[ChoiceABC]] {
 
@@ -26,12 +27,13 @@ class ChoiceParamSpec extends AbstractChoiceParamSpec[ChoiceABC, ChoiceParam[Cho
 
   className should {
     "throw an exception while deserializing multiple choices" in {
+      val graphReader = mock[GraphReader]
       val param = paramFixture._1
       val twoChoicesJson = JsObject(
         "B" -> JsObject(),
         "C" -> JsObject()
       )
-      an [DeserializationException] should be thrownBy param.valueFromJson(twoChoicesJson)
+      an [DeserializationException] should be thrownBy param.valueFromJson(twoChoicesJson, graphReader)
     }
     "serialize default values properly" in {
       val choices = Seq(OptionA(), OptionB(), OptionC())
