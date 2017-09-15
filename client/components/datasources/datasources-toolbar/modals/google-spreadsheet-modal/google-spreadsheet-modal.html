@@ -8,19 +8,23 @@
       <label class="title">Google Spreadsheet ID / URL to Google Spreadsheet</label>
       <div class="icon-input">
         <input
+          ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId"
           name="googleSpreadsheetId"
           type="text"
           class="form-control"
           placeholder="Google spreadsheet ID"
         />
-        <div class="icon-input__status">
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
           <div
-            class="sa icon"
             ng-class="{
               'sa-ok status-ok': $ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource),
               'sa-cross status-error': !$ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource)
             }"
+            class="sa icon"
           ></div>
         </div>
       </div>
@@ -30,6 +34,7 @@
       <label class="title">Google service account credentials JSON</label>
       <div class="icon-input">
         <input
+          ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials"
           ng-change="$ctrl.isGoogleCrendetialsValid()"
           name="googleServiceAccountCredentials"
@@ -38,13 +43,16 @@
           placeholder="JSON credentials"
         />
 
-        <div class="icon-input__status">
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
           <div
-            class="sa icon"
             ng-class="{
               'sa-ok status-ok': $ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource),
               'sa-cross status-error': !$ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource)
             }"
+            class="sa icon"
           ></div>
         </div>
       </div>
@@ -66,6 +74,7 @@
             ng-class="{'active': $ctrl.datasourceParams.googleSpreadsheetParams.convert01ToBoolean}"
           >
             <input
+              ng-disabled="$ctrl.previewMode"
               ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.convert01ToBoolean"
               type="checkbox"
             />
@@ -79,10 +88,14 @@
       <div class="public-param-row">
         <div class="checkbox-wrapper">
           <label
-            ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+            ng-class="{
+              'active': $ctrl.datasourceParams.visibility === 'publicVisibility',
+              'disabled': $ctrl.previewMode
+            }"
             class="format-form-label"
           >
             <input
+              ng-disabled="$ctrl.previewMode"
               ng-model="$ctrl.datasourceParams.visibility"
               ng-true-value="'publicVisibility'"
               ng-false-value="'privateVisibility'"

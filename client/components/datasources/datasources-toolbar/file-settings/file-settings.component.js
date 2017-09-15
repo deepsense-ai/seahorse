@@ -7,7 +7,8 @@ const FileSettingsComponent = {
   bindings: {
     extension: '<',
     onChange: '&',
-    fileSettings: '<'
+    fileSettings: '<',
+    disabledMode: '<'
   },
   templateUrl,
   controller: class FileSettingsController {

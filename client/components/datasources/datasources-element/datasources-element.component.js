@@ -14,10 +14,12 @@ const DatasourcesElementComponent = {
     onSelect: '&'
   },
   controller: class DatasourcesElementController {
-    constructor(UserService, DeleteModalService, DatasourcesModalsService, datasourcesService) {
+    constructor(DeleteModalService, DatasourcesModalsService, datasourcesService) {
       'ngInject';
 
-      _.assign(this, {UserService, DeleteModalService, DatasourcesModalsService, datasourcesService});
+      this.DeleteModalService = DeleteModalService;
+      this.DatasourcesModalsService = DatasourcesModalsService;
+      this.datasourcesService = datasourcesService;
 
       this.visibilityLabel = {
         publicVisibility: 'Public',
@@ -35,9 +37,15 @@ const DatasourcesElementComponent = {
       this.context = this.context || datasourceContext.BROWSE_DATASOURCE;
     }
 
-    editDatasource(datasource) {
+    selectDatasource(datasource) {
+      if (this.isSelectable()) {
+        this.onSelect({datasource});
+      }
+    }
+
+    openDatasource(datasource, mode) {
       const type = datasource.params.datasourceType;
-      this.DatasourcesModalsService.openModal(type, datasource);
+      this.DatasourcesModalsService.openModal(type, datasource, mode);
     }
 
     deleteDatasource(datasource) {
@@ -54,7 +62,7 @@ const DatasourcesElementComponent = {
     }
 
     isOwner() {
-      return this.UserService.getSeahorseUser().id === this.element.ownerId;
+      return this.datasourcesService.isCurrentUserOwnerOfDatasource(this.element);
     }
   }
 };

@@ -4,10 +4,10 @@ import DatasourceModal from '../datasource-modal.class.js';
 
 class LibraryModalController extends DatasourceModal {
   constructor($scope, $log, $uibModalInstance, LibraryModalService,
-              datasourcesService, DatasourcesPanelService, editedDatasource) {
+              datasourcesService, DatasourcesPanelService, editedDatasource, previewMode) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
 
     this.LibraryModalService = LibraryModalService;
     this.DatasourcesPanelService = DatasourcesPanelService;

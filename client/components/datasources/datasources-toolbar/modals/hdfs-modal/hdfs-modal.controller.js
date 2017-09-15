@@ -6,10 +6,10 @@ const HDFS_REGEX = /(hdfs):\/\/([\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?
 const HDFS_PREFIX = 'hdfs://';
 
 class HdfsModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
 
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;

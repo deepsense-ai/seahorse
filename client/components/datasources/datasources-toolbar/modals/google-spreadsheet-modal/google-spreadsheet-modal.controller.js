@@ -6,10 +6,10 @@ const GOOGLE_SPREADSHEET_REGEX = /[a-zA-Z0-9-_]+/;
 const FULL_SPREADSHEET_URI_REGEX = /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/;
 
 class GoogleSpreadsheetModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
 
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;

@@ -3,13 +3,14 @@
 import footerTpl from './modal-footer/modal-footer.html';
 
 class DatasourceModal {
-  constructor($log, $uibModalInstance, datasourcesService, editedDatasource) {
+  constructor($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
     'ngInject';
 
     this.$log = $log;
     this.$uibModalInstance = $uibModalInstance;
     this.datasourcesService = datasourcesService;
     this.editedDatasource = angular.copy(editedDatasource);
+    this.previewMode = previewMode;
 
     this.footerTpl = footerTpl;
   }

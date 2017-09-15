@@ -2,6 +2,7 @@
   <div class="datasources-modal__footer-input">
     <label class="title">Name</label>
     <input
+      ng-disabled="$ctrl.previewMode"
       ng-model="$ctrl.datasourceParams.name"
       ng-focus="$ctrl.stopCopyingFromUserField()"
       placeholder="Name"
@@ -16,6 +17,7 @@
     </label>
   </div>
   <button
+    ng-if="!$ctrl.previewMode"
     ng-disabled="!$ctrl.canAddNewDatasource"
     ng-click="$ctrl.ok()"
     class="btn btn-blue"
@@ -24,6 +26,15 @@
     Ok
   </button>
   <button
+    ng-if="$ctrl.previewMode"
+    ng-click="$ctrl.cancel()"
+    class="btn btn-blue"
+    type="button"
+  >
+    Close
+  </button>
+  <button
+    ng-if="!$ctrl.previewMode"
     ng-click="$ctrl.cancel()"
     class="btn btn-white"
     type="button"

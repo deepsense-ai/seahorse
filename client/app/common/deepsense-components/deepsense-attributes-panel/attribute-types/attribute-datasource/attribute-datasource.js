@@ -48,8 +48,8 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
         scope.parameter.value = null;
       };
 
-      scope.editDatasource = function () {
-        DatasourcesModalsService.openModal(scope.datasource.params.datasourceType, scope.datasource);
+      scope.openDatasource = function (mode) {
+        DatasourcesModalsService.openModal(scope.datasource.params.datasourceType, scope.datasource, mode);
       };
 
       scope.isDataSourceEmpty = function() {

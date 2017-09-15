@@ -5,10 +5,10 @@ import DatasourceModal from '../datasource-modal.class.js';
 const URL_REGEX = /(http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
 
 class ExternalFileModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
     this.extension = 'csv';
 
     if (editedDatasource) {

@@ -87,7 +87,7 @@
       border-radius: 4px;
       display: flex;
       align-items: center;
-      height: 36px;
+      height: 34px;
       font-weight: 600;
       cursor: pointer;
       line-height: 1em;
@@ -115,6 +115,14 @@
         .radio-title input {
           color: black;
         }
+      }
+
+      &.disabled {
+        background-color: #eee;
+        cursor: not-allowed;
+        color: #555;
+        font-weight: 500;
+        border: 1px solid #ccc;
       }
 
       input[type=checkbox], input[type=radio] {
@@ -152,19 +160,18 @@
       }
 
       input[type=checkbox]:disabled + span:before {
-        color: #000;
-        background: #EEE;
         border: 1px solid #EEE;
-      }
-    }
-
-    label.format-form-label:hover {
-      input[type=radio] + span:before {
-        background-color: @seahorse-light-blue;
+        font-weight: 600;
       }
 
-      input[type=radio]:checked + span:before {
-        background-color: @color-white;
+      &:not(.disabled):hover {
+        input[type=radio] + span:before {
+          background-color: @seahorse-light-blue;
+        }
+
+        input[type=radio]:checked + span:before {
+          background-color: @color-white;
+        }
       }
     }
   }

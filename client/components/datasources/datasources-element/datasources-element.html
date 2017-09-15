@@ -1,10 +1,8 @@
-<div
-  class="datasources-element"
->
+<div class="datasources-element">
   <div
     class="datasources-element__name-wrapper"
     ng-class="{'datasources-element__name-wrapper--disabled': !$ctrl.isSelectable($ctrl.element)}"
-    ng-click="$ctrl.onSelect({datasource: $ctrl.element})"
+    ng-click="$ctrl.selectDatasource($ctrl.element)"
   >
     <div
       class="datasources-element__type sa"
@@ -18,19 +16,25 @@
       {{$ctrl.element.params.name}}
     </div>
   </div>
-  <div
-    class="datasources-element__icon-wrapper"
-    ng-class="{'datasources-element__icon-wrapper--disabled': !$ctrl.isOwner()}"
-  >
+  <div class="datasources-element__icon-wrapper">
     <div
+      ng-if="!$ctrl.isOwner()"
+      ng-click="$ctrl.openDatasource($ctrl.element, 'read')"
+      class="datasources-element__edit sa sa-view"
+      title="See"
+    >
+    </div>
+    <div
+      ng-if="$ctrl.isOwner()"
+      ng-click="$ctrl.openDatasource($ctrl.element, 'edit')"
       class="datasources-element__edit sa sa-edit"
-      ng-click="$ctrl.editDatasource($ctrl.element)"
       title="Edit"
     >
     </div>
     <div
-      class="datasources-element__delete sa sa-delete"
       ng-click="$ctrl.deleteDatasource($ctrl.element)"
+      ng-class="{'datasources-element__icon-wrapper--disabled': !$ctrl.isOwner()}"
+      class="datasources-element__delete sa sa-delete"
       title="Delete"
     >
     </div>

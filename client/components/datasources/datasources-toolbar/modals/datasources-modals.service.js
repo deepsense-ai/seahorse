@@ -36,7 +36,7 @@ class DatasourcesModalsService {
     _.assign(this, {$uibModal, $document});
   }
 
-  openModal(type, datasource) {
+  openModal(type, datasource, mode) {
     const modal = modalsTypesMap[type];
     const $datasourcesToolbar = angular.element(document.querySelector('.datasources-panel'));
 
@@ -51,7 +51,8 @@ class DatasourcesModalsService {
       backdrop: 'static',
       keyboard: true,
       resolve: {
-        editedDatasource: () => angular.copy(datasource)
+        editedDatasource: () => angular.copy(datasource),
+        previewMode: () => mode === 'read'
       }
     });
   }

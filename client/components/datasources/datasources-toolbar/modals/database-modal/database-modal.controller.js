@@ -3,10 +3,10 @@
 import DatasourceModal from '../datasource-modal.class.js';
 
 class DatabaseModalController extends DatasourceModal {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource, previewMode) {
     'ngInject';
 
-    super($log, $uibModalInstance, datasourcesService, editedDatasource);
+    super($log, $uibModalInstance, datasourcesService, editedDatasource, previewMode);
 
     this.drivers = ['com.mysql.jdbc.driver', 'com.postgresql.jdbc.driver', 'com.oracle.jdbc.driver'];
     this.copyFromQueryInput = true;

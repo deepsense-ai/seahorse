@@ -25,6 +25,7 @@
     </div>
 
     <file-settings
+      disabled-mode="$ctrl.previewMode"
       extension="$ctrl.extension"
       file-settings="$ctrl.datasourceParams.libraryFileParams"
       on-change="$ctrl.onFileSettingsChange(fileSettings)"
@@ -38,6 +39,7 @@
                  ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
           >
             <input
+              ng-disabled="$ctrl.previewMode"
               ng-model="$ctrl.datasourceParams.visibility"
               ng-true-value="'publicVisibility'"
               ng-false-value="'privateVisibility'"

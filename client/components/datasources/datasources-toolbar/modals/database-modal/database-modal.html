@@ -7,8 +7,9 @@
     <div class="datasources-modal__body-row half-width">
       <label class="title">Driver</label>
       <select
-        ng-options="driver for driver in $ctrl.drivers"
+        ng-disabled="$ctrl.previewMode"
         ng-model="$ctrl.datasourceParams.jdbcParams.driver"
+        ng-options="driver for driver in $ctrl.drivers"
         class="form-control"
       >
       </select>
@@ -17,6 +18,7 @@
     <div class="datasources-modal__body-row">
       <label class="title">JDBC connection string</label>
       <input
+        ng-disabled="$ctrl.previewMode"
         ng-model="$ctrl.datasourceParams.jdbcParams.url"
         placeholder="Connection string"
         class="form-control"
@@ -32,6 +34,7 @@
             class="format-form-label"
           >
             <input
+              ng-disabled="$ctrl.previewMode"
               ng-model="$ctrl.type"
               ng-change="$ctrl.onQueryTypeChange()"
               type="radio"
@@ -46,6 +49,7 @@
             class="format-form-label"
           >
             <input
+              ng-disabled="$ctrl.previewMode"
               ng-model="$ctrl.type"
               ng-change="$ctrl.onQueryTypeChange()"
               type="radio"
@@ -57,6 +61,7 @@
       </div>
       <div class="query-row">
         <input
+          ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.sqlInstruction"
           ng-change="$ctrl.onQueryTypeChange()"
           placeholder="Custom query"
@@ -74,6 +79,7 @@
             class="format-form-label"
           >
             <input
+              ng-disabled="$ctrl.previewMode"
               ng-model="$ctrl.datasourceParams.visibility"
               ng-true-value="'publicVisibility'"
               ng-false-value="'privateVisibility'"

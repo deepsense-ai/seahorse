@@ -10,6 +10,7 @@
       </label>
       <div class="icon-input">
         <input
+          ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.datasourceParams.externalFileParams.url"
           ng-change="$ctrl.validateUrl()"
           name="url"
@@ -17,19 +18,23 @@
           class="form-control"
           type="text"
         />
-        <div class="icon-input__status">
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
           <div
-            class="sa icon"
             ng-class="{
               'sa-ok status-ok': $ctrl.isUrlValid && (datasourceForm.url.$dirty || $ctrl.originalDatasource),
               'sa-cross status-error': !$ctrl.isUrlValid && (datasourceForm.url.$dirty || $ctrl.originalDatasource)
             }"
+            class="sa icon"
           ></div>
         </div>
       </div>
     </div>
 
     <file-settings
+      disabled-mode="$ctrl.previewMode"
       extension="$ctrl.extension"
       file-settings="$ctrl.datasourceParams.externalFileParams"
       on-change="$ctrl.onFileSettingsChange(fileSettings)"
@@ -40,10 +45,14 @@
       <div class="public-param-row">
         <div class="checkbox-wrapper">
           <label
-            ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+            ng-class="{
+              'active': $ctrl.datasourceParams.visibility === 'publicVisibility',
+              'disabled': $ctrl.previewMode
+            }"
             class="format-form-label"
           >
             <input
+              ng-disabled="$ctrl.previewMode"
               ng-model="$ctrl.datasourceParams.visibility"
               ng-true-value="'publicVisibility'"
               ng-false-value="'privateVisibility'"

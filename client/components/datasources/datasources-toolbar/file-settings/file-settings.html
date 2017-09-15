@@ -4,6 +4,7 @@
     <div class="inputs-row vertical-align-bottom">
       <div class="col">
         <select
+          ng-disabled="$ctrl.disabledMode"
           ng-init="$ctrl.fileSettings.fileFormat = $ctrl.formats[0]"
           ng-options="format as (format | uppercase) for format in $ctrl.formats"
           ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
@@ -19,9 +20,13 @@
         <div class="col checkbox-wrapper">
           <label
             class="format-form-label"
-            ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.includeHeader}"
+            ng-class="{
+              'active': $ctrl.fileSettings.csvFileFormatParams.includeHeader,
+              'disabled': $ctrl.disabledMode
+            }"
           >
             <input
+              ng-disabled="$ctrl.disabledMode"
               ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
               ng-model="$ctrl.fileSettings.csvFileFormatParams.includeHeader"
               type="checkbox"
@@ -33,10 +38,14 @@
         </div>
         <div class="col checkbox-wrapper">
           <label
-            ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.convert01ToBoolean}"
+            ng-class="{
+              'active': $ctrl.fileSettings.csvFileFormatParams.convert01ToBoolean,
+              'disabled': $ctrl.disabledMode
+            }"
             class="format-form-label"
           >
             <input
+              ng-disabled="$ctrl.disabledMode"
               ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
               ng-model="$ctrl.fileSettings.csvFileFormatParams.convert01ToBoolean"
               type="checkbox"
@@ -57,10 +66,15 @@
     <div class="title-row">Separator</div>
     <div class="inputs-row space-between">
       <div class="radio-wrapper">
-        <label class="format-form-label"
-               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'comma'}"
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'comma',
+            'disabled': $ctrl.disabledMode
+          }"
         >
           <input
+            ng-disabled="$ctrl.disabledMode"
             ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
             ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
             type="radio"
@@ -70,9 +84,15 @@
         </label>
       </div>
       <div class="radio-wrapper">
-        <label class="format-form-label"
-               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'semicolon'}">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'semicolon',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
           <input
+            ng-disabled="$ctrl.disabledMode"
             ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
             ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
             type="radio"
@@ -82,9 +102,15 @@
         </label>
       </div>
       <div class="radio-wrapper">
-        <label class="format-form-label"
-               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'colon'}">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'colon',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
           <input
+            ng-disabled="$ctrl.disabledMode"
             ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
             ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
             type="radio"
@@ -94,9 +120,15 @@
         </label>
       </div>
       <div class="radio-wrapper">
-        <label class="format-form-label"
-               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'space'}">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'space',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
           <input
+            ng-disabled="$ctrl.disabledMode"
             ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
             ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
             type="radio"
@@ -106,9 +138,15 @@
         </label>
       </div>
       <div class="radio-wrapper">
-        <label class="format-form-label"
-               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'tab'}">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'tab',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
           <input
+            ng-disabled="$ctrl.disabledMode"
             ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
             ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
             type="radio"
@@ -118,9 +156,15 @@
         </label>
       </div>
       <div class="radio-wrapper">
-        <label class="format-form-label"
-               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'custom'}">
+        <label
+          class="format-form-label"
+           ng-class="{
+             'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'custom',
+             'disabled': $ctrl.disabledMode
+           }"
+        >
           <input
+            ng-disabled="$ctrl.disabledMode"
             ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
             ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
             type="radio"
@@ -128,6 +172,7 @@
           />
           <span class="radio-title">
             <input
+              ng-disabled="$ctrl.disabledMode"
               ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
               ng-model="$ctrl.fileSettings.csvFileFormatParams.customSeparator"
               ng-focus="$ctrl.onFocus()"

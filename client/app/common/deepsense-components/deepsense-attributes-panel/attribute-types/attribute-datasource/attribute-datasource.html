@@ -1,9 +1,7 @@
-<div
-  ng-class="{'disable-mask': disabledMode}"
-  class="attribute-datasource"
->
+<div class="attribute-datasource">
   <div
     ng-if="isDataSourceEmpty()"
+    ng-class="{'disable-mask': disabledMode}"
     class="datasource-wrapper error-wrapper"
   >
     <div>
@@ -29,10 +27,12 @@
     class="datasource-wrapper"
   >
     <div
+      ng-class="{'disable-mask': disabledMode}"
       ng-class="typeIcon[datasource.params.datasourceType]"
       class="datasource-wrapper__icon sa"
     ></div>
     <div
+      ng-class="{'disable-mask': disabledMode}"
       ng-click="openDataSourcePanel()"
       class="datasource-wrapper__name"
       title={{datasource.params.name}}
@@ -40,15 +40,22 @@
       {{datasource.params.name}}
     </div>
     <div
+      ng-class="{'disable-mask': disabledMode}"
       ng-click="clearDatasource()"
       class="datasource-wrapper__icon sa sa-cross"
       title="Clear datasource"
     ></div>
     <div
       ng-if="isOwner()"
-      ng-click="editDatasource()"
+      ng-click="openDatasource('edit')"
       class="datasource-wrapper__icon sa sa-edit"
       title="Edit datasource"
+    ></div>
+    <div
+      ng-if="!isOwner()"
+      ng-click="openDatasource('read')"
+      class="datasource-wrapper__icon sa sa-view"
+      title="View datasource"
     ></div>
   </div>
 </div>
