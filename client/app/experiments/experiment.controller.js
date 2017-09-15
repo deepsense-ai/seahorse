@@ -248,7 +248,7 @@ function ExperimentController(
         $scope.close = function () {
           $modalInstance.close();
         };
-        $http.post('/api/models/' + data.id + '/deploy').then((response) => {
+        $http.post('/api/models/' + data.id + '/deploy', {}).then((response) => {
           $scope.linkValue = response.data.link;
         }, (error) => {
           console.error('deploy api call error', error);
