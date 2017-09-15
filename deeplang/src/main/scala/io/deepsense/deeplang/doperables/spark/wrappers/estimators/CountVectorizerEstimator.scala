@@ -45,7 +45,7 @@ class CountVectorizerEstimator
     name = "max vocabulary size",
     description = "Max size of the vocabulary.",
     sparkParamGetter = _.vocabSize,
-    RangeValidator(0.0, Double.MaxValue, beginIncluded = false))
+    RangeValidator(0.0, Int.MaxValue, beginIncluded = false, step = Some(1.0)))
   setDefault(vocabSize, (1 << 18).toDouble)
 
   override val params: Array[Param[_]] =

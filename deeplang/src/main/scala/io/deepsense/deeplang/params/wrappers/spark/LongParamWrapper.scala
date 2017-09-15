@@ -32,6 +32,8 @@ class LongParamWrapper[P <: ml.param.Params](
   extends NumericParam(name, description, validator)
   with SparkParamWrapper[P, Long, Double] {
 
+  require(IntParamWrapper.validatorHasIntegerStep(validator))
+
   override def convert(value: Double)(schema: StructType): Long = value.toLong
 
   override def replicate(name: String): LongParamWrapper[P] =
