@@ -97,7 +97,5 @@ services:
      - "RABBITMQ_PASS=1ElYfGNW"
   database:
     image: $DOCKER_REPOSITORY/deepsense-h2:master-$DOCKER_TAG
-    ports:
-      - "1521:1521"
     volumes:
       - "./h2-data:/opt/h2-data:rw"
