@@ -81,7 +81,8 @@ class OperationsApiSpec
           responseAs[HierarchyDescriptor] shouldBe hierarchyDescriptorMock
         }
       }
-
+    }
+    "return Unauthorized" when {
       "no auth token was send (on MissingHeaderRejection)" in {
         Get(s"/$apiPrefix/hierarchy") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
@@ -119,10 +120,39 @@ class OperationsApiSpec
           responseAs[JsObject] shouldBe dOperationsCatalog.categoryTree.toJson
         }
       }
-
+    }
+    "return Unauthorized" when {
       "no auth token was send (on MissingHeaderRejection)" in {
         Get(s"/$apiPrefix/catalog") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
+        }
+      }
+    }
+  }
+
+  "GET /operations/:id" should {
+    "return existing dOperation descriptor" when {
+      "valid auth token was send" in {
+        Get(s"/$apiPrefix/$existingOperationId") ~>
+          addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          implicit val operationDescriptor = DOperationDescriptorFullFormat
+          responseAs[JsObject] shouldBe existingOperationDescriptor.toJson
+        }
+      }
+    }
+    "return Unauthorized" when {
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$apiPrefix/catalog") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+      }
+    }
+    "return Not found" when {
+      "asked for non existing Experiment" in {
+        Get(s"/$apiPrefix/${UUID.randomUUID()}") ~>
+          addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
         }
       }
     }

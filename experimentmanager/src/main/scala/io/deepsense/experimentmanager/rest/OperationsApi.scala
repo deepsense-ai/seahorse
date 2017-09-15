@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
+import spray.http.StatusCodes
 import spray.httpx.SprayJsonSupport
 import spray.routing.PathMatchers
 
@@ -55,6 +56,18 @@ class OperationsApi @Inject() (
             get {
               withUserContext { userContext =>
                 complete(Future.successful(dOperationsCatalog.categoryTree))
+              }
+            }
+          } ~
+          path(JavaUUID) { operationId =>
+            get {
+              withUserContext { userContext =>
+                implicit val operationsFormat = DOperationDescriptorFullFormat
+                dOperationsCatalog.operations.get(operationId) match {
+                  case Some(operation) => complete(Future.successful(operation))
+                  case None => complete(
+                    StatusCodes.NotFound, s"Operation with id = $operationId does not exist")
+                }
               }
             }
           } ~
