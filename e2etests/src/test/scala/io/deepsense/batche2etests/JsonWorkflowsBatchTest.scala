@@ -7,14 +7,17 @@ import java.io.File
 
 import scala.sys.process._
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
+import io.deepsense.batche2etests.JsonWorkflowsBatchTest.{ProcExitError, ProcExitSuccessful}
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator}
 
-class JsonWorkflowsBatchTest extends WordSpec
+class JsonWorkflowsBatchTest
+  extends WordSpec
   with Matchers
-  with BatchTestSupport {
+  with BatchTestSupport
+  with BeforeAndAfterAll {
 
   val resultFilePath = "result.json"
   val sparkVersion = org.apache.spark.SPARK_VERSION
@@ -42,6 +45,15 @@ class JsonWorkflowsBatchTest extends WordSpec
     }
   }
 
+  val sessionmanagerDockerId = getContainerId("sessionmanager", s"$dockerComposePath/docker-compose.yml")
+
+  override def afterAll(): Unit = {
+    reportProcessExecution(executeProcessGatherOutput(bashExecutionOnDockerCommand(
+      sessionmanagerDockerId,
+      "cp workflowexecutor_seahorse*.log /spark_applications_logs"
+    )))
+  }
+
   private def runWorkflow(cluster: ClusterDetails,
                           path: String): Unit = {
 
@@ -57,7 +69,7 @@ class JsonWorkflowsBatchTest extends WordSpec
     val dockerResultFilePath = outputDirectory + "result.json"
     val sparkSubmitPath = "$SPARK_HOME/bin/spark-submit"
 
-    val sessionmanagerDockerId = getContainerId("sessionmanager", s"$dockerComposePath/docker-compose.yml")
+
     val localWorkflowsDirectory = "src/test/resources/workflows/"
     val localResultFilePath = resultFilePath
 
@@ -88,9 +100,43 @@ class JsonWorkflowsBatchTest extends WordSpec
     val workflowExecutionCommand =
       bashExecutionOnDockerCommand(sessionmanagerDockerId, submitCommand)
 
-    workflowToDockerCommand.!!
-    workflowExecutionCommand.!!
-    workflowFromDockerCommand.!!
+    val runLogs: Either[ProcExitError, ProcExitSuccessful] = for {
+      p1 <- executeProcessGatherOutput(workflowToDockerCommand).right
+      p2 <- executeProcessGatherOutput(workflowExecutionCommand).right
+      p3 <- executeProcessGatherOutput(workflowFromDockerCommand).right
+    } yield {
+      p1 + p2 + p3
+    }
+
+    reportProcessExecution(runLogs)
+
+  }
+
+  private def reportProcessExecution(execution: Either[ProcExitError, ProcExitSuccessful]): Unit = {
+    execution match {
+      case Left(ProcExitError(exitCode, cmd, out, err)) =>
+        logger.error(s"Shell command '$cmd' exited with code: $exitCode")
+        logOutAndErr(out, err, logger.error)
+      case Right(ProcExitSuccessful(out, err)) =>
+        logOutAndErr(out, err, logger.info)
+    }
+  }
+
+  private def logOutAndErr(out: String, err: String, loggingFunction: String => Unit): Unit = {
+    loggingFunction(s"Standard output: $out")
+    loggingFunction(s"Standard error: $err")
+  }
+
+  private def executeProcessGatherOutput(cmd: Seq[String]): Either[ProcExitError, ProcExitSuccessful] = {
+    val out = new StringBuilder
+    val err = new StringBuilder
+    val exitCode = cmd ! ProcessLogger(out ++= _, err ++= _)
+
+    if (exitCode == 0) {
+      Right(ProcExitSuccessful(out.toString, err.toString))
+    } else {
+      Left(ProcExitError(exitCode, cmd.mkString(" "), out.toString, err.toString))
+    }
   }
 
   private def bashExecutionOnDockerCommand(dockerName: String, command: String): Seq[String] = {
@@ -109,4 +155,16 @@ class JsonWorkflowsBatchTest extends WordSpec
   }
 
   private def getOriginalPath(path: String) = path.replace("%20", " ")
+}
+
+object JsonWorkflowsBatchTest {
+
+  case class ProcExitSuccessful(stdOut: String, stdErr: String) {
+    def +(other: ProcExitSuccessful): ProcExitSuccessful = {
+      ProcExitSuccessful(this.stdOut + other.stdOut, this.stdErr + other.stdErr)
+    }
+  }
+
+  case class ProcExitError(exitCode: Int, command: String, stdOut: String, stdErr: String)
+
 }
