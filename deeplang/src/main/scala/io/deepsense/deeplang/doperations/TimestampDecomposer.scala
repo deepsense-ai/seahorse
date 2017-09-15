@@ -33,7 +33,7 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
       MultipleChoiceParameter("Parts of the date time to select", None, true, timeUnits)
   )
 
-  override val name: String = "Decompose DataFrame"
+  override val name: String = "Decompose Timestamp"
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val timestampColumnName: String =

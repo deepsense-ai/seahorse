@@ -34,7 +34,6 @@ class ExperimentManagerAppModule extends AbstractModule {
   }
 
   private def installServices(): Unit = {
-    bind(classOf[DOperableCatalog]).in(Scopes.SINGLETON)
     install(new ServicesModule)
   }
 

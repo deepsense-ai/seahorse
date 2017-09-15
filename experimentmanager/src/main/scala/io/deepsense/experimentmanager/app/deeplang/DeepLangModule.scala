@@ -6,7 +6,7 @@
 
 package io.deepsense.experimentmanager.app.deeplang
 
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule, Provides, Scopes, Singleton}
 
 import io.deepsense.deeplang.InferContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
@@ -22,10 +22,18 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
  */
 class DeepLangModule extends AbstractModule {
   override def configure(): Unit = {
-    val dOperableCatalog = new DOperableCatalog
-    val inferContext = new InferContext(dOperableCatalog)
-    val dOperationsCatalog = DOperationsCatalog()
-    bind(classOf[DOperationsCatalog]).toInstance(dOperationsCatalog)
-    bind(classOf[InferContext]).toInstance(inferContext)
+    bind(classOf[DOperableCatalog]).in(Scopes.SINGLETON)
+  }
+
+  @Singleton
+  @Provides
+  def provideInferContext(dOperableCatalog: DOperableCatalog): InferContext = {
+    new InferContext(dOperableCatalog)
+  }
+
+  @Singleton
+  @Provides
+  def provideDOperationsCatalog(): DOperationsCatalog = {
+    DOperationsCatalog()
   }
 }
