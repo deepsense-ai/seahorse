@@ -1,5 +1,7 @@
 'use strict';
 
+import src from 'url-loader?mimetype=text/html!_static/CodiLime_EULA';
+
 /* @ngInject */
 function AgreementModalCtrl($cookies, version) {
   let ctrl = this;
@@ -11,6 +13,8 @@ function AgreementModalCtrl($cookies, version) {
     $cookies.put(COOKIE_NAME, 'true');
     ctrl.userAcceptedAgreement = true;
   };
+
+  $('#inject-iframe').attr('src', src);
 }
 
 exports.inject = function(module) {
