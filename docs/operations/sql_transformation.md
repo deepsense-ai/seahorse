@@ -7,7 +7,10 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes a Spark SQL expression provided by the user on a [DataFrame](../classes/dataframe.html) connected to its input port.
+Executes a
+<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/sql-programming-guide.html#sql">Spark SQL</a>
+(enriched with some [User Defined Functions](../spark_sql_udf.html))
+expression provided by the user on a [DataFrame](../classes/dataframe.html) connected to its input port.
 Returns the results of the execution as a `DataFrame`.
 
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
@@ -29,7 +32,7 @@ to another `DataFrame` with a [Transform](transform.html) operation.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The <code>DataFrame</code> that the SQL expression will be executed on.</td>
+<td>The <code>DataFrame</code> that the <code>Spark SQL</code> expression will be executed on.</td>
 </tr>
 </tbody>
 </table>
@@ -48,7 +51,7 @@ to another `DataFrame` with a [Transform](transform.html) operation.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The results of the SQL expression.</td>
+<td>The results of the <code>Spark SQL</code> expression.</td>
 </tr>
 <tr>
 <td><code>1</code></td><td>
@@ -73,12 +76,14 @@ to another `DataFrame` with a [Transform](transform.html) operation.
 <tr>
 <td><code>dataframe id</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The identifier that can be used in the SQL expression to refer the input <code>DataFrame</code>.</td>
+<td>The identifier that can be used in the <code>Spark SQL</code> expression to refer
+the input <code>DataFrame</code>.</td>
 </tr>
 <tr>
 <td><code>expression</code></td>
 <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
-<td>The SQL expression to be executed. The expression must be a valid Spark SQL expression.</td>
+<td>The <code>Spark SQL</code> expression to be executed.
+The expression must be a valid <code>Spark SQL</code> expression.</td>
 </tr>
 </tbody>
 </table>

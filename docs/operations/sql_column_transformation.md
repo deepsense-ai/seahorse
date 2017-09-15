@@ -7,7 +7,11 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes a SQL formula provided by the user on a column (columns) of [DataFrame](../classes/dataframe.html) connected to its input port.
+Executes a
+<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/sql-programming-guide.html#sql">Spark SQL</a>
+(enriched with some [User Defined Functions](../spark_sql_udf.html))
+formula (as used in `SELECT` statement) provided by the user on a column (columns)
+of [DataFrame](../classes/dataframe.html) connected to its input port.
 Returns modified `DataFrame`.
 
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
@@ -78,12 +82,13 @@ to another `DataFrame` with a [Transform](transform.html) operation.
   <tr>
     <td><code>input column alias</code></td>
     <td><code><a href="../parameter_types.html#string">String</a></code></td>
-    <td>The identifier that can be used in the SQL formula to refer the input column.</td>
+    <td>The identifier that can be used in the <code>Spark SQL</code> formula
+        (as used in <code>SELECT</code> statement) to refer the input column.</td>
   </tr>
   <tr>
     <td><code>formula</code></td>
     <td><code><a href="../parameter_types.html#string">String</a></code></td>
-    <td>The SQL formula. The formula grammar is based on SQL expressions (see below).</td>
+    <td>The <code>Spark SQL</code> formula (as used in <code>SELECT</code> statement).</td>
   </tr>
   <tr>
     <td><code>output column name</code></td>
@@ -92,62 +97,5 @@ to another `DataFrame` with a [Transform](transform.html) operation.
   </tr>
 </tbody>
 </table>
-
-## Formula Grammar
-
-The formula is a Spark SQL expression. Sample formulas:
-
-- ``MAXIMUM(someColumn1, someColumn2)``
-
-- ``POW(SIN(score), 2.0) + 1.0``
-
-- ``MINIMUM(age, 5.0)``
-
-The name of the new column can be provided in ``output column name`` parameter.
-
-The formula parser is case sensitive - function names have to be written in uppercase,
-column names parsing is also case sensitive.
-
-Only one column can be created - an expression ``SIN(someColumn), COS(someColumn)``
-will not be parsed properly.
-
-``null`` values are propagated. The expression ``POW(SIN(score), 2.0) + 1.0``
-will return null for rows containing null values in ``score`` column.
-
-Available functions and operators:
-
-- All the basic operators: ``+``, ``-``, ``/``, ``*``
-
-- Mathematical functions
-
-  - ``ABS(expr: Double)`` returns the absolute (positive) value of the specified numeric expression
-
-  - ``EXP(expr: Double)`` returns e to the power of the specified expression
-
-  - ``POW(expr: Double, pow: Double)`` returns the value of the specified expression to the
-  specified power
-
-  - ``SQRT(expr: Double)`` returns the square root of the specified float value.
-
-  - ``SIN(expr: Double)`` returns the trigonometric sine of the specified angle in radians
-
-  - ``COS(expr: Double)`` returns the trigonometric cosine of the specified angle in radians
-
-  - ``TAN(expr: Double)`` returns the trigonometric tangent of the specified angle in radians
-
-  - ``LN(expr: Double)`` returns the natural logarithm of the expression
-
-  - ``MINIMUM(expr1: Double, expr2: Double)`` returns minimum of the given expressions
-
-  - ``MAXIMUM(expr1: Double, expr2: Double)`` returns maximum of the given expressions
-
-  - ``CEIL(expr1: Double)`` returns the smallest integer greater than or equal to
-  the specified numeric expression
-
-  - ``FLOOR(expr1: Double)`` returns the largest integer less than or equal to the
-  numeric expression
-
-  - ``SIGNUM(expr: Double)`` returns zero if the argument is zero, 1.0 if the argument is greater
-  than zero, -1.0 if the argument is less than zero
 
 {% markdown operations/examples/SqlColumnTransformation.md %}

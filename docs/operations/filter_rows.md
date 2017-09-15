@@ -8,7 +8,10 @@ includeOperationsMenu: true
 ---
 
 Creates a [DataFrame](../classes/dataframe.html) containing only rows satisfying given condition.
-Condition should be simple SQL condition (as used in `WHERE` condition).
+Condition should be
+<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/sql-programming-guide.html#sql">Spark SQL</a>
+(enriched with some [User Defined Functions](../spark_sql_udf.html))
+condition (as used in `WHERE` condition).
 Order of the columns is preserved.
 
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
@@ -74,8 +77,9 @@ a <a href="transform.html">Transform</a>.</td>
 <tr>
 <td><code>condition</code></td>
 <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
-<td>The filtering condition. Rows not satisfying given condition will be excluded from output
-DataFrame. It should be simple SQL condition (as used in <code>WHERE</code> condition).</td>
+<td>
+The filtering condition. Rows not satisfying given condition will be excluded from output <code>DataFrame</code>.
+It should be <code>Spark SQL</code> condition (as used in <code>WHERE</code> condition).</td>
 </tr>
 </tbody>
 </table>
