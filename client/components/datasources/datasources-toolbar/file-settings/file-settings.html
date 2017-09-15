@@ -4,25 +4,27 @@
     <div class="inputs-row vertical-align-bottom">
       <div class="col">
         <select
-          ng-init="$ctrl.selectedFormat = $ctrl.formats[0]"
-          ng-options="format for format in $ctrl.formats"
-          ng-model="$ctrl.selectedFormat"
+          ng-init="$ctrl.fileSettings.selectedFormat = $ctrl.formats[0]"
+          ng-options="format as (format | uppercase) for format in $ctrl.formats"
+          ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+          ng-model="$ctrl.fileSettings.selectedFormat"
           class="form-control"
         >
         </select>
       </div>
       <div
-        ng-if="$ctrl.selectedFormat === 'CSV'"
+        ng-if="$ctrl.fileSettings.selectedFormat === 'csv'"
         class="checkboxes-wrapper"
       >
         <div class="col checkbox-wrapper">
           <label
             class="format-form-label"
-            ng-class="{'active': $ctrl.includesNames}"
+            ng-class="{'active': $ctrl.fileSettings.includesNames}"
           >
             <input
+              ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+              ng-model="$ctrl.fileSettings.includesNames"
               type="checkbox"
-              ng-model="$ctrl.includesNames"
             />
             <span>
               First row includes column names
@@ -31,12 +33,13 @@
         </div>
         <div class="col checkbox-wrapper">
           <label
-            ng-class="{'active': $ctrl.convert}"
+            ng-class="{'active': $ctrl.fileSettings.convertToBool}"
             class="format-form-label"
           >
             <input
+              ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+              ng-model="$ctrl.fileSettings.convertToBool"
               type="checkbox"
-              ng-model="$ctrl.convert"
             />
             <span>
               Convert 0 and 1 to boolean
@@ -48,16 +51,18 @@
   </div>
 
   <div
-    ng-if="$ctrl.selectedFormat === 'CSV'"
+    ng-if="$ctrl.fileSettings.selectedFormat === 'csv'"
     class="file-settings__row-wrapper"
   >
     <div class="title-row">Separator</div>
     <div class="inputs-row space-between">
       <div class="radio-wrapper">
         <label class="format-form-label"
-               ng-class="{'active': $ctrl.type === 'coma'}">
+               ng-class="{'active': $ctrl.fileSettings.separator === 'coma'}"
+        >
           <input
-            ng-model="$ctrl.type"
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.separator"
             type="radio"
             value="coma"
           />
@@ -66,73 +71,73 @@
       </div>
       <div class="radio-wrapper">
         <label class="format-form-label"
-               ng-class="{'active': $ctrl.type === 'semicolon'}">
-          <input type="radio"
-                 value="semicolon"
-                 ng-model="$ctrl.type"/>
+               ng-class="{'active': $ctrl.fileSettings.separator === 'semicolon'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.separator"
+            type="radio"
+            value="semicolon"
+          />
           <span class="radio-title">; (semicolon)</span>
         </label>
       </div>
       <div class="radio-wrapper">
         <label class="format-form-label"
-               ng-class="{'active': $ctrl.type === 'colon'}">
-          <input type="radio"
-                 value="colon"
-                 ng-model="$ctrl.type"/>
+               ng-class="{'active': $ctrl.fileSettings.separator === 'colon'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.separator"
+            type="radio"
+            value="colon"
+          />
           <span class="radio-title">: (colon)</span>
         </label>
       </div>
       <div class="radio-wrapper">
         <label class="format-form-label"
-               ng-class="{'active': $ctrl.type === 'space'}">
-          <input type="radio"
-                 value="space"
-                 ng-model="$ctrl.type"/>
+               ng-class="{'active': $ctrl.fileSettings.separator === 'space'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.separator"
+            type="radio"
+            value="space"
+          />
           <span class="radio-title">space</span>
         </label>
       </div>
       <div class="radio-wrapper">
         <label class="format-form-label"
-               ng-class="{'active': $ctrl.type === 'tab'}">
-          <input type="radio"
-                 value="tab"
-                 ng-model="$ctrl.type"/>
+               ng-class="{'active': $ctrl.fileSettings.separator === 'tab'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.separator"
+            type="radio"
+            value="tab"
+          />
           <span class="radio-title">tab</span>
         </label>
       </div>
       <div class="radio-wrapper">
         <label class="format-form-label"
-               ng-class="{'active': $ctrl.type === 'custom' || $ctrl.focused}">
-          <input type="radio"
-                 value="custom"
-                 ng-model="$ctrl.type"/>
-          <span class="radio-title">
-          <input ng-focus="$ctrl.focused = true; $ctrl.type = 'custom'"
-                 ng-blur="$ctrl.focused = false"
-                 ng-model="$ctrl.customType"
-                 placeholder="custom"
-                 type="text"
+               ng-class="{'active': $ctrl.fileSettings.separator === 'custom' || $ctrl.focused}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.separator"
+            type="radio"
+            value="custom"
           />
-        </span>
+          <span class="radio-title">
+            <input
+              ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+              ng-model="$ctrl.fileSettings.customSeparator"
+              ng-focus="$ctrl.onFocus()"
+              ng-blur="$ctrl.onBlur()"
+              placeholder="custom"
+              id="custom-separator"
+              type="text"
+            />
+          </span>
         </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="file-settings__row-wrapper">
-    <div class="inputs-row vertical-align-middle">
-      <div class="checkbox-wrapper">
-        <label class="format-form-label"
-               ng-class="{'active': $ctrl.public}">
-          <input type="checkbox"
-                 ng-model="$ctrl.public"/>
-          <span>Public</span>
-        </label>
-      </div>
-      <div class="public-param-label">
-        <span>
-          (Public data sources are accessible by all users of this instance of Seahorse)
-        </span>
       </div>
     </div>
   </div>

@@ -11,6 +11,22 @@
 
     <file-settings>
     </file-settings>
+
+    <div class="datasources-modal__body-row">
+      <div class="public-param-row">
+        <div class="checkbox-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.public}">
+            <input type="checkbox"
+                   ng-model="$ctrl.public"/>
+            <span>Public</span>
+          </label>
+        </div>
+        <div class="public-param-row__label">
+          (Public data sources are accessible by all users of this instance of Seahorse)
+        </div>
+      </div>
+    </div>
   </div>
 
   <div ng-include="$ctrl.footerTpl"></div>
