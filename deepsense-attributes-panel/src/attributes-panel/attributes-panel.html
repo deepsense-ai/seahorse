@@ -8,7 +8,7 @@
           tooltip-trigger="mouseenter"
           tooltip-append-to-body="true">
         <span editable-text="node.uiName" onaftersave="controller.customNameSaved()" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
-        <span ng-if="disabledMode && node.uiName">{{::node.uiName}}</span>
+        <span ng-if="disabledMode && node.uiName">{{node.uiName}}</span>
       </h4>
     </section>
     <section class="operation-attributes-panel__details" ng-class="{'u-top-border': disabledMode && !node.uiName}">
