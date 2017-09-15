@@ -13,12 +13,12 @@ function ReportDataframe() {
     },
     templateUrl: 'app/workflows/reports/report-dataframe/report-dataframe.html',
     replace: 'true',
-    controller: function($scope) {
+    controller: function() {
       this.tableData = this.data['Data Sample'];
       this.tableSizes = this.data['DataFrame Size'];
       this.tableColumnsData = {};
       _.forEach(this.distributionsTypes, function (distType, colName) {
-        let icon = distType === 'categorical' ? 'fa-pie-chart' : 'fa-bar-chart-o';
+        let icon = (distType === 'categorical') ? 'fa-pie-chart' : 'fa-bar-chart-o';
         this.tableColumnsData[colName] = {
           'icon': icon
         };

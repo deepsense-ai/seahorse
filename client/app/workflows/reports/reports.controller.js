@@ -19,7 +19,7 @@ function ReportCtrl(report, $scope, $state, $modal, PageService) {
   internal.distributionsTypes = _.reduce(
     internal.distributions,
     function (acc, distObj, name) {
-      let re = /[a-zA-Z0-9]+/.exec(name);
+      let re = /[a-zA-Z0-9_]+/.exec(name);
       if (re) {
         acc[re[0]] = distObj.subtype;
       }

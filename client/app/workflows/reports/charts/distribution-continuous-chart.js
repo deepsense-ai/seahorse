@@ -22,11 +22,19 @@ function DistributionContinuousChart() {
         plots: [{
           name: 'Column plot',
           type: 'column'
-        }, {
-          name: 'Box plot',
-          type: 'box'
         }]
       });
+
+      /*
+       * The box plot can be displayed on the given data if and only if
+       * there have been provided such values like median and quartiles.
+       */
+      if (this.data && this.data.statistics && this.data.statistics.median) {
+        this.plots.push({
+          name: 'Box plot',
+          type: 'box'
+        });
+      }
 
       // default setting
       this.chosenPlot.value = this.plots[0].type;

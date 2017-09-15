@@ -38,7 +38,9 @@ function ColumnPlot() {
           tooltip: {
             formatter: function () {
               return `
-                <p>Value range: <b>${this.x} - ${data.buckets[this.point.index + 1]}</b></p>
+                <p>Value range:
+                  <b>${this.x} - ${data.buckets[this.point.index === data.buckets.length - 1 ? this.point.index : this.point.index + 1]}</b>
+                </p>
                 <br />
                 <p>Occurrence count: <b>${this.point.y}</b></p>
               `;
