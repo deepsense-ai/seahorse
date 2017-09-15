@@ -18,6 +18,11 @@ cp .git/hooks/commit-msg .git/modules/seahorse-workflow-executor/hooks/commit-ms
 
 # START SEAHORSE LATEST DEV VERSION
 
+### Ensure that you have [access to Docker Hub](https://codilime.atlassian.net/wiki/display/DM/Private+docker-hub)
+
+### Run
 ```
 (cd deployment/docker-compose; ./docker-compose-latest up)
 ```
+
+### Go to [http://localhost:33321](http://localhost:33321)
