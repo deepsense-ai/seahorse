@@ -8,23 +8,12 @@
       "description": "Simple sql db reader",
       "deterministic": true,
       "ports": {
-        "input": [
-          {
-            "portIndex": 0,
-            "required": true,
-            "typeQualifier": ["SomeDOperation"]
-          }
-        ],
+        "input": [],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
-          },
-          {
-            "portIndex": 1,
-            "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ]
       }
@@ -37,23 +26,41 @@
       "description": "Remote webservice reader",
       "deterministic": true,
       "ports": {
+        "input": [],
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+          }
+        ]
+      }
+    },
+    "59032-19830-83129": {
+      "id": "59032-19830-83129",
+      "name": "Spliter",
+      "version": "1.1.5",
+      "category": "23123-12312-43242",
+      "description": "Splits dataset",
+      "deterministic": true,
+      "ports": {
         "input": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           },
           {
             "portIndex": 1,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ]
       }
@@ -70,14 +77,14 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ]
       }
@@ -94,14 +101,14 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ]
       }
@@ -118,14 +125,14 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ]
       }
@@ -142,14 +149,14 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ]
       }
@@ -166,14 +173,14 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ]
       }
@@ -190,14 +197,19 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.Trainable"]
+          },
+          {
+            "portIndex": 1,
+            "required": true,
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.Scorable"]
           }
         ]
       }
@@ -214,14 +226,19 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.Trainable"]
+          },
+          {
+            "portIndex": 1,
+            "required": true,
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.Scorable"]
           }
         ]
       }
@@ -238,14 +255,19 @@
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["SomeDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.Trainable"]
+          },
+          {
+            "portIndex": 1,
+            "required": true,
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
           }
         ],
         "output": [
           {
             "portIndex": 0,
             "required": true,
-            "typeQualifier": ["OtherDOperation"]
+            "typeQualifier": ["io.deepsense.deeplang.doperables.Scorable"]
           }
         ]
       }
@@ -257,7 +279,13 @@
       "description": "Dataframe description and other stuff",
       "ports": {
         "input": [],
-        "output": []
+        "output": [
+          {
+            "portIndex": 0,
+            "required": true,
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+          }
+        ]
       }
     }
   }

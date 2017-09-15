@@ -72,7 +72,8 @@
         "930485-24522-26235": {
           "status": "COMPLETED",
           "started": "2015-01-20T20:06:33Z",
-          "ended": "2015-01-20T20:07:33Z"
+          "ended": "2015-01-20T20:07:33Z",
+          "results": ["test-01"]
         },
         "938247-23569-245982": {
           "status": "RUNNING",
@@ -89,13 +90,13 @@
     },
     "typeKnowledge": {
       "930485-24522-26235": [
-        ["DataFrame"]
+        ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
       ],
       "938247-23569-245982": [
-        ["DataFrame"]
+        ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
       ],
       "203845-89456-98374": [
-        ["DataFrame"]
+        ["io.deepsense.deeplang.doperables.Scorable"]
       ]
     }
   }

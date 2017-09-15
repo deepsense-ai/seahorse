@@ -7,23 +7,12 @@
     "description": "Remote webservice reader",
     "deterministic": true,
     "ports": {
-      "input": [
-        {
-          "portIndex": 0,
-          "required": true,
-          "typeQualifier": ["SomeDOperation"]
-        }
-      ],
+      "input": [],
       "output": [
         {
           "portIndex": 0,
           "required": true,
-          "typeQualifier": ["OtherDOperation"]
-        },
-        {
-          "portIndex": 1,
-          "required": true,
-          "typeQualifier": ["OtherDOperation"]
+          "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
         }
       ]
     },

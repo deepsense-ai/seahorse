@@ -123,7 +123,8 @@
         "88f560a9-97e3-4fa2-93ce-edad4cab7ea9": {
           "status": "COMPLETED",
           "started": "2015-01-20T21:11:09Z",
-          "ended": "2015-01-20T21:12:09Z"
+          "ended": "2015-01-20T21:12:09Z",
+          "results": ["test-01"]
         },
         "210ce781-0a9f-477d-99a7-5be31f7bfc02": {
           "status": "FAILED",
@@ -135,19 +136,20 @@
           }
         },
         "edc02822-b8ee-4225-b070-f892a87dbf11": {
-          "status": "ABORTED"
+          "status": "COMPLETED",
+          "results": ["test-02"]
         }
       }
     },
     "typeKnowledge": {
       "88f560a9-97e3-4fa2-93ce-edad4cab7ea9": [
-        ["DataFrame"]
+        ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
       ],
       "210ce781-0a9f-477d-99a7-5be31f7bfc02": [
-        ["DataFrame"]
+        ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
       ],
       "edc02822-b8ee-4225-b070-f892a87dbf11": [
-        ["DataFrame"]
+        ["io.deepsense.deeplang.doperables.Scorable"]
       ]
     }
   }

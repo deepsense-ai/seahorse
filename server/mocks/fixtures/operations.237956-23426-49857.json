@@ -11,14 +11,19 @@
         {
           "portIndex": 0,
           "required": true,
-          "typeQualifier": ["SomeDOperation"]
+          "typeQualifier": ["io.deepsense.deeplang.doperables.Trainable"]
+        },
+        {
+          "portIndex": 1,
+          "required": true,
+          "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
         }
       ],
       "output": [
         {
           "portIndex": 0,
           "required": true,
-          "typeQualifier": ["OtherDOperation"]
+          "typeQualifier": ["io.deepsense.deeplang.doperables.Scorable"]
         }
       ]
     },
