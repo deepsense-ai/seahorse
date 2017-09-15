@@ -86,7 +86,7 @@ class InnerWorkflowExecutorSpec
     Set(sourceNode, sinkNode, otherNode),
     Set(Edge(sourceNode, 0, sinkNode, 0)))
 
-  val graphReader = new GraphReader(Executor.createDOperationsCatalogForCustom())
+  val graphReader = new GraphReader(Executor.createDOperationsCatalog())
   val executor: InnerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
 
   val schema = StructType(List(

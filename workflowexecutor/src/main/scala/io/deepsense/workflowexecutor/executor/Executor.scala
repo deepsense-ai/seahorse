@@ -26,7 +26,6 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
@@ -47,7 +46,7 @@ trait Executor extends Logging {
     val tenantId = ""
 
     val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
-      new GraphReader(createDOperationsCatalogForCustom()))
+      new GraphReader(createDOperationsCatalog()))
 
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
@@ -99,16 +98,6 @@ trait Executor extends Logging {
     catalog
   }
 
-  def createDOperationsCatalogForCustom(): DOperationsCatalog = {
-    val catalog = DOperationsCatalog()
-    CatalogRecorder.registerDOperations(catalog)
-
-    // register additional operations for custom transformers and estimators
-    catalog.registerDOperation[Source](DOperationCategories.IO)
-    catalog.registerDOperation[Sink](DOperationCategories.IO)
-
-    catalog
-  }
 }
 
 object Executor extends Executor
