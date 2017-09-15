@@ -16,7 +16,7 @@
     - include: tasks/get_frontend_artifact_path.yml
     - include: tasks/get_wm_artifact_path.yml
     - include: tasks/get_workflowexecutor_artifact_path.yml
-    - pause: seconds=30 prompt="Waiting for Cassandra server start-up..."
+    - pause: seconds=60 prompt="Waiting for Cassandra server start-up..."
 
 - include: cassandra_migration.yml
 - include: workflowmanager.yaml
