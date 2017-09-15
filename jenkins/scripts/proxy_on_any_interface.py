@@ -21,14 +21,19 @@ def dump_yaml(json_obj, stream=None):
                      default_flow_style=False)
 
 
-def update_proxy_HOST(yaml):
-    yaml['services']['proxy']['environment']['HOST'] = '0.0.0.0'
+def local_to_any_in_port_mapping(mapping):
+    return mapping.replace('127.0.0.1', '0.0.0.0')
+
+
+def update_proxy_port_mapping(yaml):
+    yaml['services']['proxy']['ports'] = \
+        map(local_to_any_in_port_mapping, yaml['services']['proxy']['ports'])
 
 
 def main():
     docker_compose = sys.argv[1]
     yaml = load_compose(docker_compose)
-    update_proxy_HOST(yaml)
+    update_proxy_port_mapping(yaml)
     with open(docker_compose, 'w') as f:
         dump_yaml(yaml, f)
 
