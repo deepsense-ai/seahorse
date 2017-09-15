@@ -19,10 +19,12 @@ import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages._
 
 class GraphExecutorActor(
-    executionContext: ExecutionContext, clientActorPath: String)
+    executionContext: ExecutionContext,
+    clientActorPath: String)
   extends Actor with LazyLogging {
 
-  this: GraphNodeExecutorFactory =>
+  this: GraphNodeExecutorFactory with SystemShutdowner =>
+
 
   import io.deepsense.graphexecutor.GraphExecutorActor.Messages._
 
@@ -108,7 +110,7 @@ class GraphExecutorActor(
     logger.debug("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
     logger.debug("Shutting down the actor system")
     context.become(ignoreAllMessages)
-    self ! PoisonPill
+    shutdownSystem
   }
 
   def ignoreAllMessages: Receive = {
@@ -118,7 +120,9 @@ class GraphExecutorActor(
 
 object GraphExecutorActor {
   def props(ec: ExecutionContext, statusReceiverActorPath: String) =
-    Props(classOf[GraphExecutorActor], ec, statusReceiverActorPath)
+    Props(new GraphExecutorActor(ec, statusReceiverActorPath)
+      with ProductionGraphNodeExecutorFactory
+      with ProductionSystemShutdowner)
 
   type Results = Map[Entity.Id, DOperable]
 
@@ -146,4 +150,13 @@ trait ProductionGraphNodeExecutorFactory extends GraphNodeExecutorFactory {
       experiment: Experiment,
       dOperableCache: Results): Actor =
     new GraphNodeExecutorActor(executionContext, node, experiment, dOperableCache)
+}
+
+trait SystemShutdowner {
+  def shutdownSystem: Unit
+}
+
+trait ProductionSystemShutdowner extends SystemShutdowner {
+  val context: ActorContext
+  def shutdownSystem: Unit = context.system.shutdown()
 }

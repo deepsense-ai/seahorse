@@ -77,9 +77,21 @@ class GraphExecutorActorSpec
       }
     }
 
-    val geaRef = TestActorRef[GraphExecutorActor with TestGraphNodeExecutorFactory](Props(
-      new GraphExecutorActor(executionContext, gecPath) with TestGraphNodeExecutorFactory))
+    val shutdownerProbe = TestProbe()
+
+    trait TestShutdowner extends SystemShutdowner {
+      override def shutdownSystem: Unit = {
+        shutdownerProbe.ref ! shutdownMessage
+      }
+    }
+
+    val geaRef = TestActorRef[GraphExecutorActor with TestGraphNodeExecutorFactory with TestShutdowner](Props(
+      new GraphExecutorActor(executionContext, gecPath) with TestGraphNodeExecutorFactory with TestShutdowner))
     val gea = geaRef.underlyingActor
+
+    def verifySystemShutDown(): Unit = {
+      shutdownerProbe.expectMsgType[String] shouldBe shutdownMessage
+    }
 
     def startCommunication(): Unit = {
       val experimentId = Experiment.Id.randomId
@@ -126,6 +138,8 @@ class GraphExecutorActorSpec
       finishedNode
     }
   }
+
+  val shutdownMessage = "Shutdown"
 
   "GraphExecutorActor" should {
     "send ExecutorReady to actor specified in constructor" when {
@@ -218,13 +232,12 @@ class GraphExecutorActorSpec
 
         gea.experiment = runningExperiment
 
-        val parent = TestProbe()
-        parent.watch(geaRef)
 
         geaRef ! GraphExecutorActor.Messages.NodeFinished(finishedNode, Map.empty)
         gec.expectMsg(Update(finishedExperiment))
         gec.expectNoMsg()
-        parent.expectTerminated(geaRef)
+
+        verifySystemShutDown()
       }
       "it receives Abort" in new TestCase {
         startCommunication()
@@ -233,9 +246,6 @@ class GraphExecutorActorSpec
         val runningExperiment = mock[Experiment]
         gea.experiment = runningExperiment
 
-        val parent = TestProbe()
-        parent.watch(geaRef)
-
         val experimentWithUpdatedState = mock[Experiment]
         when(runningExperiment.updateState()).thenReturn(experimentWithUpdatedState)
         when(experimentWithUpdatedState.state) thenReturn mock[Experiment.State]
@@ -243,7 +253,8 @@ class GraphExecutorActorSpec
         geaRef ! Abort(experiment.id)
 
         gec.expectMsg(Update(experimentWithUpdatedState))
-        parent.expectTerminated(geaRef)
+
+        verifySystemShutDown()
       }
     }
   }
