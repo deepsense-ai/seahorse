@@ -30,3 +30,17 @@ unmanagedClasspath in Runtime += (baseDirectory.value / "conf")
 mainClass in Compile := Some("io.deepsense.graphexecutor.GraphExecutor")
 
 enablePlugins(BuildInfoPlugin, JavaAppPackaging, GitVersioning, UniversalDeployPlugin)
+
+mappings in Universal := {
+  val universalMappings = (mappings in Universal).value
+  val assemblyJar = (assembly in Compile).value
+  val assemblyDepsJar = (assemblyPackageDependency in Compile).value
+
+  val filtered = universalMappings filter {
+      case (file, name) => ! name.endsWith(".jar")
+  }
+
+  filtered :+
+    (assemblyJar -> ("lib/" + assemblyJar.getName)) :+
+    (assemblyDepsJar -> ("lib/" + assemblyDepsJar.getName))
+}
