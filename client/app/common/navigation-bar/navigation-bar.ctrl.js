@@ -1,13 +1,16 @@
 'use strict';
 
 /* @ngInject */
-function NavigationController($rootScope, PageService) {
+function NavigationController($rootScope, config, PageService) {
   _.assign(this, {
-    getTitle() {
+      getTitle() {
         return PageService.getTitle();
       },
       home() {
         $rootScope.$broadcast('StatusBar.HOME_CLICK');
+      },
+      getAPIVersion() {
+        return config.apiVersion;
       }
   });
 }

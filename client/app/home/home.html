@@ -1,10 +1,13 @@
 <div class="panel panel-default col-md-offset-2 col-md-8">
   <!-- Default panel contents -->
-  <div class="panel-heading text-center"><img src="../../img/seahorse-community-logo.png"></div>
+  <div class="panel-heading text-center">
+    <img src="../../img/seahorse-community-logo.png">
+    <p class="api-version">API v.{{home.getVersion()}}</p>
+  </div>
   <!-- List group -->
   <div class="btn-group btn-group-justified" role="group">
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-primary" ng-click="home.displayCreateWorkflowPopup($event)" >New Workflow</button>
+      <button type="button" class="btn btn-primary" ng-click="home.displayCreateWorkflowPopup($event)">New Workflow</button>
     </div>
     <div class="btn-group" role="group" >
       <button type="button" class="btn btn-info" ng-click="home.displayUploadWorkflowPopup($event)">Upload Workflow</button>
