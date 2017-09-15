@@ -12,7 +12,9 @@ case class BooleanParameterHolder(
     required: Boolean)
   extends ParameterHolder {
   type HeldParameter = Boolean
+
   val parameterType = ParameterType.Boolean
+
   var value: Option[Boolean] = None
 
   private[parameters] def replicate: ParameterHolder = copy()
@@ -26,7 +28,9 @@ case class NumericParameterHolder(
   extends ParameterHolder
   with HasValidator {
   type HeldParameter = Double
+
   val parameterType = ParameterType.Numeric
+
   var value: Option[Double] = None
 
   private[parameters] def replicate: ParameterHolder = copy()
@@ -40,7 +44,9 @@ case class StringParameterHolder(
   extends ParameterHolder
   with HasValidator {
   type HeldParameter = String
+
   val parameterType = ParameterType.String
+
   var value: Option[String] = None
 
   private[parameters] def replicate: ParameterHolder = copy()
@@ -63,7 +69,9 @@ case class ChoiceParameterHolder(
   extends ParameterHolder
   with HasChoice {
   type HeldParameter = ChoiceParameter
+
   val parameterType = ParameterType.Choice
+
   private var _value: Option[ChoiceParameter] = None
 
   def value: Option[ChoiceParameter] = _value
@@ -103,7 +111,9 @@ case class MultipleChoiceParameterHolder(
   extends ParameterHolder
   with HasChoice {
   type HeldParameter = MultipleChoiceParameter
+
   val parameterType = ParameterType.MultipleChoice
+
   private var _value: Option[MultipleChoiceParameter] = None
 
   def value: Option[MultipleChoiceParameter] = _value
@@ -137,7 +147,9 @@ case class MultiplicatorParameterHolder(
     valuesSchema: ParametersSchema)
   extends ParameterHolder {
   type HeldParameter = MultiplicatorParameter
+
   val parameterType = ParameterType.Multiplicator
+
   private var _value: Option[MultiplicatorParameter] = None
 
   def value: Option[MultiplicatorParameter] = _value
@@ -165,7 +177,8 @@ case class MultiplicatorParameterHolder(
 }
 
 abstract class ColumnSelectorParameterHolder extends ParameterHolder {
-  val default = None
+  val default: Option[HeldParameter] = None
+
   val parameterType = ParameterType.ColumnSelector
 }
 
@@ -177,6 +190,7 @@ case class SingleColumnSelectorParameterHolder(
     required: Boolean)
   extends ColumnSelectorParameterHolder {
   type HeldParameter = SingleColumnSelection
+
   var value: Option[SingleColumnSelection] = None
 
   private[parameters] def replicate: ParameterHolder = copy()
@@ -190,6 +204,7 @@ case class MultipleColumnSelectorParameterHolder(
     required: Boolean)
   extends ColumnSelectorParameterHolder {
   type HeldParameter = MultipleColumnSelection
+
   var value: Option[MultipleColumnSelection] = None
 
   private[parameters] def replicate: ParameterHolder = copy()

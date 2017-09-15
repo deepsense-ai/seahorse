@@ -18,6 +18,7 @@ import io.deepsense.deeplang.{DOperable, TypeUtils}
  */
 class DOperableCatalog {
   private val baseType = ru.typeOf[DOperable]
+
   /** All registered nodes. Keys are type nodes fullNames. */
   private val nodes: mutable.Map[String, TypeNode] = mutable.Map()
 

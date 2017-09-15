@@ -15,18 +15,25 @@ import scala.reflect.runtime.{universe => ru}
 private[doperable] abstract class TypeNode {
   /** Points to type corresponding to this node. */
   protected val javaType: Class[_]
+
   /** Informs if this type is a trait. */
   private[doperable] val isTrait: Boolean = javaType.isInterface
+
   /** Direct superclass of this type, if any. */
   protected var parent: Option[TypeNode] = None
+
   /** All direct supertraits of this type. Keys are type nodes fullNames. */
   protected val supertraits: mutable.Map[String, TypeNode] = mutable.Map()
+
   /** All direct superclasses of this type. Keys are type nodes fullNames. */
   protected val subclasses: mutable.Map[String, TypeNode] = mutable.Map()
+
   /** All direct subtraits of this type. Keys are type nodes fullNames. */
   protected val subtraits: mutable.Map[String, TypeNode] = mutable.Map()
+
   /** Name that unambiguously defines underlying type. */
   private[doperable] val fullName: String = javaType.getName.replaceAllLiterally("$", ".")
+
   /** Display, short name of type. */
   private[doperable] val displayName: String = fullName.substring(fullName.lastIndexOf('.') + 1)
 

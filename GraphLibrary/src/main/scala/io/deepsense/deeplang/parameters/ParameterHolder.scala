@@ -17,12 +17,17 @@ import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
  */
 abstract class ParameterHolder {
   type HeldParameter <: Any
+
   val parameterType: ParameterType
+
   val description: String
+
   /** Default value of the parameter. Can be None if not provided. */
   val default: Option[HeldParameter]
+
   /** Flag specifying if parameter is required. */
   val required: Boolean
+
   /** Value of the held parameter. */
   def value: Option[HeldParameter]
 
