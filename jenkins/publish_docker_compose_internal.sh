@@ -21,7 +21,7 @@ DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
 rm -f $ARTIFACT_NAME_TMPL
 rm -f $ARTIFACT_NAME
 sed 's|\$DOCKER_REPOSITORY|'"$DEEPSENSE_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$SEAHORSE_BUILD_TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME_TMPL
-deployment/docker-compose/prepare_docker-compose $ARTIFACT_NAME_TMPL $ARTIFACT_NAME
+deployment/docker-compose/prepare_docker-compose $ARTIFACT_NAME_TMPL $ARTIFACT_NAME $SEAHORSE_BUILD_TAG
 
 echo 'Sending $ARTIFACT_NAME to snapshot artifactory'
 
