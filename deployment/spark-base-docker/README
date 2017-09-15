@@ -1,0 +1,13 @@
+Seahorse base Spark docker image
+================================
+
+The image contains Spark libraries required for running inside a docker container.
+Can be used as a base image for applications requiring spark libraries.
+
+1. Building the image
+
+   $ docker build -t deepsense-spark-base .
+
+2. Running the image
+
+   $ docker run -h sandbox -d deepsense-spark-base

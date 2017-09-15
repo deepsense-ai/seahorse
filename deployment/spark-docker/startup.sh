@@ -1,22 +1,19 @@
 #!/bin/bash
 
-# Copyright (c) 2016, CodiLime Inc.
+echo 'export PATH="/opt/conda/bin:$PATH"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export PYSPARK_PYTHON="/opt/conda/bin/python"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export PYSPARK_DRIVER_PYTHON="/opt/conda/bin/python"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export SPARK_WORKER_INSTANCES="4"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export SPARK_MASTER_OPTS="-Dspark.deploy.defaultCores=1"' >> $SPARK_HOME/conf/spark-env.sh
 
-/etc/bootstrap.sh
+service ssh restart
 
-echo "spark.yarn.appMasterEnv.PYSPARK_PYTHON /opt/conda/bin/python" >> /usr/local/spark/conf/spark-defaults.conf
-echo "spark.master yarn-cluster" >> /usr/local/spark/conf/spark-defaults.conf
+$SPARK_HOME/sbin/start-all.sh
 
-# Wait for HDFS
-while ! hadoop fs -mkdir /tmp
-do
-    echo "Waiting for HDFS..."
+if [ "$1" == "-d" ] ; then
+  while [ 1 == 1 ] ; do
     sleep 1
-done
-
-hadoop fs -put /tmp/we-deps.zip /tmp
-hadoop fs -put /tmp/we.jar /tmp
-
-# Do not stop the container when script exits - run sshd instead
-service sshd stop
-/usr/sbin/sshd -D -d
+  done
+else
+  exec "$@"
+fi

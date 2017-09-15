@@ -23,18 +23,5 @@ RUN wget -q -O - \
   && mv /tmp/$SPARK_PACKAGE $SPARK_HOME \
   && rm -rf $SPARK_HOME/examples $SPARK_HOME/ec2
 
-# Install conda
-RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \
-    https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh && \
-    bash /tmp/Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/conda && \
-    rm /tmp/Miniconda2-latest-Linux-x86_64.sh
-
-# Install python packages
-RUN /opt/conda/bin/conda install --yes notebook terminado \
-    'ipython=4.0*' 'ipywidgets=4.0*' 'pandas=0.16*' 'matplotlib=1.4*' 'scipy=0.15*' 'seaborn=0.6*' 'scikit-learn=0.16*' pyzmq
-
-COPY startup.sh /opt/
-RUN chown root.root /opt/startup.sh && chmod 700 /opt/startup.sh
-
 ENTRYPOINT [ "/opt/startup.sh" ]
 CMD [ "-d" ]
