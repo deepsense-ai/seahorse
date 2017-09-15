@@ -32,7 +32,7 @@ describe('ExperimentAPIClient', () => {
     var $httpBackend,
         mockRequest;
 
-    var url = '/api/experiments/',
+    var url = '/api/experiments',
         response = {'test': true};
 
     beforeEach(() => {

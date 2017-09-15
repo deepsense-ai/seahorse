@@ -21,9 +21,12 @@ module.exports = function apiProxy(config) {
    * Handles errors.
    */
   proxy.on('error', (error, request, response) => {
-    response.writeHead(502, {'Content-Type':'text/plain'});
+    response.writeHead(502, {
+      'Content-Type': 'text/plain; charset=UTF-8'
+    });
     response.end('502');
   });
+
 
   /**
    * Handles response data processing.
@@ -32,32 +35,38 @@ module.exports = function apiProxy(config) {
     if (request.customHandler) {
       let responseWrite = response.write,
           responseWriteHead = response.writeHead,
-          responseEnd = response.end;
+          responseEnd = response.end,
+          responseData = '',
+          doResponse = (data, status, contetType) => {
+            responseWriteHead.call(response, status, {
+              'Content-Type': contetType + '; charset=UTF-8',
+              'Content-Length': data.length
+            });
+            responseWrite.call(response, data);
+            responseEnd.call(response);
+          };
 
-      response.write = (source) => {
+      proxyResponse.on('data', (source) => {
+        responseData += source;
+      });
+
+      response.write = () => {};
+      response.writeHead = () => {};
+      response.end = () => {
         if (proxyResponse.statusCode >= 400) {
-          responseWriteHead.call(response, proxyResponse.statusCode, {'Content-Type':'text/plain'});
-          responseWrite.call(response, source);
-          responseEnd.call(response);
+          doResponse(responseData, proxyResponse.statusCode, 'text/plain');
           return;
         } else {
-          let data = JSON.parse(source);
-          request.customHandler(data, request).then((data) => {
-            responseWriteHead.call(response, 200, {'Content-Type': 'application/json'});
-            responseWrite.call(response, JSON.stringify(data, true, 2));
-            responseEnd.call(response);
+          request.customHandler(JSON.parse(responseData), request).then((data) => {
+            doResponse(JSON.stringify(data, null, 2), 200, 'application/json');
           }).fail((error) => {
             console.error(error);
-            responseWriteHead.call(response, 500, {'Content-Type':'text/plain'});
-            responseWrite.call(response, '500');
-            responseEnd.call(response);
+            doResponse('500', 500, 'text/plain');
           });
         }
       };
-      response.writeHead = () => {};
-      response.end = () => {};
     } else {
-      response.header('Content-Type', 'application/json');
+      response.header('Content-Type', 'application/json; charset=UTF-8');
     }
   });
 
@@ -87,7 +96,9 @@ module.exports = function apiProxy(config) {
       request.url = '/' + config.version + request.url;
       proxy.web(request, response);
     } else {
-      response.writeHead(404, {'Content-Type':'text/plain'});
+      response.writeHead(404, {
+        'Content-Type': 'text/plain; charset=UTF-8'
+      });
       response.end('404 - unknown resource');
     }
   });

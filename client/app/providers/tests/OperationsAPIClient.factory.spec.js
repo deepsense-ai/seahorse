@@ -33,7 +33,7 @@ describe('OperationsAPIClient', () => {
     var $httpBackend,
         mockRequest;
 
-    var url = '/api/operations/',
+    var url = '/api/operations',
         response = {'test': true};
 
     beforeEach(() => {

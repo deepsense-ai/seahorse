@@ -98,7 +98,7 @@ describe('Mock test', function() {
       expect(result).toEqual('404 - missing (mock data)');
       expect(head).toEqual({
         status: 404,
-        header: {'Content-Type':'text/plain'}
+        header: {'Content-Type': 'text/plain; charset=UTF-8'}
       });
     });
   });

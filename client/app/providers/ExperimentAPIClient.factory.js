@@ -8,7 +8,7 @@
 
 /* @ngInject */
 function ExperimentAPIClientFactory(BaseAPIClient) {
-  const PATH_EXPERIMENTS = '/experiments/';
+  const PATH_EXPERIMENTS = '/experiments';
 
   function ExperimentAPIClient() {
     BaseAPIClient.call(this);
@@ -33,7 +33,7 @@ function ExperimentAPIClientFactory(BaseAPIClient) {
    * @return {Promise}
    */
   ExperimentAPIClient.prototype.getData = function(id) {
-    return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_EXPERIMENTS + id);
+    return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_EXPERIMENTS + '/' + id);
   };
 
   /**
@@ -46,7 +46,7 @@ function ExperimentAPIClientFactory(BaseAPIClient) {
   ExperimentAPIClient.prototype.saveData = function(data) {
     return this.makeRequest(
       this.METHOD_PUT,
-      this.API_PATH + PATH_EXPERIMENTS + data.experiment.id,
+      this.API_PATH + PATH_EXPERIMENTS + '/' + data.experiment.id,
       data
     );
   };

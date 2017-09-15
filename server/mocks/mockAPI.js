@@ -20,7 +20,7 @@ module.exports = function(req, res, next) {
   });
 
   readStream.on('error', function(err) {
-    res.writeHead(404, {'Content-Type':'text/plain'});
+    res.writeHead(404, {'Content-Type': 'text/plain; charset=UTF-8'});
     res.end('404 - missing (mock data)');
   });
 };

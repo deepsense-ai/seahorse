@@ -8,7 +8,7 @@
 
 /* @ngInject */
 function OperationsAPIClientFactory(BaseAPIClient) {
-  const PATH_OPERATIONS = '/operations/';
+  const PATH_OPERATIONS = '/operations';
   const PATH_CATALOG    = '/operations/catalog';
 
   function OperationsAPIClient() {
