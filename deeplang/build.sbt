@@ -45,5 +45,6 @@ inConfig(IntegTest) {
   )
 }
 
-def integFilter(name: String) = name.endsWith("IntegSpec")
-def unitFilter(name: String) = name.endsWith("Spec") && !integFilter(name)
+def integFilter(name: String) = name.endsWith("IntegSpec") || name.endsWith("IntegSuite")
+def unitFilter(name: String) =
+  (name.endsWith("Spec") || name.endsWith("Suite")) && !integFilter(name)

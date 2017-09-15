@@ -22,7 +22,7 @@ trait EntityJsonProtocol
   implicit val dataObjectReferenceFormat = jsonFormat1(DataObjectReference)
   implicit val entityFormat = jsonFormat10(Entity.apply)
   implicit val entityDescriptorFormat = jsonFormat8(CompactEntityDescriptor.apply)
-  implicit val userEntityDescriptorFormat = jsonFormat4(UserEntityDescriptor)
+  implicit val userEntityDescriptorFormat = jsonFormat4(UserEntityDescriptor.apply)
 }
 
 object EntityJsonProtocol extends EntityJsonProtocol

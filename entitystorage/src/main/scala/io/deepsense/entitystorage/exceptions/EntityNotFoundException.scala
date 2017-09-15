@@ -19,4 +19,6 @@ case class EntityNotFoundException(entityId: Entity.Id)
     UUID.randomUUID(),
     ErrorCodes.EntityNotFound,
     "Entity not found",
-    s"Entity with id $entityId not found", None, None)
+    s"Entity with id $entityId not found",
+    None,
+    None)

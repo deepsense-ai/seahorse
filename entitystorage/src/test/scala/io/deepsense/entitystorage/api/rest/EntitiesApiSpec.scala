@@ -23,7 +23,7 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.json.EntityJsonProtocol
 import io.deepsense.entitystorage.models._
-import io.deepsense.entitystorage.storage.EntityDao
+import io.deepsense.entitystorage.services.EntityService
 
 class EntitiesApiSpec
   extends StandardSpec
@@ -33,23 +33,63 @@ class EntitiesApiSpec
   with Matchers
   with EntityTestFactory {
 
-  val correctTenant: String = "A"
-  val apiPrefix: String = "v1/entities"
-  val tenantId = "Mr Mojo Risin"
-  val entities = List(
-    testEntity(tenantId, 1, Some(testDataObjectReference), Some(testDataObjectReport)),
-    testEntity(tenantId, 2, Some(testDataObjectReference), Some(testDataObjectReport)))
-  val expectedEntitiesMap: Map[String, Map[String, CompactEntityDescriptor]] =
-    Map("entities" -> entities.map(e => e.id.value.toString -> CompactEntityDescriptor(e)).toMap)
+  val correctTenantA: String = "Mr Mojo Risin"
 
+  val apiPrefix: String = "v1/entities"
+
+  val entities = List(
+    testEntity(correctTenantA, 1, Some(testDataObjectReference), Some(testDataObjectReport)),
+    testEntity(correctTenantA, 2, Some(testDataObjectReference), Some(testDataObjectReport)))
+
+  val addedEntity = entities.head
+  val addedEntityDescriptor = UserEntityDescriptor(addedEntity)
+
+  val notAddedEntity = testEntity(
+    correctTenantA, 3, Some(testDataObjectReference), Some(testDataObjectReport))
+  val notAddedEntityDescriptor = UserEntityDescriptor(notAddedEntity)
+
+  val entityService = createMockEntityService
 
   "GET /entities" should {
     "return entities" in {
       Get(s"/$apiPrefix") ~>
-        addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
+        addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
+
         implicit val entityProtocol = EntityJsonProtocol
+        val expectedEntitiesMap: Map[String, Map[String, CompactEntityDescriptor]] =
+          Map("entities" ->
+            entities.map(e => e.id.value.toString -> CompactEntityDescriptor(e)).toMap)
+
         responseAs[Map[String, Map[String, CompactEntityDescriptor]]] shouldBe expectedEntitiesMap
+      }
+    }
+  }
+
+  "PUT /entities/:id" should {
+    "return NotFound" when {
+      "entity does not exists" in {
+        Put(s"/$apiPrefix/${notAddedEntity.id}", notAddedEntityDescriptor) ~>
+          addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+      }
+    }
+    "return BadRequest" when {
+      "entity's Id from json does not match Id from request's URL" in {
+        val entity1 :: entity2 :: _ = entities
+        Put(s"/$apiPrefix/${entity1.id}", UserEntityDescriptor(entity2)) ~>
+          addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
+        }
+      }
+    }
+    "update entity and return it's report" in {
+      Put(s"/$apiPrefix/${addedEntityDescriptor.id}", addedEntityDescriptor) ~>
+        addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
+        status should be(StatusCodes.OK)
+        responseAs[Entity] shouldBe entities.head
+        verify(entityService).updateEntity(correctTenantA, addedEntityDescriptor)
       }
     }
   }
@@ -59,28 +99,40 @@ class EntitiesApiSpec
     when(tokenTranslator.translate(any(classOf[String])))
       .thenAnswer(new Answer[Future[UserContext]] {
       override def answer(invocation: InvocationOnMock): Future[UserContext] = {
-        Future.successful(mockUserContext)
+        Future.successful(createMockUserContext)
       }
     })
     createRestComponent(tokenTranslator)
   }
 
-  private def mockUserContext: UserContext = mock[UserContext]
+  private def createMockUserContext: UserContext = {
+    val context = mock[UserContext]
+    when(context.tenantId).thenReturn(correctTenantA)
+    context
+  }
 
-  private def entityDao: EntityDao = {
-    val entityDao = mock[EntityDao]
-    when(entityDao.getAll(anyString())).thenReturn(Future.successful(entities))
-    entityDao
+  private def createMockEntityService: EntityService = {
+    val entityService = mock[EntityService]
+    when(entityService.getAll(anyString())).thenReturn(Future.successful(entities))
+
+    when(entityService.updateEntity(anyString(), any())).thenAnswer(
+      new Answer[Future[Option[Entity]]] {
+        override def answer(invocationOnMock: InvocationOnMock): Future[Option[Entity]] = {
+          val entity = invocationOnMock.getArgumentAt(1, classOf[UserEntityDescriptor])
+          val result = if (entity == notAddedEntityDescriptor) None else Some(addedEntity)
+          Future.successful(result)
+        }
+      })
+    entityService
   }
 
   private def createRestComponent(tokenTranslator: TokenTranslator): Route  =  new EntitiesApi(
     tokenTranslator,
-    entityDao,
-    new AllAlowedAuthorizationProvider(),
-    apiPrefix, "role").route
+    entityService,
+    new AllAllowedAuthorizationProvider(),
+    apiPrefix, "role1", "role2").route
 
-
-  private class AllAlowedAuthorizationProvider extends AuthorizatorProvider {
+  private class AllAllowedAuthorizationProvider extends AuthorizatorProvider {
     override def forContext(userContext: Future[UserContext]): Authorizator = {
       new Authorizator {
         override def withRole[T](role: String)(onSuccess: UserContext => Future[T]): Future[T] =

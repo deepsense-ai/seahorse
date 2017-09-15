@@ -31,7 +31,7 @@ trait EntityTestFactory extends DataObjectFactory {
       data,
       report,
       now,
-      now.plusHours(1))
+      now)
   }
 
   def testInputEntity: InputEntity = new InputEntity(

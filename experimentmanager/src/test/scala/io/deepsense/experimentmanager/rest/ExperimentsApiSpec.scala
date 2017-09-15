@@ -69,12 +69,19 @@ class ExperimentsApiSpec
   def validAuthTokenTenantB: String = tenantBId
 
   val experimentAId = UUID.randomUUID()
+  val experimentA2Id = UUID.randomUUID()
   val experimentBId = UUID.randomUUID()
 
   def experimentOfTenantA = Experiment(
     experimentAId,
     tenantAId,
     "Experiment of Tenant A",
+    Graph())
+
+  def experimentOfTenantA2 = Experiment(
+    experimentA2Id,
+    tenantAId,
+    "Second experiment of Tenant A",
     Graph())
 
   def experimentOfTenantB = Experiment(
@@ -442,11 +449,10 @@ class ExperimentsApiSpec
       }
     }
     "return BadRequest" when {
-      val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", Graph(), "New Desc")
       "Experiment's Id from Json does not match Id from request's URL" in {
-        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
+        Put(s"/$apiPrefix/" + experimentOfTenantA.id, experimentOfTenantA2) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
         }
       }
     }
@@ -454,7 +460,8 @@ class ExperimentsApiSpec
 
   class MockExperimentManager(userContext: Future[UserContext]) extends ExperimentManager {
 
-    var storedExperiments: List[Experiment] = List(experimentOfTenantA, experimentOfTenantB)
+    var storedExperiments: List[Experiment] = List(
+      experimentOfTenantA, experimentOfTenantA2, experimentOfTenantB)
 
     override def get(id: Id): Future[Option[Experiment]] = {
       val wantedRole = "experiments:get"
