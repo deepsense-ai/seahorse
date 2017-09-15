@@ -19,21 +19,15 @@ package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
 import org.apache.spark.sql.types.DataType
 
-import io.deepsense.deeplang.doperables.MultiColumnTransformerTestSupport
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.NoInPlaceChoice
-import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class DiscreteCosineTransformerSmokeTest
-  extends AbstractTransformerWrapperSmokeTest
-  with MultiColumnTransformerTestSupport {
+    extends AbstractTransformerWrapperSmokeTest[DiscreteCosineTransformer]
+    with MultiColumnTransformerWrapperTestSupport {
 
-  override def className: String = "DiscreteCosineTransformer"
-
-  override val transformer: DiscreteCosineTransformer = new DiscreteCosineTransformer()
-
-  override val transformerParams: Seq[ParamPair[_]] = {
+  override def transformerWithParams: DiscreteCosineTransformer = {
     val inPlace = NoInPlaceChoice()
       .setColumnName("dct")
 
@@ -41,13 +35,12 @@ class DiscreteCosineTransformerSmokeTest
       .setInputColumn(NameSingleColumnSelection("v"))
       .setInPlace(inPlace)
 
-    Seq(
+    val transformer = new DiscreteCosineTransformer()
+    transformer.set(Seq(
       transformer.singleOrMultiChoiceParam -> single,
       transformer.inverse -> false
-    )
+    ): _*)
   }
-
-  override def transformerName: String = "DiscreteCosineTransformer"
 
   override def testValues: Seq[(Any, Any)] = {
     val input = Seq(

@@ -18,21 +18,15 @@ package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
 import org.apache.spark.sql.types.{ArrayType, DataType, StringType}
 
-import io.deepsense.deeplang.doperables.MultiColumnTransformerTestSupport
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.NoInPlaceChoice
-import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class StringTokenizerSmokeTest
-  extends AbstractTransformerWrapperSmokeTest
-  with MultiColumnTransformerTestSupport {
+  extends AbstractTransformerWrapperSmokeTest[StringTokenizer]
+  with MultiColumnTransformerWrapperTestSupport {
 
-  override def className: String = "StringTokenizer"
-
-  override val transformer: StringTokenizer = new StringTokenizer()
-
-  override val transformerParams: Seq[ParamPair[_]] = {
+  override def transformerWithParams: StringTokenizer = {
      val inPlace = NoInPlaceChoice()
       .setColumnName("tokenized")
 
@@ -40,12 +34,11 @@ class StringTokenizerSmokeTest
       .setInputColumn(NameSingleColumnSelection("s"))
       .setInPlace(inPlace)
 
-    Seq(
+    val transformer = new StringTokenizer()
+    transformer.set(Seq(
       transformer.singleOrMultiChoiceParam -> single
-    )
+    ): _*)
   }
-
-  override def transformerName: String = "StringTokenizer"
 
   override def testValues: Seq[(Any, Any)] = {
     val strings = Seq(
