@@ -8,6 +8,7 @@ import java.util.UUID
 
 import akka.actor.{ActorRef, Actor, Props}
 import akka.testkit.{TestActorRef, TestProbe}
+import io.deepsense.experimentmanager.exceptions.ExperimentNotRunningException
 import io.deepsense.graphexecutor.clusterspawner.DefaultClusterSpawner
 import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
 import org.scalatest.{BeforeAndAfter, WordSpecLike}
@@ -111,12 +112,12 @@ class RunningExperimentsActorSpec
         probe.send(actorRef, Update(experiment))
         probe.send(actorRef, Abort(experiment.id))
         val failure = probe.expectMsgClass(classOf[Failure[Experiment]])
-        failure.exception shouldBe a [IllegalArgumentException]
+        failure.exception shouldBe a [ExperimentNotRunningException]
       }
       "received Abort on not existing experiment" in new TestCase {
         probe.send(actorRef, Abort(experiment.id))
         val failure = probe.expectMsgClass(classOf[Failure[Experiment]])
-        failure.exception shouldBe an [IllegalArgumentException]
+        failure.exception shouldBe an [ExperimentNotRunningException]
       }
     }
 

@@ -21,7 +21,7 @@ import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
-import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
+import io.deepsense.experimentmanager.exceptions.{ExperimentNotRunningException, ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.graph.Node
@@ -164,8 +164,11 @@ class ExperimentManagerImpl @Inject()(
           val ownedExperiment = experiment.assureOwnedBy(userContext)
           runningExperimentsActor
             .ask(Abort(ownedExperiment.id))
-            .mapTo[Update]
-            .map(_ => ownedExperiment)
+            .mapTo[Try[Experiment]]
+            .map { _.recover { case e: ExperimentNotRunningException =>
+              experiment
+            }.get
+          }
         case None => throw new ExperimentNotFoundException(id)
       }
     }

@@ -13,6 +13,7 @@ import scala.util.{Failure, Success, Try}
 import akka.actor._
 import akka.util.Timeout
 
+import io.deepsense.experimentmanager.exceptions.ExperimentNotRunningException
 import io.deepsense.graphexecutor.GraphExecutorClientActor
 import io.deepsense.graphexecutor.clusterspawner.ClusterSpawner
 import io.deepsense.models.experiments.Experiment
@@ -83,7 +84,7 @@ class RunningExperimentsActor @Inject()(
       case None =>
         val error = s"No experiment to abort $id"
         log.error(error)
-        Failure(new IllegalArgumentException(error))
+        Failure(new ExperimentNotRunningException(id))
       case Some(ExperimentWithClient(experiment, client)) if experiment.isRunning =>
         // TODO DS-795 Don't mark experiment as aborted before it's really aborted
         val aborted = experiment.markAborted
@@ -93,7 +94,7 @@ class RunningExperimentsActor @Inject()(
       case Some(ExperimentWithClient(experiment, client)) =>
         val error = s"Could not terminate experiment $id in state: ${experiment.state.status} (not Running)"
         log.error(error)
-        Failure(new IllegalArgumentException(error))
+        Failure(new ExperimentNotRunningException(id))
     }
     log.info("<<< {} => {}", Abort(id), result)
     result
