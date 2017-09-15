@@ -4,7 +4,7 @@
     "filtered": 3
   },
   "experiments": [{
-    "name": "Location Attractiveness Hotels",
+    "name": "Location Attractiveness",
     "state": {
       "status": "DRAFT",
       "error": null,
@@ -137,7 +137,7 @@
         }
       }
     },
-    "description": "Location Attractiveness Hotels",
+    "description": "Location Attractiveness",
     "typeKnowledge": {
       "86cc0a8e-5198-4004-b6a0-76823da71f2a": [["io.deepsense.deeplang.doperations.transformations.MathematicalTransformation"]],
       "d4772acf-0867-4c06-9bae-85b6cbd68c40": [["io.deepsense.deeplang.doperations.transformations.MathematicalTransformation"]],
@@ -569,7 +569,7 @@
     },
     "tenantId": "679727bcc42741fc9b4d1f240d8fab39"
   }, {
-    "name": "Demand Forecasting)",
+    "name": "Demand Forecasting",
     "state": {
       "status": "DRAFT",
       "error": null,
