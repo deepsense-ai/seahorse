@@ -6,12 +6,14 @@ function MenuItem() {
     restrict: 'E',
     templateUrl: 'app/workflows/workflows-status-bar/menu-item/menu-item.html',
     replace: true,
-    controller: 'MenuItemController as miCtrl',
     scope: {
       label: '@',
       icon: '@',
-      callFunction: '@'
+      callFunction: '&',
+      href: '@',
+      target: '@'
     },
+    controller: 'MenuItemController as miCtrl',
     bindToController: true
   };
 }

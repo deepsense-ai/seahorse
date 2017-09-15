@@ -15,8 +15,4 @@ exports.inject = function(module) {
     .inject(module);
   require('./export-modal/export-modal.service.js')
     .inject(module);
-  require('./run-modal/run-modal.ctrl.js')
-    .inject(module);
-  require('./run-modal/run-modal.factory.js')
-    .inject(module);
 };

@@ -1,6 +1,8 @@
-<a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item" >
-  <i ng-class="{{::miCtrl.icon}}"
-     class="fa fa-2x c-workflows-status-bar__icon">
+<a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
+    ng-click="miCtrl.callFunction()"
+    ng-href="{{::miCtrl.href}}"
+    target="{{::miCtrl.target}}">
+  <i class="fa {{::miCtrl.icon}} fa-2x c-workflows-status-bar__icon">
   </i>
   <span class="c-workflows-status-bar__text">
     {{::miCtrl.label}}

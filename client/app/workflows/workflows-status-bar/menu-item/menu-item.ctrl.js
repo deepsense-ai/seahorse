@@ -1,9 +1,10 @@
 'use strict';
 
 /* @ngInject */
-function MenuItemController($scope) {
-  console.log('MenuItemController', this);
-  console.log('Controllers scope', $scope);
+class MenuItemController {
+  constructor() {
+
+  }
 }
 
 exports.inject = function(module) {

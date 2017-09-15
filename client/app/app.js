@@ -27,7 +27,6 @@ if (browser.name === 'chrome' && version >= 40) {
     require('./errors/errors.module.js').name,
     require('./server-communication/server-communication.module.js').name
   ]);
-  lab.constant('additionalControls', false);
   require('./app.config.js').inject(lab);
   require('./app.run.js').inject(lab);
 } else {

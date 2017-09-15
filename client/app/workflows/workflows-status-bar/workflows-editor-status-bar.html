@@ -1,63 +1,9 @@
 <div class="c-workflows-status-bar">
-  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
-     ng-click="controller.saveWorkflow()">
-    <i class="fa fa-save fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Save</span>
-  </a>
-
-  <menu-item
-    label="'some Label'"
-    icon="'fa-trash-o'"
-  >
+  <menu-item ng-repeat="item in controller.data.menuItems"
+    label="{{::item.label}}"
+    icon="{{::item.icon}}"
+    call-function="item.callFunction()"
+    href="{{::item.href}}"
+    target="{{::item.target}}">
   </menu-item>
-
-  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
-     ng-click="controller.clearWorkflow()">
-    <i class="fa fa-trash-o fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Clear</span>
-  </a>
-
-  <a ng-href="{{controller.getDocsHost()}}/docs/latest/index.html"
-     target="_blank"
-     class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item">
-    <i class="fa fa-book fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Documentation</span>
-  </a>
-
-  <a ng-href="{{controller.getNotebookURL()}}"
-     target="_blank"
-     class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item">
-    <i class="fa fa-terminal fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Notebook</span>
-  </a>
-
-  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
-     ng-click="controller.exportWorkflow()">
-    <i class="fa fa-angle-double-down fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Export</span>
-  </a>
-
-  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
-     ng-if="controller.run"
-     ng-click="controller.run()">
-    <i class="fa fa-play fa-2x c-workflows-status-bar__icon"></i>
-    <span class="c-workflows-status-bar__text">Run</span>
-  </a>
-
-  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item
-            c-workflows-status-bar__item--last-execution"
-     ng-show="controller.lastExecutedReport"
-     ng-click="controller.lastExecutedReport()"
-     ng-class="{
-      'c-workflows-status-bar__item--last-execution--report-uploaded animated pulse': controller.reportHasBeenUploaded(),
-      'c-workflows-status-bar__item--last-execution--report-not-uploaded': !controller.reportHasBeenUploaded()}"
-     tooltip-placement="bottom"
-     tooltip-append-to-body="true"
-     tooltip-html="controller.getLastExecutionTooltipMessage()"
-  >
-    <i class="fa fa-backward fa-2x c-workflows-status-bar__icon
-      c-workflows-status-bar__icon--last-execution"></i>
-    <span class="c-workflows-status-bar__text
-      c-workflows-status-bar__text--last-execution">Last execution report</span>
-  </a>
 </div>

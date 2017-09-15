@@ -14,6 +14,7 @@ require('./workflows-editor/workflows-editor.module.js').inject(workflows);
 require('./workflows-execution-report/workflows-execution-report.module.js').inject(workflows);
 require('./workflows-status-bar/workflows-status-bar.drv.js').inject(workflows);
 require('./workflows-status-bar/workflows-status-bar.ctrl.js').inject(workflows);
+require('./workflows-status-bar/workflows-editor-status-bar.service.js').inject(workflows);
 require('./general-data-panel/general-data-panel.js').inject(workflows);
 require('./general-data-panel/general-data-panel.ctrl.js').inject(workflows);
 require('./general-data-panel/general-data-text-area.js').inject(workflows);
