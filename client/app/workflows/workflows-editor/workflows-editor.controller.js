@@ -72,12 +72,22 @@ class WorkflowsEditorController {
     this.CopyPasteService.add(this.multipleCopyParams);
     this.updateAndRerenderEdges(this.workflow);
     this.initListeners();
-    this.ServerCommunication.init();
+    this.ServerCommunication.init(this.workflow.id);
   }
 
   initListeners() {
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
       this.WorkflowService.getWorkflow().updateState(data);
+    });
+
+    this.$scope.$on('ServerCommunication.MESSAGE.knowledge', (event, data) => {
+      if (this.WorkflowService.workflowIsSet()) {
+        this.$rootScope.$broadcast('Workflow.UPDATE.KNOWLEDGE', data);
+        this.updateAndRerenderEdges(data);
+      }
+      if (data.states) {
+        this.WorkflowService.getWorkflow().updateState(data.states);
+      }
     });
 
     this.$scope.$on('StatusBar.RUN', () => {
@@ -88,7 +98,7 @@ class WorkflowsEditorController {
       this.isRunning = true;
       let serialized = this.WorkflowService.getWorkflow().serialize();
       let nodesToExecute = this.MultiSelectionService.getSelectedNodes();
-      this.ServerCommunication.launch(this.workflow.id, serialized, nodesToExecute);
+      this.ServerCommunication.launch(serialized, nodesToExecute);
     });
 
     this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
@@ -102,13 +112,17 @@ class WorkflowsEditorController {
       this.initUnbindableListeners();
       this.isReportMode = false;
       this.isRunning = false;
-      this.ServerCommunication.abort(this.workflow.id);
+      this.ServerCommunication.abort();
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
       if (!data.originalEvent.ctrlKey) {
         this.selectedNode = data.selectedNode;
-        internal.getNodeParameters.call(this, this.selectedNode);
+        internal.getNodeParameters.call(this, this.selectedNode).then((node, mode) => {
+          if (mode === 'sync') {
+            this.$scope.$digest();
+          }
+        });
       } else if (data.originalEvent.ctrlKey && this.selectedNode && this.selectedNode.id === data.selectedNode.id) {
         this.selectedNode = null;
       }
@@ -119,10 +133,6 @@ class WorkflowsEditorController {
 
   initUnbindableListeners() {
     this.eventListeners = [
-      this.$scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
-        this.updateAndRerenderEdges(data);
-      }),
-
       this.$scope.$on(this.GraphNode.MOVE, () => {
         this.WorkflowService.saveWorkflow();
       }),
@@ -151,7 +161,7 @@ class WorkflowsEditorController {
           y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
         });
 
-        internal.getNodeParameters.call(this, node);
+        internal.getNodeParameters.call(this, node).then(() => this.WorkflowService.saveWorkflow());
       }),
 
       this.$scope.$on('AttributesPanel.UPDATED', () => {

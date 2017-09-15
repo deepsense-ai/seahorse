@@ -56,17 +56,7 @@ function WorkflowService(Workflow, OperationsHierarchyService,
     }
 
     saveWorkflow() {
-      return WorkflowsApiClient
-        .updateWorkflow(internal.workflow.serialize())
-        .then((data) => {
-          if (this.workflowIsSet()) {
-            $rootScope.$broadcast('Workflow.SAVE.SUCCESS', data);
-            return data;
-          }
-        })
-        .catch((error) => {
-          $rootScope.$broadcast('Workflow.SAVE.ERROR', error);
-        });
+      return WorkflowsApiClient.updateWorkflow(internal.workflow.serialize());
     }
 
     cloneParamsFromNodeToNode(nodeSrc, nodeDist) {

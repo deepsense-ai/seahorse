@@ -18,7 +18,7 @@
     "dev": "gulp start --dev",
     "prebuild": "npm install",
     "build": "gulp build",
-    "test": "karma start"
+    "test": "gulp browserify:external && karma start"
   },
   "dependencies": {
     "angular": "^1.4.4",

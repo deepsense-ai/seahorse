@@ -20,14 +20,13 @@ let internal = {};
     let deferred = this.$q.defer();
 
     if (node.hasParameters()) {
-      this.$scope.$digest();
-      deferred.resolve(node);
+      deferred.resolve(node, 'sync');
     } else {
       this.Operations.getWithParams(node.operationId)
-        .then((operationData) => {
+        .then(operationData => {
           this.$scope.$applyAsync(() => {
             node.setParameters(operationData.parameters, this.DeepsenseNodeParameters);
-            deferred.resolve(node);
+            deferred.resolve(node, 'async');
           });
         }, (error) => {
           console.error('operation fetch error', error);

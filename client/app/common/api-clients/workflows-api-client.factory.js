@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowsApiClientFactory(BaseApiClient, config) {
+function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
   const API_TYPE = 'batch';
   const PATH_WORKFLOWS = '/workflows';
   const PATH_REPORTS = '/reports';
@@ -9,6 +9,7 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
   class WorkflowsApiClient extends BaseApiClient {
     constructor() {
       super();
+      this.ServerCommunication = ServerCommunication;
     }
 
     getWorkflow(workflowId) {
@@ -52,7 +53,8 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
         workflow: serializedWorkflow.workflow,
         thirdPartyData: serializedWorkflow.thirdPartyData
       };
-      return this.makeRequest(this.METHOD_PUT, `${this.API_URL}${PATH_WORKFLOWS}/${serializedWorkflow.id}`, data);
+
+      this.ServerCommunication.updateWorkflow(data);
     }
 
     getDownloadWorkflowMethodUrl(workflowId) {

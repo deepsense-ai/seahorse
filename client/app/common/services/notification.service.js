@@ -22,8 +22,8 @@ class LogHandlingService {
  *    notificationType: 'info'
  * }
  *
- * 'Workflow.SAVE.SUCCESS': {
- *    message: 'The workflow has been <b>saved</b> successfully',
+ * 'Workflow.UPDATE.KNOWLEDGE': {
+ *    message: 'The workflow has been <b>updated</b> successfully',
  *    title: 'Workflow event',
  *    notificationType: 'success'
  * }

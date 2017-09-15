@@ -12,11 +12,13 @@ module.exports = function(config) {
         './bower_components/lodash/lodash.min.js',
         './node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js',
         './node_modules/angular-toastr/dist/angular-toastr.tpls.min.js',
+        './node_modules/stompjs/lib/stomp.js',
+        './node_modules/sockjs-client/lib/bundle.js',
         settings.files.tests.client
       ],
 
-      autoWatch: false,
-      singleRun: true,
+      autoWatch: true,
+      singleRun: false,
 
       frameworks: ['browserify', 'jasmine'],
 

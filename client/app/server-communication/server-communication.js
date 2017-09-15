@@ -2,7 +2,7 @@
 
 class ServerCommunication {
   /* @ngInject */
-  constructor($log, $q, $timeout, $rootScope, config, WorkflowService) {
+  constructor($log, $q, $timeout, $rootScope, config) {
     Stomp.WebSocketClass = SockJS;
 
     this.$log = $log;
@@ -10,7 +10,6 @@ class ServerCommunication {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.config = config;
-    this.WorkflowService = WorkflowService;
 
     this.data = {
       subscription: false
@@ -39,14 +38,7 @@ class ServerCommunication {
 
   onWebSocketConnect() {
     this.status = 'ws_connected';
-    this.connectToRabbit();
-
-    /*(function preventReconnection () {
-      setTimeout(() => {
-        this.send(this.config.queueRoutes.connect, {}, {});
-        preventReconnection();
-      }, 15000);
-    }.bind(this))();*/
+    this.connectToRabbit(this.workflowId);
   }
 
   onWebSocketConnectError(error) {
@@ -70,65 +62,75 @@ class ServerCommunication {
     }, this.config.socketReconnectionInterval, false);
   }
 
-  subscribeToRabbit(workflowId) {
+  subscribeToRabbit() {
     this.status = 'rb_connected';
     this.data.subscription = this.client.subscribe(
-      _.template(this.config.queueRoutes.executionStatus)({
-        workflowId
+      _.template(this.config.queueRoutes.toEditor)({
+        workflowId: this.workflowId
       }),
       this.messageHandler.bind(this)
     );
   }
 
-  send(exchangePath = this.config.queueRoutes.connect, headers = {}, message = {}) {
+  send(exchangePath = this.config.queueRoutes.seahorseToExecutor, headers = {}, message = {}) {
     return this.client && this.client.send.apply(this.client, arguments);
   }
 
-  connect(workflowId) {
-    this.send(this.config.queueRoutes.connect, {}, JSON.stringify({
+  updateWorkflow(data) {
+    this.send(_.template(this.config.queueRoutes.toExecutor)({
+      workflowId: this.workflowId
+    }), {}, JSON.stringify({
+      messageType: 'updateWorkflow',
+      messageBody: data
+    }));
+  }
+
+  connect() {
+    this.send(this.config.queueRoutes.seahorseToExecutor, {}, JSON.stringify({
       messageType: 'connect',
       messageBody: {
-        workflowId
+        workflowId: this.workflowId
       }
     }));
   }
 
   connectToRabbit() {
-    let workflowId = this.WorkflowService.getWorkflow().id;
-    this.connect(workflowId);
-    this.subscribeToRabbit(workflowId);
-    this.connect(workflowId);
+    this.connect();
+    this.subscribeToRabbit();
+    this.connect();
   }
 
-  launch(workflowId, workflow, nodesToExecute) {
+  launch(workflow, nodesToExecute) {
     this.send(
-      _.template(this.config.queueRoutes['launch/abort'])({
-        workflowId
+      _.template(this.config.queueRoutes.toExecutor)({
+        workflowId: this.workflowId
       }), {},
       JSON.stringify({
         messageType: 'launch',
         messageBody: {
-          workflowId, workflow: workflow.workflow, nodesToExecute
+          workflowId: this.workflowId,
+          workflow: workflow.workflow,
+          nodesToExecute
         }
       })
     );
   }
 
-  abort(workflowId) {
+  abort() {
     this.send(
-      _.template(this.config.queueRoutes['launch/abort'])({
-        workflowId
+      _.template(this.config.queueRoutes.toExecutor)({
+        workflowId: this.workflowId
       }), {},
       JSON.stringify({
         messageType: 'abort',
         messageBody: {
-          workflowId
+          workflowId: this.workflowId
         }
       })
     );
   }
 
-  connectToWebSocket(user = 'noUser', pass = '123q') {
+  connectToWebSocket(user = 'guest', pass = 'guest') {
     this.status = 'ws_pending';
     this.socket = new SockJS(`${this.config.socketConnectionHost}stomp`);
     this.client = Stomp.over(this.socket);
@@ -141,12 +143,13 @@ class ServerCommunication {
     this.client.connect(
       user,
       pass,
-      this.onWebSocketConnect.bind(this),
+      this.onWebSocketConnect.bind(this, this.workflowId),
       this.onWebSocketConnectError.bind(this)
     );
   }
 
-  init() {
+  init(workflowId) {
+    this.workflowId = workflowId;
     this.connectToWebSocket();
   }
 }

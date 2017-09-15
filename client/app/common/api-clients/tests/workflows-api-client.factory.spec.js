@@ -5,31 +5,47 @@ let promiseIsResolved = require('./utils/promise-is-resolved.js');
 let promiseIsRejected = require('./utils/promise-is-rejected.js');
 
 const API_TYPE = 'batch';
-const API_VERSION = '0.9.0';
+const API_VERSION = '0.6.0';
+const API_HOST = 'https://editor.seahorse.deepsense.io';
+const API_PORT = '443';
 const URL_API_VERSION = 'v1';
 
 describe('WorkflowsApiClient', () => {
   let module;
   let WorkflowsApiClient;
+  let ServerCommunication;
 
   beforeEach(() => {
     module = angular.module('test', []);
 
     require('./../base-api-client.factory.js').inject(module);
     require('./../workflows-api-client.factory.js').inject(module);
+    require('../../../server-communication/server-communication.js').inject(module);
 
     angular.mock.module('test');
     angular.mock.module(($provide) => {
       $provide.constant('config', {
-        'apiHost': '',
-        'apiPort': '',
+        'apiHost': API_HOST,
+        'docsHost': 'https://seahorse.deepsense.io',
+        'notebookHost': 'http://localhost:8888',
+        'apiPort': API_PORT,
         'apiVersion': API_VERSION,
-        'urlApiVersion': URL_API_VERSION
+        'editorVersion': '1.0.0',
+        'urlApiVersion': URL_API_VERSION,
+        'resultsRefreshInterval': 10000,
+        'socketConnectionHost': 'http://127.0.0.1:15674/',
+        'socketReconnectionInterval': 1000,
+        'queueRoutes': {
+          'connect': '/exchange/seahorse/to_executor',
+          'executionStatus': '/exchange/<%= workflowId %>/to_editor',
+          'launch/abort': '/exchange/<%= workflowId %>/to_executor'
+        }
       });
     });
 
-    angular.mock.inject((_WorkflowsApiClient_) => {
+    angular.mock.inject((_WorkflowsApiClient_, _ServerCommunication_) => {
       WorkflowsApiClient = _WorkflowsApiClient_;
+      ServerCommunication = _ServerCommunication_;
     });
   });
 
@@ -45,7 +61,7 @@ describe('WorkflowsApiClient', () => {
     let mockRequest;
 
     let id = 'workflow-id';
-    let url = `/${URL_API_VERSION}/workflows/${id}`;
+    let url = `${API_HOST}:${API_PORT}/${URL_API_VERSION}/workflows/${id}`;
     let response = {
       metadata: {
         type: API_TYPE,
@@ -63,10 +79,7 @@ describe('WorkflowsApiClient', () => {
     beforeEach(() => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
-        mockRequest = $httpBackend.
-        when('GET', url)
-          .
-        respond(response);
+        mockRequest = $httpBackend.when('GET', url).respond(response);
       });
     });
 
@@ -104,7 +117,7 @@ describe('WorkflowsApiClient', () => {
   describe('should have createWorkflow method', () => {
     let $httpBackend;
     let mockRequest;
-    let url = `/${URL_API_VERSION}/workflows`;
+    let url = `${API_HOST}:${API_PORT}/${URL_API_VERSION}/workflows`;
     let params = {
       'name': 'Draft',
       'description': 'Draft workflow'
@@ -132,14 +145,11 @@ describe('WorkflowsApiClient', () => {
     beforeEach(() => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
-        mockRequest = $httpBackend.
-        when('POST', url)
-          .
-        respond(dataResponse);
+        mockRequest = $httpBackend.when('POST', url).respond(dataResponse);
       });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
     });
@@ -175,9 +185,10 @@ describe('WorkflowsApiClient', () => {
   describe('should have updateWorkflow method', () => {
     let $httpBackend;
     let mockRequest;
+    let config;
 
     let id = 'workflow-id';
-    let url = `/${URL_API_VERSION}/workflows/${id}`;
+    let url = `${API_HOST}:${API_PORT}/${URL_API_VERSION}/workflows/${id}`;
     let serializedWorkflow = {
       id: id,
       workflow: {
@@ -198,12 +209,13 @@ describe('WorkflowsApiClient', () => {
 
     beforeEach(() => {
       angular.mock.inject(($injector) => {
+        config = $injector.get('config');
         $httpBackend = $injector.get('$httpBackend');
-        mockRequest = $httpBackend.
-        when('PUT', url)
-          .
-        respond(dataResponse);
+        mockRequest = $httpBackend.when('PUT', url).respond(dataResponse);
       });
+
+      spyOn(WorkflowsApiClient, 'updateWorkflow').and.callThrough();
+      spyOn(ServerCommunication, 'updateWorkflow');
     });
 
     afterEach(() => {
@@ -216,24 +228,25 @@ describe('WorkflowsApiClient', () => {
         .toEqual(jasmine.any(Function));
     });
 
-    it('which return promise', () => {
-      resultIsPromise(
-        $httpBackend, () => WorkflowsApiClient.updateWorkflow(serializedWorkflow), () => {
-          $httpBackend.expectPUT(url, dataRequest);
-        }
-      );
+    it('has been called', () => {
+      WorkflowsApiClient.updateWorkflow(serializedWorkflow);
+      expect(WorkflowsApiClient.updateWorkflow).toHaveBeenCalled();
     });
 
-    it('which return promise & resolve it on request success', () => {
-      promiseIsResolved($httpBackend, url, dataResponse, () => WorkflowsApiClient.updateWorkflow(serializedWorkflow), () => {
-        $httpBackend.expectPUT(url, dataRequest);
-      });
+    it('has been called with proper parameters', () => {
+      WorkflowsApiClient.updateWorkflow(serializedWorkflow);
+      expect(WorkflowsApiClient.updateWorkflow).toHaveBeenCalledWith(serializedWorkflow);
     });
 
-    it('which return promise & rejects it on request error', () => {
-      promiseIsRejected($httpBackend, mockRequest, () => WorkflowsApiClient.updateWorkflow(serializedWorkflow), () => {
-        $httpBackend.expectPUT(url, dataRequest);
-      });
+    it('which call ServerCommunication.updateWorkflow with proper parameters', () => {
+      WorkflowsApiClient.updateWorkflow(serializedWorkflow);
+      expect(WorkflowsApiClient.updateWorkflow).toHaveBeenCalled();
+      //expect(ServerCommunication.updateWorkflow).toHaveBeenCalled();
+    });
+
+    it('which call ServerCommunication.updateWorkflow with proper parameters', () => {
+      WorkflowsApiClient.updateWorkflow(serializedWorkflow);
+      expect(ServerCommunication.updateWorkflow).toHaveBeenCalledWith(dataRequest);
     });
   });
 
@@ -242,7 +255,7 @@ describe('WorkflowsApiClient', () => {
     let mockRequest;
 
     let id = 'workflow-id';
-    let url = `/${URL_API_VERSION}/workflows/${id}/report`;
+    let url = `${API_HOST}:${API_PORT}/${URL_API_VERSION}/workflows/${id}/report`;
     let dataResponse = {
       metadata: {
         type: API_TYPE,
@@ -260,14 +273,11 @@ describe('WorkflowsApiClient', () => {
     beforeEach(() => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
-        mockRequest = $httpBackend.
-        when('GET', url)
-          .
-        respond(dataResponse);
+        mockRequest = $httpBackend.when('GET', url).respond(dataResponse);
       });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
     });
@@ -303,7 +313,7 @@ describe('WorkflowsApiClient', () => {
     let mockRequest;
 
     let id = 'report-id';
-    let url = `/${URL_API_VERSION}/reports/${id}`;
+    let url = `${API_HOST}:${API_PORT}/${URL_API_VERSION}/reports/${id}`;
     let dataResponse = {
       metadata: {
         type: API_TYPE,
@@ -321,10 +331,7 @@ describe('WorkflowsApiClient', () => {
     beforeEach(() => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
-        mockRequest = $httpBackend.
-        when('GET', url)
-          .
-        respond(dataResponse);
+        mockRequest = $httpBackend.when('GET', url).respond(dataResponse);
       });
     });
 
@@ -364,16 +371,13 @@ describe('WorkflowsApiClient', () => {
     let mockRequest;
 
     let workflowId = 'workflow-id';
-    let url = `/${URL_API_VERSION}/workflows/${workflowId}/results-upload-time`;
+    let url = `${API_HOST}:${API_PORT}/${URL_API_VERSION}/workflows/${workflowId}/results-upload-time`;
     let dataResponse = 'date';
 
     beforeEach(() => {
       angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
-        mockRequest = $httpBackend.
-        when('GET', url)
-          .
-        respond(dataResponse);
+        mockRequest = $httpBackend.when('GET', url).respond(dataResponse);
       });
     });
 
