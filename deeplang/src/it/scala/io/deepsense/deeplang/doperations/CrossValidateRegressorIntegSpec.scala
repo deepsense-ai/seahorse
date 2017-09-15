@@ -25,6 +25,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.exceptions.InvalidDataFrameException
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
 class CrossValidateRegressorIntegSpec
@@ -100,7 +101,7 @@ class CrossValidateRegressorIntegSpec
 
     "fail when training DataFrame has size 0" in {
       val dataFrame = createDataFrame(Seq(), schema)
-      intercept[IllegalArgumentException] {
+      intercept[InvalidDataFrameException] {
         testCrossValidateRegressor(regressor, dataFrame)
       }
       ()

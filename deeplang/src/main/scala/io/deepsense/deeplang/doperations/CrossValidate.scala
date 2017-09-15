@@ -28,6 +28,7 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.exceptions.InvalidDataFrameException
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{ChoiceParameter, NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To2, ExecutionContext}
@@ -45,8 +46,8 @@ abstract class CrossValidate[T <: Evaluable]()
   def reportName: String
 
   override val parameters = trainParameters ++ ParametersSchema(
-    "Number of folds" -> numberOfFoldsParameter,
-    "Shuffle" -> shuffleParameter
+    "number of folds" -> numberOfFoldsParameter,
+    "shuffle" -> shuffleParameter
   )
 
   override protected val dataFramePortIndex: Int = 1
@@ -60,11 +61,13 @@ abstract class CrossValidate[T <: Evaluable]()
 
     val dataFrameSize = dataFrame.sparkDataFrame.count()
 
-    val effectiveNumberOfFolds = dataFrameSize match {
-      case 1 => 0  // If dataFrame is of size 1, no folds can be performed
-      case _ => math.min(  // If number of folds is too big, we use dataFrame size as folds number
-        dataFrameSize,
-        math.round(numberOfFoldsParameter.value.get)).toInt
+    val effectiveNumberOfFolds = (dataFrameSize, numberOfFoldsParameter.value.get) match {
+      case (0, _) => throw InvalidDataFrameException("cannot train a model on an empty DataFrame")
+      // If either dataFrameSize or numberOfFolds is 1, no folds can be performed
+      case (1, _) => 0
+      case (_, 1) => 0
+      // Now, the number of folds is at least 2
+      case (dfs, nof) => math.min(dfs, math.round(nof)).toInt
     }
 
     val seed = BinaryChoice.withName(shuffleParameter.value.get) match {
@@ -197,7 +200,7 @@ trait CrossValidateParams {
     options = ListMap(
       BinaryChoice.NO.toString -> ParametersSchema(),
       BinaryChoice.YES.toString -> ParametersSchema(
-        "Seed" -> seedShuffleParameter)
+        "seed" -> seedShuffleParameter)
     )
   )
 }

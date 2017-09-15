@@ -75,7 +75,7 @@ trait EvaluatorParams {
     portIndex = 0)
 
   val parameters = ParametersSchema(
-    "Target Column" -> targetColumnParameter,
-    "Prediction Column" -> predictionColumnParameter
+    "target column" -> targetColumnParameter,
+    "prediction column" -> predictionColumnParameter
   )
 }
