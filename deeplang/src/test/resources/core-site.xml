@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Copyright (c) 2015, CodiLime, Inc.
+
+  Owner: Grzegorz Chilkiewicz
+
+  Hadoop cluster configuration for Development Environment (vagrant)
+-->
+
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://ds-dev-env-master:8020</value>
+    <description>
+      The name of the default file system.
+      A URI whose scheme and authority determine the FileSystem implementation.
+      The uri's scheme determines the config property (fs.SCHEME.impl) naming
+      the FileSystem implementation class.
+      The uri's authority is used to determine the host, port, etc. for a filesystem.
+    </description>
+  </property>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/hdfstmp</value>
+    <description>A base for other temporary directories.</description>
+  </property>
+
+  <property>
+    <name>fs.hdfs.impl</name>
+    <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
+    <description>The FileSystem for hdfs: uris.</description>
+  </property>
+</configuration>
+

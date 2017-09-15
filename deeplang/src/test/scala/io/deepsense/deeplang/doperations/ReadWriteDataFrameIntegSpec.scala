@@ -6,10 +6,6 @@
 
 package io.deepsense.deeplang.doperations
 
-import java.net.URI
-
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.hdfs.DFSClient
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -24,23 +20,20 @@ import io.deepsense.deeplang.{DOperable, ExecutionContext, SparkIntegTestSupport
  * - /tests directory with read,write privileges to Your user on HDFS
  * - /etc/hosts entry: 172.28.128.100 ds-dev-env-master
  */
-class ReadWriteHDFSDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
+class ReadWriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
 
-  val hdfsPath = "hdfs://172.28.128.100:8020"
-  val hdfsDir = "/tests/readWriteDataFrameTest"
-  val hdfsCompletePath = hdfsPath + hdfsDir
+  val testDir = "/tests/readWriteDataFrameTest"
 
   before {
-    val client = new DFSClient(new URI(hdfsPath), new Configuration())
-    client.delete(hdfsDir, true)
+    hdfsClient.delete(testDir, true)
   }
 
   "Write and Read DataFrame operations" should "correctly write and read dataFrame from HDFS" in {
     val context = executionContext
     val dataFrame: DataFrame = createDataFrame
 
-    writeDataFrame(context, hdfsCompletePath, dataFrame)
-    val retrievedDataFrame = readDataFrame(context, hdfsCompletePath)
+    writeDataFrame(context, testDir, dataFrame)
+    val retrievedDataFrame = readDataFrame(context, testDir)
 
     assertDataFramesEqual(dataFrame, retrievedDataFrame)
   }
@@ -82,5 +75,4 @@ class ReadWriteHDFSDataFrameIntegSpec extends SparkIntegTestSupport with BeforeA
     val operationResult = readDataFrameOperation.execute(context)(Vector.empty[DOperable])
     operationResult.head.asInstanceOf[DataFrame]
   }
-
 }

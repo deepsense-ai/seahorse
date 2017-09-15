@@ -6,6 +6,10 @@
 
 package io.deepsense.deeplang
 
+import java.net.URI
+
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.hdfs.DFSClient
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
@@ -16,14 +20,20 @@ import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
  * Adds features to aid integration testing using spark
  */
 trait SparkIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
+
+  val hdfsPath = "hdfs://ds-dev-env-master:8020"
+
   var sparkConf: SparkConf = _
   var sparkContext: SparkContext = _
   var sqlContext: SQLContext = _
+  var hdfsClient: DFSClient = _
+
 
   override def beforeAll: Unit = {
     sparkConf = new SparkConf().setMaster("local[4]").setAppName("TestApp")
     sparkContext = new SparkContext(sparkConf)
     sqlContext = new SQLContext(sparkContext)
+    hdfsClient = new DFSClient(new URI(hdfsPath), new Configuration())
   }
 
   override def afterAll: Unit = {

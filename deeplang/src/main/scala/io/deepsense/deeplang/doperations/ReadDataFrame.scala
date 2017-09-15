@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Rafal Hryciuk
  */
 
 package io.deepsense.deeplang.doperations
@@ -23,7 +23,7 @@ class ReadDataFrame extends DOperation0To1[DataFrame] {
     val pathParameter = parameters.getStringParameter("path")
 
     val sqlContext = context.sqlContext
-    val dataFrame = sqlContext.jsonFile(pathParameter.value.get)
+    val dataFrame = sqlContext.parquetFile(pathParameter.value.get)
 
     val builder = context.dataFrameBuilder
     builder.buildDataFrame(dataFrame)

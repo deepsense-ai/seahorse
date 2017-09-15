@@ -23,7 +23,7 @@ class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame] = None) extends DO
   def sparkDataFrame: sql.DataFrame = optionalSparkDataFrame.get
 
   def save(path: String): Unit = {
-    sparkDataFrame.toJSON.saveAsTextFile(path)
+    sparkDataFrame.saveAsParquetFile(path)
   }
 
   def getColumnName(singleColumnSelection: SingleColumnSelection): String = {

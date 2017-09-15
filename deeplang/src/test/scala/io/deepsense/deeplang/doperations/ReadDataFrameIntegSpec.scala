@@ -1,53 +1,56 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Rafal Hryciuk
  */
 
 package io.deepsense.deeplang.doperations
 
+import java.sql.Timestamp
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
+import org.joda.time.DateTime
+import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
-class ReadDataFrameIntegSpec extends SparkIntegTestSupport {
-  "ReadDataFrame" should "read locally saved DataFrame" in {
-    val localDataFramePath = "src/test/resources/localDataFrameSample"
+class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {
 
-    // read DataFrame using operation
+  val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
+  val testDir = "/tests/ReadDataFrameTest"
+
+  before {
+    hdfsClient.delete(testDir, true)
+  }
+
+  "ReadDataFrame" should "read locally saved DataFrame" in {
     val context = executionContext
+    val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
+    dataFrame.sparkDataFrame.saveAsParquetFile(testDir)
 
     val operation = new ReadDataFrame
     val pathParameter = operation.parameters.getStringParameter("path")
-    pathParameter.value = Some(localDataFramePath)
-
+    pathParameter.value = Some(testDir)
     val operationResult = operation.execute(context)(Vector.empty[DOperable])
     val operationDataFrame = operationResult(0).asInstanceOf[DataFrame]
 
-    // compare DataFrames
+    assertDataFramesEqual(dataFrame, operationDataFrame)
+  }
+
+  def testDataFrame(builder: DataFrameBuilder): DataFrame = {
     val schema: StructType = StructType(List(
       StructField("column1", StringType, true),
       StructField("column2", LongType, true),
       StructField("column3", DoubleType, true),
-      StructField("column4", StringType, true)))
-
+      StructField("column4", TimestampType, true)))
     val manualRowsSeq: Seq[Row] = Seq(
-      Row("aaa", 1L, 1.2, "2007-12-02 03:10:11.0000001"),
-      Row("bbb", 2L, 2.2, "2007-12-02 03:10:11.0000001"),
-      Row("ccc", 3L, 3.4, "2007-12-02 03:10:11.0000001"))
-
+      Row("aaa", 1L, 1.2, timestamp),
+      Row("bbb", 2L, 2.2, timestamp),
+      Row("ccc", 3L, 3.4, timestamp))
     val manualRDD: RDD[Row] = sparkContext.parallelize(manualRowsSeq)
-
-    val manualRows = sqlContext.createDataFrame(manualRDD, schema).collect()
-    val operationRows = operationDataFrame.sparkDataFrame.collect()
-
-    assert(operationRows.length == manualRows.length)
-
-    val zipped = operationRows zip manualRows
-    assert(zipped.forall(rowPair => rowPair._1 == rowPair._2))
-    assert(zipped.forall(rowPair => rowPair._1.schema == rowPair._2.schema))
+    builder.buildDataFrame(schema, manualRDD)
   }
 }
