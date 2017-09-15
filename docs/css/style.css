@@ -315,3 +315,11 @@ p.footer-text span {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+/*
+* Adjust anchors for fixed header
+*/
+:target {
+  margin-top: -70px;
+  padding-top: 70px;
+}
