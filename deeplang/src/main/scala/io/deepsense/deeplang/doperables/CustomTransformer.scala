@@ -21,7 +21,7 @@ import org.apache.spark.sql.types.StructType
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.{ParamMap, Param}
 import io.deepsense.deeplang.params.custom.{PublicParam, InnerWorkflow}
 import io.deepsense.graph._
 
@@ -46,6 +46,11 @@ case class CustomTransformer(
 
     workflow.graph.inferKnowledge(inferCtx, initialKnowledge)
       .getKnowledge(workflow.sink.id)(0).asInstanceOf[DKnowledge[DataFrame]].single.schema
+  }
+
+  override def replicate(extra: ParamMap = ParamMap.empty): this.type = {
+    val that = new CustomTransformer(innerWorkflow, params).asInstanceOf[this.type]
+    copyValues(that, extra)
   }
 
   private def workflowWithParams(): InnerWorkflow = {

@@ -31,6 +31,7 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.doperations.ConvertType
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.custom.{PublicParam, InnerWorkflow}
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
@@ -102,6 +103,18 @@ class CustomTransformerSpec extends UnitSpec {
       ))
 
       transformer._transformSchema(schema, inferContext) shouldBe Some(expectedSchema)
+    }
+
+    "replicate" in {
+      val publicParam = TypeConverter().targetType.replicate("public name")
+      val params: Array[Param[_]] = Array(publicParam)
+      val workflow = InnerWorkflow(simpleGraph(), JsObject(),
+        List(PublicParam(innerNodeId, "target type", "public name")))
+      val transformer = new CustomTransformer(workflow, params)
+
+      val replicated = transformer.replicate()
+      replicated.innerWorkflow shouldBe workflow
+      replicated.params shouldBe params
     }
 
     "set public params" when {
