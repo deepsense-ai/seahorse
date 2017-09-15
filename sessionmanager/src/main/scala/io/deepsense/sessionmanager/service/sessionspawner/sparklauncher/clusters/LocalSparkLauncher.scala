@@ -4,8 +4,6 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
-import scalaz.Validation
-
 import org.apache.spark.launcher.SparkLauncher
 
 import io.deepsense.commons.models.ClusterDetails
