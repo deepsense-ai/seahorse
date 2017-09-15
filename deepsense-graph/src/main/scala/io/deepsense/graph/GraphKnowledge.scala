@@ -4,7 +4,7 @@
  * Owner: Radoslaw Kotowski
  */
 
-package io.deepsense.graphlibrary
+package io.deepsense.graph
 
 import io.deepsense.deeplang.{DKnowledge, DOperable}
 
@@ -13,7 +13,7 @@ import io.deepsense.deeplang.{DKnowledge, DOperable}
  * It contains mappings between nodes and their inferred knowledge on output ports.
  */
 case class GraphKnowledge(
-    private[graphlibrary] val knowledgeMap: Map[Node.Id, Vector[DKnowledge[DOperable]]]) {
+    private[graph] val knowledgeMap: Map[Node.Id, Vector[DKnowledge[DOperable]]]) {
 
   def addKnowledge(id: Node.Id, knowledge: Vector[DKnowledge[DOperable]]): GraphKnowledge = {
     GraphKnowledge(knowledgeMap + (id -> knowledge))

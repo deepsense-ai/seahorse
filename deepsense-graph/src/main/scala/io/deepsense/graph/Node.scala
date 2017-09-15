@@ -4,15 +4,15 @@
  * Owner: Radoslaw Kotowski
  */
 
-package io.deepsense.graphlibrary
+package io.deepsense.graph
 
 import java.util.UUID
 
 import org.joda.time.DateTime
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.graphlibrary.Node.State
-import io.deepsense.graphlibrary.Node.State.{Progress, Status}
+import io.deepsense.graph.Node.State
+import io.deepsense.graph.Node.State.{Progress, Status}
 
 /**
  * Immutable node.
@@ -37,14 +37,14 @@ object Node {
    * it also contains some metadata about execution of the Node,
    * e.g. when has it started or what is the progress.
    */
-  case class State private[graphlibrary](
+  case class State private[graph](
       status: Status.Status,
       started: Option[DateTime] = None,
       ended: Option[DateTime] = None,
       progress: Option[Progress] = None,
       // TODO: results should be changed to list of datasets UUIDs
       results: Option[List[UUID]] = None) {
-    private[graphlibrary] def completed(results: List[UUID]): State = {
+    private[graph] def completed(results: List[UUID]): State = {
       State(
         Status.COMPLETED,
         started,
@@ -53,15 +53,15 @@ object Node {
         Some(results))
     }
 
-    private[graphlibrary] def failed: State = {
+    private[graph] def failed: State = {
       State(Status.FAILED, started, Some(DateTime.now()))
     }
 
-    private[graphlibrary] def aborted: State = {
+    private[graph] def aborted: State = {
       State(Status.ABORTED, started, Some(DateTime.now()))
     }
 
-    private[graphlibrary] def withProgress(progress: Progress): State = {
+    private[graph] def withProgress(progress: Progress): State = {
       require(status == Status.RUNNING)
       State(status = Status.RUNNING, started = started, progress = Some(progress))
     }
@@ -80,11 +80,11 @@ object Node {
       require(current >= 0 && total >= 0 && current <= total)
     }
 
-    private[graphlibrary] def inDraft: State = State(Status.INDRAFT)
+    private[graph] def inDraft: State = State(Status.INDRAFT)
 
-    private[graphlibrary] def queued: State = State(Status.QUEUED)
+    private[graph] def queued: State = State(Status.QUEUED)
 
-    private[graphlibrary] def running(progress: Progress): State = {
+    private[graph] def running(progress: Progress): State = {
       val started = DateTime.now() // TODO: is this the way we want to compute the time?
       State(status = Status.RUNNING, started = Some(started), progress = Some(progress))
     }

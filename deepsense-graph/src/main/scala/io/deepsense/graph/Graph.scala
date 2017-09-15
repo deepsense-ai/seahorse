@@ -4,7 +4,7 @@
  * Owner: Radoslaw Kotowski
  */
 
-package io.deepsense.graphlibrary
+package io.deepsense.graph
 
 import java.util.UUID
 
@@ -12,8 +12,8 @@ import scala.collection.mutable.{Set, Map}
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.{InferContext, DOperable, DKnowledge, DOperation}
-import io.deepsense.graphlibrary.Node.State
-import io.deepsense.graphlibrary.Node.State.{Progress, Status}
+import io.deepsense.graph.Node.State
+import io.deepsense.graph.Node.State.{Progress, Status}
 
 /**
  * Colours of node.
@@ -22,7 +22,7 @@ import io.deepsense.graphlibrary.Node.State.{Progress, Status}
  * of Graph. However it makes serialization of Graph impossible.
  * This is why a decision was made to move it outside of Graph.
  */
-private[graphlibrary] object Color extends Enumeration {
+private[graph] object Color extends Enumeration {
   type Color = Value
   val WHITE, GREY, BLACK = Value
 }
@@ -35,7 +35,7 @@ private[graphlibrary] object Color extends Enumeration {
  */
 @SerialVersionUID(1L)
 class Graph extends Serializable {
-  private[graphlibrary] case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
+  private[graph] case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
     var color: Color.Color = Color.WHITE
     var state: State = State.inDraft
     val predecessors: Array[Option[GraphNode]] = Array.fill(operation.inArity) { None }
@@ -160,7 +160,7 @@ class Graph extends Serializable {
    * Returns a list of topologically sorted nodes.
    * Returns None if any node reachable from the start node lays on cycle.
    */
-  private[graphlibrary] def topologicallySorted: Option[List[GraphNode]] = {
+  private[graph] def topologicallySorted: Option[List[GraphNode]] = {
     var sorted: Option[List[GraphNode]] = Some(List.empty)
     nodes.values.foreach(n => sorted = topologicalSort(n, sorted))
     resetState()

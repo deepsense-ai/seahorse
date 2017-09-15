@@ -4,7 +4,7 @@
  * Owner: Radoslaw Kotowski
  */
 
-package io.deepsense.graphlibrary
+package io.deepsense.graph
 
 import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
 import java.util.UUID
@@ -12,7 +12,7 @@ import java.util.UUID
 import org.scalatest.{Matchers, FunSuite}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.graphlibrary.Node.State.Status
+import io.deepsense.graph.Node.State.Status
 
 object DClassesForDOperations {
   trait A extends DOperable
