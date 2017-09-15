@@ -20,7 +20,7 @@ import org.apache.spark.ml
 import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.{params, ExecutionContext}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.{ParamPair, Param}
@@ -95,4 +95,20 @@ abstract class SparkModelWrapper[
   }
 
   private def sparkParamMap(schema: StructType): ParamMap = sparkParamMap(model, schema)
+
+  override def replicate(extra: io.deepsense.deeplang.params.ParamMap): this.type = {
+    val replicatedEstimatorWrapper: SparkEstimatorWrapper[MD, E, _] =
+      parentEstimator.replicate(extractParamMap(extra))
+        .asInstanceOf[SparkEstimatorWrapper[MD, E, _]]
+
+    // model might not exist (if not fitted yet)
+    val modelCopy = Option(model)
+      .map(m => m.copy(m.extractParamMap()))
+      .getOrElse(null)
+      .asInstanceOf[MD]
+
+    super.replicate(extractParamMap(extra))
+      .setParent(replicatedEstimatorWrapper)
+      .setModel(modelCopy)
+  }
 }
