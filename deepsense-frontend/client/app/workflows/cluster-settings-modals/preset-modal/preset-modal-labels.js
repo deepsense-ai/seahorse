@@ -98,7 +98,19 @@ const standalone = {
 };
 
 const local = {
-  main: 'Local'
+  main: 'Local',
+  uri: {
+    name: 'Master URL',
+    instruction: '',
+    placeholder: '',
+    type: 'text'
+  },
+  params : {
+    name: '',
+    instruction: '',
+    placeholder: '',
+    type: 'textarea'
+  }
 };
 
 
@@ -110,6 +122,6 @@ exports.inject = function (module) {
       'params'])),
     standalone: _.assign(standalone, _.pick(common, ['userIP', 'driverMemory', 'hadoopUser', 'executorMemory',
       'totalExecutorCores', 'executorCores', 'params'])),
-    local: _.assign(local, _.pick(common, ['executorMemory', 'totalExecutorCores', 'executorCores', 'numExecutors']))
+    local
   });
 };
