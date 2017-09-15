@@ -9,35 +9,42 @@ import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesM
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
 import io.deepsense.deeplang.{ExecutionContext, DOperation1To1}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.parameters.{ColumnType, BooleanParameter, ColumnSelectorParameter, ParametersSchema}
+import io.deepsense.deeplang.parameters._
 
 case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
+
   override val name: String = "One Hot Encoder"
   override val id: Id = "b1b6eefe-f7b7-11e4-a322-1697f925ec7b"
-  val selectedColumnsKey = "columns"
-  val withRedundantKey = "with redundant"
+
+  val selectedColumnsParam = ColumnSelectorParameter(
+    "Columns to encode", required = true)
+
+  val withRedundantParam = BooleanParameter(
+    "Preserve redundant column", default = Some(false), required = true)
+
+  val prefixParam = PrefixBasedColumnCreatorParameter(
+    "Prefix for generated columns", None, required = true)
 
   override val parameters: ParametersSchema = ParametersSchema(
-    selectedColumnsKey -> ColumnSelectorParameter("Columns to encode", required = true),
-    withRedundantKey -> BooleanParameter(
-      "Preserve redundant column", default = Some(false), required = true
-    )
+    "columns" -> selectedColumnsParam,
+    "with redundant" -> withRedundantParam,
+    "prefix" -> prefixParam
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val categoricalMetadata = CategoricalMetadata(dataFrame)
-    val selectedColumnNames = dataFrame.getColumnNames(
-      parameters.getColumnSelection(selectedColumnsKey).get)
-    val withRedundant = parameters.getBoolean(withRedundantKey).get
+    val selectedColumnNames = dataFrame.getColumnNames(selectedColumnsParam.value.get)
+    val withRedundant = withRedundantParam.value.get
+    val prefix = prefixParam.value.getOrElse("")
 
     def sqlOneHotEncodingExpression(
         columnName: String,
         mapping: CategoriesMapping): List[String] = {
 
       val valueIdPairs = mapping.valueIdPairs.dropRight(if (withRedundant) 0 else 1)
-      val uniqueLevel = dataFrame.getFirstFreeNamesLevel(columnName, mapping.values.toSet)
       for ((value, id) <- valueIdPairs) yield {
-        val newColumnName = DataFrame.createColumnName(columnName, value, uniqueLevel)
+        // TODO: replace should be removed after spark upgrade to version containing bugfix. DS-635
+        val newColumnName = (prefix + columnName + "_" + value).replace(".", "_")
 
         s"IF(`$columnName` IS NULL, CAST(NULL as Double), IF(`$columnName`=$id, 1.0, 0.0))" +
           s"as `$newColumnName`"
@@ -53,5 +60,19 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
     }
     val resultSparkDataFrame = dataFrame.sparkDataFrame.selectExpr("*" +: expressions.flatten: _*)
     context.dataFrameBuilder.buildDataFrame(resultSparkDataFrame)
+  }
+}
+
+object OneHotEncoder {
+  def apply(
+      selection: MultipleColumnSelection,
+      withRedundancy: Boolean,
+      prefix: Option[String]): OneHotEncoder = {
+
+    val encoder = new OneHotEncoder
+    encoder.selectedColumnsParam.value = Some(selection)
+    encoder.withRedundantParam.value = Some(withRedundancy)
+    encoder.prefixParam.value = prefix
+    encoder
   }
 }

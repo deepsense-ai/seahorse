@@ -104,17 +104,15 @@ class MvpCase3IntegSuite extends ExperimentExecutionSpec {
       prefix = None)
   }
 
-  // TODO: Use apply
   private def oneHotEncoder: OneHotEncoder = {
-    val operation = OneHotEncoder()
-    operation.parameters.getColumnSelectorParameter(operation.selectedColumnsKey).value =
-      Some(MultipleColumnSelection(Vector(NameColumnSelection(Set(
+    OneHotEncoder(
+      MultipleColumnSelection(Vector(NameColumnSelection(Set(
         "datetime_year",
         "datetime_month",
         "datetime_day",
-        "datetime_hour")))))
-    operation.parameters.getBooleanParameter(operation.withRedundantKey).value = Some(true)
-    operation
+        "datetime_hour")))),
+      true,
+      None)
   }
 
   // TODO: Use apply

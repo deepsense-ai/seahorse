@@ -34,6 +34,8 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
   lazy val categorizedDataFrame = CategoricalMapper(dataFrame, executionContext.dataFrameBuilder)
     .categorized(columns(1), columns(2))
 
+  val prefix = "prefix"
+
   "OneHotEncoder" should {
     "encode categorical columns" when {
       "one column is selected" in {
@@ -41,7 +43,7 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
           Set(columns(2)), withRedundancy = false, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
           categorizedDataFrame,
-          Seq(columns(2) + "_ABC"),
+          Seq(prefix + columns(2) + "_ABC"),
           Seq(Seq(0.0), Seq(0.0), Seq(0.0), Seq(1.0), Seq(1.0), Seq(null))
         )
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
@@ -51,7 +53,10 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
           Set(columns(1), columns(2)), withRedundancy = false, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
           categorizedDataFrame,
-          Seq(columns(1) + "_x,x", columns(1) + "_y_y", columns(2) + "_ABC"),
+          Seq(
+            prefix + columns(1) + "_x,x",
+            prefix + columns(1) + "_y_y",
+            prefix + columns(2) + "_ABC"),
           Seq(
             Seq(1.0, 0.0, 0.0),
             Seq(0.0, 1.0, 0.0),
@@ -70,7 +75,7 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
           Set(columns(2)), withRedundancy = true, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
           categorizedDataFrame,
-          Seq(columns(2) + "_ABC", columns(2) + "_abc"),
+          Seq(prefix + columns(2) + "_ABC", prefix + columns(2) + "_abc"),
           Seq(
             Seq(0.0, 1.0),
             Seq(0.0, 1.0),
@@ -80,19 +85,6 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
             Seq(null, null)
           )
         )
-        assertDataFramesEqual(resultDataFrame, expectedDataFrame)
-      }
-    }
-    "name output columns properly" when {
-      "default extensions are occupied" in {
-        val dataFrameWithSpecialName = enrichedDataFrame(
-          categorizedDataFrame, Seq(columns(2) + "_ABC"), Seq.fill(6)(Seq(1)))
-        val resultDataFrame = executeOneHotEncoder(
-          Set(columns(2)), withRedundancy = false, dataFrameWithSpecialName)
-        val expectedDataFrame = enrichedDataFrame(
-          dataFrameWithSpecialName,
-          Seq(columns(2) + "_ABC_1"),
-          Seq(Seq(0.0), Seq(0.0), Seq(0.0), Seq(1.0), Seq(1.0), Seq(null)))
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
       }
     }
@@ -112,11 +104,11 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
       selectedColumns: Set[String],
       withRedundancy: Boolean,
       dataFrame: DataFrame): DataFrame = {
-    val operation = OneHotEncoder()
-    operation.parameters.getColumnSelectorParameter(operation.selectedColumnsKey).value =
-      Some(MultipleColumnSelection(Vector(NameColumnSelection(selectedColumns))))
-    operation.parameters.getBooleanParameter(operation.withRedundantKey).value =
-      Some(withRedundancy)
+
+    val operation = OneHotEncoder(
+      MultipleColumnSelection(Vector(NameColumnSelection(selectedColumns))),
+      withRedundancy,
+      Some(prefix))
     operation.execute(executionContext)(Vector(dataFrame)).head.asInstanceOf[DataFrame]
   }
 
