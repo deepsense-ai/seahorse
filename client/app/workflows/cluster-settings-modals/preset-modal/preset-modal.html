@@ -102,7 +102,7 @@
           Cancel
         </button>
         <button type="submit" class="btn cluster-btn cluster-btn__blue"
-                ng-disabled="!controller.isEditingEnabled()">
+                ng-disabled="!controller.isEditingEnabled() || controller.isPresetNameUsed()">
           {{(controller.isSaving) ? 'Saving' : 'Save'}}
         </button>
       </div>
