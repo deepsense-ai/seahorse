@@ -17,9 +17,9 @@ chosen strategy.
 <table>
 <thead>
 <tr>
-<th style="width:15%">Port</th>
-<th style="width:15%">Type Qualifier</th>
-<th style="width:70%">Description</th>
+<th style="width:30%">Port</th>
+<th style="width:25%">Type Qualifier</th>
+<th style="width:45%">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -36,9 +36,9 @@ chosen strategy.
 <table>
 <thead>
 <tr>
-<th style="width:15%">Port</th>
-<th style="width:15%">Type Qualifier</th>
-<th style="width:70%">Description</th>
+<th style="width:30%">Port</th>
+<th style="width:25%">Type Qualifier</th>
+<th style="width:45%">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -55,9 +55,9 @@ chosen strategy.
 <table class="table">
 <thead>
 <tr>
-<th style="width:15%">Name</th>
-<th style="width:15%">Type</th>
-<th style="width:70%">Description</th>
+<th style="width:30%">Name</th>
+<th style="width:25%">Type</th>
+<th style="width:45%">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -74,7 +74,27 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 <td><code><a href="../parameters.html#single_choice">Choice</a></code></td>
 <td>
   Strategy of handling missing values in data.<br />
-  Possible values: <code>["remove row"]</code>
+  Possible values: <code>["remove row", "remove column", "replace with custom value", "replace with mode"]</code>
+</td>
+</tr>
+<tr>
+<td><code id="seed">value</code></td>
+<td><code><a href="../parameters.html#string">String</a></code></td>
+<td>
+  Available only if <code>strategy</code> is set to <code>"replace with custom value"</code>.
+  It contains a replacement for missing values. The replacement value should match selected columns'
+  type. Boolean values are represented as <code>true</code> or <code>false</code>.
+  Timestamps are represented in <code>yyyy-[m]m-[d]d hh:mm:ss[.f...]</code> format.
+  Example timestamp: <code>2015-03-30 15:25:00.0</code>.
+</td>
+</tr>
+<tr>
+<td><code id="seed">empty column strategy</code></td>
+<td><code><a href="../parameters.html#single_choice">Choice</a></code></td>
+<td>
+  Available only if <code>strategy</code> is set to <code>"replace with mode"</code>.
+  It defines whether to remove or retain columns, which contain only empty values.
+  Possible values: <code>["remove", "retain"]</code>
 </td>
 </tr>
 </tbody>
@@ -85,14 +105,26 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 <table class="table">
 <thead>
 <tr>
-<th style="width:20%">Name</th>
-<th style="width:80%">Description</th>
+<th style="width:30%">Name</th>
+<th style="width:70%">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>remove row</code></td>
-<td>Remove all rows containing at least one missing value.</td>
+<td>Removes all rows containing at least one missing value in selected column range.</td>
+</tr>
+<tr>
+<td><code>remove column</code></td>
+<td>Removes columns with at least one missing value. Only the columns from selected columns range are affected.</td>
+</tr>
+<tr>
+<td><code>replace with custom value</code></td>
+<td>Replaces empty values with custom value (within selected column range).</td>
+</tr>
+<tr>
+<td><code>replace with mode</code></td>
+<td>Replaces empty values within selected column range with the mode (most frequently occuring value in a column).</td>
 </tr>
 </tbody>
 </table>
