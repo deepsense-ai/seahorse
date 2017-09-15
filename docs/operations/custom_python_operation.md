@@ -7,16 +7,16 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes Python function provided by the user on a DataFrame connected to its input port.
-Returns result of Python function execution as a DataFrame.
+Executes a Python function provided by the user on a `DataFrame` connected to its input port.
+Returns result of the Python function as a `DataFrame`.
 
-The function that will be executed has to:
+The function that will be executed must:
 
-* have name <code>transform</code>,
+* be named <code>transform</code>,
 
-* take exactly one argument of type DataFrame,
+* take exactly one argument of type `DataFrame`,
 
-* return DataFrame.
+* return a `DataFrame`.
 
 #### Example Python code:
 {% highlight python %}
@@ -42,7 +42,7 @@ def transform(dataframe):
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame that will be passed to <code>transform</code> function.</td>
+<td>The <code>DataFrame</code> that will be passed to the <code>transform</code> function.</td>
 </tr>
 </tbody>
 </table>
