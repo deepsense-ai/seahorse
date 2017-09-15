@@ -6,7 +6,7 @@ import com.typesafe.sbt.SbtGit
 import com.typesafe.sbt.packager.docker._
 import sbt.ProjectRef
 
-name := "deepsense-sessionmanager"
+name := "seahorse-sessionmanager"
 
 libraryDependencies ++= Dependencies.sessionmanager
 resolvers ++= Dependencies.resolvers

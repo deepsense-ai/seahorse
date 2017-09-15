@@ -21,7 +21,7 @@ import scala.util.Random
 import collection.JavaConverters._
 import io.swagger.parser.SwaggerParser
 
-name := "deepsense-api"
+name := "seahorse-executor-api"
 description := "API used between subcomponents of Seahorse"
 
 lazy val javaSourceManaged = settingKey[File]("root directory of generated Java files")

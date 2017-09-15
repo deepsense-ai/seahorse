@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+name := "seahorse-executor-workflow-json"
 
 libraryDependencies ++= Dependencies.workflowJson
 

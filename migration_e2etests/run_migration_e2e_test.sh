@@ -43,7 +43,7 @@ fi;
 
 trap cleanup EXIT
 
-$PROJECT_ROOT/jenkins/scripts/sync_up_docker_images_with_git_repo.sh
+$PROJECT_ROOT/build/manage-docker.py -b --all
 
 WORKDIR=$($SCRIPT_DIR/prepare_env.sh -b $BACKEND_TAG -f $FRONTEND_TAG) || exit 1
 

@@ -7,7 +7,7 @@ import sbtbuildinfo.{BuildInfoKey, BuildInfoPlugin}
 
 // scalastyle:off
 
-name := "deepsense-commons"
+name := "seahorse-commons"
 
 libraryDependencies ++= Dependencies.commons
 resolvers ++= Dependencies.resolvers

@@ -14,6 +14,6 @@
   * limitations under the License.
   */
 
-name := "deepsense-seahorse-docgen"
+name := "seahorse-executor-docgen"
 
 libraryDependencies ++= Dependencies.docgen

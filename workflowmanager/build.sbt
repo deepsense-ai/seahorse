@@ -2,7 +2,7 @@ import com.typesafe.sbt.SbtGit
 
 // Copyright (c) 2015, CodiLime Inc.
 
-name := "deepsense-workflowmanager"
+name := "seahorse-workflowmanager"
 
 libraryDependencies ++= Dependencies.workflowmanager
 

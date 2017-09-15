@@ -1,6 +1,6 @@
 import com.typesafe.sbt.packager.docker.Cmd
 
-name := "deepsense-libraryservice"
+name := "seahorse-libraryservice"
 
 libraryDependencies ++= Dependencies.libraryservice
 

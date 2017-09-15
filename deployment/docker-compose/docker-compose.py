@@ -57,8 +57,8 @@ def main():
     parser.add_argument('--subnet', default='10.255.3.0/24',
                         help='Network address range to use for docker-compose containers',
                         action='store')
-    parser.add_argument('--docker-repo', default='docker-repo.deepsense.codilime.com/deepsense_io',
-                        help='Docker repository to use',
+    parser.add_argument('--docker-repo', default='',
+                        help='Docker repository to use, local by default',
                         action='store')
     parser.add_argument('--custom-frontend', default=None,
                         help='Custom frontend address passed to proxy: HOST:PORT',

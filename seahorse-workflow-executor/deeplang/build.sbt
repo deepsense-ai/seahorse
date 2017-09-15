@@ -20,7 +20,7 @@ import CommonSettingsPlugin._
 
 // scalastyle:off
 
-name := "deepsense-seahorse-deeplang"
+name := "seahorse-executor-deeplang"
 
 // Integration tests using Spark Clusters need jar
 (test in OurIT) := ((test in OurIT).dependsOn (assembly)).value

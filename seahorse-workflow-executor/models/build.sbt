@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-models"
+name := "seahorse-executor-models"
 
 libraryDependencies ++= Dependencies.models

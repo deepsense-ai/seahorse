@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-reportlib"
+name := "seahorse-executor-reportlib"
 
 libraryDependencies ++= Dependencies.reportlib

@@ -4,7 +4,7 @@ resolvers ++= Seq(
   Classpaths.sbtPluginReleases,
   "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/",
    Resolver.url("Deepsense Ivy Releases", url(
-     "http://artifactory.deepsense.codilime.com:8081/artifactory/deepsense-io-ivy"
+     "http://artifactory.deepsense.codilime.com:8081/artifactory/seahorse-io-ivy"
    ))(Resolver.defaultIvyPatterns)
 )
 

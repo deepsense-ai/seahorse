@@ -4,7 +4,7 @@ import org.scalastyle.sbt._
 
 // scalastyle:off
 
-name := "deepsense-backend"
+name := "seahorse-backend"
 
 lazy val shWeRepoDir = file("./seahorse-workflow-executor")
 

@@ -1,4 +1,4 @@
-name := "deepsense-schedulingmanager"
+name := "seahorse-schedulingmanager"
 
 libraryDependencies ++= Dependencies.schedulingmanager
 

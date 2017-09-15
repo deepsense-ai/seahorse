@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-sparkutils1.6.1"
+name := "seahorse-executor-sparkutils1.6.1"
 
 libraryDependencies ++= Dependencies.sparkutils("1.6.1")

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-sdk"
+name := "seahorse-executor-sdk"
 
 libraryDependencies ++= Dependencies.sdk

@@ -2,7 +2,7 @@ import com.typesafe.sbt.SbtGit
 
 enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
 
-imageNames in docker := Seq(ImageName(s"deepsense-schedulingmanager:${SbtGit.GitKeys.gitHeadCommit.value.get}"))
+imageNames in docker := Seq(ImageName(s"seahorse-schedulingmanager:${SbtGit.GitKeys.gitHeadCommit.value.get}"))
 
 // TODO SMTP_PORT should be in docker compose instead
 // 601xx ports are container-level and docker-compose level details concepts

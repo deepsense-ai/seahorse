@@ -15,7 +15,7 @@
  */
 import sbt.Keys._
 
-name := "deepsense-seahorse-commons"
+name := "seahorse-executor-commons"
 
 libraryDependencies ++= Dependencies.commons
 resolvers ++= Dependencies.resolvers

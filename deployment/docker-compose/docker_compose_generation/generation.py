@@ -60,9 +60,13 @@ class ServiceGeneration(object):
         self.service = service
 
     def generate(self, generation_config):
+        if generation_config.docker_repository != '':
+            repository_prefix = "{}/".format(generation_config.docker_repository)
+        else:
+            repository_prefix = ''
         properties = {
-            'image': '{}/deepsense-{}:{}'.format(
-                generation_config.docker_repository,
+            'image': '{}seahorse-{}:{}'.format(
+                repository_prefix,
                 self.service.image_name(),
                 generation_config.tag(self.service.repository())),
             'network_mode': self.service.network_mode or None,
