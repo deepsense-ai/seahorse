@@ -8,18 +8,6 @@
     - include: tasks/install_openjdk.yml
     - shell: usermod -a -G vagrant ubuntu
 
-- include: cassandra.yml
-
-- hosts: seahorse-vm
-  gather_facts: false
-  vars_files:
-    - vars/env.yml
-  tasks:
-    - name: Wait for Cassandra
-      wait_for: port=9042 delay=120 timeout=600
-    - name: Wait for clients to reconnect
-      wait_for: timeout=180
-
 - hosts: localhost
   gather_facts: false
   vars_files:
@@ -30,7 +18,7 @@
     - include: tasks/get_workflowexecutor_artifact_path.yml
 
 - include: generate_examples.yml
-- include: cassandra_migration.yml
+- include: h2_migration.yml
 - include: remove_examples.yml
 
 - include: workflowmanager.yaml

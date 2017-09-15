@@ -5,12 +5,9 @@ import os
 import uuid
 import time
 
-INSERT_FORMAT = "INSERT INTO workflows (id, created, updated, deleted, workflow) VALUES ({}, '{}', '{}', False, '{}');"
+INSERT_FORMAT = "INSERT INTO workflows (id, created, updated, deleted, workflow) VALUES ('{}', '{}', '{}', False, '{}');"
 
-created = time.strftime("%Y-%m-%d %H:%M:%S") + "+0000"
-
-print "USE workflowmanager;"
-print ""
+created = int(time.time() * 1000)
 
 for file in sorted(os.listdir("examples")):
   if file.endswith(".json"):

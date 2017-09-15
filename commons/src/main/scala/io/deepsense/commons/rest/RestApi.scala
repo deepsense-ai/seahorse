@@ -4,7 +4,6 @@
 
 package io.deepsense.commons.rest
 
-import com.datastax.driver.core.exceptions.NoHostAvailableException
 import org.jclouds.http.HttpResponseException
 import spray.http._
 import spray.json.DeserializationException
@@ -30,9 +29,6 @@ trait RestApiAbstractAuth
     ExceptionHandler {
       case e: HttpResponseException =>
         logger.error("Could not contact Keystone!", e)
-        complete(StatusCodes.ServiceUnavailable)
-      case e: NoHostAvailableException =>
-        logger.error("Could not contact Cassandra!", e)
         complete(StatusCodes.ServiceUnavailable)
       case e: NoRoleException =>
         logger.warn("A user does not have the expected role", e)

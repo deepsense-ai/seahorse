@@ -31,51 +31,9 @@ operations.api.prefix = "{{operations_api_prefix}}"
 models.api.prefix = "{{models_api_prefix}}"
 reports.api.prefix = "{{reports_api_prefix}}"
 
-cassandra {
-  host = "{{cassandra_host}}"
-  port = {{cassandra_port}}
-  reconnect.delay = {{cassandra_reconnect_delay}}
-  credentials {
-    user = "{{cassandra_user}}"
-    password = "{{cassandra_pass}}"
-  }
-  workflowmanager {
-    keyspace = "{{wm_cassandra_keyspace}}"
-    workflow {
-      table = "{{workflows_cassandra_table}}"
-    }
-    workflowresults {
-      table = "{{workflowresults_cassandra_table}}"
-    }
-    notebook {
-      table = "{{notebooks_cassandra_table}}"
-    }
-    workflowstate {
-      table = "{{workflowstate_cassandra_table}}"
-    }
-  }
-}
-
-deployment {
-  root = "/deepsense"
-
-  lib {
-    main {
-      location = ${deployment.root}/lib/graphexecutor.jar
-    }
-    deps {
-      location = ${deployment.root}/lib/graphexecutor-deps.jar
-    }
-  }
-
-  etc {
-    applicationconf {
-      name = "application.conf"
-      location = ${deployment.root}/etc/${deployment.etc.applicationconf.name}
-    }
-    log4j {
-      name = "log4j.xml"
-      location = ${deployment.root}/etc/${deployment.etc.log4j.name}
-    }
-  }
+h2 {
+  url = "jdbc:h2:file:{{wm_install_dir}}/workflowmanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
+  driver = org.h2.Driver
+  connectionPool = disabled
+  keepAliveConnection = true
 }

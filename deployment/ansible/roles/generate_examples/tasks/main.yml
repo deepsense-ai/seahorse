@@ -2,6 +2,6 @@
 
 ---
 - name: Generate inserts for examples
-  shell: python generate_examples.py > ../../../{{output_dir}}/9_insert_examples.cql
+  shell: python generate_examples.py > ../../../{{output_dir}}/9_insert_examples.sql
   args:
     chdir: roles/generate_examples/files

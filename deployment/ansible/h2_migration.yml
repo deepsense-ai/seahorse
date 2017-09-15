@@ -1,0 +1,27 @@
+# Copyright (c) 2016, CodiLime Inc.
+
+---
+- name: Download H2 package
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/deployment.yml
+    - vars/artifacts.yml
+    - vars/h2.yml
+  tasks:
+    - include: tasks/download_h2.yml
+
+- name: Perform H2 database migration
+  hosts: master
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/deployment.yml
+    - vars/h2.yml
+  roles:
+    - { role: h2_migration,
+        sql_dir: "{{ wm_sql_dir }}",
+        database: "{{ wm_install_dir }}/workflowmanager",
+        module: "workflowmanager"
+      }

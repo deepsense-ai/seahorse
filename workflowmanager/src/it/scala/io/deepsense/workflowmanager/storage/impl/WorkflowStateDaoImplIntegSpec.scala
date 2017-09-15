@@ -2,41 +2,34 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.storage.cassandra
+package io.deepsense.workflowmanager.storage.impl
 
 import scala.concurrent.{Await, Future}
 
-import com.datastax.driver.core.querybuilder.QueryBuilder
 import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.{Node, nodestate}
-import io.deepsense.models.workflows.{NodeState, EntitiesMap, Workflow}
+import io.deepsense.models.workflows.{EntitiesMap, NodeState, Workflow}
 
-class WorkflowStateDaoCassandraImplIntegSpec
+class WorkflowStateDaoImplIntegSpec
   extends StandardSpec
   with ScalaFutures
   with MockitoSugar
   with Matchers
   with BeforeAndAfter
-  with CassandraTestSupport with Logging {
+  with SlickTestSupport
+  with Logging {
 
-  override def cassandraTableName: String = "workflow_state"
-
-  override def cassandraKeySpaceName: String = "workflowmanager"
-
-  var workflowStateDao: WorkflowStateDaoCassandraImpl = _
+  var workflowStateDao: WorkflowStateDaoImpl = _
 
   before {
-    WorkflowStateStorageCreator.createWorkflowStateTableCommand(cassandraTableName, session)
-    workflowStateDao = new WorkflowStateDaoCassandraImpl(
-      cassandraTableName, session, new WorkflowStateRowMapper)
+    workflowStateDao = new WorkflowStateDaoImpl(db, driver)
   }
 
   private def aDate: DateTime = DateTimeConverter.now
@@ -70,7 +63,7 @@ class WorkflowStateDaoCassandraImplIntegSpec
       }
     }
 
-    "save state" in {
+    "save state" in withStored() {
       whenReady(workflowStateDao.save(workflowId1, state1)) { _ =>
         whenReady(workflowStateDao.get(workflowId1)) { state =>
           state shouldBe state1
@@ -112,16 +105,17 @@ class WorkflowStateDaoCassandraImplIntegSpec
       storedStates: (Workflow.Id, Map[Node.Id, NodeState])*)(
       testCode: => Any): Unit = {
 
+    Await.ready(workflowStateDao.create(), operationDuration)
+
     val s = Future.sequence(storedStates.map {
       case (id, state) => workflowStateDao.save(id, state)
     })
-
     Await.ready(s, operationDuration)
+
     try {
       testCode
     } finally {
-      session.execute(new QueryBuilder(session.getCluster).truncate(cassandraTableName))
+      Await.ready(workflowStateDao.drop(), operationDuration)
     }
   }
-
 }

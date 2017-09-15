@@ -2,9 +2,11 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.storage
+package io.deepsense.workflowmanager.storage.inmemory
 
 import com.google.inject.AbstractModule
+
+import io.deepsense.workflowmanager.storage.WorkflowStorage
 
 
 class WorkflowInMemoryStorageModule extends AbstractModule {

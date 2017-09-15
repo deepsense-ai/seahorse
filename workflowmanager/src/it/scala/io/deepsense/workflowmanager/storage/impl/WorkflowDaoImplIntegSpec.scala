@@ -2,11 +2,10 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.storage.cassandra
+package io.deepsense.workflowmanager.storage.impl
 
 import scala.concurrent.{Await, Future}
 
-import com.datastax.driver.core.querybuilder.QueryBuilder
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
@@ -14,7 +13,6 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 import spray.json.JsObject
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -22,21 +20,21 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.rest.CurrentBuild
+import io.deepsense.workflowmanager.storage.GraphJsonTestSupport
 
-class WorkflowDaoCassandraImplIntegSpec
+class WorkflowDaoImplIntegSpec
   extends StandardSpec
   with ScalaFutures
   with MockitoSugar
   with Matchers
   with BeforeAndAfter
-  with CassandraTestSupport
   with GraphJsonTestSupport
+  with SlickTestSupport
   with Logging {
 
-  var workflowsDao: WorkflowDaoCassandraImpl = _
+  var workflowsDao: WorkflowDaoImpl = _
   val catalog = mock[DOperationsCatalog]
   val graphReader: GraphReader = new GraphReader(catalog)
-  val rowMapper = new WorkflowRowMapper(graphReader)
 
   val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1")
   val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2")
@@ -53,12 +51,8 @@ class WorkflowDaoCassandraImplIntegSpec
 
   val storedWorkflows = Set(w1, w2)
 
-  def cassandraTableName: String = "workflows"
-  def cassandraKeySpaceName: String = "workflowmanager"
-
   before {
-    WorkflowTableCreator.create(cassandraTableName, session)
-    workflowsDao = new WorkflowDaoCassandraImpl(cassandraTableName, session, rowMapper)
+    workflowsDao = new WorkflowDaoImpl(db, driver, graphReader)
   }
 
   "WorkflowsDao" should {
@@ -97,14 +91,18 @@ class WorkflowDaoCassandraImplIntegSpec
 
   private def withStoredWorkflows(
       storedWorkflows: Set[(Workflow.Id, Workflow)])(testCode: => Any): Unit = {
+
+    Await.ready(workflowsDao.create(), operationDuration)
+
     val s = Future.sequence(storedWorkflows.map {
       case (id, workflow) => workflowsDao.create(id, workflow)
     })
     Await.ready(s, operationDuration)
+
     try {
       testCode
     } finally {
-      session.execute(new QueryBuilder(session.getCluster).truncate(cassandraTableName))
+      Await.ready(workflowsDao.drop(), operationDuration)
     }
   }
 

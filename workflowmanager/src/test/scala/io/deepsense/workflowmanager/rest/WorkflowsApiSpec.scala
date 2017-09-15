@@ -35,6 +35,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.storage._
+import io.deepsense.workflowmanager.storage.inmemory.InMemoryWorkflowStorage
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec

@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.storage
+package io.deepsense.workflowmanager.storage.inmemory
 
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.Future
@@ -10,6 +10,7 @@ import scala.concurrent.Future
 import org.joda.time.DateTime
 
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowmanager.storage.{WorkflowStorage, WorkflowWithDates}
 
 /**
  * Thread-safe, in-memory WorkflowStorage.

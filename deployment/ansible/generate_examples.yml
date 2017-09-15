@@ -6,5 +6,5 @@
   sudo: yes
   roles:
     - { role: generate_examples,
-        output_dir: "roles/cassandra_migration/files/workflowmanager"
+        output_dir: "roles/h2_migration/files/workflowmanager"
     }
