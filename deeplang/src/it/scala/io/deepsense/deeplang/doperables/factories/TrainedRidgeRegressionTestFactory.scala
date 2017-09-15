@@ -20,7 +20,7 @@ import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.RidgeRegressionModel
 
-import io.deepsense.deeplang.doperables.TrainedRidgeRegression
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
 
 trait TrainedRidgeRegressionTestFactory {
 

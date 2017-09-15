@@ -25,6 +25,8 @@ import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
+
 class TrainedRidgeRegressionIntegSpec extends TrainedRegressionIntegSpec[RidgeRegressionModel] {
 
   private val scaledVectors = Seq(

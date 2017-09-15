@@ -22,7 +22,8 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Scorable, Trainable, UntrainedRidgeRegression}
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.UntrainedRidgeRegression
+import io.deepsense.deeplang.doperables.{Scorable, Trainable}
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 

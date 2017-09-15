@@ -17,32 +17,30 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.linalg.{Vector => SparkVector, Vectors}
-import org.apache.spark.mllib.tree.model.RandomForestModel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.TrainedRandomForestClassification
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 
-class TrainedRandomForestClassificationIntegSpec extends DeeplangIntegTestSupport {
+abstract class TrainedTreeRegressionIntegSpec extends DeeplangIntegTestSupport {
 
-  private val inputVectors = Seq(
+  val inputVectors = Seq(
     Vectors.dense(1.5, 3.5, 0.0),
     Vectors.dense(1.6, 3.6, 1.0),
     Vectors.dense(1.7, 3.7, 2.0),
     Vectors.dense(0.0, 0.0, 0.0))
 
-  private val targetColumnName = "some_target"
+  val targetColumnName = "some_target"
 
-  "TrainedRandomForestClassification" should {
+  def trainedRegressionName: String
+
+  trainedRegressionName should {
     "produce dataframe with target column" in {
       val (scoredDataFrame, expectedDataFrame) = createScoredAndExpectedDataFrames(
         inputColumnNames = Seq("column1", "column2", "column3", "column4", "column5"),
@@ -76,9 +74,9 @@ class TrainedRandomForestClassificationIntegSpec extends DeeplangIntegTestSuppor
   }
 
   private def createScoredAndExpectedDataFrames(
-      inputColumnNames: Seq[String],
-      featureColumnNames: Seq[String],
-      targetColumnName: String): (DataFrame, DataFrame) = {
+    inputColumnNames: Seq[String],
+    featureColumnNames: Seq[String],
+    targetColumnName: String): (DataFrame, DataFrame) = {
 
     val inputRowsSeq: Seq[Row] = Seq(
       Row(1.5, 2.5, "a", 3.5, 0),
@@ -100,54 +98,42 @@ class TrainedRandomForestClassificationIntegSpec extends DeeplangIntegTestSuppor
     val expectedOutputDataFrame = createExpectedOutputDataFrame(
       inputSchema, inputRowsSeq, resultDoubles, targetColumnName)
 
-    val Classification: Scorable =
-      createMockTrainedClassification(featureColumnNames, targetColumnName, resultDoubles)
+    val regression: Scorable =
+      createMockTrainedRegression(featureColumnNames, targetColumnName, resultDoubles)
 
-    val resultDataframe = Classification.score(executionContext)(targetColumnName)(inputDataframe)
+    val resultDataframe = regression.score(executionContext)(targetColumnName)(inputDataframe)
 
     (resultDataframe, expectedOutputDataFrame)
   }
 
-  private def createMockTrainedClassification(
-      featureColumnNames: Seq[String],
-      targetColumnName: String,
-      resultDoubles: Seq[Double]): Scorable = {
-
-    val mockModel = createClassificationModelMock(
-      expectedInput = inputVectors,
-      output = resultDoubles)
-
-    TrainedRandomForestClassification(mockModel, featureColumnNames, targetColumnName)
-  }
-
-  private def createClassificationModelMock(
-      expectedInput: Seq[SparkVector],
-      output: Seq[Double]): RandomForestModel = {
-
-    val mockModel = mock[RandomForestModel]
-
-    when(mockModel.predict(any[RDD[SparkVector]]())).thenAnswer(new Answer[RDD[Double]] {
+  def constructRegressionModelMockAnswer(expectedInput: Seq[SparkVector], output: Seq[Double]) = {
+    new Answer[RDD[Double]] {
       override def answer(invocationOnMock: InvocationOnMock): RDD[Double] = {
         val receivedRDD = invocationOnMock.getArgumentAt(0, classOf[RDD[SparkVector]])
         receivedRDD.collect() shouldBe expectedInput
         sparkContext.parallelize(output)
       }
-    })
-    mockModel
+    }
   }
 
-  private def createExpectedOutputDataFrame(
-      inputSchema: StructType,
-      inputRows: Seq[Row],
-      expectedClassificationResult: Seq[Double],
-      expectedPredictionColumnName: String): DataFrame = {
+  def createMockTrainedRegression(
+    featureColumnNames: Seq[String],
+    targetColumnName: String,
+    resultDoubles: Seq[Double]): Scorable
 
-    val expectedOutputRowsSeq = inputRows.zip(expectedClassificationResult).map {
+  private def createExpectedOutputDataFrame(
+    inputSchema: StructType,
+    inputRows: Seq[Row],
+    expectedRegressionResult: Seq[Double],
+    expectedPredictionColumnName: String): DataFrame = {
+
+    val expectedOutputRowsSeq = inputRows.zip(expectedRegressionResult).map {
       case (row, double) => Row.fromSeq(row.toSeq :+ double)
     }
 
     val expectedOutputSchema: StructType = StructType(
       inputSchema.fields :+ StructField(expectedPredictionColumnName, DoubleType))
+
     createDataFrame(expectedOutputRowsSeq, expectedOutputSchema)
   }
 }

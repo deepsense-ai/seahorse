@@ -17,34 +17,39 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.linalg.{Vector => SparkVector}
-import org.apache.spark.mllib.tree.model.RandomForestModel
+import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel
 import org.apache.spark.rdd.RDD
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.TrainedRandomForestRegression
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.TrainedGradientBoostedTreesRegression
 
-class TrainedRandomForestRegressionIntegSpec extends TrainedTreeRegressionIntegSpec {
 
-  override def trainedRegressionName: String = "TrainedRandomForestRegression"
+class TrainedGradientBoostedTreesRegressionIntegSpec extends TrainedTreeRegressionIntegSpec {
+
+  override def trainedRegressionName: String = "TrainedGradientBoostedTreesRegression"
 
   override def createMockTrainedRegression(
     featureColumnNames: Seq[String],
     targetColumnName: String,
     resultDoubles: Seq[Double]): Scorable = {
 
+    val mockModelParameters = mock[GradientBoostedTreesParameters]
+
     val mockModel = createRegressionModelMock(
       expectedInput = inputVectors,
       output = resultDoubles)
 
-    TrainedRandomForestRegression(mockModel, featureColumnNames, targetColumnName)
+    TrainedGradientBoostedTreesRegression(
+      mockModelParameters, mockModel, featureColumnNames, targetColumnName)
   }
 
   private def createRegressionModelMock(
     expectedInput: Seq[SparkVector],
-    output: Seq[Double]): RandomForestModel = {
+    output: Seq[Double]): GradientBoostedTreesModel = {
 
-    val mockModel = mock[RandomForestModel]
+    val mockModel = mock[GradientBoostedTreesModel]
 
     when(mockModel.predict(any[RDD[SparkVector]]())).thenAnswer(
       constructRegressionModelMockAnswer(expectedInput, output))

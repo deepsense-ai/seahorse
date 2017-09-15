@@ -20,6 +20,8 @@ import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, Logis
 import org.apache.spark.mllib.regression.GeneralizedLinearAlgorithm
 import org.scalactic.EqualityPolicy.Spread
 
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{UntrainedLogisticRegression, TrainedLogisticRegression}
+
 class UntrainedLogisticRegressionIntegSpec
   extends UntrainedRegressionIntegSpec[LogisticRegressionModel] {
 

@@ -16,4 +16,12 @@
 
 package io.deepsense.deeplang.doperables
 
-abstract class RandomForestRegressor extends SupervisedModel with SingleTargetRegressor
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.TrainedGradientBoostedTreesRegression
+
+class TrainedGradientBoostedTreesRegressionSpec
+  extends ScorableSpec[TrainedGradientBoostedTreesRegression] {
+
+  def scorableName: String = "TrainedGradientBoostedTreesRegression"
+
+  def scorable: Scorable = new TrainedGradientBoostedTreesRegression()
+}

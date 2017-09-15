@@ -23,7 +23,8 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.{ClassificationReporter, Report, TrainedLogisticRegression}
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.TrainedLogisticRegression
+import io.deepsense.deeplang.doperables.{ClassificationReporter, Report}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 import io.deepsense.reportlib.model.ReportJsonProtocol._
 

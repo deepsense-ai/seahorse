@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.randomforest.regression
 
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.tree.model.RandomForestModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.{DOperableSaver, Report, Scorable, VectorScoring}
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
-case class TrainedRandomForestClassification(
+case class TrainedRandomForestRegression(
     model: RandomForestModel,
     featureColumns: Seq[String],
     targetColumn: String)
-  extends RandomForestClassifier
+  extends RandomForestRegressor
   with Scorable
   with VectorScoring
   with DOperableSaver {
 
   def this() = this(null, null, null)
 
-  override def toInferrable: DOperable = new TrainedRandomForestClassification()
+  override def toInferrable: DOperable = new TrainedRandomForestRegression()
 
   override def url: Option[String] = None
 
@@ -53,13 +54,13 @@ case class TrainedRandomForestClassification(
       .map{ case (a, b) => List(a, b) }
 
     val table = Table(
-      "Trained Random Forest Classification",
+      "Trained Random Forest Regression",
       model.toString,
       Some(List("Feature columns", "Target column")),
       None,
       rows)
 
-    Report(ReportContent("Report for TrainedRandomForestClassification", List(table)))
+    Report(ReportContent("Report for TrainedRandomForestRegression", List(table)))
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = ???

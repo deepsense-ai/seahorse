@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.logisticregression
 
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.{Report, Scorable, Trainable}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedLogisticRegression(

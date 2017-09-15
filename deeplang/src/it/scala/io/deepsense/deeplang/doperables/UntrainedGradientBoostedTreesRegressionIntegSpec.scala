@@ -16,22 +16,23 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.{UntrainedRandomForestRegression, TrainedRandomForestRegression}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.{UntrainedGradientBoostedTreesRegression, TrainedGradientBoostedTreesRegression}
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
 
-class UntrainedRandomForestRegressionIntegSpec extends UntrainedTreeRegressionIntegSpec {
+class UntrainedGradientBoostedTreesRegressionIntegSpec extends UntrainedTreeRegressionIntegSpec {
 
   override def constructUntrainedModel: Trainable =
-    UntrainedRandomForestRegression(mockUntrainedModel.asInstanceOf[RandomForestParameters])
+    UntrainedGradientBoostedTreesRegression(
+      mockUntrainedModel.asInstanceOf[GradientBoostedTreesParameters])
 
-  private val mockUntrainedModel: RandomForestParameters =
-    RandomForestParameters(1, "auto", "variance", 4, 100)
+  private val mockUntrainedModel: GradientBoostedTreesParameters =
+    GradientBoostedTreesParameters(1, "squared", "variance", 4, 100)
 
   override def validateResult(result: Scorable): Registration = {
-    val castedResult = result.asInstanceOf[TrainedRandomForestRegression]
+    val castedResult = result.asInstanceOf[TrainedGradientBoostedTreesRegression]
     castedResult.featureColumns shouldBe Seq("column1", "column0", "column4")
     castedResult.targetColumn shouldBe "column3"
   }
 
-  override def untrainedRegressionName: String = "UntrainedRandomForestRegression"
+  override def untrainedRegressionName: String = "UntrainedGradientBoostedTreesRegression"
 }

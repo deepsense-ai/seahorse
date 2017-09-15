@@ -19,8 +19,7 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
-
-import io.deepsense.deeplang.doperables.UntrainedLogisticRegression
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.UntrainedLogisticRegression
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 

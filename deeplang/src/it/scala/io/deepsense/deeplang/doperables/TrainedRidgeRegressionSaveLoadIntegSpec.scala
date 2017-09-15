@@ -20,6 +20,7 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.factories.TrainedRidgeRegressionTestFactory
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
 
 class TrainedRidgeRegressionSaveLoadIntegSpec
   extends DeeplangIntegTestSupport

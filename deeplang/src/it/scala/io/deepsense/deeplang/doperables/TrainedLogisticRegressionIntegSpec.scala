@@ -23,6 +23,8 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 import org.mockito.Mockito.{times, verify, when}
 
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.TrainedLogisticRegression
+
 class TrainedLogisticRegressionIntegSpec
   extends TrainedRegressionIntegSpec[LogisticRegressionModel] {
 

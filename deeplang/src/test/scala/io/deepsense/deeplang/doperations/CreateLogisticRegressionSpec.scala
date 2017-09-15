@@ -17,8 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
-
-import io.deepsense.deeplang.doperables.UntrainedLogisticRegression
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.UntrainedLogisticRegression
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
 class CreateLogisticRegressionSpec extends UnitSpec {

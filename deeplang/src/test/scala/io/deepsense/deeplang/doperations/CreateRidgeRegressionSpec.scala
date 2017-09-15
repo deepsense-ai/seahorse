@@ -17,8 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.mllib.regression.RidgeRegressionWithSGD
-
-import io.deepsense.deeplang.doperables.UntrainedRidgeRegression
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.UntrainedRidgeRegression
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
 class CreateRidgeRegressionSpec extends UnitSpec {

@@ -20,7 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.UntrainedRandomForestRegression
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.UntrainedRandomForestRegression
 
 case class CreateRandomForestRegression()
     extends { override val impurityOptions = Seq("variance") }

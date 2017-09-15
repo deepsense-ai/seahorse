@@ -22,7 +22,7 @@ import org.apache.spark.mllib.regression.RidgeRegressionWithSGD
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.UntrainedRidgeRegression
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.UntrainedRidgeRegression
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 
 case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegression] {

@@ -21,22 +21,20 @@ import org.apache.spark.sql.types._
 import org.scalactic.EqualityPolicy.Spread
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{UntrainedRandomForestClassification, TrainedRandomForestClassification}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
-import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
-import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext}
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
+import io.deepsense.deeplang.doperations.exceptions.{WrongColumnTypeException, ColumnsDoNotExistException, ColumnDoesNotExistException}
+import io.deepsense.deeplang.parameters.{NameSingleColumnSelection, NameColumnSelection, MultipleColumnSelection}
 
-class UntrainedRandomForestClassificationIntegSpec
-    extends DeeplangIntegTestSupport
-    with BeforeAndAfter{
+abstract class UntrainedTreeRegressionIntegSpec
+  extends DeeplangIntegTestSupport
+  with BeforeAndAfter {
 
-  def constructUntrainedModel: Trainable =
-    UntrainedRandomForestClassification(mockUntrainedModel.asInstanceOf[RandomForestParameters])
+  def constructUntrainedModel: Trainable
 
-  val mockUntrainedModel: RandomForestParameters =
-    RandomForestParameters(1, "auto", "gini", 4, 100)
+  def validateResult(result: Scorable): Registration
+
+  def untrainedRegressionName: String
 
   val featuresValues: Seq[Spread[Double]] = Seq(
     Spread(0.0, 0.0), -0.755 +- 0.01,
@@ -44,18 +42,12 @@ class UntrainedRandomForestClassificationIntegSpec
     Spread(0.0, 0.0), 1.133 +- 0.01
   )
 
-  def validateResult(result: Scorable): Registration = {
-    val castedResult = result.asInstanceOf[TrainedRandomForestClassification]
-    castedResult.featureColumns shouldBe Seq("column1", "column0", "column4")
-    castedResult.targetColumn shouldBe "column3"
-  }
-
-  "UntrainedRandomForestClassification" should {
+  untrainedRegressionName should {
 
     val inputRows: Seq[Row] = Seq(
-      Row(-2.0, "x", 0.0, 1000.0, 0),
-      Row(-2.0, "y", 0.0, 2000.0, 1),
-      Row(-2.0, "z", 1.0, 6000.0, 2))
+      Row(-2.0, "x", -2.22, 1000.0, 0),
+      Row(-2.0, "y", -22.2, 2000.0, 1),
+      Row(-2.0, "z", -2222.0, 6000.0, 2))
 
     val inputSchema: StructType = StructType(Seq(
       StructField("column1", DoubleType),
@@ -72,58 +64,58 @@ class UntrainedRandomForestClassificationIntegSpec
     "create model trained on given dataframe" in {
       val mockContext: ExecutionContext = mock[ExecutionContext]
 
-      val classification = constructUntrainedModel
+      val regression = constructUntrainedModel
       val parameters = Trainable.Parameters(
         featureColumns = Some(MultipleColumnSelection(
           Vector(NameColumnSelection(Set("column0", "column1", "column4"))))),
         targetColumn = Some(NameSingleColumnSelection("column3")))
 
-      val result = classification.train(mockContext)(parameters)(inputDataFrame)
+      val result = regression.train(mockContext)(parameters)(inputDataFrame)
       validateResult(result)
     }
 
     "throw an exception" when {
       "non-existing column was selected as target" in {
         intercept[ColumnDoesNotExistException] {
-          val classification = constructUntrainedModel
+          val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
               Vector(NameColumnSelection(Set("column0", "column1"))))),
             targetColumn = Some(NameSingleColumnSelection("not exists")))
-          classification.train(executionContext)(parameters)(inputDataFrame)
+          regression.train(executionContext)(parameters)(inputDataFrame)
         }
         ()
       }
-      "non-existing columns were selected as features" in {
+      "non-existing columns was selected as features" in {
         intercept[ColumnsDoNotExistException] {
-          val classification = constructUntrainedModel
+          val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
               Vector(NameColumnSelection(Set("not exists", "column1"))))),
             targetColumn = Some(NameSingleColumnSelection("column3")))
-          classification.train(executionContext)(parameters)(inputDataFrame)
+          regression.train(executionContext)(parameters)(inputDataFrame)
         }
         ()
       }
       "some selected features were neither numeric nor categorical" in {
         intercept[WrongColumnTypeException] {
-          val classification = constructUntrainedModel
+          val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
               Vector(NameColumnSelection(Set("column2", "column1"))))),
             targetColumn = Some(NameSingleColumnSelection("column3")))
-          classification.train(executionContext)(parameters)(inputDataFrame)
+          regression.train(executionContext)(parameters)(inputDataFrame)
         }
         ()
       }
-      "selected target was not numerical" in {
+      "selected target was not numeric" in {
         intercept[WrongColumnTypeException] {
-          val classification = constructUntrainedModel
+          val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
             featureColumns = Some(MultipleColumnSelection(
               Vector(NameColumnSelection(Set("column0", "column1"))))),
             targetColumn = Some(NameSingleColumnSelection("column2")))
-          classification.train(executionContext)(parameters)(inputDataFrame)
+          regression.train(executionContext)(parameters)(inputDataFrame)
         }
         ()
       }

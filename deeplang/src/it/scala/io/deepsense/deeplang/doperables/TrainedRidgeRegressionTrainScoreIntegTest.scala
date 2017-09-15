@@ -22,6 +22,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{UntrainedRidgeRegression, TrainedRidgeRegression}
 import io.deepsense.deeplang.doperations.FileToDataFrame.CSV
 import io.deepsense.deeplang.doperations._
 

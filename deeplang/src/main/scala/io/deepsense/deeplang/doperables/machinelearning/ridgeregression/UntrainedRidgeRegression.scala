@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.ridgeregression
 
 import org.apache.spark.mllib.feature.{StandardScaler, StandardScalerModel}
 import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.{Report, Scorable, Trainable}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedRidgeRegression(

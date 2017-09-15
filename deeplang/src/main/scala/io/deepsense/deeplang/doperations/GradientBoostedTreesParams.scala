@@ -17,24 +17,21 @@
 package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
+import io.deepsense.deeplang.parameters.{ChoiceParameter, ParametersSchema, RangeValidator, NumericParameter}
 
-import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
-import io.deepsense.deeplang.parameters.{ChoiceParameter, NumericParameter, ParametersSchema, RangeValidator}
+trait GradientBoostedTreesParams {
 
-trait RandomForestParams {
-
-  private val numTreesParameter = NumericParameter(
-    description = "Number of trees in the random forest",
+  private val numIterationsParameter = NumericParameter(
+    description = "Number of iterations",
     default = Some(1.0),
     required = true,
     validator = RangeValidator(begin = 1.0, end = 1000, step = Some(1.0)))
-  private val featureSubsetStrategyParameter = ChoiceParameter(
-    description = "Number of features to consider for splits at each node",
-    default = Some("auto"),
+  private val lossParameter = ChoiceParameter(
+    description = "Loss function",
+    default = Some(lossOptions(0)),
     required = true,
-    options = ListMap(
-      SparkRandomForest.supportedFeatureSubsetStrategies.toList.map(_ -> ParametersSchema()): _*))
+    options = ListMap(lossOptions.map(_ -> ParametersSchema()): _*))
   private val impurityParameter = ChoiceParameter(
     description = "Criterion used for information gain calculation",
     default = Some(impurityOptions(0)),
@@ -51,37 +48,38 @@ trait RandomForestParams {
     required = true,
     validator = RangeValidator(begin = 1.0, end = 100000, step = Some(1.0)))
 
+  val lossOptions: Seq[String]
+
   val impurityOptions: Seq[String]
 
   val parameters = ParametersSchema(
-    "num trees" -> numTreesParameter,
-    "feature subset strategy" -> featureSubsetStrategyParameter,
+    "num iterations" -> numIterationsParameter,
+    "loss" -> lossParameter,
     "impurity" -> impurityParameter,
     "max depth" -> maxDepthParameter,
     "max bins" -> maxBinsParameter
   )
 
-  def setParameters(
-      numTrees: Int,
-      featureSubsetStrategy: String,
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int): Unit = {
-    numTreesParameter.value = Some(numTrees)
-    featureSubsetStrategyParameter.value = Some(featureSubsetStrategy)
+  def setParameters(numIterations: Int,
+                    loss: String,
+                    impurity: String,
+                    maxDepth: Int,
+                    maxBins: Int): Unit = {
+    numIterationsParameter.value = Some(numIterations)
+    lossParameter.value = Some(loss)
     impurityParameter.value = Some(impurity)
     maxDepthParameter.value = Some(maxDepth)
     maxBinsParameter.value = Some(maxBins)
   }
 
-  def modelParameters: RandomForestParameters = {
-    val numTrees = numTreesParameter.value.get
-    val featureSubsetStrategy = featureSubsetStrategyParameter.value.get
+  def modelParameters: GradientBoostedTreesParameters = {
+    val numIterations = numIterationsParameter.value.get
+    val loss = lossParameter.value.get
     val impurity = impurityParameter.value.get
     val maxDepth = maxDepthParameter.value.get
     val maxBins = maxBinsParameter.value.get
 
-    RandomForestParameters(
-      numTrees.toInt, featureSubsetStrategy, impurity, maxDepth.toInt, maxBins.toInt)
+    GradientBoostedTreesParameters(
+      numIterations.toInt, loss, impurity, maxDepth.toInt, maxBins.toInt)
   }
 }

@@ -16,7 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.doperables.{RandomForestParameters, UntrainedRandomForestClassification}
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.UntrainedRandomForestClassification
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
 class CreateRandomForestClassificationSpec extends UnitSpec {

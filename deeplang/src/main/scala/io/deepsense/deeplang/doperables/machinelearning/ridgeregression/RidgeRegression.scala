@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.ridgeregression
 
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.TrainedLogisticRegression
+import io.deepsense.deeplang.doperables.{LinearModel, SingleTargetRegressor}
 
-class TrainedLogisticRegressionSpec extends ScorableSpec[TrainedLogisticRegression]{
-  def scorableName: String = "TrainedLogisticRegression"
-
-  def scorable: Scorable = new TrainedLogisticRegression()
-}
+abstract class RidgeRegression extends LinearModel with SingleTargetRegressor

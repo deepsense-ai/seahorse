@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.ridgeregression
 
 import scala.concurrent.Future
 
@@ -23,6 +23,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
 import io.deepsense.reportlib.model.{ReportContent, Table}

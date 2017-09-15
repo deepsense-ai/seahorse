@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.logisticregression
 
-case class RandomForestParameters(
-   numTrees: Int, featureSubsetStrategy: String, impurity: String, maxDepth: Int, maxBins: Int)
+import io.deepsense.deeplang.doperables.{BinaryClassifier, LinearModel}
+
+abstract class LogisticRegression extends LinearModel with BinaryClassifier

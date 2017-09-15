@@ -20,7 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.UntrainedRandomForestClassification
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.UntrainedRandomForestClassification
 
 case class CreateRandomForestClassification()
     extends { override val impurityOptions = Seq("gini", "entropy") }

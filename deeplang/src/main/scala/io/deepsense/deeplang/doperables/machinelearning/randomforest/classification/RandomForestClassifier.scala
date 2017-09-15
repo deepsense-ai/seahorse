@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.randomforest.classification
+
+import io.deepsense.deeplang.doperables.{BinaryClassifier, SupervisedModel}
 
 abstract class RandomForestClassifier extends SupervisedModel with BinaryClassifier

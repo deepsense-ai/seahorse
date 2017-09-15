@@ -16,21 +16,22 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.UntrainedRandomForestRegression
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.UntrainedGradientBoostedTreesRegression
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
-class CreateRandomForestRegressionSpec extends UnitSpec {
-  "CreateRandomForestRegression DOperation" should {
-    "create UntrainedRandomForestModel" in {
-      val createRandomForestRegression = CreateRandomForestRegression(1, "auto", "variance", 4, 100)
+class CreateGradientBoostedTreesRegressionSpec extends UnitSpec {
+  "CreateGradientBoostedTreesRegression DOperation" should {
+    "create UntrainedGradientBoostedTreesModel" in {
+      val createGradientBoostedTreesRegression =
+        CreateGradientBoostedTreesRegression(1, "squared", "variance", 4, 100)
       val context = mock[ExecutionContext]
-      val resultVector = createRandomForestRegression.execute(context)(Vector.empty)
-      val result = resultVector.head.asInstanceOf[UntrainedRandomForestRegression]
-      result.modelParameters shouldBe a [RandomForestParameters]
+      val resultVector = createGradientBoostedTreesRegression.execute(context)(Vector.empty)
+      val result = resultVector.head.asInstanceOf[UntrainedGradientBoostedTreesRegression]
+      result.modelParameters shouldBe a [GradientBoostedTreesParameters]
 
-      result.modelParameters.numTrees shouldBe 1
-      result.modelParameters.featureSubsetStrategy shouldBe "auto"
+      result.modelParameters.numIterations shouldBe 1
+      result.modelParameters.loss shouldBe "squared"
       result.modelParameters.impurity shouldBe "variance"
       result.modelParameters.maxDepth shouldBe 4
       result.modelParameters.maxBins shouldBe 100

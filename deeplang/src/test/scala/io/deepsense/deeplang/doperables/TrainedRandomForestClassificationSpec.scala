@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.TrainedRandomForestClassification
+
 class TrainedRandomForestClassificationSpec extends ScorableSpec[TrainedRandomForestClassification]{
   def scorableName: String = "TrainedRandomForestClassification"
 

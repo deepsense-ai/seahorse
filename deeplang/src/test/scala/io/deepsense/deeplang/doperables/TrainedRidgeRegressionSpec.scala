@@ -21,6 +21,7 @@ import org.apache.spark.mllib.linalg
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
 import io.deepsense.reportlib.model.{Table, ReportContent}
 
 class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{

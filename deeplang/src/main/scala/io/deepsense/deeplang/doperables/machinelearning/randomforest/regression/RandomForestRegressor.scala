@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.randomforest.regression
 
-abstract class RidgeRegression extends LinearModel with SingleTargetRegressor
+import io.deepsense.deeplang.doperables.{SingleTargetRegressor, SupervisedModel}
+
+abstract class RandomForestRegressor extends SupervisedModel with SingleTargetRegressor

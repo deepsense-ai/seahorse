@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression
 
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.TrainedLogisticRegression
+import io.deepsense.deeplang.doperables.{SingleTargetRegressor, SupervisedModel}
 
-class TrainedLogisticRegressionSpec extends ScorableSpec[TrainedLogisticRegression]{
-  def scorableName: String = "TrainedLogisticRegression"
-
-  def scorable: Scorable = new TrainedLogisticRegression()
-}
+abstract class GradientBoostedTreesRegressor extends SupervisedModel with SingleTargetRegressor

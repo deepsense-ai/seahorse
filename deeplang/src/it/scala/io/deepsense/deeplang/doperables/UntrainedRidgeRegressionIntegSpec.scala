@@ -19,6 +19,8 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.regression.{GeneralizedLinearAlgorithm, RidgeRegressionModel, RidgeRegressionWithSGD}
 import org.scalactic.EqualityPolicy.Spread
 
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{UntrainedRidgeRegression, TrainedRidgeRegression}
+
 class UntrainedRidgeRegressionIntegSpec
   extends UntrainedRegressionIntegSpec[RidgeRegressionModel] {
 

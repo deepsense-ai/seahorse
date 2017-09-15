@@ -24,6 +24,7 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{UntrainedLogisticRegression, TrainedLogisticRegression}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}

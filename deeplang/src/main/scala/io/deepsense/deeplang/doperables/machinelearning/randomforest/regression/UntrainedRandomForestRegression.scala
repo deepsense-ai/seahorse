@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.machinelearning.randomforest.regression
 
 import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
+import io.deepsense.deeplang.doperables.{CategoricalFeaturesExtractor, Report, Scorable, Trainable}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.reportlib.model.ReportContent
 
-case class UntrainedRandomForestClassification(
+case class UntrainedRandomForestRegression(
     modelParameters: RandomForestParameters)
-  extends RandomForestClassifier
+  extends RandomForestRegressor
   with Trainable
   with CategoricalFeaturesExtractor {
 
   def this() = this(null)
 
-  override def toInferrable: DOperable = new UntrainedRandomForestClassification()
+  override def toInferrable: DOperable = new UntrainedRandomForestRegression()
 
   override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
     override def apply(context: ExecutionContext)(
@@ -44,9 +46,8 @@ case class UntrainedRandomForestClassification(
         featureColumns, targetColumn)
       labeledPoints.cache()
 
-      val trainedModel = SparkRandomForest.trainClassifier(
+      val trainedModel = SparkRandomForest.trainRegressor(
         labeledPoints,
-        2,
         extractCategoricalFeatures(dataFrame, featureColumns),
         modelParameters.numTrees,
         modelParameters.featureSubsetStrategy,
@@ -54,7 +55,7 @@ case class UntrainedRandomForestClassification(
         modelParameters.maxDepth,
         modelParameters.maxBins)
 
-      val result = TrainedRandomForestClassification(trainedModel, featureColumns, targetColumn)
+      val result = TrainedRandomForestRegression(trainedModel, featureColumns, targetColumn)
 
       labeledPoints.unpersist()
       result
@@ -63,12 +64,12 @@ case class UntrainedRandomForestClassification(
     override def infer(context: InferContext)(
         parameters: Trainable.Parameters)(
         dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) = {
-      (DKnowledge(new TrainedRandomForestClassification()), InferenceWarnings.empty)
+      (DKnowledge(new TrainedRandomForestRegression()), InferenceWarnings.empty)
     }
   }
 
   override def report(executionContext: ExecutionContext): Report =
-    Report(ReportContent("Report for UntrainedRandomForestClassification"))
+    Report(ReportContent("Report for UntrainedRandomForestRegression"))
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
 }
