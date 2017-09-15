@@ -34,7 +34,7 @@ trait NodeInferenceImpl extends NodeInference {
 
     val NodeInferenceResult(inKnowledge, warnings, errors) = inputInferenceForNode
     val parametersValidationErrors = node.operation.validateParams
-    if (context.fullInference && !parametersValidationErrors.isEmpty) {
+    if (context.fullInference && parametersValidationErrors.nonEmpty) {
       createDefaultKnowledge(
         context,
         node.operation,
@@ -124,7 +124,7 @@ trait NodeInferenceImpl extends NodeInference {
    * @param predecessorKnowledge Inferred knowledge incoming to port.
    * @param portIndex Index of input port.
    * @param inPortType Type of input port.
-   * @param context
+   * @param context Inference context.
    */
   private def inputKnowledgeAndAccordanceForInputPort(
       context: InferContext,

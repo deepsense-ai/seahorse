@@ -16,19 +16,19 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
-import io.deepsense.deeplang.params.{Param, Params}
-import org.apache.spark.annotation.DeveloperApi
+import scala.language.reflectiveCalls
+
 import org.apache.spark.ml
-import org.apache.spark.ml.param.{DoubleParam, ParamMap}
+import org.apache.spark.ml.param.{BooleanParam, DoubleParam, ParamMap}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
-import scala.language.reflectiveCalls
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
+import io.deepsense.deeplang.params.{Param, Params}
 
 object EstimatorModelWrappersFixtures extends MockitoSugar {
 
@@ -69,7 +69,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
 
     override val uid: String = "estimatorId"
 
-    val numericParam = new DoubleParam(uid, "name", "description")
+    val numericParam = new DoubleParam(uid, "numeric", "description")
 
     def setNumericParam(value: Double): this.type = set(numericParam, value)
 
@@ -78,8 +78,16 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
       fitModel
     }
 
-    @DeveloperApi
+    val transformSchemaShouldThrowParam = new BooleanParam(uid, "throwing", "description")
+    setDefault(transformSchemaShouldThrowParam -> false)
+
+    def setTransformSchemaShouldThrow(b: Boolean): this.type =
+      set(transformSchemaShouldThrowParam, b)
+
     override def transformSchema(schema: StructType): StructType = {
+      if ($(transformSchemaShouldThrowParam)) {
+        throw exceptionThrownByTransformSchema
+      }
       require($(numericParam) == paramValueToSet)
       transformedSchema
     }
@@ -105,11 +113,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
       fitDataFrame
     }
 
-    @DeveloperApi
-    override def transformSchema(schema: StructType): StructType = {
-      require($(numericParam) == paramValueToSet)
-      transformedSchema
-    }
+    override def transformSchema(schema: StructType): StructType = ???
   }
 
   class ExampleSparkModelWrapper
@@ -126,4 +130,6 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
   val fitDataFrame = mock[SparkDataFrame]
   val transformedSchema = mock[StructType]
   val paramValueToSet = 12.0
+
+  val exceptionThrownByTransformSchema = new Exception("mock exception")
 }

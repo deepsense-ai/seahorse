@@ -16,8 +16,6 @@
 
 package io.deepsense.graph
 
-import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.inference.exceptions.{AllTypesNotCompilableException, NoInputEdgesException}
 import io.deepsense.deeplang.inference.warnings.SomeTypesNotCompilableWarning
@@ -44,7 +42,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         Vector(knowledgeA1)
       )
     }
-    "return reference with warnings when not all types are compatible" in {
+    "return inference with warnings when not all types are compatible" in {
       val inferenceResult = testInputInferenceForNode(0, nodeA1ToA, Vector(knowledgeA12))
       inferenceResult shouldBe NodeInferenceResult(
         Vector(DKnowledge(A1())),
@@ -76,14 +74,14 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
       "type for other" in {
       val predecessorId = Node.Id.randomId
       val nodePredecessorsEndpoints = IndexedSeq(None, Some(Endpoint(predecessorId, 0)))
-      val graphKnowlege = GraphKnowledge(Map(
+      val graphKnowledge = GraphKnowledge(Map(
         predecessorId -> NodeInferenceResult(
           Vector(knowledgeA1)
         )))
       val inferenceResult = nodeInference.inputInferenceForNode(
         nodeA1A2ToFirst,
         typeInferenceCtx,
-        graphKnowlege,
+        graphKnowledge,
         nodePredecessorsEndpoints)
       inferenceResult shouldBe NodeInferenceResult(
         Vector(knowledgeA1, knowledgeA2),
@@ -146,7 +144,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         errors = Vector(DOperationA1A2ToFirst.inferenceError)
       )
     }
-    "return parameter validation errors inference errors when fullInference = false" in {
+    "return parameter validation errors and inference errors when fullInference = false" in {
       val node = nodeA1A2ToFirst
       setInferenceErrorThrowing(node)
       setParametersInvalid(node)

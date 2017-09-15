@@ -16,10 +16,11 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.params.ParamMap
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
+import io.deepsense.deeplang.params.ParamMap
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
 class SparkModelWrapperSpec extends UnitSpec {
@@ -41,31 +42,21 @@ class SparkModelWrapperSpec extends UnitSpec {
       val wrapper = prepareWrapperWithParams()
       wrapper._transformSchema(inputSchema) shouldBe Some(transformedSchema)
     }
-    "throw an exception in transform when params are not set" in {
-      val wrapper = prepareWrapperWithoutParams()
-      an[Exception] shouldBe thrownBy(
-        wrapper._transform(mock[ExecutionContext], mockInputDataFrame()))
-    }
-    "throw an exception in transformSchema when params are not set" in {
+    "forward an exception thrown by transformSchema wrapped in DeepLangException" in {
       val inputSchema = mock[StructType]
-      val wrapper = prepareWrapperWithoutParams()
-      an[Exception] shouldBe thrownBy(wrapper._transformSchema(inputSchema))
+      val wrapper = prepareWrapperWithParams()
+      wrapper.parentEstimator.sparkEstimator.setTransformSchemaShouldThrow(true)
+      val e = intercept[SparkTransformSchemaException] {
+        wrapper._transformSchema(inputSchema)
+      }
+      e.exception shouldBe exceptionThrownByTransformSchema
     }
-  }
-
-  private def prepareWrapperAndEstimator = {
-    val model = new ExampleSparkModel()
-    val wrapper = new ExampleSparkModelWrapper().setModel(model)
-    (wrapper, new ExampleSparkEstimatorWrapper())
-  }
-
-  private def prepareWrapperWithoutParams(): ExampleSparkModelWrapper = {
-    val (wrapper, parentEstimator) = prepareWrapperAndEstimator
-    wrapper.setParent(parentEstimator)
   }
 
   private def prepareWrapperWithParams(): ExampleSparkModelWrapper = {
-    val (wrapper, parentEstimator) = prepareWrapperAndEstimator
+    val model = new ExampleSparkModel()
+    val wrapper = new ExampleSparkModelWrapper().setModel(model)
+    val parentEstimator = new ExampleSparkEstimatorWrapper()
     wrapper.setParent(parentEstimator).setNumericParamWrapper(paramValueToSet)
   }
 }

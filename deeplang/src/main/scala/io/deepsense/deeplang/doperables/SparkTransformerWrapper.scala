@@ -24,6 +24,7 @@ import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
@@ -53,6 +54,11 @@ abstract class SparkTransformerWrapper[T <: ml.Transformer](implicit tag: TypeTa
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
     val paramMap = sparkParamMap(sparkTransformer, schema)
     val transformerForInference = sparkTransformer.copy(paramMap)
-    Some(transformerForInference.transformSchema(schema))
+
+    try {
+      Some(transformerForInference.transformSchema(schema))
+    } catch {
+      case e: Exception => throw SparkTransformSchemaException(e)
+    }
   }
 }

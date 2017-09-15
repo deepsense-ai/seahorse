@@ -16,15 +16,15 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml
-import org.apache.spark.ml.param.{ParamMap, DoubleParam}
+import org.apache.spark.ml.param.{BooleanParam, DoubleParam, ParamMap}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
@@ -50,6 +50,15 @@ class SparkTransformerWrapperSpec extends UnitSpec {
       val inputSchema = mock[StructType]
       sparkTransformerWrapper._transformSchema(inputSchema) shouldBe
         Some(outputSchema)
+    }
+    "forward an exception thrown by transformSchema wrapped in DeepLangException" in {
+      val inputSchema = mock[StructType]
+      val wrapper = ExampleSparkTransformerWrapper().setParamWrapper(paramValueToSet)
+      wrapper.sparkTransformer.setTransformSchemaShouldThrow(true)
+      val e = intercept[SparkTransformSchemaException] {
+        wrapper._transformSchema(inputSchema)
+      }
+      e.exception shouldBe exceptionThrownByTransformSchema
     }
   }
 
@@ -92,8 +101,16 @@ object SparkTransformerWrapperSpec extends MockitoSugar {
       outputDataFrame
     }
 
-    @DeveloperApi
+    val shouldTransformSchemaThrowParam = new BooleanParam("id", "shouldThrow", "description")
+    setDefault(shouldTransformSchemaThrowParam, false)
+
+    def setTransformSchemaShouldThrow(b: Boolean): this.type =
+      set(shouldTransformSchemaThrowParam, b)
+
     override def transformSchema(schema: StructType): StructType = {
+      if ($(shouldTransformSchemaThrowParam)) {
+        throw exceptionThrownByTransformSchema
+      }
       require($(param) == paramValueToSet)
       outputSchema
     }
@@ -110,4 +127,6 @@ object SparkTransformerWrapperSpec extends MockitoSugar {
   val outputSchema = mock[StructType]
 
   val paramValueToSet = 12.0
+
+  val exceptionThrownByTransformSchema = new Exception("mock exception")
 }

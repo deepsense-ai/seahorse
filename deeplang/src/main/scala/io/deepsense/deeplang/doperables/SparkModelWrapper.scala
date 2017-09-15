@@ -22,6 +22,7 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.{ParamPair, Param}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
@@ -86,7 +87,11 @@ abstract class SparkModelWrapper[
     val sparkEstimatorWithParams = parentEstimator.sparkEstimator
       .copy(parentEstimator.sparkParamMap(parentEstimator.sparkEstimator, schema))
       .copy(sparkParamMap(parentEstimator.sparkEstimator, schema))
-    Some(sparkEstimatorWithParams.transformSchema(schema))
+    try {
+      Some(sparkEstimatorWithParams.transformSchema(schema))
+    } catch {
+      case e: Exception => throw SparkTransformSchemaException(e)
+    }
   }
 
   private def sparkParamMap(schema: StructType): ParamMap = sparkParamMap(model, schema)

@@ -56,7 +56,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
     }
     "successfully run _fit_infer() without schema" in {
       val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
-      val transformer = estimatorWithParams._fit_infer(None)
+      estimatorWithParams._fit_infer(None)
     }
   }
 }

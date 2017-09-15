@@ -27,18 +27,20 @@ class LogisticRegressionSmokeTest
 
   override val estimatorWrapper = new LogisticRegression()
 
+  import estimatorWrapper._
+
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    ParamPair(estimatorWrapper.elasticNetParameter, 0.8),
-    ParamPair(estimatorWrapper.fitIntercept, true),
-    ParamPair(estimatorWrapper.maxIterations, 2.0),
-    ParamPair(estimatorWrapper.regularizationParameter, 0.1),
-    ParamPair(estimatorWrapper.tolerance, 0.01),
-    ParamPair(estimatorWrapper.standardization, true),
-    ParamPair(estimatorWrapper.featuresColumn, NameSingleColumnSelection("myFeatures")),
-    ParamPair(estimatorWrapper.labelColumn, NameSingleColumnSelection("myLabel")),
-    ParamPair(estimatorWrapper.probabilityColumn, "prob"),
-    ParamPair(estimatorWrapper.rawPredictionColumn, "rawPred"),
-    ParamPair(estimatorWrapper.predictionColumn, "pred"),
-    ParamPair(estimatorWrapper.threshold, 0.3)
+    elasticNetParameter -> 0.8,
+    fitIntercept -> true,
+    maxIterations -> 2.0,
+    regularizationParameter -> 0.1,
+    tolerance -> 0.01,
+    standardization -> true,
+    featuresColumn -> NameSingleColumnSelection("myFeatures"),
+    labelColumn -> NameSingleColumnSelection("myLabel"),
+    probabilityColumn -> "prob",
+    rawPredictionColumn -> "rawPred",
+    predictionColumn -> "pred",
+    threshold -> 0.3
   )
 }

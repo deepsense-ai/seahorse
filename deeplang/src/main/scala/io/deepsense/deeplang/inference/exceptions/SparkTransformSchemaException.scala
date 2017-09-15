@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.spark.wrappers.transformers
+package io.deepsense.deeplang.inference.exceptions
 
-import io.deepsense.deeplang.params.ParamPair
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+import io.deepsense.deeplang.exceptions.DeepLangException
 
-class StringTokenizerSmokeTest extends AbstractTransformerWrapperSmokeTest {
-
-  override def className: String = "StringTokenizer"
-
-  override val transformer: StringTokenizer = new StringTokenizer()
-
-  override val transformerParams: Seq[ParamPair[_]] = Seq(
-    transformer.inputColumn -> NameSingleColumnSelection("s"),
-    transformer.outputColumn -> "tokenized"
-  )
-}
+case class SparkTransformSchemaException(exception: Exception)
+  extends DeepLangException(exception.getMessage, cause = exception)

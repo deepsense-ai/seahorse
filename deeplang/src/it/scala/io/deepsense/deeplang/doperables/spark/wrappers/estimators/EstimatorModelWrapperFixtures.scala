@@ -16,10 +16,8 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper, SparkModelWrapper}
-import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
-import io.deepsense.deeplang.params.{Param, Params}
+import scala.language.reflectiveCalls
+
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml
 import org.apache.spark.ml.Estimator
@@ -27,7 +25,10 @@ import org.apache.spark.ml.param.{Param => SparkParam, ParamMap}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 
-import scala.language.reflectiveCalls
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper, SparkModelWrapper}
+import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
+import io.deepsense.deeplang.params.{Param, Params}
 
 object EstimatorModelWrapperFixtures {
 
