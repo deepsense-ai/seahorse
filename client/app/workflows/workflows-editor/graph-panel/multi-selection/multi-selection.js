@@ -7,7 +7,7 @@
 'use strict';
 
 /* @ngInject */
-function MultiSelection(GraphNode, MouseEvent, ExperimentService,
+function MultiSelection(GraphNode, MouseEvent, WorkflowService,
                         $document, $timeout, $rootScope,
                         debounce) {
   return {
@@ -33,7 +33,7 @@ function MultiSelection(GraphNode, MouseEvent, ExperimentService,
       };
       var inSelection = [];
       var nodeDimensions;
-      var experimentNodes;
+      var workflowNodes;
       var disabled;
 
       var startPainting = function startPainting (event) {
@@ -46,7 +46,7 @@ function MultiSelection(GraphNode, MouseEvent, ExperimentService,
         }
 
         startPoint = MouseEvent.getEventOffsetOfElement(event, element[0]);
-        experimentNodes = experimentNodes || _.map(ExperimentService.getExperiment().getNodes(),
+        workflowNodes = workflowNodes || _.map(WorkflowService.getWorkflow().getNodes(),
           node => {
             return {
               x: node.x,
@@ -93,7 +93,7 @@ function MultiSelection(GraphNode, MouseEvent, ExperimentService,
         });
 
         // TODO is it leak of memory?
-        experimentNodes = null;
+        workflowNodes = null;
 
         $document.off('mousemove', paint);
       };
@@ -135,7 +135,7 @@ function MultiSelection(GraphNode, MouseEvent, ExperimentService,
       };
 
       var selectNodes = function selectNodes (selectionElementDimensions) {
-        _.each(experimentNodes, function (node) {
+        _.each(workflowNodes, function (node) {
           if (
             inRange(
               [node.x, node.x + nodeDimensions.width],

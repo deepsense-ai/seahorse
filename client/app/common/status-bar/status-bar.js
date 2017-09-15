@@ -4,7 +4,7 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentEditorStatusBar($rootScope) {
+function WorkflowEditorStatusBar($rootScope) {
   return {
     restrict: 'E',
     templateUrl: 'app/common/status-bar/status-bar.html',
@@ -12,15 +12,15 @@ function ExperimentEditorStatusBar($rootScope) {
     scope: {},
     link: function (scope) {
 
-      scope.exportExperiment = function exportExperiment () {
-        $rootScope.$broadcast('Experiment.EXPORT');
+      scope.exportWorkflow = function exportWorkflow () {
+        $rootScope.$broadcast('Workflow.EXPORT');
       };
 
-      scope.saveExperiment = function saveExperiment () {
-        $rootScope.$broadcast('Experiment.SAVE');
+      scope.saveWorkflow = function saveWorkflow () {
+        $rootScope.$broadcast('Workflow.SAVE');
       };
 
-      scope.clearExperiment = function clearExperiment () {
+      scope.clearWorkflow = function clearWorkflow () {
         $rootScope.$broadcast('StatusBar.CLEAR_CLICK');
       };
     }
@@ -28,5 +28,5 @@ function ExperimentEditorStatusBar($rootScope) {
 }
 
 exports.inject = function (module) {
-  module.directive('experimentEditorStatusBar', ExperimentEditorStatusBar);
+  module.directive('workflowEditorStatusBar', WorkflowEditorStatusBar);
 };

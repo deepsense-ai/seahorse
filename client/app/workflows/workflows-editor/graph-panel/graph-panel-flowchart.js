@@ -6,7 +6,7 @@
 'use strict';
 
 /* @ngInject */
-function FlowChartBox() {
+function FlowChartBox($timeout) {
   return {
     restrict: 'E',
     controller: FlowChartBoxController,
@@ -17,9 +17,15 @@ function FlowChartBox() {
     link: (scope, element) => {
       element.on('click', function (event) {
         if (event.target.classList.contains('flowchart-paint-area')) {
-          scope.experiment.unselectNode();
+          scope.workflow.unselectNode();
           scope.$apply();
         }
+      });
+
+      scope.$applyAsync(() => {
+        $timeout(() => {
+          scope.$emit('FlowChartBox.Rendered');
+        }, 0, false);
       });
     }
   };
@@ -27,7 +33,7 @@ function FlowChartBox() {
 
 /* @ngInject */
 function FlowChartBoxController($scope, $element, $window,
-                                ExperimentService, ReportOptionsService,
+                                WorkflowService, ReportOptionsService,
                                 GraphPanelRendererService,
                                 GraphNode, Edge) {
   var that = this;
@@ -36,9 +42,13 @@ function FlowChartBoxController($scope, $element, $window,
   internal.contextMenuState = 'invisible';
   internal.contextMenuPosition = {};
 
-  internal.closeContextMenu = function closeContextMenu () {
+  internal.rawCloseContextMenu = function rawCloseContextMenu () {
     $scope.$broadcast('ContextMenu.CLOSE');
     internal.contextMenuState = 'invisible';
+  };
+
+  internal.closeContextMenu = function closeContextMenu () {
+    internal.rawCloseContextMenu();
     $scope.$digest();
   };
 
@@ -66,7 +76,7 @@ function FlowChartBoxController($scope, $element, $window,
   internal.handlePortRightClick = function handlePortRightClick (event, data) {
     let port = data.reference;
     let nodeId = port.getParameter('nodeId');
-    let currentNode = ExperimentService.getExperiment().getNodes()[nodeId];
+    let currentNode = WorkflowService.getWorkflow().getNodes()[nodeId];
 
     ReportOptionsService.setCurrentPort(port);
     ReportOptionsService.setCurrentNode(currentNode);
@@ -112,11 +122,7 @@ function FlowChartBoxController($scope, $element, $window,
 
   $scope.$on('ZOOM.ZOOM_PERFORMED', (event, data) => {
     GraphPanelRendererService.setZoom(data.zoomRatio);
-    internal.closeContextMenu();
-  });
-
-  $scope.$on('Drag.START', (event, dragEvent, dragEventElement) => {
-
+    internal.rawCloseContextMenu();
   });
 
   $scope.$on('Drop.EXACT', (event, dropEvent, droppedElement, droppedElementType) => {

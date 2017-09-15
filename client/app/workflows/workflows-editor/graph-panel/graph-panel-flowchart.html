@@ -8,12 +8,11 @@
        droppable-type="exact"
        droppable-exact-type="graphNode"
        droppable-highlight="parent">
-    <graph-node on-render-finish
-                jsplumb-draggable
+    <graph-node jsplumb-draggable
                 keyboard
                 node="node"
-                ng-class="{'selected-node': experiment.getSelectedNode().id === nodeId }"
-                ng-repeat="(nodeId, node) in experiment.getExperiment().getNodes()">
+                ng-class="{'selected-node': workflow.getSelectedNode().id === nodeId }"
+                ng-repeat="(nodeId, node) in workflow.getWorkflow().getNodes()">
     </graph-node>
   </div>
 
@@ -39,8 +38,4 @@
       </span>
     </sticky-window>
   </div>
-
-  <deepsense-loading-spinner-processing
-    ng-if="experiment.getExperiment().getStatus() === 'status_running'"
-    bg="true">Processing</deepsense-loading-spinner-processing>
 </div>

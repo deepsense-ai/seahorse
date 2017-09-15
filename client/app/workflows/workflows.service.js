@@ -1,65 +1,61 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
-
 'use strict';
 
 /* @ngInject */
-function ExperimentService(OperationsHierarchyService, Workflow) {
-  let that = this;
-  let internal = {
-    experiment: null
-  };
+function WorkflowService(Workflow, OperationsHierarchyService) {
+  let internal = {};
 
-  that.createExperiment = function createExperiment(data, operations) {
-    let experiment = new Workflow();
+  class WorkflowServiceClass {
+    constructor() {
+      internal.workflow = null;
+    }
 
-    experiment.setData({
-      'id': data.id,
-      'name': data.thirdPartyData.gui.name,
-      'description': data.thirdPartyData.gui.description
-    });
-    experiment.createNodes(data.workflow.nodes, operations, data.thirdPartyData);
-    experiment.createEdges(data.workflow.connections);
-    //experiment.updateState(data.experiment.state);
-    experiment.updateEdgesStates(OperationsHierarchyService);
+    createWorkflow(workflowData, operations) {
+      let workflow = new Workflow();
 
-    return experiment;
-  };
+      workflow.setData({
+        'id': workflowData.id,
+        'name': workflowData.thirdPartyData.gui.name,
+        'description': workflowData.thirdPartyData.gui.description
+      });
+      workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
+      workflow.createEdges(workflowData.workflow.connections);
+      // TODO
+      //workflow.updateState(workflowData.workflow.state);
+      workflow.updateEdgesStates(OperationsHierarchyService);
 
-  that.getExperiment = function getExperiment () {
-    return internal.experiment;
-  };
+      internal.workflow = workflow;
+    }
 
-  that.setExperiment = function storeExperiment (experiment) {
-    internal.experiment = experiment;
-  };
+    getWorkflow () {
+      return internal.workflow;
+    }
 
-  that.clearGraph = function clearGraph() {
-    internal.experiment.clearGraph();
-  };
+    clearGraph() {
+      internal.workflow.clearGraph();
+    }
 
-  that.clearExperiment = function clearExperiment() {
-    internal.experiment = null;
-  };
+    clearWorkflow() {
+      internal.workflow = null;
+    }
 
-  that.updateTypeKnowledge = function updateTypeKnowledge (data) {
-    internal.experiment.updateTypeKnowledge(data.experiment.knowledge);
-  };
+    updateTypeKnowledge (workflowData) {
+      internal.workflow.updateTypeKnowledge(workflowData.workflow.knowledge);
+    }
 
-  that.updateEdgesStates = function () {
-    internal.experiment.updateEdgesStates(OperationsHierarchyService);
-  };
+    updateEdgesStates() {
+      internal.workflow.updateEdgesStates(OperationsHierarchyService);
+    }
 
-  that.experimentIsSet = function experimentIsSet () {
-    return !_.isNull(internal.experiment);
-  };
+    workflowIsSet () {
+      return !_.isNull(internal.workflow);
+    }
+  }
 
-  return that;
+  return new WorkflowServiceClass();
 }
 
-exports.function = ExperimentService;
+exports.function = WorkflowService;
 
 exports.inject = function (module) {
-  module.service('ExperimentService', ExperimentService);
+  module.factory('WorkflowService', WorkflowService);
 };

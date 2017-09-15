@@ -1,20 +1,18 @@
-<div class="experiment-container animated fadeIn">
+<div class="workflow-container animated fadeIn">
   <operation-catalogue
-    catalog-collection="::experiment.getCatalog()"
-    freeze="{{experiment.getExperiment().getStatus()}}"
-    freeze-on="status_running"
+    catalog-collection="::workflow.catalog"
+    freeze="false"
     custom-scroll-bar
-    draggable="true"
+    draggable="false"
     draggable-type="frame">
   </operation-catalogue>
+
   <flow-chart-box></flow-chart-box>
+
   <deepsense-operation-attributes
-    node="experiment.getSelectedNode()"
-    ng-if="experiment.getSelectedNode() && experiment.getExperiment().getStatus() !== 'status_running'"
-    freeze="{{experiment.getExperiment().getStatus()}}"
-    freeze-on="status_running"
-    freeze-animation-in="fadeInDown"
-    freeze-animation-out="fadeOutUp"
+    node="workflow.getSelectedNode()"
+    ng-if="workflow.getSelectedNode()"
+    freeze="false"
     draggable="true"
     draggable-type="frame">
   </deepsense-operation-attributes>

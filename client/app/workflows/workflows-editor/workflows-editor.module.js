@@ -8,7 +8,6 @@
 
 exports.inject = function (module) {
   require('./graph-panel/graph-panel.module.js').inject(module);
-  require('./freeze/freeze.js').inject(module);
 
   require('./workflows-editor.controller.js').inject(module);
 };

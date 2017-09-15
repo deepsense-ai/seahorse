@@ -137,13 +137,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     jsPlumb.repaintEverything();
   };
 
-  that.setExperiment = function setExperiment(experiment) {
-    internal.experiment = experiment;
+  that.setWorkflow = function setWorkflow(workflow) {
+    internal.workflow = workflow;
   };
 
-  that.clearExperiment = function clearExperiment() {
+  that.clearWorkflow = function clearWorkflow() {
     internal.reset();
-    internal.experiment = null;
+    internal.workflow = null;
   };
 
   that.removeNode = function removeNode(nodeId) {
@@ -152,7 +152,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
   };
 
   that.renderPorts = function renderPorts() {
-    let nodes = internal.experiment.getNodes();
+    let nodes = internal.workflow.getNodes();
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         let node = internal.getNodeById(nodeId);
@@ -164,7 +164,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
   that.renderEdges = function renderEdges() {
     jsPlumb.detachEveryConnection();
-    let edges = internal.experiment.getEdges();
+    let edges = internal.workflow.getEdges();
     let outputPrefix = 'output';
     let inputPrefix = 'input';
     for (let id in edges) {
@@ -184,7 +184,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
   that.changeEdgesPaintStyles = function changeEdgesStates() {
     let connections = jsPlumb.getConnections();
-    let edges = internal.experiment.getEdges();
+    let edges = internal.workflow.getEdges();
     for (let id in edges) {
       let edge = edges[id];
       let connection = _.find(connections, (connection) => connection.getParameter('edgeId') === edge.id );
@@ -285,13 +285,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
             'portIndex': info.targetEndpoint.getParameter('portIndex')
           }
         };
-      let edge = internal.experiment.createEdge(data);
+      let edge = internal.workflow.createEdge(data);
 
       info.connection.setParameter('edgeId', edge.id);
 
       $rootScope.$broadcast(Edge.CREATE, {edge: edge});
 
-      if (DeepsenseCycleAnalyser.cycleExists(internal.experiment)) {
+      if (DeepsenseCycleAnalyser.cycleExists(internal.workflow)) {
         NotificationService.showError({
           title: 'Error',
           message: 'You cannot create a cycle in the graph!'
@@ -299,7 +299,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
 
         $timeout(() => {
           $rootScope.$broadcast(Edge.REMOVE, {
-            edge: internal.experiment.getEdgeById(info.connection.getParameter('edgeId'))
+            edge: internal.workflow.getEdgeById(info.connection.getParameter('edgeId'))
           });
 
           jsPlumb.detach(info.connection);
@@ -308,7 +308,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
-      let edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
+      let edge = internal.workflow.getEdgeById(info.connection.getParameter('edgeId'));
       if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
         $rootScope.$broadcast(Edge.REMOVE, {
           edge: edge
@@ -317,7 +317,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     });
 
     jsPlumb.bind('connectionMoved', (info) => {
-      let edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
+      let edge = internal.workflow.getEdgeById(info.connection.getParameter('edgeId'));
       if (edge) {
         $rootScope.$broadcast(Edge.REMOVE, {
           edge: edge

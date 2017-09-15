@@ -12,9 +12,9 @@
           ng-hide="navigationController.getTitle() === 'Home'"
           ng-controller="NavigationController as navigationController">
     <navigation-bar title="navigationController.getTitle()"></navigation-bar>
-    <experiment-editor-status-bar status="experiment.getExperiment().getStatus()"
+    <workflow-editor-status-bar status="experiment.getExperiment().getStatus()"
       ng-show="stateData.dataIsLoaded">
-    </experiment-editor-status-bar>
+    </workflow-editor-status-bar>
   </header>
   <deepsense-loading-spinner-lg ng-cloak ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
   <ui-view id="wrapper"

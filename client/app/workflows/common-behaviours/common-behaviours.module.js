@@ -11,7 +11,6 @@ exports.inject = function (module) {
   require('./common-draggable.js').inject(module);
   require('./common-droppable.js').inject(module);
   require('./common-drag-and-drop.service.js').inject(module);
-  require('./common-render-finish.js').inject(module);
   require('./common-keyboard.js').inject(module);
   require('./common-stick-onscroll.js').inject(module);
   require('./common-context-menu-blocker.js').inject(module);

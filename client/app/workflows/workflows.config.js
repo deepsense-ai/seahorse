@@ -1,7 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
-
 'use strict';
 
 /* @ngInject */
@@ -10,9 +6,9 @@ function WorkflowsConfig($stateProvider) {
     state('workflows_editor', {
       url: '/workflows/editor/:id',
       templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
-      controller: 'ExperimentController as experiment',
+      controller: 'WorkflowsController as workflow',
       resolve: {
-        experiment: /* @ngInject */($q, $rootScope, $stateParams, Operations, OperationsHierarchyService, WorkflowsApiClient) => {
+        workflow: /* @ngInject */($q, $rootScope, $stateParams, Operations, OperationsHierarchyService, WorkflowsApiClient) => {
           let deferred = $q.defer();
 
           Operations.load().
@@ -23,7 +19,7 @@ function WorkflowsConfig($stateProvider) {
               deferred.resolve(data);
             }).
             catch(() => {
-              $rootScope.stateData.errorMessage = 'Could not load the experiment';
+              $rootScope.stateData.errorMessage = 'Could not load the workflow';
               deferred.reject();
             });
 

@@ -4,100 +4,71 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentController(experiment,
-                              $timeout, $scope,
-                              GraphNode, Edge,
-                              PageService, Operations, GraphPanelRendererService, ExperimentService,
-                              WorkflowsApiClient, UUIDGenerator, MouseEvent,
-                              DeepsenseNodeParameters, FreezeService) {
-  const RUN_STATE_CHECK_INTERVAL = 2000;
-
+function WorkflowsController(
+  workflow,
+  $scope, $timeout,
+  GraphNode, Edge,
+  PageService, Operations, GraphPanelRendererService, WorkflowService,
+  WorkflowsApiClient, UUIDGenerator, MouseEvent,
+  DeepsenseNodeParameters
+) {
   let that = this;
   let internal = {};
 
-  internal.selectedNode = null;
+  _.assign(that, {
+    selectedNode: null,
+    catalog: Operations.getCatalog()
+  });
 
   internal.init = function init() {
-    PageService.setTitle('Experiment: ' + experiment.thirdPartyData.gui.name);
+    PageService.setTitle('Workflow: ' + workflow.thirdPartyData.gui.name);
 
-    ExperimentService.setExperiment(ExperimentService.createExperiment(experiment, Operations.getData()));
-    GraphPanelRendererService.setExperiment(ExperimentService.getExperiment());
+    WorkflowService.createWorkflow(workflow, Operations.getData());
+    GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
     GraphPanelRendererService.setZoom(1.0);
 
     //internal.updateAndRerenderEdges(experiment);
-  };
 
-  internal.handleExperimentStateChange = function handleExperimentStateChange(data) {
-    if (ExperimentService.experimentIsSet()) {
-      let experimentState;
-      ExperimentService.getExperiment().updateState(data.experiment.state);
-      experimentState = ExperimentService.getExperiment().getStatus();
-      that.checkExperimentState();
-      FreezeService.handleExperimentStateChange(experimentState);
-    }
+    $scope.$on('FlowChartBox.Rendered', () => {
+      $timeout(() => {
+        that.updateFlowchartBox();
+      }, 0, false);
+    });
   };
 
   internal.rerenderEdges = function rerenderEdges() {
-    ExperimentService.updateEdgesStates();
+    WorkflowService.updateEdgesStates();
     GraphPanelRendererService.changeEdgesPaintStyles();
   };
 
   internal.updateAndRerenderEdges = function updateAndRerenderEdges(data) {
-    ExperimentService.updateTypeKnowledge(data);
+    WorkflowService.updateTypeKnowledge(data);
     internal.rerenderEdges();
   };
 
-  internal.saveExperiment = function saveExperiment() {
-    let serializedExperiment = ExperimentService.getExperiment().serialize();
+  internal.saveWorkflow = function saveWorkflow() {
+    let serializedWorkflow = WorkflowService.getWorkflow().serialize();
     return WorkflowsApiClient.
-      saveData({
-        'experiment': serializedExperiment
-      }).
+      updateWorkflow(serializedWorkflow).
       then((result) => {
-        if (ExperimentService.experimentIsSet()) {
-          internal.handleExperimentStateChange(result);
-          internal.updateAndRerenderEdges(result);
-          $scope.$emit('Experiment.SAVE.SUCCESS');
+        if (WorkflowService.workflowIsSet()) {
+          //internal.updateAndRerenderEdges(result);
+          $scope.$emit('Workflow.SAVE.SUCCESS');
         }
       }, (error) => {
-        $scope.$emit('Experiment.SAVE.ERROR', error);
+        $scope.$emit('Workflow.SAVE.ERROR', error);
       });
   };
 
-  internal.loadExperimentState = function loadExperimentState() {
-    if (ExperimentService.experimentIsSet()) {
-      WorkflowsApiClient.
-        getData(ExperimentService.getExperiment().getId()).
-        then((data) => {
-          if (ExperimentService.experimentIsSet()) {
-            internal.handleExperimentStateChange(data);
-            internal.updateAndRerenderEdges(data);
-          }
-        }, (error) => {
-          console.error('experiment fetch state error', error);
-        });
-    }
-  };
-
-  that.onRenderFinish = function onRenderFinish() {
+  that.updateFlowchartBox = function updateFlowchartBox() {
     GraphPanelRendererService.init();
     GraphPanelRendererService.renderPorts();
     GraphPanelRendererService.renderEdges();
     GraphPanelRendererService.repaintEverything();
-    that.checkExperimentState();
-    $scope.$broadcast('Experiment.RENDER_FINISHED');
+    $scope.$broadcast('Workflow.RENDER_FINISHED');
   };
 
-  that.checkExperimentState = function checkExperimentState() {
-    $timeout.cancel(internal.runStateTimeout);
-    if (ExperimentService.getExperiment().isRunning()) {
-      internal.runStateTimeout = $timeout(internal.loadExperimentState, RUN_STATE_CHECK_INTERVAL, false);
-    }
-  };
-
-  that.getCatalog = Operations.getCatalog;
-
-  that.getExperiment = ExperimentService.getExperiment;
+  that.getWorkflow = WorkflowService.getWorkflow;
 
   that.getSelectedNode = function getSelectedNode() {
     return internal.selectedNode;
@@ -125,37 +96,33 @@ function ExperimentController(experiment,
     }
   });
 
-  $scope.$on('Experiment.SAVE', () => {
-    internal.saveExperiment();
+  $scope.$on('Workflow.SAVE', () => {
+    internal.saveWorkflow();
   });
 
   $scope.$on('StatusBar.CLEAR_CLICK',() => {
-    ExperimentService.clearGraph();
-    that.onRenderFinish();
-    internal.saveExperiment();
+    WorkflowService.clearGraph();
+    that.updateFlowchartBox();
+    internal.saveWorkflow();
   });
 
   $scope.$on(Edge.CREATE, (data, args)  => {
-    ExperimentService.getExperiment().addEdge(args.edge);
-    internal.rerenderEdges();
-    internal.saveExperiment();
+    WorkflowService.getWorkflow().addEdge(args.edge);
+    internal.saveWorkflow();
   });
 
   $scope.$on(Edge.REMOVE, (data, args)  => {
-    ExperimentService.getExperiment().removeEdge(args.edge);
-    internal.rerenderEdges();
-    internal.saveExperiment();
+    WorkflowService.getWorkflow().removeEdge(args.edge);
+    internal.saveWorkflow();
   });
 
   $scope.$on('Keyboard.KEY_PRESSED_DEL', (event, data) => {
-    if (internal.selectedNode && !ExperimentService.getExperiment().isRunning()) {
-      ExperimentService.getExperiment().removeNode(internal.selectedNode.id);
+    if (internal.selectedNode) {
+      WorkflowService.getWorkflow().removeNode(internal.selectedNode.id);
       GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();
-      internal.rerenderEdges();
-      that.onRenderFinish();
       $scope.$digest();
-      internal.saveExperiment();
+      internal.saveWorkflow();
     }
   });
 
@@ -168,18 +135,15 @@ function ExperimentController(experiment,
     let positionY = offsetY || 0;
     let elementOffsetX = 100;
     let elementOffsetY = 30;
-    let node = ExperimentService.getExperiment().createNode({
-      'id': UUIDGenerator.generateUUID(),
-      'operation': operation,
-      'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-      'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
-    });
+    let node = WorkflowService.getWorkflow().createNode({
+        'id': UUIDGenerator.generateUUID(),
+        'operation': operation,
+        'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+        'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
+      });
 
-    ExperimentService.getExperiment().addNode(node);
-    GraphPanelRendererService.repaintEverything();
-    $scope.$digest();
-    that.onRenderFinish();
-    internal.saveExperiment();
+    WorkflowService.getWorkflow().addNode(node);
+    internal.saveWorkflow();
   });
 
   $scope.$on('AttributePanel.UNSELECT_NODE', () => {
@@ -188,9 +152,24 @@ function ExperimentController(experiment,
   });
 
   $scope.$on('$destroy', () => {
-    $timeout.cancel(internal.runStateTimeout);
-    ExperimentService.clearExperiment();
-    GraphPanelRendererService.clearExperiment();
+    WorkflowService.clearWorkflow();
+    GraphPanelRendererService.clearWorkflow();
+  });
+
+  $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      $scope.$applyAsync(() => {
+        that.updateFlowchartBox();
+      });
+    }
+  });
+
+  $scope.$watchCollection('workflow.getWorkflow().getEdgesIds()', (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      $scope.$applyAsync(() => {
+        internal.rerenderEdges();
+      });
+    }
   });
 
   internal.init();
@@ -198,8 +177,8 @@ function ExperimentController(experiment,
   return that;
 }
 
-exports.function = ExperimentController;
+exports.function = WorkflowsController;
 
 exports.inject = function (module) {
-  module.controller('ExperimentController', ExperimentController);
+  module.controller('WorkflowsController', WorkflowsController);
 };

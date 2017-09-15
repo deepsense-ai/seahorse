@@ -1,6 +1,7 @@
 'use strict';
 
-let NewWorkflowModalController = /* @ngInject */ function NewWorkflowModalController($scope, $modalInstance, WorkflowsApiClient) {
+/* @ngInject */
+function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
   _.assign(this, {
     name: '',
     description: '',
@@ -9,12 +10,14 @@ let NewWorkflowModalController = /* @ngInject */ function NewWorkflowModalContro
       $modalInstance.dismiss();
     },
     ok: () => {
+      const DEFAULT_NAME = 'Draft workflow';
+
       this.loading = true;
 
       WorkflowsApiClient.
         createWorkflow({
-          name: this.name || 'Draft workflow',
-          description: this.description
+          name: this.name || DEFAULT_NAME,
+          description: this.description || ''
         }).
         then((response) => {
           $modalInstance.close(response.id);
@@ -25,7 +28,7 @@ let NewWorkflowModalController = /* @ngInject */ function NewWorkflowModalContro
         });
     }
   });
-};
+}
 
 exports.inject = function (module) {
   module.controller('NewWorkflowModalController', NewWorkflowModalController);
