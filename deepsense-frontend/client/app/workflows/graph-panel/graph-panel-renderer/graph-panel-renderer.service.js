@@ -36,10 +36,6 @@ const outputAnchorByPosition = {
   right: 'BottomRight'
 };
 
-/* beautify preserve:start */
-import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
-/* beautify preserve:end */
-
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
   DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, GraphPanelStyler) {
@@ -175,6 +171,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     let edges = workflow.getEdges();
     let outputPrefix = 'output';
     let inputPrefix = 'input';
+
     for (let id in edges) {
       if (edges.hasOwnProperty(id)) {
         let edge = edges[id];
@@ -250,7 +247,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
           event: event
         });
       }
-    }
+    };
     // FIXME Quickfix to make reports browseable in disabled mode.
     // There is a conflict between multiselection and output port click when isSource = false.
     // For isSource=true works 'click' event
@@ -358,8 +355,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       $rootScope.$broadcast(Edge.DRAG);
 
       /* During detaching an edge, hints should be displayed as well */
-      if (internal.areEdgesDetachable() && _.isArray(connection.endpoints)
-      ) {
+      if (internal.areEdgesDetachable() && _.isArray(connection.endpoints)) {
         let port = connection.endpoints[0];
         ConnectionHinterService.highlightMatchedAndDismatchedPorts(workflow, port);
         ConnectionHinterService.highlightOperations(workflow, port);
@@ -380,7 +376,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   that.internal = internal;
 
   return that;
-}
+};
 
 exports.inject = function(module) {
   module.service('GraphPanelRendererService', GraphPanelRendererService);

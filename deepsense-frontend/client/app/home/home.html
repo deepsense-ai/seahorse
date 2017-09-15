@@ -2,7 +2,7 @@
   <!-- Default panel contents -->
   <div class="panel-heading text-center logo">
     <img src="../../img/seahorse-main.png">
-    <p class="api-version">v.{{home.getVersion()}}</p>
+    <p class="api-version">v{{home.getVersion()}}</p>
   </div>
   <!-- List group -->
   <div class="btn-group btn-group-justified" role="group">
@@ -54,8 +54,8 @@
             <i ng-class="home.getClass('created')"></i>
           </span>
         </td>
-        <td class="col-md-3 color-gray">
-          <b></b>
+        <td class="col-md-2 color-gray">
+          <b>Actions</b>
         </td>
       </tr>
       <tr ng-repeat="workflow in home.workflows |
@@ -92,7 +92,7 @@
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td class="vertical-align actions-column">
+        <td class="vertical-align action-icons">
           <a ng-if="workflow.sessionStatus === 'running' || workflow.sessionStatus === 'error'">
             <i ng-click="home.deleteSession(workflow.id)"
                uib-popover="Stop session"
@@ -102,21 +102,39 @@
             </i>
           </a>
           <a popover-trigger="mouseenter"
+             popover-placement="left"
+             uib-popover="Clone workflow"
+             ng-click="home.cloneWorkflow(workflow)">
+            <span class="fa fa-files-o"></span>
+          </a>
+          <a popover-trigger="mouseenter"
              uib-popover="Delete workflow"
              ng-click="home.deleteWorkflow(workflow)">
-            <i class="fa fa-trash-o">
-            </i>
+            <span class="fa fa-times"></span>
           </a>
         </td>
       </tr>
     </table>
   </div>
-  <div class="col-md-12" ng-if="!home.canShowWorkflows && !home.isWorkflowLoading()">
+  <div class="col-md-12" ng-if="!home.isWorkflowLoading() && home.isWorkflowListEmpty">
     <div class="container center">
       <div class="no-worfklows">
         <div class="no-worfklows__icon">
-          <i class="fa {{home.icon}}"></i>
-          <span>{{home.info}}</span>
+          <i class="fa fa-ban"></i>
+          <span>No workflows found!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" ng-if="!home.isWorkflowLoading() && home.isErrorConnectingToVagrant">
+    <div class="container center">
+      <div class="no-worfklows">
+        <div class="no-worfklows__icon">
+          <span>
+            <b>Seahorse is booting up.</b>
+          </span>
+          <br/>
+          <span>Please wait a few seconds and <a href="#" ng-click="home.reloadPage()">reload the page</a>.</span>
         </div>
       </div>
     </div>

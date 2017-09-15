@@ -108,6 +108,18 @@ angular.module('deepsense.graph-model').
       return !this.parametersValues && this.parameters;
     };
 
+    GraphNode.prototype.hasInnerWorkflow = function hasInnerWorkflow() {
+      return this.hasParameters() && _.find(this.parameters.parameters, (param) => param.value && param.value.workflow);
+    };
+
+    GraphNode.prototype.getInnerWorkflow = function getInnerWorkflow() {
+      return this.parametersValues['inner workflow'].workflow;
+    };
+
+    GraphNode.prototype.setInnerWorkflow = function setInnerWorkflow(innerWorkflow) {
+      this.parametersValues['inner workflow'].workflow = innerWorkflow;
+    };
+
     GraphNode.prototype.getFancyKnowledgeErrors = function getFancyKnowledgeErrors() {
       return this.knowledgeErrors.
         map((error, ix) => `<strong>#${ix + 1}</strong>: ${error}`).

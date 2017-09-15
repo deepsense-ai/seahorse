@@ -6,4 +6,6 @@ exports.inject = function(module) {
   require('./iconic-node-content/iconic-node-content.js').inject(module);
   require('./source-sink-node-content/source-sink-node-content.js').inject(module);
   require('./graph-panel-node.js').inject(module);
+  require('./graph-panel-node-special-operations.js').inject(module);
+  require('./graph-panel-node-types.js').inject(module);
 };

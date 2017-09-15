@@ -38,6 +38,30 @@ function calculate_repository_url() {
   fi
 }
 
+function prepare_environment() {
+  echo "** Preparing Environment **"
+  # this returns an error unless it's run for the first time on a machine
+  # we know about it and want to continue anyway
+  npmrc -c codilime || test 1
+  npmrc codilime
+  npm set registry $NPM_REGISTRY_URL
+
+  sudo npm install -g gulp
+  sudo npm install -g npmrc
+
+  #install all components dependencies
+  (cd ../deepsense-components && ./install_all.sh)
+  #build all components
+  (cd ../deepsense-components && ./build_all.sh)
+  npm install
+}
+
+function build() {
+  echo "** Building package **"
+  gulp clean
+  gulp build
+}
+
 function calculate_full_version() {
   echo "** Calculating version **"
   if [[ $IS_SNAPSHOT == true ]]
@@ -143,3 +167,4 @@ fi
 clean
 
 set +e
+trap times EXIT

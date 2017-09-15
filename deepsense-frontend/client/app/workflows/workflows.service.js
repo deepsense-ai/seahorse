@@ -2,9 +2,8 @@
 
 /* @ngInject */
 function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
-  DefaultInnerWorkflowGenerator, debounce, SessionManagerApi, SessionStatus) {
+  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus) {
 
-  const CUSTOM_TRANSFORMER_ID = '65240399-2987-41bd-ba7e-2944d60a3404';
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
   class WorkflowServiceClass {
@@ -32,7 +31,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       workflow.sessionStatus = workflowData.sessionStatus;
 
       let nodes = _.values(workflow.getNodes());
-      nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
+      nodes.filter((n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER)
         .forEach((node) => this.initInnerWorkflow(node));
 
       $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
@@ -74,7 +73,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       innerWorkflow.publicParams = innerWorkflow.publicParams || [];
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
 
-      let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === CUSTOM_TRANSFORMER_ID);
+      let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER);
       _.forEach(nestedCustomTransformerNodes, (node) => this.initInnerWorkflow(node));
 
       $rootScope.$watch(() => this._serializeInnerWorkflow(innerWorkflow), (newVal) => {
@@ -89,7 +88,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       $rootScope.$watchCollection(() => workflow.getNodes(), (newNodes, oldNodes) => {
         let addedNodeIds = _.difference(_.keys(newNodes), _.keys(oldNodes));
         let addedNodes = _.map(addedNodeIds, nodeId => newNodes[nodeId]);
-        let addedCustomWorkflowNodes = _.filter(addedNodes, (n) => n.operationId === CUSTOM_TRANSFORMER_ID);
+        let addedCustomWorkflowNodes = _.filter(addedNodes, (n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER);
         _.forEach(addedCustomWorkflowNodes, (addedNode) => {
           if (_.isUndefined(addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME])) {
             addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME] = DefaultInnerWorkflowGenerator.create();

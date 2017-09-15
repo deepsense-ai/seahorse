@@ -7,6 +7,8 @@ var common = angular.module('ds.common', []);
 require('./api-clients/api-clients.module.js').inject(common);
 require('./dots/dots.js').inject(common);
 require('./filters/cut-words.js').inject(common);
+require('./filters/precision.js').inject(common);
+require('./focusElement/focus-element.js').inject(common);
 require('./loading-mask/loading-mask.module.js').inject(common);
 require('./modals/modals.module.js').inject(common);
 require('./navigation-bar/navigation-bar.module.js').inject(common);

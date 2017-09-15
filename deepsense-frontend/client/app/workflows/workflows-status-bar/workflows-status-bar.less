@@ -43,23 +43,45 @@
   }
 
   &__text {
-    @media-break: 1450px;
+    @media-break-font: 1450px;
+    @media-break-visibility: 1100px;
 
     flex: 0.85;
     font-size: 14px;
 
-    @media (max-width: @media-break) {
+    @media (max-width: @media-break-font) {
       font-size: 12px;
+      flex: 1;
+    }
+    @media (max-width: @media-break-visibility) {
+      display:none;
     }
   }
 
   &__icon {
+    @media-break: 1100px;
     background-color: rgba(0, 0, 0, 0.15);
     padding: 4px 3px;
+    transition: all 0.5s;
+
+    @media (max-width: @media-break){
+      flex:1;
+    }
     flex: 0.15;
 
-    @media (max-width: @media-break) {
-      display: none;
-    }
   }
+
+  &__popover-span {
+    @media-break: 1100px;
+    display: block;
+    @media (min-width: @media-break) {
+      display:none;
+    }
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
 }

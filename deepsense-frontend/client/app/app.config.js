@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function AppConfig($urlRouterProvider, toastrConfig) {
+function AppConfig($urlRouterProvider, $compileProvider, toastrConfig, config) {
   angular.extend(toastrConfig, {
     'allowHtml': true,
     'newestOnTop': false,
@@ -17,6 +17,7 @@ function AppConfig($urlRouterProvider, toastrConfig) {
       'warning': 'toast-warning'
     }
   });
+  $compileProvider.debugInfoEnabled(config.debugInfoEnabled);
   $urlRouterProvider.otherwise('/');
 }
 

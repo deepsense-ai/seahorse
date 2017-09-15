@@ -63,6 +63,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     };
 
     that.createNode = function createNode(options) {
+      options = angular.copy(options);
       let operation = options.operation;
 
       return new GraphNode({

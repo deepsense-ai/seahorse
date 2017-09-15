@@ -5,18 +5,20 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
 
   return {
     create: () => {
+      const sourceId = UUIDGenerator.generateUUID();
+      const sinkId = UUIDGenerator.generateUUID();
       return {
         'id': UUIDGenerator.generateUUID(),
         'workflow': {
           'nodes': [{
-            'id': '2603a7b5-aaa9-40ad-9598-23f234ec5c32',
+            'id': sourceId,
             'operation': {
               'id': 'f94b04d7-ec34-42f7-8100-93fe235c89f8',
               'name': 'Source'
             },
             'parameters': {}
           }, {
-            'id': 'd7798d5e-b1c6-4027-873e-a6d653957418',
+            'id': sinkId,
             'operation': {
               'id': 'e652238f-7415-4da6-95c6-ee33808561b2',
               'name': 'Sink'
@@ -25,11 +27,11 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
           }],
           'connections': [{
             'from': {
-              'nodeId': '2603a7b5-aaa9-40ad-9598-23f234ec5c32',
+              'nodeId': sourceId,
               'portIndex': 0
             },
             'to': {
-              'nodeId': 'd7798d5e-b1c6-4027-873e-a6d653957418',
+              'nodeId': sinkId,
               'portIndex': 0
             }
           }]
@@ -40,7 +42,7 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
             'name': 'Inner workflow of custom transformer',
             'predefColors': ['#00B1EB', '#1ab394', '#2f4050', '#f8ac59', '#ed5565', '#DD6D3F'],
             'nodes': {
-              '2603a7b5-aaa9-40ad-9598-23f234ec5c32': {
+              [sourceId]: {
                 'uiName': '',
                 'color': '#2F4050',
                 'coordinates': {
@@ -48,7 +50,7 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
                   'y': 4951
                 }
               },
-              'd7798d5e-b1c6-4027-873e-a6d653957418': {
+              [sinkId]: {
                 'uiName': '',
                 'color': '#2F4050',
                 'coordinates': {

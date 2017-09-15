@@ -102,7 +102,8 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
           scope: $scope,
           template: `<iframe style="height: calc(100% - 60px); width:100%" frameborder="0" ng-src="{{::controller.getNotebookUrl()}}"></iframe>
                      <button type="button" class="btn btn-default pull-right" ng-click="modal.close()">Close</button>`,
-          windowClass: 'o-modal--notebook'
+          windowClass: 'o-modal--notebook',
+          backdrop : 'static'
         });
       };
 
@@ -140,11 +141,33 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         });
       };
 
-      this.customNameSaved = function () {
-        $rootScope.$applyAsync(() => {
-          $rootScope.$broadcast('AttributesPanel.UPDATED');
-        });
+      this.nodeNameBuffer = '';
+      this.nodeNameInputVisible = false;
+
+      this.showInput = () => {
+        this.nodeNameInputVisible = true;
       };
+
+      this.hideInput = () => {
+        this.nodeNameInputVisible = false;
+      };
+
+      this.enableEdition = () => {
+        if (!$scope.disabledMode) {
+          this.showInput();
+          this.nodeNameBuffer = $scope.node.uiName;
+        }
+      };
+
+      this.saveNewValue = (event) => {
+        if (event.keyCode === 13) { // Enter key code
+          $scope.node.uiName = this.nodeNameBuffer;
+          this.hideInput();
+        } else if (event.keyCode === 27) { // Escape key code
+          this.hideInput();
+        }
+      }
+
     },
     controllerAs: 'controller'
   };

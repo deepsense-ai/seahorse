@@ -50,7 +50,11 @@ class MultiSelection {
         return scope.flowChartBoxCtrl.workflow;
       };
 
-      that.startPainting = () => {
+      that.startPainting = (event) => {
+        if (event.target === element[0]) {
+          event.preventDefault();
+        }
+
         internal.$document.on('mousemove', that.paint);
         internal.$document.on('mouseup', that.endPainting);
 

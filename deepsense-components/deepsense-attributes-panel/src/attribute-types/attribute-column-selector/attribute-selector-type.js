@@ -42,7 +42,6 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
               let currParameter = JSON.stringify(scope.parameter.serialize());
               if (currParameter !== oldParameter) {
                 oldParameter = currParameter;
-                $rootScope.$broadcast('AttributesPanel.UPDATED');
               }
             });
         },

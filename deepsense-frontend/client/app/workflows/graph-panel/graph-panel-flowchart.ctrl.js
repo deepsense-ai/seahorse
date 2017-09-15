@@ -45,6 +45,6 @@ function FlowChartBoxController($scope, $element, $timeout, GraphPanelRendererSe
 
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.controller('FlowChartBoxController', FlowChartBoxController);
 };
