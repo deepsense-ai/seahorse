@@ -53,22 +53,15 @@ The data is provided in a form of a 23-column, comma-separated CSV-like file wit
 To work with the dataset, it has to be loaded into Seahorse. This can be done by a
 [Read DataFrame](../operations/read_dataframe.html) operation.
 Let’s place it on the canvas using drag-and-drop from the operations palette.
-To load the data, we need to provide the correct path to the file.
-
-Just click at the Read DataFrame operation on the canvas. Now, in panel on the right you will see its parameters.
-The Read DataFrame needs to have its parameters modified:
-
+To load the data, we need to create a Data Source corresponding to the file.
 **SOURCE**: <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/mushrooms.csv">https://s3.amazonaws.com/workflowexecutor/examples/data/mushrooms.csv</a>
 
-<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/read_dataframe_parameters.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/data_source_creation.png">
 
-After setting the Read DataFrame’s parameters to the correct values, the operation is ready to be executed
- – just simply click the RUN button in the top Seahorse toolbar.
+After preparing Data Source for Read DataFrame, the operation is ready to be executed
+ -– simply click the RUN button in the top Seahorse toolbar.
 If you have much more operations on the canvas and you are interested in the results of only one operation,
 you can use partial execution of the workflow. Simply select that operation before clicking RUN.
-
-<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/run_button.png">
-
 When the execution ends, a report of the operation will be available.
 Let’s click on the operation output port to see its result.
 
@@ -172,8 +165,8 @@ a testing dataset and a training dataset. That task could be accomplished by usi
 a [Split](../operations/split.html) operation.
 To divide the dataset in ratio 1 to 3, we do need to modify its default parameters:
 
-**SPLIT RATIO**: 0.25
-*(percentage of rows that should end up in the first output DataFrame – the test set)*
+**SPLIT RATIO**: 0.75
+*(percentage of rows that should end up in the first output DataFrame – the training set)*
 
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/split_parameters.png">
 
@@ -212,7 +205,7 @@ After executing the Transform operation, we can investigate the resulting report
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/transform_report.png">
 
 Thanks to projecting only the necessary columns, the resulting dataset fits in the column number limit
-and we are able to view the data sample. We can notice that the test dataset has 2043 entries.
+and we are able to view the data sample. We can notice that the test dataset has 2057 entries.
 Also we can see that the String Indexer operation assigned 0 to “e” label (edible class) and 1 to “p” label (poisonous class).
 We can also notice that the prediction column has “almost the same” values as “edibility” column,
 so we can suspect that our model performs well. Let’s measure its performance:
