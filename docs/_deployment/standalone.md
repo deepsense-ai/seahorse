@@ -128,7 +128,9 @@ configuration may conflict with services running on your computer. This can be e
 replacing `{{ site.SEAHORSE_EDITOR_PORT }}` with a port of your choosing in `Vagrantfile`. After restarting
 Seahorse Standalone, it will be available under the address with the new port.
 
-### Note for Windows Users
+### Notes for Windows Users
+
+#### Problem with Special Characters in HOMEPATH Environment Variable
 
 By default, Vagrant keeps boxes and configuration in `%HOMEPATH%/.vagrant.d`,
 but cannot access it when a `%HOMEPATH%` includes non-ASCII characters.
@@ -146,6 +148,21 @@ There are at least two ways to overcome the problem:
 * Change the Vagrant home directory to one with ASCII characters only:
 
         setx VAGRANT_HOME c:\.vagrant.d
+
+<br />
+
+#### Problem with Downloading Vagrant Box
+
+Vagrant fails to download Seahorse Box file, but does not print any specific error message.
+
+    An error occurred while downloading the remote file. The error
+    message, if any, is reproduced below. Please fix this error and try
+    again.
+
+To overcome this
+<a target="_blank" href="https://github.com/mitchellh/vagrant/issues/6764">issue</a>,
+install
+<a target="_blank" href="http://www.microsoft.com/en-us/download/confirmation.aspx?id=8328">Microsoft Visual C++ 2010 SP1 Redistributable Package (x86)</a>.
 
 ## Other Deployment Modes
 
