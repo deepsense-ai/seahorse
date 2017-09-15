@@ -13,7 +13,7 @@ function OperationAttributesView() {
       node: '=',
       showOperationAttributesPanel: '='
     },
-    templateUrl: 'app/experiments/experiment.operationAttributesView.html',
+    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attributes-panel.html',
     replace: true,
     link: function (scope, element, attrs) {
       element.find('button').on('click', function() {

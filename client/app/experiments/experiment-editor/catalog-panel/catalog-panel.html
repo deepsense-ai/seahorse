@@ -1,0 +1,23 @@
+<div class="operations-tree no-selection">
+  <script type="text/ng-template" id="operations.category.template.html">
+    <span class="operations-name" ng-click="category.collapsed = ! category.collapsed">
+        <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i> {{::category.name}}
+      </span>
+    <ul ng-hide="category.collapsed">
+      <li class="operations-category"
+          ng-repeat="category in ::category.catalog"
+          ng-include="'operations.category.template.html'"></li>
+      <li class="operations-items"
+          ng-repeat="item in ::category.items">
+          <span class="operations-item" id="operation-{{::item.id}}">
+            <i class="fa {{::category.icon}}"></i> {{::item.name}}
+          </span>
+      </li>
+    </ul>
+  </script>
+  <ul>
+    <li class="operations-category"
+        ng-repeat="category in ::experiment.operationsCatalog"
+        ng-include="'operations.category.template.html'"></li>
+  </ul>
+</div>

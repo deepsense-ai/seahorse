@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var Port = require('./port.js');
+var Port = require('./common-port.js');
 
 function GraphNode(options) {
   var that = this;

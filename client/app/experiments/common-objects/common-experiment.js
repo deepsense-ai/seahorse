@@ -3,13 +3,12 @@
  */
 'use strict';
 
-var Edge = require('./edge.js');
-var GraphNode = require('./graphNode.js');
+var Edge = require('./common-edge.js');
+var GraphNode = require('./common-graph-node.js');
 
 function Experiment() {
 
   var that = this;
-
   var internal = {};
   internal.nodes = {};
   internal.edges = [];

@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var Experiment = require('./valueObject/experiment.js');
+var Experiment = require('./common-objects/common-experiment.js');
 
 function ExperimentFactory() {
 

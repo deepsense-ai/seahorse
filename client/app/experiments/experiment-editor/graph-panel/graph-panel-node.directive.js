@@ -15,7 +15,7 @@ function GraphNode(UPDATE_CLICKED_NODE) {
     replace: true,
     templateUrl: 'app/experiments/experiment.graphNode.html',
     link: function (scope, element, attrs) {
-      element.on('click', function() {
+      element.on('click', function () {
         scope.$emit(UPDATE_CLICKED_NODE, {
           selectedNodeId: scope.node.id
         });

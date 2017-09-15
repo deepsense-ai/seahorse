@@ -8,12 +8,12 @@ function ExperimentsConfig($stateProvider) {
   $stateProvider
     .state('lab.experiments', {
       url: '/experiments',
-      templateUrl: 'app/experiments/experiment-list.html',
+      templateUrl: 'app/experiments/experiment-browser/experiment-browser.html',
       controller: 'ExperimentListController as experimentList'
     })
     .state('lab.experiment', {
       url: '/experiment/:id',
-      templateUrl: 'app/experiments/experiment.html',
+      templateUrl: 'app/experiments/experiment-editor/experiment-editor.html',
       controller: 'ExperimentController as experiment'
     });
 }

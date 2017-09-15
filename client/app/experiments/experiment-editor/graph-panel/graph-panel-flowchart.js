@@ -11,7 +11,7 @@ function FlowChartBox() {
     restrict: 'E',
     scope: false,
     replace: true,
-    templateUrl: 'app/experiments/experiment.flowChartBox.html',
+    templateUrl: 'app/experiments/experiment-editor/graph-panel/graph-panel-flowchart.html',
     link: function (scope, element, attrs) {
       element.on('click', function(event) {
         if (event.target.classList.contains('flowchart-box')) {
