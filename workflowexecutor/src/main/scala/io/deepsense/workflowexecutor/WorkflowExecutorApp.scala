@@ -19,10 +19,11 @@ package io.deepsense.workflowexecutor
 
 import java.io.{File, FileWriter, PrintWriter}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.typesafe.config.ConfigFactory
 import scopt.OptionParser
@@ -36,8 +37,9 @@ import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
-import io.deepsense.models.json.workflow.exceptions.{WorkflowVersionException, WorkflowVersionFormatException, WorkflowVersionNotFoundException, WorkflowVersionNotSupportedException}
+import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows._
+import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 
 
 /**
@@ -46,15 +48,29 @@ import io.deepsense.models.workflows._
  */
 object WorkflowExecutorApp
   extends Logging
-  with WorkflowWithVariablesJsonProtocol
-  with WorkflowWithResultsJsonProtocol
-  with WorkflowWithSavedResultsJsonProtocol
   with WorkflowVersionUtil {
 
   private val config = ConfigFactory.load
 
+  private val workflowManagerConfig = WorkflowManagerConfig(
+    scheme = config.getString("workflow-manager.scheme"),
+    defaultHost = config.getString("workflow-manager.host"),
+    port = config.getInt("workflow-manager.port"),
+    path = config.getString("workflow-manager.path"),
+    timeout = config.getInt("workflow-manager.timeout")
+  )
+
+  private val reportPreviewConfig = ReportPreviewConfig(
+    scheme = config.getString("report-preview.scheme"),
+    defaultHost = config.getString("report-preview.host"),
+    port = config.getInt("report-preview.port"),
+    path = config.getString("report-preview.path")
+  )
+
   override val graphReader = new GraphReader(dOperationsCatalog())
+
   private val outputFile = "result.json"
+
   private val parser: OptionParser[ExecutionParams]
       = new scopt.OptionParser[ExecutionParams](BuildInfo.name) {
     head(BuildInfo.toString)
@@ -64,23 +80,41 @@ object WorkflowExecutorApp
     } text "level of details for DataFrame report generation; " +
       "LEVEL is 'high', 'medium', or 'low' (default: 'medium')"
 
-    opt[String]('w', "workflow-filename") required() valueName "FILENAME" action {
-      (x, c) => c.copy(workflowFilename = x)
+    opt[String]('w', "workflow-filename") valueName "FILENAME" action {
+      (x, c) => c.copy(workflowFilename = Some(x))
     } text "workflow filename"
 
-    opt[String]('o', "output-directory") required() valueName "DIR" action {
-      (x, c) => c.copy(outputDirectoryPath = x)
+    opt[String]('o', "output-directory") valueName "DIR" action {
+      (x, c) => c.copy(outputDirectoryPath = Some(x))
     } text
       "output directory path; directory will be created if it does not exists; " +
         "execution fails if any file is to be overwritten"
 
-    opt[String]('u', "report-upload-host") valueName "HOST" action {
-      (x, c) => c.copy(reportUploadHost = Some(x))
-    } text "hostname or IP of the server where execution report should be uploaded"
+    opt[String]('d', "workflow-id") valueName "WORKFLOW_ID" action {
+      (x, c) => c.copy(workflowId = Some(x))
+    } text "workflow ID; workflow will be downloaded from Seahorse Editor"
+
+    opt[Unit]('u', "upload-report") action {
+      (_, c) => c.copy(uploadReport = true)
+    } text "upload execution report to Seahorse Editor"
+
+    opt[String]('e', "editor-host") valueName "HOST" action {
+      (x, c) => c.copy(editorHost = Some(x))
+    } text "hostname or IP of Seahorse Editor"
 
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("See http://deepsense.io for more details")
+
+    checkConfig { c =>
+      if (c.workflowFilename.isEmpty && c.workflowId.isEmpty) {
+        failure("one of --workflow-filename or --workflow-id is required")
+      } else if (c.outputDirectoryPath.isEmpty && !c.uploadReport) {
+        failure("one of --output-directory or --upload-report is required")
+      } else {
+        success
+      }
+    }
   }
 
   override def currentVersion: Version =
@@ -91,22 +125,29 @@ object WorkflowExecutorApp
 
     logger.info("Starting WorkflowExecutor.")
 
-    cmdParams match {
-      case None => System.exit(-1)
-      case Some(params) =>
-        loadWorkflow(params.workflowFilename) match {
+    val result = cmdParams.map { params =>
+      loadWorkflow(params)
+        .map(workflow => (workflow, executeWorkflow(workflow, params.reportLevel).get))
+        .flatMap { case (workflow, report) => handleExecutionReport(params, report, workflow) }
+    }
+
+    result match {
+      case None =>
+        System.exit(1)
+      case Some(res) =>
+        val resultUrl = Await.ready(res, Duration.Inf).value.get
+        resultUrl match {
+          case Success(Some(url)) =>
+            logger.info(s"Report uploaded. You can see the results at: $url")
+          case Success(None) =>
+            logger.info("Workflow execution finished.")
           case Failure(exception) => exception match {
             case e: WorkflowVersionException => handleVersionException(e)
             case e: DeserializationException => handleDeserializationException(e)
-            case e: Throwable => handleLoadingErrors(e)
+            case e: WorkflowExecutionException => logger.error(e.getMessage, e)
+            case e: UnexpectedHttpResponseException => logger.error(e.getMessage)
+            case e: Exception => logger.error(s"Unexpected exception", e)
           }
-          case Success(workflowWithVariables) =>
-            val executionReport = executeWorkflow(workflowWithVariables, params.reportLevel)
-            handleExecutionReport(
-              params.outputDirectoryPath,
-              executionReport,
-              workflowWithVariables,
-              params.reportUploadHost)
         }
     }
   }
@@ -123,15 +164,10 @@ object WorkflowExecutorApp
             s"Workflow's version is '${workflowApiVersion.humanReadable}' but " +
             s"WorkflowExecutor's version is '${supportedApiVersion.humanReadable}'.")
     }
-    System.exit(-1)
   }
 
   private def handleDeserializationException(exception: DeserializationException): Unit = {
     logger.error(s"WorkflowExecutor is unable to parse the input file: ${exception.getMessage}")
-  }
-
-  private def handleLoadingErrors(exception: Throwable): Unit = {
-    logger.error(s"Unexpected error occurred during access to the input file!", exception)
   }
 
   private def executeWorkflow(
@@ -143,33 +179,50 @@ object WorkflowExecutorApp
     WorkflowExecutor(workflow, reportLevel).execute()
   }
 
-  private def loadWorkflow(filename: String): Try[WorkflowWithVariables] = Try {
-    val reader = new VersionedJsonReader[WorkflowWithVariables]
-    Source.fromFile(filename)
-      .mkString
-      .parseJson
-      .convertTo[WorkflowWithVariables](reader)
+  private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {
+    val content = params.workflowId match {
+      case Some(id) =>
+        val editorHost = workflowManagerConfig.host(params.editorHost)
+        downloadWorkflow(editorHost, id)
+      case None =>
+        Future(Source.fromFile(params.workflowFilename.get).mkString)
+    }
+
+    content.map(_.parseJson.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader))
+  }
+
+  private def downloadWorkflow(editorHost: String, workflowId: String): Future[String] = {
+    new WorkflowDownloadClient(
+      editorHost,
+      workflowManagerConfig.scheme,
+      workflowManagerConfig.port,
+      workflowManagerConfig.path,
+      workflowManagerConfig.timeout
+    ).downloadWorkflow(workflowId)
   }
 
   private def handleExecutionReport(
-      outputDirectoryPath: String,
-      executionReport: Try[ExecutionReport],
-      workflow: WorkflowWithVariables,
-      reportUploadHost: Option[String]): Unit = {
+      params: ExecutionParams,
+      executionReport: ExecutionReport,
+      workflow: WorkflowWithVariables): Future[Option[String]] = {
 
-    executionReport match {
-      case Failure(exception) => logger.error("Execution failed:", exception)
-      case Success(value) =>
-        val result = WorkflowWithResults(
-          workflow.id,
-          workflow.metadata,
-          workflow.graph,
-          workflow.thirdPartyData,
-          value
-        )
+    val result = WorkflowWithResults(
+      workflow.id,
+      workflow.metadata,
+      workflow.graph,
+      workflow.thirdPartyData,
+      executionReport
+    )
 
-        saveWorkflowWithResults(outputDirectoryPath, result)
-        uploadExecutionReport(reportUploadHost, result)
+    params.outputDirectoryPath.foreach { path =>
+      saveWorkflowWithResults(path, result)
+    }
+
+    if (params.uploadReport) {
+      val editorHost = workflowManagerConfig.host(params.editorHost)
+      uploadExecutionReport(editorHost, result).map(Some(_))
+    } else {
+      Future.successful(None)
     }
   }
 
@@ -187,32 +240,18 @@ object WorkflowExecutorApp
   }
 
   private def uploadExecutionReport(
-      reportUploadHost: Option[String], result: WorkflowWithResults): Unit = {
-
-    reportUploadHost.foreach { hostname =>
-
-      val reportUploadScheme = config.getString("report.upload.scheme")
-      val reportUploadPort = config.getInt("report.upload.port")
-      val reportUploadPath = config.getString("report.upload.path")
-      val reportUploadTimeout = config.getInt("report.upload.timeout")
-
-      val reportPreviewScheme = config.getString("report.preview.scheme")
-      val reportPreviewPort = config.getInt("report.preview.port")
-      val reportPreviewPath = config.getString("report.preview.path")
-
-      val uploadReport = new ReportUploadClient(hostname,
-        reportUploadScheme, reportUploadPort, reportUploadPath, reportUploadTimeout,
-        reportPreviewScheme, reportPreviewPort, reportPreviewPath,
-        graphReader).uploadReport(result)
-
-      val resultUrl = Await.ready(uploadReport, reportUploadTimeout.seconds).value.get
-      resultUrl match {
-        case Success(url) =>
-          logger.info(s"Report uploaded. You can see the results at: $url")
-        case Failure(ex) =>
-          logger.error(s"Report upload failed: ${ex.getMessage}.", ex)
-      }
-    }
+      reportUploadHost: String,
+      result: WorkflowWithResults): Future[String] = {
+    new ReportUploadClient(reportUploadHost,
+      workflowManagerConfig.scheme,
+      workflowManagerConfig.port,
+      workflowManagerConfig.path,
+      workflowManagerConfig.timeout,
+      reportPreviewConfig.scheme,
+      reportPreviewConfig.port,
+      reportPreviewConfig.path,
+      graphReader
+    ).uploadReport(result)
   }
 
   private def dOperationsCatalog(): DOperationsCatalog = {
@@ -222,8 +261,29 @@ object WorkflowExecutorApp
   }
 
   private case class ExecutionParams(
-    workflowFilename: String = "",
-    outputDirectoryPath: String = "",
+    workflowFilename: Option[String] = None,
+    workflowId: Option[String] = None,
+    outputDirectoryPath: Option[String] = None,
+    uploadReport: Boolean = false,
     reportLevel: ReportLevel = ReportLevel.MEDIUM,
-    reportUploadHost: Option[String] = None)
+    editorHost: Option[String] = None)
+
+  private case class WorkflowManagerConfig(
+      scheme: String,
+      defaultHost: String,
+      port: Int,
+      path: String,
+      timeout: Int) {
+
+    def host(hostname: Option[String]): String = hostname.getOrElse(defaultHost)
+  }
+
+  private case class ReportPreviewConfig(
+      scheme: String,
+      defaultHost: String,
+      port: Int,
+      path: String) {
+
+    def host(hostname: Option[String]): String = hostname.getOrElse(defaultHost)
+  }
 }

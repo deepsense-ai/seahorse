@@ -18,6 +18,7 @@ package io.deepsense.workflowexecutor
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.util.Try
 
 import akka.actor.ActorSystem
 import akka.io.IO
@@ -35,24 +36,23 @@ import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
 
 class ReportUploadClient(
-    val reportUploadHost: String,
-    val reportUploadScheme: String,
-    val reportUploadPort: Int,
-    val reportUploadPath: String,
-    val reportUploadTimeout: Int,
-    val reportPreviewScheme: String,
-    val reportPreviewPort: Int,
-    val reportPreviewPath: String,
+    val host: String,
+    val uploadScheme: String,
+    val uploadPort: Int,
+    val uploadPath: String,
+    val uploadTimeout: Int,
+    val previewScheme: String,
+    val previewPort: Int,
+    val previewPath: String,
     override val graphReader: GraphReader)
   extends Logging
   with WorkflowWithSavedResultsJsonProtocol {
 
   val uploadUrl =
-    s"${reportUploadScheme}://${reportUploadHost}:${reportUploadPort}/${reportUploadPath}"
+    s"$uploadScheme://$host:$uploadPort/$uploadPath/report/upload"
 
   val reportUrl = (reportId: String) =>
-    s"${reportPreviewScheme}://${reportUploadHost}:${reportPreviewPort}/" +
-      s"${reportPreviewPath}/${reportId}"
+    s"$previewScheme://$host:$previewPort/$previewPath/$reportId"
 
   def uploadReport(workflow: WorkflowWithResults): Future[String] = {
 
@@ -60,14 +60,14 @@ class ReportUploadClient(
 
     implicit val system = ActorSystem()
     import system.dispatcher
-    implicit val timeout = reportUploadTimeout.seconds
+    implicit val timeout = uploadTimeout.seconds
 
     val pipeline: HttpRequest => Future[HttpResponse] = sendReceive
     val requestData = createRequestData(workflow)
     val futureResponse = pipeline(Post(uploadUrl, requestData))
 
     futureResponse.onComplete { _ =>
-      IO(Http).ask(Http.CloseAll)(1.second).await
+      Try(IO(Http).ask(Http.CloseAll)(1.second).await)
       system.shutdown()
     }
     futureResponse.map(handleResponse)
@@ -90,7 +90,7 @@ class ReportUploadClient(
         val workflow = content.parseJson.convertTo[WorkflowWithSavedResults]
         reportUrl(workflow.executionReport.id.toString)
       case _ => throw UnexpectedHttpResponseException(
-        response.status, response.entity.data.asString)
+        "Report upload failed", response.status, response.entity.data.asString)
     }
   }
 }

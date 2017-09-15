@@ -22,11 +22,14 @@ import scala.util.{Failure, Success, Try}
 import spray.json._
 
 import io.deepsense.commons.utils.{Logging, Version}
-import io.deepsense.models.json.workflow.exceptions.{WorkflowVersionException, WorkflowVersionFormatException, WorkflowVersionNotFoundException, WorkflowVersionNotSupportedException}
-import io.deepsense.models.workflows.{Workflow, WorkflowWithResults, WorkflowWithSavedResults}
+import io.deepsense.models.json.workflow.exceptions._
+import io.deepsense.models.workflows._
 
 
-trait WorkflowVersionUtil extends WorkflowWithSavedResultsJsonProtocol {
+trait WorkflowVersionUtil
+  extends WorkflowWithSavedResultsJsonProtocol
+  with WorkflowWithVariablesJsonProtocol {
+
   this: Logging =>
 
   def currentVersion: Version
@@ -46,6 +49,7 @@ trait WorkflowVersionUtil extends WorkflowWithSavedResultsJsonProtocol {
   val versionedWorkflowReader = new VersionedJsonReader[Workflow]
   val versionedWorkflowWithResultsReader = new VersionedJsonReader[WorkflowWithResults]
   val versionedWorkflowWithSavedResultsReader = new VersionedJsonReader[WorkflowWithSavedResults]
+  val versionedWorkflowWithVariablesReader = new VersionedJsonReader[WorkflowWithVariables]
 
   def workflowWithSavedResultsOrString(
       stringJson: String): Either[String, WorkflowWithSavedResults] =

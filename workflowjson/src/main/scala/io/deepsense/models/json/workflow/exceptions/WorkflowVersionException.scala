@@ -19,7 +19,7 @@ package io.deepsense.models.json.workflow.exceptions
 import io.deepsense.commons.exception.{DeepSenseException, FailureCode}
 import io.deepsense.commons.utils.Version
 
-sealed class WorkflowVersionException(
+sealed abstract class WorkflowVersionException(
     title: String,
     message: String,
     cause: Option[Throwable] = None,
