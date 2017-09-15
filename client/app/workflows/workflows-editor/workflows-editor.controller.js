@@ -9,7 +9,7 @@ function WorkflowsController(
   $scope, $timeout, $state,
   GraphNode, Edge,
   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, ConfirmationModalService
+  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService
 ) {
   let that = this;
   let internal = {};
@@ -152,6 +152,10 @@ function WorkflowsController(
         GraphPanelRendererService.rerender();
         that.saveWorkflow();
       });
+  });
+
+  $scope.$on('StatusBar.EXPORT_CLICK', () => {
+    ExportModalService.showModal();
   });
 
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {

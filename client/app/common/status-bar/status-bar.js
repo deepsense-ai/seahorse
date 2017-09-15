@@ -17,7 +17,7 @@ function WorkflowEditorStatusBar($rootScope) {
           $rootScope.$broadcast('StatusBar.HOME_CLICK');
         },
         exportWorkflow: () => {
-          $rootScope.$broadcast('StatusBar.EXPORT');
+          $rootScope.$broadcast('StatusBar.EXPORT_CLICK');
         },
         saveWorkflow: () => {
           $rootScope.$broadcast('StatusBar.SAVE_CLICK');

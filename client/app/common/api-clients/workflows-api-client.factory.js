@@ -46,14 +46,9 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
       return this.makeRequest(this.METHOD_PUT, this.API_URL + PATH_WORKFLOWS + '/' + serializedWorkflow.id, data);
     }
 
-    // TODO
-    uploadReport() {
-
-    }
-
-    // TODO
-    downloadWorkflow() {
-
+    downloadWorkflow(id) {
+      return this.API_URL + PATH_WORKFLOWS + '/' + id + '/download?format=json';
+      //return this.makeRequest(this.METHOD_GET, this.API_URL + PATH_WORKFLOWS + '/' + id + '/download?format=json');
     }
   }
 
