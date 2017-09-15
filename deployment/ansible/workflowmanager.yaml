@@ -9,7 +9,7 @@
     - vars/supervisor.yml
   tasks:
     - include: tasks/create_download_dir.yml
-    - include: tasks/artifactory.yml artifactid={{wm_artifact_id}} version={{wm_build_version}}
+    - include: tasks/artifactory_get.yml artifact_path={{wm_artifact_path}} artifactid={{wm_artifact_id}}
     - include: tasks/download_supervisor.yml
 
 - name: Perform cassandra migration
