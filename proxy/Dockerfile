@@ -13,5 +13,15 @@ RUN npm install
 
 COPY . /usr/src/app
 
-CMD [ "npm", "start" ]
+RUN  node_modules/.bin/obfuscator --root app/server/ \
+       --entry app/server/server.js \
+       $(find app/ -name "*.js") \
+       $(find app/ -name "*.json") \
+       --out app/server/server.js.obfuscated
+
+RUN chmod +x app/server/server.js.obfuscated
+RUN find app -name "*.js" | xargs rm
+RUN find app -name "*.json" | xargs rm
+
+CMD [ "npm", "start"]
 

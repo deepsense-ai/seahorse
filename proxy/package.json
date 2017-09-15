@@ -17,6 +17,7 @@
     "http-proxy-agent": "1.0.0",
     "https-proxy-agent": "1.0.0",
     "morgan": "1.7.0",
+    "obfuscator": "0.5.4",
     "passport": "0.3.2",
     "passport-cloudfoundry": "rajaraodv/passport-cloudfoundry",
     "request": "2.69.0",
@@ -26,6 +27,6 @@
     "underscore": "1.8.3"
   },
   "scripts": {
-    "start": "node app/server/server.js"
+    "start": "node app/server/server.js.obfuscated"
   }
 }

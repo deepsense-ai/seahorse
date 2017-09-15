@@ -7,6 +7,12 @@ var request = require('request');
 
 var sso = config.getSso();
 
+/*
+ * When user quota is changed also change numbers in Seahorse documentation
+ * We need one account for admin, so user_quota = number_of_user + 1 (for admin)
+ */
+var user_quota = 2
+
 module.exports = {
     forward: checkUserQuota,
 };
@@ -40,7 +46,7 @@ function checkUserQuota(req, res, next) {
         if (!error && response.statusCode == 200) {
           console.error(body);
           users = JSON.parse(body)
-          if (users.totalResults < config.get('user_quota')) {
+          if (users.totalResults < user_quota) {
               next()
           } else {
               res.redirect('/quota.html');
