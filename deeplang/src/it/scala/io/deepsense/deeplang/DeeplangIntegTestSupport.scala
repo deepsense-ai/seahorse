@@ -33,7 +33,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   var sqlContext: SQLContext = _
   var rawHdfsClient: DFSClient = _
 
-  override def beforeAll: Unit = {
+  override def beforeAll(): Unit = {
     sparkConf = new SparkConf().setMaster("local[4]").setAppName("TestApp")
     sparkContext = new SparkContext(sparkConf)
     sqlContext = new SQLContext(sparkContext)
@@ -49,9 +49,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     executionContext.hdfsClient = new DSHdfsClient(rawHdfsClient)
   }
 
-  override def afterAll: Unit = {
-    sparkContext.stop()
-  }
+  override def afterAll(): Unit = sparkContext.stop()
 
   protected def assertDataFramesEqual(actualDf: DataFrame, expectedDf: DataFrame): Unit = {
     assert(actualDf.sparkDataFrame.schema == expectedDf.sparkDataFrame.schema)
@@ -62,10 +60,12 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   protected def entityStorageInitState: Map[(String, Entity.Id), Entity] = Map()
 
-  protected def createDataFrame(rowsSeq: Seq[Row], schema: StructType): DataFrame = {
-    val manualRDD: RDD[Row] = sparkContext.parallelize(rowsSeq)
-    val sparkDataFrame = sqlContext.createDataFrame(manualRDD, schema)
-    val builder = DataFrameBuilder(sqlContext)
-    builder.buildDataFrame(sparkDataFrame)
+  protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
+    val rdd: RDD[Row] = sparkContext.parallelize(rows)
+    val sparkDataFrame = sqlContext.createDataFrame(rdd, schema)
+    DataFrameBuilder(sqlContext).buildDataFrame(sparkDataFrame)
   }
+
+  def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
+    op.execute(executionContext)(dfs.toVector).head.asInstanceOf[DataFrame]
 }

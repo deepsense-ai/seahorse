@@ -50,9 +50,7 @@ class ProjectColumnIntegSpec
       val expectedDataFrame = createDataFrame(expectedData.map(Row.fromSeq), expectedSchema)
       assertDataFramesEqual(projected, expectedDataFrame)
     }
-  }
 
-  it should {
     "throw an exception" when {
       "the columns selected by name does not exist" in {
         intercept[ColumnsDoNotExistException] {
@@ -73,23 +71,23 @@ class ProjectColumnIntegSpec
         }
       }
     }
-  }
 
-  it should {
     "produce an empty set" when {
       "selecting a type that does not exist" in {
         val emptyDataFrame = projectColumns(
           Set.empty,
           Set.empty,
-          Set(ColumnType.ordinal))
-        emptyDataFrame.sparkDataFrame.collectAsList().toList shouldBe empty
+          Set(ColumnType.ordinal)
+        )
+        emptyDataFrame.sparkDataFrame.collectAsList() shouldBe empty
       }
       "selection is empty" in {
         val emptyDataFrame = projectColumns(
           Set.empty,
           Set.empty,
-          Set.empty)
-        emptyDataFrame.sparkDataFrame.collectAsList().toList shouldBe empty
+          Set.empty
+        )
+        emptyDataFrame.sparkDataFrame.collectAsList() shouldBe empty
       }
     }
   }
@@ -98,11 +96,8 @@ class ProjectColumnIntegSpec
       names: Set[String],
       ids: Set[Int],
       types: Set[ColumnType]): DataFrame = {
-    val rdd = sparkContext.parallelize(data.map(Row.fromSeq))
-    val testDataFrame = executionContext.dataFrameBuilder.buildDataFrame(schema, rdd)
-    executeOperation(
-      executionContext,
-      operation(names, ids, types))(testDataFrame)
+    val testDataFrame = createDataFrame(data.map(Row.fromSeq), schema)
+    executeOperation(operation(names, ids, types), testDataFrame)
   }
 
   private def operation(
@@ -116,12 +111,6 @@ class ProjectColumnIntegSpec
       IndexColumnSelection(ids),
       TypeColumnSelection(types))))
     operation
-  }
-
-  private def executeOperation(context: ExecutionContext, operation: DOperation)
-      (dataFrame: DataFrame): DataFrame = {
-    val operationResult = operation.execute(context)(Vector[DOperable](dataFrame))
-    operationResult.head.asInstanceOf[DataFrame]
   }
 
   private def selectWithIndices[T](indices: Set[Int], sequence: Seq[T]): Seq[T] =

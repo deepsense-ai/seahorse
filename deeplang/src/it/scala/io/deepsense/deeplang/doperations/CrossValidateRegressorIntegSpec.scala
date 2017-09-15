@@ -135,16 +135,16 @@ class CrossValidateRegressorIntegSpec
 
       // Check sizes of test sets
       val allTestSetsSize = table.values.slice(0, effectiveNumberOfFolds.toInt).fold(0) {
-        case (z: Int, i: List[String]) =>
+        case (z: Int, i: List[Option[String]]) =>
           // Training and test sets sizes sum should be equal to size of DataFrame
-          i(1).toInt + i(2).toInt shouldBe dataFrame.sparkDataFrame.count()
-          z + i(2).toInt
+          i(1).get.toInt + i(2).get.toInt shouldBe dataFrame.sparkDataFrame.count()
+          z + i(2).get.toInt
       }
       // Sum of test sets sizes from all folds should be equal to size of DataFrame
       allTestSetsSize shouldBe dataFrame.sparkDataFrame.count()
 
       val summaryRow = table.values.last
-      summaryRow.head shouldBe "average"
+      summaryRow.head shouldBe Some("average")
     }
   }
 }

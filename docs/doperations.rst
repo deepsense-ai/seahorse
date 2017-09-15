@@ -21,3 +21,4 @@ Contents:
    doperations/cross_validate_regressor
    doperations/one_hot_encoder
    doperations/apply_transformation
+   doperations/join
