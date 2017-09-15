@@ -189,10 +189,12 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
       });
 
       port.canvas.addEventListener('mousedown', (event) => {
-        ConnectionHinterService.showHints(port, internal.renderMode);
-        ConnectionHinterService.highlightOperations(port);
+        if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+          ConnectionHinterService.showHints(port, internal.renderMode);
+          ConnectionHinterService.highlightOperations(port);
 
-        event.stopPropagation();
+          event.stopPropagation();
+        }
       });
 
       port.bind('mouseover', (endpoint) => {
@@ -318,8 +320,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
   that.bindDisablePortHighlightingsEvents = function bindDisablePortHighlightingsEvents() {
     const disablePortHighlightings = () => {
       $timeout(() => {
-        ConnectionHinterService.setDefaultPortColors(internal.renderMode);
-        ConnectionHinterService.disableHighlightingOoperations();
+        if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+          ConnectionHinterService.setDefaultPortColors(internal.renderMode);
+          ConnectionHinterService.disableHighlightingOoperations();
+        }
       }, 0, false);
     };
 
