@@ -16,15 +16,31 @@
 
 package io.deepsense.workflowexecutor.communication.message.global
 
-import spray.json.RootJsonFormat
+import spray.httpx.SprayJsonSupport
+import spray.json.{RootJsonFormat, DefaultJsonProtocol}
 
-import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.json.{EnumerationSerializer, IdJsonProtocol}
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowexecutor.communication.message.global.ReadyMessageType.ReadyMessageType
 
-case class Ready(workflowId: Option[Workflow.Id] = None)
+case class Ready(workflowId: Option[Workflow.Id], content: ReadyContent)
 
-trait ReadyJsonProtocol extends IdJsonProtocol with Logging {
+trait ReadyJsonProtocol extends IdJsonProtocol with ReadyContentJsonProtocol {
 
-  implicit val readyFormat: RootJsonFormat[Ready] = jsonFormat1(Ready.apply)
+  implicit val readyFormat = jsonFormat2(Ready)
+}
+
+trait ReadyContentJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+
+  implicit val readyMessageTypeFormat = EnumerationSerializer.jsonEnumFormat(ReadyMessageType)
+  implicit val readyContentFormat: RootJsonFormat[ReadyContent] = jsonFormat2(ReadyContent)
+}
+
+case class ReadyContent(msgType: ReadyMessageType, text: String)
+
+object ReadyMessageType extends Enumeration {
+  type ReadyMessageType = Value
+  val Error = Value("error")
+  val Warning = Value("warning")
+  val Info = Value("info")
 }

@@ -28,7 +28,7 @@ import io.deepsense.deeplang.CommonExecutionContext
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.GetWorkflow
-import io.deepsense.workflowexecutor.communication.message.global.Ready
+import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageType, ReadyContent, Ready}
 import io.deepsense.workflowexecutor.partialexecution.Execution
 
 /**
@@ -66,7 +66,8 @@ class SessionWorkflowExecutorActor(
       s"SessionWorkflowExecutor actor for workflow: ${workflowId.toString} restarted.",
       reason)
     logger.info("Sending Ready message to seahorse topic after restart.")
-    seahorseTopicPublisher ! Ready(Some(workflowId))
+    seahorseTopicPublisher !
+      Ready(Some(workflowId), ReadyContent(ReadyMessageType.Error, reason.getMessage))
   }
 
   def waitingForWorkflow: Actor.Receive = {

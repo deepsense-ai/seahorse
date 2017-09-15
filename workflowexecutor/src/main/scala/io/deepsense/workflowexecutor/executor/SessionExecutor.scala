@@ -23,7 +23,7 @@ import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.workflowexecutor.communication.message.global.Ready
+import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageType, ReadyContent, Ready}
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.rabbitmq._
@@ -109,8 +109,9 @@ case class SessionExecutor(
       MQCommunication.Topic.allWorkflowsSubscriptionTopic,
       workflowsSubscriberActor)
 
-    seahorsePublisher ! Ready()
-    notebookPublisher ! Ready()
+    val ready: Ready = Ready(None, ReadyContent(ReadyMessageType.Info, "SessionExecutor ready."))
+    seahorsePublisher ! ready
+    notebookPublisher ! ready
 
     system.awaitTermination()
     cleanup(sparkContext, pythonExecutionCaretaker)

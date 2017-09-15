@@ -24,7 +24,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
-import io.deepsense.workflowexecutor.communication.message.global.Ready
+import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageType, ReadyContent, Ready}
 import io.deepsense.workflowexecutor.communication.message.workflow.Init
 import io.deepsense.workflowexecutor.executor.{Executor, PythonExecutionCaretaker}
 
@@ -62,8 +62,9 @@ class ExecutionDispatcherActor(
     super.postRestart(reason)
     logger.warn("ExecutionDispatcherActor restarted.", reason)
     logger.debug("Sending Ready message to seahorse topic.")
-    seahorseTopicPublisher ! Ready()
-    notebookTopicPublisher ! Ready()
+    val ready: Ready = Ready(None, ReadyContent(ReadyMessageType.Error, reason.getMessage))
+    seahorseTopicPublisher ! ready
+    notebookTopicPublisher ! ready
   }
 
   private def findExecutor(workflowId: Workflow.Id): Option[ActorRef] = {

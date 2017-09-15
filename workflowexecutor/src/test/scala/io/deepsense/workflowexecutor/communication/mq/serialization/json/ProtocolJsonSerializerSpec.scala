@@ -29,9 +29,8 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.models.workflows._
-import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
-import io.deepsense.workflowexecutor.communication.message.global.{ReadyJsonProtocol, Ready}
+import io.deepsense.workflowexecutor.communication.message.global.{Ready, ReadyContent, ReadyJsonProtocol, ReadyMessageType}
 import io.deepsense.workflowexecutor.communication.message.notebook.{Address, PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 
@@ -90,7 +89,7 @@ class ProtocolJsonSerializerSpec
     }
 
     "serialize Ready" in {
-      val ready = Ready(Some(Workflow.Id.randomId))
+      val ready = Ready(Some(Workflow.Id.randomId), ReadyContent(ReadyMessageType.Info, "blah"))
       protocolJsonSerializer.serializeMessage(ready) shouldBe
       expectedSerializationResult("ready", ready.toJson)
     }
