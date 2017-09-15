@@ -7,7 +7,6 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     compression = require('compression'),
     timeout = require('connect-timeout'),
-
     reverseProxy = require('./reverse-proxy'),
     config = require('./config/config');
 
@@ -32,6 +31,10 @@ app.use(httpsRedirectHandler);
 auth.init(app);
 
 app.use(userCookieHandler);
+
+if (config.checkOrganization == 'true') {
+  app.use(require('./organization-checker/organization-checker').organizationChecker);
+}
 
 app.get('/',
   auth.login,
@@ -65,7 +68,7 @@ function userCookieHandler(req, res, next) {
   next();
 }
 
-function timeoutHandler(req, res, next) {
+function timeoutHandler(req, res, next){
   if (req.timedout) {
     res.status(503);
     res.send("Server timeout");

@@ -4,26 +4,18 @@
 var _ = require('underscore');
 var defaults = require('./default-config.json');
 
-var vcapServices = JSON.parse(process.env.VCAP_SERVICES || '{}');
-var vcapApplication = JSON.parse(process.env.VCAP_APPLICATION || '{}');
+var thr = require('throw');
+
+var vcapServices = JSON.parse(process.env.VCAP_SERVICES || thr('VCAP_SERVICES env is required'));
+var domain = process.env.DOMAIN || thr('DOMAIN env is required');
+var organizationId = process.env.ORGANIZATION_ID || thr('ORGANIZATION_ID env is required');
+var checkOrganization = process.env.CHECK_ORGANIZATION || thr('CHECK_ORGANIZATION env is required');
+
 var userProvided = vcapServices['user-provided'] || [];
 
 function getUserProvidedSerice(name) {
   var service = _.findWhere(userProvided, { name: name });
   return service && service.credentials;
-}
-
-function getDomain() {
-  var domain = getVariable('domain');
-  if(domain) {
-    return domain;
-  }
-
-  if (vcapApplication.uris) {
-    return vcapApplication.uris[0].split(".").slice(1).join(".");
-  }
-
-  throw new Error('Cannot fetch domain configuration');
 }
 
 function getVariable(name) {
@@ -39,7 +31,9 @@ function getVariable(name) {
 
 module.exports = {
   getUserProvidedSerice: getUserProvidedSerice,
-  getDomain: getDomain,
+  domain,
+  organizationId,
+  checkOrganization,
   getSso: _.partial(getUserProvidedSerice, 'sso'),
   get: getVariable
 };
