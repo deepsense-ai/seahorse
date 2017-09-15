@@ -16,21 +16,14 @@
 
 package io.deepsense.commons.utils
 
-import java.math.RoundingMode
-import java.text.{DecimalFormatSymbols, DecimalFormat}
-import java.util.Locale
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 
-object DoubleUtils {
+class DoubleUtilsSpec extends StandardSpec with UnitTestSupport {
 
-  def double2String(d: Double): String = {
-    val formatter: DecimalFormat =
-      new DecimalFormat("#.######", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    formatter.setRoundingMode(RoundingMode.HALF_UP)
-
-    if (d.isNaN) {
-      "NaN"
-    } else {
-      formatter.format(d)
+  "double2String" should {
+    "return string 'NaN' only when Double.NaN is passed as argument" in {
+      DoubleUtils.double2String(Double.NaN) shouldBe "NaN"
+      DoubleUtils.double2String(1.0) should not be "NaN"
     }
   }
 }
