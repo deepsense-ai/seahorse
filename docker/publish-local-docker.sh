@@ -17,6 +17,9 @@ PROJECT_PATH=$1
 PROJECT_NAME=$2
 DOCKER_IMAGE=`docker images | grep $PROJECT_NAME | grep "latest" | head -1 | awk '{ print $3 }'`
 GIT_BRANCH=`git branch | grep '*' | awk '{ print $2 }'`
+if [ ! -z $BRANCH ]; then
+  GIT_BRANCH="$BRANCH"
+fi
 
 # Validate input parameters
 if [ ! -d $PROJECT_PATH ]; then
