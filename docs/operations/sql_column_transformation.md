@@ -17,7 +17,7 @@ Returns modified `DataFrame`.
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
 to another `DataFrame` with a [Transform](transform.html) operation.
 
-**Since**: Seahorse 0.4.0
+**Since**: Seahorse 1.1.0
 
 ## Input
 
