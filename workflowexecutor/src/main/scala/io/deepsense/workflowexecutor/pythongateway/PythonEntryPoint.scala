@@ -19,18 +19,20 @@ package io.deepsense.workflowexecutor.pythongateway
 import scala.concurrent.Promise
 
 import org.apache.spark.api.java.JavaSparkContext
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.ReadOnlyDataFrameStorage
+import io.deepsense.deeplang._
 
 /**
   * An entry point to our application designed to be accessible by Python process.
   */
 class PythonEntryPoint(
     val sparkContext: SparkContext,
-    val dataFrameStorage: ReadOnlyDataFrameStorage)
+    val dataFrameStorage: ReadOnlyDataFrameStorage,
+    val customOperationDataFrameStorage: CustomOperationDataFrameStorage,
+    val operationExecutionDispatcher: OperationExecutionDispatcher)
   extends Logging {
 
   def getSparkContext: JavaSparkContext = sparkContext
@@ -40,9 +42,31 @@ class PythonEntryPoint(
   def getDataFrame(workflowId: String, dataFrameName: String): DataFrame =
     dataFrameStorage.get(workflowId, dataFrameName).get.sparkDataFrame
 
+  private[pythongateway] val codeExecutorPromise: Promise[PythonCodeExecutor] = Promise()
+
   private[pythongateway] val pythonPortPromise: Promise[Int] = Promise()
+
+  def registerCodeExecutor(codeExecutor: PythonCodeExecutor): Unit = {
+    codeExecutorPromise.success(codeExecutor)
+  }
 
   def reportCallbackServerPort(port: Int): Unit = {
     pythonPortPromise.success(port)
   }
+
+  def retrieveInputDataFrame(
+      workflowId: String,
+      nodeId: String): DataFrame = {
+    customOperationDataFrameStorage.getInputDataFrame(workflowId, nodeId).get
+  }
+
+  def registerOutputDataFrame(
+      workflowId: String,
+      nodeId: String,
+      outputDataFrame: DataFrame): Unit = {
+    customOperationDataFrameStorage.setOutputDataFrame(workflowId, nodeId, outputDataFrame)
+  }
+
+  def executionFinished(workflowId: String, nodeId: String): Unit =
+    operationExecutionDispatcher.executionEnded(workflowId, nodeId)
 }

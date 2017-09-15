@@ -18,10 +18,12 @@ package io.deepsense.deeplang
 
 import java.util.UUID
 
+import scala.concurrent.Future
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.{sql, SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.models.Id
@@ -70,7 +72,8 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       fileSystemClient,
       ReportLevel.HIGH,
       "testTenantId",
-      new MockedDataFrameStorage)
+      new MockedDataFrameStorage,
+      Future.successful(new MockedCodeExecutor))
   }
 
   protected def prepareExecutionContext(): ExecutionContext = {
@@ -88,7 +91,8 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       fileSystemClient,
       ReportLevel.HIGH,
       "testTenantId",
-      new MockedContextualDataFrameStorage)
+      new MockedContextualDataFrameStorage,
+      new MockedContextualCodeExecutor)
   }
 
   protected def assertDataFramesEqual(
@@ -153,7 +157,8 @@ private class MockedCommonExecutionContext(
     override val fsClient: FileSystemClient,
     override val reportLevel: ReportLevel,
     override val tenantId: String,
-    override val dataFrameStorage: DataFrameStorage)
+    override val dataFrameStorage: DataFrameStorage,
+    override val pythonCodeExecutor: Future[PythonCodeExecutor])
   extends CommonExecutionContext(
     sparkContext,
     sqlContext,
@@ -161,7 +166,9 @@ private class MockedCommonExecutionContext(
     fsClient,
     reportLevel,
     tenantId,
-    dataFrameStorage) {
+    dataFrameStorage,
+    pythonCodeExecutor,
+    new MockedCustomOperationExecutor) {
 
   override def createExecutionContext(worflowId: Id, nodeId: Id) =
     new MockedExecutionContext(sparkContext,
@@ -170,7 +177,8 @@ private class MockedCommonExecutionContext(
       fsClient,
       reportLevel,
       tenantId,
-      new MockedContextualDataFrameStorage)
+      new MockedContextualDataFrameStorage,
+      new MockedContextualCodeExecutor)
 }
 
 private class MockedExecutionContext(
@@ -180,7 +188,8 @@ private class MockedExecutionContext(
     override val fsClient: FileSystemClient,
     override val reportLevel: ReportLevel,
     override val tenantId: String,
-    override val dataFrameStorage: ContextualDataFrameStorage)
+    override val dataFrameStorage: ContextualDataFrameStorage,
+    override val pythonCodeExecutor: ContextualPythonCodeExecutor)
   extends ExecutionContext(
     sparkContext,
     sqlContext,
@@ -188,7 +197,8 @@ private class MockedExecutionContext(
     fsClient,
     reportLevel,
     tenantId,
-    dataFrameStorage) {
+    dataFrameStorage,
+    pythonCodeExecutor) {
 
   override def uniqueFsFileName(entityCategory: String): String =
     s"target/tests/$entityCategory/" + UUID.randomUUID().toString
@@ -196,12 +206,43 @@ private class MockedExecutionContext(
 
 private class MockedDataFrameStorage extends DataFrameStorage {
 
+  var inputDataFrame: Option[sql.DataFrame] = None
+  var outputDataFrame: Option[sql.DataFrame] = None
+
   override def put(workflowId: Id, dataFrameName: DataFrameName, dataFrame: DataFrame): Unit = ()
 
   override def get(workflowId: Id, dataFrameName: DataFrameName): Option[DataFrame] = ???
 
   override def listDataFrameNames(workflowId: Id): Iterable[DataFrameName] = ???
+
+  override def getInputDataFrame(workflowId: Id, nodeId: Id): Option[sql.DataFrame] =
+    inputDataFrame
+
+  override def setInputDataFrame(workflowId: Id, nodeId: Id, dataFrame: sql.DataFrame): Unit =
+    inputDataFrame = Some(dataFrame)
+
+  override def getOutputDataFrame(workflowId: Id, nodeId: Id): Option[sql.DataFrame] =
+    outputDataFrame
+
+  override def setOutputDataFrame(workflowId: Id, nodeId: Id, dataFrame: sql.DataFrame): Unit =
+    outputDataFrame = Some(dataFrame)
 }
 
 private class MockedContextualDataFrameStorage
   extends ContextualDataFrameStorage(new MockedDataFrameStorage, Id.randomId, Id.randomId)
+
+private class MockedCodeExecutor extends PythonCodeExecutor {
+
+  override def validate(code: String): Boolean = ???
+
+  override def run(workflowId: String, nodeId: String, code: String): Unit = ???
+}
+
+private class MockedContextualCodeExecutor
+  extends ContextualPythonCodeExecutor(
+    new MockedCodeExecutor, new MockedCustomOperationExecutor, Id.randomId, Id.randomId)
+
+private class MockedCustomOperationExecutor
+  extends CustomOperationExecutor {
+  override def execute(workflowId: Id, nodeId: Id): Future[Unit] = ???
+}

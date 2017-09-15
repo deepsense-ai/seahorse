@@ -31,7 +31,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 
-import io.deepsense.deeplang.ReadOnlyDataFrameStorage
+import io.deepsense.deeplang.{CustomOperationDataFrameStorage, ReadOnlyDataFrameStorage}
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 
@@ -50,7 +50,11 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
 
   "Gateway" should {
     "set up a listening port" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
+      val gateway = PythonGateway(
+        gatewayConfig,
+        mock[SparkContext],
+        mock[ReadOnlyDataFrameStorage],
+        mock[CustomOperationDataFrameStorage])
       gateway.start()
 
       val connectionAttempt = attemptConnection(gateway.listeningPort)
@@ -60,7 +64,11 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
     }
 
     "close listening port when stopped" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
+      val gateway = PythonGateway(
+        gatewayConfig,
+        mock[SparkContext],
+        mock[ReadOnlyDataFrameStorage],
+        mock[CustomOperationDataFrameStorage])
       gateway.start()
       Thread.sleep(500)
       gateway.stop()
@@ -71,7 +79,11 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
     }
 
     "throw on uninitialized callback client" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
+      val gateway = PythonGateway(
+        gatewayConfig,
+        mock[SparkContext],
+        mock[ReadOnlyDataFrameStorage],
+        mock[CustomOperationDataFrameStorage])
       gateway.start()
 
       a[TimeoutException] should be thrownBy {
@@ -82,7 +94,11 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
     }
 
     "send a message on initialized callback client" in {
-      val gateway = PythonGateway(gatewayConfig, mock[SparkContext], mock[ReadOnlyDataFrameStorage])
+      val gateway = PythonGateway(
+        gatewayConfig,
+        mock[SparkContext],
+        mock[ReadOnlyDataFrameStorage],
+        mock[CustomOperationDataFrameStorage])
       gateway.start()
 
       val command = "Hello!"

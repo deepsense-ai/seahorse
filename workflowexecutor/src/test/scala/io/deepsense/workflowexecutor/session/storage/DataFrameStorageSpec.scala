@@ -16,6 +16,7 @@
 
 package io.deepsense.workflowexecutor.session.storage
 
+import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.mock.MockitoSugar
 
@@ -32,6 +33,9 @@ class DataFrameStorageSpec
   val workflow1Id = Id.randomId
   val workflow2Id = Id.randomId
 
+  val node1Id = Id.randomId
+  val node2Id = Id.randomId
+
   val dataframe1Id = "dataframe1"
   val dataframe2Id = "dataframe2"
   val dataframe3Id = "dataframe3"
@@ -39,6 +43,9 @@ class DataFrameStorageSpec
   val dataframe1 = mock[DataFrame]
   val dataframe2 = mock[DataFrame]
   val dataframe3 = mock[DataFrame]
+
+  val sparkDataFrame1 = mock[SparkDataFrame]
+  val sparkDataFrame2 = mock[SparkDataFrame]
 
   var storage: DataFrameStorage = _
 
@@ -77,6 +84,24 @@ class DataFrameStorageSpec
         storage.put(workflow1Id, dataframe1Id, dataframe1)
         storage.get(workflow1Id, dataframe2Id) shouldBe None
       }
+    }
+
+    "register input dataframes" in {
+      storage.setInputDataFrame(workflow1Id, node1Id, sparkDataFrame1)
+      storage.setInputDataFrame(workflow1Id, node2Id, sparkDataFrame2)
+
+      storage.getInputDataFrame(workflow1Id, node1Id) shouldBe Some(sparkDataFrame1)
+      storage.getInputDataFrame(workflow1Id, node2Id) shouldBe Some(sparkDataFrame2)
+      storage.getInputDataFrame(workflow2Id, node1Id) shouldBe None
+    }
+
+    "register output dataframes" in {
+      storage.setOutputDataFrame(workflow1Id, node1Id, sparkDataFrame1)
+      storage.setOutputDataFrame(workflow1Id, node2Id, sparkDataFrame2)
+
+      storage.getOutputDataFrame(workflow1Id, node1Id) shouldBe Some(sparkDataFrame1)
+      storage.getOutputDataFrame(workflow1Id, node2Id) shouldBe Some(sparkDataFrame2)
+      storage.getOutputDataFrame(workflow2Id, node1Id) shouldBe None
     }
   }
 }

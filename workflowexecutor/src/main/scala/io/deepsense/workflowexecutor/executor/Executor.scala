@@ -16,19 +16,20 @@
 
 package io.deepsense.workflowexecutor.executor
 
+import scala.concurrent.Future
+
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.BuildInfo
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
-import io.deepsense.commons.utils.{Version, Logging}
+import io.deepsense.commons.utils.{Logging, Version}
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{CommonExecutionContext, DataFrameStorage, CatalogRecorder, ExecutionContext}
 
 trait Executor extends Logging {
 
@@ -38,6 +39,8 @@ trait Executor extends Logging {
   def createExecutionContext(
       reportLevel: ReportLevel,
       dataFrameStorage: DataFrameStorage,
+      pythonCodeExecutor: Future[PythonCodeExecutor],
+      customOperationExecutor: CustomOperationExecutor,
       sparkContext: Option[SparkContext] = None,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
@@ -61,7 +64,9 @@ trait Executor extends Logging {
       FileSystemClientStub(), // temporarily mocked
       reportLevel,
       tenantId,
-      dataFrameStorage)
+      dataFrameStorage,
+      pythonCodeExecutor,
+      customOperationExecutor)
   }
 
   def createSparkContext(): SparkContext = {
@@ -90,5 +95,4 @@ trait Executor extends Logging {
     CatalogRecorder.registerDOperations(catalog)
     catalog
   }
-
 }

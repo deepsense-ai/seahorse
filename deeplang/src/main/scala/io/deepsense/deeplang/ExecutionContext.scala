@@ -16,8 +16,13 @@
 
 package io.deepsense.deeplang
 
+import java.util.concurrent.TimeUnit
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
+
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.{DataFrame => SparkDataFrame, SQLContext}
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
@@ -33,9 +38,15 @@ case class CommonExecutionContext(
     fsClient: FileSystemClient,
     reportLevel: ReportLevel,
     tenantId: String,
-    dataFrameStorage: DataFrameStorage) {
+    dataFrameStorage: DataFrameStorage,
+    pythonCodeExecutor: Future[PythonCodeExecutor],
+    customOperationExecutor: CustomOperationExecutor) extends Logging {
 
   def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext = {
+    logger.debug("Waiting for python code executor")
+    val executor: PythonCodeExecutor =
+      Await.result(pythonCodeExecutor, Duration(5, TimeUnit.SECONDS))
+
     ExecutionContext(
       sparkContext,
       sqlContext,
@@ -43,7 +54,8 @@ case class CommonExecutionContext(
       fsClient,
       reportLevel,
       tenantId,
-      ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId))
+      ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
+      ContextualPythonCodeExecutor(executor, customOperationExecutor, workflowId, nodeId))
   }
 }
 
@@ -55,7 +67,8 @@ case class ExecutionContext(
     fsClient: FileSystemClient,
     reportLevel: ReportLevel,
     tenantId: String,
-    dataFrameStorage: ContextualDataFrameStorage) extends Logging {
+    dataFrameStorage: ContextualDataFrameStorage,
+    pythonCodeExecutor: ContextualPythonCodeExecutor) extends Logging {
 
   def dataFrameBuilder: DataFrameBuilder = inferContext.dataFrameBuilder
 
@@ -66,11 +79,32 @@ case class ExecutionContext(
 }
 
 case class ContextualDataFrameStorage(
-  dataFrameStorage: DataFrameStorage,
-  workflowId: Id,
-  nodeId: Id) {
+    dataFrameStorage: DataFrameStorage,
+    workflowId: Id,
+    nodeId: Id) {
 
-  def store(dataFrame: DataFrame): Unit = {
+  def store(dataFrame: DataFrame): Unit =
     dataFrameStorage.put(workflowId, nodeId.toString, dataFrame)
+
+  def setInputDataFrame(dataFrame: SparkDataFrame): Unit =
+    dataFrameStorage.setInputDataFrame(workflowId, nodeId, dataFrame)
+
+  def getOutputDataFrame(): Option[SparkDataFrame] =
+    dataFrameStorage.getOutputDataFrame(workflowId, nodeId)
+}
+
+case class ContextualPythonCodeExecutor(
+    pythonCodeExecutor: PythonCodeExecutor,
+    customOperationExecutor: CustomOperationExecutor,
+    workflowId: Id,
+    nodeId: Id) extends Logging {
+
+  def validate(code: String): Boolean = pythonCodeExecutor.validate(code)
+
+  def run(code: String): Unit = {
+    val execution = customOperationExecutor.execute(workflowId, nodeId)
+    pythonCodeExecutor.run(workflowId.toString, nodeId.toString, code)
+    logger.debug("Waiting for python operation to finish")
+    Await.result(execution, Duration.Inf)
   }
 }

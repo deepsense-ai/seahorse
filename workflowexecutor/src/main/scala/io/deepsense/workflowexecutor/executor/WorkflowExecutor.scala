@@ -31,6 +31,7 @@ import com.typesafe.config.ConfigFactory
 import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
@@ -56,7 +57,11 @@ case class WorkflowExecutor(
   private val actorSystemName = "WorkflowExecutor"
 
   def execute(): Try[ExecutionReport] = {
-    val executionContext = createExecutionContext(reportLevel, new DataFrameStorageImpl)
+    val executionContext = createExecutionContext(
+      reportLevel,
+      new DataFrameStorageImpl,
+      Future.successful(PythonCodeExecutorStub()),
+      CustomOperationExecutorStub())
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
@@ -329,4 +334,15 @@ private case class FileSystemClientStub() extends FileSystemClient {
 
   override def readFileAsObject[T <: Serializable](path: String): T =
     throw new UnsupportedOperationException
+}
+
+private case class PythonCodeExecutorStub() extends PythonCodeExecutor {
+
+  override def validate(code: String): Boolean = ???
+
+  override def run(workflowId: String, nodeId: String, code: String): Unit = ???
+}
+
+private case class CustomOperationExecutorStub() extends CustomOperationExecutor {
+  override def execute(workflowId: Id, nodeId: Id): Future[Unit] = Future.successful(())
 }

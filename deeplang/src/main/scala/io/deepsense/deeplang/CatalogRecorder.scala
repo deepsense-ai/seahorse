@@ -95,6 +95,11 @@ object CatalogRecorder {
       "Creates a notebook with access to the DataFrame"
     )
 
+    catalog.registerDOperation[CustomPythonOperation](
+      DOperationCategories.Transformation,
+      "Creates a custom Python operation"
+    )
+
     catalog.registerDOperation[CreateMathematicalTransformation](
       DOperationCategories.Transformation,
       "Creates a Transformation that creates a new column based on a mathematical formula"

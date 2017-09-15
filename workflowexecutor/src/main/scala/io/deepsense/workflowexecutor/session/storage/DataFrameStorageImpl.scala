@@ -18,6 +18,8 @@ package io.deepsense.workflowexecutor.session.storage
 
 import scala.collection.concurrent.TrieMap
 
+import org.apache.spark.sql.{DataFrame => SparkDataFrame}
+
 import io.deepsense.commons.models.Id
 import io.deepsense.deeplang.DataFrameStorage
 import io.deepsense.deeplang.DataFrameStorage.{DataFrameId, DataFrameName}
@@ -26,6 +28,8 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 class DataFrameStorageImpl extends DataFrameStorage {
 
   private val storage: TrieMap[DataFrameId, DataFrame] = TrieMap.empty
+  private val inputDataFrames: TrieMap[(Id, Id), SparkDataFrame] = TrieMap.empty
+  private val outputDataFrames: TrieMap[(Id, Id), SparkDataFrame] = TrieMap.empty
 
   override def get(
       workflowId: Id,
@@ -42,4 +46,16 @@ class DataFrameStorageImpl extends DataFrameStorage {
       workflowId: Id): Iterable[DataFrameName] =
     storage.keys
       .collect { case (w, d) if w == workflowId => d }
- }
+
+  override def getInputDataFrame(workflowId: Id, nodeId: Id): Option[SparkDataFrame] =
+    inputDataFrames.get((workflowId, nodeId))
+
+  override def setInputDataFrame(workflowId: Id, nodeId: Id, dataFrame: SparkDataFrame): Unit =
+    inputDataFrames.put((workflowId, nodeId), dataFrame)
+
+  override def getOutputDataFrame(workflowId: Id, nodeId: Id): Option[SparkDataFrame] =
+    outputDataFrames.get((workflowId, nodeId))
+
+  override def setOutputDataFrame(workflowId: Id, nodeId: Id, dataFrame: SparkDataFrame): Unit =
+    outputDataFrames.put((workflowId, nodeId), dataFrame)
+}

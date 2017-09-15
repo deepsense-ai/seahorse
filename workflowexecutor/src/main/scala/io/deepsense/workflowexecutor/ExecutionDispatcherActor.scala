@@ -16,11 +16,13 @@
 
 package io.deepsense.workflowexecutor
 
+import scala.concurrent.Future
+
 import akka.actor._
 import org.apache.spark.SparkContext
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{CommonExecutionContext, DataFrameStorage, ExecutionContext}
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.workflows.Workflow
@@ -33,6 +35,8 @@ class ExecutionDispatcherActor(
     sparkContext: SparkContext,
     dOperableCatalog: DOperableCatalog,
     dataFrameStorage: DataFrameStorage,
+    pythonCodeExecutor: Future[PythonCodeExecutor],
+    customOperationExecutor: CustomOperationExecutor,
     reportLevel: ReportLevel,
     statusLogger: ActorRef)
   extends Actor
@@ -65,6 +69,8 @@ class ExecutionDispatcherActor(
       createExecutionContext(
         reportLevel,
         dataFrameStorage,
+        pythonCodeExecutor,
+        customOperationExecutor,
         sparkContext = Some(sparkContext),
         dOperableCatalog = Some(dOperableCatalog)),
       workflowId,
@@ -111,12 +117,16 @@ object ExecutionDispatcherActor {
       sparkContext: SparkContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
+      codeExecutor: Future[PythonCodeExecutor],
+      customOperationExecutor: CustomOperationExecutor,
       reportLevel: ReportLevel,
       statusLogger: ActorRef): Props =
     Props(new ExecutionDispatcherActor(
       sparkContext,
       dOperableCatalog,
       dataFrameStorage,
+      codeExecutor,
+      customOperationExecutor,
       reportLevel,
       statusLogger
     ) with WorkflowExecutorsFactoryImpl

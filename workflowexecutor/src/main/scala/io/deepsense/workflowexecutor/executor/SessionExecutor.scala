@@ -52,13 +52,16 @@ case class SessionExecutor(
     implicit val system = ActorSystem()
     val statusLogger = system.actorOf(Props[StatusLoggingActor], "status-logger")
 
-    val pythonGateway = PythonGateway(PythonGateway.GatewayConfig(), sparkContext, dataFrameStorage)
+    val pythonGateway = PythonGateway(
+      PythonGateway.GatewayConfig(), sparkContext, dataFrameStorage, dataFrameStorage)
     pythonGateway.start()
 
     val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
       sparkContext,
       dOperableCatalog,
       dataFrameStorage,
+      pythonGateway.codeExecutor,
+      pythonGateway.customOperationExecutor,
       ReportLevel.HIGH,
       statusLogger), "workflows")
 
