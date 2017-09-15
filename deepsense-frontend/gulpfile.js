@@ -264,7 +264,7 @@ gulp.task('build-all', function (callback) {
     cwd: '../deepsense-components'
   },function (error, stdout, sterr) {
     console.log(stdout);
-    console.log("All components build");
+    console.log('All components build');
     callback(error);
   });
 });
@@ -282,7 +282,7 @@ gulp.task('watch', function () {
         client.localDependencies
       ]
     ).on('change', function () {
-      runSequence('jshint', 'browserify', 'libs:css', 'libs:js', 'copy:scripts', browserSync.reload)
+      runSequence('jshint', 'browserify', 'libs:css', 'libs:js', 'copy:scripts', browserSync.reload);
     });
   }
 });
