@@ -20,7 +20,7 @@ import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRe
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.spark.wrappers.models.LogisticRegressionModel
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasThreshold, HasLabelColumnParam, ProbabilisticClassifierParams}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasLabelColumnParam, HasThreshold, ProbabilisticClassifierParams}
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
