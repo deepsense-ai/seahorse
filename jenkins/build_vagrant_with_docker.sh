@@ -47,7 +47,7 @@ do
   IMAGE_FILE_NAME=`echo "$DOCKER_IMAGE" | cut -d "/" -f 3 | rev | cut -d ":" -f 2 | rev`
   echo "Save docker image to $IMAGE_FILE_NAME.tar"
   rm -f $IMAGE_FILE_NAME.tar
-  docker save --output $DOCKER_IMAGE.tar $DOCKER_IMAGE
+  docker save --output $IMAGE_FILE_NAME.tar $DOCKER_IMAGE
 done
 
 # Create Vagrant box
