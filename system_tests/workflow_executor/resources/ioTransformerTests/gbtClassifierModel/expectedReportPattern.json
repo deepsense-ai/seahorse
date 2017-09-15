@@ -1,0 +1,42 @@
+{
+  "executionReport": {
+    "nodes": {
+      "41c53a57-ed7a-7678-f8e5-b0fd7f2fb0e3": {
+        "status": "COMPLETED", 
+        "results": [
+          "10bb5eb8-6efe-4b90-a06c-377d33298cc8"
+        ], 
+        "error": null
+      }, 
+      "2d894adc-5f0f-070a-dc73-2d590ee4ca72": {
+        "status": "COMPLETED", 
+        "results": [
+          "bd7713f9-f20d-4f88-8d7e-065c58289186", 
+          "132b2a30-0fdf-450d-9abf-285adc9328f3"
+        ], 
+        "error": null
+      }, 
+      "f6d017c5-588d-a120-141c-785ce510edfc": {
+        "status": "COMPLETED", 
+        "results": [
+          "4da0fac2-7fc0-47d8-a885-ceae2067dce5"
+        ], 
+        "error": null
+      }, 
+      "25924477-ff78-a865-3fae-1f18fdd55813": {
+        "status": "COMPLETED", 
+        "results": [
+          "6a19b9d8-86f6-4000-8b69-625a59bd3a55"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "132b2a30-0fdf-450d-9abf-285adc9328f3": {}, 
+      "bd7713f9-f20d-4f88-8d7e-065c58289186": {}, 
+      "6a19b9d8-86f6-4000-8b69-625a59bd3a55": {}, 
+      "4da0fac2-7fc0-47d8-a885-ceae2067dce5": {}, 
+      "10bb5eb8-6efe-4b90-a06c-377d33298cc8": {}
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "3cb2cf0c-4fda-24a2-1f94-13ac84988eb9",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split ratio": 0.3
+      }
+    }, {
+      "id": "d14795d6-1f87-9f3b-9606-46623362f379",
+      "operation": {
+        "id": "7f9e459e-3e11-4c5f-9137-94447d53ff60",
+        "name": "Logistic Regression"
+      },
+      "parameters": {
+        "use custom weights": {
+          "no": {
+
+          }
+        }
+      }
+    }, {
+      "id": "c1269322-b9bf-328c-3342-20448352e21c",
+      "operation": {
+        "id": "0c2ff818-977b-11e5-8994-feff819cdc9f",
+        "name": "Fit"
+      },
+      "parameters": {
+        "Parameters of input Estimator": {
+
+        }
+      }
+    }, {
+      "id": "77c85b9d-6c6a-aac0-fc53-4ca3c575eb5b",
+      "operation": {
+        "id": "58368deb-68d0-4657-ae3f-145160cb1e2b",
+        "name": "Write Transformer"
+      },
+      "parameters": {
+        "output path": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTransformerTests/logisticRegressionModel/transformer"
+      }
+    }, {
+      "id": "1f54823d-acd4-5eec-80f4-3af576c096b8",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTransformerTests/logisticRegressionModel/input.parquet",
+            "format": {
+              "PARQUET": {
+
+              }
+            }
+          }
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "1f54823d-acd4-5eec-80f4-3af576c096b8",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "3cb2cf0c-4fda-24a2-1f94-13ac84988eb9",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "c1269322-b9bf-328c-3342-20448352e21c",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "77c85b9d-6c6a-aac0-fc53-4ca3c575eb5b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "d14795d6-1f87-9f3b-9606-46623362f379",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "c1269322-b9bf-328c-3342-20448352e21c",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "3cb2cf0c-4fda-24a2-1f94-13ac84988eb9",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "c1269322-b9bf-328c-3342-20448352e21c",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "WriteLogisticRegressionModel",
+      "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "d14795d6-1f87-9f3b-9606-46623362f379": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5156,
+            "y": 5201
+          }
+        },
+        "3cb2cf0c-4fda-24a2-1f94-13ac84988eb9": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4875,
+            "y": 5202
+          }
+        },
+        "1f54823d-acd4-5eec-80f4-3af576c096b8": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5034,
+            "y": 5076
+          }
+        },
+        "77c85b9d-6c6a-aac0-fc53-4ca3c575eb5b": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5015,
+            "y": 5474
+          }
+        },
+        "c1269322-b9bf-328c-3342-20448352e21c": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5079,
+            "y": 5328
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "235ae998-7657-47f6-ada3-663b65af8436",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.2.0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "executionReport": {
+    "nodes": {
+      "41c53a57-ed7a-7678-f8e5-b0fd7f2fb0e3": {
+        "status": "COMPLETED", 
+        "results": [
+          "963e09b6-d30e-4f46-9cee-5d101b556aa4"
+        ], 
+        "error": null
+      }, 
+      "f6d017c5-588d-a120-141c-785ce510edfc": {
+        "status": "COMPLETED", 
+        "results": [
+          "12903fb6-e4e1-4fa2-9efa-613395a57f5f"
+        ], 
+        "error": null
+      }, 
+      "25924477-ff78-a865-3fae-1f18fdd55813": {
+        "status": "COMPLETED", 
+        "results": [
+          "8c2ae613-a023-408b-88aa-1a2683ed342e"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "12903fb6-e4e1-4fa2-9efa-613395a57f5f": {}, 
+      "8c2ae613-a023-408b-88aa-1a2683ed342e": {}, 
+      "963e09b6-d30e-4f46-9cee-5d101b556aa4": {}
+    }
+  }
+}

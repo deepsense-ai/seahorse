@@ -1,0 +1,201 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "317b1c44-cad5-6d4c-f675-02570f30a745",
+      "operation": {
+        "id": "65240399-2987-41bd-ba7e-2944d60a3404",
+        "name": "Create Custom Transformer"
+      },
+      "parameters": {
+        "inner workflow": {
+          "workflow": {
+            "nodes": [{
+              "id": "c1d328ae-4417-9713-2ee5-edf6909a7fa3",
+              "operation": {
+                "id": "f94b04d7-ec34-42f7-8100-93fe235c89f8",
+                "name": "Source"
+              },
+              "parameters": {
+
+              }
+            }, {
+              "id": "91d23759-465c-72c2-6eb7-bc3434cdf1dd",
+              "operation": {
+                "id": "e652238f-7415-4da6-95c6-ee33808561b2",
+                "name": "Sink"
+              },
+              "parameters": {
+
+              }
+            }, {
+              "id": "4431e526-ed16-227e-875e-e7e14debfcc5",
+              "operation": {
+                "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+                "name": "SQL Transformation"
+              },
+              "parameters": {
+                "dataframe id": null,
+                "expression": "SELECT two FROM df"
+              }
+            }, {
+              "id": "2e7258fc-310f-46ed-5555-fc09d95772b8",
+              "operation": {
+                "id": "012876d9-7a72-47f9-98e4-8ed26db14d6d",
+                "name": "SQL Column Transformation"
+              },
+              "parameters": {
+                "input column alias": null,
+                "formula": "2*x",
+                "operate on": {
+                  "one column": {
+                    "input column": {
+                      "type": "column",
+                      "value": "two"
+                    },
+                    "output": {
+                      "append new column": {
+                        "output column": "twice_two"
+                      }
+                    }
+                  }
+                }
+              }
+            }],
+            "connections": [{
+              "from": {
+                "nodeId": "c1d328ae-4417-9713-2ee5-edf6909a7fa3",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "4431e526-ed16-227e-875e-e7e14debfcc5",
+                "portIndex": 0
+              }
+            }, {
+              "from": {
+                "nodeId": "4431e526-ed16-227e-875e-e7e14debfcc5",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "2e7258fc-310f-46ed-5555-fc09d95772b8",
+                "portIndex": 0
+              }
+            }, {
+              "from": {
+                "nodeId": "2e7258fc-310f-46ed-5555-fc09d95772b8",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "91d23759-465c-72c2-6eb7-bc3434cdf1dd",
+                "portIndex": 0
+              }
+            }]
+          },
+          "thirdPartyData": {
+            "gui": {
+              "name": "Inner workflow of custom transformer",
+              "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+              "nodes": {
+                "c1d328ae-4417-9713-2ee5-edf6909a7fa3": {
+                  "uiName": "",
+                  "color": "#2F4050",
+                  "coordinates": {
+                    "x": 5262,
+                    "y": 4951
+                  }
+                },
+                "91d23759-465c-72c2-6eb7-bc3434cdf1dd": {
+                  "uiName": "",
+                  "color": "#2F4050",
+                  "coordinates": {
+                    "x": 5271,
+                    "y": 5304
+                  }
+                },
+                "4431e526-ed16-227e-875e-e7e14debfcc5": {
+                  "uiName": "",
+                  "color": "#00B1EB",
+                  "coordinates": {
+                    "x": 5195,
+                    "y": 5067
+                  }
+                },
+                "2e7258fc-310f-46ed-5555-fc09d95772b8": {
+                  "uiName": "",
+                  "color": "#00B1EB",
+                  "coordinates": {
+                    "x": 5198,
+                    "y": 5168
+                  }
+                }
+              }
+            }
+          },
+          "variables": {
+
+          },
+          "publicParams": [{
+            "nodeId": "2e7258fc-310f-46ed-5555-fc09d95772b8",
+            "paramName": "formula",
+            "publicName": "formula"
+          }],
+          "id": "697c7dd2-9941-c28b-c3e3-730fc056489b"
+        }
+      }
+    }, {
+      "id": "25e381a6-23c0-002b-de50-666b81232b37",
+      "operation": {
+        "id": "58368deb-68d0-4657-ae3f-145160cb1e2b",
+        "name": "Write Transformer"
+      },
+      "parameters": {
+        "output path": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTransformerTests/customTransformer/transformer"
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "317b1c44-cad5-6d4c-f675-02570f30a745",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "25e381a6-23c0-002b-de50-666b81232b37",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "WriteCustomTransformer",
+      "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "317b1c44-cad5-6d4c-f675-02570f30a745": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5291,
+            "y": 5092
+          }
+        },
+        "25e381a6-23c0-002b-de50-666b81232b37": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5289,
+            "y": 5305
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "3672c51c-c546-404c-af3a-df36a6c862e1",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.2.0"
+  }
+}
