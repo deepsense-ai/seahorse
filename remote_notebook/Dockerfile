@@ -15,5 +15,8 @@ COPY wmcontents /opt/conda/lib/python3.5/site-packages/wmcontents
 
 EXPOSE 8888
 
+ENV HEARTBEAT_INTERVAL 2.0
+ENV MISSED_HEARTBEAT_LIMIT 30
+
 ENTRYPOINT ["tini", "--"]
 CMD ["start-notebook.sh"]
