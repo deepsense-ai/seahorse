@@ -5,12 +5,11 @@ function Report($rootScope) {
   return {
     restrict: 'E',
     replace: true,
-    scope: {
-      currentReport: '=report'
-    },
     templateUrl: 'app/workflows/reports/reports.html',
     controller: 'ReportCtrl as controller',
-    bindToController: true,
+    bindToController: {
+      currentReport: '=report'
+    },
     link: (scope, element) => {
       // HACK This is workaround for DS-2724 BUG
       // Explanation:
@@ -29,10 +28,14 @@ function Report($rootScope) {
       element.bind('mouseover', (e) => {
         $rootScope.$broadcast('OutputPoint.MOUSEOUT');
       });
+
+      scope.$watch(() => scope.controller.currentReport, () => {
+        element[0].scrollTop = 0;
+      });
     }
   };
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.directive('report', Report);
 };
