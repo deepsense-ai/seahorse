@@ -4,14 +4,14 @@
       "baf99b23-6e7a-ff1a-d790-460e29524082": {
         "status": "COMPLETED", 
         "results": [
-          "f8959f8f-367e-44f1-9d60-31978f0c05c7"
+          "42373559-41f5-47fe-a49b-bd064784ff55"
         ], 
         "error": null
       }, 
       "a17c9162-7089-f8dd-7beb-c571dea5ff37": {
         "status": "COMPLETED", 
         "results": [
-          "356f756e-7b1c-4d12-a256-fbb3fa70a88d"
+          "39c576e5-9ff7-46d3-ad83-95903de4aa64"
         ], 
         "error": null
       }, 
@@ -24,7 +24,7 @@
       }
     }, 
     "resultEntities": {
-      "f8959f8f-367e-44f1-9d60-31978f0c05c7": {
+      "42373559-41f5-47fe-a49b-bd064784ff55": {
         "report": {
           "tables": [
             {
@@ -39,13 +39,7 @@
                 "string"
               ], 
               "rowNames": null, 
-              "values": [
-                [
-                  "inner workflow", 
-                  "{\"id\":\"4f3af8ab-b145-4e0f-d537-bd1bde42c062\",\"workflow\":{\"nodes\":[{\"id\":\"2603a7b5-aaa9-40ad-9598-23f234ec5c32\",\"operation\":{\"id\":\"f94b04d7-ec34-42f7-8100-93fe235c89f8\",\"name\":\"Source\"},\"parameters\":{}},{\"id\":\"d7798d5e-b1c6-4027-873e-a6d653957418\",\"operation\":{\"id\":\"e652238f-7415-4da6-95c6-ee33808561b2\",\"name\":\"Sink\"},\"parameters\":{}},{\"id\":\"79318906-a5eb-b2ac-fb8d-d5bdca6a3059\",\"operation\":{\"id\":\"012876d9-7a72-47f9-98e4-8ed26db14d6d\",\"name\":\"Execute Mathematical Transformation\"},\"parameters\":{\"input column alias\":\"x\",\"formula\":\"2*x\",\"input column\":{\"type\":\"column\",\"value\":\"invalid column\"},\"output column name\":\"output\"}}],\"connections\":[{\"from\":{\"nodeId\":\"2603a7b5-aaa9-40ad-9598-23f234ec5c32\",\"portIndex\":0},\"to\":{\"nodeId\":\"79318906-a5eb-b2ac-fb8d-d5bdca6a3059\",\"portIndex\":0}},{\"from\":{\"nodeId\":\"79318906-a5eb-b2ac-fb8d-d5bdca6a3059\",\"portIndex\":0},\"to\":{\"nodeId\":\"d7798d5e-b1c6-4027-873e-a6d653957418\",\"portIndex\":0}}]},\"thirdPartyData\":{\"gui\":{\"name\":\"Inner workflow of custom transformer\",\"predefColors\":[\"#00B1EB\",\"#1ab394\",\"#2f4050\",\"#f8ac59\",\"#ed5565\",\"#DD6D3F\"],\"nodes\":{\"2603a7b5-aaa9-40ad-9598-23f234ec5c32\":{\"uiName\":\"\",\"color\":\"#2F4050\",\"coordinates\":{\"x\":5233,\"y\":4951}},\"d7798d5e-b1c6-4027-873e-a6d653957418\":{\"uiName\":\"\",\"color\":\"#2F4050\",\"coordinates\":{\"x\":5236,\"y\":5247}},\"79318906-a5eb-b2ac-fb8d-d5bdca6a3059\":{\"uiName\":\"\",\"color\":\"#00B1EB\",\"coordinates\":{\"x\":5201,\"y\":5101}}}}},\"variables\":{}}", 
-                  "Inner workflow of the Transformer."
-                ]
-              ], 
+              "values": [], 
               "name": "Parameters"
             }
           ], 
@@ -53,7 +47,7 @@
           "reportType": "Model"
         }
       }, 
-      "356f756e-7b1c-4d12-a256-fbb3fa70a88d": {
+      "39c576e5-9ff7-46d3-ad83-95903de4aa64": {
         "report": {
           "tables": [
             {
