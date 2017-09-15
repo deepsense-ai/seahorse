@@ -94,9 +94,14 @@ case class IdleExecution(
     throw new IllegalStateException("IdleExecution has no read nodes!")
   }
 
-  override def enqueue: RunningExecution = {
+  override def enqueue: Execution = {
     val (selected: Set[Id], subgraph: StatefulGraph) = selectedSubgraph
-    RunningExecution(graph, subgraph.enqueueDraft, selected)
+    val enqueuedSubgraph: StatefulGraph = subgraph.enqueueDraft
+    if (enqueuedSubgraph.isRunning) {
+      RunningExecution(graph, enqueuedSubgraph, selected)
+    } else {
+      this
+    }
   }
 
   override def inferAndApplyKnowledge(inferContext: InferContext): IdleExecution = {

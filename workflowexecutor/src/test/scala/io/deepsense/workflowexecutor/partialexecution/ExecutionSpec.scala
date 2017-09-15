@@ -45,7 +45,7 @@ class ExecutionSpec
         execution.selectedNodes.foreach {
           n => execution.states(n) shouldBe nodestate.Draft
         }
-        execution shouldBe a[IdleExecution]
+        execution shouldBe an[IdleExecution]
       }
       "created with selection" in {
         val execution = Execution(directedGraph, Seq(idA, idB))
@@ -195,7 +195,7 @@ class ExecutionSpec
         .nodeFinished(idC, results(idC))
         .nodeFinished(idE, results(idE))
 
-      finished shouldBe a[IdleExecution]
+      finished shouldBe an[IdleExecution]
     }
     "reset successors state when predecessor is replaced" in {
       val changedC = Node(Node.Id.randomId, op1To1) // Notice: different Id
@@ -204,6 +204,34 @@ class ExecutionSpec
     "reset successors state when predecessor's parameters are modified" in pendingUntilFixed {
       val changedC = Node(idC, op1To1) // Notice: the same id; different parameters!
       checkSuccessorsStatesAfterANodeChange(changedC)
+    }
+    "be idle" when {
+      "stated with an empty structure and enqueued" in {
+        val statefulGraph = StatefulGraph(
+          DirectedGraph(nodeSet, edgeSet),
+          Map(
+            idA -> nodeCompletedId(idA),
+            idB -> nodeCompletedId(idB),
+            idC -> nodeCompletedId(idC),
+            idD -> nodeCompletedId(idD),
+            idE -> nodeCompletedId(idE)
+          ),
+          None
+        )
+
+        val execution = IdleExecution(
+          statefulGraph,
+          statefulGraph.nodes.map(_.id))
+
+        val emptyStructure = execution.updateStructure(DirectedGraph(), Set())
+        val enqueued = emptyStructure.inferAndApplyKnowledge(mock[InferContext])
+          .enqueue
+
+        enqueued shouldBe an[IdleExecution]
+      }
+      "was empty and enqueud" in {
+        Execution.empty.enqueue shouldBe an[IdleExecution]
+      }
     }
   }
 
