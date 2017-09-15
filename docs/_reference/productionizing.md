@@ -50,23 +50,6 @@ git clone {{ site.WORKFLOW_EXECUTOR_GITHUB_URL }}
 ```
 
 
-## Configure Environment Variables
-
-It is necessary to set the `SPARK_HOME` and `PYTHONPATH` environment variables to allow
-Seahorse Batch Workflow Executor's Python module to use Apache Spark specific libraries.
-Localize your Apache Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }} installation
-and set the `SPARK_HOME` variable:
-{% highlight bash %}
-# Replace /opt/spark with a path to your Apache Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }} installation
-export SPARK_HOME=/opt/spark
-{% endhighlight %}
-Now set the `PYTHONPATH` variable (it depends on `SPARK_HOME`):
-{% highlight bash %}
-export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.1-src.zip:$PYTHONPATH
-{% endhighlight %}
-
-
-
 ## How to Run Seahorse Batch Workflow Executor
 
 Seahorse Batch Workflow Executor can be submitted to an Apache Spark cluster as any other Apache Spark application.
