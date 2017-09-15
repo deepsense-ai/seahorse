@@ -1,5 +1,6 @@
 <div ui-ace="{
-      mode: acstCtrl.language.toLowerCase()
+      mode: acstCtrl.language.toLowerCase(),
+      onBlur: acstCtrl.broadcastUpdate
     }"
      ng-model="acstCtrl.value"
 >

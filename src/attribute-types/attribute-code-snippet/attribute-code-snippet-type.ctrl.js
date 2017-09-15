@@ -1,5 +1,5 @@
 /*@ngInject*/
-function AttributeCodeSnippetTypeCtrl($uibModal) {
+function AttributeCodeSnippetTypeCtrl($rootScope, $uibModal) {
 
   var that = this;
 
@@ -21,10 +21,16 @@ function AttributeCodeSnippetTypeCtrl($uibModal) {
     });
 
     modalInstance.result.then(function (modifiedCode) {
-      that.value = modifiedCode;
+      if(that.value !== modifiedCode) {
+        that.value = modifiedCode;
+        that.broadcastUpdate();
+      }
     }, function () {});
   };
 
+  that.broadcastUpdate = function() {
+    $rootScope.$broadcast('AttributesPanel.UPDATED');
+  };
 }
 
 angular.module('deepsense.attributes-panel').
