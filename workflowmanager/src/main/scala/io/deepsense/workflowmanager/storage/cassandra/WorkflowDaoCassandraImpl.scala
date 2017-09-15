@@ -46,7 +46,7 @@ class WorkflowDaoCassandraImpl @Inject() (
 
   override def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]] = {
     import scala.collection.JavaConversions._
-    Future(session.execute(getAllWorkflowsQuery()))
+    Future(session.execute(getAllWorkflowsQuery))
       .map(_.all().map(row =>
         Workflow.Id.fromUuid(row.getUUID(WorkflowRowMapper.Id))
           -> workflowRowMapper.toWorkflowWithDates(row)
@@ -73,7 +73,7 @@ class WorkflowDaoCassandraImpl @Inject() (
     getQuery(id, Seq(WorkflowRowMapper.Id, WorkflowRowMapper.Workflow))
   }
 
-  private def getAllWorkflowsQuery(): Select.Where = {
+  private def getAllWorkflowsQuery: Select.Where = {
     queryBuilder.select(
       WorkflowRowMapper.Id,
       WorkflowRowMapper.Workflow,
