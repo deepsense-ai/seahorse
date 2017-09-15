@@ -215,6 +215,24 @@ class ParamsSpec extends UnitSpec {
       }
     }
   }
+
+  "declareParams()" should {
+    "throw IllegalArgumentException" when {
+      import DeclareParamsFixtures._
+      "some declared params are defined outside of class" in {
+        an [IllegalArgumentException] shouldBe thrownBy { new ParamsFromOutside }
+      }
+      "some param names are not unique" in {
+        an [IllegalArgumentException] shouldBe thrownBy { new ParamsWithNotUniqueNames }
+      }
+      "not all defined params are declared" in {
+        an [IllegalArgumentException] shouldBe thrownBy { new NotAllParamsDeclared }
+      }
+      "some params are declared more then one time" in {
+        an [IllegalArgumentException] shouldBe thrownBy { new ParamsRepeated }
+      }
+    }
+  }
 }
 
 object ParamsSpec extends UnitSpec {
@@ -263,4 +281,31 @@ object ParamsSpec extends UnitSpec {
 
   class WithParamsA extends WithParams
   class WithParamsB extends WithParams
+
+  object DeclareParamsFixtures {
+    val outsideParam = MockParam("outside name")
+
+    class ParamsFromOutside extends Params {
+      val param = MockParam("name")
+      val params = declareParams(outsideParam, param)
+    }
+
+    class ParamsWithNotUniqueNames extends Params {
+      val param1 = MockParam("some name")
+      val param2 = MockParam(param1.name)
+      val params = declareParams(param1, param2)
+    }
+
+    class NotAllParamsDeclared extends Params {
+      val param1 = MockParam("some name")
+      val param2 = MockParam("some other name")
+      val params = declareParams(param1)
+    }
+
+    class ParamsRepeated extends Params {
+      val param1 = MockParam("some name")
+      val param2 = MockParam("some other name")
+      val params = declareParams(param1, param2, param1)
+    }
+  }
 }

@@ -20,6 +20,7 @@ import java.lang.reflect.Modifier
 
 import spray.json._
 
+import io.deepsense.commons.utils.CollectionExtensions._
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 
@@ -87,6 +88,7 @@ trait Params extends Serializable {
   /**
    * Allows to declare parameters order conveniently and makes sure
    * that all parameters are declared.
+   * Additionally check uniqueness of names.
    */
   protected def declareParams(params: Param[_]*): Array[Param[_]] = {
     val declaredParamSet = params.toSet
@@ -94,6 +96,7 @@ trait Params extends Serializable {
     require(declaredParamSet == reflectionParamSet,
       s"[${getClass.getName}] Not all parameters {${reflectionParamSet.mkString(", ")}}" +
         s" were declared in {${declaredParamSet.mkString(", ")}}")
+    require(params.map(_.name).hasUniqueValues, "Names of parameters are not unique")
     params.toArray
   }
 
