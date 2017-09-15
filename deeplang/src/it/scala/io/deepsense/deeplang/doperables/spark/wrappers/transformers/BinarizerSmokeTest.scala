@@ -18,8 +18,8 @@ package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
 import org.apache.spark.sql.types.{DataType, DoubleType}
 
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.SingleOrMultiColumnChoices.SingleColumnChoice
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.NoInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class BinarizerSmokeTest
@@ -28,7 +28,7 @@ class BinarizerSmokeTest
 
   override def transformerWithParams: Binarizer = {
     val inPlace = NoInPlaceChoice()
-      .setColumnName("binarizerOutput")
+      .setOutputColumn("binarizerOutput")
     val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection("d"))
       .setInPlace(inPlace)

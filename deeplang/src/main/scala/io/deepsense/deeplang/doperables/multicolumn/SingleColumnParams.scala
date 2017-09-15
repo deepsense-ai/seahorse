@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.multicolumn
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.{SingleColumnCreatorParam, Param, StringParam}
 
-object SingleColumnTransformerParams {
+object SingleColumnParams {
 
   sealed abstract class SingleColumnInPlaceChoice extends Choice {
     override val choiceOrder = SingleTransformInPlaceChoices.choiceOrder
@@ -42,8 +42,8 @@ object SingleColumnTransformerParams {
       override val name: String = "create a new column"
       override val params: Array[Param[_]] = declareParams(outputColumnCreatorParam)
 
-      def setColumnName(columnName: String): this.type = set(outputColumnCreatorParam, columnName)
-      def getColumnName: String = $(outputColumnCreatorParam)
+      def setOutputColumn(columnName: String): this.type = set(outputColumnCreatorParam, columnName)
+      def getOutputColumn: String = $(outputColumnCreatorParam)
     }
   }
 }

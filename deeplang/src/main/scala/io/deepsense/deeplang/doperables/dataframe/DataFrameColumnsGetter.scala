@@ -54,6 +54,8 @@ object DataFrameColumnsGetter {
 
   def uniqueSuffixedColumnName(column: String): String = column + "_" + UUID.randomUUID().toString
 
+  def prefixedColumnName(column: String, prefix: String): String = prefix + "_" + column
+
   /**
    * Returns name of column based on selection.
    * Throws [[ColumnDoesNotExistException]] if out-of-range index

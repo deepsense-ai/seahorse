@@ -1,0 +1,144 @@
+/**
+ * Copyright 2015, deepsense.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.deepsense.deeplang.doperables
+
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
+import io.deepsense.deeplang.doperables.StringIndexerIntegSpec.{MultiIndexedR, IndexedR, R}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasOutputCol, HasInputCol}
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+
+class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
+
+  "StringIndexer" should {
+    "convert single column" in {
+      val si = new StringIndexer()
+      si.setSingleColumn("a", "out")
+      val t = si.fit(executionContext)(())(inputDataFrame)
+        .asInstanceOf[Transformer with HasInputCol with HasOutputCol]
+
+      import t._
+      t.set(Seq(
+        inputCol -> NameSingleColumnSelection("c"),
+        outputCol -> "out"
+      ): _*)
+
+
+      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      assertDataFramesEqual(
+        transformed,
+        outputDataFrame,
+        checkRowOrder = true,
+        checkNullability = false)
+    }
+    "convert multiple columns" in {
+      val si = new StringIndexer()
+      val outputPrefix = "idx"
+      si.setMultipleColumn(Set("a", "b"), outputPrefix)
+
+      val t = si.fit(executionContext)(())(inputDataFrame)
+        .asInstanceOf[StringIndexerModel]
+
+      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      assertDataFramesEqual(
+        transformed,
+        multiOutputDataFrame,
+        checkRowOrder = true,
+        checkNullability = false)
+    }
+    "infer knowledge in single-column mode" in {
+      val si = new StringIndexer()
+      si.setSingleColumn("a", "out")
+
+      val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
+      val (transformerKnowledge, _) = si.fit.infer(mock[InferContext])(())(inputKnowledge)
+      val inf = transformerKnowledge.single
+        .asInstanceOf[Transformer with HasInputCol with HasOutputCol]
+
+      import inf._
+      inf.set(Seq(
+        inputCol -> NameSingleColumnSelection("c"),
+        outputCol -> "out"
+      ): _*)
+
+
+      val (outputKnowledge, _) = inf.transform.infer(mock[InferContext])(())(inputKnowledge)
+      val inferredSchema = outputKnowledge.single.schema.get
+      assertSchemaEqual(inferredSchema, outputDataFrame.schema.get)
+    }
+    "infer knowledge in multi-column mode" in {
+      val si = new StringIndexer()
+      val outputPrefix = "idx"
+      si.setMultipleColumn(Set("a", "b"), outputPrefix)
+
+      val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
+      val (transformerKnowledge, _) = si.fit.infer(mock[InferContext])(())(inputKnowledge)
+      val inf = transformerKnowledge.single
+        .asInstanceOf[StringIndexerModel]
+
+      val (outputKnowledge, _) = inf.transform.infer(mock[InferContext])(())(inputKnowledge)
+      val inferredSchema = outputKnowledge.single.schema.get
+      assertSchemaEqual(inferredSchema, multiOutputDataFrame.schema.get)
+    }
+  }
+
+  val rs = Seq(
+    R("a",   "bb",  "a"),
+    R("aa",  "b",   "a"),
+    R("a",   "b",   "a"),
+    R("aaa", "b",   "aa"),
+    R("aa",  "bbb", "aaa"),
+    R("aa",  "b",   "aaa")
+  )
+
+  val inputDataFrame = createDataFrame(rs)
+
+  val indexesA: Map[String, Double] = Map(
+    ("a", 1),
+    ("aa", 0),
+    ("aaa", 2))
+
+  val outputDataFrame = {
+    val indexedRs = rs.map {
+      case R(a, b, c) =>
+        IndexedR(a, b, c, indexesA(c))
+    }
+    createDataFrame(indexedRs)
+  }
+
+  val multiOutputDataFrame = {
+    val indexesB: Map[String, Double] = Map(
+      ("b", 0),
+      ("bb", 1),
+      ("bbb", 2)
+    )
+
+    val indexedRs = rs.map {
+      case R(a, b, c) =>
+        MultiIndexedR(a, b, c, indexesA(a), indexesB(b))
+    }
+
+    createDataFrame(indexedRs)
+  }
+}
+
+object StringIndexerIntegSpec {
+  case class R(a: String, b: String, c: String)
+  case class IndexedR(a: String, b: String, c: String, out: Double)
+  case class MultiIndexedR(a: String, b: String, c: String, idx_a: Double, idx_b: Double)
+}

@@ -19,8 +19,8 @@ package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
 import org.apache.spark.sql.types.DataType
 
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.SingleOrMultiColumnChoices.SingleColumnChoice
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.NoInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class DiscreteCosineTransformerSmokeTest
@@ -29,7 +29,7 @@ class DiscreteCosineTransformerSmokeTest
 
   override def transformerWithParams: DiscreteCosineTransformer = {
     val inPlace = NoInPlaceChoice()
-      .setColumnName("dct")
+      .setOutputColumn("dct")
 
     val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection("v"))

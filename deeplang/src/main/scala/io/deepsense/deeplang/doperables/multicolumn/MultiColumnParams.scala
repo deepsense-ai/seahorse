@@ -16,12 +16,12 @@
 
 package io.deepsense.deeplang.doperables.multicolumn
 
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleColumnInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.params._
 
-object MultiColumnTransformerParams {
+object MultiColumnParams {
 
   sealed abstract class MultiColumnInPlaceChoice extends Choice {
     override val choiceOrder = MultiColumnInPlaceChoices.choiceOrder
@@ -39,8 +39,8 @@ object MultiColumnTransformerParams {
       override val name: String = "Append columns"
 
       val outputColumnsPrefixParam = PrefixBasedColumnCreatorParam(
-        name = "column name suffix",
-        description = "Suffix for output columns"
+        name = "column name prefix",
+        description = "Prefix for output columns"
       )
 
       override val params: Array[Param[_]] = declareParams(outputColumnsPrefixParam)

@@ -17,15 +17,12 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
-import spray.json.DefaultJsonProtocol._
-import spray.json._
 
-import io.deepsense.deeplang.doperables.multicolumn.{SingleColumnTransformerParams, MultiColumnTransformerParams}
-import MultiColumnTransformerParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
-import MultiColumnTransformerParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
 import io.deepsense.deeplang.doperables.MultiColumnTransformerIntegSpec._
-import SingleColumnTransformerParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 import io.deepsense.deeplang.params.{NumericParam, Param}
@@ -153,7 +150,7 @@ object MultiColumnTransformerIntegSpec {
 
     def setMagicConstant(value: Double): this.type = set(magicConstant, value)
 
-    override protected def getSpecificParams: Array[Param[_]] = Array(magicConstant)
+    override def getSpecificParams: Array[Param[_]] = Array(magicConstant)
 
     override def transformSingleColumn(
         inputColumn: String,
@@ -183,7 +180,7 @@ object MultiColumnTransformerIntegSpec {
 
     def setSingleColumn(column: String, inPlace: Option[String]): this.type = {
       val inplaceChoice = inPlace match {
-        case Some(x) => NoInPlaceChoice().setColumnName(x)
+        case Some(x) => NoInPlaceChoice().setOutputColumn(x)
         case None => YesInPlaceChoice()
       }
 

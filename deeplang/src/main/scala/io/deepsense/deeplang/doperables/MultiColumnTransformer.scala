@@ -16,18 +16,15 @@
 
 package io.deepsense.deeplang.doperables
 
-import java.util.UUID
-
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
+import io.deepsense.deeplang.doperables.multicolumn.{HasSpecificParams, MultiColumnParams, SingleColumnTransformerUtils}
 import io.deepsense.deeplang.inference.exceptions.TransformSchemaException
-import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 
@@ -41,10 +38,11 @@ import io.deepsense.deeplang.params.selections.MultipleColumnSelection
  * When working with multiple columns and in not in-place mode
  * one has to specify output column names' prefix.
  */
-abstract class MultiColumnTransformer extends Transformer {
-  import MultiColumnTransformerParams._
+abstract class MultiColumnTransformer
+  extends Transformer
+  with HasSpecificParams {
 
-  protected def getSpecificParams: Array[Param[_]]
+  import MultiColumnParams._
 
   val singleOrMultiChoiceParam = ChoiceParam[SingleOrMultiColumnChoice](
     name = "one or many",
@@ -114,7 +112,7 @@ abstract class MultiColumnTransformer extends Transformer {
     val inputColumn = df.getColumnName(single.getInputColumn)
     single.getInPlace match {
       case no: NoInPlaceChoice =>
-        transformSingleColumn(inputColumn, no.getColumnName, ctx, df)
+        transformSingleColumn(inputColumn, no.getOutputColumn, ctx, df)
       case YesInPlaceChoice() =>
         transformSingleColumnInPlace(ctx, df, inputColumn)
     }
@@ -136,7 +134,8 @@ abstract class MultiColumnTransformer extends Transformer {
       case newColumns: MultiColumnNoInPlace =>
         inputColumns.foldLeft(df) {
           case (partialResult, inputColumn) =>
-            val outputColumn = prefixedColumnName(inputColumn, newColumns.getColumnsPrefix)
+            val outputColumn =
+              DataFrameColumnsGetter.prefixedColumnName(inputColumn, newColumns.getColumnsPrefix)
             transformSingleColumn(inputColumn, outputColumn, ctx, partialResult)
         }
     }
@@ -162,7 +161,8 @@ abstract class MultiColumnTransformer extends Transformer {
         inputColumns.foldLeft(someSchema) {
           case (partialResult, inputColumn) =>
             partialResult.flatMap { schema =>
-              val outputColumn = prefixedColumnName(inputColumn, columnPrefix)
+              val outputColumn =
+                DataFrameColumnsGetter.prefixedColumnName(inputColumn, columnPrefix)
               transformSingleColumnSchema(inputColumn, outputColumn, schema)
             }
         }
@@ -175,7 +175,7 @@ abstract class MultiColumnTransformer extends Transformer {
     val inputColumn = DataFrameColumnsGetter.getColumnName(schema, single.getInputColumn)
     single.getInPlace match {
       case no: NoInPlaceChoice =>
-        transformSingleColumnSchema(inputColumn, no.getColumnName, schema)
+        transformSingleColumnSchema(inputColumn, no.getOutputColumn, schema)
       case YesInPlaceChoice() =>
         transformSingleColumnSchemaInPlace(inputColumn, schema)
     }
@@ -185,25 +185,22 @@ abstract class MultiColumnTransformer extends Transformer {
       ctx: ExecutionContext,
       df: DataFrame,
       inputColumn: String): DataFrame = {
-    val temporaryColumnName = uniqueString()
-    val temporaryDataFrame =
-      transformSingleColumn(inputColumn, temporaryColumnName, ctx, df)
-    val allColumnNames = temporaryDataFrame.sparkDataFrame.schema.map(_.name)
-    val filteredColumns = allColumnNames.collect {
-      case columnName if columnName == inputColumn =>
-        temporaryDataFrame.sparkDataFrame(temporaryColumnName).as(inputColumn)
-      case columnName if columnName != temporaryColumnName =>
-        temporaryDataFrame.sparkDataFrame(columnName)
-    }
 
-    val filteredDataFrame = temporaryDataFrame.sparkDataFrame.select(filteredColumns: _*)
-    DataFrame.fromSparkDataFrame(filteredDataFrame)
+    SingleColumnTransformerUtils.transformSingleColumnInPlace(
+      inputColumn,
+      df,
+      ctx,
+      (outputColumn) => {
+        transformSingleColumn(inputColumn, outputColumn, ctx, df)
+      }
+    )
   }
 
   private def transformSingleColumnSchemaInPlace(
       inputColumn: String,
       schema: StructType): Option[StructType] = {
-    val temporaryColumnName = uniqueString()
+    val temporaryColumnName =
+      DataFrameColumnsGetter.uniqueSuffixedColumnName(inputColumn)
     val temporarySchema =
       transformSingleColumnSchema(inputColumn, temporaryColumnName, schema)
 
@@ -216,11 +213,6 @@ abstract class MultiColumnTransformer extends Transformer {
       })
     }
   }
-
-  private def uniqueString(): String = UUID.randomUUID().toString
-
-  private def prefixedColumnName(column: String, prefix: String): String =
-    prefix + "_" + column
 }
 
 object MultiColumnTransformer {

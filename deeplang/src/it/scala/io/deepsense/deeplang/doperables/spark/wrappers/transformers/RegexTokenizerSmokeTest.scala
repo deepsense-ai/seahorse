@@ -18,8 +18,8 @@ package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
 import org.apache.spark.sql.types.{ArrayType, DataType, StringType}
 
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.SingleOrMultiColumnChoices.SingleColumnChoice
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.NoInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 class RegexTokenizerSmokeTest
@@ -28,7 +28,7 @@ class RegexTokenizerSmokeTest
 
   override def transformerWithParams: RegexTokenizer = {
     val inPlace = NoInPlaceChoice()
-      .setColumnName("tokenized")
+      .setOutputColumn("tokenized")
 
     val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection("s"))
