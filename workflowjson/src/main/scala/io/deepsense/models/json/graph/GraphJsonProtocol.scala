@@ -16,12 +16,11 @@
 
 package io.deepsense.models.json.graph
 
-import spray.json._
-
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.{Edge, Graph, Node}
-import OperationJsonProtocol.DOperationReader
+import io.deepsense.models.json.graph.OperationJsonProtocol.DOperationReader
+import spray.json._
 
 object GraphJsonProtocol {
 
@@ -46,7 +45,11 @@ object GraphJsonProtocol {
 
     private def readNode(nodeJs: JsValue): Node = nodeJs match {
       case JsObject(fields) =>
-        val nodeId = fields(NodeId).convertTo[String]
+        val nodeId = try {
+          fields(NodeId).convertTo[String]
+        } catch { case e =>
+          throw new DeserializationException(s"Node is missing a string field '$NodeId'", e)
+        }
         val operation = nodeJs.convertTo[DOperation](dOperationReader)
         Node(Node.Id.fromString(nodeId), operation)
       case x =>
@@ -66,8 +69,8 @@ object GraphJsonProtocol {
     }
 
     private def read(fields: Map[String, JsValue]): Graph = {
-      val nodes = readNodes(fields(Nodes))
-      val edges = readEdges(fields(Edges))
+      val nodes: Set[Node] = fields.get(Nodes).map(readNodes).getOrElse(Set())
+      val edges: Set[Edge] = fields.get(Edges).map(readEdges).getOrElse(Set())
       Graph(nodes, edges)
     }
   }

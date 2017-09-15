@@ -16,11 +16,11 @@
 
 package io.deepsense.models.json.graph
 
-import spray.json._
-
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.catalogs.doperations.exceptions.DOperationNotFoundException
+import spray.json._
 
 object OperationJsonProtocol extends IdJsonProtocol {
 
@@ -51,9 +51,23 @@ object OperationJsonProtocol extends IdJsonProtocol {
     override def read(json: JsValue): DOperation = json match {
       case JsObject(fields) =>
         val operationJs = fields(Operation).asJsObject
-        val operation = catalog
-          .createDOperation(operationJs.fields(Id).convertTo[DOperation.Id])
-        operation.parameters.fillValuesWithJson(fields(Parameters))
+        val operationId = operationJs.fields
+          .getOrElse(Id, deserializationError(s"Operation id field '$Id' is missing"))
+          .convertTo[DOperation.Id]
+
+        val operation = try {
+          catalog.createDOperation(operationId)
+        } catch {
+          case notFound: DOperationNotFoundException =>
+            deserializationError(
+              s"DOperation with id = '${notFound.operationId}' does not exist",
+              notFound)
+        }
+
+        val parameters = fields.getOrElse(Parameters,
+          deserializationError(s"Operation parameters field '$Parameters' is missing"))
+
+        operation.parameters.fillValuesWithJson(parameters)
         operation
       case x =>
         throw new DeserializationException(s"Expected JsObject with a node but got $x")
