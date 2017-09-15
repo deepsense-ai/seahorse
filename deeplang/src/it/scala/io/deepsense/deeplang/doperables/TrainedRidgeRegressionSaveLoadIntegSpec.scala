@@ -30,6 +30,7 @@ class TrainedRidgeRegressionSaveLoadIntegSpec
 
   before {
     fileSystemClient.delete(testFilePath)
+    createDir("target/tests")
   }
 
   "TrainedRidgeRegression" should {
