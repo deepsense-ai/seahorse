@@ -21,6 +21,7 @@ import org.mockito.Mockito._
 import org.mockito.Matchers._
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.inference.InferContext
 
 import io.deepsense.graph._
@@ -196,6 +197,23 @@ class ExecutionSpec
         .nodeFinished(idE, results(idE))
 
       finished shouldBe an[IdleExecution]
+    }
+    "expose inference errors" in {
+      val failedGraph = mock[StatefulGraph]
+      val failureDescription = Some(mock[FailureDescription])
+      when(failedGraph.executionFailure).thenReturn(failureDescription)
+
+      val graph = mock[StatefulGraph]
+      val directedGraph = mock[DirectedGraph]
+      when(directedGraph.nodes).thenReturn(Set[Node]())
+      when(graph.directedGraph).thenReturn(directedGraph)
+      when(graph.subgraph(any())).thenReturn(graph)
+      when(graph.inferAndApplyKnowledge(any())).thenReturn(failedGraph)
+      when(graph.updateStates(any())).thenReturn(failedGraph)
+      when(graph.executionFailure).thenReturn(None)
+
+      val execution = IdleExecution(graph, Set())
+      execution.inferAndApplyKnowledge(mock[InferContext]).error shouldBe failureDescription
     }
     "reset successors state when predecessor is replaced" in {
       val changedC = Node(Node.Id.randomId, op1To1) // Notice: different Id

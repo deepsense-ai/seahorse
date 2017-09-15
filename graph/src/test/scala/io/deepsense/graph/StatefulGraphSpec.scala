@@ -205,6 +205,27 @@ class StatefulGraphSpec
       operation.trace("Logging just to clarify that it works after deserialization!")
       operation.tTagTI_0.tpe should not be null
     }
+    "allow to update state using another StatefulGraph" in {
+      val states: Map[Id, NodeState] = Map(
+        idA -> mock[NodeState],
+        idB -> mock[NodeState],
+        idC -> mock[NodeState],
+        idD -> mock[NodeState],
+        idE -> mock[NodeState])
+      val g1 = StatefulGraph(
+        DirectedGraph(nodeSet, edgeSet),
+        states,
+        None)
+      val nodeFailedState = nodeFailed
+      val description: Some[FailureDescription] = Some(mock[FailureDescription])
+      val g2 = StatefulGraph(
+        DirectedGraph(Set(nodeB), Set()),
+        Map(idB -> nodeFailedState),
+        description)
+      val updated = g1.updateStates(g2)
+      updated.states should contain theSameElementsAs g1.states.updated(idB, nodeFailedState)
+      updated.executionFailure shouldBe description
+    }
     "recursively mark nodes as draft" in {
       val stateCompleted = nodeCompleted
       val drafted = StatefulGraph(DirectedGraph(nodeSet, edgeSet),

@@ -135,7 +135,9 @@ case class StatefulGraph(
 
   def updateStates(changedGraph: StatefulGraph): StatefulGraph = {
     val updatedStates = states ++ changedGraph.states
-    copy(states = updatedStates)
+    copy(
+      states = updatedStates,
+      executionFailure = executionFailure.orElse(changedGraph.executionFailure))
   }
 
   def subgraph(nodes: Set[Node.Id]): StatefulGraph = {
