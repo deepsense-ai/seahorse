@@ -85,15 +85,21 @@ abstract class SparkModelWrapper[M <: ml.Model[M], E <: ml.Estimator[M]]
         sparkParamMap(df.sparkDataFrame.schema)))
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
-    // We assume that all params of model are also params of estimator
-    val sparkEstimatorWithParams = parentEstimator.serializableEstimator
-      .copy(
-        parentEstimator.sparkParamMap(parentEstimator.sparkEstimator, schema))
-      .copy(sparkParamMap(parentEstimator.sparkEstimator, schema))
-    try {
-      Some(sparkEstimatorWithParams.transformSchema(schema))
-    } catch {
-      case e: Exception => throw SparkTransformSchemaException(e)
+    // If parentEstimator is null then the wrapper was probably
+    // created for inference purposes. This model just defines the type of model
+    // it is impossible to use.
+    if (parentEstimator == null) {
+      None
+    } else {
+      // We assume that all params of model are also params of estimator
+      val sparkEstimatorWithParams = parentEstimator.serializableEstimator
+        .copy(parentEstimator.sparkParamMap(parentEstimator.sparkEstimator, schema))
+        .copy(sparkParamMap(parentEstimator.sparkEstimator, schema))
+      try {
+        Some(sparkEstimatorWithParams.transformSchema(schema))
+      } catch {
+        case e: Exception => throw SparkTransformSchemaException(e)
+      }
     }
   }
 
@@ -101,19 +107,29 @@ abstract class SparkModelWrapper[M <: ml.Model[M], E <: ml.Estimator[M]]
     sparkParamMap(sparkModel, schema)
 
   override def replicate(extra: io.deepsense.deeplang.params.ParamMap): this.type = {
+    // If parentEstimator is null then the wrapper was probably
+    // created for inference purposes. Let's just stick to nulls.
     val replicatedEstimatorWrapper: SparkEstimatorWrapper[M, E, _] =
-      parentEstimator.replicate(extractParamMap(extra))
-        .asInstanceOf[SparkEstimatorWrapper[M, E, _]]
-
+      if (parentEstimator == null) {
+        null
+      } else {
+        parentEstimator.replicate(extractParamMap(extra))
+          .asInstanceOf[SparkEstimatorWrapper[M, E, _]]
+      }
     // model might not exist (if not fitted yet)
     val modelCopy = Option(serializableModel)
       .map(m => m.copy(m.extractParamMap()).setParent(parentEstimator.serializableEstimator))
       .getOrElse(null)
       .asInstanceOf[SerializableSparkModel[M]]
 
-    super.replicate(extractParamMap(extra))
-      .setParent(replicatedEstimatorWrapper)
+    val replicated = super.replicate(extractParamMap(extra))
       .setModel(modelCopy)
+
+    if (parentEstimator == null) {
+      replicated
+    } else {
+      replicated.setParent(replicatedEstimatorWrapper)
+    }
   }
 
   override def loadTransformer(ctx: ExecutionContext, path: String): this.type = {
