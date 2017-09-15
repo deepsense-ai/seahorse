@@ -16,9 +16,10 @@ if [ $# != 1 ]; then
 fi
 
 PROJECT_NAME=$1
+GIT_SHA=`git rev-parse HEAD`
 
 # Cannot use `local-image-latest` as grepped string, because SBT-built dockers won't have it in tag
-DOCKER_IMAGE=`docker images | grep $PROJECT_NAME | grep "latest" | head -1 | awk '{ print $3 }'`
+DOCKER_IMAGE=`docker images -q "$PROJECT_NAME:$GIT_SHA"`
 
 echo "Docker image for tagging and publishing:"
 echo $DOCKER_IMAGE
@@ -35,7 +36,7 @@ NAMESPACE="deepsense_io"
 # Tag docker image
 echo ">>> Tagging docker image and pushing docker to repository $DEEPSENSE_REGISTRY"
 
-GIT_SHA=`git rev-parse HEAD`
+
 docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_SHA
 docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_SHA
 
@@ -44,6 +45,9 @@ if [ ! -z "$SEAHORSE_BUILD_TAG" ]; then
   docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
   docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
 fi
+
+# Fetch changes from origin to make sure we have current origin/master
+git fetch origin
 
 # TODO Automatically derive branches. Make it work with any dev_* bramches
 for BRANCH in master seahorse_on_desktop seahorse_on_tap seahorse_on_bdu;

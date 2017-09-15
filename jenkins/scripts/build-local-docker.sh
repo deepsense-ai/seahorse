@@ -16,7 +16,10 @@ fi
 PROJECT_PATH=$1
 PROJECT_NAME=$2
 
-TAG_LATEST="$PROJECT_NAME:local-image-latest"
+GIT_SHA=`git rev-parse HEAD`
+
+GIT_TAG="$PROJECT_NAME:$GIT_SHA"
+TAG_LATEST="$PROJECT_NAME:latest"
 
 # Validate input parameters
 if [ ! -d $PROJECT_PATH ]; then
@@ -34,4 +37,4 @@ cd $PROJECT_PATH
 # Build and tag docker image
 echo ">>> Building docker and tagging it as latest"
 docker build -t "$TAG_LATEST" .
-
+docker tag "$TAG_LATEST" "$GIT_TAG"

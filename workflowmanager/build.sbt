@@ -1,3 +1,5 @@
+import com.typesafe.sbt.SbtGit
+
 // Copyright (c) 2015, CodiLime Inc.
 
 name := "deepsense-workflowmanager"
@@ -15,5 +17,6 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 dockerBaseImage := "anapsix/alpine-java:jre8"
 dockerExposedPorts := Seq(9080)
 dockerUpdateLatest := true
+version in Docker := SbtGit.GitKeys.gitHeadCommit.value.get
 
 WorkflowExamples.defaultSettings

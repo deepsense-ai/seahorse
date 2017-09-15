@@ -79,6 +79,8 @@ dockerCommands ++= Seq(
   ExecCmd("ENTRYPOINT", "/bin/tini", "--"),
   ExecCmd("CMD", "bin/deepsense-sessionmanager")
 )
+
 dockerUpdateLatest := true
+version in Docker := SbtGit.GitKeys.gitHeadCommit.value.get
 
 // scalastyle:on
