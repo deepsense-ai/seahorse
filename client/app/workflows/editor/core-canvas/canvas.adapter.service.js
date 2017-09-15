@@ -139,7 +139,9 @@ class AdapterService {
   getNodesToRender(inputNodes) {
     const nodes = JSON.parse(JSON.stringify(inputNodes));
     if (this.newNodeData && this.newNodeData.endpoint) {
-      nodes[NEW_NODE_NODE.id] = Object.assign({}, NEW_NODE_NODE);
+      const node = Object.assign({}, NEW_NODE_NODE);
+      node.input[0].typeQualifier = this.newNodeData.typeQualifier;
+      nodes[node.id] = node;
     }
     return nodes;
   }

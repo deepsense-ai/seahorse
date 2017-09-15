@@ -107,6 +107,34 @@ class EditorController {
     this.startWizard(newNodeData.x, newNodeData.y, newNodeData.endpoint);
   }
 
+  startWizard(x, y, endpoint = null) {
+    if (this.isEditable) {
+      if (endpoint) {
+        const map = this.getAvailableOperations(this.workflow, endpoint);
+        this.categories = this.Operations.getCatalogByMap(this.Operations.getCatalog(), map);
+      }
+
+      const newNodeData = {
+        x: x,
+        y: y,
+        endpoint: endpoint,
+        nodeId: null,
+        portIndex: null,
+        typeQualifier: null
+      };
+
+      // After some time endpoint paramters are wiped by jsPlumb,
+      // and we need those params to render the temporary edges or after wizard the final edges.
+      if (endpoint) {
+        newNodeData.nodeId = endpoint.getParameter('nodeId');
+        newNodeData.portIndex = endpoint.getParameter('portIndex');
+        newNodeData.typeQualifier = this.getTypeQualifierForEndpoint(endpoint)
+      }
+
+      this.newNodeData = newNodeData;
+    }
+  }
+
   onSelect(operationId) {
     const newNodeElement = this.$element[0].querySelector('new-node');
     //TODO move it out of here to some service when they're refactored
@@ -126,7 +154,7 @@ class EditorController {
         },
         to: {
           nodeId: node.id,
-          portIndex: 0
+          portIndex: this.getMatchingPortIndex(node, this.newNodeData.typeQualifier)
         }
       });
       this.workflow.addEdge(newEdge);
@@ -134,28 +162,23 @@ class EditorController {
     this.newNodeData = null;
   }
 
-  startWizard(x, y, endpoint = null) {
-    if (this.isEditable) {
-      if (endpoint) {
-        const map = this.getAvailableOperations(this.workflow, endpoint);
-        this.categories = this.Operations.getCatalogByMap(this.Operations.getCatalog(), map);
+  //TODO move to service like all methods below
+  getMatchingPortIndex(node, typeQualifier) {
+    let portIndex = 0;
+    node.input.forEach((port, index) => {
+      if (this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier)) {
+        portIndex = index;
       }
+    });
+    return portIndex;
+  }
 
-      const newNodeData = {
-        x: x,
-        y: y,
-        endpoint: endpoint,
-      };
+  //TODO move it to service which is aware of endpoints and nodes
+  getTypeQualifierForEndpoint(endpoint) {
+    const node = this.workflow.getNodeById(endpoint.getParameter('nodeId'));
+    const port = node.output[endpoint.getParameter('portIndex')];
 
-      // After some time endpoint paramters are wiped by jsPlumb,
-      // and we need those params to render the temporary edges or after wizard the final edges.
-      if (endpoint) {
-        newNodeData.nodeId = endpoint.getParameter('nodeId');
-        newNodeData.portIndex = endpoint.getParameter('portIndex');
-      }
-
-      this.newNodeData = newNodeData;
-    }
+    return port.typeQualifier;
   }
 
   //TODO move it to service which is aware of endpoints and their params
