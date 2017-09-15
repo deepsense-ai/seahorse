@@ -21,7 +21,7 @@ a ``WrongColumnTypeException`` is thrown.
 
 If values of ``left prefix`` and/or ``right prefix`` are provided,
 the columns in the output `DataFrame` are renamed by prepending the prefix
-(followed by an underscore) proper for the table, which they come from.
+proper for the table, which they come from.
 
 If the columns' names in the resulting `DataFrame` are not to be unique,
 random strings will be appended to them.
