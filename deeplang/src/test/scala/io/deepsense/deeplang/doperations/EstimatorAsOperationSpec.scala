@@ -17,19 +17,17 @@
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types.StructType
-import org.mockito.Matchers._
-import org.mockito.Mockito._
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.{NumericParam, Param, ParamMap}
+import io.deepsense.deeplang.params.ParamMap
 
-
-class EstimatorAsOperationIntegSpec extends UnitSpec {
-  import EstimatorAsOperationIntegSpec._
+class EstimatorAsOperationSpec extends UnitSpec {
+  import EstimatorAsOperationSpec._
 
   "EstimatorAsOperation" should {
     def createMockOperation: MockEstimatorOperation = new MockEstimatorOperation
@@ -82,76 +80,7 @@ class EstimatorAsOperationIntegSpec extends UnitSpec {
   }
 }
 
-object EstimatorAsOperationIntegSpec extends UnitSpec {
-  val DefaultForA = 1
-
-  def mockTransformer(df: DataFrame, dfk: DKnowledge[DataFrame]): Transformer = {
-    val t = mock[Transformer]
-    val transform: DMethod1To1[Unit, DataFrame, DataFrame] =
-      mock[DMethod1To1[Unit, DataFrame, DataFrame]]
-    when(transform.apply(any())(any())(any())).thenReturn(df)
-    when(transform.infer(any())(any())(any())).thenReturn((dfk, InferenceWarnings.empty))
-    when(t.transform).thenReturn(transform)
-    t
-  }
-
-  def dataFrameKnowledge(s: StructType): DKnowledge[DataFrame] = {
-    val k = mock[DKnowledge[DataFrame]]
-    when(k.types).thenReturn(Set(DataFrame.forInference(s)))
-    k
-  }
-
-  def transformerKnowledge(t: Transformer): DKnowledge[Transformer] = {
-    val knowledge: DKnowledge[Transformer] = mock[DKnowledge[Transformer]]
-    when(knowledge.single).thenReturn(t)
-    knowledge
-  }
-
-  val transformedDataFrame1 = mock[DataFrame]
-  val transformedDataFrame2 = mock[DataFrame]
-  val transformedDataFrameSchema1 = mock[StructType]
-  val transformedDataFrameSchema2 = mock[StructType]
-  val transformedDataFrameKnowledge1 = dataFrameKnowledge(transformedDataFrameSchema1)
-  val transformedDataFrameKnowledge2 = dataFrameKnowledge(transformedDataFrameSchema2)
-  val transformer1 = mockTransformer(transformedDataFrame1, transformedDataFrameKnowledge1)
-  val transformer2 = mockTransformer(transformedDataFrame2, transformedDataFrameKnowledge2)
-  val transformerKnowledge1 = transformerKnowledge(transformer1)
-  val transformerKnowledge2 = transformerKnowledge(transformer2)
-
-  class MockEstimator extends Estimator {
-    val paramA = NumericParam("b", "desc")
-    setDefault(paramA -> DefaultForA)
-    override val params: Array[Param[_]] = declareParams(paramA)
-    override def report(executionContext: ExecutionContext): Report = ???
-
-    override def fit: DMethod1To1[Unit, DataFrame, Transformer] = {
-      new DMethod1To1[Unit, DataFrame, Transformer] {
-        override def apply(context: ExecutionContext)(parameters: Unit)(t0: DataFrame)
-          : Transformer = {
-          $(paramA) match {
-            case 1 => transformer1
-            case 2 => transformer2
-          }
-        }
-
-        override def infer
-          (context: InferContext)
-            (parameters: Unit)
-            (k0: DKnowledge[DataFrame])
-          : (DKnowledge[Transformer], InferenceWarnings) = {
-          $(paramA) match {
-            case 1 => (transformerKnowledge1, InferenceWarnings.empty)
-            case 2 => (transformerKnowledge2, InferenceWarnings.empty)
-          }
-        }
-      }
-    }
-
-    // Not used in tests.
-    override private[deeplang] def _fit(df: DataFrame): Transformer = ???
-    override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer = ???
-  }
-
+object EstimatorAsOperationSpec extends UnitSpec {
   class MockEstimatorOperation
     extends EstimatorAsOperation[MockEstimator] {
     override val id: Id = Id.randomId
