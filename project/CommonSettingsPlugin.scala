@@ -28,37 +28,28 @@ object CommonSettingsPlugin extends AutoPlugin {
 
   lazy val artifactoryUrl = settingKey[String]("Artifactory URL to deploy packages to")
 
-  object Versions {
-    val spark = System.getProperty("sparkVersion", "2.0.2")
-
-    val (scala, java, hadoop, akka) = spark match {
-      case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "1.8", "2.7.1", "2.4.9")
-      case other => ("2.10.5", "1.7", "2.6.0", "2.3.11")
-    }
-  }
-
   override def globalSettings = Seq(
     // Set custom URL using -Dartifactory.url
     // sbt -Dartifactory.url=http://192.168.59.104/artifactory/
     artifactoryUrl := sys.props.getOrElse("artifactory.url", "http://artifactory.deepsense.codilime.com:8081/artifactory/"),
     // Default scala version
-    scalaVersion := Versions.scala
+    scalaVersion := Version.scala
   )
 
   override def projectSettings = Seq(
     organization := "io.deepsense",
-    crossScalaVersions := Seq(Versions.scala),
+    crossScalaVersions := Seq(Version.scala),
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions", "-Xfatal-warnings"
     ),
     javacOptions ++= Seq(
-      "-source", Versions.java,
-      "-target", Versions.java
+      "-source", Version.java,
+      "-target", Version.java
     ),
     // javacOptions are copied to javaDoc and -target is not a valid javaDoc flag.
     javacOptions in doc := Seq(
-      "-source", Versions.java,
+      "-source", Version.java,
       "-Xdoclint:none" // suppress errors for generated (and other, too) code
     ),
     resolvers ++= Dependencies.resolvers,
@@ -93,7 +84,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     Seq(
       testOptions ++= Seq(
         // Show full stacktraces (F), Put results in test-reports
-        Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", s"target/test-reports-${Versions.spark}")
+        Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", s"target/test-reports-${Version.spark}")
       ),
       javaOptions := Seq(s"-DlogFile=${name.value}", "-Xmx2G", "-Xms2G"),
       fork := true,
@@ -108,7 +99,7 @@ object CommonSettingsPlugin extends AutoPlugin {
         Tests.Argument(
           TestFrameworks.ScalaTest,
           "-o",
-          "-u", s"target/test-reports-${Versions.spark}"
+          "-u", s"target/test-reports-${Version.spark}"
         )
       ),
       fork := true,

@@ -21,7 +21,7 @@ lazy val settingsForPublished = CommonSettingsPlugin.assemblySettings ++
 lazy val settingsForNotPublished = CommonSettingsPlugin.assemblySettings ++
   LicenceReportSettings.settings ++ PublishSettings.disablePublishing
 
-lazy val sparkVersion = CommonSettingsPlugin.Versions.spark
+lazy val sparkVersion = Version.spark
 
 lazy val sparkUtilsModuleDirectory = sparkVersion match {
   case "1.6.1" => s"sparkutils$sparkVersion"
