@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.report
 
 import org.apache.spark.mllib.linalg.DenseMatrix
 
@@ -24,30 +24,17 @@ import io.deepsense.reportlib.model._
 
 object CommonTablesGenerators {
 
-  def sparkParams(params: ParamMap): Table = {
-    val values = params.toSeq.map(
-      pair =>
-        List(Some(pair.param.name), Some(pair.value.toString), Some(pair.param.description)))
-    Table(
-      name = "Parameters",
-      description = "Parameters",
-      columnNames = Some(List("Parameter", "Value", "Description")),
-      columnTypes = List(ColumnType.string, ColumnType.string, ColumnType.string),
-      rowNames = None,
-      values = values.toList)
-  }
-
   def params(params: ParamMap): Table = {
     val values = params.toSeq.map(
       pair =>
-        List(Some(pair.param.name), Some(pair.value.toString), Some(pair.param.description)))
+        List(Some(pair.param.name), Some(pair.value.toString), Some(pair.param.description))).toList
     Table(
       name = "Parameters",
       description = "Parameters",
       columnNames = Some(List("Parameter", "Value", "Description")),
       columnTypes = List(ColumnType.string, ColumnType.string, ColumnType.string),
       rowNames = None,
-      values = values.toList)
+      values = ReportUtils.shortenLongTableValues(values))
   }
 
   def modelSummary(tableEntries: List[SummaryEntry]): Table = {
@@ -61,7 +48,7 @@ object CommonTablesGenerators {
       columnNames = Some(List("Result", "Value", "Description")),
       columnTypes = List(ColumnType.string, ColumnType.string, ColumnType.string),
       rowNames = None,
-      values = values)
+      values = ReportUtils.shortenLongTableValues(values))
   }
 
   def decisionTree(
@@ -84,7 +71,7 @@ object CommonTablesGenerators {
       columnTypes =
         List(ColumnType.numeric, ColumnType.numeric, ColumnType.numeric, ColumnType.numeric),
       rowNames = None,
-      values = treesEntries)
+      values = ReportUtils.shortenLongTableValues(treesEntries))
   }
 
   def categoryMaps(maps: Map[Int, Map[Double, Int]]): Table = {
@@ -99,7 +86,7 @@ object CommonTablesGenerators {
       columnNames = Some(List("Index", "Map")),
       columnTypes = List(ColumnType.numeric, ColumnType.string),
       rowNames = None,
-      values = values)
+      values = ReportUtils.shortenLongTableValues(values))
   }
 
   def denseMatrix(matrix: DenseMatrix): Table = {
@@ -117,7 +104,7 @@ object CommonTablesGenerators {
       columnNames = None,
       columnTypes = List.fill(numCols)(ColumnType.numeric),
       rowNames = None,
-      values = values)
+      values = ReportUtils.shortenLongTableValues(values))
   }
 
   case class SummaryEntry(name: String, value: String, description: String)

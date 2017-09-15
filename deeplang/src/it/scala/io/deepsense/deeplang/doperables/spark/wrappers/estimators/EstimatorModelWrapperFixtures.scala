@@ -25,7 +25,8 @@ import org.apache.spark.ml.param.{Param => SparkParam, ParamMap}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.report.Report
+import io.deepsense.deeplang.doperables.{SparkEstimatorWrapper, SparkModelWrapper}
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
 

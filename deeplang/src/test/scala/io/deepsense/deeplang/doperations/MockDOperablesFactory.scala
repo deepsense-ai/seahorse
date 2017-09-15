@@ -22,6 +22,7 @@ import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{NumericParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}

@@ -18,9 +18,10 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{IsotonicRegression => SparkIsotonicRegression, IsotonicRegressionModel => SparkIsotonicRegressionModel}
 
-import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeatureIndexParam, PredictorParams}
-import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 
 class IsotonicRegressionModel
   extends SparkModelWrapper[SparkIsotonicRegressionModel, SparkIsotonicRegression]

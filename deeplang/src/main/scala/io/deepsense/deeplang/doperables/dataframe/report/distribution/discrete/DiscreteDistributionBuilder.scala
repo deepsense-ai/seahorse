@@ -17,13 +17,14 @@
 package io.deepsense.deeplang.doperables.dataframe.report.distribution.discrete
 
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StructField, BooleanType, StringType, StructType}
+import org.apache.spark.sql.types.{BooleanType, StringType, StructField}
 
-import io.deepsense.deeplang.doperables.dataframe.report.{DataFrameReportGenerator, ReportUtils}
-import io.deepsense.deeplang.doperables.dataframe.report.distribution.{NoDistributionReasons, DistributionBuilder}
+import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
+import io.deepsense.deeplang.doperables.dataframe.report.distribution.{DistributionBuilder, NoDistributionReasons}
+import io.deepsense.deeplang.doperables.report.ReportUtils
 import io.deepsense.deeplang.utils.aggregators.Aggregator
 import io.deepsense.deeplang.utils.aggregators.AggregatorBatch.BatchedResult
-import io.deepsense.reportlib.model.{NoDistribution, DiscreteDistribution, Distribution}
+import io.deepsense.reportlib.model.{DiscreteDistribution, Distribution, NoDistribution}
 
 case class DiscreteDistributionBuilder(
     categories: Aggregator[Option[scala.collection.mutable.Map[String, Long]], Row],

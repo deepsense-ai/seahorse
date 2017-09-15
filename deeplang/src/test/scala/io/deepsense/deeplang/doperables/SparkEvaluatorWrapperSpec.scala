@@ -23,6 +23,7 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}

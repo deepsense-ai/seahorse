@@ -20,6 +20,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators._
 import io.deepsense.deeplang.doperables.spark.wrappers.evaluators._
 import io.deepsense.deeplang.doperables.spark.wrappers.models._

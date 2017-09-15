@@ -20,7 +20,7 @@ import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.ml
 import org.apache.spark.ml.param.{Param, ParamMap}
-import org.apache.spark.ml.tuning.{ParamGridBuilder, CrossValidator, CrossValidatorModel}
+import org.apache.spark.ml.tuning.{CrossValidator, CrossValidatorModel, ParamGridBuilder}
 import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.types.ColumnType
@@ -28,11 +28,12 @@ import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.wrappers.{EstimatorWrapper, EvaluatorWrapper}
-import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
-import io.deepsense.deeplang.params.{DynamicParam, ParamPair, NumericParam}
 import io.deepsense.deeplang.params.gridsearch.GridSearchParam
 import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
+import io.deepsense.deeplang.params.{DynamicParam, NumericParam, ParamPair}
 import io.deepsense.deeplang.{DOperation3To1, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, ReportType, Table}
 

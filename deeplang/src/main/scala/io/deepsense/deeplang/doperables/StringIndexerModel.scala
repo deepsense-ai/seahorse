@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables
 
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.params.Param
 
 case class StringIndexerModel()

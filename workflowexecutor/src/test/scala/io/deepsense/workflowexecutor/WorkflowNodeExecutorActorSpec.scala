@@ -24,7 +24,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Matchers, WordSpecLike}
 
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode

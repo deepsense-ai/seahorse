@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.report
 
 import io.deepsense.deeplang.DOperable
 import io.deepsense.reportlib.model.ReportType.ReportType

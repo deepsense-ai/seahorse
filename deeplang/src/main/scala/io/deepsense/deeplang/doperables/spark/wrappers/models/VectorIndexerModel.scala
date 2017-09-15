@@ -18,8 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorIndexerModel => SparkVectorIndexerModel}
 
+import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
-import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class VectorIndexerModel

@@ -22,7 +22,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.catalogs.doperable.exceptions._
-import io.deepsense.deeplang.doperables.{DOperableMock, Report}
+import io.deepsense.deeplang.doperables.DOperableMock
 
 object SampleInheritance {
   trait T1 extends DOperable

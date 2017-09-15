@@ -21,8 +21,8 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, Row}
 
 import io.deepsense.commons.types.{ColumnType, SparkConversions}
-import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.report.distribution.{DistributionCalculator, NoDistributionReasons}
+import io.deepsense.deeplang.doperables.report.{Report, ReportUtils}
 import io.deepsense.deeplang.utils.SparkTypeConverter
 import io.deepsense.reportlib.model._
 
@@ -36,7 +36,7 @@ object DataFrameReportGenerator {
 
   val MaxRowsNumberInReport = 20
   val ColumnNumberToGenerateSimplerReportThreshold = 20
-  val StringPreviewMaxLength = 40
+  val StringPreviewMaxLength = 300
 
   def report(sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
     val columnsCount = sparkDataFrame.schema.length

@@ -22,10 +22,10 @@ import org.apache.spark.sql.types._
 
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
 import io.deepsense.deeplang.doperables.dataframe.report.distribution.discrete.DiscreteDistributionBuilderFactory
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameTestFactory}
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.reportlib.model._
 
 class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestFactory {

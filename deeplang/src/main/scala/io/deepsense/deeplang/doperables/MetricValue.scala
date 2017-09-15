@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperables
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.reportlib.model.{ReportType, Table}
 
 /**

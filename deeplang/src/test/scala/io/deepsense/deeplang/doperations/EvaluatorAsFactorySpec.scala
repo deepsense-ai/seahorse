@@ -18,7 +18,8 @@ package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang.DOperation._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Evaluator, MetricValue, Report}
+import io.deepsense.deeplang.doperables.report.Report
+import io.deepsense.deeplang.doperables.{Evaluator, MetricValue}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{NumericParam, Param}
 import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}

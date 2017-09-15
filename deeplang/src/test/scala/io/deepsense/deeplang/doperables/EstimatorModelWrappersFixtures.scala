@@ -26,6 +26,7 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
 

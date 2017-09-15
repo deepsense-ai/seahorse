@@ -18,9 +18,10 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{LinearRegression => SparkLinearRegression, LinearRegressionModel => SparkLinearRegressionModel}
 
-import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.LinearRegressionParams
-import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 

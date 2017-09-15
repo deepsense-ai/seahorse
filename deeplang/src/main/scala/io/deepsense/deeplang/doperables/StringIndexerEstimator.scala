@@ -20,8 +20,9 @@ import scala.language.reflectiveCalls
 
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
-import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.params.Param
 
 class StringIndexerEstimator

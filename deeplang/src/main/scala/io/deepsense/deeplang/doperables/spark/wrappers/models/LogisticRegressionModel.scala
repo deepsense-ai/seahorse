@@ -18,9 +18,10 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression, LogisticRegressionModel => SparkLogisticRegressionModel}
 
-import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SummaryEntry
+import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasThreshold, ProbabilisticClassifierParams}
-import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class LogisticRegressionModel

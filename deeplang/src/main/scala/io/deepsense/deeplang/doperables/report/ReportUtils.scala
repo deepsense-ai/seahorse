@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.dataframe.report
+package io.deepsense.deeplang.doperables.report
 
-import org.apache.spark.sql.Row
+object ReportUtils {
 
-import io.deepsense.deeplang.utils.SparkTypeConverter
+  val StringPreviewMaxLength = 300
 
-private [report] object ReportUtils {
-
-  def shortenLongStrings(value: String, maxLength: Int): String =
+  def shortenLongStrings(value: String, maxLength: Int = StringPreviewMaxLength): String =
     if (value.length < maxLength) {
       value
     } else {
       value.take(maxLength) + "..."
     }
+
+  def shortenLongTableValues(
+    vals: List[List[Option[String]]],
+    maxLength: Int = StringPreviewMaxLength): List[List[Option[String]]] =
+    vals.map(_.map(
+      maybeStrVal => maybeStrVal match {
+        case None => None
+        case Some(strVal) => Some(ReportUtils.shortenLongStrings(strVal, maxLength))
+      }
+    ))
 
 }

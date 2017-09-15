@@ -20,7 +20,8 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Estimator, Report, Transformer}
+import io.deepsense.deeplang.doperables.report.Report
+import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{NumericParam, Param}
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}

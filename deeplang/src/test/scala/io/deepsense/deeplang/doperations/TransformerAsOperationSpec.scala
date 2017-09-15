@@ -21,8 +21,9 @@ import scala.reflect.runtime.universe.TypeTag
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Report, Transformer}
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{NumericParam, Param, ParamMap}
 import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}

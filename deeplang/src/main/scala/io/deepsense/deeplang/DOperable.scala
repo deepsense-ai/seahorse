@@ -16,8 +16,8 @@
 
 package io.deepsense.deeplang
 
-import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.descriptions.HasInferenceResult
+import io.deepsense.deeplang.doperables.report.Report
 
 /**
  * Objects of classes with this trait can be used in two ways.

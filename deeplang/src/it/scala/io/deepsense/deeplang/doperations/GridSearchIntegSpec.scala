@@ -24,8 +24,8 @@ import org.apache.spark.mllib.linalg.Vectors
 import spray.json._
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LinearRegression
 import io.deepsense.deeplang.doperables.spark.wrappers.evaluators.RegressionEvaluator
 
