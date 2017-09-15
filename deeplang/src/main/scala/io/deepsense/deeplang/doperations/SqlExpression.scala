@@ -63,9 +63,3 @@ case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] with Par
     }
   }
 }
-
-object SqlExpression {
-  def apply(sqlExpression: String, dataFrameId: String): SqlExpression =
-    new SqlExpression().setExpression(sqlExpression).setDataFrameId(dataFrameId)
-}
-

@@ -103,7 +103,11 @@ class SqlExpressionSpec extends DeeplangIntegTestSupport {
   }
 
   def executeSqlExpression(expression: String, dataFrameId: String, input: DataFrame): DataFrame =
-    executeOperation(SqlExpression(expression, dataFrameId), input)
+    executeOperation(
+      new SqlExpression()
+        .setExpression(expression)
+        .setDataFrameId(dataFrameId),
+      input)
 
   def sampleDataFrame: DataFrame = createDataFrame(data, schema, Seq(categoricalColumn))
 

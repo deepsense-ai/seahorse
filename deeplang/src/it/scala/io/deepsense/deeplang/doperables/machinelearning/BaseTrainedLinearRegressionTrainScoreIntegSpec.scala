@@ -83,7 +83,10 @@ abstract class BaseTrainedLinearRegressionTrainScoreIntegSpec
 
   def split(dataFrame: DataFrame): (DataFrame, DataFrame) = {
     val dataFrames =
-      Split(0.5, 1).execute(executionContext)(Vector(dataFrame)).map(_.asInstanceOf[DataFrame])
+      new Split()
+        .setSplitRatio(0.5)
+        .setSeed(1)
+        .execute(executionContext)(Vector(dataFrame)).map(_.asInstanceOf[DataFrame])
     (dataFrames(0), dataFrames(1))
   }
 

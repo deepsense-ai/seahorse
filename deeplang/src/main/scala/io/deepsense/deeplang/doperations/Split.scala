@@ -80,9 +80,3 @@ case class Split()
   @transient
   override lazy val tTagTO_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
-
-object Split {
-  def apply(splitRatio: Double, seed: Int): Split = {
-    new Split().setSplitRatio(splitRatio).setSeed(seed)
-  }
-}

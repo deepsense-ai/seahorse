@@ -48,7 +48,11 @@ class DataFrameSplitterIntegSpec
       for((splitRatio, seed) <- parameterPairs) {
         val rdd = createData(input)
         val df = executionContext.dataFrameBuilder.buildDataFrame(createSchema, rdd)
-        val (df1, df2) = executeOperation(executionContext, Split(splitRatio, seed / 2))(df)
+        val (df1, df2) = executeOperation(
+          executionContext,
+          new Split()
+            .setSplitRatio(splitRatio)
+            .setSeed(seed / 2))(df)
         val dfCount = df.sparkDataFrame.count()
         val df1Count = df1.sparkDataFrame.count()
         val df2Count = df2.sparkDataFrame.count()

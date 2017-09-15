@@ -88,7 +88,7 @@ object LocationAttractiveness extends WorkflowCreator {
     "log_review_count1",
     "dist_SF_LA")
 
-  val selectImportantFeatures = FilterColumns(importantColumns)
+  val selectImportantFeatures = new FilterColumns().setSelectedColumns(importantColumns)
   val writeDataFrame: WriteDataFrame = WriteDataFrame(
     (ColumnSeparator.COMMA, None),
     true,
@@ -115,7 +115,7 @@ object LocationAttractiveness extends WorkflowCreator {
     ConvertType(ColumnType.numeric, names = booleanColumns)
   }
 
-  val split: Split = Split(splitRatio = 0.7, seed = 1)
+  val split: Split = new Split().setSplitRatio(0.7).setSeed(1)
   val createRidgeRegression: DOperation =
     CreateRidgeRegression(regularization = 0.5, iterationsNumber = 1)
 

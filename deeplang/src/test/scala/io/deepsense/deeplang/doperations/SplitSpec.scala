@@ -32,7 +32,7 @@ class SplitSpec extends UnitSpec with DeeplangTestSupport {
       val df = DataFrameBuilder.buildDataFrameForInference(inputMetadata)
       val inferContext = createInferContext(mock[DOperableCatalog], fullInference = true)
 
-      val (knowledge, warnings) = Split(0.1, 1)
+      val (knowledge, warnings) = new Split().setSplitRatio(0.1).setSeed(1)
         .inferKnowledge(inferContext)(Vector(new DKnowledge[DataFrame](df)))
 
       warnings shouldBe empty

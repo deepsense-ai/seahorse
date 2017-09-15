@@ -35,7 +35,15 @@ case class FilterColumns() extends DOperation1To1[DataFrame, DataFrame] with Par
     portIndex = 0)
 
   def getSelectedColumns: MultipleColumnSelection = $(selectedColumns)
-  def setSelectedColumns(value: MultipleColumnSelection): this.type = set(selectedColumns, value)
+
+  def setSelectedColumns(value: MultipleColumnSelection): this.type =
+    set(selectedColumns, value)
+
+  def setSelectedColumns(retainedColumns: Seq[String]): this.type =
+    setSelectedColumns(
+      MultipleColumnSelection(
+        Vector(NameColumnSelection(retainedColumns.toSet)),
+        excluding = false))
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val columns = dataFrame.getColumnNames(getSelectedColumns)
@@ -51,13 +59,4 @@ case class FilterColumns() extends DOperation1To1[DataFrame, DataFrame] with Par
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-}
-
-object FilterColumns extends FilterColumns {
-
-  def apply(retainedColumns: Seq[String]): FilterColumns =
-    new FilterColumns().setSelectedColumns(
-      MultipleColumnSelection(
-        Vector(NameColumnSelection(retainedColumns.toSet)),
-        excluding = false))
 }
