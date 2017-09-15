@@ -22,15 +22,23 @@
 
   .btn-modal {
     padding: 0 10px;
-    position: relative;
-    max-height: 34px;
+    height: 32px;
     margin: 3px;
     background-color: @color-white;
     color: #000;
-    display: flex;
-    align-items: center;
     transition: background ease-in 0.2s;
     box-shadow: none;
+
+    &__icon {
+      font-size: 30px;
+      color: @seahorse-blue;
+      padding-right: 3px;
+      vertical-align: middle;
+    }
+
+    &__title {
+      vertical-align: middle;
+    }
 
     &:focus {
       outline: none;
@@ -66,12 +74,6 @@
         bottom: 25px;
         opacity: 0.2;
       }
-    }
-
-    &__icon {
-      font-size: 30px;
-      color: @seahorse-blue;
-      padding-right: 3px;
     }
   }
 }
