@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  val akka          = "2.3.9"
+  val akka          = "2.3.4"
   val apacheCommons = "3.3.+"
   val avro          = "1.7.7"
   val cassandra     = "2.1.5"
