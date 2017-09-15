@@ -28,6 +28,7 @@ Below you can find the complete list of operations available in Seahorse:
   * [Join](operations/join.html)
   * [Split](operations/split.html)
   * [Union](operations/union.html)
+  * [SQL Combine](operations/sql_combine.html)
 * Filtering
   * [Filter Columns](operations/filter_columns.html)
   * [Filter Rows](operations/filter_rows.html)

@@ -180,6 +180,9 @@ object CatalogRecorder {
     catalog.registerDOperation[Union](
       DOperationCategories.SetOperation)
 
+    catalog.registerDOperation[SqlCombine](
+      DOperationCategories.SetOperation)
+
     catalog.registerDOperation[FilterColumns](
       DOperationCategories.Filtering)
 
