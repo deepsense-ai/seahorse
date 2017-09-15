@@ -11,6 +11,9 @@ Creates a new DataFrame that contains only the selected columns. Order of the co
 Each column can be selected only once. Selecting a column more than once will not duplicate the
 column in the output. Thus, in the resulting DataFrame no column will be duplicated.
 
+Returns also a [Transformer](../classes/transformer.html) that can be later applied
+to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
+
 **Since**: Seahorse 0.4.0
 
 ## Input
@@ -47,6 +50,12 @@ column in the output. Thus, in the resulting DataFrame no column will be duplica
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
 <td>DataFrame containing the selected columns (and only them).</td>
+</tr>
+<tr>
+<td><code>1</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>Transformer that allows to apply the operation on other DataFrames using
+<a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>

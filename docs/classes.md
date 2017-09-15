@@ -17,6 +17,6 @@ List of classes:
   * [DataFrame](classes/dataframe.html)
   * [Report](classes/report.html)
   * [MetricValue](classes/metric_value.html)
-  * [Transformation](classes/transformer.html)
+  * [Transformer](classes/transformer.html)
   * [Estimator](classes/estimator.html)
   * [Evaluator](classes/evaluator.html)

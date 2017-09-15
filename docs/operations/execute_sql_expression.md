@@ -7,8 +7,11 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes an Spark SQL expression provided by the user on a DataFrame connected to its input port.
+Executes a Spark SQL expression provided by the user on a DataFrame connected to its input port.
 Returns the results of the execution as a DataFrame.
+
+Returns also a [Transformer](../classes/transformer.html) that can be later applied
+to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
@@ -46,6 +49,12 @@ Returns the results of the execution as a DataFrame.
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
 <td>The results of the SQL expression.</td>
+</tr>
+<tr>
+<td><code>1</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>Transformer that allows to apply the operation on other DataFrames using
+<a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>

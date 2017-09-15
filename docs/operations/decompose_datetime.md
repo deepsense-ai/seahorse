@@ -13,6 +13,9 @@ column will be created with name: ``year`` and Numeric type.
 If the value for parameter ``prefix`` is provided, it will be prepended to
 generated columns' names, according to the pattern: ``prefix + timestampPartName``.
 
+Returns also a [Transformer](../classes/transformer.html) that can be later applied
+to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
+
 **Since**: Seahorse 0.4.0
 
 ## Input
@@ -50,6 +53,12 @@ generated columns' names, according to the pattern: ``prefix + timestampPartName
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
 <td>DataFrame containing new columns with parts of timestamp extracted from the original
 timestamp.</td>
+</tr>
+<tr>
+<td><code>1</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>Transformer that allows to apply the operation on other DataFrames using
+<a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>

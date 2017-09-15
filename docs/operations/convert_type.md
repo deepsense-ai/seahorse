@@ -8,8 +8,7 @@ includeOperationsMenu: true
 ---
 
 Converts types of columns in a DataFrame. It can convert one or more columns at once.
-All of the selected columns are converted to the same (selected) type. The conversion is done in
-place.
+All of the selected columns are converted to the same (selected) type.
 
 Supports conversions from all types to String, Boolean, Timestamp, Double, Float, Long,
 and Integer type.
@@ -25,6 +24,9 @@ String column can be converted to Numeric as long as all values in the column re
 A column converted to its type is not modified.
 If one or more column can not be converted,
 the operation will fail at runtime with TypeConversionException.
+
+Returns also a [Transformer](../classes/transformer.html) that can be later applied
+to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
@@ -62,6 +64,12 @@ the operation will fail at runtime with TypeConversionException.
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
 <td>DataFrame with the converted columns.</td>
+</tr>
+<tr>
+<td><code>1</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>Transformer that allows to apply the operation on other DataFrames using
+<a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>
