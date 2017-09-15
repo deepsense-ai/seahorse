@@ -103,8 +103,8 @@ class WorkflowsApiSpec
   def newWorkflow(
       apiVersion: String = BuildInfo.version,
       name: String = workflowAName): Workflow = {
-    val node1 = Node(nodeAId, MockOperation())
-    val node2 = Node(Node.Id.randomId, MockOperation())
+    val node1 = Node(nodeAId, new MockOperation())
+    val node2 = Node(Node.Id.randomId, new MockOperation())
     val graph = DeeplangGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
     val thirdPartyData = JsObject(
@@ -742,8 +742,7 @@ object WorkflowsApiSpec {
     override val name: String = "mock operation"
     override val description: String = "mock operation desc"
     override val params = Array[Param[_]]()
-    override val since: Version = Version(0, 0, 0)
 
-    override protected def _execute(ctx: deeplang.ExecutionContext)(t0: DOperable): DOperable = ???
+    override protected def execute(t0: DOperable)(ctx: deeplang.ExecutionContext): DOperable = ???
   }
 }
