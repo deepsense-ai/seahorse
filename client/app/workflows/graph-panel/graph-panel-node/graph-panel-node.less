@@ -3,8 +3,6 @@
  *
  */
 
-@highlighted-graph-node-color: #5BA0DD;
-
 .flowchart-node {
   text-align: center;
   z-index: 24;
@@ -91,11 +89,11 @@
 
 .flowchart-node {
   &--active {
-    border: 2px solid lighten(@color-active, 40%);
+    border: 2px solid @highlighted-graph-node-color;
     background-color: lighten(@color-active, 30%);
 
     &:hover {
-      border-color: lighten(@color-active, 20%);
+      border-color: darken(@color-active, 20%);
     }
   }
 }

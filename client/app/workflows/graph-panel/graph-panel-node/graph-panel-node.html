@@ -1,11 +1,13 @@
 <div id="node-{{ ::node.id }}"
      class="flowchart-node {{ node.state.status }}"
-     ng-style="{'left': node.x + 'px', 'top': node.y + 'px'}"
-     title="{{ ::node.description }}">
-  <span class="name" title="{{ ::node.name }}">
+     ng-style="{'left': node.x + 'px', 'top': node.y + 'px'}">
+  <span class="name">
     <i class="fa {{ ::node.icon }}"></i> {{ ::node.name }}
   </span>
   <i class="fa fa-exclamation-circle error-icon"
      ng-if="node.knowledgeErrors.length > 0"
-     title="{{ node.getFancyKnowledgeErrors() }}"></i>
+     tooltip-placement="right"
+     tooltip-append-to-body="true"
+     tooltip-template="<div class='tooltip' role='tooltip'><div class='tooltip-arrow'></div><div class='tooltip-inner text-left--important'></div></div>"
+     tooltip-html-unsafe="{{ node.getFancyKnowledgeErrors() }}"></i>
 </div>

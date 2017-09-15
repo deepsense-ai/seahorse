@@ -15,7 +15,7 @@ function GraphNodeView(GraphNode) {
     },
     replace: true,
     templateUrl: 'app/workflows/graph-panel/graph-panel-node/graph-panel-node.html',
-    link: function (scope, element, attrs) {
+    link: function (scope, element) {
       element.on('click', function () {
         scope.$emit(GraphNode.CLICK, {
           selectedNode: scope.node
