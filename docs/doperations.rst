@@ -15,6 +15,7 @@ Contents:
    doperations/timestamp_decomposer
    doperations/dataframe_splitter
    doperations/project_columns
+   doperations/mathematical_operation
    doperations/ridge_regression
    doperations/train_regressor
    doperations/score_regressor
