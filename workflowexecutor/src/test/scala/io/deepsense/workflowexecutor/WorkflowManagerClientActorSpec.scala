@@ -18,28 +18,27 @@ package io.deepsense.workflowexecutor
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
-
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import spray.http.StatusCodes
 import spray.json._
-
 import io.deepsense.commons.StandardSpec
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.graph.{DeeplangGraph, DirectedGraph}
+import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
 import io.deepsense.models.workflows._
-import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{SaveState, SaveWorkflow, Request, GetWorkflow}
+import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWorkflow, Request, SaveState, SaveWorkflow}
 import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
+import org.parboiled.common.Base64
 
 class WorkflowManagerClientActorSpec
   extends StandardSpec
@@ -84,7 +83,7 @@ class WorkflowManagerClientActorSpec
     "requested to get workflow" should {
 
       "download workflow" in {
-        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.OK.intValue)
             .withBody(workflow.toJson.toString)
@@ -99,7 +98,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "return None when workflow does not exist" in {
-        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.NotFound.intValue)
           ))
@@ -113,7 +112,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "fail on HTTP error" in {
-        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.InternalServerError.intValue)
           ))
@@ -130,7 +129,7 @@ class WorkflowManagerClientActorSpec
     "requested to save workflow with state" should {
 
       "upload workflow and receive OK" in {
-        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.OK.intValue)
           ))
@@ -143,7 +142,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "upload workflow and receive Created" in {
-        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.Created.intValue)
           ))
@@ -156,7 +155,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "fail on HTTP error" in {
-        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.InternalServerError.intValue)
           ))
@@ -172,7 +171,7 @@ class WorkflowManagerClientActorSpec
     "requested to save status" should {
 
       "upload execution report and receive OK" in {
-        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.OK.intValue)
           ))
@@ -185,7 +184,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "upload execution report and receive Created" in {
-        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.Created.intValue)
           ))
@@ -198,7 +197,7 @@ class WorkflowManagerClientActorSpec
       }
 
       "fail on HTTP error" in {
-        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+        stubFor(put(urlEqualTo(s"/$reportsApiPrefix/$workflowId")).withUserId.withBasicAuth
           .willReturn(aResponse()
             .withStatus(StatusCodes.InternalServerError.intValue)
           ))
@@ -212,11 +211,28 @@ class WorkflowManagerClientActorSpec
     }
   }
 
+  val SeahorseUserIdHeaderName = "X-Seahorse-UserId"
+  val WorkflowOwnerId = "SomeUserId"
+  val WMUsername = "WMUsername"
+  val WMPassword = "WMPassword"
+
+  implicit class UserIdHeaderAddition(mb: MappingBuilder) {
+    def withUserId: MappingBuilder =
+      mb.withHeader(SeahorseUserIdHeaderName, equalTo(WorkflowOwnerId))
+
+    def withBasicAuth: MappingBuilder = {
+      val expectedHeaderValue =
+        Base64.rfc2045.encodeToString(s"$WMUsername:$WMPassword".getBytes, false)
+      mb.withHeader("Authorization", equalTo(s"Basic $expectedHeaderValue"))
+    }
+  }
+
   private def sendRequest(request: Request): Future[Any] = {
     implicit val system = ActorSystem()
     implicit val timeoutSeconds = Timeout(3.seconds)
 
     val actorRef = system.actorOf(Props(new WorkflowManagerClientActor(
+      WorkflowOwnerId, WMUsername, WMPassword,
       s"http://$httpHost:$httpPort", workflowsApiPrefix, reportsApiPrefix, graphReader)))
 
     actorRef ? request

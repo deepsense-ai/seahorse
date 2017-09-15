@@ -26,4 +26,7 @@ case class ExecutionParams(
   pyExecutorPath: Option[String] = None,
   jobId: Option[String] = None,
   wmAddress: Option[String] = None,
-  depsZip: Option[String] = None)
+  wmUsername: Option[String] = None,
+  wmPassword: Option[String] = None,
+  depsZip: Option[String] = None,
+  userId: Option[String] = None)

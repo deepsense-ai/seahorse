@@ -89,6 +89,18 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(depsZip = Some(x))
     } text "dependencies zip file"
 
+    opt[String]('u', "user-id") hidden() valueName "USER_ID" action {
+      (x, c) => c.copy(userId = Some(x))
+    } text "id of the workflow's owner"
+
+    opt[String]( "wm-username") hidden() valueName "USER" action {
+      (x, c) => c.copy(wmUsername = Some(x))
+    } text "user for accessing Workflow Manager API"
+
+    opt[String]( "wm-password") hidden() valueName "PASSWORD" action {
+      (x, c) => c.copy(wmPassword = Some(x))
+    } text "password for accessing Workflow Manager API"
+
     opt[String]('p', "python-executor-path") optional() valueName "PATH" action {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
@@ -109,7 +121,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.messageQueuePort.isEmpty, "--message-queue-port is required in interactive mode"),
         (config.jobId.isEmpty, "--job-id is required in interactive mode"),
         (config.wmAddress.isEmpty, "--wm-address is required in interactive mode"),
-        (config.depsZip.isEmpty, "--deps-zip is required in interactive mode")
+        (config.depsZip.isEmpty, "--deps-zip is required in interactive mode"),
+        (config.wmUsername.isEmpty, "--wm-username is required in interactive mode"),
+        (config.wmPassword.isEmpty, "--wm-password is required in interactive mode"),
+        (config.userId.isEmpty, "--user-id is required in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
@@ -153,7 +168,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         params.messageQueuePort.get,
         params.jobId.get,
         params.wmAddress.get,
-        params.depsZip.get
+        params.wmUsername.get,
+        params.wmPassword.get,
+        params.depsZip.get,
+        params.userId.get
       ).execute()
     } else {
       // Running in non-interactive mode

@@ -53,7 +53,10 @@ case class SessionExecutor(
     messageQueuePort: Int,
     sessionId: String,
     wmAddress: String,
-    depsZip: String)
+    wmUsername: String,
+    wmPassword: String,
+    depsZip: String,
+    workflowOwnerId: String)
   extends Executor {
 
   private val workflowId = Workflow.Id.fromString(sessionId)
@@ -99,6 +102,9 @@ case class SessionExecutor(
     setupLivyKeepAliveLogging(system, keepAliveInterval)
     val workflowManagerClientActor = system.actorOf(
       WorkflowManagerClientActor.props(
+        workflowOwnerId,
+        wmUsername,
+        wmPassword,
         wmAddress,
         wmWorkflowsPath,
         wmReportsPath,
