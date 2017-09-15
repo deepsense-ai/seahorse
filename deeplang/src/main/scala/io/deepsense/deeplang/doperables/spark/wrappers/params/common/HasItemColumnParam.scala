@@ -24,16 +24,14 @@ import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
 
-trait PredictorParams
-  extends Params
-  with HasPredictionColumnCreatorParam {
+trait HasItemColumnParam extends Params {
 
-  val featuresColumn =
+  val itemColumn =
     new SingleColumnSelectorParamWrapper[
-        ml.param.Params { val featuresCol: ml.param.Param[String] }](
-      name = "features column",
-      description = "Features column for model fitting",
-      sparkParamGetter = _.featuresCol,
+      ml.param.Params { val itemCol: ml.param.Param[String] }](
+      name = "item column",
+      description = "Column for item ids",
+      sparkParamGetter = _.itemCol,
       portIndex = 0)
-  setDefault(featuresColumn, NameSingleColumnSelection("features"))
+  setDefault(itemColumn, NameSingleColumnSelection("item"))
 }

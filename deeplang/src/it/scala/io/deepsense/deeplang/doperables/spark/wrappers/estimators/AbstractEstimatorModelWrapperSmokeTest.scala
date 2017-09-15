@@ -35,8 +35,8 @@ abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
 
   val dataFrame: DataFrame = {
     val rowSeq = Seq(
-      TestDataFrameRow(0.0, Vectors.dense(1.0, 2.0, 3.0)),
-      TestDataFrameRow(1.0, Vectors.dense(4.0, 5.0, 6.0))
+      TestDataFrameRow(0.0, Vectors.dense(1.0, 2.0, 3.0), 0, 0, 0.2),
+      TestDataFrameRow(1.0, Vectors.dense(4.0, 5.0, 6.0), 1, 1, 0.4)
     )
     val sparkDF = sqlContext.createDataFrame(rowSeq)
     DataFrame.fromSparkDataFrame(sparkDF)
@@ -62,5 +62,10 @@ abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
 }
 
 object AbstractEstimatorModelWrapperSmokeTest {
-  case class TestDataFrameRow(myLabel: Double, myFeatures: mllib.linalg.Vector)
+  case class TestDataFrameRow(
+    myLabel: Double,
+    myFeatures: mllib.linalg.Vector,
+    myItemId: Int,
+    myUserId: Int,
+    myRating: Double)
 }

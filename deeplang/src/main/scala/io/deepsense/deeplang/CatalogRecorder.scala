@@ -47,6 +47,8 @@ object CatalogRecorder {
     catalog.registerDOperable[CustomTransformer]()
 
     // wrapped Spark ML estimators & models
+    catalog.registerDOperable[ALS]()
+    catalog.registerDOperable[ALSModel]()
     catalog.registerDOperable[LogisticRegression]()
     catalog.registerDOperable[LogisticRegressionModel]()
     catalog.registerDOperable[PCA]()
@@ -128,8 +130,11 @@ object CatalogRecorder {
       DOperationCategories.ML.Evaluation)
 
     // operations generated from Spark estimators
+    catalog.registerDOperation[CreateALS](
+      DOperationCategories.ML.Recommendation)
+
     catalog.registerDOperation[CreateLogisticRegression](
-      DOperationCategories.ML)
+      DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreatePCA](
       DOperationCategories.ML)

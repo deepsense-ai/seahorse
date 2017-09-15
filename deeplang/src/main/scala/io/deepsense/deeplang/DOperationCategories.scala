@@ -41,6 +41,9 @@ object DOperationCategories {
     object Clustering
       extends DOperationCategory("5d6ed17f-7dc5-4b50-954c-8b2bbe6da2fd", "Clustering", ML)
 
+    object Recommendation
+      extends DOperationCategory("daf4586c-4107-4aab-bfab-2fe4e1652784", "Recommendation", ML)
+
     object Evaluation
       extends DOperationCategory("b5d34823-3f2c-4a9a-9114-3c126ce8dfb6", "Evaluation", ML)
   }

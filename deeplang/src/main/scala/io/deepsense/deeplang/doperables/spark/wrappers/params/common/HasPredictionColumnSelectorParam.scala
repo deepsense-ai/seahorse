@@ -24,7 +24,7 @@ import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
 
-trait HasPredictionColumnParam extends Params {
+trait HasPredictionColumnSelectorParam extends Params {
 
   val predictionColumn =
     new SingleColumnSelectorParamWrapper[

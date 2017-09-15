@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.evaluators
 import org.apache.spark.ml.evaluation.{MulticlassClassificationEvaluator => SparkMulticlassClassificationEvaluator}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasLabelColumnParam, HasPredictionColumnParam}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasLabelColumnParam, HasPredictionColumnSelectorParam}
 import io.deepsense.deeplang.doperables.{Report, SparkEvaluatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
@@ -27,7 +27,7 @@ import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
 
 class MulticlassClassificationEvaluator
   extends SparkEvaluatorWrapper[SparkMulticlassClassificationEvaluator]
-  with HasPredictionColumnParam
+  with HasPredictionColumnSelectorParam
   with HasLabelColumnParam {
 
   import MulticlassClassificationEvaluator._

@@ -21,19 +21,15 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
+import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
 
-trait PredictorParams
-  extends Params
-  with HasPredictionColumnCreatorParam {
+trait HasPredictionColumnCreatorParam extends Params {
 
-  val featuresColumn =
-    new SingleColumnSelectorParamWrapper[
-        ml.param.Params { val featuresCol: ml.param.Param[String] }](
-      name = "features column",
-      description = "Features column for model fitting",
-      sparkParamGetter = _.featuresCol,
-      portIndex = 0)
-  setDefault(featuresColumn, NameSingleColumnSelection("features"))
+  val predictionColumn =
+    new SingleColumnCreatorParamWrapper[
+      ml.param.Params { val predictionCol: ml.param.Param[String] }](
+      name = "prediction column",
+      description = "Prediction column created during model scoring",
+      sparkParamGetter = _.predictionCol)
+  setDefault(predictionColumn, "prediction")
 }
