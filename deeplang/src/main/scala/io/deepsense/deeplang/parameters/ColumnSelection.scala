@@ -42,6 +42,8 @@ object ColumnSelection {
           IndexColumnSelection.fromJson(value)
         case JsString(TypeColumnSelection.typeName) =>
           TypeColumnSelection.fromJson(value)
+        case JsString(RangeIndexColumnSelection.typeName) =>
+          RangeIndexColumnSelection.fromJson(value)
         case unknownType =>
           throw new DeserializationException(s"Cannot create column selection with $jsValue:" +
             s"unknown type $unknownType")
@@ -77,10 +79,25 @@ case class IndexColumnSelection(indexes: Set[Int])
 }
 
 object IndexColumnSelection {
-  val typeName = "indexList"
+  val typeName = "indexListOld" // TODO
 
   def fromJson(jsValue: JsValue): IndexColumnSelection = {
     IndexColumnSelection(jsValue.convertTo[Set[Int]])
+  }
+}
+
+case class RangeIndexColumnSelection(lowerBound: Int, upperBound: Int)
+  extends ColumnSelection(RangeIndexColumnSelection.typeName) {
+
+  override protected def valuesToJson: JsValue = List(lowerBound, upperBound).toJson
+}
+
+object RangeIndexColumnSelection {
+  val typeName = "indexList" // TODO Find a new name
+
+  def fromJson(jsValue: JsValue): RangeIndexColumnSelection = {
+    val bounds = jsValue.convertTo[List[Int]]
+    RangeIndexColumnSelection(bounds(0), bounds(1))
   }
 }
 

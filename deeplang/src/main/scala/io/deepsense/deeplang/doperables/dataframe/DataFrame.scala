@@ -237,6 +237,8 @@ object DataFrame {
       val nonExistingNames = names.filter(!allNames.contains(_))
       nonExistingNames.isEmpty
     case TypeColumnSelection(_) => true
+    case RangeIndexColumnSelection(lowerBound, upperBound) =>
+      schema.length > upperBound && lowerBound >= 0
   }
 
   /**
@@ -256,6 +258,8 @@ object DataFrame {
     case IndexColumnSelection(indexes) => indexes.contains(columnIndex)
     case NameColumnSelection(names) => names.contains(columnName)
     case TypeColumnSelection(types) => types.contains(columnType)
+    case RangeIndexColumnSelection(lowerBound, upperBound) =>
+      columnIndex >= lowerBound && columnIndex <= upperBound
   }
 
   /**

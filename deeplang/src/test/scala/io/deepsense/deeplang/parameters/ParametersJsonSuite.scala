@@ -467,6 +467,7 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
     columnSelectorParameter.value = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
+      RangeIndexColumnSelection(5, 6),
       TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
     )))
 
@@ -475,8 +476,12 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
         "type" -> JsString("columnList"),
         "values" -> JsArray(JsString("abc"), JsString("def"))),
       JsObject(
-        "type" -> JsString("indexList"),
+        "type" -> JsString("indexListOld"),
         "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
+      ),
+      JsObject(
+        "type" -> JsString("indexList"),
+        "values" -> JsArray(JsNumber(5), JsNumber(6))
       ),
       JsObject(
         "type" -> JsString("typeList"),
@@ -493,8 +498,12 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
         "type" -> JsString("columnList"),
         "values" -> JsArray(JsString("abc"), JsString("def"))),
       JsObject(
-        "type" -> JsString("indexList"),
+        "type" -> JsString("indexListOld"),
         "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
+      ),
+      JsObject(
+        "type" -> JsString("indexList"),
+        "values" -> JsArray(JsNumber(5), JsNumber(6))
       ),
       JsObject(
         "type" -> JsString("typeList"),
@@ -505,6 +514,7 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
     val expectedValue = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
+      RangeIndexColumnSelection(5, 6),
       TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
     )))
     assert(columnSelectorParameter.value == expectedValue)
