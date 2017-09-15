@@ -5,6 +5,7 @@
 package io.deepsense.commons.rest
 
 import com.datastax.driver.core.exceptions.NoHostAvailableException
+import org.jclouds.http.HttpResponseException
 import spray.http.StatusCodes
 import spray.routing._
 import spray.util.LoggingContext
@@ -17,6 +18,8 @@ trait RestApi extends Directives with AuthDirectives {
 
   def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
     ExceptionHandler {
+      case _: HttpResponseException =>
+        complete(StatusCodes.ServiceUnavailable)
       case _: NoHostAvailableException =>
         complete(StatusCodes.ServiceUnavailable)
       case _: NoRoleException =>
