@@ -25,9 +25,11 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.{Drive, DriveScopes}
 
+import io.deepsense.commons.resources.ManagedResource
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.doperations.inout.CsvParameters
-import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme};
+import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, InputStorageTypeChoice}
+import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice.GoogleSheet
+import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
 
 object GoogleSheetClient extends Logging {
 
@@ -36,23 +38,35 @@ object GoogleSheetClient extends Logging {
   // TODO Consider handling both DRIVER and DRIVER_ONLY if user wants read-only access.
   private val Scopes = util.Arrays.asList(DriveScopes.DRIVE)
 
-  val googleCsvColumnSeparator = new CsvParameters.ColumnSeparatorChoice.Comma()
+  def reduceGoogleSheetToDriverFile(googleSheet: GoogleSheet): InputStorageTypeChoice.File = {
+    val id = googleSheet.getGoogleSheetId()
+    val tmpPath = s"/tmp/seahorse/google_sheet_${id}__${UUID.randomUUID()}.csv"
 
-  // TODO Handle 'unauthorized' and other google api exceptions
-  def downloadGoogleSheetAsCsv(id: String): FilePath = {
-    val path = s"/tmp/seahorse/google_sheet_${id}__${UUID.randomUUID()}.csv"
-    val file = new java.io.File(path)
+    val file = new java.io.File(tmpPath)
     file.getParentFile.mkdirs()
-    val fos = new FileOutputStream(file)
-    driveService().files().export(id, "text/csv").executeMediaAndDownloadTo(fos)
-    logger.info(s"Downloaded google sheet id=$id to the temporary path $path")
-    FilePath(FileScheme.File, path)
+
+    ManagedResource(new FileOutputStream(file)) { fos =>
+      driveService(
+        googleSheet.getGoogleServiceAccountCredentials()
+      ).files().export(id, "text/csv").executeMediaAndDownloadTo(fos)
+      logger.info(s"Downloaded google sheet id=$id to the temporary path $tmpPath")
+    }
+
+    val downloadedCsvPath = FilePath(FileScheme.File, tmpPath)
+
+    new InputStorageTypeChoice.File()
+      .setFileFormat(
+        new InputFileFormatChoice.Csv()
+          .setCsvColumnSeparator(new CsvParameters.ColumnSeparatorChoice.Comma())
+          .setShouldConvertToBoolean(googleSheet.getShouldConvertToBoolean)
+          .setNamesIncluded(googleSheet.getNamesIncluded)
+      )
+      .setSourceFile(downloadedCsvPath.fullPath)
   }
 
-  private def driveService(): Drive = {
-    // TODO Revoke service account and add google credentials on every jenkins node
+  private def driveService(serviceAccountCredentials: String): Drive = {
     val credential = {
-      val in: InputStream = GoogleSheetClient.getClass.getResourceAsStream("/service_account.json")
+      val in = new ByteArrayInputStream(serviceAccountCredentials.getBytes)
       GoogleCredential.fromStream(in).createScoped(Scopes)
     }
     new Drive.Builder(

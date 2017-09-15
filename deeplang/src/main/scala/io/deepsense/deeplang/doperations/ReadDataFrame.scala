@@ -62,8 +62,8 @@ case class ReadDataFrame()
       val dataframe = getStorageType() match {
         case jdbcChoice: InputStorageTypeChoice.Jdbc => readFromJdbc(jdbcChoice)
         case googleSheet: InputStorageTypeChoice.GoogleSheet =>
-          val googleSheetAsFileChoice = reduceGoogleSheetToDriverFile(googleSheet)
-          readFromFile(googleSheetAsFileChoice)
+          val fileChoiceFromGoogleSheetChoice = GoogleSheetClient.reduceGoogleSheetToDriverFile(googleSheet)
+          readFromFile(fileChoiceFromGoogleSheetChoice)
         case fileChoice: InputStorageTypeChoice.File => readFromFile(fileChoice)
       }
       DataFrame.fromSparkDataFrame(dataframe)
@@ -71,17 +71,6 @@ case class ReadDataFrame()
       case e: UnknownHostException => throw DeepSenseUnknownHostException(e)
       case e: IOException => throw DeepSenseIOException(e)
     }
-  }
-
-  private def reduceGoogleSheetToDriverFile(googleSheet: GoogleSheet): File = {
-    val file = GoogleSheetClient.downloadGoogleSheetAsCsv(googleSheet.getGoogleSheetId())
-    new InputStorageTypeChoice.File()
-      .setSourceFile(file.fullPath)
-      .setFileFormat(new InputFileFormatChoice.Csv()
-        .setCsvColumnSeparator(GoogleSheetClient.googleCsvColumnSeparator)
-        .setNamesIncluded(googleSheet.getNamesIncluded)
-        .setShouldConvertToBoolean(googleSheet.getShouldConvertToBoolean)
-      )
   }
 
   override protected def _inferKnowledge(context: InferContext)():

@@ -64,7 +64,9 @@ object InputStorageTypeChoice {
   class GoogleSheet extends InputStorageTypeChoice with NamesIncludedParam with HasShouldConvertToBooleanParam {
 
     override val name: String = "Google Sheet"
-    override lazy val params = declareParams(googleSheetId, namesIncluded, shouldConvertToBoolean)
+    override lazy val params = declareParams(
+      googleSheetId, serviceAccountCredentials, namesIncluded, shouldConvertToBoolean
+    )
 
     val googleSheetId = StringParam(
       name = "Google Sheet Id",
@@ -73,6 +75,15 @@ object InputStorageTypeChoice {
 
     def getGoogleSheetId(): String = $(googleSheetId)
     def setGoogleSheetId(value: String): this.type = set(googleSheetId, value)
+
+    val serviceAccountCredentials = StringParam(
+      name = "Google Service Account credentials JSON",
+      description = "Json file representing google service account credentials to be used for reading " +
+        "google sheet. For more details read documentation #TODO_LINK")
+    setDefault(serviceAccountCredentials, "")
+
+    def getGoogleServiceAccountCredentials(): String = $(serviceAccountCredentials)
+    def setGoogleServiceAccountCredentials(value: String): this.type = set(serviceAccountCredentials, value)
 
   }
 
