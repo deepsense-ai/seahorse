@@ -269,6 +269,28 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
           Seq("col1", "col2"))
       )
     }
+
+    "name unnamed columns" in {
+      val dataFrame = readDataFrame(
+        "with_unnamed_columns.csv",
+        lineSep(ReadDataFrame.LineSeparator.UNIX),
+        csvColumnSeparator = ",",
+        csvNamesIncluded = true,
+        csvConvertToBoolean = true)
+
+      assertDataFramesEqual(
+        dataFrame,
+        expectedDataFrame(
+          Seq(
+            Row("a1", "b1", "c1", "d1"),
+            Row("a2", "b2", "c2", "d2"),
+            Row("a3", "b3", "c3", "d3")),
+          schemaOf(
+            Seq("unnamed_2", "unnamed_0", "unnamed_1", "column_D"),
+            Seq(StringType, StringType, StringType, StringType)
+          ))
+      )
+    }
   }
 
   def readDataFrame(
@@ -306,7 +328,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     customValue: Option[String] = None): (LineSeparator, Option[String]) =
     (lineSeparator, customValue)
 
-  def generatedColumnNames(n: Int): Seq[String] = for (i <- 0 until n) yield s"column_$i"
+  def generatedColumnNames(n: Int): Seq[String] = for (i <- 0 until n) yield s"unnamed_$i"
 
   def schemaOf(columns: Seq[String], types: Seq[DataType]) = StructType(
     columns.zip(types).map { case (colName, colType) => StructField(colName, colType)})

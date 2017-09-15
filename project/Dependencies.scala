@@ -87,6 +87,7 @@ object Dependencies {
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
   val deeplang = Seq(
+    apacheCommons,
     amazonS3,
     nscalaTime,
     scalaReflect,

@@ -20,6 +20,8 @@ package io.deepsense.deeplang.doperations
 import java.io.IOException
 import java.util.NoSuchElementException
 
+import org.apache.commons.lang3.StringUtils
+
 import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
 import scala.reflect.runtime.{universe => ru}
@@ -126,7 +128,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
 
     val (columnNames, dataLines) = if (namesIncluded) {
       val processedFirstLine = lines.first().map(_.trim).map(removeQuotes).map(sanitizeColumnName)
-      (processedFirstLine, skipFirstLine(lines).cache())
+      (renameUnnamed(processedFirstLine), skipFirstLine(lines).cache())
     } else {
       (generateColumnNames(columnsNo = lines.first().length), lines)
     }
@@ -358,8 +360,30 @@ object ReadDataFrame {
       iterator
     }
 
-  private def generateColumnNames(columnsNo: Int): Seq[String] = {
-    (0 until columnsNo).map(i => s"column_$i")
+  private def generateColumnNames(columnsNo: Int): Seq[String] =
+    (0 until columnsNo).map(generateColumnName)
+
+  private def generateColumnName(columnNo: Int): String = s"unnamed_$columnNo"
+
+  private def renameUnnamed(maybeEmptyNames: Seq[String]): Seq[String] = {
+    val (columnNames, _) = maybeEmptyNames.foldLeft((Seq[String](), maybeEmptyNames.toSet)) {
+      case ((columnsNames, usedNames), inputColumnName) =>
+        val columnName = if (StringUtils.isBlank(inputColumnName)) {
+          generateUniqueName(usedNames)
+        } else {
+          inputColumnName
+        }
+        (columnName +: columnsNames, usedNames + columnName)
+    }
+    columnNames.reverse
+  }
+
+  private def generateUniqueName(usedNames: Set[String]): String = {
+    def nameUnique(name: String) = !usedNames.contains(name)
+    val lastIndex = usedNames.size + 1
+    (0 to lastIndex).collectFirst {
+      case i if nameUnique(generateColumnName(i)) => generateColumnName(i)
+    }.get
   }
 
   /**
