@@ -3,6 +3,5 @@
 ---
 - name: Remove generated examples
   hosts: localhost
-  sudo: yes
   tasks:
     - file: path=roles/h2_migration/files/workflowmanager/9_insert_examples.sql state=absent

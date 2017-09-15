@@ -3,7 +3,6 @@
 ---
 - name: Generate examples
   hosts: localhost
-  sudo: yes
   roles:
     - { role: generate_examples,
         output_dir: "roles/h2_migration/files/workflowmanager"

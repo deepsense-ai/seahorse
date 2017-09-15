@@ -1,10 +1,10 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 # java_version has to match the directory name in tar.gz archive
-java_version: jdk1.8.0_51
-java_artifact_version: jdk-8u51-linux-x64
+java_version: jdk1.7.0_79
+java_artifact_version: jdk-7u79-linux-x64
 
 java_package_name: "java-{{java_artifact_version}}.tar.gz"
 java_upload_path: "/tmp/{{java_package_name}}"
-java_install_directory: /opt/jdk
+java_install_directory: /usr/lib/jvm
 java_bin_directory: "{{java_install_directory}}/{{java_version}}/bin"
