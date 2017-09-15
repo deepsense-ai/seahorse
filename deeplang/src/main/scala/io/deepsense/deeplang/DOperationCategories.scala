@@ -64,5 +64,8 @@ object DOperationCategories {
 
     object ModelEvaluation
       extends DOperationCategory("b5d34823-3f2c-4a9a-9114-3c126ce8dfb6", "Model evaluation", ML)
+
+    object HyperOptimization
+      extends DOperationCategory("5a26f196-4805-4d8e-9a8b-b4c5c4538b0b", "Hyper Optimization", ML)
   }
 }

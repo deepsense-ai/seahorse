@@ -231,7 +231,7 @@ object CatalogRecorder {
       DOperationCategories.Transformation.TextProcessing)
 
     catalog.registerDOperation[GridSearch](
-      DOperationCategories.ML)
+      DOperationCategories.ML.HyperOptimization)
 
     catalog.registerDOperation[CreateLinearRegression](
       DOperationCategories.ML.Regression)
