@@ -22,6 +22,7 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection}
 
 class JoinSpec extends DeeplangIntegTestSupport {
@@ -183,6 +184,165 @@ class JoinSpec extends DeeplangIntegTestSupport {
             Set.empty
           )
           executeOperation(join, ldf, rdf)
+        }
+      }
+    }
+  }
+
+  it should {
+    "infer DataFrame schema" when {
+      "based upon a single column selection by name" in {
+        val (ldf, rdf, expected, joinColumns) = oneColumnFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon a single column selection by index" in {
+        val (ldf, rdf, expected, joinColumnIds) = oneColumnByIndicesFixture()
+
+        val join = joinWithMultipleColumnSelection(Set.empty, joinColumnIds)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon a single column selection with colliding join column" in {
+        val (ldf, rdf, expected, joinColumns) = oneColumnFixture(None, None)
+
+        val join = joinWithMultipleColumnSelection(
+          joinColumns, Set.empty, leftPrefix = None, rightPrefix = None)
+
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon two columns" in {
+        val (ldf, rdf, expected, joinColumns) = twoColumnsFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon two columns with different column names" in {
+        val (ldf, rdf, expected, leftJoinColumns, rightJoinColumns) =
+          twoColumnsDifferentNamesFixture()
+
+        val join = joinWithMultipleColumnSelection(
+          leftJoinColumns,
+          Vector.empty,
+          rightJoinColumns,
+          Vector.empty,
+          leftPrefix = None,
+          rightPrefix = None)
+
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "based upon two columns with different column indices" in {
+        val (ldf, rdf, expected, leftJoinIndices, rightJoinIndices) =
+          twoColumnsDifferentIndicesFixture()
+
+        val join = joinWithMultipleColumnSelection(
+          Vector.empty,
+          leftJoinIndices,
+          Vector.empty,
+          rightJoinIndices,
+          leftPrefix = None,
+          rightPrefix = None)
+
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "some rows from left dataframe have no corresponding values in the right one" in {
+        val (ldf, rdf, expected, joinColumns) = noSomeRightValuesFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "dataframes have no matching values" in {
+        val (ldf, rdf, expected, joinColumns) = noMatchingValuesFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "some column values are null" in {
+        val (ldf, rdf, expected, joinColumns) = nullFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "with null values only in left DataFrame" in {
+        val (ldf, rdf, expected, joinColumns) = nullValuesInLeftDataFrameFixture()
+
+        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+        val joinDF = inferSchema(join, ldf, rdf)
+
+        joinDF shouldBe expected.sparkDataFrame.schema
+      }
+      "with null values only in both DataFrames" is pending
+      "with empty join column selection" is pending
+    }
+    "throw an exception during inference" when {
+      "with columns of the same name in both and no join on them" in {
+        an[Exception] should be thrownBy {
+          val (ldf, rdf, expected, joinColumns) = sameColumnNamesFixture()
+
+          val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
+          val joinDF = inferSchema(join, ldf, rdf)
+
+          joinDF shouldBe expected.sparkDataFrame.schema
+        }
+      }
+      "the columns selected by name does not exist" in {
+        an[ColumnDoesNotExistException] should be thrownBy {
+          val nonExistingColumnName = "thisColumnDoesNotExist"
+          val join = joinWithMultipleColumnSelection(
+            Set(nonExistingColumnName),
+            Set.empty
+          )
+          val (ldf, rdf, _, _) = oneColumnFixture()
+          inferSchema(join, ldf, rdf)
+        }
+      }
+      "the columns selected by index does not exist" in {
+        an[ColumnDoesNotExistException] should be thrownBy {
+          val nonExistingColumnIndex = 1000
+          val join = joinWithMultipleColumnSelection(
+            Set.empty,
+            Set(nonExistingColumnIndex)
+          )
+          val (ldf, rdf, _, _) = oneColumnFixture()
+          inferSchema(join, ldf, rdf)
+        }
+      }
+      "the columns selected by name are of different types" in {
+        an[WrongColumnTypeException] should be thrownBy {
+          val (ldf, rdf, _, wrongTypeColumnNames) = differentTypesFixture()
+          val join = joinWithMultipleColumnSelection(
+            wrongTypeColumnNames,
+            Set.empty
+          )
+          inferSchema(join, ldf, rdf)
+        }
+      }
+      "the joinColumns MultipleColumnSelector is empty" in {
+        an[ColumnsDoNotExistException] should be thrownBy {
+          val (ldf, rdf, _, wrongTypeColumnNames) = joinColumnsIsEmptyFixture()
+          val join = joinWithMultipleColumnSelection(
+            wrongTypeColumnNames,
+            Set.empty
+          )
+          inferSchema(join, ldf, rdf)
         }
       }
     }
@@ -783,5 +943,19 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
   private def appendPrefix(schema: Seq[StructField], prefix: Option[String]) = {
     schema.map(field => field.copy(name = prefix.getOrElse("") + field.name))
+  }
+
+  private def inferSchema(
+      operation: Join,
+      leftDataFrame: DataFrame,
+      rightDataFrame: DataFrame): StructType = {
+
+    val (knowledge, _) = operation.inferKnowledge(mock[InferContext])(Vector(
+      DKnowledge(DataFrame.forInference(leftDataFrame.sparkDataFrame.schema)),
+      DKnowledge(DataFrame.forInference(rightDataFrame.sparkDataFrame.schema))
+    ))
+
+    val dataFrameKnowledge = knowledge.head.single.asInstanceOf[DataFrame]
+    dataFrameKnowledge.schema.get
   }
 }

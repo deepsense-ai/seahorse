@@ -46,57 +46,6 @@ trait DataFrameColumnsGetter {
    */
   def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] =
     DataFrameColumnsGetter.getColumnNames(sparkDataFrame.schema, multipleColumnSelection)
-
-  /**
-   * Column type by column name.
-   */
-  def columnType(columnName: String): ColumnType =
-    SparkConversions.sparkColumnTypeToColumnType(sparkDataFrame.schema(columnName).dataType)
-
-
-  /**
-   * Method useful for generating names for new columns. When we want to add new columns
-   * to a dataframe, we need to generate a new name for them assuring that this name is not already
-   * used in the dataframe. Common use case is when we generate new columns' names based on
-   * existing column name by adding some sort of extension. When new name generated using base
-   * column name and extension is already used, we want to add level number.
-   * E. g. assume that we have column named 'xyz' and we want to add two new columns, with
-   * suffixes '_a' and '_b', so 'xyz_a' and 'xyz_b'. But if there already is column 'xyz_a' in
-   * dataframe, we want new columns to be named 'xyz_a_1' and 'xyz_b_1'.
-   * This method allows to compute lowest unoccupied level provided original column name
-   * ('xyz' from example) and extensions ({'a', 'b'} from example).
-   * @param originalColumnName Name of the column which is a base for a new column.
-   * @param newColumnNameExtensions Extensions of base name for generating new columns.
-   * @return Lowest unoccupied level that can be used to generate a new name for columns.
-   */
-  def getFirstFreeNamesLevel(
-    originalColumnName: String,
-    newColumnNameExtensions: Set[String]): Int = {
-
-    val existingColumnsNames = sparkDataFrame.schema.fieldNames.toSet
-
-    @tailrec
-    def getFirstFreeNamesLevel(level: Int): Int = {
-      val levelTaken: Boolean = newColumnNameExtensions.exists(
-        ext => existingColumnsNames.contains(DataFrameColumnsGetter.createColumnName(
-          originalColumnName, ext, level))
-      )
-      if (levelTaken) getFirstFreeNamesLevel(level + 1) else level
-    }
-
-    getFirstFreeNamesLevel(0)
-  }
-
-  /**
-   * Generates unique column name created of some other column's name, suffix and optionally
-   * integer appended.
-   * E. g. uniqueColumnName('xyz', 'a') returns 'xyz_a' if there is no such name in dataframe yet,
-   * and it returns 'xyz_a_2' if there already are columns 'xyz_a' and 'xyz_a_1' in dataframe.
-   */
-  def uniqueColumnName(originalColumnName: String, columnNameSuffix: String): String = {
-    val level = getFirstFreeNamesLevel(originalColumnName, Set(columnNameSuffix))
-    DataFrameColumnsGetter.createColumnName(originalColumnName, columnNameSuffix, level)
-  }
 }
 
 object DataFrameColumnsGetter {
@@ -166,6 +115,54 @@ object DataFrameColumnsGetter {
     } else {
       selectedColumns.distinct
     }
+  }
+
+  /**
+    * Method useful for generating names for new columns. When we want to add new columns
+    * to a dataframe, we need to generate a new name for them assuring that this name is not already
+    * used in the dataframe. Common use case is when we generate new columns' names based on
+    * existing column name by adding some sort of extension. When new name generated using base
+    * column name and extension is already used, we want to add level number.
+    * E. g. assume that we have column named 'xyz' and we want to add two new columns, with
+    * suffixes '_a' and '_b', so 'xyz_a' and 'xyz_b'. But if there already is column 'xyz_a' in
+    * dataframe, we want new columns to be named 'xyz_a_1' and 'xyz_b_1'.
+    * This method allows to compute lowest unoccupied level provided original column name
+    * ('xyz' from example) and extensions ({'a', 'b'} from example).
+    * @param originalColumnName Name of the column which is a base for a new column.
+    * @param newColumnNameExtensions Extensions of base name for generating new columns.
+    * @return Lowest unoccupied level that can be used to generate a new name for columns.
+    */
+  def getFirstFreeNamesLevel(
+      schema: StructType,
+      originalColumnName: String,
+      newColumnNameExtensions: Set[String]): Int = {
+
+    val existingColumnsNames = schema.fieldNames.toSet
+
+    @tailrec
+    def getFirstFreeNamesLevel(level: Int): Int = {
+      val levelTaken: Boolean = newColumnNameExtensions.exists(
+        ext => existingColumnsNames.contains(DataFrameColumnsGetter.createColumnName(
+          originalColumnName, ext, level))
+      )
+      if (levelTaken) getFirstFreeNamesLevel(level + 1) else level
+    }
+
+    getFirstFreeNamesLevel(0)
+  }
+
+  /**
+    * Generates unique column name created of some other column's name, suffix and optionally
+    * integer appended.
+    * E. g. uniqueColumnName('xyz', 'a') returns 'xyz_a' if there is no such name in dataframe yet,
+    * and it returns 'xyz_a_2' if there already are columns 'xyz_a' and 'xyz_a_1' in dataframe.
+    */
+  def uniqueColumnName(
+      schema: StructType,
+      originalColumnName: String,
+      columnNameSuffix: String): String = {
+    val level = getFirstFreeNamesLevel(schema, originalColumnName, Set(columnNameSuffix))
+    createColumnName(originalColumnName, columnNameSuffix, level)
   }
 
   private def assertColumnSelectionsValid(
