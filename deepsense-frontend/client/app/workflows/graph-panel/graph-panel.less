@@ -15,6 +15,17 @@ path,
   cursor: pointer;
 }
 
+.seahorse-logo {
+  pointer-events: none;
+  background: url("../img/seahorse-small.png") center center no-repeat;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: fixed;
+}
+
 .flowchart-box {
   width: 100%;
   background: rgb(239, 239, 239);
@@ -23,18 +34,6 @@ path,
   height: 100%;
   position: relative;
   flex: 1;
-
-  &:after {
-    content: "";
-    background: url("../img/seahorse-small.png") center center no-repeat;
-    opacity: 0.2;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    position: absolute;
-    z-index: 0;
-  }
 
   &.active-drag-target {
     border: 3px dashed @color-action;
