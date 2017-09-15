@@ -18,7 +18,6 @@ object Version {
   val spark = "2.0.0"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
-  val seahorse = "1.3.0-LOCAL-SNAPSHOT"
   val wiremock = "1.57"
   val flyway = "4.0"
 }
@@ -31,10 +30,6 @@ object Library {
 
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val jclouds = (name: String) => "org.apache.jclouds.api" % s"openstack-$name" % Version.jclouds
-  val seahorse = (name: String) => "io.deepsense" %% s"deepsense-seahorse-$name" %
-    Version.seahorse exclude("com.datastax.cassandra", "cassandra-driver-core") exclude(
-    "com.datastax.spark", "spark-cassandra-connector") exclude(
-    "org.cassandraunit", "cassandra-unit")
 
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
 
@@ -61,13 +56,6 @@ object Library {
   val scalatraTest = "org.scalatra" %% "scalatra-scalatest" % Version.scalatra % "test"
   val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.5"
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
-  val seahorseCommons = seahorse("commons")
-  val seahorseDeeplang = seahorse("deeplang")
-  val seahorseModels = seahorse("models")
-  val seahorseGraph = seahorse("graph")
-  val seahorseWorkflowJson = seahorse("workflow-json")
-  val seahorseReportlib = seahorse("reportlib")
-  val seahorseMqProtocol = seahorse("workflowexecutor-mq-protocol") excludeAkkaActor
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
@@ -119,7 +107,6 @@ object Dependencies {
     jcloudsNova,
     metricsScala,
     nscalaTime,
-    seahorseCommons,
     sprayCan,
     sprayJson,
     sprayRouting
@@ -131,10 +118,6 @@ object Dependencies {
     guice,
     guiceMultibindings,
     h2,
-    seahorseDeeplang,
-    seahorseGraph,
-    seahorseReportlib,
-    seahorseWorkflowJson,
     slick,
     flyway,
     sprayCan,
@@ -148,7 +131,6 @@ object Dependencies {
     akkaAgent,
     apacheCommonsExec,
     h2,
-    seahorseMqProtocol,
     slick,
     flyway,
     scalaz,
@@ -169,8 +151,6 @@ object Dependencies {
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
     "org.jfarcand" % "wcs" % "1.5",
-    scalaz,
-    seahorseCommons,
-    seahorseWorkflowJson
+    scalaz
   ) ++ Seq(scalatest).map(_ % s"$Test,it")
 }

@@ -83,6 +83,4 @@ buildInfoKeys ++= {
   )
 }
 
-
-
 // scalastyle:on

@@ -4,9 +4,16 @@
 
 name := "deepsense-backend"
 
-lazy val commons                = project
-lazy val workflowmanager        = project dependsOn (commons, commons % "test->test")
-lazy val sessionmanager         = project dependsOn (commons, commons % "test->test")
+lazy val seahorseCommons = ProjectRef(file("./seahorse-workflow-executor"), "commons")
+lazy val seahorseMqProtocol = ProjectRef(file("./seahorse-workflow-executor"), "workflowexecutormqprotocol")
+lazy val seahorseDeeplang = ProjectRef(file("./seahorse-workflow-executor"), "deeplang")
+lazy val seahorseGraph = ProjectRef(file("./seahorse-workflow-executor"), "graph")
+lazy val seahorseReportlib = ProjectRef(file("./seahorse-workflow-executor"), "reportlib")
+lazy val seahorseWorkflowJson = ProjectRef(file("./seahorse-workflow-executor"), "workflowjson")
+
+lazy val commons                = project dependsOn seahorseCommons
+lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseGraph, seahorseReportlib, seahorseWorkflowJson, commons, commons % "test->test")
+lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, commons, commons % "test->test")
 lazy val libraryservice         = project dependsOn (commons, commons % "test->test")
 
 lazy val root = (project in file(".")).
@@ -24,21 +31,5 @@ addCommandAlias("ds-it",
     ";sessionmanager/it:test " +
     ";workflowmanager/it:test " +
     ";libraryservice/it:test")
-
-val printWarning = (s: State) => {
-  // TODO Make compile depending on publishWeClasses instead
-  println(
-    """
-      |****************************
-      |******** ATTENTION *********
-      |****************************
-      |**
-      |** Run `sbt publishWeClasses` first to solve resolver problems with workflow executor packages
-      |**
-      |****************************
-    """.stripMargin)
-  s
-}
-onLoad in Global ~= (printWarning compose _)
 
 // scalastyle:on
