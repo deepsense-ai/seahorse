@@ -33,4 +33,6 @@ object ParameterType extends Enumeration {
   val Dynamic = Value("dynamic")
   val Workflow = Value("workflow")
   val GridSearch = Value("gridSearch")
+  val LoadFromLibrary = Value("loadFromLibrary")
+  val SaveToLibrary = Value("saveToLibrary")
 }
