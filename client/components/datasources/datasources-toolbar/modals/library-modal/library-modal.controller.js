@@ -76,6 +76,8 @@ class LibraryModalController extends DatasourceModal {
         .then((fullFilePath) => {
           if (fullFilePath) {
             this.setDatasourceParams(fullFilePath);
+          } else if (!fullFilePath && !this.datasourceParams.libraryFileParams.libraryPath) {
+            this.$uibModalInstance.close();
           }
         });
     } else {
@@ -83,6 +85,8 @@ class LibraryModalController extends DatasourceModal {
         .then((file) => {
           if (file) {
             this.setDatasourceParams(file.uri);
+          } else if (!file && !this.datasourceParams.libraryFileParams.libraryPath) {
+            this.$uibModalInstance.close();
           }
         });
     }
