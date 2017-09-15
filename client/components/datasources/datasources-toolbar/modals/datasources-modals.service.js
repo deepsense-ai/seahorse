@@ -7,7 +7,7 @@ import hdfsTpl from './hdfs-modal/hdfs-modal.html';
 import libraryTpl from './library-modal/library-modal.html';
 
 const modalsTypesMap = {
-  'database': {
+  'jdbc': {
     tpl: databaseTpl,
     ctrl: 'DatabaseModalController'
   },
@@ -23,7 +23,7 @@ const modalsTypesMap = {
     tpl: hdfsTpl,
     ctrl: 'HdfsModalController'
   },
-  'library': {
+  'libraryFile': {
     tpl: libraryTpl,
     ctrl: 'LibraryModalController'
   }
@@ -36,7 +36,7 @@ class DatasourcesModalsService {
     _.assign(this, {$uibModal, $document});
   }
 
-  openModal(type) {
+  openModal(type, datasource) {
     const modal = modalsTypesMap[type];
     const $datasourcesToolbar = angular.element(document.querySelector('.datasources-panel'));
 
@@ -49,7 +49,10 @@ class DatasourcesModalsService {
       controller: modal.ctrl,
       controllerAs: '$ctrl',
       backdrop: 'static',
-      keyboard: true
+      keyboard: true,
+      resolve: {
+        datasource: () => angular.copy(datasource)
+      }
     });
   }
 

@@ -6,22 +6,13 @@ import './file-settings.less';
 const FileSettingsComponent = {
   bindings: {
     extension: '<',
-    onChange: '&'
+    onChange: '&',
+    fileSettings: '<'
   },
   templateUrl,
   controller: class FileSettingsController {
     constructor($scope) {
       'ngInject';
-
-      this.fileSettings = {
-        fileFormat: '',
-        csvFileFormatParams: {
-          includeHeader: false,
-          convert01ToBoolean: false,
-          separatorType: '',
-          customSeparator: ''
-        }
-      };
 
       $scope.$watch(() => this.extension, (newValue, oldValue) => {
         if (newValue !== oldValue && newValue === 'csv') {
@@ -38,11 +29,12 @@ const FileSettingsComponent = {
         }
       });
 
-      this.formats = ['csv', 'json', 'parqet'];
+      this.formats = ['csv', 'json', 'parquet'];
     }
 
     onFocus() {
-      this.fileSettings.csvFileFormatParams.separator = 'custom';
+      this.fileSettings.csvFileFormatParams.separatorType = 'custom';
+      this.onChange({fileSettings: this.fileSettings});
     }
   }
 };

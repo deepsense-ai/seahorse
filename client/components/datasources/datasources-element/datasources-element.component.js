@@ -3,6 +3,8 @@
 import templateUrl from './datasources-element.html';
 import './datasources-element.less';
 
+const COOKIE_NAME = 'DELETE_DATASOURCE_COOKIE';
+
 const DatasourcesElementComponent = {
   templateUrl,
   bindings: {
@@ -11,10 +13,10 @@ const DatasourcesElementComponent = {
     onSelect: '&'
   },
   controller: class DatasourcesElementController {
-    constructor(UserService) {
+    constructor(UserService, DeleteModalService, DatasourcesModalsService, datasourcesService) {
       'ngInject';
 
-      this.UserService = UserService;
+      _.assign(this, {UserService, DeleteModalService, DatasourcesModalsService, datasourcesService});
 
       this.visibilityLabel = {
         publicVisibility: 'Public',
@@ -32,12 +34,15 @@ const DatasourcesElementComponent = {
       this.context = this.context || 'read-only';
     }
 
-    edit(datasource) {
-      console.warn(datasource); //eslint-disable-line
+    editDatasource(datasource) {
+      const type = datasource.params.datasourceType;
+      this.DatasourcesModalsService.openModal(type, datasource);
     }
 
-    delete(datasource) {
-      console.warn(datasource); //eslint-disable-line
+    deleteDatasource(datasource) {
+      this.DeleteModalService.handleDelete(() => {
+        this.datasourcesService.deleteDatasource(datasource.id);
+      }, COOKIE_NAME);
     }
 
     isSelectable() {
