@@ -29,5 +29,5 @@ object WrongColumnTypeException {
       expectedTypes: ColumnType*): WrongColumnTypeException =
     WrongColumnTypeException(
       s"Column '$columnName' has type '$actualType' instead of " +
-        s"expected ${expectedTypes.map(t => s"'${t.toString}'").mkString(", ")}")
+        s"expected ${expectedTypes.map(t => s"'${t.toString}'").mkString(" or ")}.")
 }

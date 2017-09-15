@@ -35,15 +35,15 @@ Represents a simple choice - yes or no.
 **Example value:** true
 
 ### <a name="single_column_selector"></a>Single Column Selector
-Serves to specify a single column of a [DataFrame](classes/dataframe.html). Column can be specified by its name or its index.
+Serves to specify a single column of a [DataFrame](classes/dataframe.html). Column can be specified by its name or its index (starting from 0).
 
 **Example of use:** column to be treated as label in supervised learning algorithm
 
 **Example value:** name: "price"
 
 ### <a name="multiple_column_selector"></a>Multiple Column Selector
-Serves to specify a subset of columns of a [DataFrame](classes/dataframe.html). Columns can be specified by their names, indices or types. Therefore, one selector can contain multiple names, index ranges and column types selections. All columns that meet a condition from at least one input selection will be included in the final subset of columns.
-The multiple column selector selector exposes additional boolean flag: _excluding_, which - if selected, changes selecting logic: the final subset contains all columns that do _not_ meet condition from any of input selections.
+Serves to specify a subset of columns of a [DataFrame](classes/dataframe.html). Columns can be specified by their names, indices (starting from 0) or types. Therefore, one selector can contain multiple names, index ranges and column types selections. All columns that meet a condition from at least one input selection will be included in the final subset of columns.
+The multiple column selector exposes additional boolean flag: _excluding_, which - if selected, changes selecting logic: the final subset contains all columns that do _not_ meet condition from any of input selections.
 
 **Example of use:** columns to be projected in the `Project Column` operation
 

@@ -13,14 +13,14 @@ Produces
 trained on entire [DataFrame](../classes/dataframe.html)
 and a cross-validation [report](../classes/report.html).
 Report contains the following metrics for each fold:
-[Explained Variance](https://en.wikipedia.org/wiki/Explained_variation),
-[Mean Absolute Error](https://en.wikipedia.org/wiki/Mean_absolute_error),
-[Mean Square Error](https://en.wikipedia.org/wiki/Mean_squared_error),
-[r2](https://en.wikipedia.org/wiki/Coefficient_of_determination),
-[Root Mean Squared Error](https://en.wikipedia.org/wiki/Root-mean-square_deviation)
+<a target="_blank" href="https://en.wikipedia.org/wiki/Explained_variation">Explained Variance</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Mean_absolute_error">Mean Absolute Error</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Mean_squared_error">Mean Square Error</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Coefficient_of_determination">r2</a>,
+<a target="_blank" href="https://en.wikipedia.org/wiki/Root-mean-square_deviation">Root Mean Squared Error</a>.
 
 More details about cross-validation can be found
-[here](https://en.wikipedia.org/wiki/Cross-validation_%28statistics%29)
+<a target="_blank" href="https://en.wikipedia.org/wiki/Cross-validation_%28statistics%29>here</a>.
 
 **Since**: Seahorse 0.4.0
 

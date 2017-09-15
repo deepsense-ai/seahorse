@@ -93,6 +93,7 @@ pre {
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
   padding-left: 0;
+  margin-bottom: 40px;
 }
 .sidemenu-unactive {
   left: -200px !important;
@@ -313,4 +314,12 @@ p.footer-text span {
 .spacer {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+/*
+* Adjust anchors for fixed header
+*/
+:target {
+  margin-top: -70px;
+  padding-top: 70px;
 }

@@ -111,3 +111,9 @@ Available functions and operators:
   - ``MINIMUM(expr1: Double, expr2: Double)`` returns minimum of the given expressions
 
   - ``MAXIMUM(expr1: Double, expr2: Double)`` returns maximum of the given expressions
+
+  - ``CEIL(expr1: Double, expr2: Double)`` returns the smallest integer greater than or equal to the specified numeric expression
+
+  - ``FLOOR(expr1: Double, expr2: Double)`` returns the largest integer less than or equal to the numeric expression
+
+  - ``SIGNUM(expr: Double)`` returns zero if the argument is zero, 1.0 if the argument is greater than zero, -1.0 if the argument is less than zero

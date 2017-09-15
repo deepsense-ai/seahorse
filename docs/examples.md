@@ -2,7 +2,7 @@
 layout: documentation
 displayTitle: Seahorse Examples
 menuTab: examples
-title: Overview
+title: Examples
 description: Seahorse documentation homepage
 ---
 
@@ -33,7 +33,7 @@ the scoring will be produced (model performance report).
 
 <img style="float:right" src="./img/examples_workflow1.png" />
 
-* Go to [Seahorse Editor]({{ site.SEAHORSE_EDITOR_ADDRESS }}) and click **New workflow**
+* Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a> and click **New workflow**
   * Put <code>machinelearning1</code> in the **Name** section
   * Press the **create** button
 
@@ -121,7 +121,7 @@ numerical columns. We will mark <code>city</code> as categorical in the [Read Da
 
 ### Update workflow
 
-* Open workflow from **Example 1** in the [Seahorse Editor]({{ site.SEAHORSE_EDITOR_ADDRESS }})
+* Open workflow from **Example 1** in the <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse Editor</a>
 * Click on the [Read DataFrame](operations/read_dataframe.html):
   * In the **CATEGORICAL COLUMNS** section click **Edit selection**
   * Click at **Names List** section
