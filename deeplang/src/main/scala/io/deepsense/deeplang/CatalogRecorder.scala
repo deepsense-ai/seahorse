@@ -146,6 +146,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Evaluation)
 
     // operations generated from Spark estimators
+    catalog.registerDOperation[CreateLogisticRegression](
+      DOperationCategories.ML.Classification)
+
     catalog.registerDOperation[CreateALS](
       DOperationCategories.ML.Recommendation)
 
@@ -153,9 +156,6 @@ object CatalogRecorder {
       DOperationCategories.ML.Clustering)
 
     catalog.registerDOperation[CreateLinearRegression](
-      DOperationCategories.ML.Regression)
-
-    catalog.registerDOperation[CreateLogisticRegression](
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateRandomForestRegression](
