@@ -76,40 +76,45 @@ object WorkflowExecutorApp
       = new scopt.OptionParser[ExecutionParams](BuildInfo.name) {
     head(BuildInfo.toString)
 
-    opt[String]('r', "report-level") valueName "LEVEL" action {
-      (x, c) => c.copy(reportLevel = ReportLevel.withName(x.toUpperCase))
-    } text "level of details for DataFrame report generation; " +
-      "LEVEL is 'high', 'medium', or 'low' (default: 'medium')"
-
+    note("Workflow input:")
     opt[String]('w', "workflow-filename") valueName "FILENAME" action {
       (x, c) => c.copy(workflowFilename = Some(x))
     } text "workflow filename"
-
-    opt[String]('o', "output-directory") valueName "DIR" action {
-      (x, c) => c.copy(outputDirectoryPath = Some(x))
-    } text
-      "output directory path; directory will be created if it does not exists; " +
-        "execution fails if any file is to be overwritten"
 
     opt[String]('d', "download-workflow") valueName "ID" action {
       (x, c) => c.copy(workflowId = Some(x))
     } text "download workflow; workflow with passed ID will be downloaded from Seahorse Editor"
 
+    note("")
+    note("Execution report output:")
+    opt[String]('o', "output-directory") valueName "DIR" action {
+      (x, c) => c.copy(outputDirectoryPath = Some(x))
+    } text
+      "output directory path; directory will be created if it does not exists"
+
     opt[Unit]('u', "upload-report") action {
       (_, c) => c.copy(uploadReport = true)
     } text "upload execution report to Seahorse Editor"
 
+    note("")
+    note("Miscellaneous:")
+    opt[String]('r', "report-level") valueName "LEVEL" action {
+      (x, c) => c.copy(reportLevel = ReportLevel.withName(x.toUpperCase))
+    } text "level of details for DataFrame report generation; " +
+      "LEVEL is 'high', 'medium', or 'low' (default: 'medium')"
+
     opt[String]('e', "editor-host") valueName "HOST" action {
       (x, c) => c.copy(editorHost = Some(x))
-    } text "hostname or IP of Seahorse Editor"
+    } text s"hostname or IP of Seahorse Editor (default: '${workflowManagerConfig.defaultHost}')"
 
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
-    note("See http://deepsense.io for more details")
+    note("")
+    note("Visit https://seahorse.deepsense.io for more details")
 
     checkConfig { c =>
       if (c.workflowFilename.isEmpty && c.workflowId.isEmpty) {
-        failure("one of --workflow-filename or --workflow-id is required")
+        failure("one of --workflow-filename or --download-workflow is required")
       } else if (c.outputDirectoryPath.isEmpty && !c.uploadReport) {
         failure("one of --output-directory or --upload-report is required")
       } else {
