@@ -23,11 +23,13 @@ function DropTarget() {
       });
 
       element.on('drop', function dragEnd(event) {
-        var data = {};
-        data.dropEvent = event;
-        data.classId = event.dataTransfer.getData('classId');
-        data.target = element;
-        scope.$emit('FlowChartBox.ELEMENT_DROPPED',data);
+        if (!!event.dataTransfer.getData('droppable')) {
+          let data = {};
+          data.dropEvent = event;
+          data.elementId = event.dataTransfer.getData('elementId');
+          data.target = element;
+          scope.$emit('FlowChartBox.ELEMENT_DROPPED',data);
+        }
       });
     }
   };

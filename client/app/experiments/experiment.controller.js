@@ -195,7 +195,7 @@ function ExperimentController(
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
     let dropElementOffset = MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target[0]);
-    let operation = Operations.get(args.classId);
+    let operation = Operations.get(args.elementId);
     let offsetX = dropElementOffset.x;
     let offsetY = dropElementOffset.y;
     let positionX = offsetX || 0;

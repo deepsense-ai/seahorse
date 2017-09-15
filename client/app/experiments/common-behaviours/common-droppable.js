@@ -14,7 +14,8 @@ function Droppable() {
       angular.element(element).attr('draggable', 'true');
       element.on('dragstart',function (event) {
         event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('classId', element[0].id);
+        event.dataTransfer.setData('elementId', element[0].id);
+        event.dataTransfer.setData('droppable', true);
       });
     }
   };

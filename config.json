@@ -65,7 +65,8 @@
           "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.css",
           "./node_modules/deepsense-context-menu/dist/context-menu.css",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.css",
-          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css"
+          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css",
+          "./node_modules/animate.css/animate.min.css"
         ]
       },
       "prod": {
@@ -95,7 +96,8 @@
           "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.css",
           "./node_modules/deepsense-context-menu/dist/context-menu.css",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.css",
-          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css"
+          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css",
+          "./node_modules/animate.css/animate.min.css"
         ]
       }
     },

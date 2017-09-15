@@ -35,6 +35,7 @@
     "express": "^4.12.4"
   },
   "devDependencies": {
+    "animate.css": "^3.2.5",
     "babelify": "^6.1.2",
     "bower": "^1.4.1",
     "browser-sync": "^2.7.12",
