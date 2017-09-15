@@ -50,8 +50,8 @@ for BRANCH in master seahorse_on_desktop seahorse_on_tap seahorse_on_bdu;
 do
   if [ "$GIT_SHA" = "$(git rev-parse origin/$BRANCH)" ]
   then
-    echo "This GIT_SHA is also tip of the origin/$GIT_BRANCH! Publishing $GIT_BRANCH-latest image"
-    docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
-    docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
+    echo "This GIT_SHA is also tip of the origin/$BRANCH! Publishing $BRANCH-latest image"
+    docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH-latest
+    docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH-latest
   fi
 done
