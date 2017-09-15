@@ -63,7 +63,6 @@ private object ToVectorConversions {
 
 /** Following classes are generated automatically. */
 // scalastyle:off
-
 abstract class DOperation0To1[
     TO_0 <: DOperable : ru.TypeTag]
   extends DOperation {
@@ -89,20 +88,8 @@ abstract class DOperation0To1[
 
   protected def _execute(context: ExecutionContext)(): TO_0
 
-  protected def _inferKnowledge(context: InferContext)(): (DKnowledge[TO_0], InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)()
-    } else {
-      _inferTypeKnowledge(context)()
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(): (DKnowledge[TO_0], InferenceWarnings) = {(
+  protected def _inferKnowledge(context: InferContext)(): (DKnowledge[TO_0], InferenceWarnings) = { (
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(): (DKnowledge[TO_0], InferenceWarnings) = {
-    _inferTypeKnowledge(context)()
   }
 }
 
@@ -133,21 +120,9 @@ abstract class DOperation0To2[
 
   protected def _execute(context: ExecutionContext)(): (TO_0, TO_1)
 
-  protected def _inferKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)()
-    } else {
-      _inferTypeKnowledge(context)()
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
+  protected def _inferKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)()
   }
 }
 
@@ -180,22 +155,10 @@ abstract class DOperation0To3[
 
   protected def _execute(context: ExecutionContext)(): (TO_0, TO_1, TO_2)
 
-  protected def _inferKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)()
-    } else {
-      _inferTypeKnowledge(context)()
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
+  protected def _inferKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)()
   }
 }
 
@@ -230,21 +193,7 @@ abstract class DOperation1To0[
       t0: TI_0): Unit
 
   protected def _inferKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): (Unit, InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0)
-    } else {
-      _inferTypeKnowledge(context)(k0)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): (Unit, InferenceWarnings) = {((), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): (Unit, InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0)
+      k0: DKnowledge[TI_0]): (Unit, InferenceWarnings) = { ((), InferenceWarnings.empty)
   }
 }
 
@@ -279,22 +228,8 @@ abstract class DOperation1To1[
       t0: TI_0): TO_0
 
   protected def _inferKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0)
-    } else {
-      _inferTypeKnowledge(context)(k0)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], InferenceWarnings) = {(
+      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], InferenceWarnings) = { (
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0)
   }
 }
 
@@ -331,23 +266,9 @@ abstract class DOperation1To2[
       t0: TI_0): (TO_0, TO_1)
 
   protected def _inferKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0)
-    } else {
-      _inferTypeKnowledge(context)(k0)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
+      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0)
   }
 }
 
@@ -386,24 +307,10 @@ abstract class DOperation1To3[
       t0: TI_0): (TO_0, TO_1, TO_2)
 
   protected def _inferKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0)
-    } else {
-      _inferTypeKnowledge(context)(k0)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
+      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0)
   }
 }
 
@@ -444,23 +351,7 @@ abstract class DOperation2To0[
 
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): (Unit, InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): (Unit, InferenceWarnings) = {((), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): (Unit, InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1)
+      k1: DKnowledge[TI_1]): (Unit, InferenceWarnings) = { ((), InferenceWarnings.empty)
   }
 }
 
@@ -501,24 +392,8 @@ abstract class DOperation2To1[
 
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], InferenceWarnings) = {(
+      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], InferenceWarnings) = { (
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1)
   }
 }
 
@@ -561,25 +436,9 @@ abstract class DOperation2To2[
 
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
+      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1)
   }
 }
 
@@ -624,26 +483,10 @@ abstract class DOperation2To3[
 
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
+      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1)
   }
 }
 
@@ -690,25 +533,7 @@ abstract class DOperation3To0[
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): (Unit, InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1, k2)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1, k2)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): (Unit, InferenceWarnings) = {((), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): (Unit, InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1, k2)
+      k2: DKnowledge[TI_2]): (Unit, InferenceWarnings) = { ((), InferenceWarnings.empty)
   }
 }
 
@@ -755,26 +580,8 @@ abstract class DOperation3To1[
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1, k2)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1, k2)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], InferenceWarnings) = {(
+      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], InferenceWarnings) = { (
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1, k2)
   }
 }
 
@@ -823,27 +630,9 @@ abstract class DOperation3To2[
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1, k2)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1, k2)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {((
+      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1, k2)
   }
 }
 
@@ -894,28 +683,10 @@ abstract class DOperation3To3[
   protected def _inferKnowledge(context: InferContext)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    if (context.fullInference) {
-      _inferFullKnowledge(context)(k0, k1, k2)
-    } else {
-      _inferTypeKnowledge(context)(k0, k1, k2)
-    }
-  }
-
-  protected def _inferTypeKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {((
+      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = { ((
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0](ru.typeTag[TO_0])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1](ru.typeTag[TO_1])),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2](ru.typeTag[TO_2]))), InferenceWarnings.empty)
-  }
-
-  protected def _inferFullKnowledge(context: InferContext)(
-      k0: DKnowledge[TI_0],
-      k1: DKnowledge[TI_1],
-      k2: DKnowledge[TI_2]): ((DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]), InferenceWarnings) = {
-    _inferTypeKnowledge(context)(k0, k1, k2)
   }
 }
 

@@ -90,7 +90,7 @@ class KnowledgeInferenceSpec
 
   private lazy val inferContext: InferContext = {
     val executor: InnerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
-    InferContext(null, null, dOperableCatalog, executor, false)
+    InferContext(null, null, dOperableCatalog, executor)
   }
   override protected lazy val graphReader = new GraphReader(operationCatalog)
   private lazy val operationCatalog = Executor.createDOperationsCatalog()

@@ -91,8 +91,6 @@ def print_operation(in_arity, out_arity):
   parameters_class = "DParameters"
   inner_exec = "_execute"
   inner_infer = "_inferKnowledge"
-  inner_infer_type = "_inferTypeKnowledge"
-  inner_infer_full = "_inferFullKnowledge"
   arguments = "arguments"
   knowledge = "knowledge"
 
@@ -155,22 +153,7 @@ def print_operation(in_arity, out_arity):
 ({exec_arguments}): {exec_return}
 
       protected def {inner_infer}({infer_context_name}: {infer_context_class})\
-({infer_arguments}): {infer_return} = {{
-        if ({infer_context_name}.fullInference) {{
-          {inner_infer_full}({infer_context_name})({inferred_argument_names})
-        }} else {{
-          {inner_infer_type}({infer_context_name})({inferred_argument_names})
-        }}
-      }}
-
-      protected def {inner_infer_type}({infer_context_name}: {infer_context_class})\
-({infer_arguments}): {infer_return} = {{\
-{infer_implementation}
-      }}
-
-      protected def {inner_infer_full}({infer_context_name}: {infer_context_class})\
-({infer_arguments}): {infer_return} = {{
-        {inner_infer_type}({infer_context_name})({inferred_argument_names})
+({infer_arguments}): {infer_return} = {{ {infer_implementation}
       }}
     }}""".format(
       in_arity=in_arity,
@@ -180,8 +163,6 @@ def print_operation(in_arity, out_arity):
       knowledge_class=knowledge_class,
       inner_exec=inner_exec,
       inner_infer=inner_infer,
-      inner_infer_full=inner_infer_full,
-      inner_infer_type=inner_infer_type,
       warnings_class=warnings_class,
       arguments=arguments,
       knowledge=knowledge,
@@ -222,24 +203,8 @@ def print_method(in_arity, out_arity):
                ({apply_arguments}): {apply_return}
 
       def infer({infer_context_name}: {infer_context_class})\
-({parameters_name}: {parameters_type})({infer_arguments}): {infer_return} = {{
-        if ({infer_context_name}.fullInference) {{
-          inferFull({infer_context_name})({parameters_name})({inferred_argument_names})
-        }} else {{
-          inferTypes({infer_context_name})({parameters_name})({inferred_argument_names})
-        }}
+({parameters_name}: {parameters_type})({infer_arguments}): {infer_return} = {{ {infer_implementation}
       }}
-
-      protected def inferTypes({infer_context_name}: {infer_context_class})\
-({parameters_name}: {parameters_type})({infer_arguments}): {infer_return} = {{\
-{infer_implementation}
-      }}
-
-      protected def inferFull({infer_context_name}: {infer_context_class})\
-({parameters_name}: {parameters_type})({infer_arguments}): {infer_return} = {{
-        inferTypes({infer_context_name})({parameters_name})({inferred_argument_names})
-      }}
-
     }}""".format(
       in_arity=in_arity,
       out_arity=out_arity,
