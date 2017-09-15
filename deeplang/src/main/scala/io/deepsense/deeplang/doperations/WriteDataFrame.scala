@@ -20,10 +20,12 @@ import java.io.{IOException, StringWriter}
 import java.sql.Timestamp
 
 import scala.collection.immutable.ListMap
+import scala.compat.Platform.EOL
 import scala.reflect.runtime.{universe => ru}
 
 import au.com.bytecode.opencsv.CSVWriter
 import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.spark.SparkException
 import org.apache.spark.sql.Row
 
 import io.deepsense.commons.datetime.DateTimeConverter
@@ -31,7 +33,7 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
 import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
-import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
+import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, WriteFileException}
 import io.deepsense.deeplang.parameters.FileFormat.FileFormat
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
@@ -69,32 +71,37 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] with CsvParameters
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
     val path = outputFileParameter.value.get
 
-    FileFormat.withName(formatParameter.value.get) match {
-      case FileFormat.CSV =>
-        val categoricalMetadata = CategoricalMetadata(dataFrame.sparkDataFrame)
-        val csv = dataFrame.sparkDataFrame.rdd
-          .map(rowToStringArray(categoricalMetadata) andThen convertToCsv)
+    try {
+      FileFormat.withName(formatParameter.value.get) match {
+        case FileFormat.CSV =>
+          val categoricalMetadata = CategoricalMetadata(dataFrame.sparkDataFrame)
+          val csv = dataFrame.sparkDataFrame.rdd
+            .map(rowToStringArray(categoricalMetadata) andThen convertToCsv)
 
-        val result = if (csvNamesIncludedParameter.value.get) {
-          context.sparkContext.parallelize(Seq(
-            convertToCsv (dataFrame.sparkDataFrame.schema.fieldNames)
-          )).union(csv)
-        } else {
-          csv
-        }
+          val result = if (csvNamesIncludedParameter.value.get) {
+            context.sparkContext.parallelize(Seq(
+              convertToCsv(dataFrame.sparkDataFrame.schema.fieldNames)
+            )).union(csv)
+          } else {
+            csv
+          }
 
-        try {
           result.saveAsTextFile(path)
-        } catch {
-          case e: IOException => throw DeepSenseIOException (e)
-        }
-      case FileFormat.PARQUET =>
-        // TODO: DS-1480 Writing DF in parquet format when column names contain forbiden characters
-        dataFrame.sparkDataFrame.write.parquet(path)
-      case FileFormat.JSON =>
-        val mapper = CategoricalMapper(dataFrame, context.dataFrameBuilder)
-        val uncategorizedDataFrame = mapper.uncategorized(dataFrame)
-        uncategorizedDataFrame.sparkDataFrame.write.json(path)
+        case FileFormat.PARQUET =>
+          // TODO: DS-1480 Writing DF in parquet format when column names contain forbidden chars
+          dataFrame.sparkDataFrame.write.parquet(path)
+        case FileFormat.JSON =>
+          val mapper = CategoricalMapper(dataFrame, context.dataFrameBuilder)
+          val uncategorizedDataFrame = mapper.uncategorized(dataFrame)
+          uncategorizedDataFrame.sparkDataFrame.write.json(path)
+      }
+    } catch {
+      case e: IOException =>
+        logger.error(s"WriteDataFrame error. Could not write file to: $path", e)
+        throw DeepSenseIOException(e)
+      case e: SparkException =>
+        logger.error(s"WriteDataFrame error: Spark problem. Could not write file to: $path", e)
+        throw WriteFileException(path, e)
     }
   }
 
