@@ -28,7 +28,7 @@
 
   <appender name="file" class="org.apache.log4j.rolling.RollingFileAppender">
     <rollingPolicy name="file" class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-      <param name="FileNamePattern" value="seahorse_${logFile}.%d{yyyy-MM-dd}.log" />
+      <param name="FileNamePattern" value="${logFile}_seahorse.%d{yyyy-MM-dd}.log" />
     </rollingPolicy>
 
     <layout class="org.apache.log4j.PatternLayout">
