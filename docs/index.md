@@ -14,12 +14,13 @@ description: Seahorse documentation homepage
 
 ## Setup
 
-Follow the instructions in [Seahorse Desktop](bundled_image_overview.html) to download and run Seahorse Desktop.
+Follow the instructions at the [Try Seahorse](/downloads.html) page to start your Seahorse instance.
 
 ## Test It
-Go to <a target="_blank" href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
-If Seahorse Desktop was set up correctly, you will see the main page of Seahorse web-based
-user interface:
+Depending on the deployment mode you are using (they are all listed [here](/downloads.html))
+Seahorse might be available at different addresses. In Seahorse Desktop it's
+<a target="_blank" href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
+Open it in your browser and you will see the web-based user interface:
 
 <p style="text-align:center;">
     <img class="centered-image img-responsive" src="./img/seahorse_main.png">
@@ -39,6 +40,8 @@ To create a new workflow:
 * Press the **Create** button.
 
 You have been redirected to workflow editor where you can create your application in a visual way.
+If you are using Seahorse Desktop, you can start editing the workflow right away. Otherwise,
+click the **START EDITING** button in the top panel to start editing the workflow.
 
 <p style="text-align:center;">
     <img class="centered-image img-responsive" src="./img/empty_workflow.png">
@@ -127,10 +130,11 @@ the scoring will be produced (model performance report).
 </p>
 
 1. Create an empty workflow:
-   * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a> and click **New workflow**.
+   * Go to Seahorse main page and click **New workflow**.
    * Put <code>machinelearning1</code> in the **Name** section - setting a meaningful name will help
      when looking for a workflow in the workflow list.
    * Press the **Create** button.
+   * Start editing the workflow.
 
 2. Set the source of your data:
    * Drag a [Read DataFrame](operations/read_dataframe.html) operation to your canvas.
@@ -222,8 +226,7 @@ models for further reuse with `Write Transformer` operation.
 An exported model can also be shared with other users.
 
 1.  Drag the `Write Transformer` operation onto your canvas.
-2.  Set **OUTPUT PATH** parameter's value to `/vagrant/model_example_1`.
-    This path refers to the directory containing the Vagrantfile in the host OS.
+2.  Set **OUTPUT PATH** parameter's value to `/tmp/model_example_1`.
 3.  Drag the `Fit` output to the `Write Transformer` operation.
 4.  Click **RUN** to execute the workflow again and write the transformer to the specified path.
 
@@ -248,7 +251,7 @@ executing linear regression algorithm on the data.
     <em>The Better Model</em>
 </p>
 
-1. Open workflow from **Example 1** in <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a>.
+1. Open workflow from **Example 1**.
 
 2. Disconnect the `Assemble Vector` node from the `Read DataFrame` node:
    * Grab the connection going into the input port of the `Assemble Vector` node and drag it
@@ -315,9 +318,10 @@ to interactively analyze data.
 
 
 * Create an empty workflow:
-  * Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">Seahorse</a> and click **New workflow**.
+  * Go to Seahorse main page and click **New workflow**.
   * Put <code>notebook1</code> in the **Name** section.
   * Press the **Create** button.
+  * Start editing the workflow.
 
 * Set the source of your data:
   * Drag [Read DataFrame](operations/read_dataframe.html) operation onto your canvas.
@@ -547,7 +551,7 @@ exported model. Note that the `Export model` step from Example 1 must be finishe
 1. Create an empty workflow.
 2. Import the model:
    * Drag a `Read Transformer` operation onto your canvas.
-   * Set **SOURCE** parameter's value to `/vagrant/model_example_1`.
+   * Set **SOURCE** parameter's value to `/tmp/model_example_1`.
      This path refers to the model saved in the Example 1.
 3. Load the data to be run with the imported model:
    * Drag the `Read DataFrame` operation onto your canvas and set parameters as listed in Example 1.
