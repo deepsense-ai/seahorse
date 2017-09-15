@@ -1,15 +1,10 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.experimentmanager.rest
 
-import java.util.UUID
-
-import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.{Await, duration}
+import scala.concurrent.Await
 
 import com.google.common.base.Function
 import com.google.inject.{Key, TypeLiteral}
@@ -64,20 +59,21 @@ class ExperimentsApiIntegSpec
 
   before {
     experimentA = Experiment(
-      UUID.randomUUID(),
+      Experiment.Id.randomId,
       tenantAId,
       "Experiment of Tenant A",
       Graph())
 
     experimentB = Experiment(
-      UUID.randomUUID(),
+      Experiment.Id.randomId,
       tenantBId,
       "Experiment of Tenant B",
       Graph())
 
     experimentStorage = getInstance[ExperimentStorage]
-    Await.ready(experimentStorage.save(experimentA), FiniteDuration(2, duration.SECONDS))
-    Await.ready(experimentStorage.save(experimentB), FiniteDuration(2, duration.SECONDS))
+    import scala.concurrent.duration._
+    Await.ready(experimentStorage.save(experimentA), 2.seconds)
+    Await.ready(experimentStorage.save(experimentB), 2.seconds)
   }
 
   after {

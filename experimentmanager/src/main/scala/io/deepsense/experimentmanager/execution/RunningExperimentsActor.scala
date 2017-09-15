@@ -6,8 +6,7 @@ package io.deepsense.experimentmanager.execution
 import javax.inject.{Inject, Named}
 
 import scala.collection.mutable
-import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.{Future, duration}
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 import akka.actor.{Actor, ActorLogging}
@@ -26,10 +25,11 @@ class RunningExperimentsActor @Inject() (
     graphExecutorFactory: GraphExecutorClientFactory)
   extends Actor with ActorLogging {
 
-  val refreshDelay = new FiniteDuration(statusRefreshMillis, duration.MILLISECONDS)
+  import scala.concurrent.duration._
+  val refreshDelay = statusRefreshMillis.milliseconds
   val experiments = mutable.Map[Experiment.Id, (Experiment, GraphExecutorClient)]()
 
-  implicit val timeout: Timeout = Timeout(timeoutMillis, duration.MILLISECONDS)
+  implicit val timeout: Timeout = timeoutMillis.milliseconds
   import InternalMessages._
   import context.dispatcher
 

@@ -20,8 +20,10 @@ abstract class GraphExecutionIntegSuite
   with Matchers
   with BeforeAndAfter {
 
-  experimentName should "run on external YARN cluster" in {
-    testOnYarnCluster(experiment)
+  experimentName should {
+    "run on external YARN cluster" in {
+      testOnYarnCluster(experiment)
+    }
   }
 
   protected def testOnYarnCluster(experiment: Experiment): Unit = {

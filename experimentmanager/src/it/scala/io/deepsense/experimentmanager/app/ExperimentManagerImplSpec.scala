@@ -1,10 +1,8 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager
+package io.deepsense.experimentmanager.app
 
 import java.util.UUID
 
@@ -21,6 +19,7 @@ import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.experimentmanager.ExperimentManagerImpl
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.storage.ExperimentStorage

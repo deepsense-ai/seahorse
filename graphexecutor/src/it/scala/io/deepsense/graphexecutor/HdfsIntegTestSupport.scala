@@ -20,7 +20,7 @@ import io.deepsense.graphexecutor.deployment.DeployOnHdfs
  * NOTE: beforeAll method deploys current deepsense build on HDFS cluster.
  */
 trait HdfsIntegTestSupport
-  extends FlatSpec
+  extends WordSpec
   with Matchers
   with OptionValues
   with Inside

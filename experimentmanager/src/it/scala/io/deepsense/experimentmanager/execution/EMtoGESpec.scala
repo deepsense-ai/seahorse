@@ -36,31 +36,33 @@ class EMtoGESpec
   val GetStatusInterval = 2000
   val MaxRetryNumber = 30
 
-  "ExperimentManager" should "launch graph on GraphExecutor" in {
-    testProbe.send(actorRef, Launch(experiment))
-    testProbe.expectMsgPF() {
-      case Launched(exp) => exp.state == Experiment.State.running
-    }
-
-    var success = false
-    breakable {
-      for (i <- 0 until MaxRetryNumber) {
-        testProbe.send(actorRef, GetStatus(experiment.id))
-        val status = testProbe.expectMsgType[Status]
-        logger.debug(s"Received status: $status")
-        forAll(status.experiment.get.graph.nodes) { node =>
-          import io.deepsense.graph.Status.Failed
-          node.state.status shouldNot be (Failed)
-        }
-        if (graphCompleted(status)) {
-          success = true
-          break()
-        }
-        Thread.sleep(GetStatusInterval)
+  "ExperimentManager" should {
+    "launch graph on GraphExecutor" in {
+      testProbe.send(actorRef, Launch(experiment))
+      testProbe.expectMsgPF() {
+        case Launched(exp) => exp.state == Experiment.State.running
       }
-    }
-    if (!success) {
-      fail(s"Max retry: $MaxRetryNumber and experiment did not run. Communication FAILED!!!")
+
+      var success = false
+      breakable {
+        for (i <- 0 until MaxRetryNumber) {
+          testProbe.send(actorRef, GetStatus(experiment.id))
+          val status = testProbe.expectMsgType[Status]
+          logger.debug(s"Received status: $status")
+          forAll(status.experiment.get.graph.nodes) { node =>
+            import io.deepsense.graph.Status.Failed
+            node.state.status shouldNot be (Failed)
+          }
+          if (graphCompleted(status)) {
+            success = true
+            break()
+          }
+          Thread.sleep(GetStatusInterval)
+        }
+      }
+      if (!success) {
+        fail(s"Max retry: $MaxRetryNumber and experiment did not run. Communication FAILED!!!")
+      }
     }
   }
 
