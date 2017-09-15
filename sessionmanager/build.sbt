@@ -37,6 +37,18 @@ downloadWeJar := {
 
 mappings in Universal += downloadWeJar.value -> "we.jar"
 
+val preparePythonDeps = taskKey[File]("Generates we_deps.zip file with python dependencies")
+
+preparePythonDeps := {
+  "sessionmanager/prepare-deps.sh ." !
+
+  target.value / "we-deps.zip"
+}
+
+preparePythonDeps <<= preparePythonDeps dependsOn downloadWeJar
+
+mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
+
 dockerBaseImage := "quay.io/deepsense_io/deepsense-spark:1.6.1"
 dockerExposedPorts := Seq(9082)
 dockerCommands ++= Seq(
