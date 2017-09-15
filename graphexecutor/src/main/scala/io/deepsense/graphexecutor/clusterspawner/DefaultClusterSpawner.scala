@@ -5,18 +5,17 @@
 package io.deepsense.graphexecutor.clusterspawner
 
 import scala.collection.JavaConverters._
-
 import scala.util.Try
 
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.yarn.api.records.{ApplicationId, ContainerLaunchContext, Resource}
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.Records
+
 import io.deepsense.commons.config.ConfigurationMerger
-import io.deepsense.graphexecutor.Constants
 import io.deepsense.graphexecutor.util.Utils
 import io.deepsense.models.experiments.Experiment
 
@@ -34,8 +33,7 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
   def spawnOnCluster(
       experimentId: Experiment.Id,
       graphExecutionStatusesActorPath: String,
-      esFactoryName: String = "default",
-      applicationConfLocation: String = Constants.GraphExecutorConfigLocation):
+      esFactoryName: String = "default"):
     Try[(YarnClient, ApplicationId)] = {
 
     logger.debug(">>> spawnOnCluster")
@@ -54,7 +52,7 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
     val app = yarnClient.createApplication()
     val amContainer = Records.newRecord(classOf[ContainerLaunchContext])
 
-    val geCfg = ConfigFactory.load(Constants.GraphExecutorConfName)
+    val geCfg = ConfigFactory.load()
     val command = "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor" +
       " --master spark://" + geCfg.getString(HdfsHostnameProperty) + ":7077" +
       " --executor-memory " + geCfg.getString(ExecutorMemoryProperty) +
@@ -66,14 +64,17 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
     logger.debug("Prepared {}", command)
     amContainer.setCommands(List(command).asJava)
 
-    val geConf = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorConfigLocation))
-    val geJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorJarLocation))
-    val log4jXml = Utils.getConfiguredLocalResource(new Path(Constants.Log4jXmlLocation))
-    val geDepsJar = Utils
-      .getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
+    val geConf = Utils.getConfiguredLocalResource(
+      new Path(geCfg.getString("deployment.etc.applicationconf.location")))
+    val log4jXml = Utils.getConfiguredLocalResource(
+      new Path(geCfg.getString("deployment.etc.log4j.location")))
+    val geJar = Utils.getConfiguredLocalResource(
+      new Path(geCfg.getString("deployment.lib.main.location")))
+    val geDepsJar = Utils.getConfiguredLocalResource(
+      new Path(geCfg.getString("deployment.lib.deps.location")))
     amContainer.setLocalResources(Map(
-      Constants.GraphExecutorConfName -> geConf,
-      Constants.Log4jXmlName -> log4jXml,
+      geCfg.getString("deployment.etc.applicationconf.name") -> geConf,
+      geCfg.getString("deployment.etc.log4j.name") -> log4jXml,
       "graphexecutor.jar" -> geJar,
       "graphexecutor-deps.jar" -> geDepsJar
     ).asJava)

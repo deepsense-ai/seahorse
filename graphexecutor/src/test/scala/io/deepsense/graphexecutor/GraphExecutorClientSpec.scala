@@ -164,7 +164,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
   def verifySpawnerCalled(spawner: ClusterSpawner, experiment: Experiment): Registration = {
     eventually {
       verify(spawner, times(1))
-        .spawnOnCluster(org.mockito.Matchers.eq(experiment.id), any(), any(), any())
+        .spawnOnCluster(org.mockito.Matchers.eq(experiment.id), any(), any())
     }
   }
 
@@ -185,21 +185,21 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
 
   def failingSpawner: ClusterSpawner = {
     val spawner = mock[ClusterSpawner]
-    when(spawner.spawnOnCluster(any(), any(), any(), any()))
+    when(spawner.spawnOnCluster(any(), any(), any()))
       .thenThrow(new IllegalStateException("This mock always fails when spawning GE"))
     spawner
   }
 
   def succeedingSpawner(yarnClient: YarnClient = mock[YarnClient]): ClusterSpawner = {
     val spawner = mock[ClusterSpawner]
-    when(spawner.spawnOnCluster(any(), any(), any(), any()))
+    when(spawner.spawnOnCluster(any(), any(), any()))
       .thenReturn(Success(yarnClient, mock[ApplicationId]))
     spawner
   }
 
   def slowSpawner(yarnClient: YarnClient = mock[YarnClient]): ClusterSpawner = {
     val spawner = mock[ClusterSpawner]
-    when(spawner.spawnOnCluster(any(), any(), any(), any()))
+    when(spawner.spawnOnCluster(any(), any(), any()))
       .thenAnswer(new Answer[Success[(YarnClient, ApplicationId)]]{
       override def answer(invocation: InvocationOnMock): Success[(YarnClient, ApplicationId)] = {
         Thread.sleep(4000)

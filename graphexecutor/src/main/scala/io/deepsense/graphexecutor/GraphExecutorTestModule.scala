@@ -58,12 +58,24 @@ class GraphExecutorTestModule extends AbstractModule {
   }
 }
 
+object GraphExecutorTest {
+  /**
+   * Directory on HDFS used for testing purposes
+   */
+  val TestDir = "/tests"
+
+  /**
+   * Tenant id used for testing purposes
+   */
+  val TestTenantId = "TestTenantId"
+}
+
 object SimpleGraphExecutionIntegSuiteEntities {
   val Name = "SimpleGraphExecutionIntegSuite"
 
-  val entityTenantId = Constants.TestTenantId
+  val entityTenantId = GraphExecutorTest.TestTenantId
   val entityId = Entity.Id.fromString("87cced7a-2c47-4210-9243-245284f74d72")
-  val dataFrameLocation = Constants.TestDir + "/" + entityId
+  val dataFrameLocation = GraphExecutorTest.TestDir + "/" + entityId
 
   val entity = Entity(
     entityTenantId,
@@ -81,10 +93,10 @@ object SimpleGraphExecutionIntegSuiteEntities {
 object BikesIntegSuiteEntities {
   val Name = "BikesIntegSuiteEntities"
 
-  val bikesTenantId = Constants.TestTenantId
+  val bikesTenantId = GraphExecutorTest.TestTenantId
 
   val demandId: Entity.Id = Entity.Id.fromString("52df8588-b192-4446-a418-2c95f8a94d85")
-  val demandLocation = Constants.TestDir + "/" + demandId
+  val demandLocation = GraphExecutorTest.TestDir + "/" + demandId
 
   val demand = Entity(
     bikesTenantId,
@@ -99,7 +111,7 @@ object BikesIntegSuiteEntities {
     saved = true)
 
   val weatherId: Entity.Id = Entity.Id.fromString("7ff0e089-8059-491c-9a7e-557349633312")
-  val weatherLocation = Constants.TestDir + "/" + weatherId
+  val weatherLocation = GraphExecutorTest.TestDir + "/" + weatherId
 
   val weather = Entity(
     bikesTenantId,

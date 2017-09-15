@@ -80,7 +80,8 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     experimentStatusesReceiverActorPath: String): Unit = {
     logger.debug("mainLoop({}, {})", experimentId, experimentStatusesReceiverActorPath)
     val resourceManagerClient = new AMRMClientAsyncImpl[ContainerRequest](
-      Constants.AMRMClientHeartbeatInterval, this)
+      geConfig.getInt("graphexecutor.yarn.heartbeat.interval"),
+      this)
     resourceManagerClient.init(conf)
     resourceManagerClient.start()
     logger.debug("AMRMClientAsyncImpl started")
