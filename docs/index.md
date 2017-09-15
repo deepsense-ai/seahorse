@@ -19,11 +19,20 @@ in a fast, simple and interactive way. Creating Spark applications
 with Seahorse is as easy as dragging and dropping operation on the canvas, all while
 connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundled local Spark.
 
+
+Seahorse uses
+<img class="img-responsive" style="display: inline-block; width:auto; height:40px; margin-top: -11px;" src="./img/spark_2_0.jpg">
+. To learn about using Seahorse with other Apache Spark versions please
+<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
+  contact us for details.
+</a>
+
 <div class="centered-container spacer" markdown="1">
   <img src="img/seahorse_editor.png"
     class="centered-image img-responsive spacer bordered-image" style="width:90%"/>
   *Seahorse's interface*
 </div>
+
 
 #### A Glimpse of Seahorse's Features
 
