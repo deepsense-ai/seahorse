@@ -56,7 +56,8 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
       " --master spark://" + geCfg.getString(HdfsHostnameProperty) + ":7077" +
       " --executor-memory " + geCfg.getString(ExecutorMemoryProperty) +
       " --driver-memory " + geCfg.getString(DriverMemoryProperty) +
-      " --jars ./graphexecutor-deps.jar" +
+      " --driver-class-path \"$CLASSPATH\" " +
+      " --jars ./graphexecutor-deps.jar " +
       s" ./graphexecutor.jar $experimentId $graphExecutionStatusesActorPath $esFactoryName" +
       Utils.logRedirection
     logger.debug("Prepared {}", command)
@@ -65,11 +66,13 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
     val geConf = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorConfigLocation))
     val esConf = Utils.getConfiguredLocalResource(new Path(Constants.EntityStorageConfigLocation))
     val geJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorJarLocation))
+    val log4jXml = Utils.getConfiguredLocalResource(new Path(Constants.Log4jXmlLocation))
     val geDepsJar = Utils
       .getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
     amContainer.setLocalResources(Map(
       Constants.GraphExecutorConfName -> geConf,
       Constants.EntityStorageConfName -> esConf,
+      Constants.Log4jXmlName -> log4jXml,
       "graphexecutor.jar" -> geJar,
       "graphexecutor-deps.jar" -> geDepsJar
     ).asJava)

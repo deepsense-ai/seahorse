@@ -66,6 +66,11 @@ object Utils {
       Environment.CLASSPATH.name(),
       Environment.PWD.$() + File.separator + "*",
       File.pathSeparator)
+    Apps.addToEnvironment(
+      env.asJava,
+      Environment.CLASSPATH.name(),
+      Environment.PWD.$(),
+      File.pathSeparator)
     env
   }
 }

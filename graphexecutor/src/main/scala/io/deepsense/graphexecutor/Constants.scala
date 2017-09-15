@@ -93,10 +93,10 @@ object Constants {
   /**
    *  Configuration file's name on cluster HDFS
    */
-  val Log4jPropertiesName = "log4j.properties"
+  val Log4jXmlName = "log4j.xml"
 
   /**
    * Location of configuration file on cluster HDFS
    */
-  val Log4jPropertiesLocation = DeepSenseIoDeploymentDirectory + "/etc/" + Log4jPropertiesName
+  val Log4jXmlLocation = DeepSenseIoDeploymentDirectory + "/etc/" + Log4jXmlName
 }
