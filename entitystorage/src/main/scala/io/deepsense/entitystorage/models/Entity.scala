@@ -30,6 +30,10 @@ case class Entity (
 
 object Entity {
   type Id = models.Id
+
+  object Id {
+    def randomId = models.Id.randomId
+  }
 }
 
 /**

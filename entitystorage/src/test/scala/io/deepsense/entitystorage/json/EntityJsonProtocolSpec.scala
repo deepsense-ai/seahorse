@@ -85,7 +85,7 @@ class EntityJsonProtocolSpec extends FlatSpec with Matchers with EntityJsonProto
   private def testEntity(dClass: String, data: DataObject) = {
     val now = DateTimeConverter.now
     Entity(
-      Id(UUID.randomUUID()),
+      Entity.Id.randomId,
       "testEntity",
       "entity Description",
       dClass,

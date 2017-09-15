@@ -4,7 +4,7 @@
  *  Owner: Rafal Hryciuk
  */
 
-package io.deepsense.entitystorage.rest
+package io.deepsense.entitystorage.api.rest
 
 import scala.concurrent.ExecutionContext
 

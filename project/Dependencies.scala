@@ -62,7 +62,7 @@ object Dependencies {
   )
 
   val entitystorage = Seq(
-
+    akkaActor
   ) ++ Seq(scalatest, mockitoCore, sprayTestkit).map(_ % "test")
 
   val commons = Seq(

@@ -4,9 +4,7 @@
  *  Owner: Rafal Hryciuk
  */
 
-package io.deepsense.entitystorage.rest
-
-import java.util.UUID
+package io.deepsense.entitystorage.api.rest
 
 import scala.concurrent.Future
 
@@ -20,11 +18,10 @@ import spray.http.StatusCodes
 import spray.json.DefaultJsonProtocol
 import spray.routing._
 
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.models.Id
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.entitystorage.json.EntityJsonProtocol
 import io.deepsense.entitystorage.models._
@@ -71,7 +68,7 @@ class EntitiesApiSpec
       created: DateTime,
       updated: DateTime,
       data: DataObject): Entity = Entity(
-    Id(UUID.randomUUID()),
+    Entity.Id.randomId,
     s"name$index",
     s"description$index",
     s"dClass$index",

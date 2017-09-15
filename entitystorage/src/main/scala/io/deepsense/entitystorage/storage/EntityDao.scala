@@ -13,4 +13,6 @@ import io.deepsense.entitystorage.models.Entity
 trait EntityDao {
 
   def getAll(tenantId: String): Future[List[Entity]]
+
+  def get(tenantId: String, id: Entity.Id): Future[Option[Entity]]
 }
