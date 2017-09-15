@@ -33,8 +33,8 @@ trait WorkflowWithKnowledgeJsonProtocol extends WorkflowJsonProtocol
 
   implicit val graphKnowledgeFormat = jsonFormat1(GraphKnowledge.apply)
 
-  implicit val workflowWithKnowledgeFormat: JsonFormat[WorkflowWithKnowledge] =
-    new JsonFormat[WorkflowWithKnowledge] {
+  implicit val workflowWithKnowledgeFormat: RootJsonFormat[WorkflowWithKnowledge] =
+    new RootJsonFormat[WorkflowWithKnowledge] {
       override def read(json: JsValue): WorkflowWithKnowledge = ???
 
       override def write(workflow: WorkflowWithKnowledge): JsValue = {
