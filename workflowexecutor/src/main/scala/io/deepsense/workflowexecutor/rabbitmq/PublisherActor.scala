@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.rabbitmq
 
-object MQCommunication {
-  val mqActorSystemName = "rabbitmq"
-  val editorTopic = "to_editor"
+import akka.actor.Actor
+
+import io.deepsense.workflowexecutor.communication.MessageMQ
+
+class PublisherActor(publisher: MQPublisher) extends Actor {
+
+  override def receive: Receive = {
+    case publishMessage: PublishMessage =>
+      publisher.publish(publishMessage.topic, publishMessage.messageMQ)
+  }
 }
+
+case class PublishMessage(topic: String, messageMQ: MessageMQ)

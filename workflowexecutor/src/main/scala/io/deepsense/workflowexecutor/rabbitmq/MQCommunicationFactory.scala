@@ -23,12 +23,17 @@ import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client.{Channel, DefaultConsumer, Envelope}
 import com.thenewmotion.akka.rabbitmq.{ChannelActor, CreateChannel, RichConnectionActor}
 
-case class MQCommunicationFactory(system: ActorSystem, connection: ActorRef) {
+import io.deepsense.workflowexecutor.communication.MQMessageDeserializer
+
+case class MQCommunicationFactory(
+  system: ActorSystem,
+  connection: ActorRef,
+  mQMessageDeserializer: MQMessageDeserializer) {
 
   val exchangeType = "fanout"
 
-  def createCommunicationChannel(name: String, subscriber: SubscriberActor): MQPublisher = {
-    createSubscriber(name, subscriber)
+  def createCommunicationChannel(name: String, subscriber: ActorRef): MQPublisher = {
+    createSubscriber(name, SubscriberActor(subscriber, mQMessageDeserializer))
     createPublisher(name)
   }
 

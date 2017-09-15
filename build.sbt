@@ -37,9 +37,9 @@ lazy val workflowexecutor       = project dependsOn (
   commons % "test->test",
   deeplang,
   graph,
+  `message-protocol`,
   models,
-  workflowjson,
-  `message-protocol`)
+  workflowjson)
 lazy val `message-protocol`        = project dependsOn models
 
 // Sequentially perform integration tests

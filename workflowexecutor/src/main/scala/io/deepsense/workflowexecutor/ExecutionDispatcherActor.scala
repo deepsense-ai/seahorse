@@ -18,9 +18,7 @@ package io.deepsense.workflowexecutor
 
 import akka.actor.{Actor, ActorContext, ActorRef, Props}
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SQLContext
 
-import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog

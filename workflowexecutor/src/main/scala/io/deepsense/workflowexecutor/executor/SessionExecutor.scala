@@ -25,7 +25,7 @@ import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.workflowexecutor.communication.{MQCommunication, ProtocolDeserializer}
-import io.deepsense.workflowexecutor.rabbitmq.{MQCommunicationFactory, MQPublisher, MySubscriber, SubscriberActor}
+import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingActor}
 
 /**
@@ -62,15 +62,15 @@ case class SessionExecutor(
       ConnectionActor.props(factory),
       MQCommunication.mqActorSystemName)
     val exchange = "seahorse"
+    val messageDeserializer = ProtocolDeserializer(graphReader, currentVersion)
 
-    val mySubscriber = system.actorOf(MySubscriber.props(executionDispatcher), "mySubscriber")
-    val communicationFactory = MQCommunicationFactory(system, connection)
-
-    val globalMessageDeserializer = ProtocolDeserializer(graphReader, currentVersion)
-    val globalSubscriber = SubscriberActor(mySubscriber, globalMessageDeserializer)
+    val communicationFactory = MQCommunicationFactory(system, connection, messageDeserializer)
+    val seahorseSubscriber = system.actorOf(
+      SeahorseChannelSubscriber.props(executionDispatcher, communicationFactory),
+      "communication")
 
     val globalPublisher: MQPublisher = communicationFactory.createCommunicationChannel(
-      exchange, globalSubscriber)
+      exchange, seahorseSubscriber)
 
     system.awaitTermination()
     cleanup(sparkContext)
