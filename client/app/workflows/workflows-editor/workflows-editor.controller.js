@@ -101,8 +101,12 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
-      this.selectedNode = data.selectedNode;
-      internal.getNodeParameters.call(this, this.selectedNode);
+      if (!data.originalEvent.ctrlKey) {
+        this.selectedNode = data.selectedNode;
+        internal.getNodeParameters.call(this, this.selectedNode);
+      } else if (data.originalEvent.ctrlKey && this.selectedNode && this.selectedNode.id === data.selectedNode.id) {
+        this.selectedNode = null;
+      }
     });
 
     this.initUnbindableListeners();
