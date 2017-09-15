@@ -2,8 +2,9 @@
 
 angular.module('test').
   factory('Model', ['DeepsenseNodeParameters', function (DeepsenseNodeParameters) {
-    var nodes = [
-      {
+
+    let sqlReader = {
+      node: {
         description: 'Simple sql db reader',
         id: '88f560a9-97e3-4fa2-93ce-edad4cab7ea9',
         name: 'Sql Reader',
@@ -378,255 +379,7 @@ angular.module('test').
           }
         ]
       },
-      {
-        description: 'Simple filters takes dataset based on...',
-        id: '210ce781-0a9f-477d-99a7-5be31f7bfc02',
-        name: 'Row Filter',
-        uiName: 'Row Filter',
-        color: '#00B1EB',
-        operationId: '342342-123123-434234-12334',
-        parameters: null,
-        state: {
-          "status": "status_completed",
-          "started": "2013-09-10T22:11:09Z",
-          "ended": "2013-09-20T21:22:09Z"
-        }
-      },
-      {
-        description: 'Neural networks inspired by biological STARTS test of description length message, hey hey hey this is a test so please welcome',
-        id: 'edc02822-b8ee-4225-b070-f892a87dbf11',
-        name: 'Neural Network',
-        color: '#00B1EB',
-        operationId: '11111-111111-44444',
-        parameters: null,
-        state: null
-      },
-      {
-        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
-        id: 'e61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
-        name: 'File To DataFrame',
-        uiName: 'File To DataFrame',
-        color: '#00B1EB',
-        operationId: '11111-111111-33333',
-        parameters: null,
-        state: {
-          "status": "status_aborted",
-          "started": "2012-08-20T21:11:09Z",
-          "ended": "2012-08-20T21:12:09Z",
-          "error": {
-            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
-            "code": 42,
-            "title": "Question unknown",
-            "message": "Something that describes the problem more precisely",
-            "details": {"stacktrace": "exception404\nexception502\nLorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing"
-            }
-          }
-        }
-      },
-      {
-        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
-        id: 'a61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
-        name: 'Test draft',
-        uiName: 'Test draft',
-        color: '#00B1EB',
-        operationId: '11111-111111-33333',
-        parameters: null,
-        state: {
-          "status": "status_failed",
-          "started": "2012-08-20T21:11:09Z",
-          "ended": "2012-08-20T21:12:09Z",
-          "error": {
-            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
-            "code": 42,
-            "title": "Question unknown",
-            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "aut autem consectetur deserunt, dolore, eius eum facilis fugiat" +
-              " impedit magnam maxime odio omnis reiciendis suscipit tempora " +
-              "temporibus tenetur totam unde, voluptatum. Architecto, dolorum?",
-            "details": {
-              "stacktrace": "exception404\nexception502\nLorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
-              +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
-              +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
-              +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
-              +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
-              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
-              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
-              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
-            }
-          }
-        },
-        stateDetails: null
-      },
-      {
-        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
-        id: 'a61a311f-ffc0-71b8-736c-3fb1e3cf8e77',
-        name: 'Test of dynamic params',
-        uiName: '',
-        color: '#00B1EB',
-        operationId: '11111-111111-33333',
-        parameters: null,
-        state: {
-          "status": "status_failed",
-          "started": "2012-08-20T21:11:09Z",
-          "ended": "2012-08-20T21:12:09Z",
-          "error": {
-            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
-            "code": 42,
-            "title": "Question unknown",
-            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing" +
-              " elit. Alias eligendi error nam nulla optio? Aspernatur " +
-              "dignissimos enim facere impedit ipsa ipsam labore, minima " +
-              "nostrum officiis quidem repellat saepe, sit unde. Ad adipisci " +
-              "commodi cum dolorum iusto magnam mollitia nulla vitae, " +
-              "voluptatibus. Adipisci aperiam assumenda consequuntur cum dolor " +
-              "eveniet ex exercitationem harum hic ipsam iusto nostrum quas " +
-              "reprehenderit sapiente sed, totam velit, veritatis! Asperiores " +
-              "autem consequatur, cupiditate deserunt dolorem dolorum fugit " +
-              "iure magnam maxime nemo, non placeat possimus. Architecto " +
-              "assumenda error fuga fugit impedit nemo nihil optio quam quo " +
-              "soluta. Autem deleniti exercitationem expedita explicabo labore " +
-              "laboriosam laudantium reiciendis tenetur voluptatum.",
-            "details": {
-            }
-          }
-        },
-        stateDetails: null
-      },
-      {
-        name: 'Workflow param',
-        description: 'Test of workflow param',
-        id: '52a4a9fe-8d8e-4dcc-81f7-d1d34352b969',
-        color: '#00B1EB',
-        operationId: '11111-111111-55555',
-        parameters: null,
-        state: null
-      },
-      {
-        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
-        id: 'a61a311f-ffc0-71b8-736c-3fb184df8e77',
-        name: 'Test of gridsearch params',
-        uiName: '',
-        color: '#00B1EB',
-        operationId: '11111-111111-33333',
-        parameters: null,
-        state: {
-          "status": "status_failed",
-          "started": "2012-08-20T21:11:09Z",
-          "ended": "2012-08-20T21:12:09Z",
-          "error": {
-            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
-            "code": 42,
-            "title": "Question unknown",
-            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing" +
-            " elit. Alias eligendi error nam nulla optio? Aspernatur " +
-            "dignissimos enim facere impedit ipsa ipsam labore, minima " +
-            "nostrum officiis quidem repellat saepe, sit unde. Ad adipisci " +
-            "commodi cum dolorum iusto magnam mollitia nulla vitae, " +
-            "voluptatibus. Adipisci aperiam assumenda consequuntur cum dolor " +
-            "eveniet ex exercitationem harum hic ipsam iusto nostrum quas " +
-            "reprehenderit sapiente sed, totam velit, veritatis! Asperiores " +
-            "autem consequatur, cupiditate deserunt dolorem dolorum fugit " +
-            "iure magnam maxime nemo, non placeat possimus. Architecto " +
-            "assumenda error fuga fugit impedit nemo nihil optio quam quo " +
-            "soluta. Autem deleniti exercitationem expedita explicabo labore " +
-            "laboriosam laudantium reiciendis tenetur voluptatum.",
-            "details": {
-            }
-          }
-        },
-        stateDetails: null
-      }
-    ];
-
-    var parameterSchemas = [
-      [
+      schema: [
         {
           "name": "connection_string",
           "type": "string",
@@ -651,7 +404,7 @@ angular.module('test').
           "name": "sample-multiplier",
           "type": "multiplier",
           "description": "This is a multiplier parameter test teats as ttatasast" +
-            "asast tasat sat at .",
+          "asast tasat sat at .",
           "required": true,
           "values": [
             {
@@ -779,7 +532,48 @@ angular.module('test').
           ]
         }
       ],
-      [
+      values: {
+        "connection_string": "jdbc:test/string/field",
+        "boolean_attr_test": false,
+        "sample-multiplier": [
+        ],
+        "sample_multiple_choice": {
+          "choice1-long-text": {
+            "name_001": 102
+          },
+          "choice2-some-example-text": {
+            "name_002": "2-2=0"
+          }
+        },
+        "sample-multiplier-nonempty": [
+          {
+            "http-field": "http://42.pl/",
+            "ftp-field": "ftp://42.pl/"
+          },
+          {
+            "http-field": "http://42.0.pl/",
+            "ftp-field": "ftp://42.0.pl/"
+          }
+        ]
+      }
+    };
+
+    let rowFilter = {
+      node: {
+        description: 'Simple filters takes dataset based on...',
+        id: '210ce781-0a9f-477d-99a7-5be31f7bfc02',
+        name: 'Row Filter',
+        uiName: 'Row Filter',
+        color: '#00B1EB',
+        operationId: '342342-123123-434234-12334',
+        parameters: null,
+        state: {
+          "status": "status_completed",
+          "started": "2013-09-10T22:11:09Z",
+          "ended": "2013-09-20T21:22:09Z"
+        }
+      },
+      schema: [
         {
           "name": "sample-selectors",
           "type": "selector",
@@ -852,7 +646,56 @@ angular.module('test').
           }
         }
       ],
-      [
+      values: {
+        "sample-selectors": {
+          "excluding": false,
+          "selections": [
+            {
+              "type": "columnList",
+              "values": ["column1", "column2", "...", "column42"]
+            },
+            {
+              "type": "indexRange",
+              "values": [0, 42]
+            },
+            {
+              "type": "typeList",
+              "values": ["numeric", "time interval", "categorical"]
+            }
+          ]
+        },
+        "sample-selectors-empty": null,
+        "multi-selector-known-cols": {
+          "excluding": false,
+          "selections": [
+            {
+              "type": "columnList",
+              "values": ["unknown-col", "abc"]
+            }
+          ]
+        },
+        "sample-single-column-selector": {
+          "type": "column", // name
+          "value": "kozik"
+        },
+        "sample-single-index-selector": {
+          "type": "index",
+          "value": 42
+        }
+      }
+    };
+
+    let neuralNetwork = {
+      node: {
+        description: 'Neural networks inspired by biological STARTS test of description length message, hey hey hey this is a test so please welcome',
+        id: 'edc02822-b8ee-4225-b070-f892a87dbf11',
+        name: 'Neural Network',
+        color: '#00B1EB',
+        operationId: '11111-111111-44444',
+        parameters: null,
+        state: null
+      },
+      schema: [
         {
           "name": "sample_codeSnippet",
           "type": "codeSnippet",
@@ -963,8 +806,174 @@ angular.module('test').
           "required": true
         }
       ],
-      [],
-      [
+      values: {
+        "sample_codeSnippet": "K <- 42;",
+        "sample_choice": {
+          "choice1": {
+            "name21": "word42"
+          },
+          "choice2": {
+            "name12": false,
+            "name22": "exit 42 * 2 - 42;"
+          },
+          "choice3": {
+            "name31": "let codilime <- 42 * 3 - 42 * 2;"
+          }
+        },
+        "creator-sample-parameter": "sample text"
+      }
+    };
+
+    let fileToDataframe = {
+      node: {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'e61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
+        name: 'File To DataFrame',
+        uiName: 'File To DataFrame',
+        color: '#00B1EB',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        state: {
+          "status": "status_aborted",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z",
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Something that describes the problem more precisely",
+            "details": {"stacktrace": "exception404\nexception502\nLorem ipsum dolor sit amet, consectetur adipisicing " +
+            "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+            " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+            "Lorem ipsum dolor sit amet, consectetur adipisicing"
+            }
+          }
+        }
+      },
+      schema: [],
+      values: {}
+    };
+
+    let testDraft = {
+      node: {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'a61a300f-ffc0-71b8-736c-3fb1e3cf8e77',
+        name: 'Test draft',
+        uiName: 'Test draft',
+        color: '#00B1EB',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        state: {
+          "status": "status_failed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z",
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+            "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+            " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+            "aut autem consectetur deserunt, dolore, eius eum facilis fugiat" +
+            " impedit magnam maxime odio omnis reiciendis suscipit tempora " +
+            "temporibus tenetur totam unde, voluptatum. Architecto, dolorum?",
+            "details": {
+              "stacktrace": "exception404\nexception502\nLorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+              +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi\n" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid \n" +
+              "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid "
+            }
+          }
+        },
+        stateDetails: null
+      },
+      schema: [
         {
           "name": "selectors-new",
           "type": "selector",
@@ -996,7 +1005,54 @@ angular.module('test').
           ]
         }
       ],
-      [
+      values: {
+        "selectors-new": {
+          "excluding": false,
+          "selections": []
+        },
+        "single-choice": {
+          "option2": {}
+        }
+      }
+    };
+
+    let dynamicParams = {
+      node: {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'a61a311f-ffc0-71b8-736c-3fb1e3cf8e77',
+        name: 'Test of dynamic params',
+        uiName: '',
+        color: '#00B1EB',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        state: {
+          "status": "status_failed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z",
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing" +
+            " elit. Alias eligendi error nam nulla optio? Aspernatur " +
+            "dignissimos enim facere impedit ipsa ipsam labore, minima " +
+            "nostrum officiis quidem repellat saepe, sit unde. Ad adipisci " +
+            "commodi cum dolorum iusto magnam mollitia nulla vitae, " +
+            "voluptatibus. Adipisci aperiam assumenda consequuntur cum dolor " +
+            "eveniet ex exercitationem harum hic ipsam iusto nostrum quas " +
+            "reprehenderit sapiente sed, totam velit, veritatis! Asperiores " +
+            "autem consequatur, cupiditate deserunt dolorem dolorum fugit " +
+            "iure magnam maxime nemo, non placeat possimus. Architecto " +
+            "assumenda error fuga fugit impedit nemo nihil optio quam quo " +
+            "soluta. Autem deleniti exercitationem expedita explicabo labore " +
+            "laboriosam laudantium reiciendis tenetur voluptatum.",
+            "details": {
+            }
+          }
+        },
+        stateDetails: null
+      },
+      schema: [
         {
           "name": "selectors-single-test",
           "type": "selector",
@@ -1023,7 +1079,25 @@ angular.module('test').
           required: true
         }
       ],
-      [
+      values: {
+        "selectors-single-test": {
+          "type": "index",
+          "value": 1
+        }
+      }
+    };
+
+    let workflowParam = {
+      node:  {
+        name: 'Workflow param',
+        description: 'Test of workflow param',
+        id: '52a4a9fe-8d8e-4dcc-81f7-d1d34352b969',
+        color: '#00B1EB',
+        operationId: '11111-111111-55555',
+        parameters: null,
+        state: null
+      },
+      schema: [
         {
           "name": "Sample workflow",
           "type": "workflow",
@@ -1032,7 +1106,46 @@ angular.module('test').
           "required": true
         }
       ],
-      [
+      values: {"Sample workflow": {}}
+    };
+
+    let gridsearchParams = {
+      node: {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'a61a311f-ffc0-71b8-736c-3fb184df8e77',
+        name: 'Test of gridsearch params',
+        uiName: '',
+        color: '#00B1EB',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        state: {
+          "status": "status_failed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z",
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing" +
+            " elit. Alias eligendi error nam nulla optio? Aspernatur " +
+            "dignissimos enim facere impedit ipsa ipsam labore, minima " +
+            "nostrum officiis quidem repellat saepe, sit unde. Ad adipisci " +
+            "commodi cum dolorum iusto magnam mollitia nulla vitae, " +
+            "voluptatibus. Adipisci aperiam assumenda consequuntur cum dolor " +
+            "eveniet ex exercitationem harum hic ipsam iusto nostrum quas " +
+            "reprehenderit sapiente sed, totam velit, veritatis! Asperiores " +
+            "autem consequatur, cupiditate deserunt dolorem dolorum fugit " +
+            "iure magnam maxime nemo, non placeat possimus. Architecto " +
+            "assumenda error fuga fugit impedit nemo nihil optio quam quo " +
+            "soluta. Autem deleniti exercitationem expedita explicabo labore " +
+            "laboriosam laudantium reiciendis tenetur voluptatum.",
+            "details": {
+            }
+          }
+        },
+        stateDetails: null
+      },
+      schema: [
         {
           "name": "selectors-single-test",
           "type": "selector",
@@ -1065,105 +1178,8 @@ angular.module('test').
           default: null,
           required: true
         }
-      ]
-    ];
-
-    var parameterValues = [
-      {
-        "connection_string": "jdbc:test/string/field",
-        "boolean_attr_test": false,
-        "sample-multiplier": [
-        ],
-        "sample_multiple_choice": {
-          "choice1-long-text": {
-            "name_001": 102
-          },
-          "choice2-some-example-text": {
-            "name_002": "2-2=0"
-          }
-        },
-        "sample-multiplier-nonempty": [
-          {
-            "http-field": "http://42.pl/",
-            "ftp-field": "ftp://42.pl/"
-          },
-          {
-            "http-field": "http://42.0.pl/",
-            "ftp-field": "ftp://42.0.pl/"
-          }
-        ]
-      },
-      {
-        "sample-selectors": {
-          "excluding": false,
-          "selections": [
-            {
-              "type": "columnList",
-              "values": ["column1", "column2", "...", "column42"]
-            },
-            {
-              "type": "indexRange",
-              "values": [0, 42]
-            },
-            {
-              "type": "typeList",
-              "values": ["numeric", "time interval", "categorical"]
-            }
-          ]
-        },
-        "sample-selectors-empty": null,
-        "multi-selector-known-cols": {
-          "excluding": false,
-          "selections": [
-            {
-              "type": "columnList",
-              "values": ["unknown-col", "abc"]
-            }
-          ]
-        },
-        "sample-single-column-selector": {
-          "type": "column", // name
-          "value": "kozik"
-        },
-        "sample-single-index-selector": {
-          "type": "index",
-          "value": 42
-        }
-      },
-      {
-        "sample_codeSnippet": "K <- 42;",
-        "sample_choice": {
-          "choice1": {
-            "name21": "word42"
-          },
-          "choice2": {
-            "name12": false,
-            "name22": "exit 42 * 2 - 42;"
-          },
-          "choice3": {
-            "name31": "let codilime <- 42 * 3 - 42 * 2;"
-          }
-        },
-        "creator-sample-parameter": "sample text"
-      },
-      {},
-      {
-        "selectors-new": {
-          "excluding": false,
-          "selections": []
-        },
-        "single-choice": {
-          "option2": {}
-        }
-      },
-      {
-        "selectors-single-test": {
-          "type": "index",
-          "value": 1
-        }
-      },
-      {"Sample workflow": {}},
-      {
+      ],
+      values: {
         "selectors-single-test": {
           "type": "index",
           "value": 1
@@ -1177,18 +1193,23 @@ angular.module('test').
           }]
         }
       }
-    ];
+    };
 
     // Mocked node. It can return its id and incomingKnowledge.
     // In this mocked implementation, incomingKnowledge returns outputKnowledge
-    // from nodes[0], from portIndex that is specified.
+    // from sqlReader.node, from portIndex that is specified.
     let mockNode = {
-      getIncomingKnowledge: portIndex => nodes[0].output[portIndex]
+      getIncomingKnowledge: portIndex => sqlReader.node.output[portIndex]
     };
 
-    for (let i = 0; i < nodes.length; ++i) {
-      nodes[i].parameters = DeepsenseNodeParameters.factory.createParametersList(parameterValues[i], parameterSchemas[i], mockNode);
-    }
+    let testCases = [sqlReader, rowFilter, neuralNetwork, fileToDataframe, testDraft, dynamicParams, workflowParam,
+      gridsearchParams];
+
+    _.forEach(testCases, tc => {
+      tc.node.parameters = DeepsenseNodeParameters.factory.createParametersList(tc.values, tc.schema, mockNode);
+    });
+
+    let nodes = _.map(testCases, tc => tc.node);
 
     let workflow_id = "mock_workflow_id";
 
