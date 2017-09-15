@@ -77,7 +77,7 @@ object Dependencies {
 
   val entitystorage = Seq(
     akkaActor
-  ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit).map(_ % "test")
+  ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit).map(_ % s"$Test,it")
 
   val commons = Seq(
     akkaActor,
@@ -95,7 +95,7 @@ object Dependencies {
     guice,
     guiceMultibindings,
     nscalaTime
-  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest, cassandraUnit).map(_ % "test")
+  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest, cassandraUnit).map(_ % Test)
 
   val deeplang = Seq(
     nscalaTime,
@@ -103,7 +103,7 @@ object Dependencies {
     sparkSql,
     sparkCore,
     sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
+  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val experimentmanager = Seq(
     guice,
@@ -113,11 +113,11 @@ object Dependencies {
     sprayJson,
     akkaActor,
     apacheCommons
-  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % "test")
+  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 
   val graph = Seq(
     nscalaTime
-  ) ++ Seq(scalatest).map(_ % "test")
+  ) ++ Seq(scalatest).map(_ % Test)
 
   val graphexecutor = Seq(
     hadoopCommon,
@@ -128,10 +128,10 @@ object Dependencies {
     hadoopClient,
     avroCore,
     avroRpc
-  ) ++ Seq(sparkCore).map(_ % "provided") ++ Seq(scalatest).map(_ % "test")
+  ) ++ Seq(sparkCore).map(_ % Provided) ++ Seq(scalatest).map(_ % s"$Test,it")
 
   val graphJson = Seq(
     nscalaTime,
     sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
+  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 }

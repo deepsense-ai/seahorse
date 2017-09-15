@@ -24,40 +24,7 @@ assemblyMergeStrategy in assembly := {
 // Skip test while assembling uber-jar
 test in assembly := {}
 
-
-// Configuration for test and it:test tasks
-inConfig(Test) {
-  Seq(
-    testOptions := Seq(
-      Tests.Filter(unitFilter),
-      // Put results in target/test-reports
-      Tests.Argument(TestFrameworks.ScalaTest, "-o", "-u", "target/test-reports")
-    ),
-    fork := true,
-    javaOptions := Seq("-Denv=test", s"-DlogFile=${name.value}"),
-    unmanagedClasspath += baseDirectory.value / "conf"
-  )
-}
-
-lazy val IntegTest = config("it") extend(Test)
-configs(IntegTest)
-
-inConfig(IntegTest) {
-  Defaults.testTasks ++ Seq(
-    testOptions := Seq(
-      Tests.Filter(integFilter),
-      // Show full stacktraces (F), Put results in target/test-reports
-      Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
-    ),
-    javaOptions := Seq("-Denv=integtest", s"-DlogFile=${name.value}"),
-    fork := true
-  )
-}
-
-def integFilter(name: String) = name.endsWith("IntegSuite")
-def unitFilter(name: String) = name.endsWith("Suite") && !integFilter(name)
-
 // Always perform assembly task before it:test
-test in IntegTest <<= (test in IntegTest) dependsOn assembly
+test in IntegrationTest <<= (test in IntegrationTest) dependsOn assembly
 
 enablePlugins(BuildInfoPlugin)
