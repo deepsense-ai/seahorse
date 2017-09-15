@@ -5,7 +5,6 @@ import ast
 from threading import Thread
 import traceback
 
-import pandas
 from pyspark.sql.dataframe import DataFrame
 
 
@@ -49,9 +48,14 @@ class CodeExecutor(object):
     def _convert_data_to_data_frame(self, data):
         sqlContext = self.sql_context
         sc = self.spark_context
+        try:
+            import pandas
+            self.is_pandas_available = True
+        except ImportError:
+            self.is_pandas_available = False
         if isinstance(data, DataFrame):
             return data
-        if isinstance(data, pandas.DataFrame):
+        elif self.is_pandas_available and isinstance(data, pandas.DataFrame):
             return sqlContext.createDataFrame(data)
         elif isinstance(data, (list, tuple)) and all(isinstance(el, (list, tuple)) for el in data):
             return sqlContext.createDataFrame(sc.parallelize(data))
@@ -91,7 +95,8 @@ class CodeExecutor(object):
         except:
             raise Exception('Operation returned {} instead of a DataFrame'.format(output_data) + \
                 ' (or pandas.DataFrame, single value, tuple/list of single values,' + \
-                ' tuple/list of tuples/lists of single values).')
+                ' tuple/list of tuples/lists of single values) (pandas library available: ' + \
+                str(self.is_pandas_available) + ').')
 
         # noinspection PyProtectedMember
         self.entry_point.registerOutputDataFrame(workflow_id,
