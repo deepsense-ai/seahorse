@@ -6,6 +6,8 @@
 
 'use strict';
 
+const DI = new WeakMap();
+
 function ShowModal(templateUrl, controller, resolveData) {
   let modal = DI.get(this).modal.open({
     animation: true,
@@ -26,8 +28,6 @@ function ShowModal(templateUrl, controller, resolveData) {
       }
     });
 }
-
-const DI = new WeakMap();
 
 class ExperimentCrudController {
   constructor($scope, $modal, $state, $rootScope) {

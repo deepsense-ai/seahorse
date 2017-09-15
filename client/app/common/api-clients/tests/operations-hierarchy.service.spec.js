@@ -3,7 +3,10 @@
  *
  * Created by: Grzegorz Swatowski
  */
+
 'use strict';
+
+// TODO: needs refactoring
 
 let getHierarchyResponseMock = {
   'traits': {

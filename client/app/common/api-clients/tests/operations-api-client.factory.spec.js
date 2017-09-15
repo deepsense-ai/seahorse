@@ -3,9 +3,10 @@
  *
  * Created by: Piotr Zarówny
  */
-/*global inject*/
+
 'use strict';
 
+// TODO: needs refactoring
 
 describe('OperationsApiClient', () => {
   let globalInternal = {
@@ -74,7 +75,7 @@ describe('OperationsApiClient', () => {
       });
     });
 
-    inject((_OperationsApiClient_) => {
+    angular.mock.inject((_OperationsApiClient_) => {
       OperationsApiClient = _OperationsApiClient_;
     });
   });
@@ -93,7 +94,7 @@ describe('OperationsApiClient', () => {
     let response = { 'test': true };
 
     beforeEach(() => {
-      inject(($injector) => {
+      angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend
           .when('GET', url)
@@ -133,7 +134,7 @@ describe('OperationsApiClient', () => {
     let response = { 'test': true };
 
     beforeEach(() => {
-      inject(($injector) => {
+      angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend
           .when('GET', url)
@@ -171,7 +172,7 @@ describe('OperationsApiClient', () => {
     let response = { 'test': true };
 
     beforeEach(() => {
-      inject(($injector) => {
+      angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend
           .when('GET', url)
@@ -209,7 +210,7 @@ describe('OperationsApiClient', () => {
     let response = { 'test': true };
 
     beforeEach(() => {
-      inject(($injector) => {
+      angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend
           .when('GET', url)

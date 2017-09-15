@@ -4,8 +4,10 @@
  * Owner: Piotr Zarówny
  */
 /*global inject*/
+
 'use strict';
 
+// TODO: needs refactoring
 
 describe('BaseApiClient', () => {
   var module,

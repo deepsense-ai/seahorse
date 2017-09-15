@@ -3,8 +3,10 @@
  *
  * Owner: Piotr Zarówny
  */
+
 'use strict';
 
+// TODO: needs refactoring
 
 describe('Operations', () => {
   var module,

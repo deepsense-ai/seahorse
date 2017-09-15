@@ -127,7 +127,8 @@ gulp.task('libs:js', function () {
 gulp.task('jshint', function () {
   return gulp.src([
       server.path + server.js,
-      './gulpfile.js'
+      './gulpfile.js',
+      client.path + client.js
     ])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))

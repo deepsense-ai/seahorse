@@ -5,6 +5,9 @@
  */
 'use strict';
 
+let resultIsPromise = require('./utils/result-is-promise.js');
+let promiseIsResolved = require('./utils/promise-is-resolved.js');
+let promiseIsRejected = require('./utils/promise-is-rejected.js');
 
 describe('ExperimentApiClient', () => {
   let module;
@@ -29,12 +32,10 @@ describe('ExperimentApiClient', () => {
     });
   });
 
-
   it('should be defined', () => {
     expect(ExperimentApiClient).toBeDefined();
     expect(ExperimentApiClient).toEqual(jasmine.any(Object));
   });
-
 
   describe('should have getList method', () => {
     var $httpBackend,
@@ -57,66 +58,32 @@ describe('ExperimentApiClient', () => {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-
     it('which is valid function', () => {
       expect(ExperimentApiClient.getList).toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
-      $httpBackend.expectGET(url);
-
-      let promise = ExperimentApiClient.getList();
-      expect(promise).toEqual(jasmine.any(Object));
-      expect(promise.then).toEqual(jasmine.any(Function));
-      expect(promise.catch).toEqual(jasmine.any(Function));
-
-      $httpBackend.flush();
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.getList(),
+        () => { $httpBackend.expectGET(url); }
+      );
     });
 
     it('which return promise & resolve it on request success', () => {
-      let success = false,
-          error   = false,
-          responseData;
-
-      $httpBackend.expectGET(url);
-
-      let promise = ExperimentApiClient.getList();
-      promise.then((data) => {
-        success = true;
-        responseData = data;
-      }).catch(() => {
-        error = true;
-      });
-
-      $httpBackend.flush();
-
-      expect(success).toBe(true);
-      expect(error).toBe(false);
-      expect(responseData).toEqual(response);
+      promiseIsResolved($httpBackend, url, response,
+        () => ExperimentApiClient.getList(),
+        () => { $httpBackend.expectGET(url); }
+      );
     });
 
     it('which return promise & rejects it on request error', () => {
-      let success = false,
-          error   = false;
-
-      $httpBackend.expectGET(url);
-
-      let promise = ExperimentApiClient.getList();
-      promise.then(() => {
-        success = true;
-      }).catch(() => {
-        error = true;
-      });
-
-      mockRequest.respond(500, 'Server Error');
-      $httpBackend.flush();
-
-      expect(success).toBe(false);
-      expect(error).toBe(true);
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.getList(),
+        () => { $httpBackend.expectGET(url); }
+      );
     });
-
   });
-
 
   describe('should have getData method', () => {
     var $httpBackend,
@@ -146,60 +113,27 @@ describe('ExperimentApiClient', () => {
     });
 
     it('which return promise', () => {
-      $httpBackend.expectGET(url);
-
-      let promise = ExperimentApiClient.getData(id);
-      expect(promise).toEqual(jasmine.any(Object));
-      expect(promise.then).toEqual(jasmine.any(Function));
-      expect(promise.catch).toEqual(jasmine.any(Function));
-
-      $httpBackend.flush();
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.getData(id),
+        () => { $httpBackend.expectGET(url); }
+      );
     });
 
     it('which return promise & resolve it on request success', () => {
-      let success = false,
-          error   = false,
-          responseData;
-
-      $httpBackend.expectGET(url);
-
-      let promise = ExperimentApiClient.getData(id);
-      promise.then((data) => {
-        success = true;
-        responseData = data;
-      }).catch(() => {
-        error = true;
-      });
-
-      $httpBackend.flush();
-
-      expect(success).toBe(true);
-      expect(error).toBe(false);
-      expect(responseData).toEqual(response);
+      promiseIsResolved($httpBackend, url, response,
+        () => ExperimentApiClient.getData(id),
+        () => { $httpBackend.expectGET(url); }
+      );
     });
 
     it('which return promise & rejects it on request error', () => {
-      let success = false,
-          error   = false;
-
-      $httpBackend.expectGET(url);
-
-      let promise = ExperimentApiClient.getData(id);
-      promise.then(() => {
-        success = true;
-      }).catch(() => {
-        error = true;
-      });
-
-      mockRequest.respond(500, 'Server Error');
-      $httpBackend.flush();
-
-      expect(success).toBe(false);
-      expect(error).toBe(true);
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.getData(id),
+        () => { $httpBackend.expectGET(url); }
+      );
     });
-
   });
-
 
   describe('should have saveData method', () => {
     var $httpBackend,
@@ -234,58 +168,26 @@ describe('ExperimentApiClient', () => {
     });
 
     it('which return promise', () => {
-      $httpBackend.expectPUT(url, {'experiment': data});
-
-      let promise = ExperimentApiClient.saveData({'experiment': data});
-      expect(promise).toEqual(jasmine.any(Object));
-      expect(promise.then).toEqual(jasmine.any(Function));
-      expect(promise.catch).toEqual(jasmine.any(Function));
-
-      $httpBackend.flush();
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.saveData({'experiment': data}),
+        () => { $httpBackend.expectPUT(url, {'experiment': data}); }
+      );
     });
 
     it('which return promise & resolve it on request success', () => {
-      let success = false,
-          error   = false,
-          responseData;
-
-      $httpBackend.expectPUT(url, {'experiment': data});
-
-      let promise = ExperimentApiClient.saveData({'experiment': data});
-      promise.then((data) => {
-        success = true;
-        responseData = data;
-      }).catch(() => {
-        error = true;
-      });
-
-      $httpBackend.flush();
-
-      expect(success).toBe(true);
-      expect(error).toBe(false);
-      expect(responseData).toEqual(data);
+      promiseIsResolved($httpBackend, url, data,
+        () => ExperimentApiClient.saveData({'experiment': data}),
+        () => { $httpBackend.expectPUT(url, {'experiment': data}); }
+      );
     });
 
     it('which return promise & rejects it on request error', () => {
-      let success = false,
-          error   = false;
-
-      $httpBackend.expectPUT(url, {'experiment': data});
-
-      let promise = ExperimentApiClient.saveData({'experiment': data});
-      promise.then(() => {
-        success = true;
-      }).catch(() => {
-        error = true;
-      });
-
-      mockRequest.respond(500, 'Server Error');
-      $httpBackend.flush();
-
-      expect(success).toBe(false);
-      expect(error).toBe(true);
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.saveData({'experiment': data}),
+        () => { $httpBackend.expectPUT(url, {'experiment': data}); }
+      );
     });
-
   });
 
   describe('should have runExperiment method', () => {
@@ -316,62 +218,30 @@ describe('ExperimentApiClient', () => {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-
     it('which is valid function', () => {
       expect(ExperimentApiClient.runExperiment).toEqual(jasmine.any(Function));
     });
 
     it('which return promise', () => {
-      $httpBackend.expectPOST(url, {'launch': {}});
-
-      let promise = ExperimentApiClient.runExperiment(id);
-      expect(promise).toEqual(jasmine.any(Object));
-      expect(promise.then).toEqual(jasmine.any(Function));
-      expect(promise.catch).toEqual(jasmine.any(Function));
-
-      $httpBackend.flush();
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.runExperiment(id),
+        () => { $httpBackend.expectPOST(url, {'launch': {}}); }
+      );
     });
 
     it('which return promise & resolve it on request success', () => {
-      let success = false,
-          error   = false,
-          responseData;
-
-      $httpBackend.expectPOST(url, {'launch': {}});
-
-      let promise = ExperimentApiClient.runExperiment(id);
-      promise.then((data) => {
-        success = true;
-        responseData = data;
-      }).catch(() => {
-        error = true;
-      });
-
-      $httpBackend.flush();
-
-      expect(success).toBe(true);
-      expect(error).toBe(false);
-      expect(responseData).toEqual(data);
+      promiseIsResolved($httpBackend, url, data,
+        () => ExperimentApiClient.runExperiment(id),
+        () => { $httpBackend.expectPOST(url, {'launch': {}}); }
+      );
     });
 
     it('which return promise & rejects it on request error', () => {
-      let success = false,
-          error   = false;
-
-      $httpBackend.expectPOST(url, {'launch': {}});
-
-      let promise = ExperimentApiClient.runExperiment(id);
-      promise.then(() => {
-        success = true;
-      }).catch(() => {
-        error = true;
-      });
-
-      mockRequest.respond(409, 'Conflict');
-      $httpBackend.flush();
-
-      expect(success).toBe(false);
-      expect(error).toBe(true);
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.runExperiment(id),
+        () => { $httpBackend.expectPOST(url, {'launch': {}}); }
+      );
     });
 
     it('which handles targetNodes params', () => {
@@ -382,7 +252,6 @@ describe('ExperimentApiClient', () => {
 
       $httpBackend.flush();
     });
-
   });
 
   describe('should have abortExperiment method', () => {
@@ -419,56 +288,25 @@ describe('ExperimentApiClient', () => {
     });
 
     it('which return promise', () => {
-      $httpBackend.expectPOST(url, {'abort': {}});
-
-      let promise = ExperimentApiClient.abortExperiment(id);
-      expect(promise).toEqual(jasmine.any(Object));
-      expect(promise.then).toEqual(jasmine.any(Function));
-      expect(promise.catch).toEqual(jasmine.any(Function));
-
-      $httpBackend.flush();
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.abortExperiment(id),
+        () => { $httpBackend.expectPOST(url, {'abort': {}}); }
+      );
     });
 
     it('which return promise & resolve it on request success', () => {
-      let success = false,
-          error   = false,
-          responseData;
-
-      $httpBackend.expectPOST(url, {'abort': {}});
-
-      let promise = ExperimentApiClient.abortExperiment(id);
-      promise.then((data) => {
-        success = true;
-        responseData = data;
-      }).catch(() => {
-        error = true;
-      });
-
-      $httpBackend.flush();
-
-      expect(success).toBe(true);
-      expect(error).toBe(false);
-      expect(responseData).toEqual(data);
+      promiseIsResolved($httpBackend, url, data,
+        () => ExperimentApiClient.abortExperiment(id),
+        () => { $httpBackend.expectPOST(url, {'abort': {}}); }
+      );
     });
 
     it('which return promise & rejects it on request error', () => {
-      let success = false,
-          error   = false;
-
-      $httpBackend.expectPOST(url, {'abort': {}});
-
-      let promise = ExperimentApiClient.abortExperiment(id);
-      promise.then(() => {
-        success = true;
-      }).catch(() => {
-        error = true;
-      });
-
-      mockRequest.respond(409, 'Conflict');
-      $httpBackend.flush();
-
-      expect(success).toBe(false);
-      expect(error).toBe(true);
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.abortExperiment(id),
+        () => { $httpBackend.expectPOST(url, {'abort': {}}); }
+      );
     });
 
     it('which handles nodes params', () => {
@@ -479,19 +317,185 @@ describe('ExperimentApiClient', () => {
 
       $httpBackend.flush();
     });
-
   });
 
   describe('should have createExperiment method', () => {
-    // TODO
+    let $httpBackend;
+    let mockRequest;
+    let url = '/api/experiments';
+    let params = {
+      'name': 'Draft',
+      'description': 'Draft experiment'
+    };
+    let dataRequest = {
+      'experiment': {
+        'name': params.name,
+        'description': params.description,
+        'graph': {
+          'nodes': [],
+          'edges': []
+        }
+      }
+    };
+    let dataResponse = _.assign({}, dataRequest, {
+      id: 'experiment-id'
+    });
+
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend
+          .when('POST', url)
+          .respond(dataResponse);
+      });
+    });
+
+    afterEach(function() {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('which is valid function', () => {
+      expect(ExperimentApiClient.createExperiment).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.createExperiment(params),
+        () => { $httpBackend.expectPOST(url, dataRequest); }
+      );
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      promiseIsResolved(
+        $httpBackend, url, dataResponse,
+        () => ExperimentApiClient.createExperiment(params),
+        () => { $httpBackend.expectPOST(url, dataRequest); }
+      );
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.createExperiment(params),
+        () => { $httpBackend.expectPOST(url, dataRequest); }
+      );
+    });
   });
 
   describe('should have modifyExperiment method', () => {
-    // TODO
+    let $httpBackend;
+    let mockRequest;
+    let experimentId = 'experiment-id';
+    let url = '/api/experiments/' + experimentId;
+    let params = {
+      'name': 'Draft',
+      'description': 'Draft experiment',
+      'graph': {
+        'nodes': [],
+        'edges': []
+      }
+    };
+    let dataRequest = {
+      'experiment': {
+        'name': params.name,
+        'description': params.description,
+        'graph': {
+          'nodes': [],
+          'edges': []
+        }
+      }
+    };
+    let dataResponse = _.assign({}, dataRequest);
+
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend
+          .when('PUT', url)
+          .respond(dataResponse);
+      });
+    });
+
+    afterEach(function() {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('which is valid function', () => {
+      expect(ExperimentApiClient.modifyExperiment).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.modifyExperiment(experimentId, params),
+        () => { $httpBackend.expectPUT(url, dataRequest); }
+      );
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      promiseIsResolved(
+        $httpBackend, url, dataResponse,
+        () => ExperimentApiClient.modifyExperiment(experimentId, params),
+        () => { $httpBackend.expectPUT(url, dataRequest); }
+      );
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.modifyExperiment(experimentId, params),
+        () => { $httpBackend.expectPUT(url, dataRequest); }
+      );
+    });
   });
 
   describe('should have deleteExperiment method', () => {
-    // TODO
-  });
+    let $httpBackend;
+    let mockRequest;
+    let experimentId = 'experiment-id';
+    let url = '/api/experiments/' + experimentId;
+    let dataResponse = 'OK';
 
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend
+          .when('DELETE', url)
+          .respond(dataResponse);
+      });
+    });
+
+    afterEach(function() {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('which is valid function', () => {
+      expect(ExperimentApiClient.deleteExperiment).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      resultIsPromise(
+        $httpBackend,
+        () => ExperimentApiClient.deleteExperiment(experimentId),
+        () => { $httpBackend.expectDELETE(url); }
+      );
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      promiseIsResolved(
+        $httpBackend, url, dataResponse,
+        () => ExperimentApiClient.deleteExperiment(experimentId),
+        () => { $httpBackend.expectDELETE(url); }
+      );
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      promiseIsRejected($httpBackend, mockRequest,
+        () => ExperimentApiClient.deleteExperiment(experimentId),
+        () => { $httpBackend.expectDELETE(url); }
+      );
+    });
+  });
 });
