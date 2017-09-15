@@ -16,11 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
-import java.sql.Timestamp
-
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.datetime.DateTimeConverter
@@ -28,7 +25,7 @@ import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame.LineSeparator.LineSeparator
 import io.deepsense.deeplang.doperations.exceptions.InvalidFileException
-import io.deepsense.deeplang.parameters.{StorageType, IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
+import io.deepsense.deeplang.parameters.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
 class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
@@ -228,7 +225,6 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     val operation = ReadDataFrame(
       absoluteTestsDirPath + "/" + fileName,
       lineSeparator,
-      StorageType.FILE,
       csvColumnSeparator,
       csvNamesIncluded,
       csvCategoricalColumns)

@@ -29,7 +29,7 @@ import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.doperations.WriteDataFrame.CSV
-import io.deepsense.deeplang.parameters.{StorageType, ColumnType}
+import io.deepsense.deeplang.parameters.ColumnType
 
 class WriteDataFrameIntegSpec
   extends DeeplangIntegTestSupport
@@ -84,7 +84,6 @@ class WriteDataFrameIntegSpec
         CSV,
         ",",
         false,
-        StorageType.FILE,
         absoluteWriteDataFrameTestPath + "/without-header")
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("/without-header", rows, false)
@@ -95,7 +94,6 @@ class WriteDataFrameIntegSpec
         CSV,
         ",",
         true,
-        StorageType.FILE,
         absoluteWriteDataFrameTestPath + "/with-header")
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("/with-header", rows, true)
@@ -106,7 +104,6 @@ class WriteDataFrameIntegSpec
         CSV,
         ";",
         false,
-        StorageType.FILE,
         absoluteWriteDataFrameTestPath + "/custom-separator")
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("/custom-separator", rows, false, ";")

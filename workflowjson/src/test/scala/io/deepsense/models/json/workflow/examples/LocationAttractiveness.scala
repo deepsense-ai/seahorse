@@ -29,7 +29,6 @@ object LocationAttractiveness extends WorkflowCreator {
   val readDataFrame: ReadDataFrame = ReadDataFrame(
     testFilePath,
     (ReadDataFrame.LineSeparator.UNIX, None),
-    StorageType.FILE,
     ",",
     true)
 
@@ -61,7 +60,6 @@ object LocationAttractiveness extends WorkflowCreator {
     WriteDataFrame.CSV,
     ",",
     true,
-    StorageType.FILE,
     resultFilePath)
 
   val convertBooleanToDouble: DOperation = {

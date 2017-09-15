@@ -50,9 +50,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
     "line separator" -> lineSeparatorParameter)
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
-    readFile(
-      StorageType
-        .getPathWithProtocolPrefix(sourceFileParameter.value.get, pathParameter.value.get), context)
+    readFile(sourceFileParameter.value.get, context)
   }
 
   private def readFile(path: String, context: ExecutionContext): DataFrame = {
@@ -174,25 +172,11 @@ trait ReadDataFrameParameters {
         "names included" -> csvNamesIncludedParameter,
         "categorical columns" -> csvCategoricalColumnsParameter)))
 
-  val pathParameter = StringParameter(
-    "Path",
+  val sourceFileParameter = StringParameter(
+    "Path to the DataFrame file",
     default = None,
     required = true,
-    // Do not accept paths with protocol prefix
-    validator = StorageType.pathValidator
-  )
-
-  val sourceFileParameter = ChoiceParameter(
-    description = "Source of the DataFrame",
-    default = Some(StorageType.FILE.toString),
-    required = true,
-    options = ListMap(
-      StorageType.HDFS.toString -> ParametersSchema("path" -> pathParameter),
-      StorageType.S3N.toString -> ParametersSchema("path" -> pathParameter),
-      StorageType.FILE.toString -> ParametersSchema("path" -> pathParameter),
-      StorageType.LOCAL.toString -> ParametersSchema("path" -> pathParameter)
-    )
-  )
+    validator = new AcceptAllRegexValidator())
 
   val customLineSeparatorParameter = StringParameter(
     "Custom line separator",
@@ -228,20 +212,18 @@ object ReadDataFrame {
   def apply(
       filePath: String,
       lineSeparator: (LineSeparator.LineSeparator, Option[String]),
-      storageType: StorageType.StorageType,
       csvColumnSeparator: String,
       csvNamesIncluded: Boolean,
       csvCategoricalColumns: Option[MultipleColumnSelection] = None): ReadDataFrame = {
 
     val operation = new ReadDataFrame()
 
-    operation.pathParameter.value = Some(filePath)
     operation.formatParameter.value = Some("CSV")
     operation.lineSeparatorParameter.value = Some(lineSeparator._1.toString)
     if (lineSeparator._2.isDefined) {
       operation.customLineSeparatorParameter.value = lineSeparator._2
     }
-    operation.sourceFileParameter.value = Some(storageType.toString)
+    operation.sourceFileParameter.value = Some(filePath)
     operation.csvColumnSeparatorParameter.value = Some(csvColumnSeparator)
     operation.csvNamesIncludedParameter.value = Some(csvNamesIncluded)
     operation.csvCategoricalColumnsParameter.value = csvCategoricalColumns

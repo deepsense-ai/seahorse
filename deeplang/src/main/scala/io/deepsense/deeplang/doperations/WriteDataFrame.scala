@@ -62,25 +62,11 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
     ))
   )
 
-  val pathParameter = StringParameter(
+  val outputFileParameter = StringParameter(
     description = "Output file path",
     default = None,
     required = true,
-    // Do not accept paths with protocol prefix
-    validator = StorageType.pathValidator
-  )
-
-  val outputFileParameter = ChoiceParameter(
-    description = "Where should the output file be stored?",
-    default = Some(StorageType.FILE.toString),
-    required = true,
-    options = ListMap(
-      StorageType.HDFS.toString -> ParametersSchema("path" -> pathParameter),
-      StorageType.S3N.toString -> ParametersSchema("path" -> pathParameter),
-      StorageType.FILE.toString -> ParametersSchema("path" -> pathParameter),
-      StorageType.LOCAL.toString -> ParametersSchema("path" -> pathParameter)
-    )
-  )
+    validator = new AcceptAllRegexValidator())
 
   override val parameters = ParametersSchema(
     "format" -> formatParameter,
@@ -103,10 +89,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
     }
 
     try {
-      result.saveAsTextFile(
-        StorageType.getPathWithProtocolPrefix(
-          outputFileParameter.value.get, pathParameter.value.get)
-      )
+      result.saveAsTextFile(outputFileParameter.value.get)
     } catch {
       case e: IOException => throw DeepSenseIOException(e)
     }
@@ -168,15 +151,13 @@ object WriteDataFrame {
       fileType: FileType,
       columnSeparator: String,
       writeHeader: Boolean,
-      storageType: StorageType.StorageType,
       path: String): WriteDataFrame = {
 
     val writeDataFrame = WriteDataFrame()
     writeDataFrame.formatParameter.value = Some(fileType.name)
     writeDataFrame.columnSeparatorParameter.value = Some(columnSeparator)
     writeDataFrame.writeHeaderParameter.value = Some(writeHeader)
-    writeDataFrame.outputFileParameter.value = Some(storageType.toString)
-    writeDataFrame.pathParameter.value = Some(path)
+    writeDataFrame.outputFileParameter.value = Some(path)
     writeDataFrame
   }
 }
