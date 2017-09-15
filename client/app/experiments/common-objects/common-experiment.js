@@ -187,9 +187,9 @@ function Experiment() {
 
   that.createEdge = function createEdge(data) {
     var edge = new Edge({
-      startNodeId: data.from.node,
+      startNodeId: data.from.nodeId,
       startPortId: data.from.portIndex,
-      endNodeId: data.to.node,
+      endNodeId: data.to.nodeId,
       endPortId: data.to.portIndex
     });
     return edge;

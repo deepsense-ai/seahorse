@@ -26,11 +26,11 @@ Edge.prototype.generateId = function generateId() {
 Edge.prototype.serialize = function serialize() {
   let data = {
     'from': {
-      'node': this.startNodeId,
+      'nodeId': this.startNodeId,
       'portIndex': this.startPortId
     },
     'to': {
-      'node': this.endNodeId,
+      'nodeId': this.endNodeId,
       'portIndex': this.endPortId
     }
   };

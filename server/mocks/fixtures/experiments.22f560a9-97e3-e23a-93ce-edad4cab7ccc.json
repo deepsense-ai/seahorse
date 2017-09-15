@@ -63,21 +63,21 @@
       "edges": [
         {
           "from": {
-            "node": "88f560a9-97e3-4fa2-93ce-edad4cab7ea9",
+            "nodeId": "88f560a9-97e3-4fa2-93ce-edad4cab7ea9",
             "portIndex": 0
           },
           "to": {
-            "node": "210ce781-0a9f-477d-99a7-5be31f7bfc02",
+            "nodeId": "210ce781-0a9f-477d-99a7-5be31f7bfc02",
             "portIndex": 0
           }
         },
         {
           "from": {
-            "node": "210ce781-0a9f-477d-99a7-5be31f7bfc02",
+            "nodeId": "210ce781-0a9f-477d-99a7-5be31f7bfc02",
             "portIndex": 0
           },
           "to": {
-            "node": "edc02822-b8ee-4225-b070-f892a87dbf11",
+            "nodeId": "edc02822-b8ee-4225-b070-f892a87dbf11",
             "portIndex": 0
           }
         }

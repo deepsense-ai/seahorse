@@ -19,11 +19,11 @@ describe('edge', () => {
       },
       serializedData = {
         'from': {
-          'node': startNodeId,
+          'nodeId': startNodeId,
           'portIndex': startPortId
         },
         'to': {
-          'node': endNodeId,
+          'nodeId': endNodeId,
           'portIndex': endPortId
         }
       };

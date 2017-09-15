@@ -53,6 +53,9 @@ var inputStyle = {
 /* @ngInject */
 function DrawingService($rootScope) {
 
+  const nodeIdPrefix = 'node-';
+  const nodeIdPrefixLength = nodeIdPrefix.length;
+
   var that = this;
   var internal = {};
 
@@ -69,8 +72,7 @@ function DrawingService($rootScope) {
   };
 
   internal.getNodeById = function getNodeById(id) {
-    var idPrefix = '#node-';
-    return document.querySelector(idPrefix + id);
+    return document.querySelector('#' + nodeIdPrefix + id);
   };
 
   that.redrawEverything = function redrawEverything() {
@@ -169,11 +171,11 @@ function DrawingService($rootScope) {
 
       let data = {
           'from': {
-            'node': info.sourceId.substr(5, info.sourceId.length),
+            'nodeId': info.sourceId.slice(nodeIdPrefixLength),
             'portIndex': info.sourceEndpoint.getParameter('portIndex')
           },
           'to': {
-            'node': info.targetId.substr(5, info.targetId.length),
+            'nodeId': info.targetId.slice(nodeIdPrefixLength),
             'portIndex': info.targetEndpoint.getParameter('portIndex')
           }
         },

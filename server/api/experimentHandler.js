@@ -12,7 +12,7 @@ module.exports = function experimentHandler(config) {
       experimentModel = config.localDB.collections.experiment;
 
   /**
-   * Filters UI data from body request.
+   * Filters UI data from request body.
    *
    * @param {JSON} body
    *
@@ -44,18 +44,19 @@ module.exports = function experimentHandler(config) {
    */
   var mergeData = function mergeData(data, local) {
     if (!local || !local.nodes) {
-      if (!local) {
-        console.error('local data is missing');
-      }
-      return data;
+      local = {
+        'nodes': {}
+      };
     }
+
     let graphNodes = data.experiment.graph.nodes;
     for (let i = graphNodes.length - 1; i >= 0; i--) {
       let graphNode = graphNodes[i],
         localNode = local.nodes[graphNode.id];
-      if (localNode) {
-        graphNode.ui = localNode;
-      }
+      graphNode.ui = localNode || {
+        'x': 0,
+        'y': 0
+      };
     }
 
     return data;
@@ -91,6 +92,10 @@ module.exports = function experimentHandler(config) {
         case 'GET':
           console.log('get experiment', id);
           experimentModel.findOne().where({id: id}).then((result) => {
+            if (!result) {
+              console.log('missing local data - recovering');
+              experimentModel.create({id: id}).then(() => {});
+            }
             deferred.resolve(mergeData(data, result));
           }).catch((error) => {
             deferred.reject(error);

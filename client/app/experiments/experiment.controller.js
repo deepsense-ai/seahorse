@@ -56,6 +56,30 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
     DrawingService.redrawEverything();
   };
 
+  /**
+   * Generates uuid part.
+   *
+   * @return {string}
+   */
+  var generateUUIDPart = function generateUUIDPart() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  };
+
+  /**
+   * Generates uuid.
+   *
+   * @return {string}
+   */
+  that.generateUUID = function generateGUID() {
+    return (
+      generateUUIDPart() + generateUUIDPart() + '-' +
+      generateUUIDPart() + '-' +
+      generateUUIDPart() + '-' +
+      generateUUIDPart() + '-' +
+      generateUUIDPart() + generateUUIDPart() + generateUUIDPart()
+    );
+  };
+
   that.getCatalog = function getCatalog() {
     return that.operationsCatalog;
   };
@@ -115,7 +139,13 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
     var moveY = args.dropEvent.y-args.target[0].getBoundingClientRect().top;
     var offsetX = -100;
     var offsetY = -50;
-    var node = internal.experiment.createNode(new Date().getTime().toString(),operation,{},moveX+offsetX,moveY+offsetY);
+    var node = internal.experiment.createNode(
+      that.generateUUID(),
+      operation,
+      {},
+      moveX + offsetX,
+      moveY + offsetY
+    );
     internal.experiment.addNode(node);
     $rootScope.$apply();
     that.onRenderFinish();

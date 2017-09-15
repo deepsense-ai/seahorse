@@ -79,11 +79,11 @@ describe('experiment', () => {
       initConnections = [
         {
           'from': {
-            'node': '101',
+            'nodeId': '101',
             'portIndex': 0
           },
           'to': {
-            'node': '102',
+            'nodeId': '102',
             'portIndex': 0
           }
         }

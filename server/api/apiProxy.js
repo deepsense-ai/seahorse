@@ -8,8 +8,7 @@
 
 
 module.exports = function apiProxy(config) {
-  var bodyParser = require('body-parser'),
-      express = require('express'),
+  var express = require('express'),
       httpProxy = require('http-proxy'),
       apiApp = express(),
       proxy = httpProxy.createProxyServer({
@@ -76,6 +75,12 @@ module.exports = function apiProxy(config) {
     if (config.token) {
       proxyRequest.setHeader('X-Auth-Token', config.token);
     }
+
+    if (request.customHandler && (request.method === 'PUT' || request.method === 'POST')) {
+      request.on('data', (source) => {
+        request.body = JSON.parse(source.toString());
+      });
+    }
   });
 
 
@@ -85,7 +90,6 @@ module.exports = function apiProxy(config) {
   /**
    * Handles & proxies known requests.
    */
-  apiApp.use(bodyParser.json());
   apiApp.all('*', (request, response) => {
     urlPathParts = request.url.split('/');
     resource = urlPathParts[1] ? config.resources[urlPathParts[1]] : null;

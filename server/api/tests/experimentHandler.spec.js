@@ -162,8 +162,8 @@ describe('Experiment handler', () => {
         }
         expect(node101.ui).not.toBeUndefined();
         expect(node101.ui.extended).toBe(true);
-        expect(node101.ui).not.toBeUndefined();
-        expect(node102.ui).toBeUndefined();
+        expect(node102.ui).not.toBeUndefined();
+        expect(node102.ui).toEqual({'x': 0, 'y': 0});
       });
     });
 
