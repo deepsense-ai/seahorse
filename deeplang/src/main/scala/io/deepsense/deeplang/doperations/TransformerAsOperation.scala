@@ -16,19 +16,18 @@
 
 package io.deepsense.deeplang.doperations
 
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.{DKnowledge, DOperation1To2, ExecutionContext}
+import io.deepsense.deeplang.{DKnowledge, DOperation1To2, ExecutionContext, TypeUtils}
 
 abstract class TransformerAsOperation[T <: Transformer]
-    ()(implicit classTag: ClassTag[T])
+    ()(implicit tag: TypeTag[T])
   extends DOperation1To2[DataFrame, DataFrame, T] {
 
-  val transformer: T = classTag.runtimeClass.asInstanceOf[Class[T]].getConstructor().newInstance()
+  val transformer: T = TypeUtils.instanceOfType(tag)
 
   val params = transformer.params
 

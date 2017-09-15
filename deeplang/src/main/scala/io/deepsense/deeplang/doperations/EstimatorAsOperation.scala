@@ -21,16 +21,13 @@ import scala.reflect.runtime.universe.TypeTag
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import io.deepsense.deeplang.{DKnowledge, DOperation1To2, ExecutionContext, TypeUtils}
 
 abstract class EstimatorAsOperation [T <: Estimator]
     ()(implicit typeTag: TypeTag[T])
   extends DOperation1To2[DataFrame, DataFrame, Transformer] {
 
-  val estimator: T = TypeUtils.constructorForType(typeTag.tpe).getOrElse {
-    throw NoArgumentConstructorRequiredException(typeTag.tpe.typeSymbol.asClass.name.decoded)
-  }.newInstance().asInstanceOf[T]
+  val estimator: T = TypeUtils.instanceOfType(typeTag)
 
   val params = estimator.params
 
