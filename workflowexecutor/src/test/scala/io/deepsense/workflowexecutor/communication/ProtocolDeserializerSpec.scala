@@ -76,6 +76,34 @@ class ProtocolDeserializerSpec
       val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe Abort(workflowId)
     }
+    "deserialize Connect messages" in {
+      val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
+      val workflowId = Workflow.Id.randomId
+
+      val rawMessage = JsObject(
+        "messageType" -> JsString("connect"),
+        "messageBody" -> JsObject(
+          "workflowId" -> JsString(workflowId.toString)
+        )
+      )
+
+      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
+      readMessage shouldBe Connect(workflowId)
+    }
+    "deserialize StatusRequest messages" in {
+      val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
+      val workflowId = Workflow.Id.randomId
+
+      val rawMessage = JsObject(
+        "messageType" -> JsString("statusRequest"),
+        "messageBody" -> JsObject(
+          "workflowId" -> JsString(workflowId.toString)
+        )
+      )
+
+      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
+      readMessage shouldBe StatusRequest(workflowId)
+    }
   }
 
   def serializeAndRead(
