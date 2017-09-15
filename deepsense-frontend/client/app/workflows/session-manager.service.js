@@ -15,10 +15,15 @@ function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
     }
   };
 
-  $interval(() => { // SM polling
+  function pollSessionManager() {
     SessionManagerApi.downloadSessions().then((result) => {
       service.sessions = result;
     });
+  }
+
+  pollSessionManager();
+  $interval(() => { // SM polling
+    pollSessionManager();
   }, config.sessionPollingInterval);
 
   return service;
