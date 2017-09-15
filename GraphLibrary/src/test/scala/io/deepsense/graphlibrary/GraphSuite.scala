@@ -4,7 +4,7 @@
  * Owner: Radoslaw Kotowski
  */
 
-package io.deepsense.graphlibrarytest
+package io.deepsense.graphlibrary
 
 import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
 import java.util.UUID
