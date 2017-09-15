@@ -59,7 +59,7 @@ class WorkflowExecutorActor(
         execution)
     case NodeFailed(id, failureDescription) =>
       nodeFailed(id, failureDescription, execution)
-    case StatusRequest(_) | Connect(_) =>
+    case StatusRequest(_) =>
       sendExecutionStatus(executionToStatus(execution))
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
@@ -101,7 +101,7 @@ class WorkflowExecutorActor(
       val nodeSet = nodes.toSet
       val updatedStructure = finishedExecution.updateStructure(graph, nodeSet)
       launch(finishedExecution, updatedStructure, nodes)
-    case StatusRequest(_) | Connect(_) =>
+    case StatusRequest(_) =>
       sendExecutionStatus(executionToStatus(finishedExecution))
   }
 
@@ -110,7 +110,7 @@ class WorkflowExecutorActor(
       val execution = executionFactory.create(graph, nodes)
       // Received Launch for the first time. Use an empty execution as the previous state.
       launch(Execution.empty, execution, nodes)
-    case StatusRequest(_) | Connect(_) =>
+    case StatusRequest(_) =>
       sendExecutionStatus(ExecutionStatus(Map.empty, EntitiesMap()))
   }
 

@@ -40,7 +40,7 @@ import io.deepsense.models.workflows.{EntitiesMap, Workflow}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
-import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
+import io.deepsense.workflowexecutor.communication.{ExecutionStatus, StatusRequest}
 import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 class WorkflowExecutorActorSpec
@@ -54,7 +54,7 @@ class WorkflowExecutorActorSpec
   with ScaledTimeSpans {
 
   "WorkflowExecutorActor" when {
-    "received Connect" when {
+    "received StatusRequest" when {
       "no graph was sent" should {
         "send empty status" in {
           val probe = TestProbe()
@@ -67,7 +67,7 @@ class WorkflowExecutorActorSpec
             Some(statusListener.ref),
             Some(system.actorSelection(publisher.ref.path))),
             Id.randomId.toString)
-          probe.send(wea, Connect(Workflow.Id.randomId))
+          probe.send(wea, StatusRequest(Workflow.Id.randomId))
           verifyStatusSent(Seq(publisher))
         }
       }
@@ -76,7 +76,7 @@ class WorkflowExecutorActorSpec
           val ids: IndexedSeq[Id] = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
           val (_, execution) = simpleRunningExecution(ids, Some(ids.head))
           val (probe, wea, _, _, statusListeners, _) = launchedStateFixture(execution)
-          probe.send(wea, Connect(Workflow.Id.randomId))
+          probe.send(wea, StatusRequest(Workflow.Id.randomId))
           eventually {
             statusListeners.foreach { receiver =>
               val status = receiver.expectMsgClass(classOf[ExecutionStatus])
@@ -423,7 +423,7 @@ class WorkflowExecutorActorSpec
         verifyStatus(statusListeners){ _.executionFailure.isDefined shouldBe true }
         verifyStatus(Seq(endStateSubscriber)){ _.executionFailure.isDefined shouldBe true }
 
-        probe.send(wea, Connect(Workflow.Id.randomId)) // Id doesn't matter
+        probe.send(wea, StatusRequest(Workflow.Id.randomId)) // Id doesn't matter
         eventually {
           verifyStatus(statusListeners){ _.executionFailure.isDefined shouldBe true }
         }
