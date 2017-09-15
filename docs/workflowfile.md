@@ -14,9 +14,16 @@ description: Deepsense documentation homepage
 
 ## Overview
 
-The main purpose of workflow files is to store information about
-[workflow](deeplang_overview.html#workflows) design and results
+The main purpose of the workflow files is to store information about
+a [workflow](deeplang_overview.html#workflows) design and results
 of its execution. Workflow files use JSON format.
+
+Manual modifications to the workflow file are not necessary - workflow can be created
+using Seahorse graphical interface and exported to a JSON file. Working with workflow files is only
+necessary when using [Batch Workflow Executor](./batch_workflow_executor_overview.html).
+In that case, the results of workflow execution are stored on disk. The result file contains
+detailed reports for each entity produced by executed operations, which may be useful for
+analysis or debugging purposes.
 
 ## Workflow File Format
 
@@ -173,7 +180,7 @@ Subsection *resultEntities* contains information about entities created as a res
 | Property | Description |
 | --- | --- |
 | ``className`` | Class name of described entity. |
-| ``report`` | Object containing detailed entity report about each entity. The exact form is dependent on the entity type. |
+| ``report`` | Object containing a detailed entity report about each entity. The exact form is dependent on the entity type. |
 
 ##### Example
 {:.no_toc}

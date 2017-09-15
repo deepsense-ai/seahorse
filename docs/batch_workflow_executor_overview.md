@@ -14,15 +14,13 @@ description: Seahorse Batch Workflow Executor
 
 ## Overview
 
-Additionally to the standard way,
+In addition to the standard way,
 [workflows](workflowfile.html) can be executed on a cluster in a batch mode.
-It is an additional, very niche functionality reserved for advanced users.
-If you are starting work with Seahorse, skip this document and visit
-[Seahorse Bundled Image documentation](bundled_image_overview.html).
+This feature allows you to deploy workflows as independent
+<a target="_blank" href="http://spark.apache.org">Apache Spark</a> applications.
 
-Seahorse Batch Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }}
-is an <a target="_blank" href="http://spark.apache.org">Apache Spark</a>
-application that allows user to execute [workflows](workflowfile.html) in batch mode.
+Seahorse Batch Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }} is an Apache Spark
+application that allows you to execute workflows in batch mode.
 This functionality can facilitate integration of Seahorse with other data processing systems.
 
 <div class="centered-container" markdown="1">
