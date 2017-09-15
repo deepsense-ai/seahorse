@@ -18,7 +18,8 @@ function DeployModelService($modal, ModelApiClient) {
 
         ModelApiClient.deployModel(data.id).
           then((response) => {
-            $scope.linkValue = response.data.link;
+            $scope.linkValue = response.link;
+
             // TODO: mock
             $scope.features = '{ \n    "features" : [1.1, 1.9, 5.7, 7.7] \n}';
             $scope.scores = '{ \n    "score": 0.1 \n}';
