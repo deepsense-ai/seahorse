@@ -291,10 +291,10 @@ angular.module('deepsense.graph-model').
        *
        * @param {Object} typeKnowledge
        */
-      that.updateTypeKnowledge = function (typeKnowledge) {
+      that.updateTypeKnowledge = function (knowledge) {
         _.forEach(this.getNodes(), (node) => {
-          let newOutputPorts = typeKnowledge[node.id];
-          if (newOutputPorts) {
+          if (knowledge[node.id] && knowledge[node.id].typeKnowledge) {
+            let newOutputPorts = knowledge[node.id].typeKnowledge;
             _.forEach(node.output, (port) => {
               let newTypes = newOutputPorts[port.index];
               if (newTypes) {

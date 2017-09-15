@@ -112,6 +112,14 @@ describe('experiment', () => {
       'edges': initConnections
     }
   };
+  let buildNodeKnowledge = (typeKnowledge) => {
+    return {
+      'typeKnowledge': typeKnowledge,
+      'metadata': [],
+      'errors': [],
+      'warnings': []
+    };
+  };
 
   beforeEach(() => {
     angular.mock.module('deepsense.graph-model');
@@ -347,11 +355,12 @@ describe('experiment', () => {
     expect(node1.input[0].typeQualifier).toEqual(initOperations.o2.ports.input[0].typeQualifier);
     expect(node1.output[0].typeQualifier).toEqual(initOperations.o2.ports.output[0].typeQualifier);
 
-    let typeKnowledge = {};
-    typeKnowledge[node0.id] = [['T02']];
-    typeKnowledge[node1.id] = [['T04']];
+    let knowledge = {
+      [node0.id]: buildNodeKnowledge([['T02']]),
+      [node1.id]: buildNodeKnowledge([['T04']])
+    };
 
-    experiment.updateTypeKnowledge(typeKnowledge);
+    experiment.updateTypeKnowledge(knowledge);
 
     expect(node0.input[0].typeQualifier).toEqual(initOperations.o1.ports.input[0].typeQualifier);
     expect(node0.output[0].typeQualifier).toEqual(['T02']);
@@ -380,9 +389,10 @@ describe('experiment', () => {
       let experiment = new Experiment();
       initExperiment(experiment);
 
-      let typeKnowledge = {};
-      typeKnowledge[initNodes[0].id] = [['T22', 'T23']];
-      experiment.updateTypeKnowledge(typeKnowledge);
+      let knowledge = {
+        [initNodes[0].id]: buildNodeKnowledge([['T22', 'T23']])
+      };
+      experiment.updateTypeKnowledge(knowledge);
 
       // T22,T23 -> T31,T32
       let edge = _.values(experiment.getEdges())[0];
@@ -394,9 +404,10 @@ describe('experiment', () => {
       let experiment = new Experiment();
       initExperiment(experiment);
 
-      let typeKnowledge = {};
-      typeKnowledge[initNodes[0].id] = [['T23', 'T24']];
-      experiment.updateTypeKnowledge(typeKnowledge);
+      let knowledge = {
+        [initNodes[0].id]: buildNodeKnowledge([['T23', 'T24']])
+      };
+      experiment.updateTypeKnowledge(knowledge);
 
       // T23,T24 -> T31,T32
       let edge = _.values(experiment.getEdges())[0];
