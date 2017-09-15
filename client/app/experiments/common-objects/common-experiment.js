@@ -134,7 +134,6 @@ function Experiment() {
    * @param {Node} node
    *
    */
-
   that.addNode = function addNode(node) {
     if (that.getNodeById(node.id)) {
       throw new Error('Node ' + node.id + ' already exists');
@@ -148,7 +147,6 @@ function Experiment() {
    * @param {Edge} edge
    *
    */
-
   that.addEdge = function addEdge(edge) {
 
     if (!edge.id) {
@@ -162,8 +160,8 @@ function Experiment() {
     }
 
     internal.edges[edge.id] = edge;
-    that.getNodeById(edge.startNodeId)[edge.id] = edge;
-    that.getNodeById(edge.endNodeId)[edge.id] = edge;
+    that.getNodeById(edge.startNodeId).edges[edge.id] = edge;
+    that.getNodeById(edge.endNodeId).edges[edge.id] = edge;
   };
 
   /**
@@ -172,7 +170,6 @@ function Experiment() {
    * @param {Edge} edge
    *
    */
-
   that.removeEdge = function removeEdge(edge) {
     if (!edge.id) {
       throw new Error('Cannot remove edge. Edge id: ' + edge.id + ' doesn\'t exist.');
@@ -195,7 +192,6 @@ function Experiment() {
    * @param {string} nodeId
    *
    */
-
   that.removeNode = function removeNode(nodeId) {
     try {
       that.removeEdges(nodeId);

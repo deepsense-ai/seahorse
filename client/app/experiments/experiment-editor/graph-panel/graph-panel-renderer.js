@@ -75,7 +75,7 @@ function DrawingService($rootScope) {
     return document.querySelector('#' + nodeIdPrefix + id);
   };
 
-  that.redrawEverything = function redrawEverything() {
+  that.repaintEverything = function redrawEverything() {
     jsPlumb.repaintEverything();
   };
 
@@ -100,13 +100,13 @@ function DrawingService($rootScope) {
   };
 
   that.renderEdges = function renderEdges() {
+    jsPlumb.detachEveryConnection();
     var edges = internal.experiment.getEdges();
     var outputPrefix = 'output';
     var inputPrefix = 'input';
-
     for (let id in edges) {
-      var edge = edges[id],
-        connection = jsPlumb.connect({
+      var edge = edges[id];
+      var connection = jsPlumb.connect({
           uuids: [
             outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
             inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
@@ -181,28 +181,19 @@ function DrawingService($rootScope) {
         },
         edge = internal.experiment.createEdge(data);
       info.connection.setParameter('edgeId', edge.id);
-      $rootScope.$emit(Edge.CREATE, {});
+      $rootScope.$emit(Edge.CREATE, {edge: edge});
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
-
-      var edgeId = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
-      console.log(edgeId);
-
-
-      //internal.experiment.removeEdge(edge);
-
-      //console.log(info,originalEvent);
-      /* if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
-        internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
-       console.log(internal.experiment.getEdges());
-        $rootScope.$emit(Edge.REMOVE, {});
-       }*/
+      var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
+      if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
+        $rootScope.$emit(Edge.REMOVE, {edge: edge});
+      }
     });
 
     jsPlumb.bind('connectionMoved', function (info) {
-      internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
-      $rootScope.$emit(Edge.REMOVE, {});
+      var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
+      $rootScope.$emit(Edge.REMOVE, {edge: edge});
     });
   };
 
@@ -217,4 +208,3 @@ exports.function = DrawingService;
 exports.inject = function (module) {
   module.service('DrawingService', DrawingService);
 };
-

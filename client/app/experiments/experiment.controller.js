@@ -4,7 +4,8 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentController($scope,$stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
+
+function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
 
   var that = this;
   var internal = {};
@@ -53,7 +54,7 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
   that.onRenderFinish = function onRenderFinish() {
     DrawingService.renderPorts();
     DrawingService.renderEdges();
-    DrawingService.redrawEverything();
+    DrawingService.repaintEverything();
   };
 
   /**
@@ -117,26 +118,48 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
     });
   };
 
+  that.log = function log() {
+    console.log(internal.experiment.getNodes());
+    console.log(internal.experiment.getEdges());
+  };
+
+
   $rootScope.$on(GraphNode.CLICK, (event, data) => {
     internal.selectedNode = data.selectedNode;
     $rootScope.$apply();
   });
 
-  $rootScope.$on(GraphNode.MOVE, ()  => that.saveData());
-  $rootScope.$on(Edge.CREATE, ()  => that.saveData());
-  $rootScope.$on(Edge.REMOVE, ()  => that.saveData());
+  $rootScope.$on(GraphNode.MOVE, (data) => {
+    that.saveData();
+  });
 
-  $rootScope.$on('Keyboard.KEY_PRESSED', (event,data) => {
-    internal.experiment.removeNode(internal.selectedNode.id);
-    DrawingService.removeNode(internal.selectedNode.id);
+  $rootScope.$on(Edge.CREATE, (data, args)  => {
+    internal.experiment.addEdge(args.edge);
     $rootScope.$apply();
-    that.onRenderFinish();
+    that.saveData();
+  });
+
+  $rootScope.$on(Edge.REMOVE, (data, args)  => {
+    console.log(args.edge);
+    internal.experiment.removeEdge(args.edge);
+    $rootScope.$apply();
+    that.saveData();
+  });
+
+  $rootScope.$on('Keyboard.KEY_PRESSED', (event, data) => {
+    if (internal.selectedNode) {
+      internal.experiment.removeNode(internal.selectedNode.id);
+      DrawingService.removeNode(internal.selectedNode.id);
+      internal.selectedNode = null;
+      that.onRenderFinish();
+      $rootScope.$apply();
+    }
   });
 
   $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
     var operation = that.getOperationById(args.classId);
-    var moveX = args.dropEvent.x-args.target[0].getBoundingClientRect().left;
-    var moveY = args.dropEvent.y-args.target[0].getBoundingClientRect().top;
+    var moveX = args.dropEvent.x - args.target[0].getBoundingClientRect().left;
+    var moveY = args.dropEvent.y - args.target[0].getBoundingClientRect().top;
     var offsetX = -100;
     var offsetY = -50;
     var node = internal.experiment.createNode(
@@ -147,10 +170,15 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
       moveY + offsetY
     );
     internal.experiment.addNode(node);
+    DrawingService.repaintEverything();
     $rootScope.$apply();
     that.onRenderFinish();
     that.saveData();
   });
+
+  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', ()=> that.log());
+  $rootScope.$on('Keyboard.KEY_PRESSED', ()=> that.log());
+  $rootScope.$on('Edge.REMOVE', ()=> that.log());
 
   internal.init();
   return that;
