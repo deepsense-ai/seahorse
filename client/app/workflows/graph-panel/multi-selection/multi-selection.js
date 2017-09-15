@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 09.07.15.
- */
-
 'use strict';
 
 /* @ngInject */
@@ -14,10 +8,10 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
     restrict: 'A',
     link: (scope, element) => {
       const CLASS_NAME = 'selection-element';
-
+      let currentPoint = {};
       var selectionElement = $document[0].createElement('div');
       var $selectionElement = $(selectionElement);
-      var startPoint = {x:0, y:0};
+      var startPoint = {x: 0, y: 0};
       var elementDimensions;
       var axisToWord = {
         x: {
@@ -36,7 +30,7 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
       var workflowNodes;
       var disabled;
 
-      var startPainting = function startPainting (event) {
+      var startPainting = function startPainting(event) {
         /**
          * event.button 0: Main button pressed, usually the left button
          * https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
@@ -46,23 +40,25 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
         }
 
         startPoint = MouseEvent.getEventOffsetOfElement(event, element[0]);
+
         workflowNodes = workflowNodes || _.map(WorkflowService.getWorkflow().getNodes(),
-          node => {
-            return {
-              x: node.x,
-              y: node.y,
-              id: node.id
-            };
-          }
-        );
+            node => {
+              return {
+                x: node.x,
+                y: node.y,
+                id: node.id
+              };
+            }
+          );
+
         elementDimensions = elementDimensions || {
-          width: element[0].clientWidth,
-          height: element[0].clientHeight
-        };
+            width: element[0].clientWidth,
+            height: element[0].clientHeight
+          };
         nodeDimensions = nodeDimensions || {
-          width: $(element[0].querySelector('[id^="node-"]')).outerWidth(true),
-          height: $(element[0].querySelector('[id^="node-"]')).outerHeight(true)
-        };
+            width: $(element[0].querySelector('[id^="node-"]')).outerWidth(true),
+            height: $(element[0].querySelector('[id^="node-"]')).outerHeight(true)
+          };
 
         unselectNodes();
 
@@ -80,7 +76,7 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
         event.preventDefault();
       };
 
-      var endPainting = function endPainting (event) {
+      var endPainting = function endPainting(event) {
         element.removeClass('has-cursor-crosshair');
 
         $selectionElement.fadeOut(100, () => {
@@ -98,32 +94,33 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
         $document.off('mousemove', paint);
       };
 
-      var paint = function paint (event) {
-        var currentPoint = MouseEvent.getEventOffsetOfElement(event, element[0]);
+      var paint = function paint(event) {
+        currentPoint = MouseEvent.getEventOffsetOfElement(event, element[0]);
+
         var diff = {
           x: currentPoint.x - startPoint.x,
           y: currentPoint.y - startPoint.y
         };
+
         var selectionElementDimensions = {
-          width: Math.abs(diff.x),
-          height: Math.abs(diff.y)
+          width: diff.x,
+          height: diff.y
         };
 
         $selectionElement.css({
-          'width': selectionElementDimensions.width,
-          'height': selectionElementDimensions.height
+          'width': Math.abs(selectionElementDimensions.width),
+          'height': Math.abs(selectionElementDimensions.height)
         });
 
         calculate('x', diff);
         calculate('y', diff);
-
         selectNodes(selectionElementDimensions);
 
         // fix for borders disappearing after paint finish
         viewFix();
       };
 
-      var calculate = function calculate (axis, diff) {
+      var calculate = function calculate(axis, diff) {
         if (diff[axis] < 0) {
           $selectionElement.css(axisToWord[axis].original, 'auto');
           $selectionElement.css(axisToWord[axis].opposite,
@@ -134,26 +131,33 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
         }
       };
 
-      var selectNodes = function selectNodes (selectionElementDimensions) {
-        _.each(workflowNodes, function (node) {
-          if (
-            inRange(
-              [node.x, node.x + nodeDimensions.width],
-              [selectionElement.offsetLeft, selectionElement.offsetLeft + selectionElementDimensions.width]
-            ) &&
-            inRange(
-              [node.y, node.y + nodeDimensions.height],
-              [selectionElement.offsetTop, selectionElement.offsetTop + selectionElementDimensions.height]
-            )
-          ) {
-            addToSelection(node);
-          } else {
-            removeFromSelection(node);
-          }
+      let intersect = (A, B) => {
+        return A.left <= B.right &&
+          A.top <= B.bottom &&
+          B.top <= A.bottom &&
+          B.left <= A.right;
+      };
+
+      var selectNodes = function selectNodes(selectionElementDimensions) {
+        unselectNodes();
+        _.each(_.filter(workflowNodes, (node) => {
+          return intersect({
+            left: node.x,
+            top: node.y,
+            right: node.x + nodeDimensions.width,
+            bottom: node.y + nodeDimensions.height
+          }, {
+            left: Math.min(startPoint.x, startPoint.x + selectionElementDimensions.width),
+            top: Math.min(startPoint.y, startPoint.y + selectionElementDimensions.height),
+            right: Math.max(startPoint.x, startPoint.x + selectionElementDimensions.width),
+            bottom: Math.max(startPoint.y, startPoint.y + selectionElementDimensions.height)
+          });
+        }), (node) => {
+          addToSelection(node);
         });
       };
 
-      var unselectNodes = function unselectNodes () {
+      var unselectNodes = function unselectNodes() {
         _.each(
           inSelection,
           DOMNode => DOMNode.classList.remove('flowchart-node--active')
@@ -161,9 +165,9 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
 
         jsPlumb.clearDragSelection();
         inSelection.length = 0;
-      } ;
+      };
 
-      var addToSelection = function addToSelection (node) {
+      var addToSelection = function addToSelection(node) {
         var DOMNode = $document[0].getElementById(`node-${node.id}`);
 
         if (inSelection.indexOf(DOMNode) === -1) {
@@ -173,23 +177,7 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
         }
       };
 
-      var removeFromSelection = function removeFromSelection (node) {
-        _.remove(inSelection, function(DOMNode) {
-          if (DOMNode.id === `node-${node.id}`) {
-            DOMNode.classList.remove('flowchart-node--active');
-            jsPlumb.removeFromDragSelection(DOMNode);
-            return true;
-          }
-        });
-      };
-
-      var inRange = function inRange (what, withinWhat) {
-        return what[0] >= withinWhat[0] && what[1] <= withinWhat[1];
-      };
-
-      // debouncing to fire not more than value
-      // forcing browser to repaint
-      var viewFix = debounce(function viewFix () {
+      var viewFix = debounce(function viewFix() {
         let oldRepaintValue = $selectionElement[0].style.left;
         let newRepaintValue = parseInt($selectionElement[0].style.left) - 1;
 
@@ -203,7 +191,7 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService,
         }, false);
       }, 50, true);
 
-      var init = function init () {
+      var init = function init() {
         // put selection element
         selectionElement.className = CLASS_NAME;
         selectionElement.style.display = 'none';

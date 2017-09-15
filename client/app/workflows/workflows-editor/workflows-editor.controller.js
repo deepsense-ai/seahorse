@@ -54,9 +54,7 @@ function WorkflowsEditorController(workflow,
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
     let node = data.selectedNode;
-
     internal.selectedNode = node;
-
     if (node.hasParameters()) {
       $scope.$digest();
     } else {
