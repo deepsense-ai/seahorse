@@ -57,6 +57,7 @@ Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, 'utf-8')
 
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(bodyParser.json());
+      app.use('/apimock', require('./mock.js'));
       app.use('/api', require('./rest.js')(waterline));
       app.use('/', express.static(__dirname + '/../build'));
 
