@@ -23,7 +23,7 @@ import spray.json._
 import io.deepsense.commons.utils.CollectionExtensions._
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.descriptions.{HasInferenceResult, ParamsInferenceResult}
-import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.exceptions.{DeepLangMultiException, DeepLangException}
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 import io.deepsense.deeplang.params.multivalue.MultipleValuesParam
 import io.deepsense.deeplang.params.wrappers.spark._
@@ -195,6 +195,17 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
         Vector(new ParamValueNotProvidedException(param.name))
       }
     }.toVector
+  }
+
+  /**
+    * Validates Params entities that contain dynamic parameters' values.
+    * Validation errors are wrapped in DeepLangMultiException.
+    */
+  def validateDynamicParams(params: Params*): Unit = {
+    val validationResult = params.flatMap(param => param.validateParams).toVector
+    if (validationResult.nonEmpty) {
+      throw DeepLangMultiException(validationResult)
+    }
   }
 
   final def isSet(param: Param[_]): Boolean = {

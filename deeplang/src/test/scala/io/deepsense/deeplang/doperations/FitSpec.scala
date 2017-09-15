@@ -23,6 +23,7 @@ import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
+import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamsMatchers._
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
@@ -93,6 +94,14 @@ class FitSpec extends UnitSpec {
         val op = Fit()
         a[TooManyPossibleTypesException] shouldBe thrownBy {
           op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(estimators)))
+        }
+      }
+      "Estimator's dynamic parameters are invalid" in {
+        val inputDF = DataFrame.forInference(mock[StructType])
+        val estimator = new MockEstimator
+        val fit = Fit().setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(-2)))
+        a[DeepLangMultiException] shouldBe thrownBy {
+          fit.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(estimator)))
         }
       }
     }

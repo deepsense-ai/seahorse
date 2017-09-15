@@ -22,6 +22,7 @@ import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
+import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
 
@@ -83,6 +84,16 @@ class FitPlusTransformSpec extends UnitSpec {
             Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimators))
           val fpt = new FitPlusTransform
           a[TooManyPossibleTypesException] shouldBe thrownBy {
+            fpt.inferKnowledge(mock[InferContext])(inputKnowledge)
+          }
+        }
+        "Estimator's dynamic parameters are invalid" in {
+          val estimator = new MockEstimator
+          val inputKnowledge: Vector[DKnowledge[DOperable]] =
+            Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimator))
+          val fpt = new FitPlusTransform
+          fpt.setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(-2)))
+          a[DeepLangMultiException] shouldBe thrownBy {
             fpt.inferKnowledge(mock[InferContext])(inputKnowledge)
           }
         }

@@ -23,6 +23,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.doperations.MockTransformers._
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
+import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamsMatchers._
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
@@ -101,6 +102,17 @@ class TransformSpec extends UnitSpec {
         a [TooManyPossibleTypesException] shouldBe thrownBy {
           op.inferKnowledge(mock[InferContext])(
             Vector(DKnowledge(inputDF), DKnowledge(transformers)))
+        }
+      }
+      "Transformer's dynamic parameters are invalid" in {
+        val inputDF = DataFrame.forInference(mock[StructType])
+        val transformer = new MockTransformer
+        val transform = Transform().setTransformerParams(
+          JsObject(transformer.paramA.name -> JsNumber(-2)))
+
+        a [DeepLangMultiException] shouldBe thrownBy {
+          transform.inferKnowledge(mock[InferContext])(
+            Vector(DKnowledge(inputDF), DKnowledge(transformer)))
         }
       }
     }

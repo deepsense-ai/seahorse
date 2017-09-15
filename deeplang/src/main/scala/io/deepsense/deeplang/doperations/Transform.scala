@@ -69,6 +69,9 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
     transformerWithParams(transformer).transform.infer(context)(())(dataFrameKnowledge)
   }
 
-  private def transformerWithParams(transformer: Transformer): Transformer =
-    transformer.replicate().setParamsFromJson(getTransformerParams)
+  private def transformerWithParams(transformer: Transformer): Transformer = {
+    val transformerWithParams = transformer.replicate().setParamsFromJson(getTransformerParams)
+    validateDynamicParams(transformerWithParams)
+    transformerWithParams
+  }
 }

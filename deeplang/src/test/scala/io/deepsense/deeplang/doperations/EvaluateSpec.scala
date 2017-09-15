@@ -23,6 +23,7 @@ import io.deepsense.deeplang.doperables.MetricValue
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
+import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamsMatchers._
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
@@ -101,6 +102,19 @@ class EvaluateSpec extends UnitSpec {
         a [TooManyPossibleTypesException] shouldBe thrownBy {
           op.inferKnowledge(mock[InferContext])(
             Vector(DKnowledge(inputDF), DKnowledge(evaluators)))
+        }
+      }
+      "values of dynamic parameters are invalid" in {
+        val evaluator = new MockEvaluator
+
+        val inputDF = DataFrame.forInference(mock[StructType])
+
+        val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(-2))
+        val evaluatorWithParams = Evaluate().setEvaluatorParams(paramsForEvaluator)
+
+        a [DeepLangMultiException] shouldBe thrownBy {
+          evaluatorWithParams.inferKnowledge(mock[InferContext])(
+            Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
         }
       }
     }

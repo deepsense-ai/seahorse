@@ -19,7 +19,7 @@ package io.deepsense.graph
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.inference.exceptions.{AllTypesNotCompilableException, NoInputEdgesException}
 import io.deepsense.deeplang.inference.warnings.SomeTypesNotCompilableWarning
-import io.deepsense.deeplang.{DOperation, DKnowledge, DOperable}
+import io.deepsense.deeplang.{DKnowledge, DOperable}
 import io.deepsense.graph.DClassesForDOperations.A1
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
@@ -179,6 +179,25 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
         errors = Vector(
           DOperationA1A2ToFirst.parameterInvalidError,
           DOperationA1A2ToFirst.inferenceError
+        )
+      )
+    }
+    "handle DeepLangMultiException" in {
+      val node = nodeA1A2ToFirst
+      setInferenceErrorMultiThrowing(node)
+      val inputInferenceForNode = NodeInferenceResult(
+        ports = Vector(knowledgeA1, knowledgeA2),
+        errors = Vector(DOperationA1A2ToFirst.parameterInvalidError))
+      val inferenceResult = nodeInference.inferKnowledge(
+        node,
+        typeInferenceCtx,
+        inputInferenceForNode)
+      inferenceResult shouldBe NodeInferenceResult(
+        Vector(knowledgeA12),
+        errors = Vector(
+          DOperationA1A2ToFirst.parameterInvalidError,
+          DOperationA1A2ToFirst.multiInferenceError.exceptions(0),
+          DOperationA1A2ToFirst.multiInferenceError.exceptions(1)
         )
       )
     }

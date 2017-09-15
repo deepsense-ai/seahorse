@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,11 @@
 
 package io.deepsense.deeplang.exceptions
 
-import io.deepsense.commons.exception.{FailureDescription, FailureCode, DeepSenseException}
+/**
+  * This exception is used when we need to throw multiple validation errors at once.
+  */
+case class DeepLangMultiException(exceptions: Vector[DeepLangException])
+  extends DeepLangException("Multiple errors") {
 
-abstract class DeepLangException(
-    override val message: String,
-    cause: Throwable = null)
-  extends DeepSenseException(
-    FailureCode.NodeFailure,
-    "DeepLang Exception",
-    message,
-    Option(cause),
-    Option(cause)
-      .map(e => FailureDescription.stacktraceDetails(e.getStackTrace))
-      .getOrElse(Map())) {
-
-  def toVector: Vector[DeepLangException] = Vector(this)
+  override def toVector: Vector[DeepLangException] = exceptions
 }

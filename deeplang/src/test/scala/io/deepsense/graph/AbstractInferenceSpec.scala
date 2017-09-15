@@ -22,7 +22,7 @@ import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.exceptions.{DeepLangMultiException, DeepLangException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.params.exceptions.ValidationException
 import io.deepsense.graph.DClassesForDOperations._
@@ -68,15 +68,25 @@ class AbstractInferenceSpec
     def setParamsInvalid(): Unit = paramsValid = false
 
     private var inferenceShouldThrow = false
+    private var multiException = false
 
     def setInferenceErrorThrowing(): Unit = inferenceShouldThrow = true
+
+    def setInferenceErrorThrowingMultiException(): Unit = {
+      inferenceShouldThrow = true
+      multiException = true
+    }
 
     override protected def _inferTypeKnowledge(
       context: InferContext)(
       k0: DKnowledge[A1],
       k1: DKnowledge[A2]): (DKnowledge[A], InferenceWarnings) = {
       if (inferenceShouldThrow) {
-        throw inferenceError
+        if (multiException) {
+          throw multiInferenceError
+        } else {
+          throw inferenceError
+        }
       }
       (k0, InferenceWarnings(warning))
     }
@@ -87,8 +97,10 @@ class AbstractInferenceSpec
   }
 
   object DOperationA1A2ToFirst {
-    val parameterInvalidError = mock[ValidationException]
-    val inferenceError = mock[DeepLangException]
+    val parameterInvalidError = new ValidationException("") {}
+    val inferenceError = new DeepLangException("") {}
+    val multiInferenceError = DeepLangMultiException(
+      Vector(mock[DeepLangException], mock[DeepLangException]))
     val warning = mock[InferenceWarning]
   }
 
@@ -116,6 +128,10 @@ class AbstractInferenceSpec
 
   def setInferenceErrorThrowing(node: DeeplangNode): Unit = {
     node.value.asInstanceOf[DOperationA1A2ToFirst].setInferenceErrorThrowing()
+  }
+
+  def setInferenceErrorMultiThrowing(node: DeeplangNode): Unit = {
+    node.value.asInstanceOf[DOperationA1A2ToFirst].setInferenceErrorThrowingMultiException()
   }
 
   def setParametersInvalid(node: DeeplangNode): Unit = {

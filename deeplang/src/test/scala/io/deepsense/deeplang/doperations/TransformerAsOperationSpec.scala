@@ -25,6 +25,7 @@ import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.{NumericParam, Param, ParamMap}
 import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
 
@@ -38,7 +39,7 @@ object MockTransformers extends UnitSpec {
   val outputSchema2 = mock[StructType]
 
   class MockTransformer extends Transformer {
-    val paramA = NumericParam("a", "desc")
+    val paramA = NumericParam("a", "desc", RangeValidator(0.0, Double.MaxValue))
     setDefault(paramA -> DefaultForA)
 
     override val params: Array[Param[_]] = declareParams(paramA)
@@ -48,14 +49,14 @@ object MockTransformers extends UnitSpec {
     private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
       $(paramA) match {
         case 1 => outputDataFrame1
-        case 2 => outputDataFrame2
+        case -2 | 2 => outputDataFrame2
       }
     }
 
     override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
       Some($(paramA) match {
         case 1 => outputSchema1
-        case 2 => outputSchema2
+        case -2 | 2 => outputSchema2
       })
     }
   }

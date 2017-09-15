@@ -30,11 +30,12 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.wrappers.{EstimatorWrapper, EvaluatorWrapper}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.gridsearch.GridSearchParam
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
 import io.deepsense.deeplang.params.{DynamicParam, NumericParam, ParamPair}
-import io.deepsense.deeplang.{DOperation3To1, ExecutionContext}
+import io.deepsense.deeplang.{DKnowledge, DOperation3To1, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, ReportType, Table}
 
 case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, Report] {
@@ -91,6 +92,8 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
     val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams)
     val estimatorWithParams = createEstimatorWithParams(estimator, estimatorParams)
     val evaluatorWithParams = createEvaluatorWithParams(evaluator)
+    validateDynamicParams(estimatorWithParams, evaluatorWithParams)
+
     val estimatorWrapper: EstimatorWrapper = new EstimatorWrapper(context, estimatorWithParams)
     val gridSearchParams: Array[ParamMap] =
       createGridSearchParams(estimatorWrapper.uid, estimatorParams)
@@ -101,6 +104,24 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
       .setNumFolds(getNumberOfFolds)
     val cvModel: CrossValidatorModel = cv.fit(dataFrame.sparkDataFrame)
     createReport(gridSearchParams, cvModel.avgMetrics, evaluator.isLargerBetter)
+  }
+
+
+  override protected def _inferKnowledge(
+      context: InferContext)(
+      dataFrameKnowledge: DKnowledge[DataFrame],
+      estimatorKnowledge: DKnowledge[Estimator],
+      evaluatorKnowledge: DKnowledge[Evaluator]): (DKnowledge[Report], InferenceWarnings) = {
+
+    val estimator = estimatorKnowledge.single
+    val evaluator = evaluatorKnowledge.single
+
+    val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams)
+    val estimatorWithParams = createEstimatorWithParams(estimator, estimatorParams)
+    val evaluatorWithParams = createEvaluatorWithParams(evaluator)
+
+    validateDynamicParams(estimatorWithParams, evaluatorWithParams)
+    (DKnowledge(Report()), InferenceWarnings.empty)
   }
 
   private def createReport(

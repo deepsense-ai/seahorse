@@ -74,7 +74,9 @@ class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, T
   }
 
   private def estimatorWithParams(estimator: Estimator): Estimator = {
-    estimator.replicate().setParamsFromJson($(estimatorParams))
+    val estimatorWithParams = estimator.replicate().setParamsFromJson($(estimatorParams))
+    validateDynamicParams(estimatorWithParams)
+    estimatorWithParams
   }
 
   private def inferDataFrame(

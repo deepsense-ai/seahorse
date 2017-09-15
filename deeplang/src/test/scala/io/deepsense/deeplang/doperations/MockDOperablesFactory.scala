@@ -24,6 +24,7 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.{NumericParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}
 
@@ -65,7 +66,7 @@ object MockDOperablesFactory extends UnitSpec {
   val metricValueKnowledge2 = DKnowledge(MetricValue.forInference("name2"))
 
   class MockEstimator extends Estimator {
-    val paramA = NumericParam("b", "desc")
+    val paramA = NumericParam("b", "desc", RangeValidator(0.0, Double.MaxValue))
     setDefault(paramA -> DefaultForA)
     override val params: Array[Param[_]] = declareParams(paramA)
     override def report: Report = ???
@@ -76,7 +77,7 @@ object MockDOperablesFactory extends UnitSpec {
         : Transformer = {
           $(paramA) match {
             case 1 => transformer1
-            case 2 => transformer2
+            case -2 | 2 => transformer2
           }
         }
 
@@ -87,7 +88,7 @@ object MockDOperablesFactory extends UnitSpec {
         : (DKnowledge[Transformer], InferenceWarnings) = {
           $(paramA) match {
             case 1 => (transformerKnowledge1, InferenceWarnings.empty)
-            case 2 => (transformerKnowledge2, InferenceWarnings.empty)
+            case -2 | 2 => (transformerKnowledge2, InferenceWarnings.empty)
           }
         }
       }
@@ -99,7 +100,7 @@ object MockDOperablesFactory extends UnitSpec {
   }
 
   class MockEvaluator extends Evaluator {
-    val paramA = NumericParam("b", "desc")
+    val paramA = NumericParam("b", "desc", RangeValidator(0.0, Double.MaxValue))
     setDefault(paramA -> DefaultForA)
     override val params: Array[Param[_]] = declareParams(paramA)
     override def report: Report = ???
