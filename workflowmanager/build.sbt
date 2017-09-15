@@ -15,3 +15,5 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 dockerBaseImage := "anapsix/alpine-java:jre8"
 dockerExposedPorts := Seq(9080)
 dockerUpdateLatest := true
+
+WorkflowExamples.defaultSettings
