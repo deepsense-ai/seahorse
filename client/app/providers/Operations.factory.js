@@ -103,8 +103,10 @@ function OperationsFactory(OperationsAPIClient, $q) {
    */
   var loadOperationData = function loadOperationData(id) {
     return OperationsAPIClient.get(id).then((data) => {
-      operationsData[id].parameters = Object.freeze(data.operation.parameters || {});
-      Object.freeze(operationsData[id]);
+      if (_.isUndefined(operationsData[id].parameters)) {
+        operationsData[id].parameters = Object.freeze(data.operation.parameters || {});
+        Object.freeze(operationsData[id]);
+      }
       return operationsData[id];
     }, (error) => {
       console.error('error', error);

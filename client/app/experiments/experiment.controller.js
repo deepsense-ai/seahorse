@@ -6,7 +6,7 @@
 /* @ngInject */
 function ExperimentController(
   $http, $modal, $timeout, $stateParams, $scope,
-  PageService, Operations, DrawingService, ExperimentService, ExperimentAPIClient, UUIDGenerator
+  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -32,7 +32,7 @@ function ExperimentController(
         console.log('Experiment downloaded successfully');
         PageService.setTitle('Experiment: ' + data.experiment.name);
         ExperimentService.setExperiment(ExperimentService.createExperiment(data, Operations.getData()));
-        DrawingService.renderExperiment(ExperimentService.getExperiment());
+        GraphPanelRendererService.renderExperiment(ExperimentService.getExperiment());
         internal.isDataLoaded = true;
       });
   };
@@ -42,10 +42,10 @@ function ExperimentController(
   };
 
   that.onRenderFinish = function onRenderFinish() {
-    DrawingService.init();
-    DrawingService.renderPorts();
-    DrawingService.renderEdges();
-    DrawingService.repaintEverything();
+    GraphPanelRendererService.init();
+    GraphPanelRendererService.renderPorts();
+    GraphPanelRendererService.renderEdges();
+    GraphPanelRendererService.repaintEverything();
     that.checkExperimentState();
   };
 
@@ -55,19 +55,25 @@ function ExperimentController(
    * @param {object} data
    */
   that.handleExperimentStateChange = function handleExperimentStateChange(data) {
-    ExperimentService.getExperiment().updateState(data.experiment.state);
-    that.checkExperimentState();
+    let experiment = ExperimentService.getExperiment();
+    if (!_.isUndefined(experiment)) {
+      experiment.updateState(data.experiment.state);
+      that.checkExperimentState();
+    }
   };
 
   /**
    * Loads experiment state data.
    */
   that.loadExperimentState = function loadExperimentState() {
-    ExperimentAPIClient.getData(ExperimentService.getExperiment().getId()).then(that.handleExperimentStateChange,
-      (error) => {
-        console.error('experiment fetch state error', error);
-      }
-    );
+    let experiment = ExperimentService.getExperiment();
+    if (!_.isUndefined(experiment)) {
+      ExperimentAPIClient.
+        getData(experiment.getId()).
+        then(that.handleExperimentStateChange, (error) => {
+          console.error('experiment fetch state error', error);
+        });
+    }
   };
 
   /**
@@ -141,7 +147,7 @@ function ExperimentController(
   $scope.$on('Keyboard.KEY_PRESSED', (event, data) => {
     if (internal.selectedNode) {
       ExperimentService.getExperiment().removeNode(internal.selectedNode.id);
-      DrawingService.removeNode(internal.selectedNode.id);
+      GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();
       that.onRenderFinish();
       $scope.$digest();
@@ -163,7 +169,7 @@ function ExperimentController(
         'y': positionY > offsetY ? positionY - offsetY : 0
       });
     ExperimentService.getExperiment().addNode(node);
-    DrawingService.repaintEverything();
+    GraphPanelRendererService.repaintEverything();
     $scope.$digest();
     that.onRenderFinish();
     that.saveData();
@@ -187,6 +193,8 @@ function ExperimentController(
 
   $scope.$on('$destroy', () => {
     $timeout.cancel(internal.runStateTimeout);
+    ExperimentService.clearExperiment();
+    GraphPanelRendererService.clearExperiment();
   });
 
 

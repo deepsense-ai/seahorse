@@ -11,10 +11,12 @@ function ExperimentService() {
 
   that.createExperiment = function createExperiment(data, operations) {
     var experiment = new Experiment();
+
     experiment.setData(data.experiment);
     experiment.createNodes(data.experiment.graph.nodes, operations, data.experiment.state);
     experiment.createEdges(data.experiment.graph.edges);
     experiment.updateState(data.experiment.state);
+
     return experiment;
   };
 
@@ -24,6 +26,10 @@ function ExperimentService() {
 
   that.setExperiment = function storeExperiment (experiment) {
     internal.experiment = experiment;
+  };
+
+  that.clearExperiment = function clearExperiment () {
+    internal.experiment = null;
   };
 
   return that;

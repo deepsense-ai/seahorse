@@ -22,7 +22,7 @@ require('./experiment-editor/context-menu/context-menu-element.js').inject(exper
 require('./experiment-editor/status-bar/status-bar.js').inject(experiments);
 require('./experiment-editor/graph-panel/graph-panel-flowchart.js').inject(experiments);
 require('./experiment-editor/graph-panel/graph-panel-node.js').inject(experiments);
-require('./experiment-editor/graph-panel/graph-panel-renderer.js').inject(experiments);
+require('./experiment-editor/graph-panel/graph-panel-renderer.service.js').inject(experiments);
 require('./experiment-editor/catalog-panel/catalog-panel.js').inject(experiments);
 require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-panel.module.js').inject(experiments);

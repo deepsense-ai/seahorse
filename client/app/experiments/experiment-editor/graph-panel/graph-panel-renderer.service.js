@@ -52,7 +52,7 @@ var inputStyle = {
 };
 
 /* @ngInject */
-function DrawingService($rootScope) {
+function GraphPanelRendererService($rootScope) {
 
   const nodeIdPrefix = 'node-';
   const nodeIdPrefixLength = nodeIdPrefix.length;
@@ -219,12 +219,16 @@ function DrawingService($rootScope) {
     });
   };
 
+  that.clearExperiment = function clearExperiment () {
+    internal.experiment = null;
+  };
+
   return that;
 
 }
 
-exports.function = DrawingService;
+exports.function = GraphPanelRendererService;
 
 exports.inject = function (module) {
-  module.service('DrawingService', DrawingService);
+  module.service('GraphPanelRendererService', GraphPanelRendererService);
 };
