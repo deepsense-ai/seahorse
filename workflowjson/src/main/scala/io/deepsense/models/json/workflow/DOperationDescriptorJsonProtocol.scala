@@ -59,6 +59,7 @@ trait DOperationDescriptorJsonProtocol
         "category" -> obj.category.id.toJson,
         "description" -> obj.description.toJson,
         "deterministic" -> false.toJson,  // TODO use real value as soon as it is supported
+        "hasDocumentation" -> obj.hasDocumentation.toJson,
         "ports" -> JsObject(
           "input" -> portTypesToJson(obj.inPorts, addRequiredField = true, obj.inPortsLayout),
           "output" -> portTypesToJson(obj.outPorts, addRequiredField = false, obj.outPortsLayout)

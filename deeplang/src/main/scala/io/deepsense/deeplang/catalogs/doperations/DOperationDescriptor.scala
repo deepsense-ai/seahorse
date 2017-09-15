@@ -31,6 +31,7 @@ case class DOperationDescriptor(
     name: String,
     description: String,
     category: DOperationCategory,
+    hasDocumentation: Boolean,
     parametersJsonDescription: JsValue,
     inPorts: Seq[Type],
     inPortsLayout: Vector[DPortPosition],

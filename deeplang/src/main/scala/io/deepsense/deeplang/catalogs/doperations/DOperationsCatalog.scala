@@ -67,7 +67,7 @@ object DOperationsCatalog {
       val outPortTypes = operationInstance.outPortTypes.map(_.tpe)
       val parameterDescription = operationInstance.paramsToJson
       val operationDescriptor = DOperationDescriptor(
-        id, name, description, category, parameterDescription, inPortTypes,
+        id, name, description, category, operationInstance.hasDocumentation, parameterDescription, inPortTypes,
         operationInstance.inPortsLayout, outPortTypes, operationInstance.outPortsLayout
       )
 
