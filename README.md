@@ -1,7 +1,16 @@
-
-Build and publish H2 image
+# GETTING STARTED WITH DEVELOPMENT
 
 ```
-(cd deployment/docker ; ./build-local-docker.sh ../h2-docker/ deepsense-h2)
-(cd deployment/docker ; ./publish-local-docker.sh ../h2-docker/ deepsense-h2)
+# Init nested workflow-executor repo
+git submodule init
+git submodule update
+
+# Compile classes from workflow-executor that are needed to compile deepsense-backend
+sbt publishWeClasses
+```
+
+# START SEAHORSE LATEST DEV VERSION
+
+```
+(cd deployment/docker-compose; ./docker-compose-latest up)
 ```
