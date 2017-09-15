@@ -17,3 +17,5 @@ libraryDependencies ++= Seq(
   "com.github.nscala-time" %% "nscala-time" % "1.8.0",
   "org.scala-lang" % "scala-reflect" % "2.10.4"
 )
+
+fork := true // fork all test tasks and run tasks
