@@ -1,8 +1,8 @@
 # Copyright (c) 2016, CodiLime Inc.
 
-import argparse
 import os
 from threading import Event
+import json
 
 from jupyter_client import MultiKernelManager
 from jupyter_client.kernelspec import KernelSpecManager
@@ -11,6 +11,8 @@ from rabbit_mq_client import RabbitMQClient, RabbitMQJsonReceiver, RabbitMQJsonS
 from utils import setup_logging, Logging
 import argparse
 import signal
+
+from executing_kernel_client import ExecutingKernelClient, ExecutingKernelClientSettings
 
 
 class ExecutingKernelManager(Logging):
@@ -35,6 +37,8 @@ class ExecutingKernelManager(Logging):
 
         signal.signal(signal.SIGINT, self.exit_gracefully)
         signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+        self.executing_kernel_clients = {}
 
         self._executing_kernel_source_dir = executing_kernel_source_dir
         self._gateway_address = gateway_address
@@ -128,9 +132,33 @@ class ExecutingKernelManager(Logging):
                                                 kernel_id=kernel_id,
                                                 extra_arguments=extra_arguments)
 
+        # TODO: check if not an interweave
+        ExecutingKernelManager.change_key(kernel_id, signature_key)
+
+        settings = ExecutingKernelClientSettings(self._gateway_address, self._rabbit_mq_address,
+                                                 self._rabbit_mq_credentials, self._session_id,
+                                                 self._workflow_id, node_id, port_number)
+        executing_kernel_client = ExecutingKernelClient(kernel_id, signature_key, settings)
+        executing_kernel_client.start()
+        self.executing_kernel_clients[kernel_id] = executing_kernel_client
+
+    @staticmethod
+    def change_key(kernel_id, signature_key):
+        connection_filename = "kernel-"+kernel_id+".json"
+        json_file = open(connection_filename, "r")
+        data = json.load(json_file)
+        json_file.close()
+
+        data["key"] = signature_key
+
+        json_file = open(connection_filename, "w+")
+        json_file.write(json.dumps(data))
+        json_file.close()
+
     def shutdown_kernel(self, kernel_id):
         self.logger.debug('kernel_id {}'.format(kernel_id))
         self._multi_kernel_manager.shutdown_kernel(kernel_id=kernel_id)
+        self.executing_kernel_clients.pop(kernel_id)
 
     def _init_rabbit_client(self):
         rabbit_client = RabbitMQClient(address=self._rabbit_mq_address,
