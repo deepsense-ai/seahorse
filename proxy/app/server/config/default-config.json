@@ -1,6 +1,7 @@
 {
-  "user_quota_commentary": "When user quota is changed also change numbers in Seahorse documentation",
-  "user_quota": 1,
+  "user_quota_commentary_1": "When user quota is changed also change numbers in Seahorse documentation",
+  "user_quota_commentary_2": "We need one account for admin, so user_quota = number_of_user + 1 (for admin)",
+  "user_quota": 2,
   "timeout": 30000,
   "session_config" : {
     "idle_time": 1800,
