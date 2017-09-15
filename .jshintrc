@@ -8,6 +8,9 @@
   "esnext": true,
   "evil": false,
   "forin": false,
+  "maxdepth": 5,
+  "maxstatements": 32,
+  "maxcomplexity": 12,
   "globals": {
     "angular": true,
     "jsPlumb": true,
