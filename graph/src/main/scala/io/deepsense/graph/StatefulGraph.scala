@@ -153,6 +153,13 @@ case class StatefulGraph(
     copy(states = enqueued)
   }
 
+  def abort: StatefulGraph = {
+    val aborted = states.mapValues(state =>
+      if (state.isQueued) state.abort else state
+    )
+    copy(states = aborted)
+  }
+
   private def markChildrenDraft(
     states: Map[Node.Id, NodeState],
     draftNodeId: Node.Id): Map[Node.Id, NodeState] = {

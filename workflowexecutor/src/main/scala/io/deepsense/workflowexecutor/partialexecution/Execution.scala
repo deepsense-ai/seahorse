@@ -53,6 +53,7 @@ sealed trait ExecutionLike {
   def isRunning: Boolean
   def inferAndApplyKnowledge(inferContext: InferContext): Execution
   def updateStructure(directedGraph: DirectedGraph, nodes: Set[Node.Id]): Execution
+  def abort: Execution
 }
 
 sealed abstract class Execution(graph: StatefulGraph, running: Boolean) extends ExecutionLike {
@@ -104,6 +105,10 @@ case class IdleExecution(
     copy(graph = graph.updateStates(inferred))
   }
 
+  override def abort: Execution = {
+    throw new IllegalStateException("IdleExecution cannot be aborted!")
+  }
+
   private def selectedSubgraph: (Set[Id], StatefulGraph) = {
     val selected = Execution.selectedNodes(graph.directedGraph, selectedNodes.toSeq)
     val subgraph = graph.subgraph(selected)
@@ -138,16 +143,13 @@ case class IdleExecution(
   override def isRunning: Boolean = false
 }
 
-case class RunningExecution(
-    graph: StatefulGraph,
-    runningPart: StatefulGraph,
-    selectedNodes: Set[Node.Id])
+abstract class StartedExecution(
+  graph: StatefulGraph,
+  runningPart: StatefulGraph,
+  selectedNodes: Set[Node.Id])
   extends Execution(graph, running = true) {
 
   override def states: NodeStates = graph.states ++ runningPart.states
-
-  override def updateStructure(directedGraph: DirectedGraph, nodes: Set[Id]): Execution =
-    throw new IllegalStateException("Structure of a RunningExecution cannot be altered!")
 
   override def readyNodes: Seq[ReadyNode] = runningPart.readyNodes
 
@@ -157,30 +159,75 @@ case class RunningExecution(
   override def nodeFailed(id: Id, cause: Exception): Execution =
     withRunningPartUpdated(_.nodeFailed(id, cause))
 
+  override def error: Option[FailureDescription] = runningPart.executionFailure
+
+  override def enqueue: Execution = {
+    throw new IllegalStateException("An Execution that is not idle cannot be enqueued!")
+  }
+
+  override def inferAndApplyKnowledge(inferContext: InferContext): RunningExecution = {
+    throw new IllegalStateException("An Execution that is not idle cannot infer knowledge!")
+  }
+
+  override def updateStructure(directedGraph: DirectedGraph, nodes: Set[Id]): Execution =
+    throw new IllegalStateException("Structure of an Execution that is not idle cannot be altered!")
+
+  private def withRunningPartUpdated(update: (StatefulGraph) => StatefulGraph): Execution = {
+    val updatedRunningPart = update(runningPart)
+    val updatedGraph = graph.updateStates(updatedRunningPart)
+
+    if (updatedRunningPart.isRunning) {
+      updateState(updatedRunningPart, updatedGraph)
+    } else {
+      IdleExecution(updatedGraph, selectedNodes)
+    }
+  }
+
+  protected def updateState(
+    updatedRunningPart: StatefulGraph,
+    updatedGraph: StatefulGraph): Execution
+}
+
+case class RunningExecution(
+    graph: StatefulGraph,
+    runningPart: StatefulGraph,
+    selectedNodes: Set[Node.Id])
+  extends StartedExecution(graph, runningPart, selectedNodes) {
+
   override def nodeStarted(id: Id): RunningExecution = {
     val updatedRunningPart = runningPart.nodeStarted(id)
     val updatedGraph = graph.updateStates(updatedRunningPart)
     copy(graph = updatedGraph, runningPart = updatedRunningPart)
   }
 
-  override def enqueue: Execution = {
-    throw new IllegalStateException("RunningExecution can not be executed again!")
+  override def abort: AbortedExecution = {
+    AbortedExecution(graph, runningPart.abort, selectedNodes)
   }
 
-  override def inferAndApplyKnowledge(inferContext: InferContext): RunningExecution = {
-    throw new IllegalStateException("RunningExecution cannot infer knowledge!")
+  override protected def updateState(
+    updatedRunningPart: StatefulGraph,
+    updatedGraph: StatefulGraph): Execution = {
+    RunningExecution(updatedGraph, updatedRunningPart, selectedNodes)
+  }
+}
+
+case class AbortedExecution(
+  graph: StatefulGraph,
+  runningPart: StatefulGraph,
+  selectedNodes: Set[Node.Id])
+  extends StartedExecution(graph, runningPart, selectedNodes) {
+
+  override def nodeStarted(id: Id): AbortedExecution = {
+    throw new IllegalStateException("A node cannot be started when execution is Aborted!")
   }
 
-  private def withRunningPartUpdated(f: (StatefulGraph) => StatefulGraph): Execution = {
-    val updatedRunningPart = f(runningPart)
-    val updatedGraph = graph.updateStates(updatedRunningPart)
-
-    if (updatedRunningPart.isRunning) {
-      copy(graph = updatedGraph, runningPart = updatedRunningPart)
-    } else {
-      IdleExecution(updatedGraph, selectedNodes)
-    }
+  override def abort: Execution = {
+    throw new IllegalStateException("Once aborted execution cannot be aborted again!")
   }
 
-  override def error: Option[FailureDescription] = runningPart.executionFailure
+  override protected def updateState(
+    updatedRunningPart: StatefulGraph,
+    updatedGraph: StatefulGraph): Execution = {
+    AbortedExecution(updatedGraph, updatedRunningPart, selectedNodes)
+  }
 }

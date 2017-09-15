@@ -51,7 +51,6 @@ class StatefulGraphSpec
     "disallow to change nodes' states when Completed" in {
       illegalToNodeFinishOrFail(completedGraph)
     }
-    "disallow to change nodes' states when Aborted" is pending
     "disallow to change nodes' states when Failed" in {
       val failedGraph = StatefulGraph(nodeSet, edgeSet).enqueue.fail(mock[FailureDescription])
       illegalToNodeFinishOrFail(failedGraph)
@@ -159,6 +158,28 @@ class StatefulGraphSpec
       running3.readyNodes should have size 2
       verifyNodeReady(idC, 1, running3)
       verifyNodeReady(idE, 2, running3)
+    }
+    "be still running after Abort until execution is finished" in {
+      val aborted = StatefulGraph(nodeSet, edgeSet)
+        .enqueue
+        .nodeStarted(idA)
+        .nodeFinished(idA, results(idA))
+        .nodeStarted(idB)
+        .nodeFinished(idB, results(idB))
+        .nodeStarted(idC)
+        .abort
+
+      aborted.states(idA) shouldBe 'Completed
+      aborted.states(idB) shouldBe 'Completed
+      aborted.states(idC) shouldBe 'Running
+      aborted.states(idD) shouldBe 'Aborted
+      aborted.states(idE) shouldBe 'Aborted
+      aborted.readyNodes shouldBe 'empty
+      aborted shouldBe 'Running
+
+      val finished = aborted.nodeFinished(idC, results(idC))
+      finished.readyNodes shouldBe 'empty
+      finished should not be 'Running
     }
     "be serializable" in {
       import io.deepsense.graph.DOperationTestClasses._

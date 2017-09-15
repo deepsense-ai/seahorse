@@ -30,7 +30,7 @@ import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
-import io.deepsense.workflowexecutor.partialexecution.{Execution, IdleExecution, RunningExecution}
+import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 /**
  * WorkflowExecutorActor coordinates execution of a workflow by distributing work to
@@ -52,8 +52,7 @@ class WorkflowExecutorActor(
   val progressReporter = WorkflowProgress()
   val workflowId = self.path.name
 
-  def launched(execution: RunningExecution): Receive = {
-    case NodeStarted(id) => nodeStarted(id)
+  def waitingForFinish(execution: Execution): PartialFunction[Any, Unit] = {
     case NodeCompleted(id, nodeExecutionResult) =>
       nodeCompleted(id,
         nodeExecutionResult,
@@ -64,6 +63,16 @@ class WorkflowExecutorActor(
       sendExecutionStatus(executionToStatus(execution))
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
+  }
+
+  def launched(execution: RunningExecution): Receive = {
+    waitingForFinish(execution)
+      .orElse {
+        case Abort() =>
+          val aborted = execution.abort
+          updateExecutionState(execution, aborted)
+        case NodeStarted(id) => nodeStarted(id)
+      }
   }
 
   private def reset(): Unit = {
@@ -82,7 +91,7 @@ class WorkflowExecutorActor(
   }
 
   override def receive: Receive = {
-    case Launch(graph, nodes) => // TODO: Pass DirectedGraph instead of StatefulGraph?
+    case Launch(graph, nodes) =>
       val execution = executionFactory.create(graph, nodes)
       launch(execution, nodes)
     case Connect(_) =>
@@ -95,11 +104,11 @@ class WorkflowExecutorActor(
     updateExecutionState(execution, enqueued)
   }
 
-  def updateExecutionState(originalExecution: Execution, executionInProcess: Execution): Unit = {
-    val updatedExecution = executionInProcess match {
+  def updateExecutionState(previous: Execution, current: Execution): Unit = {
+    val updated = current match {
       case idle: IdleExecution =>
         logger.debug(s"End of execution")
-        terminationListener.foreach(_ ! executionToStatus(executionInProcess))
+        terminationListener.foreach(_ ! executionToStatus(current))
         context.unbecome()
         context.become(finished(idle))
         idle
@@ -108,10 +117,15 @@ class WorkflowExecutorActor(
         context.unbecome()
         context.become(launched(launchedGraph))
         launchedGraph
+      case aborted: AbortedExecution =>
+        logger.debug("Becoming aborted! - waiting for running nodes to finish")
+        context.unbecome()
+        context.become(waitingForFinish(aborted))
+        aborted
     }
 
     val executionStatus: ExecutionStatus =
-      calculateExecutionStatus(originalExecution, updatedExecution)
+      calculateExecutionStatus(previous, updated)
     sendExecutionStatus(executionStatus)
   }
 

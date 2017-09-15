@@ -40,7 +40,7 @@ import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
 import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
-import io.deepsense.workflowexecutor.partialexecution.{Execution, IdleExecution, RunningExecution}
+import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 class WorkflowExecutorActorSpec
   extends TestKit(ActorSystem("WorkflowExecutorActorSpec"))
@@ -82,6 +82,38 @@ class WorkflowExecutorActorSpec
               status.nodes shouldBe execution.states
               status.resultEntities shouldBe EntitiesMap()
             }
+          }
+        }
+      }
+    }
+    "received Abort" should {
+      "abort all nodes and wait for execution end" in {
+        val (probe, wea, execution, _, statusListeners, _) =
+          launchedStateFixture(mock[RunningExecution])
+        val abortedExecution = mock[AbortedExecution]
+        val nodeId = Node.Id.randomId
+        when(execution.states).thenReturn(Map(
+          nodeId -> nodestate.Queued
+        ))
+
+        when(execution.abort).thenReturn(abortedExecution)
+        val abortedStates: Map[Id, NodeState] = Map(
+          nodeId -> nodestate.Aborted
+        )
+        when(abortedExecution.states).thenReturn(abortedStates)
+        when(abortedExecution.error).thenReturn(None)
+
+        probe.send(wea, Abort())
+        eventually {
+          verify(execution).abort
+        }
+
+        eventually {
+          statusListeners.foreach { receiver =>
+            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
+            status.executionFailure shouldBe None
+            status.nodes shouldBe abortedStates
+            status.resultEntities shouldBe EntitiesMap()
           }
         }
       }
