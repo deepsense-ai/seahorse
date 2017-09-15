@@ -20,12 +20,13 @@ collections:
     output: true
 
 versions:
-  - "1.3"
-  - "1.2"
-  - "1.1"
-  - "1.0"
+  - 1.3
+  - 1.2
+  - 1.1
+  - 1.0
 
-# These allow the documentation to be updated with newer releases
+SEAHORSE_LATEST_VERSION: 1.3
+
 WORKFLOW_EXECUTOR_VERSION: 0.4
 DEEPSENSE_VERSION_SHORT: 0.4
 
@@ -46,4 +47,3 @@ SPARK_DOCS: https://spark.apache.org/docs/1.6.1
 
 SPARK_ASSEMBLY_PATH: spark-assembly-1.6.1-hadoop2.6.0.jar
 
-SEAHORSE_LATEST_VERSION: 1.3

@@ -30,9 +30,14 @@
           <div class="navbar-brand">
             <a href="{{base}}"><img src="{{base}}/img/seahorse_logo.png" alt="deepsense.io Seahorse"></a>
             <label class="select-version">
-              <select onchange="location = this.value;">
+              <select onchange="location = this.value; this.selectedIndex = {{ site.versions | indexof: site.SEAHORSE_LATEST_VERSION }};">
                 {% for version in site.versions %}
-                  <option value="/{{version}}">{{version}}</option>
+                  <option value="/{{version}}"
+                          {% if version == site.SEAHORSE_LATEST_VERSION %}
+                          selected
+                          {% endif %}>
+                    {{version}}
+                  </option>
                 {% endfor %}
               </select>
             </label>
