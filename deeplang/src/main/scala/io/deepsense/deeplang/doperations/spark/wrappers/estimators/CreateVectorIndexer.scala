@@ -17,10 +17,10 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.PCA
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.VectorIndexer
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
-class CreateVectorIndexer extends EstimatorAsFactory[PCA] {
+class CreateVectorIndexer extends EstimatorAsFactory[VectorIndexer] {
 
   override val id: Id = "d62abcbf-1540-4d58-8396-a92b017f2ef0"
   override val name: String = "Vector Indexer"
