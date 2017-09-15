@@ -5,6 +5,7 @@ from tornado import web
 from nbformat import reads, writes, from_dict
 from traitlets import Unicode
 from datetime import datetime
+from urllib import error
 from .wmcheckpoints import WMCheckpoints
 import urllib
 import re
@@ -12,12 +13,34 @@ import re
 NBFORMAT_VERSION = 4
 DUMMY_CREATED_DATE = datetime.fromtimestamp(0)
 
+
 class WMContentsManager(ContentsManager):
     workflow_manager_url = Unicode(
         default_value="http://localhost:9080",
         allow_none=False,
         config=True,
         help="Workflow Manager URL",
+    )
+
+    kernel_name = Unicode(
+        default_value="pyspark",
+        allow_none=False,
+        config=True,
+        help="Default kernel name",
+    )
+
+    kernel_display_name = Unicode(
+        default_value="Python (Spark)",
+        allow_none=False,
+        config=True,
+        help="Default kernel display name",
+    )
+
+    kernel_python_version = Unicode(
+        default_value="2.7.10",
+        allow_none=False,
+        config=True,
+        help="Default kernel python version",
     )
 
     def _checkpoints_class_default(self):
@@ -46,10 +69,44 @@ class WMContentsManager(ContentsManager):
             "mimetype": None,
         }
 
+    def create_notebook(self):
+        return {
+            "cells": [],
+            "metadata": {
+                "kernelspec": {
+                    "display_name": self.kernel_display_name,
+                    "language": "python",
+                    "name": self.kernel_name
+                },
+                "language_info": {
+                    "name": "python",
+                    "version": self.kernel_python_version
+                }
+            },
+            "nbformat": NBFORMAT_VERSION,
+            "nbformat_minor": 0
+        }
+
+    def save_notebook(self, workflow_id, content_json, return_content=False):
+        notebook_url = self.get_wm_notebook_url(workflow_id)
+
+        try:
+            response = urllib.request.urlopen(notebook_url, content_json.encode("utf-8"))
+            if response.code == 201:
+                return self.create_model(content_json if return_content else None, workflow_id)
+            else:
+                raise web.HTTPError(response.status, response.msg)
+        except web.HTTPError:
+            raise
+        except error.HTTPError as e:
+            raise web.HTTPError(e.code, e.msg)
+        except Exception as e:
+            raise web.HTTPError(500, str(e))
+
     def get(self, path, content=True, type=None, format=None):
         workflow_id = self.get_workflow_id(path)
         if workflow_id is None:
-            raise web.HTTPError(400, "invalid path")
+            raise web.HTTPError(400, "Invalid path")
 
         try:
             notebook_url = self.get_wm_notebook_url(workflow_id)
@@ -61,30 +118,26 @@ class WMContentsManager(ContentsManager):
                 raise web.HTTPError(response.status, response.msg)
         except web.HTTPError:
             raise
+        except error.HTTPError as e:
+            if e.code == 404:
+                content_json = writes(from_dict(self.create_notebook()), NBFORMAT_VERSION)
+                return self.save_notebook(workflow_id, content_json, content)
+            else:
+                raise web.HTTPError(e.code, e.msg)
         except Exception as e:
             raise web.HTTPError(500, str(e))
 
     def save(self, model, path):
         workflow_id = self.get_workflow_id(path)
         if workflow_id is None:
-            raise web.HTTPError(400, "invalid path")
+            raise web.HTTPError(400, "Invalid path")
 
         if model['type'] != "notebook":
             model['message'] = "Cannot save object of type: {}".format(model['type'])
             return model
 
-        notebook_url = self.get_wm_notebook_url(workflow_id)
         content_json = writes(from_dict(model['content']), NBFORMAT_VERSION)
-        try:
-            response = urllib.request.urlopen(notebook_url, content_json.encode("utf-8"))
-            if response.code == 201:
-                return self.create_model(None, workflow_id)
-            else:
-                raise web.HTTPError(response.status, response.msg)
-        except web.HTTPError:
-            raise
-        except Exception as e:
-            raise web.HTTPError(500, str(e))
+        return self.save_notebook(workflow_id, content_json, False)
 
     def delete_file(self, path):
         raise web.HTTPError(400, "Unsupported: delete_file {}".format(path))
