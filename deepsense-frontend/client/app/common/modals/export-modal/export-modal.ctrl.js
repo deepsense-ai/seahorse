@@ -17,6 +17,7 @@ function ExportModalController(config, version, $uibModalInstance, $stateParams,
         .append(angular.element(`
           <iframe style="display: none" src="${WorkflowsApiClient.getDownloadWorkflowMethodUrl($stateParams.id)}"></iframe>
         `));
+      this.close();
     }
   });
 }
