@@ -139,7 +139,7 @@ There are at least two ways to overcome the problem:
 * Change user name to one with ASCII characters only
 * Change Vagrant home directory to one with ASCII characters only:
 
-        setx VAGRANT_HOME=c:\.vagrant.d
+        setx VAGRANT_HOME c:\.vagrant.d
 
 ## Upgrading Seahorse Desktop To the Latest Version
 If you want to replace your Seahorse with the newest version you need to invoke
