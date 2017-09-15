@@ -35,7 +35,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
 
       def testFit(op: Fit, expectedTransformer: Transformer): Unit = {
         val Vector(outputTransformer: Transformer) =
-          op.executeUntyped(Vector(mock[DataFrame], estimator))(mock[ExecutionContext])
+          op.executeUntyped(Vector(estimator, mock[DataFrame]))(mock[ExecutionContext])
         outputTransformer shouldBe expectedTransformer
       }
       val op1 = Fit()
@@ -51,7 +51,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
 
       val paramsForEstimator = JsObject(estimator.paramA.name -> JsNumber(2))
       val op = Fit().setEstimatorParams(paramsForEstimator)
-      op.executeUntyped(Vector(mock[DataFrame], estimator))(mock[ExecutionContext])
+      op.executeUntyped(Vector(estimator, mock[DataFrame]))(mock[ExecutionContext])
 
       estimator should have (theSameParamsAs (originalEstimator))
     }
@@ -61,7 +61,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
       def testInference(op: Fit, expectedTransformerKnowledge: DKnowledge[Transformer]): Unit = {
         val inputDF = DataFrame.forInference(createSchema())
         val (knowledge, warnings) =
-          op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(estimator)))(mock[InferContext])
+          op.inferKnowledgeUntyped(Vector(DKnowledge(estimator), DKnowledge(inputDF)))(mock[InferContext])
         // Currently, InferenceWarnings are always empty.
         warnings shouldBe InferenceWarnings.empty
         val Vector(transformerKnowledge) = knowledge
@@ -81,7 +81,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
       val paramsForEstimator = JsObject(estimator.paramA.name -> JsNumber(2))
       val op = Fit().setEstimatorParams(paramsForEstimator)
       val inputDF = DataFrame.forInference(createSchema())
-      op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(estimator)))(mock[InferContext])
+      op.inferKnowledgeUntyped(Vector(DKnowledge(estimator), DKnowledge(inputDF)))(mock[InferContext])
 
       estimator should have (theSameParamsAs (originalEstimator))
     }
@@ -92,7 +92,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
 
         val op = Fit()
         a[TooManyPossibleTypesException] shouldBe thrownBy {
-          op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(estimators)))(mock[InferContext])
+          op.inferKnowledgeUntyped(Vector(DKnowledge(estimators), DKnowledge(inputDF)))(mock[InferContext])
         }
       }
       "Estimator's dynamic parameters are invalid" in {
@@ -100,7 +100,7 @@ class FitSpec extends UnitSpec with DeeplangTestSupport {
         val estimator = new MockEstimator
         val fit = Fit().setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(-2)))
         a[DeepLangMultiException] shouldBe thrownBy {
-          fit.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(estimator)))(mock[InferContext])
+          fit.inferKnowledgeUntyped(Vector(DKnowledge(estimator), DKnowledge(inputDF)))(mock[InferContext])
         }
       }
     }

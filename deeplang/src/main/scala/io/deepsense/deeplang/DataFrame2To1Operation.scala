@@ -21,7 +21,13 @@ import org.apache.spark.sql.types.StructType
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
+import io.deepsense.deeplang.DPortPosition.DPortPosition
+
 trait DataFrame2To1Operation { self: DOperation2To1[DataFrame, DataFrame, DataFrame] =>
+
+  override def inPortsLayout: Vector[DPortPosition] =
+    Vector(DPortPosition.Left, DPortPosition.Right)
+
   override protected final def inferKnowledge(
       leftDataFrameKnowledge: DKnowledge[DataFrame],
       rightDataFrameKnowledge: DKnowledge[DataFrame])(

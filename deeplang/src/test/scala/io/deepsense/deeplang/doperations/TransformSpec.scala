@@ -34,7 +34,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
       val transformer = new MockTransformer
 
       def testTransform(op: Transform, expectedDataFrame: DataFrame): Unit = {
-        val Vector(outputDataFrame) = op.executeUntyped(Vector(createDataFrame(), transformer))(mock[ExecutionContext])
+        val Vector(outputDataFrame) = op.executeUntyped(Vector(transformer, createDataFrame()))(mock[ExecutionContext])
         outputDataFrame shouldBe expectedDataFrame
       }
 
@@ -52,7 +52,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
 
       val paramsForTransformer = JsObject(transformer.paramA.name -> JsNumber(2))
       val op = Transform().setTransformerParams(paramsForTransformer)
-      op.executeUntyped(Vector(mock[DataFrame], transformer))(mock[ExecutionContext])
+      op.executeUntyped(Vector(transformer, mock[DataFrame]))(mock[ExecutionContext])
 
       transformer should have (theSameParamsAs (originalTransformer))
     }
@@ -63,7 +63,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
       def testInference(op: Transform, expecteDataFrameKnowledge: DKnowledge[DataFrame]): Unit = {
         val inputDF = createDataFrame()
         val (knowledge, warnings) = op.inferKnowledgeUntyped(
-          Vector(DKnowledge(inputDF), DKnowledge(transformer)))(mock[InferContext])
+          Vector(DKnowledge(transformer), DKnowledge(inputDF)))(mock[InferContext])
         // Currently, InferenceWarnings are always empty.
         warnings shouldBe InferenceWarnings.empty
         val Vector(dataFrameKnowledge) = knowledge
@@ -85,7 +85,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
       val paramsForTransformer = JsObject(transformer.paramA.name -> JsNumber(2))
       val op = Transform().setTransformerParams(paramsForTransformer)
       val inputDF = DataFrame.forInference(createSchema())
-      op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(transformer)))(mock[InferContext])
+      op.inferKnowledgeUntyped(Vector(DKnowledge(transformer), DKnowledge(inputDF)))(mock[InferContext])
 
       transformer should have (theSameParamsAs (originalTransformer))
     }
@@ -96,7 +96,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
 
       val op = Transform()
       val (knowledge, warnings) =
-        op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(transformers)))(mock[InferContext])
+        op.inferKnowledgeUntyped(Vector(DKnowledge(transformers), DKnowledge(inputDF)))(mock[InferContext])
 
       knowledge shouldBe Vector(DKnowledge(DataFrame.forInference()))
       warnings shouldBe InferenceWarnings.empty
@@ -110,7 +110,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
           JsObject(transformer.paramA.name -> JsNumber(-2)))
 
         a [DeepLangMultiException] shouldBe thrownBy {
-          transform.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(transformer)))(mock[InferContext])
+          transform.inferKnowledgeUntyped(Vector(DKnowledge(transformer), DKnowledge(inputDF)))(mock[InferContext])
         }
       }
     }

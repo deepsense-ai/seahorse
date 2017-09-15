@@ -34,7 +34,7 @@ class GridSearchSpec extends UnitSpec with DeeplangTestSupport {
 
       val gridSearch = GridSearch()
       gridSearch.inferKnowledgeUntyped(
-          Vector(DKnowledge(inputDF), DKnowledge(estimator), DKnowledge(evaluator)))(mock[InferContext]) shouldBe
+          Vector(DKnowledge(estimator), DKnowledge(inputDF), DKnowledge(evaluator)))(mock[InferContext]) shouldBe
         (Vector(DKnowledge(Report())), InferenceWarnings.empty)
     }
     "throw Exception" when {
@@ -65,8 +65,8 @@ class GridSearchSpec extends UnitSpec with DeeplangTestSupport {
     val multiException = the [DeepLangMultiException] thrownBy {
       gridSearch.inferKnowledgeUntyped(
         Vector(
-          DKnowledge(inputDF),
           DKnowledge(estimator),
+          DKnowledge(inputDF),
           DKnowledge(evaluator)))(mock[InferContext])
     }
 

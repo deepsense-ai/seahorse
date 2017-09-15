@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe._
+
 import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.utils.Version
@@ -25,12 +26,15 @@ import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
+import io.deepsense.deeplang.doperations.layout.SmallBlockLayout2To2
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{DynamicParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To2, ExecutionContext}
 
 class FitPlusTransform
-  extends DOperation2To2[DataFrame, Estimator[Transformer], DataFrame, Transformer] with OperationDocumentation {
+  extends DOperation2To2[Estimator[Transformer], DataFrame, DataFrame, Transformer]
+    with SmallBlockLayout2To2
+    with OperationDocumentation {
 
   override val id: Id = "1cb153f1-3731-4046-a29b-5ad64fde093f"
   override val name: String = "Fit + Transform"
@@ -38,23 +42,23 @@ class FitPlusTransform
 
   override val since: Version = Version(1, 0, 0)
 
+  override lazy val tTagTI_0: TypeTag[Estimator[Transformer]] = typeTag[Estimator[Transformer]]
+  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag[DataFrame]
   override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
   override lazy val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
-  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag[Estimator[Transformer]]
 
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
     description = "These parameters are rendered dynamically, depending on type of Estimator.",
-    inputPort = 1)
+    inputPort = 0)
   setDefault(estimatorParams -> JsNull)
 
   def setEstimatorParams(jsValue: JsValue): this.type = set(estimatorParams -> jsValue)
   override val params: Array[Param[_]] = Array(estimatorParams)
 
   override protected def execute(
-      dataFrame: DataFrame,
-      estimator: Estimator[Transformer])(
+      estimator: Estimator[Transformer],
+      dataFrame: DataFrame)(
       context: ExecutionContext): (DataFrame, Transformer) = {
     val estimatorToRun = estimatorWithParams(estimator)
     val transformer: Transformer = estimatorToRun.fit(context)(())(dataFrame)
@@ -63,8 +67,8 @@ class FitPlusTransform
   }
 
   override protected def inferKnowledge(
-      inputDataFrameKnowledge: DKnowledge[DataFrame],
-      estimatorKnowledge: DKnowledge[Estimator[Transformer]])(
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]],
+      inputDataFrameKnowledge: DKnowledge[DataFrame])(
       context: InferContext)
       : ((DKnowledge[DataFrame], DKnowledge[Transformer]), InferenceWarnings) = {
 

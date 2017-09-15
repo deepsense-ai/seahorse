@@ -26,11 +26,15 @@ import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
+import io.deepsense.deeplang.doperations.layout.SmallBlockLayout2To1
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Transformer] with OperationDocumentation {
+case class Fit()
+  extends DOperation2To1[Estimator[Transformer], DataFrame, Transformer]
+    with SmallBlockLayout2To1
+    with OperationDocumentation {
 
   override val id: Id = "0c2ff818-977b-11e5-8994-feff819cdc9f"
   override val name: String = "Fit"
@@ -42,27 +46,27 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Trans
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
     description = "These parameters are rendered dynamically, depending on type of Estimator.",
-    inputPort = 1)
+    inputPort = 0)
   setDefault(estimatorParams -> JsNull)
 
   def setEstimatorParams(jsValue: JsValue): this.type = set(estimatorParams -> jsValue)
 
   override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(estimatorParams)
 
-  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
-  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag
+  override lazy val tTagTI_0: TypeTag[Estimator[Transformer]] = typeTag
+  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag
   override lazy val tTagTO_0: TypeTag[Transformer] = typeTag
 
   override protected def execute(
-      dataFrame: DataFrame,
-      estimator: Estimator[Transformer])(
+      estimator: Estimator[Transformer],
+      dataFrame: DataFrame)(
       ctx: ExecutionContext): Transformer = {
     estimatorWithParams(estimator).fit(ctx)(())(dataFrame)
   }
 
   override protected def inferKnowledge(
-      dataFrameKnowledge: DKnowledge[DataFrame],
-      estimatorKnowledge: DKnowledge[Estimator[Transformer]])(
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]],
+      dataFrameKnowledge: DKnowledge[DataFrame])(
       ctx: InferContext)
     : (DKnowledge[Transformer], InferenceWarnings) = {
 

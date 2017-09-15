@@ -22,6 +22,7 @@ import io.deepsense.commons.models
 import io.deepsense.commons.utils.{CollectionExtensions, Logging}
 import io.deepsense.deeplang.DPortPosition.DPortPosition
 import io.deepsense.deeplang.documentation.OperationDocumentation
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.graph.{GraphKnowledge, Operation}
@@ -44,18 +45,21 @@ abstract class DOperation extends Operation
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 
-  def inPortsLayout: Vector[DPortPosition] = defaultPortLayout(inPortTypes)
+  def inPortsLayout: Vector[DPortPosition] = defaultPortLayout(inPortTypes, GravitateLeft)
 
   def outPortTypes: Vector[ru.TypeTag[_]]
 
-  def outPortsLayout: Vector[DPortPosition] = defaultPortLayout(outPortTypes)
+  def outPortsLayout: Vector[DPortPosition] = defaultPortLayout(outPortTypes, GravitateRight)
 
-  private def defaultPortLayout(portTypes: Vector[ru.TypeTag[_]]): Vector[DPortPosition] = {
+  private def defaultPortLayout(portTypes: Vector[ru.TypeTag[_]], gravity: Gravity): Vector[DPortPosition] = {
     import DPortPosition._
     portTypes.size match {
       case 0 => Vector.empty
       case 1 => Vector(Center)
-      case 2 => Vector(Left, Center)
+      case 2 => gravity match {
+        case GravitateLeft => Vector(Left, Center)
+        case GravitateRight => Vector(Center, Right)
+      }
       case 3 => Vector(Left, Center, Right)
       case other => throw new IllegalStateException(s"Unsupported number of output ports: $other")
     }

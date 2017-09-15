@@ -37,9 +37,9 @@ class FitPlusTransformSpec extends UnitSpec {
 
         def testExecute(
           op: FitPlusTransform,
-          expectedTransformer: Transformer,
-          expectedDataFrame: DataFrame): Unit = {
-          val results = op.executeUntyped(Vector(mock[DataFrame], estimator))(mock[ExecutionContext])
+          expectedDataFrame: DataFrame,
+          expectedTransformer: Transformer): Unit = {
+          val results = op.executeUntyped(Vector(estimator, mock[DataFrame]))(mock[ExecutionContext])
           val outputDataFrame = results(0).asInstanceOf[DataFrame]
           val outputTransformer = results(1).asInstanceOf[Transformer]
 
@@ -47,9 +47,9 @@ class FitPlusTransformSpec extends UnitSpec {
           outputTransformer shouldBe expectedTransformer
         }
 
-        testExecute(fpt, transformer1, transformedDataFrame1)
+        testExecute(fpt, transformedDataFrame1, transformer1)
         fpt.setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(2)))
-        testExecute(fpt, transformer2, transformedDataFrame2)
+        testExecute(fpt, transformedDataFrame2, transformer2)
         estimator.extractParamMap() shouldBe initialParametersValues
       }
 
@@ -62,25 +62,25 @@ class FitPlusTransformSpec extends UnitSpec {
 
         def testInference(
           op: FitPlusTransform,
-          expectedTransformerKnowledge: DKnowledge[Transformer],
-          expectedDataFrameKnowledge: DKnowledge[DataFrame]): Unit = {
+          expectedDataFrameKnowledge: DKnowledge[DataFrame],
+          expectedTransformerKnowledge: DKnowledge[Transformer]): Unit = {
           val (Vector(outputDataFrameKnowledge, outputTransformerKnowledge), _) =
-            op.inferKnowledgeUntyped(Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimator)))(mock[InferContext])
+            op.inferKnowledgeUntyped(Vector(DKnowledge(estimator), mock[DKnowledge[DataFrame]]))(mock[InferContext])
 
           outputDataFrameKnowledge shouldBe expectedDataFrameKnowledge
           outputTransformerKnowledge shouldBe expectedTransformerKnowledge
         }
 
-        testInference(fpt, transformerKnowledge1, transformedDataFrameKnowledge1)
+        testInference(fpt, transformedDataFrameKnowledge1, transformerKnowledge1)
         fpt.setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(2)))
-        testInference(fpt, transformerKnowledge2, transformedDataFrameKnowledge2)
+        testInference(fpt, transformedDataFrameKnowledge2, transformerKnowledge2)
         estimator.extractParamMap() shouldBe initialParametersValues
       }
       "throw exceptions" when {
         "input Estimator Knowledge consist more than one type" in {
           val estimators = Set[DOperable](new MockEstimator, new MockEstimator)
           val inputKnowledge: Vector[DKnowledge[DOperable]] =
-            Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimators))
+            Vector(DKnowledge(estimators), mock[DKnowledge[DataFrame]])
           val fpt = new FitPlusTransform
           a[TooManyPossibleTypesException] shouldBe thrownBy {
             fpt.inferKnowledgeUntyped(inputKnowledge)(mock[InferContext])
@@ -89,7 +89,7 @@ class FitPlusTransformSpec extends UnitSpec {
         "Estimator's dynamic parameters are invalid" in {
           val estimator = new MockEstimator
           val inputKnowledge: Vector[DKnowledge[DOperable]] =
-            Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimator))
+            Vector(DKnowledge(estimator), mock[DKnowledge[DataFrame]])
           val fpt = new FitPlusTransform
           fpt.setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(-2)))
           a[DeepLangMultiException] shouldBe thrownBy {

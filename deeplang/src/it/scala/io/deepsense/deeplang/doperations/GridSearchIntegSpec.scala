@@ -44,7 +44,7 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
       gridSearch.setEstimatorParams(estimatorParams)
       gridSearch.setNumberOfFolds(2)
 
-      val results = gridSearch.executeUntyped(Vector(dataFrame, estimator, evaluator))(executionContext)
+      val results = gridSearch.executeUntyped(Vector(estimator, dataFrame, evaluator))(executionContext)
       val report = results.head.asInstanceOf[Report]
 
       val tables = report.content.tables
@@ -82,7 +82,7 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
 
         a[ColumnDoesNotExistException] should be thrownBy {
           gridSearch.inferKnowledgeUntyped(
-            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))(
+            Vector(DKnowledge(estimator), DKnowledge(dataFrame), DKnowledge(evaluator)))(
             executionContext.inferContext)
         }
       }
@@ -101,7 +101,7 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
 
         a[ColumnDoesNotExistException] should be thrownBy {
           gridSearch.inferKnowledgeUntyped(
-            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))(
+            Vector(DKnowledge(estimator), DKnowledge(dataFrame), DKnowledge(evaluator)))(
             executionContext.inferContext)
         }
       }

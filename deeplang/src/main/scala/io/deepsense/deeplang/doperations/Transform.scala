@@ -25,11 +25,15 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.layout.SmallBlockLayout2To1
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame] with OperationDocumentation {
+case class Transform()
+  extends DOperation2To1[Transformer, DataFrame, DataFrame]
+    with SmallBlockLayout2To1
+    with OperationDocumentation {
 
   override val id: Id = "643d8706-24db-4674-b5b4-10b5129251fc"
   override val name: String = "Transform"
@@ -41,7 +45,7 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
   val transformerParams = new DynamicParam(
     name = "Parameters of input Transformer",
     description = "These parameters are rendered dynamically, depending on type of Transformer.",
-    inputPort = 1)
+    inputPort = 0)
   setDefault(transformerParams, JsNull)
 
   def getTransformerParams: JsValue = $(transformerParams)
@@ -49,20 +53,20 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
 
   override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(transformerParams)
 
-  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
-  override lazy val tTagTI_1: TypeTag[Transformer] = typeTag
+  override lazy val tTagTI_0: TypeTag[Transformer] = typeTag
+  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag
   override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag
 
   override protected def execute(
-      dataFrame: DataFrame,
-      transformer: Transformer)(
+      transformer: Transformer,
+      dataFrame: DataFrame)(
       context: ExecutionContext): DataFrame = {
     transformerWithParams(transformer).transform(context)(())(dataFrame)
   }
 
   override protected def inferKnowledge(
-      dataFrameKnowledge: DKnowledge[DataFrame],
-      transformerKnowledge: DKnowledge[Transformer])(
+      transformerKnowledge: DKnowledge[Transformer],
+      dataFrameKnowledge: DKnowledge[DataFrame])(
       context: InferContext): (DKnowledge[DataFrame], InferenceWarnings) = {
 
     if (transformerKnowledge.size > 1) {

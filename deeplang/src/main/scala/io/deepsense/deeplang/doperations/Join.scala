@@ -25,6 +25,7 @@ import org.apache.spark.sql.types.StructType
 import io.deepsense.commons.types.SparkConversions
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.DPortPosition.DPortPosition
 import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
@@ -32,7 +33,7 @@ import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.{NameColumnSelection, SingleColumnSelection}
-import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
+import io.deepsense.deeplang.{DOperation2To1, DPortPosition, DataFrame2To1Operation, ExecutionContext}
 
 case class Join()
   extends DOperation2To1[DataFrame, DataFrame, DataFrame]

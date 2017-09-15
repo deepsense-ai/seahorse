@@ -17,16 +17,18 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.DPortPosition.DPortPosition
 import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
+import io.deepsense.deeplang.{DOperation2To1, DPortPosition, DataFrame2To1Operation, ExecutionContext}
 import io.deepsense.sparkutils.SQL
 
 case class Union()
@@ -39,6 +41,10 @@ case class Union()
   override val name: String = "Union"
   override val description: String =
     "Creates a DataFrame containing all rows from both input DataFrames"
+
+
+  override def inPortsLayout: Vector[DPortPosition] =
+    Vector(DPortPosition.Left, DPortPosition.Right)
 
   override val since: Version = Version(0, 4, 0)
 

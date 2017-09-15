@@ -40,7 +40,7 @@ import io.deepsense.deeplang.{DKnowledge, DOperation3To1, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, ReportType, Table}
 
 case class GridSearch()
-  extends DOperation3To1[DataFrame, Estimator[Transformer], Evaluator, Report] with OperationDocumentation {
+  extends DOperation3To1[Estimator[Transformer], DataFrame, Evaluator, Report] with OperationDocumentation {
 
   override val name: String = "Grid Search"
   override val id: Id = "9163f706-eaaf-46f6-a5b0-4114d92032b7"
@@ -52,7 +52,7 @@ case class GridSearch()
   val estimatorParams = new GridSearchParam(
     name = "Parameters of input Estimator",
     description = "These parameters are rendered dynamically, depending on type of Estimator.",
-    inputPort = 1)
+    inputPort = 0)
   setDefault(estimatorParams, JsNull)
 
   val evaluatorParams = new DynamicParam(
@@ -83,14 +83,14 @@ case class GridSearch()
   override val params: Array[io.deepsense.deeplang.params.Param[_]] =
     Array(estimatorParams, evaluatorParams, numberOfFolds)
 
-  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
-  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag
+  override lazy val tTagTI_0: TypeTag[Estimator[Transformer]] = typeTag
+  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag
   override lazy val tTagTI_2: TypeTag[Evaluator] = typeTag
   override lazy val tTagTO_0: TypeTag[Report] = typeTag
 
   override protected def execute(
-      dataFrame: DataFrame,
       estimator: Estimator[Transformer],
+      dataFrame: DataFrame,
       evaluator: Evaluator)(
       context: ExecutionContext): Report = {
 
@@ -113,8 +113,8 @@ case class GridSearch()
 
 
   override protected def inferKnowledge(
-      dataFrameKnowledge: DKnowledge[DataFrame],
       estimatorKnowledge: DKnowledge[Estimator[Transformer]],
+      dataFrameKnowledge: DKnowledge[DataFrame],
       evaluatorKnowledge: DKnowledge[Evaluator])(
       context: InferContext): (DKnowledge[Report], InferenceWarnings) = {
 

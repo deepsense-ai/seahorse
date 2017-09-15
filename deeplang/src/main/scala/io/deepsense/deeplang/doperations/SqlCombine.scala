@@ -29,7 +29,8 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarnings, SqlSchemaInferrer}
 import io.deepsense.deeplang.params.exceptions.ParamsEqualException
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
-import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
+import io.deepsense.deeplang.{DOperation2To1, DPortPosition, DataFrame2To1Operation, ExecutionContext}
+import io.deepsense.deeplang.DPortPosition.DPortPosition
 import io.deepsense.sparkutils.{SQL, SparkSQLSession}
 
 final class SqlCombine
@@ -40,6 +41,9 @@ final class SqlCombine
   override val id: Id = "8f254d75-276f-48b7-872d-e4a18b6a86c6"
   override val name: String = "SQL Combine"
   override val description: String = "Combines two DataFrames into one using custom SQL"
+
+  override def inPortsLayout: Vector[DPortPosition] =
+    Vector(DPortPosition.Left, DPortPosition.Right)
 
   val leftTableName = StringParam(
     name = "Left dataframe id",
