@@ -540,7 +540,7 @@ class WorkflowExecutorActorSpec
       }
     val commonExecutionContext = mock[CommonExecutionContext]
     val inferContext =
-      InferContext(null, null, Executor.createDOperableCatalog(), fullInference = true)
+      InferContext(null, null, Executor.createDOperableCatalog())
     when(commonExecutionContext.inferContext).thenReturn(inferContext)
     val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(
       new SessionWorkflowExecutorActor(

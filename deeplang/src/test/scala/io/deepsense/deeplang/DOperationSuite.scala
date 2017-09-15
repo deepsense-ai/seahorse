@@ -81,7 +81,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
     val h = new DOperableCatalog
     h.registerDOperable[A1]()
     h.registerDOperable[A2]()
-    val context = createInferContext(h, fullInference = false)
+    val context = createInferContext(h)
 
     val knowledge = Vector[DKnowledge[DOperable]](DKnowledge(A1()), DKnowledge(A2()))
     val (result, warnings) = firstPicker.inferKnowledge(context)(knowledge)
@@ -116,7 +116,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
     val h = new DOperableCatalog
     h.registerDOperable[A1]()
     h.registerDOperable[A2]()
-    val context = createInferContext(h, fullInference = false)
+    val context = createInferContext(h)
 
     val (results, warnings) = generator.inferKnowledge(context)(Vector())
     assert(results == Vector(DKnowledge(A1(), A2())))

@@ -49,8 +49,7 @@ trait Executor extends Logging {
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
       tenantId,
-      catalog,
-      fullInference = true)
+      catalog)
 
     CommonExecutionContext(
       sparkContext,

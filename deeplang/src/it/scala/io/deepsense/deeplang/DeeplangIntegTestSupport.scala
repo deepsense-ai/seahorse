@@ -60,8 +60,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
       "testTenantId",
-      dOperableCatalog = null,
-      fullInference = true)
+      dOperableCatalog = null)
 
     new MockedCommonExecutionContext(
       sparkContext,
@@ -78,8 +77,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
       "testTenantId",
-      dOperableCatalog = null,
-      fullInference = true)
+      dOperableCatalog = null)
 
     new MockedExecutionContext(
       sparkContext,

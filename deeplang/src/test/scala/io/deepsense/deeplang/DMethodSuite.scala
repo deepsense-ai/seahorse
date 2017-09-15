@@ -49,7 +49,7 @@ class DMethodSuite extends FunSuite with DeeplangTestSupport {
     h.registerDOperable[A]()
     h.registerDOperable[B]()
 
-    val context = createInferContext(h, fullInference = false)
+    val context = createInferContext(h)
     val (result, warnings) = c.f.infer(context)(2)(DKnowledge(new A()))
     assert(result == DKnowledge(new B()))
     assert(warnings == InferenceWarnings.empty)
@@ -76,7 +76,7 @@ class DMethodSuite extends FunSuite with DeeplangTestSupport {
     h.registerDOperable[A]()
     h.registerDOperable[B]()
 
-    val context = createInferContext(h, fullInference = false)
+    val context = createInferContext(h)
     val (result, warnings) = c.f.infer(context)(2)()
     assert(result == DKnowledge(new A()))
     assert(warnings == mockedWarnings)
