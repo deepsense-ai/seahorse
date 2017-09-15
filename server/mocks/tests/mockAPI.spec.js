@@ -5,7 +5,7 @@
  */
 'use strict';
 
-var mock   = require('../mockAPI.js');
+var mock   = require('./../mockAPI.js');
 var stream = require('stream');
 
 describe('Mock test', function() {

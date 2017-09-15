@@ -52,7 +52,7 @@ module.exports = function mockDB(apiConfig) {
         orm .collections.mock.create({id: 1, version: 1}).then((result) => {
           console.log('creating mock UI data');
           let experimentModel = apiConfig.localDB.collections.experiment;
-          fs.readFile(__dirname + '/fixtures/experiments.json', 'utf-8', (error, data) => {
+          fs.readFile(__dirname + '/mocks/fixtures/experiments.json', 'utf-8', (error, data) => {
             if (error) {
               console.error('error while reading experiments list file', error);
               return;
@@ -61,7 +61,7 @@ module.exports = function mockDB(apiConfig) {
             for (let i = 0, k = data.experiments.length; i < k; i++) {
               let id = data.experiments[i].id;
               experimentModel.create({id: id}).then((result) => {
-                fs.readFile(__dirname + '/fixtures/experiments.'+ id +'.json', 'utf-8',
+                fs.readFile(__dirname + '/mocks/fixtures/experiments.'+ id +'.json', 'utf-8',
                   (error, item) => {
                     if (error) {
                       console.error('error while reading experiment data file', error);

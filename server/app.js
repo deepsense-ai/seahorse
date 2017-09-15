@@ -16,8 +16,8 @@ require('./api/ormHandler.js')((orm) => {
   apiConfig.localDB = orm;
 
   // mock
-  require('./mockDB.js')(apiConfig);
-  app.use('/apimock/V1', require('./mockAPI.js'));
+  require('./mocks/mockDB.js')(apiConfig);
+  app.use('/apimock/V1', require('./mocks/mockAPI.js'));
 
   // api proxy
   apiConfig = experimentHandler(apiConfig);
