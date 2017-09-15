@@ -43,7 +43,7 @@ module.exports = function apiProxy(config) {
         } else {
           let data = JSON.parse(source);
           request.customHandler(data, request).then((data) => {
-            responseWriteHead.call(response, 200, {"Content-Type": "application/json"});
+            responseWriteHead.call(response, 200, {'Content-Type': 'application/json'});
             responseWrite.call(response, JSON.stringify(data, true, 2));
             responseEnd.call(response);
           }).fail((error) => {
@@ -56,6 +56,8 @@ module.exports = function apiProxy(config) {
       };
       response.writeHead = () => {};
       response.end = () => {};
+    } else {
+      response.header('Content-Type', 'application/json');
     }
   });
 
