@@ -22,7 +22,8 @@ function OperationsFactory(OperationsApiClient, $q, $log) {
     'a88eaf35-9061-4714-b042-ddd2049ce917': 'fa-tachometer', // Evaluate
     '9163f706-eaaf-46f6-a5b0-4114d92032b7': 'fa-table', // Grid Search
     'e76ca616-0322-47a5-b390-70c9668265dd': 'sa-python', // Python Notebook
-    '89198bfd-6c86-40de-8238-68f7e0a0b50e': 'sa-r' // R Notebook
+    '89198bfd-6c86-40de-8238-68f7e0a0b50e': 'sa-r', // R Notebook
+    '08752b37-3f90-4b8d-8555-e911e2de5662': 'fa-exclamation-circle' // Unknown operation
   };
 
   const DEFAULT_ICON = 'fa-square';
