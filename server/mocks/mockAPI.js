@@ -14,9 +14,20 @@ module.exports = function(req, res, next) {
   var p = '/fixtures/' + uri.replace(/\//g,'.').substr(1) + '.json';
   var filename = __dirname + p;
 
-  var readStream = fs.createReadStream(filename);
-  readStream.on('open', function () {
-    readStream.pipe(res);
+  var readStream = fs.createReadStream(filename),
+      data = '';
+
+  readStream.on('data', function (source) {
+    data += source;
+  });
+
+  readStream.on('end', function () {
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Content-Length': data.length
+    });
+    res.write(data);
+    res.end();
   });
 
   readStream.on('error', function(err) {
