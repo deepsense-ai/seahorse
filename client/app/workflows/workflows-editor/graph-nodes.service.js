@@ -40,7 +40,7 @@ class GraphNodesService {
     let node = workflow.createNode(params);
     workflow.addNode(node);
     return node;
-  };
+  }
 
   cloneNodes(workflow, nodes) {
     let cloningNodeIds = nodes.map(node => node.id);

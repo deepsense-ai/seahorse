@@ -33,7 +33,7 @@ class NodeCopyPasteVisitor {
 
   pasteUsingSerializedData(serializedData) {
     let nodeIds = serializedData.split(',');
-    let workflow = this.WorkflowService.getWorkflow();
+    let workflow = this.WorkflowsEditorController.getWorkflow();
     let nodes = nodeIds.map(workflow.getNodeById);
 
     let nodeParametersPromises = _.map(nodes, node => {

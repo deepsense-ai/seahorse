@@ -2,12 +2,11 @@
 
 /* beautify preserve:start */
 import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
-import WorkflowReports from './workflows-editor.reports.js';
 /* beautify preserve:end */
 
 import NodeCopyPasteVisitor from './node-copy-paste-visitor.js';
 
-class WorkflowsEditorController extends WorkflowReports {
+class WorkflowsEditorController {
 
   // TODO Try to use this instead of long constructors with boilerplate?
   // http://stackoverflow.com/questions/27529518/automatically-set-arguments-as-instance-properties-in-es6
@@ -20,9 +19,7 @@ class WorkflowsEditorController extends WorkflowReports {
     ConfirmationModalService, ExportModalService, GraphNodesService,
     NotificationService, ServerCommunication, CopyPasteService, SideBarService, WorkflowStatusBarService) {
 
-    super($scope, $rootScope, Report, PageService, Operations, GraphPanelRendererService,
-      WorkflowService);
-
+    this.Report = Report;
     this.ServerCommunication = ServerCommunication;
     this.PageService = PageService;
     this.WorkflowService = WorkflowService;
@@ -59,18 +56,44 @@ class WorkflowsEditorController extends WorkflowReports {
   }
 
   loadReports(data) {
-    if (!_.isEmpty(data.resultEntities)) {
-      super.init(data.resultEntities);
-      super.initListeners(data.resultEntities);
+    let report = data.resultEntities;
+    if (!_.isEmpty(report)) {
+      this.WorkflowService.getMainWorkflow().setPortTypesFromReport(report);
+      this.Report.createReportEntities(report.id, report);
+      this._initReportListeners();
       this.$scope.$applyAsync(() => {
         this.GraphPanelRendererService.rerender(this.workflow);
       });
     }
   }
 
+  _initReportListeners() {
+    if (this.inited) {
+      return false;
+    }
+
+    this.$scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
+      let workflowId = data.workflowId;
+      let workflow = this.WorkflowService.getWorkflowById(workflowId);
+      let node = workflow.getNodeById(data.portObject.nodeId);
+      let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
+
+      if (this.Report.hasReportEntity(reportEntityId)) {
+        this.Report.getReport(reportEntityId).then(report => {
+          this.reportName = '';
+          this.report = report;
+          this.reportName = report.name;
+          this.Report.openReport();
+        });
+      }
+    });
+
+    this.inited = true;
+  }
+
   init(workflowWithResults) {
     this.PageService.setTitle('Workflow editor');
-    this.workflow = this.WorkflowService.createWorkflow(workflowWithResults, this.Operations.getData());
+    this.workflow = this.WorkflowService.initMainWorkflow(workflowWithResults);
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
     this.CopyPasteService.registerCopyPasteVisitor(this.nodeCopyPasteVisitor);

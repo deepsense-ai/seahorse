@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient) {
+function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations) {
 
   let internal = {};
 
@@ -9,17 +9,34 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
 
     constructor() {
       // TODO Internal state to be removed
-      internal.workflow = null;
+      internal.mainWorkflow = null;
+      internal.workflowById = {};
       this.init();
     }
 
     init() {
       WorkflowsApiClient.getAllWorkflows().then((data) => {
-        internal.workflows = data;
+        internal.workflowsData = data;
       });
     }
 
-    createWorkflow(workflowData, operations) {
+    getWorkflowById(workflowId) {
+      return internal.workflowById[workflowId];
+    }
+
+    initMainWorkflow(workflowData) {
+      let workflow = this._createWorkflowFromWorkflowData(workflowData);
+
+      internal.mainWorkflow = workflow;
+      internal.workflowById[workflow.id] = workflow;
+
+      // TODO Traverse over workflow and add all inner workflows to map.
+
+      return workflow;
+    }
+
+    _createWorkflowFromWorkflowData(workflowData) {
+      let operations = Operations.getData();
       let workflow = new Workflow();
       let thirdPartyData = workflowData.thirdPartyData || {};
       workflow.id = workflowData.id;
@@ -29,13 +46,11 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
       workflow.createEdges(workflowData.workflow.connections);
       workflow.updateEdgesStates(OperationsHierarchyService);
-      // TODO Internal state to be removed
-      internal.workflow = workflow;
       return workflow;
     }
 
     isWorkflowRunning() {
-      let statuses = _.chain(internal.workflow.getNodes())
+      let statuses = _.chain(internal.mainWorkflow.getNodes())
         .map((node) => {
           return node.state;
         })
@@ -50,55 +65,54 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       return idx !== -1;
     }
 
-    // TODO Internal state to be removed
-    getWorkflow() {
-      return internal.workflow;
+    getMainWorkflow() {
+      return internal.mainWorkflow;
     }
 
     getPredefColors() {
-      return internal.workflow.predefColors;
+      return internal.mainWorkflow.predefColors;
     }
 
     clearGraph() {
-      internal.workflow.clearGraph();
+      internal.mainWorkflow.clearGraph();
     }
 
     clearWorkflow() {
-      internal.workflow = null;
+      internal.mainWorkflow = null;
     }
 
     updateTypeKnowledge(knowledge) {
-      internal.workflow.updateTypeKnowledge(knowledge);
+      internal.mainWorkflow.updateTypeKnowledge(knowledge);
     }
 
     updateEdgesStates() {
-      internal.workflow.updateEdgesStates(OperationsHierarchyService);
+      internal.mainWorkflow.updateEdgesStates(OperationsHierarchyService);
     }
 
     workflowIsSet() {
-      return !_.isNull(internal.workflow);
+      return !_.isNull(internal.mainWorkflow);
     }
 
     getAllWorkflows() {
-      return internal.workflows;
+      return internal.workflowsData;
     }
 
     saveWorkflow() {
-      return WorkflowsApiClient.updateWorkflow(internal.workflow.serialize());
+      return WorkflowsApiClient.updateWorkflow(internal.mainWorkflow.serialize());
     }
 
     removeWorkflowFromList(workflowId) {
-      let foundWorkflow = internal.workflows.find((workflow) => workflow.id === workflowId);
-      let workflowIndex = internal.workflows.indexOf(foundWorkflow);
+      let foundWorkflow = internal.workflowsData.find((workflow) => workflow.id === workflowId);
+      let workflowIndex = internal.workflowsData.indexOf(foundWorkflow);
       if (workflowIndex >= 0) {
-        internal.workflows.splice(workflowIndex, 1);
+        internal.workflowsData.splice(workflowIndex, 1);
       }
     }
 
     deleteWorkflow(workflowId) {
       WorkflowsApiClient.deleteWorkflow(workflowId).then(() => {
-        if (internal.workflow && internal.workflow.id === workflowId) {
-          internal.workflow = null;
+        if (internal.mainWorkflow && internal.mainWorkflow.id === workflowId) {
+          internal.mainWorkflow = null;
         }
         this.removeWorkflowFromList(workflowId);
       });

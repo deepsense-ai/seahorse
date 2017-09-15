@@ -212,7 +212,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
           reference: port,
           portObject: ports[i],
-          event: event
+          event: event,
+          workflowId: workflow.id,
         });
 
         event.stopPropagation();

@@ -8,7 +8,7 @@ class MultiSelection {
     };
     this.restrict = 'A';
   }
-  link(scope, element, attrs) {
+  link(scope, element) {
     let that = {};
 
     const CLASS_NAME = 'selection-element';
@@ -45,7 +45,7 @@ class MultiSelection {
     };
 
     that._getWorkflowFromInheritedScope = () => {
-      return scope.flowChartBoxCtrl.workflow
+      return scope.flowChartBoxCtrl.workflow;
     };
 
     that.startPainting = () => {
