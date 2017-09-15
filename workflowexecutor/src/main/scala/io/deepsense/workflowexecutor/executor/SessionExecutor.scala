@@ -81,6 +81,9 @@ case class SessionExecutor(
     val seahorsePublisher = communicationFactory.createPublisher(
       MQCommunication.Topic.seahorsePublicationTopic,
       MQCommunication.Actor.Publisher.seahorse)
+    val notebookPublisher = communicationFactory.createPublisher(
+      MQCommunication.Topic.notebookPublicationTopic,
+      MQCommunication.Actor.Publisher.notebook)
 
     val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
       sparkContext,
@@ -91,6 +94,7 @@ case class SessionExecutor(
       statusLogger,
       workflowManagerClientActor,
       seahorsePublisher,
+      notebookPublisher,
       config.getInt("workflow-manager.timeout")), "workflows")
 
     val notebookSubscriberActor = system.actorOf(
@@ -98,11 +102,9 @@ case class SessionExecutor(
         "user/" + MQCommunication.Actor.Publisher.notebook,
         pythonExecutionCaretaker.gatewayListeningPort _),
       MQCommunication.Actor.Subscriber.notebook)
-    communicationFactory.createCommunicationChannel(
+    communicationFactory.registerSubscriber(
       MQCommunication.Topic.notebookSubscriptionTopic,
-      MQCommunication.Topic.notebookPublicationTopic,
-      notebookSubscriberActor,
-      MQCommunication.Actor.Publisher.notebook)
+      notebookSubscriberActor)
 
     val workflowsSubscriberActor = system.actorOf(
       WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory),
@@ -112,6 +114,7 @@ case class SessionExecutor(
       workflowsSubscriberActor)
 
     seahorsePublisher ! Ready()
+    notebookPublisher ! Ready()
 
     system.awaitTermination()
     cleanup(sparkContext, pythonExecutionCaretaker)

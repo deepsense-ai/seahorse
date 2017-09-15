@@ -80,6 +80,7 @@ class ExecutionDispatcherActorSpec
         TestProbe().ref,
         TestProbe().ref,
         TestProbe().ref,
+        TestProbe().ref,
         5
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
@@ -141,7 +142,7 @@ class ExecutionDispatcherActorSpec
       reportLevel: ReportLevel)
     extends ExecutionDispatcherActor(
       sparkContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
-      reportLevel, TestProbe().ref, TestProbe().ref, TestProbe().ref, 5) {
+      reportLevel, TestProbe().ref, TestProbe().ref, TestProbe().ref, TestProbe().ref, 5) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
 

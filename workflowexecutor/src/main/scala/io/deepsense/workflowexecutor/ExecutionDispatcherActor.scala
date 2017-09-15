@@ -38,6 +38,7 @@ class ExecutionDispatcherActor(
     statusLogger: ActorRef,
     workflowManagerClientActor: ActorRef,
     seahorseTopicPublisher: ActorRef,
+    notebookTopicPublisher: ActorRef,
     wmTimeout: Int)
   extends Actor
   with Logging
@@ -64,6 +65,7 @@ class ExecutionDispatcherActor(
     logger.warn("ExecutionDispatcherActor restarted.", reason)
     logger.debug("Sending Ready message to seahorse topic.")
     seahorseTopicPublisher ! Ready()
+    notebookTopicPublisher ! Ready()
   }
 
   private def findExecutor(workflowId: Workflow.Id): Option[ActorRef] = {
@@ -152,6 +154,7 @@ object ExecutionDispatcherActor {
       statusLogger: ActorRef,
       workflowManagerClientActor: ActorRef,
       seahorseTopicPublisher: ActorRef,
+      notebookTopicPublisher: ActorRef,
       wmTimeout: Int): Props =
     Props(new ExecutionDispatcherActor(
       sparkContext,
@@ -162,6 +165,7 @@ object ExecutionDispatcherActor {
       statusLogger,
       workflowManagerClientActor,
       seahorseTopicPublisher,
+      notebookTopicPublisher,
       wmTimeout
     ) with WorkflowExecutorsFactoryImpl
       with ExecutorFinderImpl)
