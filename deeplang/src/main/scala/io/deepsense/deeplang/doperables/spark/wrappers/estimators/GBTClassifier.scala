@@ -52,7 +52,7 @@ class VanillaGBTClassifier()
 
   import GBTClassifier._
 
-  override lazy val maxIterationsDefault = 20.0
+  override lazy val maxIterationsDefault = 10.0
 
   val estimator = TypeUtils.instanceOfType(typeTag[SparkGBTClassifier])
 
