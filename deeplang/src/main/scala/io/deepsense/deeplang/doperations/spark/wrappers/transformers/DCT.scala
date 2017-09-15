@@ -24,7 +24,7 @@ import io.deepsense.deeplang.doperations.TransformerAsOperation
 
 class DCT extends TransformerAsOperation[DiscreteCosineTransformer] {
 
-  override val id: Id = "4a741088-3180-4373-940d-741b2f1620de"
+  override val id: Id = "68cd1492-501d-4c4f-9fde-f742d652111a"
   override val name: String = "DCT"
   override val description: String = "Applies discrete cosine transform (DCT) to vector columns"
 

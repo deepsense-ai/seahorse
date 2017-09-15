@@ -85,6 +85,11 @@ object DOperationsCatalog {
       val operationDescriptor = DOperationDescriptor(
           id, name, description, category, parameterDescription, inPortTypes, outPortTypes)
 
+      if (operations.contains(id)) {
+        val alreadyRegisteredOperationName = operations(id).name
+        throw new RuntimeException(
+          s"DOperation $alreadyRegisteredOperationName is already registered with UUID $id!")
+      }
       operations += id -> operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)
       operationsConstructors(id) = constructor

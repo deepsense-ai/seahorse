@@ -100,9 +100,6 @@ object CatalogRecorder {
     catalog.registerDOperation[DecomposeDatetime](
       DOperationCategories.Transformation)
 
-    catalog.registerDOperation[ExecuteMathematicalTransformation](
-      DOperationCategories.Transformation)
-
     catalog.registerDOperation[ExecuteSqlExpression](
       DOperationCategories.Transformation)
 
