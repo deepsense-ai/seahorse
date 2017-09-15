@@ -23,6 +23,7 @@
   "dependencies": {
     "ace-webapp": "~0.2.0",
     "angular": "~1.4.9",
+    "angular-cookies": "~1.4.9",
     "angular-mocks": "~1.4.9",
     "angular-sanitize": "~1.4.9",
     "angular-toastr": "~1.7.0",

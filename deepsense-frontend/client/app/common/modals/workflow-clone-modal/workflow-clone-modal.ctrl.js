@@ -1,14 +1,15 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowCloneModalCtrl($uibModalInstance, workflow) {
-  this.oldName = workflow.name;
-  workflow.name = 'Copy of: "' + workflow.name + '"';
+function WorkflowCloneModalCtrl($uibModalInstance, originalWorkflow) {
+
+  this.originalWorkflow = originalWorkflow;
+  this.workflowCopy = angular.copy(originalWorkflow);
+  this.workflowCopy.name = 'Copy of: "' + this.workflowCopy.name + '"';
 
   _.assign(this, {
-    workflow: workflow,
     save: () => {
-      $uibModalInstance.close(this.workflow);
+      $uibModalInstance.close(this.workflowCopy);
     },
     dismiss: () => {
       $uibModalInstance.dismiss();

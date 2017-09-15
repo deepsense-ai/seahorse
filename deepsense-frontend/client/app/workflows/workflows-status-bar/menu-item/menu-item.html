@@ -1,24 +1,36 @@
-<a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
-    ng-class="::miCtrl.additionalClass"
-    ng-click="miCtrl.callFunction()"
-    ng-href="{{::miCtrl.href}}"
-    ng-style="{'background-color': miCtrl.color}"
-    target="{{::miCtrl.target}}">
-  <span class="c-workflows-status-bar__icon">
-      <i
-        ng-class="::miCtrl.additionalIconClass"
-        class="fa {{::miCtrl.icon}} fa-2x">
-      </i>
-  </span>
+<div class="button-wrapper">
+  <a class="btn btn-info btn-sm o-action-btn c-workflows-status-bar__item"
+     ng-class="::miCtrl.additionalClass"
+     ng-click="miCtrl.callFunction()"
+     ng-href="{{::miCtrl.href}}"
+     ng-style="{'background-color': miCtrl.color}"
+     target="{{::miCtrl.target}}">
+    <span class="c-workflows-status-bar__icon">
+        <i
+          ng-class="::miCtrl.additionalIconClass"
+          class="fa {{::miCtrl.icon}} fa-2x">
+        </i>
+    </span>
 
-  <span class="c-workflows-status-bar__text">
-    {{::miCtrl.label}}
-  </span>
-  <span class="c-workflows-status-bar__popover-span"
-        uib-popover="{{::miCtrl.label}}"
-        popover-placement="bottom"
-        popover-trigger="mouseenter"
-        popover-append-to-body="true"
+    <div class="c-workflows-status-bar__text">
+      <span class="c-workflows-status-bar__text-label">{{::miCtrl.label}}</span>
+      <span class="c-workflows-status-bar__text-small-label" ng-if="miCtrl.forOwnerOnly && !miCtrl.isOwner()">
+        Owner only
+      </span>
+    </div>
+    <span class="c-workflows-status-bar__popover-span"
+          uib-popover="{{::miCtrl.label}}"
+          popover-placement="bottom"
+          popover-trigger="mouseenter"
+          popover-append-to-body="true"
+    >
+    </span>
+  </a>
+
+  <ng-include
+    ng-if="miCtrl.additionalHtmlForOwner && miCtrl.isOwner()"
+    src="miCtrl.additionalHtmlForOwner"
   >
-  </span>
-</a>
+  </ng-include>
+
+</div>

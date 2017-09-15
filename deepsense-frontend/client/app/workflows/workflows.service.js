@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
-  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager) {
+  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager, ServerCommunication) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -30,6 +30,11 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       workflow.workflowStatus = 'editor';
       workflow.sessionStatus = SessionStatus.NOT_RUNNING;
 
+      workflow.owner = {
+        id: workflowData.workflowInfo.ownerId,
+        name: workflowData.workflowInfo.ownerName
+      };
+
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER)
         .forEach((node) => this.initInnerWorkflow(node));
@@ -39,18 +44,26 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         workflow.sessionStatus = newStatus;
       });
 
-      $rootScope.$on('StatusBar.START_EXECUTOR', () => {
+      $rootScope.$on('StatusBar.START_EDITING', () => {
         const workflow = this.getRootWorkflow();
         SessionManagerApi.startSession(workflow.id);
       });
 
-      $rootScope.$on('StatusBar.STOP_EXECUTOR', () => {
+      $rootScope.$on('StatusBar.STOP_EDITING', () => {
         const workflow = this.getRootWorkflow();
         SessionManagerApi.deleteSessionById(workflow.id);
       });
 
       this._watchForNewCustomTransformers(workflow);
       this._workflowsStack.push(workflow);
+
+      const unregisterSynchronization = $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
+        if (data.sessionId === workflow.id) {
+          console.log('Received first hearbeat. Synchronizing with executor...');
+          ServerCommunication.sendSynchronize();
+          unregisterSynchronization();
+        }
+      });
     }
 
     // TODO Add enums for workflowType, workflowStatus
@@ -185,7 +198,6 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         return workflows;
       });
     }
-
   }
 
   return new WorkflowServiceClass();
@@ -193,6 +205,6 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
 
 exports.function = WorkflowService;
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.factory('WorkflowService', WorkflowService);
 };

@@ -8,13 +8,15 @@ function MenuItem() {
     replace: true,
     scope: {
       label: '@',
+      forOwnerOnly: '@',
       icon: '@',
       callFunction: '&',
       href: '@',
       target: '@',
       color: '@',
       additionalClass: '@',
-      additionalIconClass: '@'
+      additionalIconClass: '@',
+      additionalHtmlForOwner: '@'
     },
     controller: 'MenuItemController as miCtrl',
     bindToController: true

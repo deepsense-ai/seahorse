@@ -2,11 +2,11 @@
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
-              NotificationService, WorkflowsApiClient, SessionManager, config) {
+              NotificationService, WorkflowCloneService, WorkflowsApiClient, SessionManager, config, UserService) {
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
-    this.canShowWorkflows = false;
+    this._isWorkflowLoading = false;
     this.isWorkflowListEmpty = false;
     this.isErrorConnectingToVagrant = false;
     this.icon = '';
@@ -28,12 +28,12 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
   };
 
   this.downloadWorkflows = () => {
-    this.canShowWorkflows = false;
+    this._isWorkflowLoading = true;
     WorkflowService.downloadWorkflows().then((workflows) => {
       if (workflows && workflows.length === 0) {
         this.isWorkflowListEmpty = true;
       }
-      this.canShowWorkflows = true;
+      this._isWorkflowLoading = false;
       this.workflows = workflows;
     }, () => {
       this.isErrorConnectingToVagrant = true;
@@ -57,8 +57,16 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
     }
   };
 
+  this.getCurrentUser = () => {
+    return UserService.getSeahorseUser();
+  };
+
+  this.isWorkflowOwnedByCurrentUser = (workflow) => {
+    return UserService.getSeahorseUser().id === workflow.ownerId;
+  };
+
   this.isWorkflowLoading = () => {
-    return this._isLoadingWorkflows;
+    return this._isWorkflowLoading;
   };
 
   this.getClass = (columnName) => {
@@ -81,29 +89,7 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
   };
 
   this.cloneWorkflow = (workflow) => {
-    const modal = $uibModal.open({
-      animation: true,
-      templateUrl: 'app/common/modals/workflow-clone-modal/workflow-clone-modal.html',
-      controller: 'WorkflowCloneModalCtrl as controller',
-      backdrop: 'static',
-      keyboard: true,
-      resolve: {
-        workflow: () => angular.copy(workflow)
-      }
-    });
-
-    modal.result.then((workflowToClone) => {
-      WorkflowsApiClient.cloneWorkflow(workflowToClone).then(() => {
-        this.downloadWorkflows();
-      }, () => {
-        NotificationService.showWithParams({
-          message: 'There was an error during copying this workflow.',
-          title: 'Workflow copy',
-          settings: {timeOut: 10000},
-          notificationType: 'error'
-        });
-      });
-    });
+    WorkflowCloneService.openModal(this.downloadWorkflows, workflow);
   };
 
   this.deleteWorkflow = function (workflow) {

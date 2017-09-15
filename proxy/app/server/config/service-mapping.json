@@ -1,9 +1,11 @@
 [{
   "path": "/v1/workflows",
-  "name": "workflow-manager"
+  "name": "workflow-manager",
+  "auth": "basic"
 }, {
   "path": "/v1/operations",
-  "name": "workflow-manager"
+  "name": "workflow-manager",
+  "auth": "basic"
 }, {
   "path": "/v1/sessions",
   "name": "session-manager"

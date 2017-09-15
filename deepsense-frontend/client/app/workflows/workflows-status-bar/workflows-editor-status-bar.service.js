@@ -1,15 +1,23 @@
 'use strict';
 
 /* ngInject */
-function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
+function WorkflowStatusBarService($rootScope, config, version, WorkflowService, SessionStatus, UserService) {
 
   const service = this;
 
   service.getMenuItems = getMenuItems;
 
+  const isOwner = () => WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id;
+
+  this.popovers = {
+    startingPopoverVisible: true,
+    runningExecutorPopoverVisible: true
+  };
+
   const menuItems = {
     clear: {
       label: 'Clear',
+      forOwnerOnly: true,
       icon: 'fa-trash-o',
       callFunction: () => $rootScope.$broadcast('StatusBar.CLEAR_CLICK')
     },
@@ -19,6 +27,11 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
       href: config.docsHost + '/docs/' + version.getDocsVersion() + '/index.html',
       target: '_blank'
     },
+    clone: {
+      label: 'Clone',
+      icon: 'fa-clone',
+      callFunction: () => $rootScope.$broadcast('StatusBar.CLONE_WORKFLOW')
+    },
     export: {
       label: 'Export',
       icon: 'fa-angle-double-down',
@@ -26,19 +39,23 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
     },
     run: {
       label: 'Run',
+      forOwnerOnly: true,
       icon: 'fa-play',
       callFunction: () => $rootScope.$broadcast('StatusBar.RUN')
     },
-    startExecutor: {
-      label: 'Start executor',
+    startEditing: {
+      label: 'Start editing',
+      forOwnerOnly: true,
       icon: 'fa-play',
-      callFunction: () => $rootScope.$emit('StatusBar.START_EXECUTOR')
+      callFunction: () => $rootScope.$emit('StatusBar.START_EDITING'),
+      additionalHtmlForOwner: 'app/workflows/workflows-status-bar/additional-html/starting-popover.html'
     },
-    startingExecutor: {
-      label: 'Start executor...',
+    startingEditing: {
+      label: 'Starting...',
       icon: 'fa-cog',
-      additionalClass: 'disabled',
-      additionalIconClass: 'fa-spin'
+      additionalClass: 'menu-item-disabled',
+      additionalIconClass: 'fa-spin',
+      additionalHtmlForOwner: 'app/workflows/workflows-status-bar/additional-html/running-executor-popover.html'
     },
     executorError: {
       label: 'Executor error',
@@ -46,10 +63,10 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
       color: '#BF2828',
       additionalClass: 'disabled'
     },
-    stopExecutor: {
-      label: 'Stop executor',
+    stopEditing: {
+      label: 'Stop editing',
       icon: 'fa-ban',
-      callFunction: () => $rootScope.$emit('StatusBar.STOP_EXECUTOR')
+      callFunction: () => $rootScope.$emit('StatusBar.STOP_EDITING')
     },
     abort: {
       label: 'Abort',
@@ -60,7 +77,7 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
       label: 'Aborting...',
       icon: 'fa-ban',
       color: '#216477',
-      additionalClass: 'disabled'
+      additionalClass: 'menu-item-disabled'
     },
     closeInnerWorkflow: {
       label: 'Close inner workflow',
@@ -70,22 +87,29 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
     }
   };
 
+  menuItems.disabledClone = angular.copy(menuItems.clone);
+  menuItems.disabledClone.additionalClass = 'menu-item-disabled';
+
+  menuItems.disabledStartEditing = angular.copy(menuItems.startEditing);
+  menuItems.disabledStartEditing.additionalClass = 'menu-item-disabled';
+
   menuItems.disabledClear = angular.copy(menuItems.clear);
-  menuItems.disabledClear.additionalClass = 'disabled';
+  menuItems.disabledClear.additionalClass = 'menu-item-disabled';
 
   menuItems.disabledExport = angular.copy(menuItems.export);
-  menuItems.disabledExport.additionalClass = 'disabled';
+  menuItems.disabledExport.additionalClass = 'menu-item-disabled';
 
   menuItems.disabledRun = angular.copy(menuItems.run);
-  menuItems.disabledRun.additionalClass = 'disabled';
+  menuItems.disabledRun.additionalClass = 'menu-item-disabled';
 
   const _menuItemViews = {
-    editorExecutorRunning: [menuItems.clear, menuItems.export, menuItems.documentation, menuItems.stopExecutor, menuItems.run],
-    editorExecutorCreating: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startingExecutor, menuItems.disabledRun],
-    editorExecutorNotRunning: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startExecutor, menuItems.disabledRun],
+    editorExecutorRunning: [menuItems.export, menuItems.clone, menuItems.stopEditing, menuItems.clear, menuItems.run, menuItems.documentation],
+    editorExecutorCreating: [menuItems.export, menuItems.clone, menuItems.startingEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorExecutorNotRunning: [menuItems.export, menuItems.clone, menuItems.startEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorExecutorError: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.executorError, menuItems.disabledRun],
-    running: [menuItems.disabledClear, menuItems.disabledExport, menuItems.documentation, menuItems.abort],
-    aborting: [menuItems.disabledClear, menuItems.disabledExport, menuItems.documentation, menuItems.aborting],
+    editorReadOnlyForNotOwner: [menuItems.export, menuItems.clone, menuItems.disabledStartEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    running: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
+    aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.aborting, menuItems.documentation],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
   };
 
@@ -98,6 +122,9 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
     // TODO Refactor this code.
     switch (workflow.workflowType) {
       case 'root':
+        if(!isOwner()) {
+          return 'editorReadOnlyForNotOwner'
+        }
         switch (workflow.workflowStatus) {
           case 'editor':
             switch (workflow.sessionStatus) {
@@ -126,6 +153,22 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
         }
     }
   }
+
+  service.isStartingPopoverVisible = () => {
+    return this.popovers.startingPopoverVisible;
+  };
+
+  service.isRunningExecutorPopoverVisible = () => {
+    return this.popovers.runningExecutorPopoverVisible;
+  };
+
+  service.closeStartingPopover = () => {
+    this.popovers.startingPopoverVisible = false;
+  };
+
+  service.closeRunningExecutorPopover = () => {
+    this.popovers.runningExecutorPopoverVisible = false;
+  };
 
   return service;
 }

@@ -1,12 +1,68 @@
-.c-workflows-status-bar {
-  @media-break: 1250px;
+@import "../../../css/variables";
 
+.c-workflows-status-bar {
+  height: 100%;
   margin: 0;
   text-align: center;
   align-items: center;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  flex-direction: column;
   width: 100%;
+
+  &__upper-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 5px;
+
+    &-workflow {
+      text-align: left;
+      font-size: 22px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 70%;
+      overflow: hidden;
+
+      @media (max-width: @bigger-media-break) {
+        font-size: 16px;
+        width: 100%;
+      }
+
+      &__title {
+        font-weight: bold;
+      }
+    }
+
+    &-user {
+      font-size: 16px;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 30%;
+      overflow: hidden;
+
+      @media (max-width: @bigger-media-break) {
+        font-size: 14px;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: @media-break) {
+      align-items: flex-start;
+      flex-direction: column;
+
+      &-user {
+        text-align: left;
+      }
+    }
+  }
+
+  &__lower-section {
+    display: flex;
+    width: 100%;
+  }
 
   &__item {
     flex: 1;
@@ -16,6 +72,7 @@
     flex-direction: row-reverse;
     padding: 0;
     position: relative;
+    border: none;
 
     &:before {
       transition: all 0.15s ease-in-out;
@@ -32,56 +89,79 @@
     &:hover:before {
       width: 100%;
     }
+  }
+
+  &__text {
+    height: 40px;
+
+    flex: 0.85;
+    font-size: 14px;
+    font-weight: bold;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
 
     @media (max-width: @media-break) {
-      margin: 0 5px 0 0;
+      flex: 1;
+    }
 
-      &:last-child {
-        margin: 0;
+    @media (max-width: @media-break) {
+      display: none;
+    }
+
+    &-label {
+      font-size: 15px;
+      margin-left: 10px;
+
+      @media (max-width: @bigger-media-break) {
+        font-size: 12px;
+        margin-left: 5px;
+      }
+    }
+
+    &-small-label {
+      font-size: 10px;
+      margin-left: 10px;
+
+      @media (max-width: @bigger-media-break) {
+        margin-left: 5px;
       }
     }
   }
 
-  &__text {
-    @media-break-font: 1450px;
-    @media-break-visibility: 1100px;
-
-    flex: 0.85;
-    font-size: 14px;
-
-    @media (max-width: @media-break-font) {
-      font-size: 12px;
-      flex: 1;
-    }
-    @media (max-width: @media-break-visibility) {
-      display:none;
-    }
-  }
-
   &__icon {
-    @media-break: 1100px;
     background-color: rgba(0, 0, 0, 0.15);
     padding: 4px 3px;
     transition: all 0.5s;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    @media (max-width: @media-break){
-      flex:1;
+    @media (max-width: @media-break) {
+      flex: 1;
     }
     flex: 0.15;
 
   }
 
   &__popover-span {
-    @media-break: 1100px;
     display: block;
     @media (min-width: @media-break) {
-      display:none;
+      display: none;
     }
     position: absolute;
-    top:0;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
   }
 
+  .menu-item-disabled {
+    pointer-events: none;
+    background-color: lightgrey;
+  }
 }

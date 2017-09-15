@@ -5,6 +5,7 @@
 @import "./common-behaviours/draggable.less";
 @import "./graph-panel/graph-panel.less";
 @import "./workflows-status-bar/workflows-status-bar.less";
+@import "./workflows-status-bar/menu-item/menu-item.less";
 @import "./reports/reports.less";
 @import "./panels.less";
 @import "./general-data-panel/general-data-panel.less";
@@ -31,7 +32,12 @@
   width: ~"calc(100% - @{panel-main-width})";
 
   &__nav-bar {
+    height: 100%;
     width: 100%;
+  }
+
+  @media(max-width: @media-break) {
+    height: @navigation-bar-height + 20px;
   }
 }
 
@@ -50,8 +56,8 @@
 
 .c-navigation-bar {
   margin-top: 10px;
-  width: @panel-main-width;
-  min-width: @panel-main-width;
+  width: @panel-logo-width;
+  min-width: @panel-logo-width;
 }
 
 textarea.editable-has-buttons.editable-input {
