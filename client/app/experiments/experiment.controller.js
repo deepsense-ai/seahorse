@@ -8,7 +8,7 @@ function ExperimentController(
   experiment,
   $http, $modal, $timeout, $scope,
   PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentApiClient, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters
+  DeepsenseNodeParameters, FreezeService
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -39,8 +39,12 @@ function ExperimentController(
    */
   internal.handleExperimentStateChange = function handleExperimentStateChange(data) {
     if (ExperimentService.experimentIsSet()) {
+      let experimentState;
+
       ExperimentService.getExperiment().updateState(data.experiment.state);
+      experimentState = ExperimentService.getExperiment().getStatus();
       that.checkExperimentState();
+      FreezeService.handleExperimentStateChange(experimentState);
     }
   };
 
@@ -178,8 +182,8 @@ function ExperimentController(
     internal.saveExperiment();
   });
 
-  $scope.$on('Keyboard.KEY_PRESSED', (event, data) => {
-    if (internal.selectedNode) {
+  $scope.$on('Keyboard.KEY_PRESSED_DEL', (event, data) => {
+    if (internal.selectedNode && !ExperimentService.getExperiment().isRunning()) {
       ExperimentService.getExperiment().removeNode(internal.selectedNode.id);
       GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();

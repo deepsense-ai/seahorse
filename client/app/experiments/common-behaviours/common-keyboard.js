@@ -12,7 +12,11 @@ function Keyboard($rootScope) {
     restrict: 'A',
     link: function (scope, element, attrs) {
       Mousetrap.bind('del', () => {
-        $rootScope.$broadcast('Keyboard.KEY_PRESSED',{key:'delete'});
+        $rootScope.$broadcast('Keyboard.KEY_PRESSED_DEL');
+      });
+
+      Mousetrap.bind('esc', () => {
+        $rootScope.$broadcast('Keyboard.KEY_PRESSED_ESC');
       });
     }
   };

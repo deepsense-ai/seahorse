@@ -13,7 +13,8 @@
     <div>abort</div>
   </a>
 
-  <a class="btn btn-primary btn-sm ds-action-btn save-experiment-button">
+  <a class="btn btn-primary btn-sm ds-action-btn save-experiment-button"
+     ng-disabled="status === 'status_running'">
     <span class="fa fa-save fa-2x"></span>
     <div>save</div>
   </a>

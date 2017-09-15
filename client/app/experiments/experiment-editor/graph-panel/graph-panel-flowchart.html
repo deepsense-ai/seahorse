@@ -1,5 +1,5 @@
 <div context-menu-blocker class="flowchart-box">
-  <div class="flowchart-paint-area" drop-target>
+  <div class="flowchart-paint-area" drop-target drop-target-to="parent">
     <graph-node on-render-finish
                 jsplumb-draggable
                 keyboard
@@ -18,7 +18,7 @@
                   position-y="flowChartBoxController.getContextMenuPositionY()"
                   state="flowChartBoxController.getContextMenuState()">
     </context-menu>
-    <user-interaction-controls interactTo=".flowchart-paint-area"></user-interaction-controls>
+    <user-interaction-controls></user-interaction-controls>
   </div>
 
   <div ng-controller="PortStatusesTooltipController as portStatusesTooltipController">
@@ -32,4 +32,8 @@
       </span>
     </sticky-window>
   </div>
+
+  <deepsense-loading-spinner-processing
+    ng-if="experiment.getExperiment().getStatus() === 'status_running'"
+    bg="true">Processing</deepsense-loading-spinner-processing>
 </div>

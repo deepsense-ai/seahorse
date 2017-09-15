@@ -16,6 +16,11 @@ function Droppable() {
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.setData('elementId', element[0].id);
         event.dataTransfer.setData('droppable', true);
+        scope.$emit('FlowChartBox.ELEMENT_DRAGSTART', element);
+      });
+
+      element.on('dragend',function (event) {
+        scope.$emit('FlowChartBox.ELEMENT_DRAGEND', element);
       });
     }
   };

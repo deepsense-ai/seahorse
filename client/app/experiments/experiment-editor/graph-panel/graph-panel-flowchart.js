@@ -60,12 +60,6 @@ function FlowChartBoxController($scope, $element, $window) {
     }
   };
 
-  internal.checkKeyAndClose = function checkKeyAndClose (event) {
-    if (event.keyCode === 27) {
-      internal.closeContextMenu();
-    }
-  };
-
   that.getContextMenuState = function getContextMenuState () {
     return internal.contextMenuState;
   };
@@ -91,14 +85,13 @@ function FlowChartBoxController($scope, $element, $window) {
   $scope.$on('InputPoint.CLICK', internal.closeContextMenu);
   $scope.$on('OutputPort.LEFT_CLICK', internal.closeContextMenu);
   $scope.$on('ReportOptions.UPDATED', internal.contextMenuOpener);
+  $scope.$on('Keyboard.KEY_PRESSED_ESC', internal.closeContextMenu);
 
   $window.addEventListener('mousedown', internal.checkClickAndClose);
-  $window.addEventListener('keydown', internal.checkKeyAndClose);
   $window.addEventListener('blur', internal.closeContextMenu);
 
   $scope.$on('$destroy', () => {
     $window.removeEventListener('mousedown', internal.checkClickAndClose);
-    $window.removeEventListener('keydown', internal.checkKeyAndClose);
     $window.removeEventListener('blur', internal.closeContextMenu);
   });
 }
