@@ -22,9 +22,10 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.models.Entity.Id
+import io.deepsense.graph.nodestate.name.NodeStatusName
 
 sealed abstract class NodeStatus(
-    val name: String,
+    val name: NodeStatusName,
     val results: Seq[Entity.Id])
   extends Serializable {
 
@@ -71,7 +72,7 @@ sealed abstract class NodeStatus(
 }
 
 final case class Draft(override val results: Seq[Entity.Id] = Seq.empty)
-  extends NodeStatus("DRAFT", results) {
+  extends NodeStatus(NodeStatusName.Draft, results) {
 
   override def start: Running = throw stateCannot("start")
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
@@ -84,7 +85,7 @@ final case class Draft(override val results: Seq[Entity.Id] = Seq.empty)
 }
 
 final case class Queued(override val results: Seq[Entity.Id] = Seq.empty)
-  extends NodeStatus("QUEUED", results) {
+  extends NodeStatus(NodeStatusName.Queued, results) {
 
   override def start: Running = Running(DateTimeConverter.now, results)
   override def finish(results: Seq[Entity.Id]): Completed = throw stateCannot("finish")
@@ -97,7 +98,7 @@ final case class Queued(override val results: Seq[Entity.Id] = Seq.empty)
 }
 
 final case class Running(started: DateTime, override val results: Seq[Entity.Id] = Seq.empty)
-    extends NodeStatus("RUNNING", results) {
+    extends NodeStatus(NodeStatusName.Running, results) {
   override def start: Running = throw stateCannot("start")
   override def abort: Aborted = Aborted(results)
   override def fail(error: FailureDescription): Failed =
@@ -117,10 +118,9 @@ sealed trait FinalState {
 }
 
 final case class Completed(started: DateTime, ended: DateTime, override val results: Seq[Id])
-  extends NodeStatus("COMPLETED", results) with FinalState
+  extends NodeStatus(NodeStatusName.Completed, results) with FinalState
 final case class Failed(started: DateTime, ended: DateTime, error: FailureDescription)
-  extends NodeStatus("FAILED", results = Seq.empty) with FinalState
+  extends NodeStatus(NodeStatusName.Failed, results = Seq.empty) with FinalState
 final case class Aborted(override val results: Seq[Entity.Id] = Seq.empty)
-  extends NodeStatus("ABORTED", results)
+  extends NodeStatus(NodeStatusName.Aborted, results)
   with FinalState
-

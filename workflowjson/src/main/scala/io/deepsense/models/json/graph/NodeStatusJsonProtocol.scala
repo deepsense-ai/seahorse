@@ -24,16 +24,32 @@ import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.DateTimeJsonProtocol._
 import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate._
+import io.deepsense.graph.nodestate.name.NodeStatusName
 
 trait NodeStatusJsonProtocol
   extends DefaultJsonProtocol
   with FailureDescriptionJsonProtocol
   with NullOptions {
 
+  implicit object NodeStatusNameFormat extends RootJsonFormat[NodeStatusName] {
+
+    override def write(obj: NodeStatusName): JsValue = JsString(obj.toString.toUpperCase)
+
+    override def read(json: JsValue): NodeStatusName = json.asInstanceOf[JsString].value match {
+      case "DRAFT" => NodeStatusName.Draft
+      case "QUEUED" => NodeStatusName.Queued
+      case "RUNNING" => NodeStatusName.Running
+      case "COMPLETED" => NodeStatusName.Completed
+      case "FAILED" => NodeStatusName.Failed
+      case "ABORTED" => NodeStatusName.Aborted
+    }
+  }
+
   implicit object NodeStatusFormat
     extends JsonFormat[NodeStatus]
     with DefaultJsonProtocol
     with NullOptions {
+
 
     val viewFormat = jsonFormat5(NodeStatusView)
     val abortedFormat = jsonFormat(Aborted, "results")
@@ -75,18 +91,18 @@ trait NodeStatusJsonProtocol
         throw new DeserializationException("Expected 'status' field does not exist")
       }
 
-      status.get.convertTo[String] match {
-        case "DRAFT" => jsObject.convertTo[Draft](draftFormat)
-        case "QUEUED" => jsObject.convertTo[Queued](queuedFormat)
-        case "RUNNING" => jsObject.convertTo[Running](runningFormat)
-        case "COMPLETED" => jsObject.convertTo[Completed](completedFormat)
-        case "FAILED" => jsObject.convertTo[Failed](failedFormat)
-        case "ABORTED" => jsObject.convertTo[Aborted](abortedFormat)
+      status.get.convertTo[NodeStatusName] match {
+        case NodeStatusName.Draft => jsObject.convertTo[Draft](draftFormat)
+        case NodeStatusName.Queued => jsObject.convertTo[Queued](queuedFormat)
+        case NodeStatusName.Running => jsObject.convertTo[Running](runningFormat)
+        case NodeStatusName.Completed => jsObject.convertTo[Completed](completedFormat)
+        case NodeStatusName.Failed => jsObject.convertTo[Failed](failedFormat)
+        case NodeStatusName.Aborted => jsObject.convertTo[Aborted](abortedFormat)
       }
     }
 
     case class NodeStatusView(
-      status: String,
+      status: NodeStatusName,
       started: Option[DateTime] = None,
       ended: Option[DateTime] = None,
       results: Option[Seq[Entity.Id]] = None,
