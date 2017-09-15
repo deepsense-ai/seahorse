@@ -12,10 +12,10 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.exceptions.{AllTypesNotCompilableException, NoInputEdgesException}
 import io.deepsense.deeplang.inference.warnings.SomeTypesNotCompilableWarning
-import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.parameters.exceptions.ValidationException
-import io.deepsense.deeplang.{ExecutionContext, DOperation2To1, DKnowledge, DOperable}
+import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation2To1, ExecutionContext}
 
 class KnowledgeInferenceSpec
   extends WordSpec
@@ -186,6 +186,15 @@ class KnowledgeInferenceSpec
         graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
       }
     }
+
+    "throw an exception" when {
+      "graph contains cycle" in {
+        intercept[CyclicGraphException] {
+          graphWithCycle.inferKnowledge(ctx)
+        }
+        ()
+      }
+    }
   }
 
   it should {
@@ -274,6 +283,10 @@ class KnowledgeInferenceSpec
     nodes = Set(nodeCreateA1, nodeA1A2ToFirst),
     edges = Set(Edge(nodeCreateA1, 0, nodeA1A2ToFirst, 0))
   )
+
+  def graphWithCycle: Graph = new Graph() {
+    override def topologicallySorted: Option[List[Node]] = None
+  }
 
   def setParamsValid(graph: Graph): Unit = setInGraph(graph, _.setParamsValid())
 

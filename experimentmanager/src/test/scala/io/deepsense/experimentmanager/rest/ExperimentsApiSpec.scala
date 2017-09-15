@@ -4,7 +4,7 @@
 
 package io.deepsense.experimentmanager.rest
 
-import io.deepsense.deeplang.doperations.MathematicalOperation
+import io.deepsense.deeplang.doperations.{FileToDataFrame, MathematicalOperation}
 
 import scala.concurrent._
 
@@ -30,8 +30,8 @@ import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
-import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider}
-import io.deepsense.graph.{Graph, Node}
+import io.deepsense.experimentmanager.{DOperationCategories, ExperimentManager, ExperimentManagerProvider}
+import io.deepsense.graph.{Edge, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.Experiment.Status
 import io.deepsense.models.experiments.{Experiment, InputExperiment}
@@ -45,6 +45,11 @@ class ExperimentsApiSpec
   val created = DateTimeConverter.now
   val updated = created.plusHours(1)
   val catalog = DOperationsCatalog()
+  catalog.registerDOperation[FileToDataFrame](
+    DOperationCategories.IO,
+    "Converts a file to a DataFrame"
+  )
+
   val dOperableCatalog = new DOperableCatalog
   override val inferContext: InferContext = new InferContext(dOperableCatalog, true)
   override val graphReader: GraphReader = new GraphReader(catalog)
@@ -59,6 +64,13 @@ class ExperimentsApiSpec
   def inputExperiment: InputExperiment = InputExperiment("test name", "test description", Graph())
 
   def envelopedInputExperiment: Envelope[InputExperiment] = Envelope(inputExperiment)
+
+  def cyclicExperiment: InputExperiment = {
+    val node1 = Node(Node.Id.randomId, FileToDataFrame())
+    val node2 = Node(Node.Id.randomId, FileToDataFrame())
+    val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
+    InputExperiment("cycle", "cyclic graph", graph)
+  }
 
   val tenantAId: String = "A"
   val tenantBId: String = "B"
@@ -276,6 +288,14 @@ class ExperimentsApiSpec
             'graph (inputExperiment.graph),
             'tenantId (tenantAId)
           )
+        }
+      }
+    }
+    "return Bad Request" when {
+      "inputExperiment contains cyclic graph" in {
+        Post(s"/$apiPrefix", Envelope(cyclicExperiment)) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be (StatusCodes.BadRequest)
         }
       }
     }
