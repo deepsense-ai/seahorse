@@ -24,7 +24,6 @@ require('./experiment-editor/catalog-panel/catalog-panel.js').inject(experiments
 require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-panel.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-list.js').inject(experiments);
-require('./experiment-editor/attributes-panel/attribute-value.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attribute-types/attribute-boolean-type.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attribute-types/attribute-single-choice-type.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attribute-types/attribute-multiple-choice-type.js').inject(experiments);

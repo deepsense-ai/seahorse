@@ -7,11 +7,13 @@
 'use strict';
 
 let GenericParameter = require('./common-generic-parameter.js');
+let ValidatorFactory = require('./common-validators/common-validator-factory.js');
 
 function StringParameter(options) {
   this.name = options.name;
   this.value = this.initValue(options.value, options.schema);
   this.schema = options.schema;
+  this.schema.validator = ValidatorFactory.createValidator(this.schema.type, this.schema.validator);
 }
 
 StringParameter.prototype = new GenericParameter();
@@ -22,7 +24,7 @@ StringParameter.prototype.serialize = function () {
 };
 
 StringParameter.prototype.validate = function () {
-  // TODO: access this._schema.validator and validate this._value
+  return this.schema.validator.validate(this.value);
 };
 
 module.exports = StringParameter;

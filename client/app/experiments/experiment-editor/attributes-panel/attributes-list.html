@@ -2,7 +2,19 @@
   <div class="panel panel-default" ng-repeat="parameter in parametersList.parameters">
     <div class="panel-heading"><label for="attr-{{ ::parameter.name }}">{{ ::parameter.name }}</label></div>
     <div class="panel-body">
-      <attribute-value></attribute-value>
+      <div class="attributes-value-view" ng-switch="::parameter.schema.type">
+        <attribute-boolean-type ng-switch-when="boolean"></attribute-boolean-type>
+
+        <attribute-single-choice-type ng-switch-when="choice"></attribute-single-choice-type>
+
+        <attribute-multiple-choice-type ng-switch-when="multipleChoice"></attribute-multiple-choice-type>
+
+        <attribute-numeric-type ng-switch-when="numeric"></attribute-numeric-type>
+
+        <attribute-snippet-type ng-switch-when="snippet"></attribute-snippet-type>
+
+        <attribute-string-type ng-switch-when="string"></attribute-string-type>
+      </div>
     </div>
   </div>
   <div class="lead no-parameters" ng-if="noParamValues()">No parameters</div>

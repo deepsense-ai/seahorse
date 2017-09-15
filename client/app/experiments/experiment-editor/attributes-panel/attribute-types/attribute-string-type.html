@@ -1,1 +1,3 @@
-<input id="attr-{{ ::parameter.name }}" type="text" class="form-control" ng-model="parameter.value">
+<input id="attr-{{ ::parameter.name }}" type="text" class="form-control"
+       ng-class="{ 'invalid-param-value': !parameter.validate() }"
+       ng-model="parameter.value">

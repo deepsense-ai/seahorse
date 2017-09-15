@@ -17,7 +17,7 @@ let MultipleChoiceParameterConstructor = require('./common-parameters/common-mul
 /*
  * (API parameter's type value) => (constructor)
  */
-let constructors = {
+let parameterConstructors = {
   'numeric': NumericParameterConstructor,
   'string': StringParameterConstructor,
   'boolean': BooleanParameterConstructor,
@@ -56,8 +56,11 @@ let ParameterFactory = {
           break;
       }
 
-      if (constructors[paramSchema.type]) {
-        parametersList[paramName] = new constructors[paramSchema.type](options);
+      if (parameterConstructors[paramSchema.type]) {
+        let Constructor = parameterConstructors[paramSchema.type];
+        if (typeof Constructor !== 'undefined') {
+          parametersList[paramName] = new Constructor(options);
+        }
       }
     }
 
