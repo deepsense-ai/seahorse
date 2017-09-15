@@ -95,8 +95,7 @@ class AdapterService {
       this.onConnectionAbort({newNodeData: {
         x: (originalEvent.layerX - originalEvent.x) * -1,
         y: (originalEvent.layerY - originalEvent.y + 60) * -1,
-        source: connection.sourceId.replace('node-', ''),
-        port: connection.endpoints[0].getParameter('portIndex')
+        endpoint: connection.endpoints[0]
       }});
     });
   }
@@ -139,7 +138,7 @@ class AdapterService {
 
   getNodesToRender(inputNodes) {
     const nodes = JSON.parse(JSON.stringify(inputNodes));
-    if (this.newNodeData && this.newNodeData.source) {
+    if (this.newNodeData && this.newNodeData.endpoint) {
       nodes[NEW_NODE_NODE.id] = Object.assign({}, NEW_NODE_NODE);
     }
     return nodes;
@@ -147,10 +146,10 @@ class AdapterService {
 
   getEdgesToRender(inputEdges) {
     const edges = JSON.parse(JSON.stringify(inputEdges));
-    if (this.newNodeData && this.newNodeData.source) {
+    if (this.newNodeData && this.newNodeData.endpoint) {
       const edge = Object.assign({}, NEW_NODE_EDGE);
-      edge.startNodeId = this.newNodeData.source;
-      edge.startPortId = this.newNodeData.port;
+      edge.startNodeId = this.newNodeData.nodeId;
+      edge.startPortId = this.newNodeData.portIndex;
       edges[edge.id] = edge;
     }
     return edges;

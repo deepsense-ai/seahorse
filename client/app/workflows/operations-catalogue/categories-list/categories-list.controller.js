@@ -10,7 +10,7 @@ class CategoriesListController {
     this.$timeout = $timeout;
   }
 
-  $postLink() {
+  $onChanges() {
     this.$timeout(() => {
       this.childrenPlacement = [];
       this.offset = $(this.$element[0]).offset();

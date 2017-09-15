@@ -1,7 +1,6 @@
 class OperationsCatalogueController {
-  constructor($scope, OperationsCatalogueService) {
+  constructor($scope) {
     'ngInject';
-    this.categories = OperationsCatalogueService.getAllOperations();
 
     $scope.$watch(() => this.query, (newValue) => {
       this.isSearchMode = newValue && newValue.length > 2;

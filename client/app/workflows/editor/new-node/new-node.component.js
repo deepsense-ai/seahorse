@@ -5,6 +5,7 @@ import './new-node.less';
 
 const NewNodeComponent = {
   bindings: {
+    'categories': '<',
     'data': '<',
     'onSelect': '&'
   },

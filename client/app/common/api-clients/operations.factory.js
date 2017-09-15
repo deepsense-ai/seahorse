@@ -227,6 +227,20 @@ function OperationsFactory(OperationsApiClient, $q) {
     return categoryMap[id] || null;
   };
 
+  service.getCatalogByMap = function (catalog, map) {
+    const copy = catalog.map((el) => {
+      const element = Object.assign({}, el);
+      element.catalog = service.getCatalogByMap(element.catalog, map);
+      element.items = element.items.filter((item) => {
+        return map[item.id];
+      });
+      return element;
+    }).filter((element) => {
+      return element.items.length || element.catalog.length;
+    });
+    return copy;
+  };
+
   return service;
 }
 

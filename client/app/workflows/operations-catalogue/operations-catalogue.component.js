@@ -6,6 +6,7 @@ import OperationsCatalogueController from './operations-catalogue.controller.js'
 const OperationsCatalogueComponent = {
   controller: OperationsCatalogueController,
   bindings: {
+    categories: '<',
     onUpdate: '&',
     query: '<',
     selectOperation: '&'

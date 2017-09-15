@@ -1,15 +1,20 @@
 'use strict';
 
+import _ from 'lodash';
+
 const ZOOM_STEP = 0.1;
 
 class EditorController {
-  constructor(CanvasService, UUIDGenerator, Operations, MouseEvent,  $element) {
+  constructor(CanvasService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent,  $element) {
     'ngInject';
     this.CanvasService = CanvasService;
     this.UUIDGenerator = UUIDGenerator; //TODO remove when services are refactored
     this.Operations = Operations;       //TODO remove when services are refactored
+    this.OperationsHierarchyService = OperationsHierarchyService;       //TODO remove when services are refactored
     this.MouseEvent = MouseEvent;
     this.$element = $element;
+
+    this.categories = Operations.getCatalog();
   }
 
   $postLink() {
@@ -99,7 +104,7 @@ class EditorController {
   }
 
   onConnectionAbort(newNodeData) {
-    this.startWizard(newNodeData.x, newNodeData.y, newNodeData.source, newNodeData.port);
+    this.startWizard(newNodeData.x, newNodeData.y, newNodeData.endpoint);
   }
 
   onSelect(operationId) {
@@ -113,11 +118,11 @@ class EditorController {
     };
     const node = this.workflow.createNode(params);
     this.workflow.addNode(node);
-    if (this.newNodeData.source) {
+    if (this.newNodeData.endpoint) {
       const newEdge = this.workflow.createEdge({
         from: {
-          nodeId: this.newNodeData.source,
-          portIndex: this.newNodeData.port
+          nodeId: this.newNodeData.nodeId,
+          portIndex: this.newNodeData.portIndex
         },
         to: {
           nodeId: node.id,
@@ -129,17 +134,55 @@ class EditorController {
     this.newNodeData = null;
   }
 
-  startWizard(x, y, sourceId = null, portId = null) {
+  startWizard(x, y, endpoint = null) {
     if (this.isEditable) {
+      if (endpoint) {
+        const map = this.getAvailableOperations(this.workflow, endpoint);
+        this.categories = this.Operations.getCatalogByMap(this.Operations.getCatalog(), map);
+      }
+
       const newNodeData = {
         x: x,
         y: y,
-        port: portId,
-        source: sourceId
+        endpoint: endpoint,
       };
+
+      // After some time endpoint paramters are wiped by jsPlumb,
+      // and we need those params to render the temporary edges or after wizard the final edges.
+      if (endpoint) {
+        newNodeData.nodeId = endpoint.getParameter('nodeId');
+        newNodeData.portIndex = endpoint.getParameter('portIndex');
+      }
+
       this.newNodeData = newNodeData;
     }
+  }
 
+  //TODO move it to service which is aware of endpoints and their params
+  getAvailableOperations(workflow, sourceEndpoint) {
+    const sourceNodeId = sourceEndpoint.getParameter('nodeId');
+    const sourceNode = workflow.getNodeById(sourceNodeId);
+    const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
+    const sourcePort = sourceNode.output[sourcePortIndex];
+
+
+    const operations = this.Operations.getData();
+    const operationsMatch = [];
+    _.forEach(operations, (operation) => {
+      const inputMatches = _.reduce(operation.ports.input, (acc, input) => {
+        const typesMatch = _.every(_.map(
+          sourcePort.typeQualifier,
+          typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, input.typeQualifier)
+        ));
+
+        acc.push(typesMatch);
+
+        return acc;
+      }, []);
+      operationsMatch[operation.id] = _.some(inputMatches);
+    });
+
+    return operationsMatch;
   }
 }
 
