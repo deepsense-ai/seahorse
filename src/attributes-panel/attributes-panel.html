@@ -27,14 +27,30 @@
           <span class="o-action-text__text-element">Click here to show errors</span>
         </button>
       </header>
-      <p class="o-state__time text-right gray-bg"
+      <p class="o-state__time text-right navy-bg"
+         ng-show="node.state.started">
+        <span class="block">Execution start</span>
+        <i class="fa fa-clock-o"></i>
+        <time datetime="{{node.state.started}}"
+              class="text-right">
+          {{node.state.started | date:'medium'}}
+        </time>
+      </p>
+      <p class="o-state__time text-right lazur-bg"
          ng-show="node.state.ended">
-        <span class="block">Last executed</span>
+        <span class="block">Execution end</span>
         <i class="fa fa-clock-o"></i>
         <time datetime="{{node.state.ended}}"
               class="text-right">
           {{node.state.ended | date:'medium'}}
         </time>
+      </p>
+      <p class="o-state__time text-right gray-bg"
+         ng-show="node.state.ended">
+        <span class="block">Execution time</span>
+        <i class="fa fa-clock-o"></i>
+        <time-diff start="node.state.started"
+                   end="node.state.ended"></time-diff>
       </p>
     </section>
   </header>

@@ -60,6 +60,46 @@ ARGUMENTS
 
 - *min-value (optional) | {Number}  | minimum possible value of an input
 
+COMPONENT MODULE `deepsense.attributes-panel`
+
+COMPONENT DIRECTIVE NAME `labelToFirstUnlabeled`
+
+COMPONENT DIRECTIVE `label-to-first-unlabeled`
+
+EXAMPLE OF USAGE
+
+    <div label-to-first-unlabeled>
+      <label>
+        Label
+      </label>
+    </div>
+    <div>
+      <input type="text" />
+    </div>
+
+DESCRIPTION  
+
+Add unique ID to first next input element
+
+COMPONENT MODULE `deepsense.attributes-panel`
+
+COMPONENT DIRECTIVE NAME `timeDiff`
+
+COMPONENT DIRECTIVE `time-diff`
+
+EXAMPLE OF USAGE
+
+    <time-diff start="{{angular binding}}" end="{{angular binding}}"></time-diff>
+
+ARGUMENTS
+
+- *start | {Date|Angular binding} | started time
+- *end | {Date|Angular binding} | ended time
+
+DESCRIPTION  
+
+Shows difference between start and end time
+
 ### Development
 
 `gulp start` to start watchers  

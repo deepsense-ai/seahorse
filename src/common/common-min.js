@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 06.07.15.
- */
-
 angular.module('deepsense.attributes-panel')
   .directive('minValue', function ($timeout) {
     return {
