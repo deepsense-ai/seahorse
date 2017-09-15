@@ -129,7 +129,7 @@ export LIBPROCESS_IP={user-machine-IP}   # IP addres of user's machine, visible 
   --deploy-mode client \
   --supervise \
   --files workflow.json \
-  --conf spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz \
+  --conf spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.2-bin-hadoop2.7.tgz \
   workflowexecutor.jar \
     --workflow-filename workflow.json \
     --output-directory test-output \

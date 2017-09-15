@@ -18,10 +18,10 @@ import sbt._
 
 object Version {
 
-  val spark = sys.props.getOrElse("SPARK_VERSION", "2.0.0")
+  val spark = sys.props.getOrElse("SPARK_VERSION", "2.0.2")
   val (scala, java, hadoop, akka) = spark match {
     case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "1.8", "2.7.1", "2.4.9")
-    case other => ("2.10.5", "1.7", "2.6.0", "2.3.11")
+    case "1.6.1" => ("2.10.5", "1.7", "2.6.0", "2.3.11")
   }
 
   val amazonS3 = "1.10.16"

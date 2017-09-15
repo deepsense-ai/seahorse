@@ -35,7 +35,7 @@ DEEPSENSE_VERSION_SHORT: 0.4
 
 WORKFLOW_EXECUTOR_SCALA_VERSION: 2.11.8
 WORKFLOW_EXECUTOR_HADOOP_VERSION: 2.7.0
-WORKFLOW_EXECUTOR_SPARK_VERSION: 2.0.0
+WORKFLOW_EXECUTOR_SPARK_VERSION: 2.0.2
 
 WORKFLOW_EXECUTOR_GITHUB_URL: https://github.com/deepsense-io/seahorse-workflow-executor
 WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor
@@ -46,6 +46,6 @@ SEAHORSE_EDITOR_PORT: 33321
 
 PANDAS_LIBRARY_ADDRESS: http://pandas.pydata.org
 
-SPARK_DOCS: https://spark.apache.org/docs/2.0.0
+SPARK_DOCS: https://spark.apache.org/docs/2.0.2
 
-SPARK_ASSEMBLY_PATH: spark-assembly-2.0.0-hadoop2.7.0.jar
+SPARK_ASSEMBLY_PATH: spark-assembly-2.0.2-hadoop2.7.0.jar
