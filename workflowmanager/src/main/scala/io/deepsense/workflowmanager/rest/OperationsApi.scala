@@ -45,9 +45,9 @@ abstract class OperationsApi @Inject() (
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
   def route: Route = {
-    handleRejections(rejectionHandler) {
-      handleExceptions(exceptionHandler) {
-        cors {
+    cors {
+      handleRejections(rejectionHandler) {
+        handleExceptions(exceptionHandler) {
           pathPrefix(pathPrefixMatcher) {
             path("hierarchy") {
               get {

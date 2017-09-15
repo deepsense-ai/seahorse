@@ -72,9 +72,9 @@ abstract class WorkflowApi @Inject() (
   }
 
   def route: Route = {
-    handleRejections(rejectionHandler) {
-      handleExceptions(exceptionHandler) {
-        cors {
+    cors {
+      handleRejections(rejectionHandler) {
+        handleExceptions(exceptionHandler) {
           path("") {
             get {
               complete("Workflow Manager")
@@ -209,7 +209,7 @@ abstract class WorkflowApi @Inject() (
   }
 
   override def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
-    super.exceptionHandler(log) orElse ExceptionHandler {
+    ExceptionHandler {
         case e: WorkflowNotFoundException =>
           complete(StatusCodes.NotFound, e.failureDescription)
         case e: WorkflowRunningException =>
@@ -218,7 +218,7 @@ abstract class WorkflowApi @Inject() (
           complete(StatusCodes.NotFound, e.failureDescription)
         case e: CyclicGraphException =>
           complete(StatusCodes.BadRequest, e.failureDescription)
-    }
+    } orElse super.exceptionHandler(log)
   }
 
   private def selectFormPart(multipartFormData: MultipartFormData, partName: String): String =
