@@ -6,98 +6,108 @@ package io.deepsense.models.entities
 
 import org.joda.time.DateTime
 
-import io.deepsense.commons.auth.HasTenantId
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models
 
-/**
- * Represents mapping between logical id and report or
- * reference pointing to hdfs where data is stored.
- */
-case class Entity (
-    tenantId: String,
-    id: Entity.Id,
-    name: String,
-    description: String,
-    dClass: String,
-    data: Option[DataObjectReference],
-    report: Option[DataObjectReport],
-    created: DateTime,
-    updated: DateTime,
-    saved: Boolean = true)
-  extends HasTenantId {
+case class Entity(
+    override val info: EntityInfo,
+    dataReference: Option[DataObjectReference],
+    report: DataObjectReport)
+  extends WithEntityInfo {
 
-  def reportOnly: Entity = copy(data = None)
+  def dataOnly: EntityWithData = EntityWithData(info, dataReference.get)
 
-  def dataOnly: Entity = copy(report = None)
-
-  def descriptor: CompactEntityDescriptor = CompactEntityDescriptor(this)
-
-  def updateWith(userEntityDescriptor: UserEntityDescriptor): Entity = copy(
-    name = userEntityDescriptor.name,
-    description = userEntityDescriptor.description,
-    saved = userEntityDescriptor.saved,
-    updated = DateTimeConverter.now)
+  def reportOnly: EntityWithReport = EntityWithReport(info, report)
 }
 
 object Entity {
   type Id = models.Id
   val Id = models.Id
+
+  def apply(
+      entity: CreateEntityRequest,
+      id: Id,
+      created: DateTime,
+      updated: DateTime): Entity = Entity(
+    EntityInfo(entity, id, updated, created), entity.dataReference, entity.report)
+}
+
+case class EntityWithReport(
+    override val info: EntityInfo,
+    report: DataObjectReport)
+  extends WithEntityInfo
+
+object EntityWithReport {
+  def apply(
+      entity: CreateEntityRequest,
+      id: Entity.Id,
+      created: DateTime,
+      updated: DateTime): EntityWithReport = EntityWithReport(
+    EntityInfo(entity, id, updated, created), entity.report
+  )
+}
+
+case class EntityWithData(
+    override val info: EntityInfo,
+    dataReference: DataObjectReference)
+  extends WithEntityInfo
+
+object EntityWithData {
+  def apply(
+      entity: CreateEntityRequest,
+      id: Entity.Id,
+      created: DateTime,
+      updated: DateTime): EntityWithData = EntityWithData(
+    EntityInfo(entity, id, updated, created), entity.dataReference.get
+  )
 }
 
 /**
- * Data that describe entity to save.
+ * Fields that can be both created and updated.
  */
-case class InputEntity (
-  tenantId: String,
-  name: String,
-  description: String,
-  dClass: String,
-  data: Option[DataObjectReference],
-  report: Option[DataObjectReport],
-  saved: Boolean)
-
-/**
- * Shorter Entity description used for list presentation
- */
-case class CompactEntityDescriptor(
-  tenantId: String,
-  id: Entity.Id,
-  name: String,
-  description: String,
-  dClass: String,
-  created: DateTime,
-  updated: DateTime,
-  saved: Boolean = true
-)
-
-object CompactEntityDescriptor {
-
-  def apply(entity: Entity): CompactEntityDescriptor = {
-    CompactEntityDescriptor(
-      entity.tenantId,
-      entity.id,
-      entity.name,
-      entity.description,
-      entity.dClass,
-      entity.created,
-      entity.updated,
-      entity.saved)
-  }
+trait InputEntityFields {
+  val name: String
+  val description: String
+  val saved: Boolean
 }
 
 /**
- * Entity Description that can be provided by user.
+ * Contains information needed to create an entity.
  */
-case class UserEntityDescriptor(
-  id: Entity.Id,
-  name: String,
-  description: String,
-  saved: Boolean = true
-)
+case class CreateEntityRequest(
+    tenantId: String,
+    name: String,
+    description: String,
+    dClass: String,
+    dataReference: Option[DataObjectReference],
+    report: DataObjectReport,
+    saved: Boolean = true)
+  extends InputEntityFields
 
-object UserEntityDescriptor {
-  def apply(entity: Entity): UserEntityDescriptor = {
-    UserEntityDescriptor(entity.id, entity.name, entity.description, entity.saved)
-  }
+object CreateEntityRequest {
+  def apply(
+      info: EntityInfo,
+      dataReference: Option[DataObjectReference],
+      report: DataObjectReport): CreateEntityRequest = CreateEntityRequest(
+    info.tenantId, info.name, info.description, info.dClass, dataReference, report, info.saved)
+
+  def apply(entityWithReport: EntityWithReport): CreateEntityRequest = CreateEntityRequest(
+    entityWithReport.info, None, entityWithReport.report)
+}
+
+/**
+ * Contains information needed to update an entity.
+ * Note that it is limited to fields that can be modified, i.e. mutable ones.
+ */
+case class UpdateEntityRequest(
+    name: String,
+    description: String,
+    saved: Boolean = true)
+  extends InputEntityFields
+
+object UpdateEntityRequest {
+  def apply(entityCreate: CreateEntityRequest): UpdateEntityRequest = UpdateEntityRequest(
+    entityCreate.name, entityCreate.description, entityCreate.saved)
+
+  def apply(entity: EntityWithReport): UpdateEntityRequest =
+    UpdateEntityRequest(CreateEntityRequest(entity))
 }

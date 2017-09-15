@@ -10,7 +10,7 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.models.entities.{InputEntity, Entity}
+import io.deepsense.models.entities.{EntityWithData, CreateEntityRequest, Entity}
 import io.deepsense.models.protocols.EntitiesApiActorProtocol.{Create, Get}
 
 // FIXME Extract the traits into a single trait
@@ -25,7 +25,6 @@ class EntityStorageClientSpec(actorSystem: ActorSystem)
   with Eventually {
 
   val serviceProbe = TestProbe()
-  val returnTestEntity = mock[Entity]
   val client = TestActorBasedEntityStorageClientFactory.create(serviceProbe.ref)
 
   def this() = this(ActorSystem("EntityStorageClientSpec"))
@@ -35,7 +34,7 @@ class EntityStorageClientSpec(actorSystem: ActorSystem)
     // FIXME Generate the data using scalacheck
     val tenantId = "tenantId"
     val id = Entity.Id.randomId
-    val entity = mock[Entity]
+    val entity = mock[EntityWithData]
     val returnEntity = Some(entity)
 
     import scala.concurrent.duration._
@@ -56,14 +55,16 @@ class EntityStorageClientSpec(actorSystem: ActorSystem)
     import scala.concurrent.duration._
     implicit val timeout = 5.seconds
 
-    val entityToCreate = mock[InputEntity]
+    val entityToCreate = mock[CreateEntityRequest]
+    val createdId = mock[Entity.Id]
     val entityF = client.createEntity(entityToCreate)
 
     serviceProbe.expectMsg(Create(entityToCreate))
-    serviceProbe.reply(returnTestEntity)
+
+    serviceProbe.reply(createdId)
 
     whenReady(entityF) {
-      _ shouldBe returnTestEntity
+      _ shouldBe createdId
     }
   }
 

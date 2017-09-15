@@ -49,6 +49,10 @@ object DOperationTestClasses {
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
   }
 
+  case class DOperation1To2Test() extends DOperation1To2[A, A1, A2] with DOperationBaseFields {
+    override protected def _execute(context: ExecutionContext)(in: A): (A1, A2) = ???
+  }
+
   case class DOperation1To1Logging() extends DOperation1To1[A, A] with DOperationBaseFields {
     logger.trace("Initializing logging to test the serialization")
     override protected def _execute(context: ExecutionContext)(t0: A): A = ???
@@ -76,7 +80,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
     val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
     val nodes = Set(node1, node2)
-    val edges = Set(Edge(Endpoint(node1.id, 0), Endpoint(node2.id, 0)))
+    val edges = Set(Edge(node1, 0, node2, 0))
     val graph = Graph(nodes, edges)
     graph.size shouldBe 2
   }
@@ -142,7 +146,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val nodeReady = Node(Node.Id.randomId, new DOperation0To1Test)
     val nodeNotReady = Node(Node.Id.randomId, new DOperation1To0Test)
     val nodes = Set(nodeReady, nodeNotReady)
-    val edges = Set(Edge(Endpoint(nodeReady.id, 0), Endpoint(nodeNotReady.id, 0)))
+    val edges = Set(Edge(nodeReady, 0, nodeNotReady, 0))
     var graph = Graph(nodes, edges)
 
     // queue all Nodes for execution
@@ -164,9 +168,9 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
     val nodes = Set(node1, node2, node3, node4)
     val nonCyclicEdges = Set(
-      Edge(Endpoint(node1.id, 0), Endpoint(node2.id, 0)),
-      Edge(Endpoint(node2.id, 0), Endpoint(node3.id, 0)),
-      Edge(Endpoint(node3.id, 0), Endpoint(node4.id, 0))
+      Edge(node1, 0, node2, 0),
+      Edge(node2, 0, node3, 0),
+      Edge(node3, 0, node4, 0)
     )
     var graph = Graph(nodes, nonCyclicEdges)
     assert(!graph.containsCycle)
@@ -183,13 +187,31 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
     val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
     val edges = Set(
-      Edge(Endpoint(node1.id, 0), Endpoint(node2.id, 0)),
-      Edge(Endpoint(node2.id, 0), Endpoint(node3.id, 0)),
-      Edge(Endpoint(node3.id, 0), Endpoint(node4.id, 0)))
+      Edge(node1, 0, node2, 0),
+      Edge(node2, 0, node3, 0),
+      Edge(node3, 0, node4, 0))
 
     val graph = Graph(Set(node1, node2, node3, node4), edges)
     val sorted = graph.topologicallySorted
     assert(sorted == Some(List(node1, node2, node3, node4)))
+  }
+
+  test("Simple Graph can calculate its direct and non-direct precedessors") {
+    import DOperationTestClasses._
+
+    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val edges = Set(
+      Edge(node1, 0, node2, 0),
+      Edge(node2, 0, node3, 0),
+      Edge(node3, 0, node4, 0))
+
+    val graph = Graph(Set(node1, node2, node3, node4), edges)
+
+    val predsOfNode3 = graph.allPredecessorsOf(node3.id)
+    assert(predsOfNode3 == Set(node1, node2))
   }
 
   test("Complicated Graph can be sorted topologically") {
@@ -265,13 +287,12 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
     val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
     val nodes = Set(node1, node2, node3, node4)
-    val edges = List(
-      (node1, node2, 0, 0),
-      (node1, node3, 0, 0),
-      (node2, node4, 0, 0),
-      (node3, node4, 0, 1))
-    val edgesSet = edges.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
-    val graph = Graph(nodes, edgesSet)
+    val edges = Set(
+      Edge(node1, 0, node2, 0),
+      Edge(node1, 0, node3, 0),
+      Edge(node2, 0, node4, 0),
+      Edge(node3, 0, node4, 1))
+    val graph = Graph(nodes, edges)
 
     val hierarchy = new DOperableCatalog
     hierarchy.registerDOperable[A1]()
@@ -289,6 +310,41 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
       node4.id -> knowledgeA12)
 
     graphKnowledge.knowledgeMap should contain theSameElementsAs graphKnowledgeExpected
+  }
+
+  test("Graph can infer knowledge up to given output port") {
+
+    import DClassesForDOperations._
+    import DOperationTestClasses._
+
+    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To2Test)
+    val node3 = Node(Node.Id.randomId, new DOperation2To1Test)
+    val nodes = Set(node1, node2, node3)
+    val edges = Set(
+      Edge(node1, 0, node2, 0),
+      Edge(node2, 0, node3, 0),
+      Edge(node2, 1, node3, 1))
+    val graph = Graph(nodes, edges)
+
+    val hierarchy = new DOperableCatalog
+    hierarchy.registerDOperable[A1]()
+    hierarchy.registerDOperable[A2]()
+    val ctx = new InferContext(hierarchy)
+
+    val node1Knowledge = graph.inferKnowledge(node1.id, 0, ctx)
+    val node2Port0Knowledge = graph.inferKnowledge(node2.id, 0, ctx)
+    val node2Port1Knowledge = graph.inferKnowledge(node2.id, 1, ctx)
+    val node3Knowledge = graph.inferKnowledge(node3.id, 0, ctx)
+
+    val knowledgeA1 = DKnowledge(A1())
+    val knowledgeA2 = DKnowledge(A2())
+    val knowledgeA12 = DKnowledge(A1(), A2())
+
+    node1Knowledge shouldBe knowledgeA1
+    node2Port0Knowledge shouldBe knowledgeA1
+    node2Port1Knowledge shouldBe knowledgeA2
+    node3Knowledge shouldBe knowledgeA12
   }
 
   test("Non-empty Graph should be serializable") {

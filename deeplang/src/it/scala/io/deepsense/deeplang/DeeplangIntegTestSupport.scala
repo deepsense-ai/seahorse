@@ -17,7 +17,7 @@ import org.scalatest.BeforeAndAfterAll
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
-import io.deepsense.models.entities.Entity
+import io.deepsense.models.entities.{CreateEntityRequest, Entity}
 
 /**
  * Adds features to facilitate integration testing using Spark and entitystorage

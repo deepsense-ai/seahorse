@@ -10,42 +10,47 @@ import io.deepsense.models.entities._
 trait EntityTestFactory extends DataObjectTestFactory {
 
   val testTenantId = "Mr Crowley"
-  val testName = "Operation"
-  val testDescription = "description"
-  val testDClass = "DataFrame"
+  val testName = "test name of entity"
+  val testDescription = "test description of entity"
+  val testDClass = "test dClass for entity"
 
-  def testEntity: Entity = testEntity(Some(testDataObjectReference), Some(testDataObjectReport))
+  def testEntityWithData(
+      tenantId: String = testTenantId,
+      index: Int = 0,
+      data: DataObjectReference = testDataObjectReference): EntityWithData =
+    EntityWithData(testEntityInfo(tenantId, index), data)
 
-  def testEntity(data: Option[DataObjectReference], report: Option[DataObjectReport]): Entity =
-    testEntity(testTenantId, 0, data, report)
+  def testEntityWithReport(
+      tenantId: String = testTenantId,
+      index: Int = 0,
+      report: DataObjectReport = testDataObjectReport): EntityWithReport =
+    EntityWithReport(testEntityInfo(tenantId, index), report)
 
-  def testEntity(
-      tenantId: String,
-      index: Int,
-      data: Option[DataObjectReference],
-      report: Option[DataObjectReport]): Entity = {
+  def testEntityInfo(tenantId: String = testTenantId, index: Int = 0): EntityInfo = {
     val now = DateTimeConverter.now
-    Entity(
-      tenantId,
-      Entity.Id.randomId,
-      indexedValue(testName, index),
-      indexedValue(testDescription, index),
-      testDClass,
-      data,
-      report,
-      now,
-      now)
+    EntityInfo(
+      Entity.Id.randomId, tenantId, indexedValue(testName, index),
+      indexedValue(testDescription, index), testDClass, now, now)
   }
 
-  def testInputEntity: InputEntity = new InputEntity(
-    testTenantId,
-    testName,
-    testDescription,
-    testDClass,
-    Some(testDataObjectReference),
-    Some(testDataObjectReport),
-    false)
+  def testCreateEntityRequest(
+      tenantId: String = testTenantId,
+      index: Int = 0,
+      data: Option[DataObjectReference] = Some(testDataObjectReference),
+      report: DataObjectReport = testDataObjectReport): CreateEntityRequest =
+    CreateEntityRequest(info = testEntityInfo(tenantId, index), data, report)
+
+  def testUpdateEntityRequest(): UpdateEntityRequest =
+    UpdateEntityRequest(testCreateEntityRequest())
 
   private def indexedValue(value: String, index: Int): String =
     if (index == 0) value else s"${value}_$index"
+
+  def modifyEntity(entity: UpdateEntityRequest): UpdateEntityRequest = {
+    val s = "_modified"
+    entity.copy(
+      name = entity.name + s,
+      description = entity.description + s,
+      saved = !entity.saved)
+  }
 }

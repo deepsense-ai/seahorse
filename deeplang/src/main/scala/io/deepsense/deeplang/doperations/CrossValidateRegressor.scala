@@ -23,6 +23,9 @@ case class CrossValidateRegressor()
   with WithTrainParameters {
 
   import CrossValidateRegressor._
+
+  override val dataFramePortIndex = 1
+
   override val parameters = trainParameters ++ ParametersSchema(
     numOfFoldsParamKey ->
       NumericParameter(

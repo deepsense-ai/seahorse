@@ -15,13 +15,12 @@ import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.json.ExceptionsJsonProtocol
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.entitystorage.exceptions.EntityNotFoundException
 import io.deepsense.entitystorage.json.EntityJsonProtocol
 import io.deepsense.entitystorage.services.EntityService
-import io.deepsense.models.entities.{CompactEntityDescriptor, Entity, UserEntityDescriptor}
+import io.deepsense.models.entities.{Entity, UpdateEntityRequest}
 
 class EntitiesApi @Inject() (
     val tokenTranslator: TokenTranslator,
@@ -59,21 +58,17 @@ class EntitiesApi @Inject() (
           val entityId: Entity.Id = idParameter
           put {
             withUserContext { userContext =>
-              entity(as[UserEntityDescriptor]) { entityDescription =>
-                validate(
-                  entityDescription.id == entityId,
-                  "Entity's Id from Json does not match Id from request's URL"
-                ) {
-                  complete(
-                    authorizatorProvider.forContext(userContext).withRole(roleUpdate) {
-                      userContext =>
-                        entityService.updateEntity(userContext.tenantId, entityDescription).map {
-                          case Some(entity) => Map("entity" -> entity)
-                          case None => throw EntityNotFoundException(entityId)
-                        }
-                    }
-                  )
-                }
+              entity(as[UpdateEntityRequest]) { entityUpdate =>
+                complete(
+                  authorizatorProvider.forContext(userContext).withRole(roleUpdate) {
+                    userContext =>
+                      entityService.updateEntity(
+                          userContext.tenantId, entityId, entityUpdate).map {
+                        case Some(entity) => Map("entity" -> entity)
+                        case None => throw EntityNotFoundException(entityId)
+                      }
+                  }
+                )
               }
             }
           } ~
@@ -92,7 +87,9 @@ class EntitiesApi @Inject() (
             withUserContext { userContext =>
               complete(
                 authorizatorProvider.forContext(userContext).withRole(roleGet) { userContext =>
-                  entityService.getAll(userContext.tenantId).map(entitiesDescriptors)
+                  entityService.getAll(userContext.tenantId).map {
+                    entities => Map("entities" -> entities)
+                  }
                 }
               )
             }
@@ -108,9 +105,4 @@ class EntitiesApi @Inject() (
         complete(StatusCodes.NotFound, e.failureDescription)
     }
   }
-
-  private def entitiesDescriptors(entities: List[Entity]):
-      Map[String, Map[String, CompactEntityDescriptor]] =
-    Map("entities" -> entities.map(e => e.id.value.toString -> e.descriptor).toMap)
-
 }

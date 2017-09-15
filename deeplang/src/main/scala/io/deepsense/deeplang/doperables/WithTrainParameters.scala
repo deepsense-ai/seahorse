@@ -11,11 +11,17 @@ trait WithTrainParameters {
 
   private val targetColumnField = "target column"
 
+  protected val dataFramePortIndex: Int
+
   protected val trainParameters = ParametersSchema(
     featureColumnsField -> ColumnSelectorParameter(
-      "Columns which are to be used as features in regression", required = true),
+      "Columns which are to be used as features in regression",
+      required = true,
+      portIndex = dataFramePortIndex),
     targetColumnField -> SingleColumnSelectorParameter(
-      "Column against which the regression will be performed", required = true))
+      "Column against which the regression will be performed",
+      required = true,
+      portIndex = dataFramePortIndex))
 
   protected def parametersForTrainable: Trainable.Parameters = Trainable.Parameters(
     trainParameters.getColumnSelection(featureColumnsField),

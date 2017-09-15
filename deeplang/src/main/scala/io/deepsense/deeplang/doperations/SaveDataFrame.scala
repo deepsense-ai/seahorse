@@ -6,12 +6,12 @@ package io.deepsense.deeplang.doperations
 
 import spray.json._
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadata, DataFrame}
 import io.deepsense.deeplang.doperables.{DOperableSaver, Report}
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation1To0, ExecutionContext}
 import io.deepsense.entitystorage.UniqueFilenameUtil
-import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, InputEntity}
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, CreateEntityRequest}
 
 /**
  * Operation which is able to serialize DataFrame and save it.
@@ -33,23 +33,25 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
     DOperableSaver.saveDOperableWithEntityStorageRegistration(
       context)(
       dataFrame,
-      inputEntity(context, uniqueFilename, dataFrame.report))
+      inputEntity(context, uniqueFilename, dataFrame.report, dataFrame.metadata.get))
   }
 
   private def inputEntity(
       context: ExecutionContext,
       uniqueFilename: String,
-      dataFrameReport: Report): InputEntity = {
+      dataFrameReport: Report,
+      metadata: DataFrameMetadata): CreateEntityRequest = {
     val name = parameters.getStringParameter(SaveDataFrame.nameParam).value.get
     val description = parameters.getStringParameter(SaveDataFrame.descriptionParam).value.get
-    import io.deepsense.reportlib.model.ReportJsonProtocol._
-    InputEntity(
+    CreateEntityRequest(
       context.tenantId,
       name,
       description,
-      "DataFrame",
-      Some(DataObjectReference(uniqueFilename)),
-      Some(DataObjectReport(dataFrameReport.content.toJson.prettyPrint)),
+      dClass = DataFrame.getClass.toString,  // TODO https://codilime.atlassian.net/browse/DS-869
+      dataReference = Some(DataObjectReference(
+        uniqueFilename,
+        metadata.serializeToJson.compactPrint)),
+      report = dataFrameReport.toDataObjectReport,
       saved = true)
   }
 

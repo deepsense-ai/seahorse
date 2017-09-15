@@ -43,7 +43,7 @@ class MvpCase3IntegSuite extends ExperimentExecutionSpec {
   val convertTypeBeforeOneHotId = Node.Id.randomId
   val projectId = Node.Id.randomId
   val splitId = Node.Id.randomId
-  val untraindedRRId = Node.Id.randomId
+  val untrainedRRId = Node.Id.randomId
   val convertTypeBeforeSplitId = Node.Id.randomId
   val crossValidateRId = Node.Id.randomId
   val scoreRId = Node.Id.randomId
@@ -66,7 +66,7 @@ class MvpCase3IntegSuite extends ExperimentExecutionSpec {
     Node(oneHotDId, oneHotEncoder),
     Node(projectId, projectColumns),
     Node(splitId, Split(0.7, 123456789)),
-    Node(untraindedRRId, CreateRidgeRegression(0.0000001, RegressorTrainingIterations)),
+    Node(untrainedRRId, CreateRidgeRegression(0.0000001, RegressorTrainingIterations)),
     Node(convertTypeBeforeSplitId, ConvertType(ColumnType.numeric, Set(), (1 to 76).toSet)),
     Node(crossValidateRId, crossValidateRegressor),
     Node(scoreRId, new ScoreRegressor),
@@ -84,7 +84,7 @@ class MvpCase3IntegSuite extends ExperimentExecutionSpec {
     Edge(Endpoint(convertTypeBeforeSplitId, 0), Endpoint(splitId, 0)),
     Edge(Endpoint(splitId, 0), Endpoint(crossValidateRId, 1)),
     Edge(Endpoint(splitId, 1), Endpoint(scoreRId, 1)),
-    Edge(Endpoint(untraindedRRId, 0), Endpoint(crossValidateRId, 0)),
+    Edge(Endpoint(untrainedRRId, 0), Endpoint(crossValidateRId, 0)),
     Edge(Endpoint(crossValidateRId, 0), Endpoint(scoreRId, 0)),
     Edge(Endpoint(scoreRId, 0), Endpoint(evaluateRId, 0))
   )

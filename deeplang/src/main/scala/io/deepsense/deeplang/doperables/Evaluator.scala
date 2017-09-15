@@ -15,9 +15,9 @@ trait Evaluator extends DOperation1To1[DataFrame, Report] {
 
   val evaluatorParameters = ParametersSchema(
     Evaluator.targetColumnParamKey ->
-      SingleColumnSelectorParameter("Target Column", required = true),
+      SingleColumnSelectorParameter("Target Column", required = true, portIndex = 0),
     Evaluator.predictionColumnParamKey ->
-      SingleColumnSelectorParameter("Prediction Column", required = true)
+      SingleColumnSelectorParameter("Prediction Column", required = true, portIndex = 0)
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Report = {

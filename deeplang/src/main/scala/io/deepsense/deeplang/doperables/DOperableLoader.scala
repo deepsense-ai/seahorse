@@ -21,7 +21,7 @@ trait DOperableLoader {
     implicit val timeout = 5.seconds
     val entityF = entityStorageClient.getEntityData(tenantId, id)
     val entity = Await.result(entityF, timeout).get
-    loader(entity.data.get.url)
+    loader(entity.dataReference.savedDataPath)
   }
 }
 

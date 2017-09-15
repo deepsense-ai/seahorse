@@ -6,12 +6,12 @@ package io.deepsense.deeplang.doperables.dataframe.types.categorical
 
 import io.deepsense.deeplang.UnitSpec
 
-class MappingSpec extends UnitSpec {
+class CategoriesMappingSpec extends UnitSpec {
 
   val values = Seq("Value1", "Value2", "Value3", "Value4")
   val mapping = CategoriesMapping(values)
 
-  "Mapping" should {
+  "CategoriesMapping" should {
     "create a proper mapping" in {
       values.foreach(v => mapping.idToValue(mapping.valueToId(v)) shouldBe v)
       mapping.idToValue should have size values.size

@@ -17,7 +17,7 @@ class EntitiesApiActor @Inject()(entityService: EntityService) extends Actor wit
 
   override def receive: Receive = {
     case Get(tenantId, id) => entityService.getEntityData(tenantId, id) pipeTo sender()
-    case Create(inputEntity) => entityService.createEntity(inputEntity) pipeTo sender()
+    case Create(entity) => entityService.createEntity(entity) pipeTo sender()
     case x => unhandled(x)
   }
 }

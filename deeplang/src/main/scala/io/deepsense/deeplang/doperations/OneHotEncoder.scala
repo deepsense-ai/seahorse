@@ -5,11 +5,11 @@
 package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, CategoricalMetadata}
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMetadata, CategoriesMapping}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
-import io.deepsense.deeplang.{ExecutionContext, DOperation1To1}
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.parameters.{ColumnType, BooleanParameter, ColumnSelectorParameter, ParametersSchema}
+import io.deepsense.deeplang.parameters.{BooleanParameter, ColumnSelectorParameter, ColumnType, ParametersSchema}
+import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
   override val name: String = "One Hot Encoder"
@@ -18,7 +18,8 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
   val withRedundantKey = "with redundant"
 
   override val parameters: ParametersSchema = ParametersSchema(
-    selectedColumnsKey -> ColumnSelectorParameter("Columns to encode", required = true),
+    selectedColumnsKey -> ColumnSelectorParameter(
+      "Columns to encode", required = true, portIndex = 0),
     withRedundantKey -> BooleanParameter(
       "Preserve redundant column", default = Some(false), required = true
     )
@@ -37,7 +38,7 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
       val valueIdPairs = mapping.valueIdPairs.dropRight(if (withRedundant) 0 else 1)
       val uniqueLevel = dataFrame.getFirstFreeNamesLevel(columnName, mapping.values.toSet)
       for ((value, id) <- valueIdPairs) yield {
-        val newColumnName = DataFrame.createColumnName(columnName, value, uniqueLevel)
+        val newColumnName = DataFrameColumnsGetter.createColumnName(columnName, value, uniqueLevel)
 
         s"IF(`$columnName` IS NULL, CAST(NULL as Double), IF(`$columnName`=$id, 1.0, 0.0))" +
           s"as `$newColumnName`"

@@ -17,5 +17,5 @@ case class ApplyTransformation() extends DOperation2To1[Transformation, DataFram
 
   override protected def _execute(
       context: ExecutionContext)(transformation: Transformation, dataFrame: DataFrame): DataFrame =
-    transformation.transform(dataFrame)
+    transformation.transform(context)(())(dataFrame)
 }

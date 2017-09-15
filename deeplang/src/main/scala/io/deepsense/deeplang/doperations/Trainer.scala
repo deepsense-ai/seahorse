@@ -17,6 +17,8 @@ trait Trainer[T1 <: Trainable, T2 <: Scorable]
 
   override val parameters = trainParameters
 
+  override val dataFramePortIndex = 1
+
   override protected def _execute(
       context: ExecutionContext)(
       trainable: T1, dataframe: DataFrame): T2 = {

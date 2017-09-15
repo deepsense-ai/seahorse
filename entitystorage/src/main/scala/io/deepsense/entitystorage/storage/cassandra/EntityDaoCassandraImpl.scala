@@ -14,9 +14,10 @@ import com.datastax.driver.core.querybuilder.Update.Assignments
 import com.datastax.driver.core.querybuilder.{Delete, QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import org.joda.time.DateTime
 
 import io.deepsense.entitystorage.storage.EntityDao
-import io.deepsense.models.entities.Entity
+import io.deepsense.models.entities._
 
 class EntityDaoCassandraImpl @Inject() (
     @Named("cassandra.entities.table") table: String,
@@ -24,57 +25,88 @@ class EntityDaoCassandraImpl @Inject() (
     (implicit ec: ExecutionContext)
   extends EntityDao {
 
-  override def getAll(tenantId: String): Future[List[Entity]] =
-    Future(session.execute(getAllQuery(tenantId)))
-      .map(_.all().toList.map(EntityRowMapper.fromRow))
-
-  override def get(tenantId: String, id: Entity.Id): Future[Option[Entity]] = {
-    Future(session.execute(getQuery(tenantId, id)))
-      .map(rs => Option(rs.one()).map(EntityRowMapper.fromRow))
+  override def getAll(tenantId: String): Future[List[EntityInfo]] = {
+    Future(session.execute(
+      getAllQuery(tenantId, selectedFields = EntityRowMapper.EntityInfoFields))
+    ).map(_.all().toList.map(EntityRowMapper.toEntityInfo))
   }
 
-  override def upsert(entity: Entity): Future[Unit] = {
-    Future(session.execute(upsertQuery(entity)))
+  override def getWithData(tenantId: String, id: Entity.Id): Future[Option[EntityWithData]] = {
+    Future(session.execute(
+      getQuery(tenantId, id, selectedFields = EntityRowMapper.EntityWithDataFields))
+    ).map(rs => Option(rs.one()).map(EntityRowMapper.toEntityWithData))
+  }
+
+  override def getWithReport(tenantId: String, id: Entity.Id): Future[Option[EntityWithReport]] = {
+    Future(session.execute(
+      getQuery(tenantId, id, selectedFields = EntityRowMapper.EntityWithReportFields))
+    ).map(rs => Option(rs.one()).map(EntityRowMapper.toEntityWithReport))
+  }
+
+  override def create(
+      id: Entity.Id,
+      entity: CreateEntityRequest,
+      created: DateTime): Future[Unit] = {
+    Future(session.execute(createQuery(id, entity, created)))
+  }
+
+  def update(
+      tenantId: String,
+      id: Entity.Id,
+      entity: UpdateEntityRequest,
+      updated: DateTime): Future[Unit] = {
+    Future(session.execute(updateEntityQuery(tenantId, id, entity, updated)))
   }
 
   override def delete(tenantId: String, id: Entity.Id): Future[Unit] = {
     Future(session.execute(deleteQuery(tenantId, id)))
   }
 
-  private def getAllQuery(tenantId: String): Where = {
+  private def getAllQuery(tenantId: String, selectedFields: Seq[String]): Where = {
     QueryBuilder
-      .select()
+      .select(selectedFields: _*)
       .from(table)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
   }
 
-  private def getQuery(tenantId: String, id: Entity.Id): Select = {
-    QueryBuilder.select().from(table)
+  private def getQuery(tenantId: String, id: Entity.Id, selectedFields: Seq[String]): Select = {
+    QueryBuilder.select(selectedFields: _*).from(table)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
       .and(QueryBuilder.eq(EntityRowMapper.Id, id.value)).limit(1)
   }
 
-  private def upsertQuery(entity: Entity): Update.Where = {
-    val update = QueryBuilder.update(table)
-      .`with`(set(EntityRowMapper.Name, entity.name))
-      .and(set(EntityRowMapper.Description, entity.description))
+  private def createQuery(
+      id: Entity.Id,
+      entity: CreateEntityRequest,
+      created: DateTime): Update.Where = {
+    inputQuery(entity)
       .and(set(EntityRowMapper.DClass, entity.dClass))
-      .and(set(EntityRowMapper.Url, entity.data.map(_.url).orNull))
-      .and(set(EntityRowMapper.Created, entity.created.getMillis))
-      .and(set(EntityRowMapper.Updated, entity.updated.getMillis))
-      .and(set(EntityRowMapper.Saved, entity.saved))
-    upsertReport(update, entity)
+      .and(set(EntityRowMapper.Url, entity.dataReference.map(_.savedDataPath).orNull))
+      .and(set(EntityRowMapper.Metadata, entity.dataReference.map(_.metadata).orNull))
+      .and(set(EntityRowMapper.Created, created.getMillis))
+      .and(set(EntityRowMapper.Updated, created.getMillis))
+      .and(set(EntityRowMapper.Report, entity.report.jsonReport))
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, entity.tenantId))
-      .and(QueryBuilder.eq(EntityRowMapper.Id, entity.id.value))
+      .and(QueryBuilder.eq(EntityRowMapper.Id, id.value))
   }
 
-  private def upsertReport(update: Update.Assignments, entity: Entity): Assignments = {
-    entity.report match {
-      case Some(report) =>
-        update.and(set(EntityRowMapper.Report, report.jsonReport))
-      case None =>
-        update
-    }
+  private def updateEntityQuery(
+      tenantId: String,
+      id: Entity.Id,
+      entity: UpdateEntityRequest,
+      updated: DateTime): Update.Where = {
+
+    inputQuery(entity)
+      .and(set(EntityRowMapper.Updated, updated.getMillis))
+      .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
+      .and(QueryBuilder.eq(EntityRowMapper.Id, id.value))
+  }
+
+  private def inputQuery(entity: InputEntityFields): Update.Assignments = {
+    QueryBuilder.update(table)
+      .`with`(set(EntityRowMapper.Name, entity.name))
+      .and(set(EntityRowMapper.Description, entity.description))
+      .and(set(EntityRowMapper.Saved, entity.saved))
   }
 
   private def deleteQuery(tenantId: String, id: Entity.Id): Delete.Where = {

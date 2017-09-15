@@ -81,7 +81,7 @@ abstract class Parameter extends Serializable {
   protected def definedValueToJson(definedValue: HeldValue): JsValue
 
   /**
-   * Fills parameter with value basing on json representation of this value.
+   * Fills parameter with value based on json representation of this value.
    */
   def fillValueWithJson(jsValue: JsValue): Unit = {
     value = jsValue match {
@@ -91,8 +91,9 @@ abstract class Parameter extends Serializable {
   }
 
   /**
-   * Returns value of parameter basing on json representation of this value.
-   * Assumes that `jsValue` is not JsNull. Performs all required side effects of setting value.
+   * Performs all required side effects of setting value.
+   * Assumes that `jsValue` is not JsNull.
+   * @return Value of parameter based on json representation of this value.
    */
   protected def valueFromDefinedJson(jsValue: JsValue): HeldValue
 }

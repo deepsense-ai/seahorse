@@ -18,7 +18,8 @@ case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
   override val parameters: ParametersSchema = ParametersSchema(
     selectedColumns -> ColumnSelectorParameter(
       "Columns to be included in the output DataFrame",
-      required = true
+      required = true,
+      portIndex = 0
     )
   )
 

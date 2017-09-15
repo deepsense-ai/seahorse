@@ -12,7 +12,7 @@ import io.deepsense.deeplang.parameters.ParametersSchema
 
 /**
  * DOperation that receives and returns instances of DOperable.
- * Can infer its output type basing on type knowledge.
+ * Can infer its output type based on type knowledge.
  */
 @SerialVersionUID(1L)
 abstract class DOperation extends Serializable with Logging {

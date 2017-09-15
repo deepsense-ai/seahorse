@@ -46,7 +46,7 @@ class SaveDataFrameIntegSpec
   def testSimpleDataFrameSchemaWithRowsSeq(rowsSeq: Seq[Row]): Unit = {
     val context = executionContext
     // NOTE: In this test suite, description should uniquely identify DataFrame
-    val dataFrameDescription = rowsSeq.toString
+    val dataFrameDescription = rowsSeq.toString()
     val operation: SaveDataFrame = createSaveDataFrameOperation("testName", dataFrameDescription)
     val dataFrameToSave: DataFrame = createDataFrameToSave(rowsSeq)
 
@@ -58,10 +58,11 @@ class SaveDataFrameIntegSpec
         .entityStorageClient
         .asInstanceOf[EntityStorageClientTestInMemoryImpl]
         .getAllEntities
-        .filter(p => p.description == dataFrameDescription)
+        .filter(e => e.info.description == dataFrameDescription)
     filteredEntities.length shouldBe 1
 
-    val loadedSparkDataFrame = sqlContext.parquetFile(filteredEntities.head.data.get.url)
+    val loadedSparkDataFrame = sqlContext.read.parquet(
+      filteredEntities.head.dataReference.savedDataPath)
     val loadedDataFrame = context.dataFrameBuilder.buildDataFrame(loadedSparkDataFrame)
     // We cannot guarantee order of rows in loaded DataFrame
     assertDataFramesEqual(dataFrameToSave, loadedDataFrame, checkRowOrder = false)

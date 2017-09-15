@@ -15,8 +15,21 @@ abstract class DMethod0To1[
            (): TO_0
 
   def infer(context: InferContext)(parameters: P)(): DKnowledge[TO_0] = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)()
+    } else {
+      inferTypes(context)(parameters)()
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(): DKnowledge[TO_0] = {
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(): DKnowledge[TO_0] = {
+    inferTypes(context)(parameters)()
+  }
+
 }
 
 abstract class DMethod0To2[
@@ -26,10 +39,25 @@ abstract class DMethod0To2[
   def apply(context: ExecutionContext)(parameters: P)
            (): (TO_0, TO_1)
 
-  def infer(context: InferContext)(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
+  def infer(context: InferContext)(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)()
+    } else {
+      inferTypes(context)(parameters)()
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)
+      (): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
+
+  protected def inferFull(
+      context: InferContext)(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    inferTypes(context)(parameters)()
+  }
+
 }
 
 abstract class DMethod0To3[
@@ -40,12 +68,27 @@ abstract class DMethod0To3[
   def apply(context: ExecutionContext)(parameters: P)
            (): (TO_0, TO_1, TO_2)
 
-  def infer(context: InferContext)(parameters: P)():
-      (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
+  def infer(context: InferContext)(parameters: P)
+      (): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)()
+    } else {
+      inferTypes(context)(parameters)()
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)
+      (): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)
+      (): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    inferTypes(context)(parameters)()
+  }
+
 }
 
 abstract class DMethod1To0[
@@ -56,7 +99,22 @@ abstract class DMethod1To0[
 
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0]): Unit = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0)
+    } else {
+      inferTypes(context)(parameters)(k0)
+    }
   }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): Unit = {
+  }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): Unit = {
+    inferTypes(context)(parameters)(k0)
+  }
+
 }
 
 abstract class DMethod1To1[
@@ -68,8 +126,23 @@ abstract class DMethod1To1[
 
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0]): DKnowledge[TO_0] = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0)
+    } else {
+      inferTypes(context)(parameters)(k0)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): DKnowledge[TO_0] = {
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): DKnowledge[TO_0] = {
+    inferTypes(context)(parameters)(k0)
+  }
+
 }
 
 abstract class DMethod1To2[
@@ -81,10 +154,25 @@ abstract class DMethod1To2[
            (t0: TI_0): (TO_0, TO_1)
 
   def infer(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0)
+    } else {
+      inferTypes(context)(parameters)(k0)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    inferTypes(context)(parameters)(k0)
+  }
+
 }
 
 abstract class DMethod1To3[
@@ -97,11 +185,26 @@ abstract class DMethod1To3[
            (t0: TI_0): (TO_0, TO_1, TO_2)
 
   def infer(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0)
+    } else {
+      inferTypes(context)(parameters)(k0)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    inferTypes(context)(parameters)(k0)
+  }
+
 }
 
 abstract class DMethod2To0[
@@ -114,7 +217,24 @@ abstract class DMethod2To0[
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): Unit = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1)
+    } else {
+      inferTypes(context)(parameters)(k0, k1)
+    }
   }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): Unit = {
+  }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): Unit = {
+    inferTypes(context)(parameters)(k0, k1)
+  }
+
 }
 
 abstract class DMethod2To1[
@@ -128,8 +248,25 @@ abstract class DMethod2To1[
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): DKnowledge[TO_0] = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1)
+    } else {
+      inferTypes(context)(parameters)(k0, k1)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): DKnowledge[TO_0] = {
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): DKnowledge[TO_0] = {
+    inferTypes(context)(parameters)(k0, k1)
+  }
+
 }
 
 abstract class DMethod2To2[
@@ -143,10 +280,27 @@ abstract class DMethod2To2[
 
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1)
+    } else {
+      inferTypes(context)(parameters)(k0, k1)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    inferTypes(context)(parameters)(k0, k1)
+  }
+
 }
 
 abstract class DMethod2To3[
@@ -161,11 +315,28 @@ abstract class DMethod2To3[
 
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1)
+    } else {
+      inferTypes(context)(parameters)(k0, k1)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    inferTypes(context)(parameters)(k0, k1)
+  }
+
 }
 
 abstract class DMethod3To0[
@@ -180,7 +351,26 @@ abstract class DMethod3To0[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): Unit = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1, k2)
+    } else {
+      inferTypes(context)(parameters)(k0, k1, k2)
+    }
   }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): Unit = {
+  }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): Unit = {
+    inferTypes(context)(parameters)(k0, k1, k2)
+  }
+
 }
 
 abstract class DMethod3To1[
@@ -196,8 +386,27 @@ abstract class DMethod3To1[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): DKnowledge[TO_0] = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1, k2)
+    } else {
+      inferTypes(context)(parameters)(k0, k1, k2)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): DKnowledge[TO_0] = {
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): DKnowledge[TO_0] = {
+    inferTypes(context)(parameters)(k0, k1, k2)
+  }
+
 }
 
 abstract class DMethod3To2[
@@ -213,10 +422,29 @@ abstract class DMethod3To2[
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1, k2)
+    } else {
+      inferTypes(context)(parameters)(k0, k1, k2)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {
+    inferTypes(context)(parameters)(k0, k1, k2)
+  }
+
 }
 
 abstract class DMethod3To3[
@@ -233,9 +461,28 @@ abstract class DMethod3To3[
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    if (context.fullInference) {
+      inferFull(context)(parameters)(k0, k1, k2)
+    } else {
+      inferTypes(context)(parameters)(k0, k1, k2)
+    }
+  }
+
+  protected def inferTypes(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
+
+  protected def inferFull(context: InferContext)(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {
+    inferTypes(context)(parameters)(k0, k1, k2)
+  }
+
 }
