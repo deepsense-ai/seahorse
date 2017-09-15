@@ -55,5 +55,11 @@
       command: docker rm -f {{ds_documentation_docker_image}}
       when: docker_containers.stdout.find('{{ds_documentation_docker_image}}') != -1
 
-    - name: Run documentation container
-      shell: docker run --restart=always -d -p {{ds_documentation_ip}}:{{ds_documentation_port}}:80 --name={{ds_documentation_docker_image}} {{ds_documentation_docker_image}}
+    - name: Run frontend container
+      docker:
+        name: "{{ds_documentation_docker_image}}"
+        image: "{{ds_documentation_docker_image}}"
+        state: started
+        restart_policy: always
+        ports:
+          - "{{ds_documentation_ip}}:{{ds_documentation_port}}:80"
