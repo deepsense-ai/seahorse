@@ -157,9 +157,10 @@ function WorkflowsEditorController(workflow,
       The workflow had to be executed at least once. Make sure you saved the current state of the workflow.`
     }).
     then(() => {
-      $state.go('workflows.latest_report', {
+      let url = $state.href('workflows.latest_report', {
         'id': $stateParams.id
       });
+      window.open(url, '_blank');
     });
   });
 
