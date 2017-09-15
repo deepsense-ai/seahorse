@@ -11,7 +11,10 @@ apt-get -y update
 
 # Install prerequisites
 apt-get -y install apt-transport-https ca-certificates
-#apt-get -y install linux-image-extra-$(uname -r)
+
+# Install 3.19 kernel so Notebooks will work
+apt-get -y install linux-generic-lts-vivid
+
 apt-get -y install python-pip
 
 # Add docker repository
