@@ -12,6 +12,7 @@
   "maxstatements": 34,
   "maxcomplexity": 12,
   "globals": {
+    "browser": true,
     "autosize": true,
     "angular": true,
     "jsPlumb": true,

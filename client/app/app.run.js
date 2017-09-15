@@ -2,6 +2,7 @@
 
 /* @ngInject */
 function AppRun($rootScope, $state, PageService) {
+
   $rootScope.stateData = {
     showView: undefined,
     errorMessage: undefined,

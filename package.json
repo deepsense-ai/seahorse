@@ -38,6 +38,7 @@
     "deepsense-loading-spinner": "^1.0.2",
     "deepsense-navigation-panel": "0.0.8",
     "deepsense-node-parameters": "0.0.19",
+    "detect-browser": "^1.1.1",
     "express": "^4.12.4",
     "font-awesome": "^4.4.0",
     "icheck": "^1.0.2",
