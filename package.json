@@ -96,6 +96,7 @@
       "app": "app/app.js",
       "js": "app/**/*.js",
       "less": "css/**/*.less",
+      "lessSources": "**/*.less",
       "html": "**/*.html",
       "fonts": "fonts/*",
       "images": "img/*"

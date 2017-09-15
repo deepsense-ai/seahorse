@@ -9,7 +9,7 @@
           ng-include="'catalog-panel'"></li>
       <li class="operations-items"
           ng-repeat="item in ::category.items">
-        <operation-item id="{{::item.id}}" category="{{::category.icon}}" name="{{::item.name}}"/>
+          <operation-item id="{{::item.id}}" icon="{{::category.icon}}" name="{{::item.name}}"/>
       </li>
     </ul>
   </script>
