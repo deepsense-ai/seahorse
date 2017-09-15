@@ -25,7 +25,7 @@ import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.doperables.ColumnsFilterer
-import io.deepsense.graph.{GraphKnowledge, DirectedGraph, Node}
+import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol, ExecutionReportJsonProtocol}
 import io.deepsense.models.workflows._
@@ -71,7 +71,7 @@ class ProtocolJsonSerializerSpec
       val workflowWithResults = WorkflowWithResults(
         Workflow.Id.randomId,
         WorkflowMetadata(WorkflowType.Streaming, "1.0.0"),
-        DirectedGraph(),
+        DeeplangGraph(),
         ThirdPartyData("{}"),
         ExecutionReport(Map()))
 

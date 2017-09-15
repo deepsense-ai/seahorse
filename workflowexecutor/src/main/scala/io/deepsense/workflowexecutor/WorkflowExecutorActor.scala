@@ -24,7 +24,8 @@ import akka.util.Timeout
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
+import io.deepsense.deeplang._
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.NodeStatusJsonProtocol
 import io.deepsense.models.workflows._
@@ -245,7 +246,7 @@ trait GraphNodeExecutorFactory {
   def createGraphNodeExecutor(
     context: ActorContext,
     executionContext: ExecutionContext,
-    node: Node,
+    node: DeeplangNode,
     input: Vector[DOperable]): ActorRef
 }
 
@@ -254,7 +255,7 @@ class GraphNodeExecutorFactoryImpl extends GraphNodeExecutorFactory {
   override def createGraphNodeExecutor(
       context: ActorContext,
       executionContext: ExecutionContext,
-      node: Node,
+      node: DeeplangNode,
       input: Vector[DOperable]): ActorRef = {
     val props = Props(new WorkflowNodeExecutorActor(executionContext, node, input))
       .withDispatcher("node-executor-dispatcher")

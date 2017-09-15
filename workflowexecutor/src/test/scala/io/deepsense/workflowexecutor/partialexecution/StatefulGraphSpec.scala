@@ -22,8 +22,9 @@ import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.{DOperation, DOperable}
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph.RandomNodeFactory._
 import io.deepsense.graph.graphstate._
@@ -219,7 +220,7 @@ class StatefulGraphSpec
       val graph = StatefulGraph(nodes.toSet, edges)
       val graphIn = serializeDeserialize(graph)
       graphIn shouldBe graph
-      val operation = graphIn.node(id).operation.asInstanceOf[DOperationAToALogging]
+      val operation = graphIn.node(id).value.asInstanceOf[DOperationAToALogging]
       operation.trace("Logging just to clarify that it works after deserialization!")
       operation.tTagTI_0.tpe should not be null
     }
@@ -231,14 +232,14 @@ class StatefulGraphSpec
         idD -> mock[NodeStateWithResults],
         idE -> mock[NodeStateWithResults])
       val g1 = StatefulGraph(
-        DirectedGraph(nodeSet, edgeSet),
+        DeeplangGraph(nodeSet, edgeSet),
         states,
         None)
       val nodeFailedStatus =
         NodeStateWithResults(NodeState(nodeFailed, Some(EntitiesMap())), Map())
       val description: Some[FailureDescription] = Some(mock[FailureDescription])
       val g2 = StatefulGraph(
-        DirectedGraph(Set(nodeB), Set()),
+        DeeplangGraph(Set(nodeB), Set()),
         Map(idB -> nodeFailedStatus),
         description)
       val updated = g1.updateStates(g2)
@@ -247,7 +248,7 @@ class StatefulGraphSpec
     }
     "recursively mark nodes as draft" in {
       val statusCompleted = nodeCompleted
-      val drafted = StatefulGraph(DirectedGraph(nodeSet, edgeSet),
+      val drafted = StatefulGraph(DeeplangGraph(nodeSet, edgeSet),
         Map(
           idA -> nodeState(statusCompleted),
           idB -> nodeState(nodeFailed),
@@ -276,11 +277,11 @@ class StatefulGraphSpec
   }
 
   private def graph(
-      nodes: Set[Node],
+      nodes: Set[DeeplangNode],
       edges: Set[Edge],
       states: Map[Node.Id, NodeStateWithResults],
       state: GraphState): StatefulGraph = {
-    val directedGraph = DirectedGraph(nodes, edges)
+    val directedGraph = DeeplangGraph(nodes, edges)
     StatefulGraph(directedGraph, states, None)
   }
 

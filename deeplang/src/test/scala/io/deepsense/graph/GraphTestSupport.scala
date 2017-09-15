@@ -23,6 +23,7 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang._
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
 trait GraphTestSupport {
   self: MockitoSugar =>
@@ -98,7 +99,7 @@ trait GraphTestSupport {
       opB: DOperation,
       opC: DOperation,
       opD: DOperation,
-      opE: DOperation): Seq[(Node.Id, Node)] = {
+      opE: DOperation): Seq[(Node.Id, DeeplangNode)] = {
     val nodes = Seq(opA, opB, opC, opD, opE).map { o => Node(Node.Id.randomId, o)}
     nodes.map(n => n.id -> n)
   }

@@ -16,11 +16,11 @@
 
 package io.deepsense.models.workflows
 
-import io.deepsense.graph.DirectedGraph
+import io.deepsense.graph.DeeplangGraph
 
 case class WorkflowWithResults(
   id: Workflow.Id,
   metadata: WorkflowMetadata,
-  graph: DirectedGraph,
+  graph: DeeplangGraph,
   thirdPartyData: ThirdPartyData,
   executionReport: ExecutionReport)

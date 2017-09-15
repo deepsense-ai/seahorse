@@ -20,7 +20,8 @@ import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.graph.{DirectedGraph, Edge, Node}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
+import io.deepsense.graph.{DeeplangGraph, Edge, Node}
 import io.deepsense.models.json.graph.OperationJsonProtocol.DOperationReader
 
 object GraphJsonProtocol {
@@ -33,18 +34,18 @@ object GraphJsonProtocol {
   val NodeId = "id"
 
   class GraphReader(catalog: DOperationsCatalog)
-    extends JsonReader[DirectedGraph]
+    extends JsonReader[DeeplangGraph]
     with DefaultJsonProtocol {
 
     private val dOperationReader = new DOperationReader(catalog)
 
-    override def read(json: JsValue): DirectedGraph = json match {
+    override def read(json: JsValue): DeeplangGraph = json match {
       case JsObject(fields) => read(fields)
       case x =>
         throw new DeserializationException(s"Expected JsObject with a Graph but got $x")
     }
 
-    private def readNode(nodeJs: JsValue): Node = nodeJs match {
+    private def readNode(nodeJs: JsValue): DeeplangNode = nodeJs match {
       case JsObject(fields) =>
         val nodeId = try {
           fields(NodeId).convertTo[String]
@@ -57,7 +58,7 @@ object GraphJsonProtocol {
         throw new DeserializationException(s"Expected JsObject with a node but got $x")
     }
 
-    private def readNodes(nodesJs: JsValue): Set[Node] = nodesJs match {
+    private def readNodes(nodesJs: JsValue): Set[DeeplangNode] = nodesJs match {
       case JsArray(elements) => elements.map(readNode).toSet
       case x =>
         throw new DeserializationException(s"Expected JsArray with nodes but got $x")
@@ -69,15 +70,15 @@ object GraphJsonProtocol {
         throw new DeserializationException(s"Expected JsArray with edges but got $x")
     }
 
-    private def read(fields: Map[String, JsValue]): DirectedGraph = {
-      val nodes: Set[Node] = fields.get(Nodes).map(readNodes).getOrElse(Set())
+    private def read(fields: Map[String, JsValue]): DeeplangGraph = {
+      val nodes: Set[DeeplangNode] = fields.get(Nodes).map(readNodes).getOrElse(Set())
       val edges: Set[Edge] = fields.get(Edges).map(readEdges).getOrElse(Set())
-      DirectedGraph(nodes, edges)
+      DeeplangGraph(nodes, edges)
     }
   }
 
-  implicit object GraphWriter extends JsonWriter[DirectedGraph] with DefaultJsonProtocol {
-    override def write(graph: DirectedGraph): JsValue = {
+  implicit object GraphWriter extends JsonWriter[DeeplangGraph] with DefaultJsonProtocol {
+    override def write(graph: DeeplangGraph): JsValue = {
       JsObject(
         Nodes -> JsArray(graph.nodes.map(_.toJson).toVector),
         Edges -> JsArray(graph.edges.map(_.toJson).toVector))

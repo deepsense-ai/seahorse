@@ -21,6 +21,7 @@ import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.DOperation
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 
 class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
@@ -35,9 +36,9 @@ class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
     when(dOperation.id).thenReturn(expectedOperationId)
     when(dOperation.name).thenReturn(expectedOperationName)
 
-    val node = mock[Node]
+    val node = mock[DeeplangNode]
     val expectedNodeId = Node.Id.randomId
-    when(node.operation).thenReturn(dOperation)
+    when(node.value).thenReturn(dOperation)
     when(node.id).thenReturn(expectedNodeId)
     val nodeJson = node.toJson.asJsObject
 

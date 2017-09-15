@@ -26,6 +26,7 @@ import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DOperable, DOperation}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Completed, NodeStatus, Queued}
 import io.deepsense.models.workflows.{EntitiesMap, NodeState, NodeStateWithResults}
@@ -36,7 +37,7 @@ class ExecutionSpec
   with MockitoSugar
   with GraphTestSupport {
 
-  val directedGraph = DirectedGraph(nodeSet, edgeSet)
+  val directedGraph = DeeplangGraph(nodeSet, edgeSet)
   val statefulGraph = StatefulGraph(
     directedGraph,
     directedGraph.nodes.map(_.id -> NodeStateWithResults.draft).toMap,
@@ -59,7 +60,7 @@ class ExecutionSpec
     }
     "infer knowledge only on the selected part" in {
       val graph = mock[StatefulGraph]
-      when(graph.directedGraph).thenReturn(DirectedGraph())
+      when(graph.directedGraph).thenReturn(DeeplangGraph())
       val subgraph = mock[StatefulGraph]
       when(graph.subgraph(any())).thenReturn(subgraph)
       when(subgraph.enqueueDraft).thenReturn(subgraph)
@@ -133,7 +134,7 @@ class ExecutionSpec
     }
     "mark all selected nodes as Draft" in {
       val statefulGraph = StatefulGraph(
-        DirectedGraph(nodeSet, edgeSet),
+        DeeplangGraph(nodeSet, edgeSet),
         Map(
           idA -> nodeCompletedState,
           idB -> nodeCompletedState,
@@ -163,7 +164,7 @@ class ExecutionSpec
       val stateWD = nodeCompletedIdState(idD)
       val stateWE = nodeCompletedIdState(idE)
       val statefulGraph = StatefulGraph(
-        DirectedGraph(nodeSet, edgeSet),
+        DeeplangGraph(nodeSet, edgeSet),
         Map(
           idA -> nodeCompletedIdState(idA),
           idB -> nodeCompletedIdState(idB),
@@ -212,8 +213,8 @@ class ExecutionSpec
       when(failedGraph.executionFailure).thenReturn(failureDescription)
 
       val graph = mock[StatefulGraph]
-      val directedGraph = mock[DirectedGraph]
-      when(directedGraph.nodes).thenReturn(Set[Node]())
+      val directedGraph = mock[DeeplangGraph]
+      when(directedGraph.nodes).thenReturn(Set[DeeplangNode]())
       when(graph.directedGraph).thenReturn(directedGraph)
       when(graph.subgraph(any())).thenReturn(graph)
       when(graph.inferAndApplyKnowledge(any())).thenReturn(failedGraph)
@@ -234,7 +235,7 @@ class ExecutionSpec
     "be idle" when {
       "stated with an empty structure and enqueued" in {
         val statefulGraph = StatefulGraph(
-          DirectedGraph(nodeSet, edgeSet),
+          DeeplangGraph(nodeSet, edgeSet),
           Map(
             idA -> nodeCompletedIdState(idA),
             idB -> nodeCompletedIdState(idB),
@@ -249,7 +250,7 @@ class ExecutionSpec
           statefulGraph,
           statefulGraph.nodes.map(_.id))
 
-        val emptyStructure = execution.updateStructure(DirectedGraph(), Set())
+        val emptyStructure = execution.updateStructure(DeeplangGraph(), Set())
         val enqueued = emptyStructure.inferAndApplyKnowledge(mock[InferContext])
           .enqueue
 
@@ -269,13 +270,13 @@ class ExecutionSpec
         val node2 = Node(Node.Id.randomId, op2)
         val node3 = Node(Node.Id.randomId, op1)
         val edge = Edge(node1, 0, node2, 0)
-        val graph = DirectedGraph(Set(node1, node2), Set(edge))
+        val graph = DeeplangGraph(Set(node1, node2), Set(edge))
         val statefulGraph = StatefulGraph(
           graph,
           Map(node1.id -> nodeCompletedState, node2.id -> nodeCompletedState),
           None)
         val execution = IdleExecution(statefulGraph)
-        val newStructure = DirectedGraph(Set(node1, node2, node3), Set())
+        val newStructure = DeeplangGraph(Set(node1, node2, node3), Set())
 
         val updatedExecution = execution.updateStructure(newStructure)
 
@@ -286,12 +287,12 @@ class ExecutionSpec
     }
   }
 
-  def checkSuccessorsStatesAfterANodeChange(changedC: Node): Unit = {
-    val graph = DirectedGraph(nodeSet, edgeSet)
+  def checkSuccessorsStatesAfterANodeChange(changedC: DeeplangNode): Unit = {
+    val graph = DeeplangGraph(nodeSet, edgeSet)
 
     val edgeBtoC = Edge(nodeB, 0, changedC, 0)
     val edgeCtoD = Edge(changedC, 0, nodeD, 0)
-    val updatedGraph = DirectedGraph(
+    val updatedGraph = DeeplangGraph(
       Set(nodeA, nodeB, changedC, nodeD, nodeE),
       Set(edge1, edgeBtoC, edgeCtoD, edge4, edge5)
     )

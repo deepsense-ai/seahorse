@@ -66,7 +66,7 @@ trait WorkflowJsonTestSupport
     (node2, node4, 0, 0),
     (node3, node4, 0, 1))
   val edges = preEdges.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4)))
-  val graph = DirectedGraph(nodes, edges)
+  val graph = DeeplangGraph(nodes, edges)
 
   def mockOperation(
     inArity: Int,

@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.workflows
+package io.deepsense.graph
 
-import io.deepsense.commons.models
-import io.deepsense.graph.DeeplangGraph
+import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
-case class Workflow(
-    metadata: WorkflowMetadata,
-    graph: DeeplangGraph,
-    additionalData: ThirdPartyData)
+trait NodeInference {
+  def inferKnowledge(
+    node: DeeplangNode,
+    context: InferContext,
+    inputInferenceForNode: NodeInferenceResult): NodeInferenceResult
 
-object Workflow {
-  type Id = models.Id
-  val Id = models.Id
+  def inputInferenceForNode(
+    node: DeeplangNode,
+    context: InferContext,
+    graphKnowledge: GraphKnowledge,
+    nodePredecessorsEndpoints: IndexedSeq[Option[Endpoint]]): NodeInferenceResult
 }

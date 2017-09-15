@@ -22,9 +22,10 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.DOperableMock
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
 object RandomNodeFactory {
-  def randomNode(operation: DOperation): Node = Node(Node.Id.randomId, operation)
+  def randomNode(operation: DOperation): DeeplangNode = Node(Node.Id.randomId, operation)
 }
 
 object DClassesForDOperations extends MockitoSugar {

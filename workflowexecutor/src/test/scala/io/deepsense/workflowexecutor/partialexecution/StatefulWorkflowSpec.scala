@@ -21,20 +21,20 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.deeplang.CommonExecutionContext
-import io.deepsense.graph.DirectedGraph
+import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.workflows._
 
 class StatefulWorkflowSpec extends StandardSpec with MockitoSugar {
 
   "StatefulWorkflow" should {
-    val originalGraph: DirectedGraph = DirectedGraph()
+    val originalGraph: DeeplangGraph = DeeplangGraph()
     val worklfowWithResults = WorkflowWithResults(
       Workflow.Id.randomId,
       WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
       originalGraph,
       ThirdPartyData(),
       ExecutionReport(Map()))
-    val newGraph = mock[DirectedGraph]
+    val newGraph = mock[DeeplangGraph]
     val newThirdPartyData = mock[ThirdPartyData]
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, "1.0.0"),

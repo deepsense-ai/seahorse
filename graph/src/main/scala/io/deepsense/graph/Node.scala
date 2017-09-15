@@ -17,12 +17,10 @@
 package io.deepsense.graph
 
 import io.deepsense.commons.models
-import io.deepsense.deeplang.DOperation
 
-case class Node(
+case class Node[+T](
   id: Node.Id,
-  operation: DOperation)
-
+  value: T)
 
 object Node {
   type Id = models.Id

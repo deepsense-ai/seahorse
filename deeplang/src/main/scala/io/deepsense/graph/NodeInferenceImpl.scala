@@ -21,6 +21,7 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.TypesAccordance.TypesAccordance
 
 trait NodeInferenceImpl extends NodeInference {
@@ -28,23 +29,23 @@ trait NodeInferenceImpl extends NodeInference {
    * @return inferred result for the given node.
    */
   override def inferKnowledge(
-      node: Node,
+      node: DeeplangNode,
       context: InferContext,
       inputInferenceForNode: NodeInferenceResult): NodeInferenceResult = {
 
     val NodeInferenceResult(inKnowledge, warnings, errors) = inputInferenceForNode
-    val parametersValidationErrors = node.operation.validateParams
+    val parametersValidationErrors = node.value.validateParams
     if (context.fullInference && parametersValidationErrors.nonEmpty) {
       createDefaultKnowledge(
         context,
-        node.operation,
+        node.value,
         warnings,
         errors ++ parametersValidationErrors
       )
     } else {
       try {
         val (outKnowledge, inferWarnings) =
-          node.operation.inferKnowledge(context)(inKnowledge.toVector)
+          node.value.inferKnowledge(context)(inKnowledge.toVector)
         NodeInferenceResult(
           outKnowledge,
           warnings ++ inferWarnings,
@@ -54,7 +55,7 @@ trait NodeInferenceImpl extends NodeInference {
         case exception: DeepLangException =>
           createDefaultKnowledge(
             context,
-            node.operation,
+            node.value,
             warnings,
             errors ++ parametersValidationErrors :+ exception
           )
@@ -63,12 +64,12 @@ trait NodeInferenceImpl extends NodeInference {
   }
 
   override def inputInferenceForNode(
-      node: Node,
+      node: DeeplangNode,
       context: InferContext,
       graphKnowledge: GraphKnowledge,
       nodePredecessorsEndpoints: IndexedSeq[Option[Endpoint]]): NodeInferenceResult = {
 
-    (0 until node.operation.inArity).foldLeft(NodeInferenceResult.empty) {
+    (0 until node.value.inArity).foldLeft(NodeInferenceResult.empty) {
       case (NodeInferenceResult(knowledge, warnings, errors), portIndex) =>
         val predecessorEndpoint = nodePredecessorsEndpoints(portIndex)
         val (portKnowledge, accordance) =
@@ -95,12 +96,12 @@ trait NodeInferenceImpl extends NodeInference {
    *                       graphKnowledge contains all required data.
    */
   private def inputKnowledgeAndAccordanceForInputPort(
-      node: Node,
+      node: DeeplangNode,
       context: InferContext,
       graphKnowledge: GraphKnowledge,
       portIndex: Int,
       predecessorEndpointOption: Option[Endpoint]): (DKnowledge[DOperable], TypesAccordance) = {
-    val inPortType = node.operation.inPortTypes(portIndex).asInstanceOf[ru.TypeTag[DOperable]]
+    val inPortType = node.value.inPortTypes(portIndex).asInstanceOf[ru.TypeTag[DOperable]]
     predecessorEndpointOption match {
       case None => (defaultKnowledge(context, inPortType), TypesAccordance.NotProvided(portIndex))
       case Some(predecessorEndpoint) =>

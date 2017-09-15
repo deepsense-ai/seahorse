@@ -21,7 +21,8 @@ import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.graph.{Edge, Endpoint, Node, DirectedGraph}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
+import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class GraphReaderSpec extends GraphJsonTestSupport {
@@ -103,7 +104,7 @@ class GraphReaderSpec extends GraphJsonTestSupport {
     "connections" -> edgesArray
   )
 
-  val expectedGraph = DirectedGraph(
+  val expectedGraph = DeeplangGraph(
     Set(Node(node1Id, operation1), Node(node2Id, operation2), Node(node3Id, operation3)),
     Set(Edge(Endpoint(node1Id, edge1from), Endpoint(node2Id, edge1to)),
       Edge(Endpoint(node2Id, edge2from), Endpoint(node3Id, edge2to)))
@@ -111,23 +112,23 @@ class GraphReaderSpec extends GraphJsonTestSupport {
 
   "GraphReader" should {
     "create Graph from JSON and fill parameters with values from Json" in {
-      graphsSimilar(exampleJson.convertTo[DirectedGraph], expectedGraph) shouldBe true
+      graphsSimilar(exampleJson.convertTo[DeeplangGraph], expectedGraph) shouldBe true
       verify(operation1).setParamsFromJson(parameters1)
       verify(operation2).setParamsFromJson(parameters2)
       verify(operation3).setParamsFromJson(parameters3)
     }
   }
 
-  def graphsSimilar(g1: DirectedGraph, g2: DirectedGraph): Boolean = {
+  def graphsSimilar(g1: DeeplangGraph, g2: DeeplangGraph): Boolean = {
     g1.edges == g2.edges &&
       g1.nodes.size == g2.nodes.size &&
       nodesSimilar(g1.nodes, g2.nodes)
   }
 
 
-  def nodesSimilar(nodes1: Set[Node], nodes2: Set[Node]): Boolean = {
-    val testNodes1 = nodes1.map(node => TestNode(node.id, node.operation))
-    val testNodes2 = nodes2.map(node => TestNode(node.id, node.operation))
+  def nodesSimilar(nodes1: Set[DeeplangNode], nodes2: Set[DeeplangNode]): Boolean = {
+    val testNodes1 = nodes1.map(node => TestNode(node.id, node.value))
+    val testNodes2 = nodes2.map(node => TestNode(node.id, node.value))
     testNodes1 == testNodes2
   }
 

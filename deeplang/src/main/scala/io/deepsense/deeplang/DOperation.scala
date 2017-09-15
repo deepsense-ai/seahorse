@@ -22,13 +22,14 @@ import io.deepsense.commons.models
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
+import io.deepsense.graph.Operation
 
 /**
  * DOperation that receives and returns instances of DOperable.
  * Can infer its output type based on type knowledge.
  */
 @SerialVersionUID(1L)
-abstract class DOperation extends Serializable with Logging with Params {
+abstract class DOperation extends Operation with Serializable with Logging with Params {
   val inArity: Int
   val outArity: Int
   val id: DOperation.Id

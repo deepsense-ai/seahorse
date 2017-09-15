@@ -177,7 +177,7 @@ object WorkflowExecutor extends Logging {
           try {
             Await.ready(reportPathFuture, 1.minute).value.get
           } catch {
-            case e =>
+            case e: Exception =>
               executionReportDump(workflowWithResults)
               throw e
           }

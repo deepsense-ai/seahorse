@@ -19,11 +19,11 @@ package io.deepsense.graph
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.inference.exceptions.{AllTypesNotCompilableException, NoInputEdgesException}
 import io.deepsense.deeplang.inference.warnings.SomeTypesNotCompilableWarning
-import io.deepsense.deeplang.{DKnowledge, DOperable}
+import io.deepsense.deeplang.{DOperation, DKnowledge, DOperable}
+import io.deepsense.graph.DClassesForDOperations.A1
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
 class NodeInferenceImplSpec extends AbstractInferenceSpec {
-
-  import io.deepsense.graph.DClassesForDOperations._
 
   val nodeInference = new NodeInferenceImpl{}
 
@@ -165,7 +165,7 @@ class NodeInferenceImplSpec extends AbstractInferenceSpec {
 
   def testInputInferenceForNode(
       predecessorPortIndex: Int,
-      node: Node,
+      node: DeeplangNode,
       predecessorKnowledge: Vector[DKnowledge[DOperable]]): NodeInferenceResult = {
     val predecessorId = Node.Id.randomId
     val nodePredecessorsEndpoints = IndexedSeq(

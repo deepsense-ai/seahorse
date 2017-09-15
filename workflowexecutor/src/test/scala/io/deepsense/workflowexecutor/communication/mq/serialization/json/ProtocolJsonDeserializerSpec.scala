@@ -22,7 +22,7 @@ import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.graph.DirectedGraph
+import io.deepsense.graph.{DeeplangGraph, DirectedGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
 import io.deepsense.workflowexecutor.communication.message.global.Connect
@@ -116,7 +116,7 @@ class ProtocolJsonDeserializerSpec
 
       val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe UpdateWorkflow(
-        Workflow(WorkflowMetadata(WorkflowType.Batch, "1.0.0"), DirectedGraph(), ThirdPartyData()))
+        Workflow(WorkflowMetadata(WorkflowType.Batch, "1.0.0"), DeeplangGraph(), ThirdPartyData()))
     }
   }
 

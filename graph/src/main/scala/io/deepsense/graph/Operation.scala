@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.workflows
+package io.deepsense.graph
 
-import io.deepsense.commons.models
-import io.deepsense.graph.DeeplangGraph
+trait Operation {
 
-case class Workflow(
-    metadata: WorkflowMetadata,
-    graph: DeeplangGraph,
-    additionalData: ThirdPartyData)
-
-object Workflow {
-  type Id = models.Id
-  val Id = models.Id
+  val inArity: Int
+  val outArity: Int
 }

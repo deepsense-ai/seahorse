@@ -18,7 +18,8 @@ package io.deepsense.workflowexecutor.partialexecution
 
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{CommonExecutionContext, DOperable}
+import io.deepsense.deeplang.{DOperation, CommonExecutionContext, DOperable}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 import io.deepsense.graph.Node._
 import io.deepsense.models.workflows._
@@ -67,7 +68,7 @@ class StatefulWorkflow(
     executionReport
   )
 
-  def node(id: Node.Id): Node = execution.node(id)
+  def node(id: Node.Id): DeeplangNode = execution.node(id)
 
   def nodeFinished(
       id: Node.Id,

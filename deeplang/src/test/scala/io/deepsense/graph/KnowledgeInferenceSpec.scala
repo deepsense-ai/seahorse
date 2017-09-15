@@ -20,14 +20,15 @@ import org.mockito.Matchers.{eq => isEqualTo, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 
+import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.graph.Node.Id
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
 class KnowledgeInferenceSpec
   extends AbstractInferenceSpec
   with BeforeAndAfter {
 
-  val topologicallySortedMock = mock[TopologicallySortable]
+  val topologicallySortedMock = mock[TopologicallySortable[DOperation]]
   val nodeInferenceMock = mock[NodeInference]
 
   val graph = DirectedGraphWithSomeLogicMocked(topologicallySortedMock, nodeInferenceMock)
@@ -56,7 +57,7 @@ class KnowledgeInferenceSpec
         )
         when(topologicallySortedMock.topologicallySorted).thenReturn(Some(topologicallySortedNodes))
         topologicallySortedNodes.zip(nodeInferenceResultForNodes).foreach {
-          case (node: Node, result: NodeInferenceResult) =>
+          case (node: DeeplangNode, result: NodeInferenceResult) =>
             nodeInferenceMockShouldInferResultForNode(node, result)
         }
 
@@ -85,7 +86,7 @@ class KnowledgeInferenceSpec
     "throw an exception" when {
       "graph contains cycle" in {
         intercept[CyclicGraphException] {
-          val topologicallySortedMock = mock[TopologicallySortable]
+          val topologicallySortedMock = mock[TopologicallySortable[DOperation]]
           when(topologicallySortedMock.topologicallySorted).thenReturn(None)
           val graph = DirectedGraphWithSomeLogicMocked(
             topologicallySortedMock,
@@ -99,7 +100,7 @@ class KnowledgeInferenceSpec
   }
 
   def nodeInferenceMockShouldInferResultForNode(
-      nodeCreateA1: Node,
+      nodeCreateA1: DeeplangNode,
       nodeCreateA1InferenceResult: NodeInferenceResult): Unit = {
     when(nodeInferenceMock.inferKnowledge(
       isEqualTo(nodeCreateA1),
@@ -109,21 +110,21 @@ class KnowledgeInferenceSpec
   }
 
   case class DirectedGraphWithSomeLogicMocked(
-      val topologicallySortableMock: TopologicallySortable,
+      val topologicallySortableMock: TopologicallySortable[DOperation],
       val nodeInferenceMock: NodeInference)
-    extends TopologicallySortable
+    extends TopologicallySortable[DOperation]
     with KnowledgeInference
     with NodeInference {
 
     override def inferKnowledge(
-        node: Node,
+        node: DeeplangNode,
         context: InferContext,
         inputInferenceForNode: NodeInferenceResult): NodeInferenceResult = {
       nodeInferenceMock.inferKnowledge(node, context, inputInferenceForNode)
     }
 
     override def inputInferenceForNode(
-        node: Node,
+        node: DeeplangNode,
         context: InferContext,
         graphKnowledge: GraphKnowledge,
         nodePredecessorsEndpoints: IndexedSeq[Option[Endpoint]]): NodeInferenceResult = {
@@ -135,22 +136,22 @@ class KnowledgeInferenceSpec
       )
     }
 
-    override def topologicallySorted: Option[List[Node]] =
+    override def topologicallySorted: Option[List[DeeplangNode]] =
       topologicallySortableMock.topologicallySorted
 
-    override def node(id: Id): Node = topologicallySortableMock.node(id)
+    override def node(id: Node.Id): DeeplangNode = topologicallySortableMock.node(id)
 
-    override def allPredecessorsOf(id: Id): Set[Node] =
+    override def allPredecessorsOf(id: Node.Id): Set[DeeplangNode] =
       topologicallySortableMock.allPredecessorsOf(id)
 
-    override def predecessors(id: Id): IndexedSeq[Option[Endpoint]] =
+    override def predecessors(id: Node.Id): IndexedSeq[Option[Endpoint]] =
       topologicallySortableMock.predecessors(id)
 
-    override def successors(id: Id): IndexedSeq[Set[Endpoint]] =
+    override def successors(id: Node.Id): IndexedSeq[Set[Endpoint]] =
       topologicallySortableMock.successors(id)
 
     override def edges: Set[Edge] = ???
 
-    override def nodes: Set[Node] = ???
+    override def nodes: Set[DeeplangNode] = ???
   }
 }

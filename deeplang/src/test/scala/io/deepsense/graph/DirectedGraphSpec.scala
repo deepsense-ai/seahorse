@@ -21,9 +21,11 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.DOperation
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.RandomNodeFactory._
 
-class DirectedGraphSpec
+class DeeplangGraphSpec
   extends FunSuite
   with Matchers
   with Serialization
@@ -32,13 +34,13 @@ class DirectedGraphSpec
   with GraphTestSupport {
 
   test("An empty Graph should have size 0") {
-    DirectedGraph().size shouldBe 0
+    DeeplangGraph().size shouldBe 0
   }
 
   test("Adding edge to an empty Graph should produce IllegalArgumentException") {
     an [IllegalArgumentException] shouldBe thrownBy {
       val edge = Edge(Endpoint(Node.Id.randomId, 0), Endpoint(Node.Id.randomId, 0))
-      DirectedGraph(Set(), Set(edge))
+      DeeplangGraph(Set(), Set(edge))
     }
   }
 
@@ -49,7 +51,7 @@ class DirectedGraphSpec
     val node2 = randomNode(DOperationA1ToA())
     val nodes = Set(node1, node2)
     val edges = Set(Edge(node1, 0, node2, 0))
-    val graph = DirectedGraph(nodes, edges)
+    val graph = DeeplangGraph(nodes, edges)
     graph.size shouldBe 2
   }
 
@@ -66,7 +68,7 @@ class DirectedGraphSpec
       Edge(node2, 0, node3, 0),
       Edge(node3, 0, node4, 0)
     )
-    var graph = DirectedGraph(nodes, nonCyclicEdges)
+    var graph = DeeplangGraph(nodes, nonCyclicEdges)
     assert(!graph.containsCycle)
 
     graph = graph.copy(edges = graph.edges + Edge(Endpoint(node4.id, 0), Endpoint(node2.id, 1)))
@@ -85,7 +87,7 @@ class DirectedGraphSpec
       Edge(node2, 0, node3, 0),
       Edge(node3, 0, node4, 0))
 
-    val graph = DirectedGraph(Set(node1, node2, node3, node4), edges)
+    val graph = DeeplangGraph(Set(node1, node2, node3, node4), edges)
     val sorted = graph.topologicallySorted
     assert(sorted == Some(List(node1, node2, node3, node4)))
   }
@@ -102,7 +104,7 @@ class DirectedGraphSpec
       Edge(node2, 0, node3, 0),
       Edge(node3, 0, node4, 0))
 
-    val graph = DirectedGraph(Set(node1, node2, node3, node4), edges)
+    val graph = DeeplangGraph(Set(node1, node2, node3, node4), edges)
 
     val predsOfNode3 = graph.allPredecessorsOf(node3.id)
     assert(predsOfNode3 == Set(node1, node2))
@@ -111,7 +113,8 @@ class DirectedGraphSpec
   test("Complicated Graph can be sorted topologically") {
     import io.deepsense.graph.DOperationTestClasses._
 
-    def checkIfInOrder(node1: Node, node2: Node, order: List[Node]): Unit = {
+    def checkIfInOrder(
+        node1: DeeplangNode, node2: DeeplangNode, order: List[DeeplangNode]): Unit = {
       assert(order.indexOf(node1) < order.indexOf(node2))
     }
 
@@ -133,7 +136,7 @@ class DirectedGraphSpec
       (node5, node7, 0, 0),
       (node6, node7, 0, 1))
     val edgesSet = edges.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
-    val graph = DirectedGraph(nodes, edgesSet)
+    val graph = DeeplangGraph(nodes, edgesSet)
 
     val sortedOption = graph.topologicallySorted
     assert(sortedOption.isDefined)
@@ -155,7 +158,7 @@ class DirectedGraphSpec
       Edge(node2, 0, node4, 0),
       Edge(node3, 0, node4, 1)
     )
-    val graph = DirectedGraph(nodes, edges)
+    val graph = DeeplangGraph(nodes, edges)
 
     graph.predecessors(node1.id).size shouldBe 0
     graph.predecessors(node2.id) should
@@ -173,30 +176,30 @@ class DirectedGraphSpec
   }
 
   test("Graph allows to calculate a subgraph") {
-    DirectedGraph().subgraph(Set()) should have size 0
+    DeeplangGraph().subgraph(Set()) should have size 0
 
-    val bigGraph = DirectedGraph(nodeSet, edgeSet)
+    val bigGraph = DeeplangGraph(nodeSet, edgeSet)
     bigGraph.subgraph(nodeSet.map(_.id)) shouldBe bigGraph
 
-    bigGraph.subgraph(Set(idA)) shouldBe DirectedGraph(Set(nodeA), Set())
+    bigGraph.subgraph(Set(idA)) shouldBe DeeplangGraph(Set(nodeA), Set())
 
     bigGraph.subgraph(Set(idA, idB)) shouldBe
-      DirectedGraph(Set(nodeA, nodeB), Set(edge1))
+      DeeplangGraph(Set(nodeA, nodeB), Set(edge1))
 
     bigGraph.subgraph(Set(idD)) shouldBe
-      DirectedGraph(Set(nodeA, nodeB, nodeC, nodeD), Set(edge1, edge2, edge3))
+      DeeplangGraph(Set(nodeA, nodeB, nodeC, nodeD), Set(edge1, edge2, edge3))
 
     bigGraph.subgraph(Set(idE, idC)) shouldBe
-      DirectedGraph(Set(nodeE, nodeC, nodeB, nodeA), Set(edge1, edge2, edge4, edge5))
+      DeeplangGraph(Set(nodeE, nodeC, nodeB, nodeA), Set(edge1, edge2, edge4, edge5))
 
     bigGraph.subgraph(Set(idD, idB)) shouldBe
-      DirectedGraph(Set(nodeA, nodeB, nodeC, nodeD), Set(edge1, edge2, edge3))
+      DeeplangGraph(Set(nodeA, nodeB, nodeC, nodeD), Set(edge1, edge2, edge3))
   }
 
   test("Graph with a cycle allows to calculate a subgraph") {
     val node1 = Node(Node.Id.randomId, op1To1)
     val node2 = Node(Node.Id.randomId, op1To1)
-    val cyclicGraph = DirectedGraph(
+    val cyclicGraph = DeeplangGraph(
       Set(node1, node2),
       Set(
         Edge(node1, 0, node2, 0),

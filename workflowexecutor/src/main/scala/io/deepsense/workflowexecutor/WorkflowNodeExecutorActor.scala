@@ -20,7 +20,8 @@ import akka.actor.{Actor, PoisonPill}
 
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
+import io.deepsense.deeplang._
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
@@ -32,14 +33,14 @@ import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeComplet
  */
 class WorkflowNodeExecutorActor(
     executionContext: ExecutionContext,
-    node: Node,
+    node: DeeplangNode,
     input: Vector[DOperable])
   extends Actor
   with Logging {
 
   import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages._
 
-  val nodeDescription = s"'${node.operation.name}-${node.id}'"
+  val nodeDescription = s"'${node.value.name}-${node.id}'"
   var executionStart: Long = _
 
   override def receive: Receive = {
@@ -107,8 +108,8 @@ class WorkflowNodeExecutorActor(
     logger.debug(s"$nodeDescription inputVector.size = ${input.size}")
     val inputKnowledge = input.map { dOperable => DKnowledge(dOperable) }
     // if inference throws, we do not perform execution
-    node.operation.inferKnowledge(executionContext.inferContext)(inputKnowledge)
-    val resultVector = node.operation.execute(executionContext)(input)
+    node.value.inferKnowledge(executionContext.inferContext)(inputKnowledge)
+    val resultVector = node.value.execute(executionContext)(input)
     logger.debug(s"$nodeDescription executed (without reports): $resultVector")
     resultVector
   }

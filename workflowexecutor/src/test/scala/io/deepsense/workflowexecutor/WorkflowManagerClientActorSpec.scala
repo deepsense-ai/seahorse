@@ -34,7 +34,7 @@ import spray.json._
 import io.deepsense.commons.StandardSpec
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.graph.DirectedGraph
+import io.deepsense.graph.{DeeplangGraph, DirectedGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
 import io.deepsense.models.workflows._
@@ -65,7 +65,7 @@ class WorkflowManagerClientActorSpec
   val workflow = WorkflowWithResults(
     workflowId,
     WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
-    DirectedGraph(),
+    DeeplangGraph(),
     ThirdPartyData("{}"),
     ExecutionReport(Map(), None))
 

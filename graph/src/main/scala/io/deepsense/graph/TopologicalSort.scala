@@ -18,18 +18,18 @@ package io.deepsense.graph
 
 import scala.collection.mutable
 
-private[graph] class TopologicalSort(sortable: TopologicallySortable) {
-  private val visits: mutable.Map[Node, Visits] = mutable.Map()
+private[graph] class TopologicalSort[T](sortable: TopologicallySortable[T]) {
+  private val visits: mutable.Map[Node[T], Visits] = mutable.Map()
 
-  private var sorted: Option[List[Node]] = Some(List.empty)
+  private var sorted: Option[List[Node[T]]] = Some(List.empty)
   sortable.nodes.foreach(n => sorted = topologicalSort(n, sorted))
 
   def isSorted: Boolean = sorted.isEmpty
-  def sortedNodes: Option[List[Node]] = sorted
+  def sortedNodes: Option[List[Node[T]]] = sorted
 
   private def topologicalSort(
-    node: Node,
-    sortedSoFar: Option[List[Node]]): Option[List[Node]] = {
+    node: Node[T],
+    sortedSoFar: Option[List[Node[T]]]): Option[List[Node[T]]] = {
 
     visits.get(node) match {
       case Some(Visited) => sortedSoFar
@@ -45,11 +45,11 @@ private[graph] class TopologicalSort(sortable: TopologicallySortable) {
     }
   }
 
-  private def markInProgress(node: Node): Unit = {
+  private def markInProgress(node: Node[T]): Unit = {
     visits(node) = InProgress
   }
 
-  private def markVisited(node: Node): Unit = {
+  private def markVisited(node: Node[T]): Unit = {
     visits(node) = Visited
   }
 

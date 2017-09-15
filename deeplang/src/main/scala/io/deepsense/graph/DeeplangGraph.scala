@@ -16,17 +16,20 @@
 
 package io.deepsense.graph
 
-import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.DOperation
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
-trait NodeInference {
-  def inferKnowledge(
-    node: Node,
-    context: InferContext,
-    inputInferenceForNode: NodeInferenceResult): NodeInferenceResult
+case class DeeplangGraph(
+    override val nodes: Set[DeeplangNode] = Set.empty,
+    override val edges: Set[Edge] = Set())
+  extends DirectedGraph[DOperation, DeeplangGraph](nodes, edges)
+  with KnowledgeInference
+  with NodeInferenceImpl {
 
-  def inputInferenceForNode(
-    node: Node,
-    context: InferContext,
-    graphKnowledge: GraphKnowledge,
-    nodePredecessorsEndpoints: IndexedSeq[Option[Endpoint]]): NodeInferenceResult
+  override def subgraph(nodes: Set[DeeplangNode], edges: Set[Edge]): DeeplangGraph =
+    DeeplangGraph(nodes, edges)
+}
+
+object DeeplangGraph {
+  type DeeplangNode = Node[DOperation]
 }

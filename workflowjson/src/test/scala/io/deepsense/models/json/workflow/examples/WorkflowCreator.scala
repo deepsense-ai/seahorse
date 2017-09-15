@@ -21,7 +21,8 @@ import java.util.UUID
 import spray.json._
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.graph.{DirectedGraph, Edge, Node}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
+import io.deepsense.graph.{DeeplangGraph, Edge, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithVariablesJsonProtocol
 import io.deepsense.models.workflows._
@@ -30,19 +31,19 @@ abstract class WorkflowCreator extends WorkflowWithVariablesJsonProtocol {
 
   val apiVersion: String = "0.4.0"
 
-  protected def nodes: Seq[Node]
+  protected def nodes: Seq[DeeplangNode]
 
   protected def edges: Seq[Edge]
 
   protected def experimentName: String
 
-  protected def node(operation: DOperation): Node = Node(UUID.randomUUID(), operation)
+  protected def node(operation: DOperation): DeeplangNode = Node(UUID.randomUUID(), operation)
 
   override val graphReader: GraphReader = null
 
   def buildWorkflow(): WorkflowWithVariables = {
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion)
-    val graph: DirectedGraph = DirectedGraph(nodes.toSet, edges.toSet)
+    val graph: DeeplangGraph = DeeplangGraph(nodes.toSet, edges.toSet)
     val thirdPartyData: ThirdPartyData = ThirdPartyData("{}")
     val variables: Variables = Variables()
     val result =

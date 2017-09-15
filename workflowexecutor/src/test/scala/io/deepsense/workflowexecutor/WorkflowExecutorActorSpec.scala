@@ -36,6 +36,7 @@ import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.{FileFormat, StorageType}
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, DOperation, ExecutionContext}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Aborted, NodeStatus, Queued, Running}
@@ -236,7 +237,7 @@ class WorkflowExecutorActorSpec
                 states,
                 None),
               StatefulGraph(
-                DirectedGraph(Set(node1), Set()),
+                DeeplangGraph(Set(node1), Set()),
                 Map(node1.id -> NodeStateWithResults(
                   NodeState(nodestate.Running(DateTimeConverter.now), Some(EntitiesMap())),
                   Map())),
@@ -420,11 +421,11 @@ class WorkflowExecutorActorSpec
   }
 
   def mockReadyNode(): ReadyNode = {
-    val node = mock[Node]
+    val node = mock[DeeplangNode]
     when(node.id).thenReturn(Node.Id.randomId)
     val dOperation = mock[DOperation]
     when(dOperation.name).thenReturn("mockedName")
-    when(node.operation).thenReturn(dOperation)
+    when(node.value).thenReturn(dOperation)
     ReadyNode(node, Seq())
   }
 
@@ -608,7 +609,7 @@ class WorkflowExecutorActorSpec
       .map(_ -> completedState())
     val queuedNodes = nodesIds.drop(runningNodeIdx + 1).map(_ -> nodeState(Queued()))
     val statefulGraph = StatefulGraph(
-      DirectedGraph(nodes.toSet, edges.toSet),
+      DeeplangGraph(nodes.toSet, edges.toSet),
       (completedNodes ++ Seq(nodesIds.head -> nodeState(Running(time))) ++ queuedNodes).toMap,
       None)
     statefulGraph
@@ -616,7 +617,7 @@ class WorkflowExecutorActorSpec
 
   private def simpleRunningExecution(
     nodesIds: IndexedSeq[Node.Id],
-    runningNode: Option[Node.Id]): (DirectedGraph, RunningExecution) = {
+    runningNode: Option[Node.Id]): (DeeplangGraph, RunningExecution) = {
     val statefulGraph: StatefulGraph = linearGraph(nodesIds, runningNode)
     (statefulGraph.directedGraph, RunningExecution(statefulGraph, statefulGraph, nodesIds.toSet))
   }
@@ -660,7 +661,7 @@ class WorkflowExecutorActorSpec
   def workflowWithResults(id: Workflow.Id): WorkflowWithResults = WorkflowWithResults(
     id,
     WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
-    DirectedGraph(
+    DeeplangGraph(
       Set(node1, node2),
       Set(Edge(node1, 0, node2, 0))),
     ThirdPartyData(),

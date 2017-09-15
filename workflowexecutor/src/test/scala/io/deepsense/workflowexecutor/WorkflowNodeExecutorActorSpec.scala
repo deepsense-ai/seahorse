@@ -27,6 +27,7 @@ import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Matchers, WordSpecLike}
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, ExecutionContext}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
@@ -82,7 +83,7 @@ class WorkflowNodeExecutorActorSpec
     }
   }
 
-  private def nodeExecutorActor(input: Vector[DOperable], node: Node): ActorRef = {
+  private def nodeExecutorActor(input: Vector[DOperable], node: DeeplangNode): ActorRef = {
     system.actorOf(
       Props(new WorkflowNodeExecutorActor(executionContext, node, input)))
   }
@@ -106,7 +107,8 @@ class WorkflowNodeExecutorActorSpec
     dOperation
   }
 
-  private def fixtureFailingInference(): (TestProbe, ActorRef, Node, NullPointerException) = {
+  private def fixtureFailingInference()
+      : (TestProbe, ActorRef, DeeplangNode, NullPointerException) = {
     val operation = mockOperation
     val cause = new NullPointerException("test exception")
     when(operation.inferKnowledge(any())(any()))
@@ -115,7 +117,8 @@ class WorkflowNodeExecutorActorSpec
     (probe, testedActor, node, cause)
   }
 
-  private def fixtureFailingOperation(): (TestProbe, ActorRef, Node, NullPointerException) = {
+  private def fixtureFailingOperation()
+      : (TestProbe, ActorRef, DeeplangNode, NullPointerException) = {
     val operation = mockOperation
     val cause = new NullPointerException("test exception")
     when(operation.execute(any[ExecutionContext]())(any[Vector[DOperable]]()))
@@ -124,7 +127,8 @@ class WorkflowNodeExecutorActorSpec
     (probe, testedActor, node, cause)
   }
 
-  private def fixtureSucceedingOperation(): (TestProbe, ActorRef, Node, Vector[DOperable]) = {
+  private def fixtureSucceedingOperation()
+      : (TestProbe, ActorRef, DeeplangNode, Vector[DOperable]) = {
     val operation = mockOperation
     val output = Vector(operableWithReports, operableWithReports)
     when(operation.execute(any())(any()))
@@ -134,17 +138,17 @@ class WorkflowNodeExecutorActorSpec
   }
 
   private def fixtureWithOperation(dOperation: DOperation):
-      (TestProbe, ActorRef, Node, DOperation, Vector[DOperable]) = {
-    val node = mock[Node]
+      (TestProbe, ActorRef, DeeplangNode, DOperation, Vector[DOperable]) = {
+    val node = mock[DeeplangNode]
     when(node.id).thenReturn(Node.Id.randomId)
-    when(node.operation).thenReturn(dOperation)
+    when(node.value).thenReturn(dOperation)
     val probe = TestProbe()
     val input = Vector(inferableOperable, inferableOperable)
     val testedActor = nodeExecutorActor(input, node)
     (probe, testedActor, node, dOperation, input)
   }
 
-  private def fixutre(): (TestProbe, ActorRef, Node, DOperation, Vector[DOperable]) = {
+  private def fixutre(): (TestProbe, ActorRef, DeeplangNode, DOperation, Vector[DOperable]) = {
     val dOperation = mockOperation
     when(dOperation.inferKnowledge(any())(any()))
       .thenReturn((Vector[DKnowledge[DOperable]](), mock[InferenceWarnings]))

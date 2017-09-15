@@ -18,7 +18,6 @@ package io.deepsense.graph
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.mockito.Mockito._
 import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang._
@@ -26,15 +25,15 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.params.exceptions.ValidationException
+import io.deepsense.graph.DClassesForDOperations._
+import io.deepsense.graph.DOperationTestClasses._
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
 
 class AbstractInferenceSpec
   extends WordSpec
   with DeeplangTestSupport
   with Matchers {
-
-  import io.deepsense.graph.DClassesForDOperations._
-  import io.deepsense.graph.DOperationTestClasses._
 
   val hierarchy = new DOperableCatalog
   hierarchy.registerDOperable[A1]()
@@ -103,7 +102,7 @@ class AbstractInferenceSpec
   protected def nodeAToA1A2 = Node(idAToA1A2, DOperationAToA1A2())
   protected def nodeA1A2ToFirst = Node(idA1A2ToFirst, DOperationA1A2ToFirst())
 
-  def validGraph: DirectedGraph = DirectedGraph(
+  def validGraph: DeeplangGraph = DeeplangGraph(
     nodes = Set(nodeCreateA1, nodeAToA1A2, nodeA1A2ToFirst),
     edges = Set(
       Edge(nodeCreateA1, 0, nodeAToA1A2, 0),
@@ -111,22 +110,22 @@ class AbstractInferenceSpec
       Edge(nodeAToA1A2, 1, nodeA1A2ToFirst, 1))
   )
 
-  def setParametersValid(node: Node): Unit = {
-    node.operation.asInstanceOf[DOperationA1A2ToFirst].setParamsValid()
+  def setParametersValid(node: DeeplangNode): Unit = {
+    node.value.asInstanceOf[DOperationA1A2ToFirst].setParamsValid()
   }
 
-  def setInferenceErrorThrowing(node: Node): Unit = {
-    node.operation.asInstanceOf[DOperationA1A2ToFirst].setInferenceErrorThrowing()
+  def setInferenceErrorThrowing(node: DeeplangNode): Unit = {
+    node.value.asInstanceOf[DOperationA1A2ToFirst].setInferenceErrorThrowing()
   }
 
-  def setParametersInvalid(node: Node): Unit = {
-    node.operation.asInstanceOf[DOperationA1A2ToFirst].setParamsInvalid()
+  def setParametersInvalid(node: DeeplangNode): Unit = {
+    node.value.asInstanceOf[DOperationA1A2ToFirst].setParamsInvalid()
   }
 
-  def setParametersValid(graph: DirectedGraph): Unit = setInGraph(graph, _.setParamsValid())
+  def setParametersValid(graph: DeeplangGraph): Unit = setInGraph(graph, _.setParamsValid())
 
-  def setInGraph(graph: DirectedGraph, f: DOperationA1A2ToFirst => Unit): Unit = {
+  def setInGraph(graph: DeeplangGraph, f: DOperationA1A2ToFirst => Unit): Unit = {
     val node = graph.node(idA1A2ToFirst)
-    f(node.operation.asInstanceOf[DOperationA1A2ToFirst])
+    f(node.value.asInstanceOf[DOperationA1A2ToFirst])
   }
 }

@@ -21,8 +21,9 @@ import scala.util.{Failure, Success, Try}
 import io.deepsense.commons.exception.{DeepSenseException, DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.{DOperation, DOperable}
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.GraphKnowledge._
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
@@ -31,10 +32,10 @@ import io.deepsense.models.workflows.{ExecutionReport, EntitiesMap, NodeState, N
 import io.deepsense.reportlib.model.ReportContent
 
 case class StatefulGraph(
-    directedGraph: DirectedGraph,
+    directedGraph: DeeplangGraph,
     states: Map[Node.Id, NodeStateWithResults],
     executionFailure: Option[FailureDescription])
-  extends TopologicallySortable
+  extends TopologicallySortable[DOperation]
   with KnowledgeInference
   with NodeInferenceImpl
   with Logging {
@@ -107,21 +108,26 @@ case class StatefulGraph(
 
   def size: Int = directedGraph.size
 
-  def node(id: Node.Id): Node = directedGraph.node(id)
+  def node(id: Node.Id): DeeplangNode = directedGraph.node(id)
 
-  def nodes: Set[Node] = directedGraph.nodes
+  def nodes: Set[DeeplangNode] = directedGraph.nodes
 
   // Delegated methods (TopologicallySortable)
 
-  override def topologicallySorted: Option[List[Node]] = directedGraph.topologicallySorted
+  override def topologicallySorted: Option[List[DeeplangNode]] =
+    directedGraph.topologicallySorted
 
-  override def allPredecessorsOf(id: Id): Set[Node] = directedGraph.allPredecessorsOf(id)
+  override def allPredecessorsOf(id: Id): Set[DeeplangNode] =
+    directedGraph.allPredecessorsOf(id)
 
-  override def predecessors(id: Id): IndexedSeq[Option[Endpoint]] = directedGraph.predecessors(id)
+  override def predecessors(id: Id): IndexedSeq[Option[Endpoint]] =
+    directedGraph.predecessors(id)
 
-  override def edges: Set[Edge] = directedGraph.edges
+  override def edges: Set[Edge] =
+    directedGraph.edges
 
-  override def successors(id: Id): IndexedSeq[Set[Endpoint]] = directedGraph.successors(id)
+  override def successors(id: Id): IndexedSeq[Set[Endpoint]] =
+    directedGraph.successors(id)
 
   /**
    * Tells the graph to infer Knowledge.
@@ -300,17 +306,17 @@ case class StatefulGraph(
 
 object StatefulGraph {
   def apply(
-    nodes: Set[Node] = Set(),
+    nodes: Set[DeeplangNode] = Set(),
     edges: Set[Edge] = Set()): StatefulGraph = {
     val states = nodes.map(node =>
       node.id -> NodeStateWithResults(NodeState(nodestate.Draft(), Some(EntitiesMap())), Map())
     ).toMap
-    StatefulGraph(DirectedGraph(nodes, edges), states, None)
+    StatefulGraph(DeeplangGraph(nodes, edges), states, None)
   }
 
   protected def predecessorsReady(
       id: Node.Id,
-      directedGraph: DirectedGraph,
+      directedGraph: DeeplangGraph,
       states: Map[Node.Id, NodeStateWithResults]): Boolean = {
     directedGraph.predecessors(id).forall {
       case Some(Endpoint(nodeId, _)) =>
@@ -336,4 +342,4 @@ object StatefulGraph {
   }
 }
 
-case class ReadyNode(node: Node, input: Seq[DOperable])
+case class ReadyNode(node: DeeplangNode, input: Seq[DOperable])

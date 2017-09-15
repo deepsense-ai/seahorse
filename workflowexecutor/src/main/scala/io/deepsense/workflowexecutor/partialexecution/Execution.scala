@@ -18,10 +18,11 @@ package io.deepsense.workflowexecutor.partialexecution
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
-import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.{DOperation, DOperable}
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
-import io.deepsense.graph.{DirectedGraph, Node, _}
+import io.deepsense.graph._
 import io.deepsense.models.workflows.{ExecutionReport, NodeStateWithResults}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -32,7 +33,7 @@ object Execution {
     IdleExecution(graph, selectedNodes)
   }
 
-  def selectedNodes(directedGraph: DirectedGraph, nodes: Seq[Id]): Set[Id] = {
+  def selectedNodes(directedGraph: DeeplangGraph, nodes: Seq[Id]): Set[Id] = {
     val graphNodeIds = directedGraph.nodes.map(_.id)
     val filteredNodes = nodes.filter(graphNodeIds.contains).toSet
     filteredNodes
@@ -46,7 +47,7 @@ object Execution {
 sealed trait ExecutionLike {
   type NodeStates = Map[Node.Id, NodeStateWithResults]
 
-  def node(id: Node.Id): Node
+  def node(id: Node.Id): DeeplangNode
   def nodeStarted(id: Node.Id): Execution
   def nodeFailed(id: Node.Id, cause: Exception): Execution
   def nodeFinished(
@@ -60,14 +61,14 @@ sealed trait ExecutionLike {
   def states: NodeStates
   def isRunning: Boolean
   def inferAndApplyKnowledge(inferContext: InferContext): Execution
-  def updateStructure(directedGraph: DirectedGraph, nodes: Set[Node.Id] = Set.empty): Execution
+  def updateStructure(directedGraph: DeeplangGraph, nodes: Set[Node.Id] = Set.empty): Execution
   def abort: Execution
   def executionReport: ExecutionReport
   def inferKnowledge(context: InferContext): GraphKnowledge
 }
 
 sealed abstract class Execution(val graph: StatefulGraph, running: Boolean) extends ExecutionLike {
-  override def node(id: Node.Id): Node = graph.node(id)
+  override def node(id: Node.Id): DeeplangNode = graph.node(id)
 
   override def isRunning: Boolean = running
 
@@ -105,7 +106,7 @@ case class IdleExecution(
   }
 
   override def updateStructure(
-      newStructure: DirectedGraph,
+      newStructure: DeeplangGraph,
       nodes: Set[Id] = Set.empty): IdleExecution = {
     val selected = Execution.selectedNodes(newStructure, nodes.toSeq)
     val substructure = newStructure.subgraph(selected)
@@ -145,8 +146,8 @@ case class IdleExecution(
   }
 
   private def findStates(
-      newStructure: DirectedGraph,
-      substructure: DirectedGraph,
+      newStructure: DeeplangGraph,
+      substructure: DeeplangGraph,
       nodes: Set[Node.Id]): NodeStates = {
     val noMissingStates = newStructure.nodes.map {
       case Node(id, _) => id -> states.getOrElse(id, NodeStateWithResults.draft)
@@ -210,7 +211,7 @@ abstract class StartedExecution(
     throw new IllegalStateException("An Execution that is not idle cannot infer knowledge!")
   }
 
-  override def updateStructure(directedGraph: DirectedGraph, nodes: Set[Id]): Execution =
+  override def updateStructure(directedGraph: DeeplangGraph, nodes: Set[Id]): Execution =
     throw new IllegalStateException("Structure of an Execution that is not idle cannot be altered!")
 
   private def withRunningPartUpdated(update: (StatefulGraph) => StatefulGraph): Execution = {

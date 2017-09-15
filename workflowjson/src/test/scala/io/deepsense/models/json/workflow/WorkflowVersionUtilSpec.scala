@@ -23,7 +23,7 @@ import org.mockito.Mockito._
 import spray.json._
 
 import io.deepsense.commons.utils.{Logging, Version}
-import io.deepsense.graph.DirectedGraph
+import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionFormatException
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
@@ -38,7 +38,7 @@ class WorkflowVersionUtilSpec
   val currentVersionString = "1.2.3"
   override def currentVersion: Version = Version(currentVersionString)
   override val graphReader = mock[GraphReader]
-  when(graphReader.read(any())).thenReturn(DirectedGraph())
+  when(graphReader.read(any())).thenReturn(DeeplangGraph())
 
   "WorkflowVersionUtil" should {
     "allow to extract the version as a string and as an object" in {
@@ -80,7 +80,7 @@ class WorkflowVersionUtilSpec
   val correctVersionMeta = WorkflowMetadata(WorkflowType.Batch, currentVersionString)
   val incorrectVersionMeta = correctVersionMeta.copy(apiVersion = "X" + currentVersionString)
 
-  val correctWorkflow = Workflow(correctVersionMeta, DirectedGraph(), ThirdPartyData("{}"))
+  val correctWorkflow = Workflow(correctVersionMeta, DeeplangGraph(), ThirdPartyData("{}"))
   val correctWorkflowString = correctWorkflow.toJson.prettyPrint
 
   val incorrectVersionJson = JsObject(
@@ -92,7 +92,7 @@ class WorkflowVersionUtilSpec
   val workflowWithResults = WorkflowWithResults(
     Workflow.Id.randomId,
     correctVersionMeta,
-    DirectedGraph(),
+    DeeplangGraph(),
     ThirdPartyData("{}"),
     ExecutionReport(Map(),
       EntitiesMap(), None))

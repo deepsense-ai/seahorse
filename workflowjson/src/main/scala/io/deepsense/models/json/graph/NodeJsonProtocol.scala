@@ -19,16 +19,18 @@ package io.deepsense.models.json.graph
 import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.deeplang.DOperation
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 
 trait NodeJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
 
   import OperationJsonProtocol.DOperationWriter
 
-  implicit object NodeWriter extends JsonWriter[Node] {
-    override def write(node: Node): JsValue = JsObject(
+  implicit object NodeWriter extends JsonWriter[DeeplangNode] {
+    override def write(node: DeeplangNode): JsValue = JsObject(
       Map(NodeJsonProtocol.Id -> node.id.toJson) ++
-        node.operation.toJson.asJsObject.fields)
+        node.value.toJson.asJsObject.fields)
   }
 }
 

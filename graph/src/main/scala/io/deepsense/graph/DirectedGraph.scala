@@ -16,12 +16,11 @@
 
 package io.deepsense.graph
 
-case class DirectedGraph(
-    nodes: Set[Node] = Set(),
-    edges: Set[Edge] = Set())
-  extends TopologicallySortable
-  with KnowledgeInference
-  with NodeInferenceImpl {
+abstract class DirectedGraph[T <: Operation, G <: DirectedGraph[T, G]](
+    val nodes: Set[Node[T]] = Set[Node[T]](),
+    val edges: Set[Edge] = Set())
+  extends TopologicallySortable[T]
+  with Serializable {
 
   private val nonExistingNodes: Set[Node.Id] = checkEdgesEndsExist(nodes, edges)
 
@@ -33,14 +32,14 @@ case class DirectedGraph(
   private val _successors = prepareSuccessors
   private val _containsCycle = new TopologicalSort(this).isSorted
 
-  def topologicallySorted: Option[List[Node]] = new TopologicalSort(this).sortedNodes
-  def node(id: Node.Id): Node = idToNode(id)
+  def topologicallySorted: Option[List[Node[T]]] = new TopologicalSort(this).sortedNodes
+  def node(id: Node.Id): Node[T] = idToNode(id)
   def predecessors(id: Node.Id): IndexedSeq[Option[Endpoint]] = _predecessors(id)
   def successors(id: Node.Id): IndexedSeq[Set[Endpoint]] = _successors(id)
   def containsCycle: Boolean = _containsCycle
 
-  def allPredecessorsOf(id: Node.Id): Set[Node] = {
-    predecessors(id).foldLeft(Set[Node]())((acc: Set[Node], predecessor: Option[Endpoint]) =>
+  def allPredecessorsOf(id: Node.Id): Set[Node[T]] = {
+    predecessors(id).foldLeft(Set[Node[T]]())((acc: Set[Node[T]], predecessor: Option[Endpoint]) =>
       predecessor match {
         case None => acc
         case Some(endpoint) => (acc + node(endpoint.nodeId)) ++
@@ -50,7 +49,20 @@ case class DirectedGraph(
 
   def size: Int = nodes.size
 
-  def subgraph(nodes: Set[Node.Id]): DirectedGraph = {
+  def rootNodes: Iterable[Node[T]] = {
+    topologicallySorted.get.filter(n => predecessors(n.id).flatten.isEmpty)
+  }
+
+  def predecessorsOf(nodes: Set[Node.Id]): Set[Node.Id] = {
+    nodes.flatMap {
+      node => predecessors(node).flatten.map { _.nodeId }
+    }
+  }
+
+  def successorsOf(node: Node.Id): Set[Node.Id] =
+   successors(node).flatMap(endpoints => endpoints.map(_.nodeId)).toSet
+
+  def subgraph(nodes: Set[Node.Id]): G = {
     def collectNodesEdges(
         previouslyCollectedNodes: Set[Node.Id],
         previouslyCollectedEdges: Set[Edge],
@@ -68,21 +80,10 @@ case class DirectedGraph(
     }
 
     val (n, e) = collectNodesEdges(nodes, Set(), nodes)
-    DirectedGraph(n.map(node), e)
+    subgraph(n.map(node), e)
   }
 
-  def rootNodes: Iterable[Node] = {
-    topologicallySorted.get.filter(n => predecessors(n.id).flatten.isEmpty)
-  }
-
-  def predecessorsOf(nodes: Set[Node.Id]): Set[Node.Id] = {
-    nodes.flatMap {
-      node => predecessors(node).flatten.map { _.nodeId }
-    }
-  }
-
-  def successorsOf(node: Node.Id): Set[Node.Id] =
-   successors(node).flatMap(endpoints => endpoints.map(_.nodeId)).toSet
+  def subgraph(nodes: Set[Node[T]], edges: Set[Edge]): G
 
   private def edgesOf(nodes: Set[Node.Id]): Set[Edge] = nodes.flatMap(edgesTo)
 
@@ -95,7 +96,7 @@ case class DirectedGraph(
 
     nodes.foreach(node => {
       mutablePredecessors +=
-        node.id -> mutable.IndexedSeq.fill(node.operation.inArity)(None)
+        node.id -> mutable.IndexedSeq.fill(node.value.inArity)(None)
     })
     edges.foreach(edge => {
       mutablePredecessors(edge.to.nodeId)(edge.to.portIndex) = Some(edge.from)
@@ -109,7 +110,7 @@ case class DirectedGraph(
       mutable.Map()
 
     nodes.foreach(node => {
-      mutableSuccessors += node.id -> Vector.fill(node.operation.outArity)(mutable.Set())
+      mutableSuccessors += node.id -> Vector.fill(node.value.outArity)(mutable.Set())
     })
     edges.foreach(edge => {
       mutableSuccessors(edge.from.nodeId)(edge.from.portIndex) += edge.to
@@ -117,7 +118,7 @@ case class DirectedGraph(
     mutableSuccessors.mapValues(_.map(_.toSet)).toMap
   }
 
-  private def checkEdgesEndsExist(nodes: Set[Node], edges: Set[Edge]): Set[Node.Id] = {
+  private def checkEdgesEndsExist(nodes: Set[Node[T]], edges: Set[Edge]): Set[Node.Id] = {
     val nodesIds = nodes.map(_.id)
     edges.flatMap { edge => Set(edge.from.nodeId, edge.to.nodeId)}.collect {
       case id if !nodesIds.contains(id) => id

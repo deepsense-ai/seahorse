@@ -26,7 +26,7 @@ case class SinglePortKnowledgeInferenceResult(
   errors: InferenceErrors)
 
 trait KnowledgeInference {
-  self: TopologicallySortable with NodeInference =>
+  self: TopologicallySortable[DOperation] with NodeInference =>
 
   /**
    * @return A graph knowledge with inferred results for every node.
@@ -61,7 +61,7 @@ trait KnowledgeInference {
       subgraphNodes.contains(node(edge.from.nodeId)) &&
         subgraphNodes.contains(node(edge.to.nodeId)))
     val inferenceResult =
-      DirectedGraph(subgraphNodes, subgraphEdges).inferKnowledge(context).getResult(nodeId)
+      DeeplangGraph(subgraphNodes, subgraphEdges).inferKnowledge(context).getResult(nodeId)
     SinglePortKnowledgeInferenceResult(
       inferenceResult.ports(outPortIndex),
       inferenceResult.warnings,
