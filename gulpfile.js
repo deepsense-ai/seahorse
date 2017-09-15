@@ -112,6 +112,11 @@ gulp.task('replace', function () {
     .pipe(gulp.dest(build.path));
 });
 
+gulp.task('copy:images', function () {
+  return gulp.src([client.path + client.icheckImages]).
+    pipe(gulp.dest(build.path + build.css));
+});
+
 gulp.task('favicon', function () {
   return gulp.src([client.path + client.favicon])
     .pipe(gulp.dest(build.path));
@@ -203,7 +208,7 @@ gulp.task('build', function (callback) {
   runSequence(
     'clean',
     [
-      'fonts', 'images', 'html:index', 'html:partials', 'config', 'favicon', 'assets', 'less',
+      'fonts', 'images', 'html:index', 'html:partials', 'copy:images', 'config', 'favicon', 'assets', 'less',
       'libs:css', 'libs:js', 'jshint', 'browserify'
     ],
     'version', 'replace', callback);

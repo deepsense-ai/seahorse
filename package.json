@@ -38,6 +38,7 @@
     "deepsense-node-parameters": "0.0.14",
     "express": "^4.12.4",
     "font-awesome": "^4.4.0",
+    "icheck": "^1.0.2",
     "ng-debounce": "^1.0.1",
     "ng-file-upload": "^7.0.13",
     "ng-switchery": "^1.0.1"

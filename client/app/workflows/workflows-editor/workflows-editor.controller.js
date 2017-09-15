@@ -162,7 +162,7 @@ function WorkflowsEditorController(
 
   $scope.$on('StatusBar.RUN', () => {
     RunModalFactory.showModal({
-      message: 'Something here!'
+      message: `Discovery Peak Apache Spark cluster`
     });
   });
 

@@ -1,9 +1,9 @@
 'use strict';
 
 /* @ngInject */
-function RunModalController($modalInstance, message, RunModalFactory) {
+function RunModalController($state, $stateParams, $modalInstance, message, RunModalFactory) {
   const LOADING = 'loading';
-  const LOADED = 'loaded';
+  const SUCCESS = 'success';
   const FAILED = 'failed';
 
   _.assign(this, {
@@ -16,14 +16,19 @@ function RunModalController($modalInstance, message, RunModalFactory) {
       this.status = LOADING;
 
       RunModalFactory.execute().
-        then((response) => {
-          this.status = LOADED;
-          return $modalInstance.close(response.id);
+        then(() => {
+          this.status = SUCCESS;
         }).
-        catch((reason = { data: 'Server is not responding' }) => {
+        catch(({ data } = { data: 'Server is not responding' }) => {
           this.status = FAILED;
-          this.errorMessage = reason.data;
+          this.errorMessage = data;
         });
+    },
+    goToReport : function () {
+      $state.go('workflows.latest_report', {
+        'id': $stateParams.id
+      });
+      $modalInstance.dismiss();
     }
   });
 }

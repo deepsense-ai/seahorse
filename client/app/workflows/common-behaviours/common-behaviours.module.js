@@ -17,4 +17,5 @@ exports.inject = function (module) {
   require('./common-focused.js').inject(module);
   require('./common-flowchart-box-undraggable.js').inject(module);
   require('./common-context-menu-blocker.js').inject(module);
+  require('./common-icheck.js').inject(module);
 };

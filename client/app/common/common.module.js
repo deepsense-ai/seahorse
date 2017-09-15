@@ -10,6 +10,6 @@ require('./services/services.module.js').inject(common);
 require('./sticky-window/sticky-window.js').inject(common);
 require('./services/uuid-generator.js').inject(common);
 require('./modals/modals.module.js').inject(common);
-require('./button-wait/button-wait.js').inject(common);
+require('./dots/dots.js').inject(common);
 
 module.exports = common;

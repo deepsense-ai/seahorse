@@ -1,21 +1,74 @@
 <div class="inmodal c-run-modal">
   <div class="modal-header">
-    <h4 class="modal-title">This is RUN progress</h4>
+    <h4 class="modal-title">Run workflow</h4>
     <button type="button" class="close c-run-modal__close" aria-label="Close"
             ng-click="controller.close()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <p>{{ ::controller.message }}</p>
-    <p  ng-if="controller.errorMessage"
-        class="text-danger">{{ ::controller.errorMessage }}</p>
+    <table class="table table-hover">
+      <tr class="m-b">
+        <td>Execution environment:</td>
+        <td>{{ ::controller.message }}</td>
+      </tr>
+      <tr class="m-b">
+        <td>
+          <label for="report-detail">Report detail:</label>
+        </td>
+        <td>
+          <select class="form-control" name="report-detail" id="report-detail">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </td>
+      </tr>
+      <tr class="m-b">
+        <td>
+          <label for="logging-level">Logging level:</label>
+        </td>
+        <td>
+          <select class="form-control" name="logging-level" id="logging-level">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="upload-execution-report">Upload execution result:</label>
+        </td>
+        <td>
+          <input type="checkbox"
+                 icheck
+                 id="upload-execution-report"
+                 ng-model="controller.data" />
+        </td>
+      </tr>
+    </table>
+    <section class="js-run-workflow-action c-run-workflow-action">
+      <div class="c-run-workflow-action__left" ng-show="controller.status === 'loading' || controller.status === 'success'">
+        <span>Executing the workflow</span>
+        <span dynamic-dots
+              dynamic-dots-status="controller.status"></span>
+      </div>
+      <div class="c-run-workflow-action__right animated fadeIn"
+        ng-if="controller.status === 'success'">
+        <span>Completed with status:</span>
+        <span class="text-success">{{controller.status | uppercase}}</span>
+        <button class="btn btn-success"
+          ng-click="controller.goToReport()">Go to report ></button>
+      </div>
+    </section>
+    <p ng-if="controller.errorMessage"
+       class="text-danger">{{ ::controller.errorMessage }}</p>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-primary pull-left"
             ng-click="controller.execute()"
-            button-wait
-            button-wait-status="controller.status">Execute</button>
+            ng-disabled="controller.status === 'loading'">Execute</button>
     <button type="button" class="btn btn-white"
             ng-click="controller.close()">Cancel</button>
   </div>

@@ -1,14 +1,10 @@
 'use strict';
 
 /* @ngInject */
-function RunModalFactory ($modal, $q, BaseApiClient) {
-  // const URL = 'NO_URL';
+function RunModalFactory ($modal, $q, $timeout) {
+  class RunModal {
 
-  class RunModal extends BaseApiClient {
-
-    constructor() {
-      super();
-    }
+    constructor() {}
 
     showModal(options = {}) {
       options.message = options.message || '';
@@ -26,11 +22,8 @@ function RunModalFactory ($modal, $q, BaseApiClient) {
     }
 
     execute () {
-      // return this.makeRequest(this.METHOD_GET, URL);
       let def = $q.defer();
-
-      setTimeout(() => def.reject(), 2000);
-
+      $timeout(def.resolve, 5000, false);
       return def.promise;
     }
   }
