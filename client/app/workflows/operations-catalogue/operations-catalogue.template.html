@@ -1,0 +1,22 @@
+<div class="operations-catalogue"
+     ng-class="{
+      'search-results': $ctrl.isSearchMode,
+      'catalogue-results': !$ctrl.isSearchMode
+     }"
+>
+  <categories-list
+    ng-if="!$ctrl.isSearchMode"
+    categories="$ctrl.categories"
+    select-operation="$ctrl.selectOperation({operationId: operationId})"
+  >
+  </categories-list>
+
+  <search-operation
+    ng-if="$ctrl.isSearchMode"
+    search-results="$ctrl.filteredCategories"
+    select-operation="$ctrl.selectOperation({operationId: operationId})"
+    message="$ctrl.message"
+  >
+  </search-operation>
+
+</div>

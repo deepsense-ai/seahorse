@@ -1,0 +1,37 @@
+<div class="search-operation">
+  <div ng-if="$ctrl.message"
+       class="message"
+  >
+    {{$ctrl.message}}
+  </div>
+
+  <div ng-if="!$ctrl.message"
+       class="category"
+       ng-repeat="category in $ctrl.searchResults.catalog"
+  >
+    <div class="category__name">
+      {{category.name}}
+    </div>
+    <div class="operations"
+         ng-repeat="operation in category.items"
+         ng-click="$ctrl.selectOperation({operationId: operation.id})"
+    >
+      <div class="operations__name">
+        {{operation.name}}
+      </div>
+    </div>
+    <div class="subcategory" ng-repeat="category in category.catalog">
+      <div class="subcategory__name">
+        {{category.name}}
+      </div>
+      <div class="operations"
+           ng-repeat="operation in category.items"
+           ng-click="$ctrl.selectOperation({operationId: operation.id})"
+      >
+        <div class="operations__name">
+          {{operation.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -13,7 +13,6 @@ if (browserValidator.isBrowserSupported()) {
     'ngCookies',
     'rt.debounce',
     require('./common/deepsense-components/deepsense-attributes-panel/attributes-panel.module.js').name,
-    require('./common/deepsense-components/deepsense-catalogue-panel/catalogue-panel.module.js').name,
     require('./common/deepsense-components/deepsense-cycle-analyser/deepsense-cycle-analyser.js').name,
     require('./common/deepsense-components/deepsense-graph-model/deepsense-graph-model.module.js').name,
     require('./common/deepsense-components/deepsense-loading-spinner/loading-spinner.module.js').name,

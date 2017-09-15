@@ -1,0 +1,78 @@
+@import "../../../../css/variables";
+
+.categories-list {
+  width: 240px;
+
+  &__category {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    min-height: 35px;
+    width: 240px;
+    position: relative;
+    border-left: 2px solid @seahorse-grey;
+    border-right: 2px solid @seahorse-grey;
+    border-top: 1px solid @seahorse-grey;
+    border-bottom: 1px solid @seahorse-grey;
+
+    &:first-of-type {
+      border-top: 2px solid @seahorse-grey;
+    }
+
+    &:last-of-type {
+      border-bottom: 2px solid @seahorse-grey;
+    }
+
+    &:hover {
+      background-color: @color-white;
+      cursor: pointer;
+    }
+
+    .name {
+      display: flex;
+      align-items: center;
+      height: 33px;
+      padding-left: 10px;
+    }
+
+    .icon {
+      padding-right: 5px;
+      font-size: 22px;
+    }
+  }
+
+  &__categories-wrapper {
+    position: absolute;
+    background-color: @color-light-grey;
+    color: @seahorse-blue;
+    top: -2px;
+
+    &.right-orientation {
+      right: -240px;
+    }
+
+    &.left-orientation {
+      right: 236px;
+    }
+  }
+
+  &__operations-wrapper {
+    z-index: 100;
+    position: absolute;
+    background-color: @color-light-grey;
+    color: @seahorse-blue;
+    top: -2px;
+    border: 2px solid @seahorse-grey;
+
+    &.right-orientation {
+      right: -254px;
+    }
+
+    &.left-orientation {
+      right: 236px;
+    }
+  }
+}
