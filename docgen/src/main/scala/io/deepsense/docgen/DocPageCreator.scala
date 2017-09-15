@@ -231,6 +231,7 @@ trait DocPageCreator {
       case (p: ChoiceParam[_]) => "SingleChoice"
       case (p: ColumnSelectorParam) => "MultipleColumnSelector"
       case (p: NumericParam) => "Numeric"
+      case (p: MultipleNumericParam) => "MultipleNumeric"
       case (p: MultipleChoiceParam[_]) => "MultipleChoice"
       case (p: PrefixBasedColumnCreatorParam) => "String"
       case (p: SingleColumnCreatorParam) => "String"

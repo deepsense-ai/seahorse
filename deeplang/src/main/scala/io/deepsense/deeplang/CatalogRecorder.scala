@@ -85,6 +85,8 @@ object CatalogRecorder {
     catalog.registerDOperable[IDFModel]()
     catalog.registerDOperable[GBTClassifier]()
     catalog.registerDOperable[GBTClassificationModel]()
+    catalog.registerDOperable[MultilayerPerceptronClassifier]()
+    catalog.registerDOperable[MultilayerPerceptronClassifierModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -250,6 +252,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateLogisticRegression](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateMultilayerPerceptronClassifier](
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateKMeans](

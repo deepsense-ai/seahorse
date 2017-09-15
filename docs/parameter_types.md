@@ -19,13 +19,19 @@ Holds a single numeric value. It can specify validation rules such as a range of
 
 **Example value:** 100.0
 
+### Multiple Numeric
+Holds multiple numeric values. It can specify validation rules such as a range of accepted values etc.
+
+**Example of use:** layer sizes in a multilayer perceptron classifier
+
+**Example value:** [1, 2, 3]
+
 ### String
 Holds single string value. It can be restricted by a regular expression that has to be satisfied by the input value.
 
 **Example of use:** source parameter  in `ReadDataFrame` operation
 
 **Example value:** “file:///tmp/example.csv”
-
 
 ### Boolean
 Represents a simple choice - yes or no.

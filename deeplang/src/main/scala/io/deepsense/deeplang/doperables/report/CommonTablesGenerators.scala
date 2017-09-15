@@ -34,6 +34,11 @@ object CommonTablesGenerators {
         case choice: Choice =>
           Seq(List(Some(pair.param.name), Some(choice.toString), Some(pair.param.description))) ++
             paramMapToDescriptionLists(choice.extractParamMap())
+        case array: Array[_] =>
+          Seq(List(
+            Some(pair.param.name),
+            Some(s"[${array.map(_.toString).mkString(", ")}]"),
+            Some(pair.param.description)))
         case value =>
           Seq(List(Some(pair.param.name), Some(value.toString), Some(pair.param.description)))
       }
