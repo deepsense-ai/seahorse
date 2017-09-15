@@ -9,7 +9,6 @@ import com.google.inject.AbstractModule
 class ClusterSpawnerModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[ClusterSpawner])
-      .to(classOf[DefaultClusterSpawner])
-      .asEagerSingleton()
+      .toInstance(DefaultClusterSpawner)
   }
 }
