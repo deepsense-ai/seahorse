@@ -297,6 +297,15 @@ object DataFrame {
     }
   }
 
+  /**
+   * Generates a DataFrame with no columns.
+   */
+  def empty(context: ExecutionContext): DataFrame = {
+    val emptyRdd = context.sqlContext.sparkContext.parallelize(Seq[Row]())
+    val emptySparkDataFrame = context.sqlContext.createDataFrame(emptyRdd, StructType(Seq.empty))
+    context.dataFrameBuilder.buildDataFrame(emptySparkDataFrame)
+  }
+
   val dataSampleTableName = "Data Sample"
   val maxRowsNumberInReport = 100
   val maxColumnsNumberInReport = 100

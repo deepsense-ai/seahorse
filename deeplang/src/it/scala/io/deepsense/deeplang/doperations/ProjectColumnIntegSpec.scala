@@ -6,13 +6,13 @@ package io.deepsense.deeplang.doperations
 
 import java.sql.Timestamp
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{Ignore, Matchers}
+import org.scalatest.Matchers
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -20,7 +20,6 @@ import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
-@Ignore
 class ProjectColumnIntegSpec
   extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
@@ -35,7 +34,7 @@ class ProjectColumnIntegSpec
 
   def schema = StructType(columns)
 
-  // Projected:     "b"     "a"                                               "z"
+  // Projected:  0  "b"/1   "a"/2 3                                     "z"/4
   val row1 = Seq(1, "str1", 10.0, new Timestamp(DateTime.now.getMillis), true)
   val row2 = Seq(2, "str2", 20.0, new Timestamp(DateTime.now.getMillis), false)
   val row3 = Seq(3, "str3", 30.0, new Timestamp(DateTime.now.getMillis), false)
@@ -44,7 +43,7 @@ class ProjectColumnIntegSpec
   "ProjectColumn" should {
     "select correct columns basing on the column selection" in {
       val projected = projectColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.ordinal))
-      val selectedIndices = Set(1, 2, 5)
+      val selectedIndices = Set(1, 2, 4) // b a z
       val expectedColumns = selectWithIndices[StructField](selectedIndices, columns)
       val expectedSchema = StructType(expectedColumns)
       val expectedData = data.map(r => selectWithIndices[Any](selectedIndices, r.toList))
@@ -83,14 +82,14 @@ class ProjectColumnIntegSpec
           Set.empty,
           Set.empty,
           Set(ColumnType.ordinal))
-        emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
+        emptyDataFrame.sparkDataFrame.collectAsList().toList shouldBe empty
       }
       "selection is empty" in {
         val emptyDataFrame = projectColumns(
           Set.empty,
           Set.empty,
           Set.empty)
-        emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
+        emptyDataFrame.sparkDataFrame.collectAsList().toList shouldBe empty
       }
     }
   }
@@ -126,7 +125,7 @@ class ProjectColumnIntegSpec
   }
 
   private def selectWithIndices[T](indices: Set[Int], sequence: Seq[T]): Seq[T] =
-    sequence.zipWithIndex.filter { case (_, index) =>
-      indices.contains(index)
-    }.map { case (value, _) => value }
+    sequence.zipWithIndex
+      .filter { case (_, index) => indices.contains(index) }
+      .map { case (v, _) => v }
 }
