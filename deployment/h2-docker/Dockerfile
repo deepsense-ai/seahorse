@@ -1,5 +1,5 @@
 # Copyright (c) 2016, CodiLime Inc.
-FROM java:8
+FROM anapsix/alpine-java:jre8
 
 ENV H2_VERSION 1.4.192
 ENV DATA_DIR /opt/h2-data
