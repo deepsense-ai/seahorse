@@ -28,12 +28,12 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
 
   import CustomPythonColumnOperationTransformer._
 
-  val targetType = ChoiceParam[TargetTypeChoice](
+  val targetType = ChoiceParam[TargetPythonTypeChoice](
     name = "target type",
     description = "Target type of the columns.")
 
-  def getTargetType: TargetTypeChoice = $(targetType)
-  def setTargetType(value: TargetTypeChoice): this.type = set(targetType, value)
+  def getTargetType: TargetPythonTypeChoice = $(targetType)
+  def setTargetType(value: TargetPythonTypeChoice): this.type = set(targetType, value)
 
   val codeParameter = CodeSnippetParam(
     name = "code",
