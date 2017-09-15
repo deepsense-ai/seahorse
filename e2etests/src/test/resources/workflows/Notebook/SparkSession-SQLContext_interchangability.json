@@ -1,0 +1,131 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+      "operation": {
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data source": "10659556-d079-9709-b41b-89e81e938ebd"
+      }
+    }, {
+      "id": "e789a852-6a7f-1c4e-2a01-eff2e0d73eab",
+      "operation": {
+        "id": "e76ca616-0322-47a5-b390-70c9668265dd",
+        "name": "Python Notebook"
+      },
+      "parameters": {
+
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "e789a852-6a7f-1c4e-2a01-eff2e0d73eab",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "SparkSession-SQLContext interchangability",
+      "description": "Check if both Spark and SQLContext can be used for sql queries on df",
+      "nodes": {
+        "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5040,
+            "y": 5109
+          }
+        },
+        "e789a852-6a7f-1c4e-2a01-eff2e0d73eab": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5032,
+            "y": 5238
+          }
+        }
+      }
+    },
+    "notebooks": {
+      "e789a852-6a7f-1c4e-2a01-eff2e0d73eab": {
+        "cells": [{
+          "source": ["df = dataframe()"],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": true
+          }
+        }, {
+          "source": ["df.createOrReplaceTempView(\"testview\")\n", "sqlContext.sql(\"SELECT * FROM testview\")"],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": false
+          }
+        }, {
+          "source": ["if sc.version.startswith(\"2.\"):\n", "    spark.sql(\"SELECT * FROM testview\")"],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": false
+          }
+        }, {
+          "source": ["if sc.version.startswith(\"2.\"):\n", "    df2 = spark.createDataFrame(df.rdd)\n", "    df2.createOrReplaceTempView(\"testview2\")\n", "    spark.sql(\"SELECT * FROM testview2\")\n", "    sqlContext.sql(\"SELECT * FROM testview2\")"],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": false
+          }
+        }, {
+          "source": [],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": true
+          }
+        }],
+        "metadata": {
+          "kernelspec": {
+            "display_name": "PySpark",
+            "language": "python",
+            "name": "forwarding_kernel_py"
+          },
+          "language_info": {
+            "mimetype": "text/x-python",
+            "name": "python",
+            "pygments_lexer": "ipython2",
+            "codemirror_mode": {
+              "name": "ipython",
+              "version": 2
+            },
+            "version": "2.7.12",
+            "nbconvert_exporter": "python",
+            "file_extension": ".py"
+          }
+        },
+        "nbformat": 4,
+        "nbformat_minor": 0
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "72d6e413-d73a-4376-99e8-8f34d57f9e43",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.5.0"
+  }
+}
