@@ -47,7 +47,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       this._watchForNewCustomTransformers(workflow);
       this._workflowsStack.push(workflow);
 
-      $rootScope.$on('StatusBar.START_EXECUTOR', () => {
+      $rootScope.$on('StatusBar.START_EDITING', () => {
         const workflow = this.getRootWorkflow();
         workflow.sessionStatus = SessionStatus.STARTING;
         SessionManagerApi.startSession(workflow.id).then(() => {
@@ -55,7 +55,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         });
       });
 
-      $rootScope.$on('StatusBar.STOP_EXECUTOR', () => {
+      $rootScope.$on('StatusBar.STOP_EDITING', () => {
         const workflow = this.getRootWorkflow();
         SessionManagerApi.deleteSessionById(workflow.id).then(() => {
           workflow.sessionStatus = SessionStatus.NOT_RUNNING;

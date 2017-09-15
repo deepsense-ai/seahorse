@@ -41,22 +41,22 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
       icon: 'fa-play',
       callFunction: () => $rootScope.$broadcast('StatusBar.RUN')
     },
-    startExecutor: {
+    startEditing: {
       label: 'Start editing',
       smallLabel: smallLabel,
       icon: 'fa fa-pencil',
-      callFunction: () => $rootScope.$emit('StatusBar.START_EXECUTOR')
+      callFunction: () => $rootScope.$emit('StatusBar.START_EDITING')
     },
-    startingExecutor: {
-      label: 'Start executor...',
+    startingEditing: {
+      label: 'Starting...',
       icon: 'fa-cog',
       additionalClass: 'menu-item-disabled',
       additionalIconClass: 'fa-spin'
     },
-    stopExecutor: {
-      label: 'Stop executor',
+    stopEditing: {
+      label: 'Stop editing',
       icon: 'fa-ban',
-      callFunction: () => $rootScope.$emit('StatusBar.STOP_EXECUTOR')
+      callFunction: () => $rootScope.$emit('StatusBar.STOP_EDITING')
     },
     abort: {
       label: 'Abort',
@@ -80,8 +80,8 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   menuItems.disabledClone= angular.copy(menuItems.clone);
   menuItems.disabledClone.additionalClass = 'menu-item-disabled';
 
-  menuItems.disabledStartExecutor = angular.copy(menuItems.startExecutor);
-  menuItems.disabledStartExecutor.additionalClass = 'menu-item-disabled';
+  menuItems.disabledStartEditing = angular.copy(menuItems.startEditing);
+  menuItems.disabledStartEditing.additionalClass = 'menu-item-disabled';
 
   menuItems.disabledClear = angular.copy(menuItems.clear);
   menuItems.disabledClear.additionalClass = 'menu-item-disabled';
@@ -93,10 +93,10 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   menuItems.disabledRun.additionalClass = 'menu-item-disabled';
 
   const _menuItemViews = {
-    editorWithExecutor: [menuItems.export, menuItems.clone, menuItems.stopExecutor, menuItems.clear, menuItems.run, menuItems.documentation],
-    editorWithoutReadyExecutor: [menuItems.export, menuItems.clone, menuItems.startingExecutor,  menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorWithoutExecutorForOwner: [menuItems.export, menuItems.clone, menuItems.startExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorWithoutExecutor: [menuItems.export, menuItems.clone, menuItems.disabledStartExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithExecutor: [menuItems.export, menuItems.clone, menuItems.stopEditing, menuItems.clear, menuItems.run, menuItems.documentation],
+    editorWithoutReadyExecutor: [menuItems.export, menuItems.clone, menuItems.startingEditing,  menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithoutExecutorForOwner: [menuItems.export, menuItems.clone, menuItems.startEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithoutExecutor: [menuItems.export, menuItems.clone, menuItems.disabledStartEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     running: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
     aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear,  menuItems.aborting,  menuItems.documentation],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
