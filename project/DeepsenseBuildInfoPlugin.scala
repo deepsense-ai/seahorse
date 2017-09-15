@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import scala.util.{Failure, Success, Try}
+
 import sbt.Keys._
 import sbt._
 import sbtbuildinfo.BuildInfoKey.Entry
@@ -22,34 +24,40 @@ import sbtbuildinfo.{BuildInfoKey, BuildInfoPlugin}
 object DeepsenseBuildInfoPlugin extends AutoPlugin {
   override def requires: Plugins = BuildInfoPlugin
 
-  val buildInfoKeysSetting: Def.Initialize[Seq[Entry[_]]] = Def.setting {
-    val slices = 3
-    val versionSeparator = '.'
-    lazy val versionSplit: Seq[Int] = {
-      val split = version.value.replaceAll("[^\\d.]", "").split(versionSeparator).toSeq
-        .filter(_.nonEmpty).map(_.toInt)
-      assert(split.size == slices, assertionMessage)
-      val apiVersion = split.take(slices).mkString(versionSeparator.toString)
-      assert(version.value.startsWith(apiVersion), assertionMessage)
-      split
-    }
+  def parseVersionString(versionString: String): (Int, Int, Int, String) = {
+    // <number>.<number>.<number><optional_rest>
+    val splitRegex = """([0-9]+)\.([0-9]+)\.([0-9]+)([^0-9].*)?""".r
 
-    lazy val assertionMessage = s"Version is set to '${version.value}' but should be in a format" +
-      " X.Y.Z, where X, Y and Z are non negative integers!"
+    Try {
+      versionString match {
+        case splitRegex(maj, min, fix, rest) => (maj.toInt, min.toInt, fix.toInt, Option(rest).getOrElse(""))
+        case _ => throw new IllegalArgumentException(
+          s"Version must conform to regex given by string ${splitRegex.toString()}")
+      }
+    } match {
+      case Success(versionTuple) => versionTuple
+      case Failure(nfe: NumberFormatException) =>
+        throw new IllegalArgumentException("Version must start with X.Y.Z, " +
+          "where X, Y and Z are non negative integers!")
+
+      case Failure(e) => throw e
+    }
+  }
+
+  val buildInfoKeysSetting: Def.Initialize[Seq[Entry[_]]] = Def.setting {
+
+    lazy val (maj, min, fix, rest) = parseVersionString(version.value)
 
     Seq(
       BuildInfoKey.action("gitCommitId") {
         Process("git rev-parse HEAD").lines.head
       },
-      BuildInfoKey.action("apiVersionMajor") {
-        versionSplit.head
-      },
-      BuildInfoKey.action("apiVersionMinor") {
-        versionSplit(1)
-      },
-      BuildInfoKey.action("apiVersionPatch") {
-        versionSplit(2)
-      }
+
+      "apiVersionMajor" -> maj,
+      "apiVersionMinor" -> min,
+      "apiVersionPatch" -> fix,
+      "apiVersionRest" -> rest
+
     )
   }
 
