@@ -1,14 +1,12 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Rafal Hryciuk
  */
 
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
-import org.apache.spark.sql.types.LongType
+import org.apache.spark.sql.types.DoubleType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.TimestampDecomposer.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
@@ -67,7 +65,7 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
 
     val newColumnName = DataFrame.createColumnName(columnName, timestampPart.name, level)
     (sparkDataFrame(columnName).substr(timestampPart.start, timestampPart.length)
-      as newColumnName cast LongType)
+      as newColumnName cast DoubleType)
   }
 }
 

@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Rafal Hryciuk
  */
 
 package io.deepsense.deeplang.doperations
@@ -58,7 +56,7 @@ class TimestampDecomposerIntegSpec extends DeeplangIntegTestSupport {
       "necessary to avoid names collision" in {
         val schema = StructType(List(
           StructField(timestampColumnName, TimestampType),
-          StructField(timestampColumnName + "_seconds", LongType)
+          StructField(timestampColumnName + "_seconds", DoubleType)
         ))
         val data = sparkContext.parallelize(List(
           Row(new Timestamp(t1.getMillis), 123)
@@ -80,10 +78,10 @@ class TimestampDecomposerIntegSpec extends DeeplangIntegTestSupport {
       "necessary to avoid names collision" in {
         val schema = StructType(List(
           StructField(timestampColumnName, TimestampType),
-          StructField(timestampColumnName + "_minutes_2", LongType),
-          StructField(timestampColumnName + "_hour", LongType),
-          StructField(timestampColumnName + "_day_1", LongType),
-          StructField(timestampColumnName + "_day_4", LongType)
+          StructField(timestampColumnName + "_minutes_2", DoubleType),
+          StructField(timestampColumnName + "_hour", DoubleType),
+          StructField(timestampColumnName + "_day_1", DoubleType),
+          StructField(timestampColumnName + "_day_4", DoubleType)
         ))
         val data = sparkContext.parallelize(List(
           Row(new Timestamp(t1.getMillis), 5, 6, 7, 8)
@@ -168,12 +166,12 @@ class TimestampDecomposerIntegSpec extends DeeplangIntegTestSupport {
     val levelSuffix = if (level > 0) "_" + level else ""
 
     StructType(originalSchema.fields ++ Array(
-      StructField(timestampColumn + "_year" + levelSuffix, LongType),
-      StructField(timestampColumn + "_month" + levelSuffix, LongType),
-      StructField(timestampColumn + "_day" + levelSuffix, LongType),
-      StructField(timestampColumn + "_hour" + levelSuffix, LongType),
-      StructField(timestampColumn + "_minutes" + levelSuffix, LongType),
-      StructField(timestampColumn + "_seconds" + levelSuffix, LongType)
+      StructField(timestampColumn + "_year" + levelSuffix, DoubleType),
+      StructField(timestampColumn + "_month" + levelSuffix, DoubleType),
+      StructField(timestampColumn + "_day" + levelSuffix, DoubleType),
+      StructField(timestampColumn + "_hour" + levelSuffix, DoubleType),
+      StructField(timestampColumn + "_minutes" + levelSuffix, DoubleType),
+      StructField(timestampColumn + "_seconds" + levelSuffix, DoubleType)
     ))
   }
 
