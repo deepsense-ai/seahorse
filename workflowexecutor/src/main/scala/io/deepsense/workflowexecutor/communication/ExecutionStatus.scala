@@ -22,16 +22,15 @@ import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.graph.Node
-import io.deepsense.graph.graphstate._
 import io.deepsense.graph.nodestate.NodeState
 import io.deepsense.models.json.graph.NodeStateJsonProtocol
 import io.deepsense.models.json.workflow.EntitiesMapJsonProtocol
 import io.deepsense.models.workflows.EntitiesMap
 
 case class ExecutionStatus(
-    graphState: GraphState,
     nodes: Map[Node.Id, NodeState],
-    resultEntities: EntitiesMap)
+    resultEntities: EntitiesMap,
+    executionFailure: Option[FailureDescription] = None)
   extends WriteMessageMQ {
 
   override protected def jsMessageType: JsValue = JsString(ExecutionStatus.messageType)
@@ -47,24 +46,17 @@ object ExecutionStatus
   with EntitiesMapJsonProtocol {
 
   val messageType = "executionStatus"
-  val protocol = jsonFormat4(JsonExecutionStatus.apply)
+  val protocol = jsonFormat3(JsonExecutionStatus.apply)
 
   def toJsonView(executionStatus: ExecutionStatus): JsValue = {
-    val failureDescription: Option[FailureDescription] = executionStatus.graphState match {
-      case Failed(fd) => Some(fd)
-      case _ => None
-    }
-
     JsonExecutionStatus(
-      executionStatus.graphState.name,
-      failureDescription,
+      executionStatus.executionFailure,
       executionStatus.nodes,
       executionStatus.resultEntities
     ).toJson(protocol)
   }
 
   case class JsonExecutionStatus(
-    state: String, // TODO status?
     error: Option[FailureDescription],
     nodes: Map[Node.Id, NodeState],
     resultEntities: EntitiesMap)

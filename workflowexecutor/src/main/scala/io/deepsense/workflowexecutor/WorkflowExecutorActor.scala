@@ -23,7 +23,9 @@ import akka.actor._
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
+import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
+import io.deepsense.graph.nodestate.{Completed, NodeState}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
@@ -38,7 +40,7 @@ class WorkflowExecutorActor(
     executionContext: ExecutionContext,
     nodeExecutorFactory: GraphNodeExecutorFactory,
     executionFactory: ExecutionFactory,
-    statusListener: Option[ActorRef],
+    terminationListener: Option[ActorRef],
     publisher: Option[ActorSelection])
   extends Actor
   with Logging {
@@ -59,7 +61,7 @@ class WorkflowExecutorActor(
     case NodeFailed(id, failureDescription) =>
       nodeFailed(id, failureDescription, execution)
     case Connect(_) =>
-      sendWorkflowStatus(execution)
+      sendExecutionStatus(executionToStatus(execution))
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
   }
@@ -75,7 +77,7 @@ class WorkflowExecutorActor(
       val updatedStructure = finishedExecution.updateStructure(graph)
       launch(updatedStructure, nodes)
     case Connect(_) =>
-      sendWorkflowStatus(finishedExecution)
+      sendExecutionStatus(executionToStatus(finishedExecution))
   }
 
   override def receive: Receive = {
@@ -83,49 +85,66 @@ class WorkflowExecutorActor(
       val execution = executionFactory.create(graph)
       launch(execution, nodes)
     case Connect(_) =>
-      sendWorkflowStatus(executionFactory.empty)
+      sendExecutionStatus(ExecutionStatus(Map.empty, EntitiesMap()))
   }
 
   def launch(execution: Execution, nodes: Seq[Node.Id]): Unit = {
     val inferred = execution.inferAndApplyKnowledge(executionContext.inferContext)
-    val enqueued = if (inferred.state.isFailed) {
-      inferred
+    val enqueued = inferred.error.map(_ => inferred).getOrElse(inferred.enqueue(nodes))
+    updateExecutionState(execution, enqueued)
+  }
+
+  def updateExecutionState(originalExecution: Execution, executionInProcess: Execution): Unit = {
+    val updatedExecution = if (executionInProcess.isRunning) {
+      val launchedGraph = launchReadyNodes(executionInProcess)
+      context.unbecome()
+      context.become(launched(launchedGraph))
+      launchedGraph
     } else {
-      inferred.enqueue(nodes)
+      logger.debug(s"End of execution")
+      terminationListener.foreach(_ ! executionToStatus(executionInProcess))
+      context.unbecome()
+      context.become(finished(executionInProcess))
+      executionInProcess
     }
-    checkExecutionState(enqueued)
+    val executionStatus: ExecutionStatus =
+      calculateExecutionStatus(originalExecution, updatedExecution)
+    sendExecutionStatus(executionStatus)
   }
 
-  def checkExecutionState(execution: Execution): Unit = {
-    val updatedGraph = execution.state match { // TODO What are the valid states?
-      case graphstate.Draft =>
-        logger.error("Graph in state 'Draft'! This should not happen!")
-        execution
-      case graphstate.Running =>
-        val launchedGraph = launchReadyNodes(execution)
-        context.unbecome()
-        context.become(launched(launchedGraph))
-        launchedGraph
-      case _ =>
-        logger.debug(s"End of execution, state=${execution.state}")
-        context.unbecome()
-        context.become(finished(execution))
-        execution
-    }
-    sendWorkflowStatus(updatedGraph)
+  private def calculateExecutionStatus(
+      originalExecution: Execution,
+      updatedExecution: Execution): ExecutionStatus = {
+    val updatedStates: Map[Id, NodeState] = getChangedNodes(originalExecution, updatedExecution)
+    val entitiesMap: EntitiesMap = createEntitiesMap(updatedStates.values.toSeq)
+    ExecutionStatus(updatedStates, entitiesMap, updatedExecution.error)
   }
 
-  def sendWorkflowStatus(execution: Execution): Unit = {
-    val nodeStates = execution.states
-    val graphState = execution.state // TODO Is graph state needed?
-    val status = ExecutionStatus(
-      graphState,
-      nodeStates,
-      EntitiesMap(dOperableCache.toMap, reports.toMap))
+  private def getChangedNodes(
+      originalExecution: Execution,
+      updatedExecution: Execution): Map[Id, NodeState] = {
+    updatedExecution.states.filter(p => p._2 != originalExecution.states(p._1))
+  }
 
-    logger.debug(s"Status for '$workflowId': $status")
-    statusListener.foreach(_ ! status)
-    publisher.foreach(_ ! status)
+  private def createEntitiesMap(states: Seq[NodeState]): EntitiesMap = {
+    val entities: Seq[Entity.Id] = states.flatMap(_ match {
+      case Completed(_, _, results: Seq[Id]) => results
+      case _ => Seq.empty
+    })
+    val reportsContents = entities.map(id => id -> reports(id)).toMap
+    val dOperables = entities.map(id => id -> dOperableCache(id)).toMap
+    EntitiesMap(dOperables, reportsContents)
+  }
+
+  def sendExecutionStatus(executionStatus: ExecutionStatus): Unit = {
+    logger.debug(s"Status for '$workflowId': $executionStatus")
+    publisher.foreach(_ ! executionStatus)
+  }
+
+  def executionToStatus(execution: Execution): ExecutionStatus = {
+    ExecutionStatus(
+      execution.states,
+      EntitiesMap(dOperableCache.toMap, reports.toMap), execution.error)
   }
 
   def launchReadyNodes(execution: Execution): Execution = {
@@ -150,8 +169,8 @@ class WorkflowExecutorActor(
     logger.debug(s"Node ${execution.node(id)} completed!")
     processResults(nodeExecutionResults)
     val entityIds = nodeExecutionResults.doperables.keys.toSeq
-    val updatedGraph = execution.nodeFinished(id, entityIds)
-    finalizeNodeExecutionEnd(updatedGraph)
+    val updatedExecution = execution.nodeFinished(id, entityIds)
+    finalizeNodeExecutionEnd(execution, updatedExecution)
   }
 
   def nodeFailed(
@@ -160,7 +179,7 @@ class WorkflowExecutorActor(
       execution: Execution): Unit = {
     logger.warn(s"Node ${execution.node(id)} failed!", cause)
     val withFailedNode = execution.nodeFailed(id, cause)
-    finalizeNodeExecutionEnd(withFailedNode)
+    finalizeNodeExecutionEnd(execution, withFailedNode)
   }
 
   def processResults(nodeExecutionResults: NodeExecutionResults): Unit = {
@@ -168,9 +187,11 @@ class WorkflowExecutorActor(
     dOperableCache ++= nodeExecutionResults.doperables
   }
 
-  def finalizeNodeExecutionEnd(execution: Execution): Unit = {
-    progressReporter.logProgress(execution)
-    checkExecutionState(execution)
+  def finalizeNodeExecutionEnd(
+      originalExecution: Execution,
+      executionInProcess: Execution): Unit = {
+    progressReporter.logProgress(executionInProcess)
+    updateExecutionState(originalExecution, executionInProcess)
   }
 }
 

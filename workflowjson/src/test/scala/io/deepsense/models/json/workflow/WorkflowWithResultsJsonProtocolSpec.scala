@@ -19,7 +19,7 @@ package io.deepsense.models.json.workflow
 import org.joda.time.DateTime
 import spray.json._
 
-import io.deepsense.graph.{graphstate, nodestate}
+import io.deepsense.graph.nodestate
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
 import io.deepsense.models.workflows._
@@ -81,7 +81,6 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     val entity2Id = Entity.Id.randomId
 
     val executionReport = ExecutionReport(
-      graphstate.Completed,
       DateTime.parse(workflowStartTimestamp),
       DateTime.parse(workflowFinishTimestamp),
       Map(
@@ -94,7 +93,6 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
       EntitiesMap()
     )
     val executionReportJson = JsObject(
-      "status" -> JsString("COMPLETED"),
       "started" -> JsString(workflowStartTimestamp),
       "ended" -> JsString(workflowFinishTimestamp),
       "error" -> JsNull,

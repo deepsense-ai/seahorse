@@ -22,43 +22,16 @@ import io.deepsense.commons.exception.{DeepSenseException, DeepSenseFailure, Fai
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.GraphKnowledge._
 import io.deepsense.graph.Node.Id
-import io.deepsense.graph.graphstate._
 import io.deepsense.graph.nodestate._
 import io.deepsense.models.entities.Entity
 
 case class StatefulGraph(
     directedGraph: DirectedGraph,
     states: Map[Node.Id, NodeState],
-    state: GraphState)
+    executionFailure: Option[FailureDescription])
   extends TopologicallySortable
   with KnowledgeInference
   with NodeInferenceImpl {
-
-  state match {
-    case graphstate.Draft =>
-      require(allNodesDraft(states), "Draft Graph can have only Draft nodes")
-    case graphstate.Running =>
-      require(
-        nodeRunningOrReadyNodeExist(states),
-        "Running graph should have ready nodes or running nodes")
-    case graphstate.Completed =>
-      require(
-        allNodesCompleted(states),
-        s"Completed graph can have only Completed nodes but has: $states")
-    case graphstate.Aborted =>
-      require(
-        allNodesFinished(states),
-        s"Aborted Graph can have only Completed, Failed or Aborted nodes but has: $states")
-    case graphstate.Failed(error) =>
-      require(
-        allNodesFinished(states),
-        s"Failed Graph can have only Completed, Failed or Aborted nodes but has: $states")
-  }
-
-  if (!state.isDraft) {
-    require(noDraftNodes(states),
-      s"Graph in state ${state.name} cannot contain Draft nodes: $states")
-  }
 
   /**
    * Tells the graph that an execution of a node has started.
@@ -89,7 +62,7 @@ case class StatefulGraph(
    */
   def fail(errors: FailureDescription): StatefulGraph = {
     val updatedStates = abortUnfinished(states)
-    copy(states = updatedStates, state = graphstate.Failed(errors))
+    copy(states = updatedStates, executionFailure = Some(errors))
   }
 
   /**
@@ -105,14 +78,18 @@ case class StatefulGraph(
    * Tells the graph that it was enqueued for execution.
    */
   def enqueue: StatefulGraph = {
-    val updatedStates = states.mapValues(_.enqueue)
-    val newState = if (nodes.isEmpty) {
-      graphstate.Completed
-    } else {
-      graphstate.Running
+    if (isRunning) {
+      throw new IllegalStateException("Cannot enqueue running graph")
     }
-    copy(states = updatedStates, state = newState)
+    val updatedStates = states.mapValues(_.enqueue)
+    copy(states = updatedStates)
   }
+
+  def isRunning: Boolean = states.valuesIterator.exists(s => s.isQueued || s.isRunning)
+
+  def withoutFailedNodes: Boolean = !hasFailedNodes
+
+  def hasFailedNodes: Boolean = states.valuesIterator.exists(_.isFailed)
 
   def size: Int = directedGraph.size
 
@@ -124,10 +101,7 @@ case class StatefulGraph(
     * Discards the current state of the graph. Creates a new graph
     * that is structurally the same, but is in Draft state.
     */
-  def reset: StatefulGraph = copy(
-    state = graphstate.Draft,
-    states = states.mapValues(_ => nodestate.Draft)
-  )
+  def reset: StatefulGraph = copy(states = states.mapValues(_ => nodestate.Draft))
 
   // Delegated methods (TopologicallySortable)
 
@@ -168,8 +142,7 @@ case class StatefulGraph(
         }
       )
       val updatedStates = states.mapValues(_.abort)
-      val updatedState = graphstate.Failed(description)
-      copy(states = updatedStates, state = updatedState)
+      copy(states = updatedStates, executionFailure = Some(description))
     } else {
       this
     }
@@ -222,15 +195,9 @@ case class StatefulGraph(
       copy(states = updatedStates)
     } else {
       if (allNodesCompleted(updatedStates)) {
-        copy(states = updatedStates, state = graphstate.Completed)
+        copy(states = updatedStates)
       } else {
-        copy(states = abortUnfinished(updatedStates), state = graphstate.Failed(
-          FailureDescription(
-            DeepSenseFailure.Id.randomId,
-            FailureCode.NodeFailure,
-            title = "One or more nodes failed",
-            message = Some("Provided workflow could not finish successfully" +
-              " because one or more nodes has failed"))))
+        copy(states = abortUnfinished(updatedStates))
       }
     }
   }
@@ -242,9 +209,6 @@ case class StatefulGraph(
       FailureDescription.stacktraceDetails(exception.getStackTrace)
     )
   }
-
-  private def allNodesDraft(states: Map[Node.Id, NodeState]): Boolean =
-    states.values.forall(_.isDraft)
 
   private def nodeRunningOrReadyNodeExist(
       states: Map[Node.Id, NodeState]): Boolean = {
@@ -259,15 +223,6 @@ case class StatefulGraph(
 
   private def allNodesCompleted(states: Map[Node.Id, NodeState]): Boolean =
     states.values.forall(_.isCompleted)
-
-  private def allNodesFinished(states: Map[Node.Id, NodeState]): Boolean = {
-    states.values.forall { s =>
-      s.isAborted || s.isCompleted || s.isFailed
-    }
-  }
-
-  private def noDraftNodes(states: Map[Node.Id, NodeState]): Boolean =
-    !states.values.exists(_.isDraft)
 
   private def abortUnfinished(unfinished: Map[Id, NodeState]): Map[Id, NodeState] = {
     unfinished.mapValues {
@@ -284,7 +239,7 @@ object StatefulGraph {
     nodes: Set[Node] = Set(),
     edges: Set[Edge] = Set()): StatefulGraph = {
     val states = nodes.map(n => n.id -> nodestate.Draft).toMap
-    StatefulGraph(DirectedGraph(nodes, edges), states, graphstate.Draft)
+    StatefulGraph(DirectedGraph(nodes, edges), states, None)
   }
 
   protected def predecessorsReady(

@@ -16,11 +16,11 @@
 
 package io.deepsense.workflowexecutor.partialexecution
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.Node.Id
-import io.deepsense.graph.graphstate.GraphState
 import io.deepsense.graph.nodestate.NodeState
-import io.deepsense.graph.{StatefulGraph, DirectedGraph, Node, ReadyNode}
+import io.deepsense.graph.{DirectedGraph, Node, ReadyNode, StatefulGraph}
 import io.deepsense.models.entities.Entity
 
 trait Execution {
@@ -35,8 +35,10 @@ trait Execution {
   def enqueue(nodes: Seq[Node.Id]): Execution
   def readyNodes: Seq[ReadyNode]
 
-  def state: GraphState
+  def error: Option[FailureDescription]
   def states: NodeStates
+
+  def isRunning: Boolean
 
   def inferAndApplyKnowledge(inferContext: InferContext): Execution
   def updateStructure(directedGraph: DirectedGraph): Execution
@@ -48,10 +50,6 @@ case class PartialExecution(statefulGraph: StatefulGraph) extends Execution {
   }
   override def readyNodes: Seq[ReadyNode] = {
     statefulGraph.readyNodes
-  }
-
-  override def state: GraphState = {
-    statefulGraph.state
   }
 
   override def states: NodeStates = {
@@ -78,6 +76,10 @@ case class PartialExecution(statefulGraph: StatefulGraph) extends Execution {
   override def inferAndApplyKnowledge(inferContext: InferContext): Execution = {
     copy(statefulGraph.inferAndApplyKnowledge(inferContext))
   }
+
+  override def error: Option[FailureDescription] = statefulGraph.executionFailure
+
+  override def isRunning: Boolean = statefulGraph.isRunning
 }
 
 object PartialExecution {

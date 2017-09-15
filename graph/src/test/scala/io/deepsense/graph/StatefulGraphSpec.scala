@@ -65,39 +65,7 @@ class StatefulGraphSpec
   }
 
   "StatefulGraph" should {
-    "throw IllegalArgumentException" when {
-      "contains non-Draft nodes in Draft state" in {
-        val g = StatefulGraph(nodeSet, edgeSet)
-        val enqueued = g.states(idA).enqueue
-        an [IllegalArgumentException] shouldBe thrownBy {
-          g.copy(states = g.states.updated(idA, enqueued))
-        }
-      }
-      "contains Draft nodes in non-Draft state" in {
-        val g = StatefulGraph(nodeSet, edgeSet).enqueue
-        an [IllegalArgumentException] shouldBe thrownBy {
-          g.copy(states = g.states.updated(idA, nodestate.Draft))
-        }
-      }
-      "is Aborted and" when {
-        containsANodeInAnIllegalState(illegalForFinished, Aborted)
-      }
-      "is Failed and" when {
-        containsANodeInAnIllegalState(illegalForFinished, Failed(mock[FailureDescription]))
-      }
-      "is Completed and" when {
-        containsANodeInAnIllegalState(illegalForCompleted, Completed)
-      }
-    }
-    "disallow to enqueue when Completed" in {
-      illegalToEnqueue(completedGraph)
-    }
-    "disallow to enqueue when Aborted" is pending
-    "disallow to enqueue when Failed" in {
-      val failedGraph = StatefulGraph(nodeSet, edgeSet).enqueue.fail(mock[FailureDescription])
-      illegalToEnqueue(failedGraph)
-    }
-    "disallow to enqueue when Running" in {
+    "disallow to enqueue when partial execution is in progress" in {
       val runningGraph = StatefulGraph(nodeSet, edgeSet).enqueue
       illegalToEnqueue(runningGraph)
     }
@@ -109,9 +77,9 @@ class StatefulGraphSpec
       val failedGraph = StatefulGraph(nodeSet, edgeSet).enqueue.fail(mock[FailureDescription])
       illegalToNodeFinishOrFail(failedGraph)
     }
-    "be completed" when {
+    "has no running execution" when {
       "is empty and was enqueued" in {
-        StatefulGraph().enqueue.state shouldBe Completed
+        StatefulGraph().enqueue.isRunning shouldBe false
       }
       "last Running node completed successfully and other nodes are Completed" in {
         val completedNodes: Map[Id, NodeState] =
@@ -120,17 +88,17 @@ class StatefulGraphSpec
         val g = graph(nodeSet, edgeSet, states, Running)
           .nodeFinished(idE, Seq(mock[Entity.Id], mock[Entity.Id]))
         g.states(idE) shouldBe 'Completed
-        g.state shouldBe Completed
+        g.isRunning shouldBe false
       }
     }
-    "be failed" when {
+    "has failed nodes" when {
       "there's no nodes to run and there is at least one Failed" when {
         "a node fails" in {
           val g = StatefulGraph(nodeSet, edgeSet).enqueue
             .nodeStarted(idA)
             .nodeFailed(idA, new Exception())
 
-          g.state shouldBe 'Failed
+          g.hasFailedNodes shouldBe true
 
           forAll(Seq(idB, idC, idD, idE)) { id =>
             g.states(id) shouldBe 'Aborted
@@ -147,7 +115,7 @@ class StatefulGraphSpec
 
           graph(nodeSet, edgeSet, states, Running)
             .nodeFinished(idE, Seq(mock[Entity.Id]))
-            .state shouldBe 'Failed
+            .hasFailedNodes shouldBe true
         }
       }
     }
@@ -156,7 +124,6 @@ class StatefulGraphSpec
         val g = StatefulGraph(nodeSet, edgeSet)
           .enqueue
           .inferAndApplyKnowledge(mock[InferContext])
-        g.state shouldBe 'Failed
         forAll(List(idA, idB, idC, idD, idE)) { id => g.states(id) shouldBe 'Aborted}
       }
     }
@@ -164,14 +131,12 @@ class StatefulGraphSpec
       "enqueued" in {
         val enqueued = StatefulGraph(nodeSet, edgeSet)
           .enqueue
-        enqueued.state shouldBe Running
         nodeIds.foreach { id => enqueued.states(id) shouldBe 'Queued  }
       }
       "no ready nodes but running" in {
         val running = StatefulGraph(nodeSet, edgeSet).enqueue
           .nodeStarted(idA)
 
-        running.state shouldBe 'Running
         running.readyNodes shouldBe 'Empty
         running.states(idA) shouldBe 'Running
         Seq(idB, idC, idD, idE).foreach { id => running.states(id) shouldBe 'Queued  }
@@ -184,14 +149,8 @@ class StatefulGraphSpec
           .nodeStarted(idB)
           .nodeFinished(idB, results(idB))
 
-        g.state shouldBe 'Running
         g.readyNodes should have size 2
         g.states(idB) shouldBe 'Completed
-      }
-    }
-    "be draft" when {
-      "created" in {
-        StatefulGraph().state shouldBe Draft
       }
     }
     "list nodes ready for execution" in {
@@ -270,7 +229,7 @@ class StatefulGraphSpec
       states: Map[Node.Id, NodeState],
       state: GraphState): StatefulGraph = {
     val directedGraph = DirectedGraph(nodes, edges)
-    StatefulGraph(directedGraph, states, state)
+    StatefulGraph(directedGraph, states, None)
   }
 
   private def illegalToNodeFinishOrFail(completedGraph: StatefulGraph): Unit = {

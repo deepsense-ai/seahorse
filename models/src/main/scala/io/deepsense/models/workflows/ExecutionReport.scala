@@ -18,13 +18,13 @@ package io.deepsense.models.workflows
 
 import org.joda.time.DateTime
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.graph.Node
-import io.deepsense.graph.graphstate.GraphState
 import io.deepsense.graph.nodestate.NodeState
 
 case class ExecutionReport(
-    state: GraphState,
     started: DateTime,
     ended: DateTime,
     nodes: Map[Node.Id, NodeState],
-    resultEntities: EntitiesMap)
+    resultEntities: EntitiesMap,
+    error: Option[FailureDescription] = None)

@@ -26,14 +26,15 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
-import io.deepsense.graph.nodestate.NodeState
+import io.deepsense.graph.nodestate.{Aborted, Completed, NodeState, Queued, Running}
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.models.workflows.{EntitiesMap, Workflow}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
@@ -64,35 +65,64 @@ class WorkflowExecutorActorSpec
             Some(statusListener.ref),
             Some(system.actorSelection(publisher.ref.path))))
           probe.send(wea, Connect(Workflow.Id.randomId))
-          verifyStatusSent(Seq(statusListener, publisher))
+          verifyStatusSent(Seq(publisher))
         }
       }
       "a graph was sent" should {
-        "send graph's status" in {
-          val (probe, wea, execution, _, _, statusListeners) = readyNodesFixture()
+        "send whole graph's status" in {
+          val (probe, wea, _, _, _, statusListeners, _) = readyNodesFixture()
+          val ids: IndexedSeq[Id] = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
+          val (_, execution) = simpleExecution(ids, Some(ids.head))
           become(wea, execution)
           probe.send(wea, Connect(Workflow.Id.randomId))
-          verifyStatusSent(statusListeners)
+          eventually {
+            statusListeners.foreach { receiver =>
+              val status = receiver.expectMsgClass(classOf[ExecutionStatus])
+              status.executionFailure shouldBe None
+              status.nodes shouldBe execution.states
+              status.resultEntities shouldBe EntitiesMap()
+            }
+          }
         }
       }
     }
     "received Launch" should {
+      "send status update" in {
+        val probe = TestProbe()
+        val publisher = TestProbe()
+        val wea = TestActorRef(new WorkflowExecutorActor(
+          executionContext,
+          nodeExecutorFactory(),
+          new ExecutionWithoutInferenceFactory(),
+          None,
+          Some(system.actorSelection(publisher.ref.path))))
+
+        val nodesIds = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
+        val (graph, _) = simpleExecution(nodesIds, None)
+        probe.send(wea, Launch(graph, nodesIds))
+        eventually {
+          val status = publisher.expectMsgClass(classOf[ExecutionStatus])
+          status.executionFailure shouldBe None
+          status.nodes.size shouldBe 3
+          nodesIds.foreach(status.nodes(_) shouldBe a[Queued.type])
+        }
+      }
       "enqueue graph" in {
-        val (probe, wea, execution, _, _, _) = readyNodesFixture()
+        val (probe, wea, execution, _, _, _, _) = readyNodesFixture()
         sendLaunch(probe, wea)
         eventually {
           verify(execution).enqueue(any())
         }
       }
       "infer and apply graph knowledge and pass it to graph" in {
-        val (probe, wea, execution, _, _, _) = readyNodesFixture()
+        val (probe, wea, execution, _, _, _, _) = readyNodesFixture()
         sendLaunch(probe, wea)
         eventually {
           verify(execution).inferAndApplyKnowledge(executionContext.inferContext)
         }
       }
       "launch ready nodes and send status if inference ok" in {
-        val (probe, wea, execution, readyNodes, executors, statusListeners) = readyNodesFixture()
+        val (probe, wea, execution, readyNodes, executors, statusListeners, _) = readyNodesFixture()
         sendLaunch(probe, wea)
         verifyNodesStarted(execution, readyNodes, executors)
         verifyStatusSent(statusListeners)
@@ -100,26 +130,26 @@ class WorkflowExecutorActorSpec
 
       "infer graph knowledge, fail graph and send status on exception" in {
         val probe = TestProbe()
-        val statusListener = TestProbe()
         val publisher = TestProbe()
+        val subscriber = TestProbe()
         val execution = readyExecutionWithThrowingInference()
         val wea = TestActorRef(new WorkflowExecutorActor(
           executionContext,
           nodeExecutorFactory(),
           createExecutionFactory(execution),
-          Some(statusListener.ref),
+          Some(subscriber.ref),
           Some(system.actorSelection(publisher.ref.path))))
         sendLaunch(probe, wea)
         eventually {
           verify(execution).inferAndApplyKnowledge(executionContext.inferContext)
         }
 
-        verifyStatus(Seq(statusListener, publisher)){ _.graphState shouldBe 'Failed }
+        verifyStatus(Seq(subscriber, publisher)){ _.executionFailure.isDefined shouldBe true }
       }
     }
     "received NodeCompleted" should {
       "tell graph about it" in {
-        val (probe, wea, execution, _, _, _) = readyNodesFixture()
+        val (probe, wea, execution, _, _, _, _) = readyNodesFixture()
         become(wea, execution)
         val (completedId, nodeCompletedMessage, results) = nodeCompleted()
         probe.send(wea, nodeCompletedMessage)
@@ -129,37 +159,66 @@ class WorkflowExecutorActorSpec
       }
       "launch ready nodes and send status" when {
         "ready nodes exist" in {
-          val (probe, wea, graph, readyNodes, executors, statusListeners) = readyNodesFixture()
-          become(wea, graph)
+          val (probe, wea, execution, readyNodes, executors, statusListeners, _) =
+            readyNodesFixture()
+          become(wea, execution)
           val (_, nodeCompletedMessage, _) = nodeCompleted()
           probe.send(wea, nodeCompletedMessage)
-          verifyNodesStarted(graph, readyNodes, executors)
+          verifyNodesStarted(execution, readyNodes, executors)
           verifyStatusSent(statusListeners)
+        }
+      }
+      "launch ready nodes and send only changed statuses" when {
+        "ready nodes exist" in {
+          val (probe, wea, _, _, _, statusListeners, _) = readyNodesFixture()
+          val nodesIds = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
+          val (_, execution) = simpleExecution(nodesIds, Some(nodesIds.head))
+          become(wea, execution)
+          val (nodeCompletedMessage, entitiesMap) = createNodeCompletedMessage(nodesIds.head)
+          probe.send(wea, nodeCompletedMessage)
+          eventually {
+            statusListeners.foreach { receiver =>
+              val status = receiver.expectMsgClass(classOf[ExecutionStatus])
+              status.executionFailure shouldBe None
+              status.nodes.size shouldBe 2
+              status.nodes(nodesIds.head) shouldBe a[Completed]
+              status.nodes(nodesIds(1)) shouldBe a[Running]
+              status.resultEntities shouldBe entitiesMap
+            }
+          }
         }
       }
       "send graph status" when {
         "there is no ready nodes" in {
-          val (probe, wea, graph, _, _, statusListeners) = noReadyNodesFixture()
-          become(wea, graph)
+          val (probe, wea, execution, _, _, statusListeners, _) = noReadyNodesFixture()
+          become(wea, execution)
           val (_, nodeCompletedMessage, _) = nodeCompleted()
           probe.send(wea, nodeCompletedMessage)
           verifyStatusSent(statusListeners)
         }
       }
       "finish execution, if graph Completed/Failed" in {
-        val (probe, wea, execution, _, _, statusListeners) = readyNodesFixture()
-        val completed = completedExecution()
-        when(execution.nodeFinished(any(), any())).thenReturn(completed)
+        val (probe, wea, _, _, _, statusListeners, endStateSubscriber) = readyNodesFixture()
+        val nodesIds = IndexedSeq(Node.Id.randomId)
+        val (_, execution) = simpleExecution(nodesIds, Some(nodesIds.head))
         become(wea, execution)
-        val (_, nodeCompletedMessage, _) = nodeCompleted()
+        val (nodeCompletedMessage, entitiesMap) = createNodeCompletedMessage(nodesIds.head)
         probe.send(wea, nodeCompletedMessage)
+        eventually {
+          (statusListeners :+ endStateSubscriber).foreach { receiver =>
+            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
+            status.executionFailure shouldBe None
+            status.nodes.size shouldBe 1
+            status.nodes(nodesIds.head) shouldBe a[Completed]
+            status.resultEntities shouldBe entitiesMap
 
-        verifyStatus(statusListeners){ _.graphState shouldBe 'Completed }
+          }
+        }
       }
     }
     "received NodeFailed" should {
       "tell graph about it" in {
-        val (probe, wea, execution, _, _, statusListeners) = readyNodesFixture()
+        val (probe, wea, execution, _, _, statusListeners, _) = readyNodesFixture()
         become(wea, execution)
         val (completedId, nodeFailedMessage, cause) = nodeFailed()
         probe.send(wea, nodeFailedMessage)
@@ -170,30 +229,60 @@ class WorkflowExecutorActorSpec
       }
       "launch ready nodes" when {
         "ready nodes exist" in {
-          val (probe, wea, graph, readyNodes, executors, statusListeners) = readyNodesFixture()
-          become(wea, graph)
+          val (probe, wea, execution, readyNodes, executors, statusListeners, _) =
+            readyNodesFixture()
+          become(wea, execution)
           val (_, nodeFailedMessage, _) = nodeFailed()
           probe.send(wea, nodeFailedMessage)
-          verifyNodesStarted(graph, readyNodes, executors)
+          verifyNodesStarted(execution, readyNodes, executors)
           verifyStatusSent(statusListeners)
         }
       }
+      "send status" in {
+        val (probe, wea, _, _, _, statusListeners, _) = readyNodesFixture()
+        val nodesIds = IndexedSeq(Node.Id.randomId, Node.Id.randomId)
+        val (_, execution) = simpleExecution(nodesIds, Some(nodesIds.head))
+        become(wea, execution)
+        val nodeFailedMsg =
+          NodeFailed(nodesIds.head, new RuntimeException("Huston we have a problem"))
+        probe.send(wea, nodeFailedMsg)
+        eventually {
+          statusListeners.foreach { receiver =>
+            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
+            status.executionFailure shouldBe None
+            status.nodes.size shouldBe 2
+            status.nodes(nodesIds.head) shouldBe a[nodestate.Failed]
+            status.nodes(nodesIds(1)) shouldBe a[Aborted.type]
+          }
+        }
+      }
       "finish execution and persist its state if graph Completed/Failed" in {
-        val (probe, wea, graph, _, _, statusListeners) = readyNodesFixture()
+        val (probe, wea, graph, _, _, statusListeners, endStateSubscriber) = readyNodesFixture()
         val failed = failedExecution()
         when(graph.nodeFailed(any(), any())).thenReturn(failed)
         become(wea, graph)
         val (_, nodeFailedMessage, _) = nodeFailed()
         probe.send(wea, nodeFailedMessage)
 
-        verifyStatus(statusListeners){ _.graphState shouldBe 'Failed }
+        verifyStatus(statusListeners){ _.executionFailure.isDefined shouldBe true }
+        verifyStatus(Seq(endStateSubscriber)){ _.executionFailure.isDefined shouldBe true }
 
         probe.send(wea, Connect(Workflow.Id.randomId)) // Id doesn't matter
         eventually {
-          verifyStatus(statusListeners){ _.graphState shouldBe 'Failed }
+          verifyStatus(statusListeners){ _.executionFailure.isDefined shouldBe true }
         }
       }
     }
+  }
+
+  def createNodeCompletedMessage(nodeId: Id): (NodeCompleted, EntitiesMap) = {
+    val eId: Entity.Id = Entity.Id.randomId
+    val reports: Map[Entity.Id, ReportContent] = Map(eId -> ReportContent("t", List()))
+    val dOperables: Map[Entity.Id, DOperable] = Map(eId -> mock[DOperable])
+    val nodeCompletedMessage = NodeCompleted(
+      nodeId,
+      NodeExecutionResults(reports, dOperables))
+    (nodeCompletedMessage, EntitiesMap(dOperables, reports))
   }
 
   def sendLaunch(probe: TestProbe, wea: TestActorRef[WorkflowExecutorActor]): Unit = {
@@ -271,13 +360,13 @@ class WorkflowExecutorActorSpec
   }
 
   def runningExecutionWithReadyNodes(readyNodes: Seq[ReadyNode]): Execution = {
-    val graph = mock[Execution]
-    when(graph.state).thenReturn(graphstate.Running)
-    when(graph.states).thenReturn(Map[Node.Id, NodeState]())
+    val execution = mock[Execution]
+    when(execution.states).thenReturn(Map[Node.Id, NodeState]())
 
-    when(graph.readyNodes).thenReturn(readyNodes)
-    when(graph.nodeStarted(any())).thenReturn(graph)
-    graph
+    when(execution.readyNodes).thenReturn(readyNodes)
+    when(execution.nodeStarted(any())).thenReturn(execution)
+    when(execution.error).thenReturn(None)
+    execution
   }
 
   def readyExecution(): (Execution, Seq[ReadyNode]) = {
@@ -290,16 +379,16 @@ class WorkflowExecutorActorSpec
   def executionWithOkInference(
       execution: Execution,
       readyNodes: Seq[ReadyNode]): (Execution, Seq[ReadyNode]) = {
-
     when(execution.enqueue(any())).thenReturn(execution)
     when(execution.inferAndApplyKnowledge(any())).thenReturn(execution)
-
+    when(execution.error).thenReturn(None)
+    when(execution.isRunning).thenReturn(true)
     (execution, readyNodes)
   }
 
   def readyExecutionWithOkInference(): (Execution, Seq[ReadyNode]) = {
-    val (graph, readyNodes) = readyExecution()
-    executionWithOkInference(graph, readyNodes)
+    val (execution, readyNodes) = readyExecution()
+    executionWithOkInference(execution, readyNodes)
   }
 
 
@@ -313,24 +402,26 @@ class WorkflowExecutorActorSpec
   }
 
   def failedExecution(): Execution = {
-    val graph = mock[Execution]
-    when(graph.states).thenReturn(Map[Node.Id, NodeState]())
-    when(graph.state).thenReturn(graphstate.Failed(
+    val execution = mock[Execution]
+    when(execution.states).thenReturn(Map[Node.Id, NodeState]())
+    when(execution.error).thenReturn(Some(
       FailureDescription(
         DeepSenseFailure.Id.randomId,
         FailureCode.UnexpectedError,
         "Mock title"
-      )))
-    when(graph.readyNodes).thenReturn(Seq())
-    graph
+      )
+    ))
+    when(execution.readyNodes).thenReturn(Seq())
+    execution
   }
 
   def completedExecution(): Execution = {
-    val graph = mock[Execution]
-    when(graph.state).thenReturn(graphstate.Completed)
-    when(graph.states).thenReturn(Map[Node.Id, NodeState]())
-    when(graph.readyNodes).thenReturn(Seq())
-    graph
+    val execution = mock[Execution]
+    when(execution.states).thenReturn(Map[Node.Id, NodeState]())
+    when(execution.readyNodes).thenReturn(Seq())
+    when(execution.isRunning).thenReturn(false)
+    when(execution.error).thenReturn(None)
+    execution
   }
 
   def readyExecutionWithThrowingInference(): Execution = {
@@ -339,7 +430,6 @@ class WorkflowExecutorActorSpec
     val failed = failedExecution()
     when(graph.inferAndApplyKnowledge(any(classOf[InferContext])))
       .thenReturn(failed)
-
     graph
   }
 
@@ -355,12 +445,13 @@ class WorkflowExecutorActorSpec
     Execution,
     Seq[ReadyNode],
     Seq[TestProbe],
-    Seq[TestProbe]) = {
+    Seq[TestProbe],
+    TestProbe) = {
     val testProbe = TestProbe()
-    val statusListener = TestProbe()
     val publisher = TestProbe()
     when(execution.nodeFinished(any(), any())).thenReturn(execution)
     when(execution.nodeFailed(any(), any())).thenReturn(execution)
+    val subscriber = TestProbe()
     val executors = Seq(TestProbe(), TestProbe())
 
     val nodeExecutorFactory = mock[GraphNodeExecutorFactory]
@@ -380,10 +471,10 @@ class WorkflowExecutorActorSpec
       executionContext,
       nodeExecutorFactory,
       executionFactory,
-      Some(statusListener.ref),
+      Some(subscriber.ref),
       Some(system.actorSelection(publisher.ref.path))))
 
-    (testProbe, testedActor, execution, readyNodes, executors, Seq(statusListener, publisher))
+    (testProbe, testedActor, execution, readyNodes, executors, Seq(publisher), subscriber)
   }
 
   def readyNodesFixture():
@@ -392,7 +483,8 @@ class WorkflowExecutorActorSpec
         Execution,
         Seq[ReadyNode],
         Seq[TestProbe],
-        Seq[TestProbe]) = {
+        Seq[TestProbe],
+        TestProbe) = {
 
     val (execution, readyNodes) = readyExecutionWithOkInference()
     fixture(execution, readyNodes)
@@ -404,7 +496,44 @@ class WorkflowExecutorActorSpec
     Execution,
     Seq[ReadyNode],
     Seq[TestProbe],
-    Seq[TestProbe]) = {
+    Seq[TestProbe],
+    TestProbe) = {
     fixture(noReadyExecutionWithOkInference(), Seq.empty)
+  }
+
+  private def simpleExecution(
+      nodesIds: IndexedSeq[Node.Id],
+      runningNode: Option[Node.Id]): (DirectedGraph, Execution) = {
+    // A -> B -> ... -> N
+    val nodes = nodesIds.map(Node(_, mockDOperation()))
+    val edges = (0 until nodesIds.length - 1).map(i => Edge(nodes(i), 0, nodes(i + 1), 0))
+    val time = DateTimeConverter.now.minusHours(1)
+    val runningNodeIdx: Int = runningNode.map(nodesIds.indexOf(_)).getOrElse(-1)
+    val completedNodes = nodesIds.take(runningNodeIdx)
+      .map(_ -> Completed(time, time.plusMinutes(1), Seq()))
+    val queuedNodes = nodesIds.drop(runningNodeIdx + 1).map(_ -> Queued)
+    val statefulGraph = StatefulGraph(
+      DirectedGraph(nodes.toSet, edges.toSet),
+      (completedNodes ++ Seq(nodesIds.head -> Running(time)) ++ queuedNodes).toMap,
+      None)
+    (statefulGraph.directedGraph, new ExecutionWithoutInference(statefulGraph))
+  }
+
+  private def mockDOperation(): DOperation = {
+    val operation = mock[DOperation]
+    when(operation.inArity).thenReturn(1)
+    when(operation.outArity).thenReturn(1)
+    operation
+  }
+
+  private class ExecutionWithoutInferenceFactory extends ExecutionFactory {
+    override def create(directedGraph: DirectedGraph): Execution =
+      new ExecutionWithoutInference(StatefulGraph(directedGraph.nodes, directedGraph.edges))
+    override def empty: Execution = ???
+  }
+
+  private class ExecutionWithoutInference(statefulGraph: StatefulGraph)
+      extends PartialExecution(statefulGraph) {
+    override def inferAndApplyKnowledge(inferContext: InferContext): Execution = this
   }
 }

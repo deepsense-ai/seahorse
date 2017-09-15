@@ -20,7 +20,7 @@ import java.util
 
 import akka.actor.{ActorRef, ActorSystem}
 import com.rabbitmq.client.AMQP.BasicProperties
-import com.rabbitmq.client.{AMQP, Channel, DefaultConsumer, Envelope}
+import com.rabbitmq.client.{Channel, DefaultConsumer, Envelope}
 import com.thenewmotion.akka.rabbitmq.{ChannelActor, CreateChannel, RichConnectionActor}
 
 import io.deepsense.workflowexecutor.communication.{MQCommunication, MQMessageDeserializer}

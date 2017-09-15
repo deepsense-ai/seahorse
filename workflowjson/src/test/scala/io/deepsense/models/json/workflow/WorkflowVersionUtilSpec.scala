@@ -115,7 +115,6 @@ class WorkflowVersionUtilSpec
     StatefulGraph(),
     ThirdPartyData("{}"),
     ExecutionReport(
-      Completed,
       DateTimeConverter.now,
       DateTimeConverter.now,
       Map(),
@@ -131,7 +130,6 @@ class WorkflowVersionUtilSpec
     ExecutionReportWithId(
       ExecutionReportWithId.Id.randomId,
       ExecutionReport(
-        Completed,
         DateTimeConverter.now,
         DateTimeConverter.now,
         Map(),

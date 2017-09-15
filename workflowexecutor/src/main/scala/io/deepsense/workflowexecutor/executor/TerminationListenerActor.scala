@@ -20,22 +20,17 @@ import scala.concurrent.Promise
 
 import akka.actor.{Actor, Props}
 
-import io.deepsense.graph.graphstate._
 import io.deepsense.workflowexecutor.communication.ExecutionStatus
 
-class StatusReceiverActor(finishedExecutionStatus: Promise[ExecutionStatus]) extends Actor {
+class TerminationListenerActor(finishedExecutionStatus: Promise[ExecutionStatus]) extends Actor {
   override def receive: Receive = {
-    case status @ ExecutionStatus(graphState, _, _) =>
-      graphState match {
-        case Draft | Running => // The graph is still running
-        case Completed | Aborted | Failed(_) =>
-          finishedExecutionStatus.success(status)
-          context.system.shutdown()
-      }
+    case status: ExecutionStatus =>
+      finishedExecutionStatus.success(status)
+      context.system.shutdown()
   }
 }
 
-object StatusReceiverActor {
+object TerminationListenerActor {
   def props(finishedExecutionStatus: Promise[ExecutionStatus]): Props =
-    Props(new StatusReceiverActor(finishedExecutionStatus))
+    Props(new TerminationListenerActor(finishedExecutionStatus))
 }

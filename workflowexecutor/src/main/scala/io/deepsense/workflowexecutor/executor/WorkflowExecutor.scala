@@ -39,7 +39,7 @@ import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
-import io.deepsense.workflowexecutor.communication.{ExecutionStatus, Connect}
+import io.deepsense.workflowexecutor.communication.{Connect, ExecutionStatus}
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.{ExecutionParams, ReportUploadClient, WorkflowDownloadClient, WorkflowExecutorActor}
 
@@ -60,7 +60,7 @@ case class WorkflowExecutor(
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
     val statusReceiverActor =
-      actorSystem.actorOf(StatusReceiverActor.props(finishedExecutionStatus))
+      actorSystem.actorOf(TerminationListenerActor.props(finishedExecutionStatus))
     val workflowExecutorActor = actorSystem.actorOf(
       WorkflowExecutorActor.props(executionContext, None, Some(statusReceiverActor)))
 
@@ -75,10 +75,9 @@ case class WorkflowExecutor(
       case Failure(exception) => // WEA failed with an exception
         logger.error("WorkflowExecutorActor failed: ", exception)
         throw exception
-      case Success(ExecutionStatus(graphState, nodes, entitiesMap)) =>
+      case Success(ExecutionStatus(nodes, entitiesMap, failure)) =>
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
         Try(ExecutionReport(
-          graphState,
           startedTime,
           DateTimeConverter.now,
           nodes,
