@@ -12,6 +12,7 @@ import scala.collection.JavaConverters._
 import scala.util.Try
 
 import com.typesafe.config.ConfigFactory
+import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.AvroRuntimeException
 import org.apache.avro.ipc.NettyTransceiver
@@ -27,6 +28,9 @@ import io.deepsense.graph.Graph
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.Utils
 import io.deepsense.models.experiments.Experiment
+import io.deepsense.graphexecutor.GraphExecutorClient.ExecutorMemoryProperty
+import io.deepsense.graphexecutor.GraphExecutorClient.HdfsHostnameProperty
+import io.deepsense.graphexecutor.GraphExecutorClient.DriverMemoryProperty
 
 /**
  * Starts Graph Executor on remote YARN cluster,
@@ -41,6 +45,8 @@ class GraphExecutorClient extends Closeable with LazyLogging {
   var rpcClient: Option[NettyTransceiver] = None
 
   var rpcProxy: Option[GraphExecutorAvroRpcProtocol] = None
+
+  val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
 
   /**
    * Sends and experiment designated to immediate execution by Graph Executor.
@@ -180,12 +186,13 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     val app = yarnClient.get.createApplication()
     val amContainer = Records.newRecord(classOf[ContainerLaunchContext])
 
-    amContainer.setCommands(List(
-      // TODO: Move spark-master string to configuration file
-      "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
-        " --master spark://" + getHdfsHostnameFromConfig + ":7077  --executor-memory 512m " +
+    val command = "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
+        " --master spark://" + geConfig.getString(HdfsHostnameProperty) + ":7077" +
+        " --executor-memory " + geConfig.getString(ExecutorMemoryProperty) +
+        " --driver-memory " + geConfig.getString(DriverMemoryProperty) +
         s" ./graphexecutor.jar $esFactoryName " + Utils.logRedirection
-    ).asJava)
+    logger.debug("Prepared {}", command)
+    amContainer.setCommands(List(command).asJava)
 
     val appMasterJar = Utils.getConfiguredLocalResource(new Path(geUberJarLocation))
     amContainer.setLocalResources(Map(
@@ -195,12 +202,10 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     // Setup env to get all yarn and hadoop classes in classpath
     val env = Utils.getConfiguredEnvironmentVariables
     amContainer.setEnvironment(env.asJava)
-
     val resource = Records.newRecord(classOf[Resource])
     // Allocated memory couldn't be less than 1GB
     resource.setMemory(1024)
     resource.setVirtualCores(1)
-
     val appContext = app.getApplicationSubmissionContext
     // TODO: Configuration string access should follow proper configuration access convention
     appContext.setApplicationName("Deepsense GraphExecutor")
@@ -211,9 +216,9 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     // TODO: Configuration value access should follow proper configuration access convention
     // This value probably should equal to 1
     appContext.setMaxAppAttempts(1)
-
     // Submit the application
     Try {
+      logger.info("Submitting application")
       yarnClient.get.submitApplication(appContext)
     }.map { aid =>
       logger.info("Application submitted - ID: {}", aid)
@@ -224,9 +229,6 @@ class GraphExecutorClient extends Closeable with LazyLogging {
         throw e
     }
   }
-
-  private def getHdfsHostnameFromConfig: String =
-    ConfigFactory.load(Constants.GraphExecutorConfName).getString("hdfs.hostname")
 
   /**
    * Releases all resources associated with this object.
@@ -246,6 +248,10 @@ class GraphExecutorClient extends Closeable with LazyLogging {
 }
 
 object GraphExecutorClient {
+  val HdfsHostnameProperty = "hdfs.hostname"
+  val ExecutorMemoryProperty = "spark.executor.memory"
+  val DriverMemoryProperty = "spark.driver.memory"
+
   def apply() = {
     new GraphExecutorClient()
   }

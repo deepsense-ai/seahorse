@@ -35,7 +35,9 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
     val numberOfIterations = parameters.getDouble(IterationsNumberKey).get
     val model = new RidgeRegressionWithSGD()
     model.setIntercept(true)
+    model.setValidateData(false)
     model.optimizer
+      .setStepSize(1.0)
       .setRegParam(regParam)
       .setNumIterations(numberOfIterations.toInt)
     UntrainedRidgeRegression(Some(model))

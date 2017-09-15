@@ -135,7 +135,12 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       // Acquire Spark Context
       val sparkConf = new SparkConf()
       sparkConf.setAppName("Spark DeepSense Akka PoC")
-      sparkConf.set("spark.executor.memory", "512m")
+        .set("spark.eventLog.dir", "hdfs:///tmp/spark-events")
+        .set("spark.eventLog.enabled", "true")
+        .set("spark.ui.retainedStages", "5000")
+        .set("spark.logConf", "true")
+        .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+        .registerKryoClasses(Array())
       val sparkContext = new SparkContext(sparkConf)
 
       executionContext.sparkContext = sparkContext
