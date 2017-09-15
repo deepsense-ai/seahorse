@@ -136,9 +136,7 @@ abstract class WorkflowExecutorActor(
     logger.debug(s"Status for '$workflowId': Error: ${executionStatus.executionReport.error}, " +
       s"States of nodes: ${executionStatus.executionReport.nodesStatuses.mkString("\n")}")
     publisher.foreach(_ ! executionStatus)
-    workflowManagerClientActor.get ! SaveState(
-      workflowId,
-      executionStatus.executionReport)
+    workflowManagerClientActor.foreach(_ ! SaveState(workflowId, executionStatus.executionReport))
   }
 
   def executionToStatus(execution: Execution): ExecutionStatus = {
