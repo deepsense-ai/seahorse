@@ -63,8 +63,8 @@ addCommandAlias("ds-it",
 lazy val projectsForScalastyle = seahorseBackendProjects // :+ e2etests // TODO Make e2etest compliant with scalastyle
 lazy val scalastyleCmd = projectsForScalastyle.flatMap(p => Seq(
     s"${p.id}/scalastyle",
-    s"${p.id}/it:scalastyle"
-//    s"${p.id}/test:scalastyle" // TODO Make test code compliant with scalastyle
+    s"${p.id}/it:scalastyle",
+    s"${p.id}/test:scalastyle"
 )).mkString(";", " ;", "")
 addCommandAlias("scalastylebackend", scalastyleCmd) // override default scalastyle task
 
