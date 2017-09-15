@@ -7,7 +7,7 @@ function AttributeCodeSnippetType() {
     templateUrl: 'attribute-types/attribute-code-snippet/attribute-code-snippet-type.html',
     replace: false,
     scope: {
-      'value': '=',
+      value: '=',
       language: '='
     },
     bindToController: true,

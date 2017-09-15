@@ -23,7 +23,9 @@ function AttributeCodeSnippetTypeCtrl($rootScope, $uibModal) {
     modalInstance.result.then(function (modifiedCode) {
       if(that.value !== modifiedCode) {
         that.value = modifiedCode;
-        that.broadcastUpdate();
+        $rootScope.$applyAsync(function() {
+          that.broadcastUpdate();
+        });
       }
     }, function () {});
   };
