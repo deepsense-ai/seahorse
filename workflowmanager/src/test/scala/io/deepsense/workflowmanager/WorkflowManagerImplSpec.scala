@@ -4,6 +4,8 @@
 
 package io.deepsense.workflowmanager
 
+import java.util.UUID
+
 import scala.concurrent.Future
 
 import org.joda.time.DateTime
@@ -46,6 +48,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
 
   val graph = mock[DeeplangGraph]
   when(graph.nodes).thenReturn(Set[DeeplangNode]())
+  when(graph.getDatasourcesIds).thenReturn(Set[UUID]())
   val metadata = WorkflowMetadata(
     workflowType = WorkflowType.Batch,
     apiVersion = CurrentBuild.version.humanReadable)

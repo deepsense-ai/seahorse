@@ -12,8 +12,10 @@ import spray.json._
 import io.deepsense.api.datasourcemanager.model.{AccessLevel, Datasource, DatasourceParams, Visibility}
 import io.deepsense.commons.rest.client.datasources.DatasourceTypes.DatasourceList
 import io.deepsense.commons.utils.Version
+import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.doperations.readwritedatasource.ToDatasourceConverters
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 object VersionConverter extends DefaultJsonProtocol{
 
@@ -132,6 +134,9 @@ object VersionConverter extends DefaultJsonProtocol{
     newDatasource
   }
 
+  private def graphReader = new GraphReader(
+    CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog)
+
   private def convertWdfs(nodesArray: JsArray, ownerId: String, ownerName: String): (JsArray, DatasourceList) = {
     val wdfs = nodesArray.elements.filter(extractOperationId(_) == Js.writeDataFrame13Id)
 
@@ -139,8 +144,7 @@ object VersionConverter extends DefaultJsonProtocol{
       val paramsJson = rdf.asJsObject.fields(Js.parameters)
 
       val wdf = new WriteDataFrame
-
-      wdf.setParamsFromJson(paramsJson)
+      wdf.setParamsFromJson(paramsJson, graphReader)
 
       val dsParams = ToDatasourceConverters.wdfToDatasourceParams(wdf)
       val newDatasource = createDatasource(dsParams, ownerId, ownerName)
@@ -167,8 +171,7 @@ object VersionConverter extends DefaultJsonProtocol{
       val paramsJson = rdf.asJsObject.fields(Js.parameters)
 
       val rdfParams = new ReadDataFrame
-
-      rdfParams.setParamsFromJson(paramsJson)
+      rdfParams.setParamsFromJson(paramsJson, graphReader)
 
       val dsParams = ToDatasourceConverters.rdfParamsToDatasourceParams(rdfParams)
       val newDatasource = createDatasource(dsParams, ownerId, ownerName)

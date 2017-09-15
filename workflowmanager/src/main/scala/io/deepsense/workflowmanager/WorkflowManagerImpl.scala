@@ -295,7 +295,7 @@ class WorkflowManagerImpl @Inject()(
   private def addDatasourcesData(id: Workflow.Id, workflow: Workflow): Future[JsValue] = {
     authorizator.withRole(roleGet) { userContext => Future {
       val datasourcesClient = datasourcesClientFromUserContext(userContext)
-      val datasourcesId = workflow.graph.nodes.foldLeft(Set.empty[UUID])((acc, el) => acc ++ el.value.getDatasourcesId)
+      val datasourcesId = workflow.graph.getDatasourcesIds
       val datasources = datasourcesId.foldLeft(List.empty[Datasource])((acc, el) =>
         acc ++ datasourcesClient.getDatasource(el))
       DatasourceListJsonProtocol.toString(datasources).parseJson
