@@ -19,19 +19,16 @@ package io.deepsense.deeplang.params.wrappers.spark
 import scala.reflect.runtime.universe._
 
 import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-class ChoiceParamWrapper[T <: Choice : TypeTag](
-    val sparkParam: ml.param.Param[String],
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends ChoiceParam[T](
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)))
-  with SparkParamWrapper[String, T] {
+class ChoiceParamWrapper[P <: ml.param.Params, T <: Choice : TypeTag](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.Param[String])
+  extends ChoiceParam[T](name, description)
+  with SparkParamWrapper[P, String, T] {
 
-  override def convert(value: T)(df: DataFrame): String = value.name
+  override def convert(value: T)(schema: StructType): String = value.name
 }

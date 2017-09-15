@@ -17,20 +17,20 @@
 package io.deepsense.deeplang.params.wrappers.spark
 
 import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.Params
 
-trait ParamsWithSparkWrappers extends Params {
-  lazy val sparkParamWrappers: Array[SparkParamWrapper[_, _]] = params.collect {
-    case wrapper: SparkParamWrapper[_, _] => wrapper +: wrapper.nestedWrappers
+trait ParamsWithSparkWrappers[P <: ml.param.Params] extends Params {
+  lazy val sparkParamWrappers: Array[SparkParamWrapper[_, _, _]] = params.collect {
+    case wrapper: SparkParamWrapper[_, _, _] => wrapper +: wrapper.nestedWrappers
   }.flatten
 
-  def sparkParamPairs(df: DataFrame): Array[ml.param.ParamPair[Any]] = {
-    for {
-      wrapper <- sparkParamWrappers
-      value = $(wrapper)
-      convertedValue = wrapper.convertAny(value)(df)
-    } yield ml.param.ParamPair(wrapper.sparkParam.asInstanceOf[ml.param.Param[Any]], convertedValue)
-  }
+  def sparkParamPairs(sparkEntity: P, schema: StructType): Array[ml.param.ParamPair[Any]] =
+    sparkParamWrappers.map(wrapper => {
+      val value = $(wrapper)
+      val convertedValue = wrapper.convertAny(value)(schema)
+      ml.param.ParamPair(
+        wrapper.sparkParam(sparkEntity).asInstanceOf[ml.param.Param[Any]], convertedValue)
+    })
 }

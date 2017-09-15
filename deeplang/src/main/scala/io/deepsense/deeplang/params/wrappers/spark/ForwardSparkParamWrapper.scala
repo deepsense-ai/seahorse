@@ -16,8 +16,9 @@
 
 package io.deepsense.deeplang.params.wrappers.spark
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-trait ForwardSparkParamWrapper[T] extends SparkParamWrapper[T, T] {
-  def convert(value: T)(df: DataFrame): T = value
+trait ForwardSparkParamWrapper[P <: ml.param.Params, T] extends SparkParamWrapper[P, T, T] {
+  def convert(value: T)(schema: StructType): T = value
 }

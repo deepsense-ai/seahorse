@@ -19,13 +19,10 @@ package io.deepsense.deeplang.params.wrappers.spark
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.MultipleColumnCreatorParam
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-class MultipleColumnCreatorParamWrapper(
-    val sparkParam: ml.param.StringArrayParam,
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends MultipleColumnCreatorParam(
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)))
-  with ForwardSparkParamWrapper[Array[String]]
+class MultipleColumnCreatorParamWrapper[P <: ml.param.Params](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.StringArrayParam)
+  extends MultipleColumnCreatorParam(name, description)
+  with ForwardSparkParamWrapper[P, Array[String]]

@@ -17,22 +17,18 @@
 package io.deepsense.deeplang.params.wrappers.spark
 
 import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{RangeValidator, Validator}
 import io.deepsense.deeplang.params.NumericParam
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-class FloatParamWrapper(
-    val sparkParam: ml.param.FloatParam,
-    override val validator: Validator[Double] = RangeValidator(Float.MinValue, Float.MaxValue),
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends NumericParam(
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)),
-    validator)
-  with SparkParamWrapper[Float, Double] {
+class FloatParamWrapper[P <: ml.param.Params](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.FloatParam,
+    override val validator: Validator[Double] = RangeValidator(Float.MinValue, Float.MaxValue))
+  extends NumericParam(name, description, validator)
+  with SparkParamWrapper[P, Float, Double] {
 
-  override def convert(value: Double)(df: DataFrame): Float = value.toFloat
+  override def convert(value: Double)(schema: StructType): Float = value.toFloat
 }

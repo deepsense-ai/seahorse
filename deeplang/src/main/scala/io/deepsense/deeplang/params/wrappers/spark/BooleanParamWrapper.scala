@@ -19,13 +19,10 @@ package io.deepsense.deeplang.params.wrappers.spark
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.BooleanParam
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-class BooleanParamWrapper(
-    val sparkParam: ml.param.BooleanParam,
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends BooleanParam(
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)))
-  with ForwardSparkParamWrapper[Boolean]
+class BooleanParamWrapper[P <: ml.param.Params](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.Param[Boolean])
+  extends BooleanParam(name, description)
+  with ForwardSparkParamWrapper[P, Boolean]

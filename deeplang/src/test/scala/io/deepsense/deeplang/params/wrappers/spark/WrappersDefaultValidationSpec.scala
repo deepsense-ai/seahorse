@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.params.wrappers.spark
 
+import org.apache.spark.ml
 import org.apache.spark.ml.param.{DoubleParam, FloatParam, IntParam}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -25,42 +26,55 @@ class WrappersDefaultValidationSpec
   with Matchers
   with MockitoSugar {
 
+  class ExampleSparkParams extends ml.param.Params {
+    override val uid: String = "id"
+    val intSparkParam = new IntParam("", "name", "description")
+    val floatSparkParam = new FloatParam("", "name", "description")
+    val doubleSparkParam = new DoubleParam("", "name", "description")
+  }
+
   "IntParamWrapper" should {
 
-    val intSparkParam = new IntParam("", "name", "description")
-    val intParamWrapper = new IntParamWrapper(intSparkParam)
+    val intParamWrapper = new IntParamWrapper[ExampleSparkParams](
+      "name",
+      "description",
+      _.intSparkParam)
 
     "validate whole Int range" in {
-      intParamWrapper.validate(Int.MinValue + 1) shouldBe Vector()
-      intParamWrapper.validate(Int.MaxValue - 1) shouldBe Vector()
+      intParamWrapper.validate(Int.MinValue + 1) shouldBe empty
+      intParamWrapper.validate(Int.MaxValue - 1) shouldBe empty
     }
     "reject fractional values" in {
-      intParamWrapper.validate(Int.MinValue + 0.005).size shouldBe 1
-      intParamWrapper.validate(Int.MaxValue - 0.005).size shouldBe 1
+      intParamWrapper.validate(Int.MinValue + 0.005) should have size 1
+      intParamWrapper.validate(Int.MaxValue - 0.005) should have size 1
     }
   }
 
   "FloatParamWrapper" should {
 
-    val floatSparkParam = new FloatParam("", "name", "description")
-    val floatParamWrapper = new FloatParamWrapper(floatSparkParam)
+    val floatParamWrapper = new FloatParamWrapper[ExampleSparkParams](
+      "name",
+      "description",
+      _.floatSparkParam)
 
     "validate whole Float range" in {
-      floatParamWrapper.validate(Float.MinValue + 1) shouldBe Vector()
-      floatParamWrapper.validate(Float.MaxValue - 1) shouldBe Vector()
+      floatParamWrapper.validate(Float.MinValue + 1) shouldBe empty
+      floatParamWrapper.validate(Float.MaxValue - 1) shouldBe empty
     }
     "reject values out of Float range" in {
-      floatParamWrapper.validate(Double.MinValue + 1).size shouldBe 1
-      floatParamWrapper.validate(Double.MaxValue - 1).size shouldBe 1
+      floatParamWrapper.validate(Double.MinValue + 1) should have size 1
+      floatParamWrapper.validate(Double.MaxValue - 1) should have size 1
     }
   }
 
   "DoubleParamWrapper" should {
     "validate whole Double range" in {
-      val doubleSparkParam = new DoubleParam("", "name", "description")
-      val doubleParamWrapper = new DoubleParamWrapper(doubleSparkParam)
-      doubleParamWrapper.validate(Double.MinValue + 1) shouldBe Vector()
-      doubleParamWrapper.validate(Double.MinValue - 1) shouldBe Vector()
+      val doubleParamWrapper = new DoubleParamWrapper[ExampleSparkParams](
+        "name",
+        "description",
+        _.doubleSparkParam)
+      doubleParamWrapper.validate(Double.MinValue + 1) shouldBe empty
+      doubleParamWrapper.validate(Double.MinValue - 1) shouldBe empty
     }
   }
 }

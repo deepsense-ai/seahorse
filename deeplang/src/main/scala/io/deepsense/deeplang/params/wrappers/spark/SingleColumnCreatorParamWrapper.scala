@@ -19,13 +19,10 @@ package io.deepsense.deeplang.params.wrappers.spark
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.SingleColumnCreatorParam
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-class SingleColumnCreatorParamWrapper(
-    val sparkParam: ml.param.Param[String],
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends SingleColumnCreatorParam(
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)))
-  with ForwardSparkParamWrapper[String]
+class SingleColumnCreatorParamWrapper[P <: ml.param.Params](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.Param[String])
+  extends SingleColumnCreatorParam(name, description)
+  with ForwardSparkParamWrapper[P, String]

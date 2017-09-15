@@ -16,25 +16,34 @@
 
 package io.deepsense.deeplang.params.wrappers.spark
 
+import org.apache.spark.ml
 import org.apache.spark.ml.param.{IntParam, Param, ParamPair}
+import org.apache.spark.sql.types.StructType
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.params.BooleanParam
 
 class ParamsWithSparkWrappersSpec extends WordSpec
   with Matchers
   with MockitoSugar {
 
-  case class ParamsWithSparkWrappersClass() extends ParamsWithSparkWrappers {
-
+  class ExampleSparkParams extends ml.param.Params {
+    override val uid: String = "id"
     val sparkParamA = new Param[String]("", "paramA", "descA")
     val sparkParamB = new IntParam("", "paramB", "descB")
+  }
 
-    val paramA = new StringParamWrapper(sparkParamA)
-    val paramB = new IntParamWrapper(sparkParamB)
+  case class ParamsWithSparkWrappersClass() extends ParamsWithSparkWrappers[ExampleSparkParams] {
 
-    val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(paramA, paramB)
+    val exampleSparkParams = new ExampleSparkParams
+
+    val paramA = new StringParamWrapper[ExampleSparkParams]("paramA", "descA", _.sparkParamA)
+    val paramB = new IntParamWrapper[ExampleSparkParams]("paramB", "descB", _.sparkParamB)
+    val notWrappedParam = BooleanParam("booleanParamName", "booleanParamDescription")
+
+    val params: Array[io.deepsense.deeplang.params.Param[_]] =
+      Array(paramA, paramB, notWrappedParam)
 
     def setParamA(v: String): this.type = set(paramA, v)
     def setParamB(v: Double): this.type = set(paramB, v)
@@ -48,10 +57,11 @@ class ParamsWithSparkWrappersSpec extends WordSpec
     }
     "return parameter values" in {
       val paramsWithSparkWrappers = ParamsWithSparkWrappersClass().setParamA("a").setParamB(0.0)
-      paramsWithSparkWrappers.sparkParamPairs(mock[DataFrame]) shouldBe
+      paramsWithSparkWrappers.sparkParamPairs(
+        paramsWithSparkWrappers.exampleSparkParams, mock[StructType]) shouldBe
         Array(
-          ParamPair(paramsWithSparkWrappers.sparkParamA, "a"),
-          ParamPair(paramsWithSparkWrappers.sparkParamB, 0))
+          ParamPair(paramsWithSparkWrappers.exampleSparkParams.sparkParamA, "a"),
+          ParamPair(paramsWithSparkWrappers.exampleSparkParams.sparkParamB, 0))
     }
   }
 }

@@ -20,15 +20,11 @@ import org.apache.spark.ml
 
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, Validator}
 import io.deepsense.deeplang.params.StringParam
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-class StringParamWrapper(
-    val sparkParam: ml.param.Param[String],
-    override val validator: Validator[String] = new AcceptAllRegexValidator,
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends StringParam(
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)),
-    validator)
-  with ForwardSparkParamWrapper[String]
+class StringParamWrapper[P <: ml.param.Params](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.Param[String],
+    override val validator: Validator[String] = new AcceptAllRegexValidator)
+  extends StringParam(name, description, validator)
+  with ForwardSparkParamWrapper[P, String]

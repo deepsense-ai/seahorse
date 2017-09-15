@@ -17,25 +17,20 @@
 package io.deepsense.deeplang.params.wrappers.spark
 
 import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.parameters.{IndexSingleColumnSelection, NameSingleColumnSelection, SingleColumnSelection}
+import io.deepsense.deeplang.doperables.dataframe.DataFrameColumnsGetter
+import io.deepsense.deeplang.parameters.SingleColumnSelection
 import io.deepsense.deeplang.params.SingleColumnSelectorParam
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+class SingleColumnSelectorParamWrapper[P <: ml.param.Params](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.Param[String],
+    override val portIndex: Int)
+  extends SingleColumnSelectorParam(name, description, portIndex)
+  with SparkParamWrapper[P, String, SingleColumnSelection] {
 
-class SingleColumnSelectorParamWrapper(
-    val sparkParam: ml.param.Param[String],
-    override val portIndex: Int,
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends SingleColumnSelectorParam(
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)),
-    portIndex)
-  with SparkParamWrapper[String, SingleColumnSelection] {
-
-  override def convert(value: SingleColumnSelection)(df: DataFrame): String = {
-    df.getColumnName(value)
-  }
+  override def convert(value: SingleColumnSelection)(schema: StructType): String =
+    DataFrameColumnsGetter.getColumnName(schema, value)
 }

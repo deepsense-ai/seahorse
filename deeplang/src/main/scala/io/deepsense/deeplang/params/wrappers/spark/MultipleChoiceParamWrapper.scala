@@ -19,19 +19,16 @@ package io.deepsense.deeplang.params.wrappers.spark
 import scala.reflect.runtime.universe._
 
 import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.choice.{Choice, MultipleChoiceParam}
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
-class MultipleChoiceParamWrapper[T <: Choice : TypeTag](
-    val sparkParam: ml.param.StringArrayParam,
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends MultipleChoiceParam[T](
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)))
-  with SparkParamWrapper[Array[String], Set[T]] {
+class MultipleChoiceParamWrapper[P <: ml.param.Params, T <: Choice : TypeTag](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.StringArrayParam)
+  extends MultipleChoiceParam[T](name, description)
+  with SparkParamWrapper[P, Array[String], Set[T]] {
 
-  override def convert(value: Set[T])(df: DataFrame): Array[String] = value.map(_.name).toArray
+  override def convert(value: Set[T])(schema: StructType): Array[String] = value.map(_.name).toArray
 }

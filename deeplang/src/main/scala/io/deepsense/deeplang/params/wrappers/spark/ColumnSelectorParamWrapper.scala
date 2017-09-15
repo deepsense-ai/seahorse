@@ -17,24 +17,21 @@
 package io.deepsense.deeplang.params.wrappers.spark
 
 import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.DataFrameColumnsGetter
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.ColumnSelectorParam
-import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescription, defaultName}
 
 
-class ColumnSelectorParamWrapper(
-    val sparkParam: ml.param.StringArrayParam,
-    override val portIndex: Int = 0,
-    val customName: Option[String] = None,
-    val customDescription: Option[String] = None)
-  extends ColumnSelectorParam(
-    customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)),
-    portIndex)
-  with SparkParamWrapper[Array[String], MultipleColumnSelection] {
+class ColumnSelectorParamWrapper[P <: ml.param.Params](
+    override val name: String,
+    override val description: String,
+    val sparkParamGetter: P => ml.param.StringArrayParam,
+    override val portIndex: Int = 0)
+  extends ColumnSelectorParam(name, description, portIndex)
+  with SparkParamWrapper[P, Array[String], MultipleColumnSelection] {
 
-  override def convert(value: MultipleColumnSelection)(df: DataFrame): Array[String] =
-    df.getColumnNames(value).toArray
+  override def convert(value: MultipleColumnSelection)(schema: StructType): Array[String] =
+    DataFrameColumnsGetter.getColumnNames(schema, value).toArray
 }
