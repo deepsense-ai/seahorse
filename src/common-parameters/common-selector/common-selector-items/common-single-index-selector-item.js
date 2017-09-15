@@ -17,10 +17,10 @@ SingleIndexSelectorItem.prototype = new GenericSelectorItem();
 SingleIndexSelectorItem.prototype.constructor = GenericSelectorItem;
 
 SingleIndexSelectorItem.prototype.serialize = function serialize() {
-  return {
+  return this.firstNum >= 0 && !_.isNull(this.firstNum) ? {
     type: 'index',
     value: this.firstNum
-  };
+  } : null;
 };
 
 SingleIndexSelectorItem.getType = () => { return {

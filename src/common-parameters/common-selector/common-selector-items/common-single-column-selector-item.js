@@ -23,15 +23,15 @@ SingleColumnSelectorItem.prototype.addColumn = function addColumn(name) {
 };
 
 SingleColumnSelectorItem.prototype.serialize = function serialize() {
-  return {
+  return this.column.name ? {
     'type': this.type.id,
     'value': this.column.name
-  };
+  } : null;
 };
 
 SingleColumnSelectorItem.getType = () => { return {
   'id': 'column',
-  'verbose': 'Single column'
+  'verbose': 'Single name'
 };};
 
 module.exports = SingleColumnSelectorItem;
