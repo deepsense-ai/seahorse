@@ -86,6 +86,7 @@ object DatasourcesSchema {
 // TODO use sbt-docker with sbt-assembly and define mainClass in assembly as
 // it's solved in Neptune
 
+/*
 object PrintDDL extends App {
   import Database.api._
   import DatasourcesSchema._
@@ -93,4 +94,4 @@ object PrintDDL extends App {
   println(datasourcesTable.schema.createStatements.mkString("\n"))
   // scalastyle:on println
 }
-
+*/
