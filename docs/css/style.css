@@ -316,6 +316,10 @@ p.footer-text span {
   display: block;
 }
 
+.bordered-image {
+  border: 1px solid #b7b7b7;
+}
+
 .centered-container {
   vertical-align:middle;
   text-align: center;
