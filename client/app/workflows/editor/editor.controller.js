@@ -15,6 +15,7 @@ class EditorController {
     this.OperationsHierarchyService = OperationsHierarchyService;       //TODO remove when services are refactored
     this.MouseEvent = MouseEvent;
     this.$element = $element;
+    this.$rootScope = $rootScope;
 
     this.categories = Operations.getCatalog();
 
@@ -139,6 +140,8 @@ class EditorController {
   }
 
   startWizard(x, y, endpoint = null) {
+    this.newNodeData = null;
+    this.$rootScope.$digest();
     if (this.isEditable) {
       const newNodeData = {
         x: x,
