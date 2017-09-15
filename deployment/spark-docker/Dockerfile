@@ -7,14 +7,11 @@ FROM ubuntu:16.04
 # gfortran liblapack-dev liblapack3 libopenblas-base libopenblas-dev are needed for machine learning R libraries
 RUN apt-get update && \
     apt-get install -y build-essential openjdk-8-jre wget curl bzip2 openssh-server openssh-client libsm6 \
-    r-base libcurl4-openssl-dev libssl-dev && \
+    libcurl4-openssl-dev libssl-dev && \
     apt-get install -y gfortran liblapack-dev liblapack3 libopenblas-base libopenblas-dev && \
     apt-get clean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/*
-
-RUN R --slave -e  "install.packages(c('repr', 'IRdisplay', 'pbdZMQ', 'devtools'), repos='http://cran.uni-muenster.de/')"
-RUN R --slave -e  "devtools::install_github('IRkernel/IRkernel', ref='66e4fdda2e3cba3763bb45ac8b649dc73a3fa4bc')"
 
 # Setup passwordless SSH
 RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
@@ -42,7 +39,13 @@ RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \
     /opt/conda/bin/conda install --yes \
     'ipykernel=4.3.1' 'jupyter_client=4.3.0' 'pandas=0.16*' 'matplotlib=1.4*' \
     'scipy=0.15*' 'seaborn=0.6*' 'scikit-learn=0.16*' && \
+# Install r packages
+    /opt/conda/bin/conda install --yes -c r r-essentials && \
+    /opt/conda/bin/conda install --yes -c r r-base='3.3.1 1' && \
+    /opt/conda/bin/conda install --yes -c r r-irkernel=0.7 && \
     /opt/conda/bin/conda clean --all --yes
+
+ENV PATH $PATH:/opt/conda/bin
 
 COPY startup.sh /opt/
 RUN chown root.root /opt/startup.sh && chmod 700 /opt/startup.sh
