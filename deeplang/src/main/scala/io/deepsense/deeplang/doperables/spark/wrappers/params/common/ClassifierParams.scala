@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
-import scala.reflect.runtime.universe.TypeTag
+import scala.language.reflectiveCalls
 
-import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.MissingValuesHandler
+import org.apache.spark.ml
 
-class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] {
+import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
 
-  override val name: String = "Handle Missing Values"
-  override val id: Id = "d5f4e717-429f-4a28-a0d3-eebba036363a"
-  override val description: String =
-    "Handles missing values in a DataFrame"
-
-  override lazy val tTagTO_1: TypeTag[MissingValuesHandler] = typeTag
+trait ClassifierParams extends PredictorParams {
+  val rawPredictionColumn =
+    new SingleColumnCreatorParamWrapper[
+        ml.param.Params { val rawPredictionCol: ml.param.Param[String] }](
+      name = "raw prediction column",
+      description = "Raw prediction (confidence) column",
+      sparkParamGetter = _.rawPredictionCol)
+  setDefault(rawPredictionColumn, "rawPrediction")
 }

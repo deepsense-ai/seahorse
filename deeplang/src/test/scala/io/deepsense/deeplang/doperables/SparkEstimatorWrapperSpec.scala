@@ -37,16 +37,12 @@ class SparkEstimatorWrapperSpec extends UnitSpec {
       val wrapper = new ExampleSparkEstimatorWrapper().setNumericParamWrapper(paramValueToSet)
       val inferredModelWrapper = wrapper._fit_infer(Some(mock[StructType]))
         .asInstanceOf[ExampleSparkModelWrapper]
-      inferredModelWrapper.parentSparkEstimator shouldBe wrapper.sparkEstimator
+      inferredModelWrapper.parentEstimator.sparkEstimator shouldBe wrapper.sparkEstimator
     }
     "infer knowledge when schema isn't provided" in {
       val wrapper = new ExampleSparkEstimatorWrapper()
       val inferredModelWrapper = wrapper._fit_infer(None).asInstanceOf[ExampleSparkModelWrapper]
-      inferredModelWrapper.parentSparkEstimator shouldBe wrapper.sparkEstimator
-    }
-    "throw an exception in fit_infer when params are not set" in {
-      val wrapper = new ExampleSparkEstimatorWrapper()
-      an[Exception] shouldBe thrownBy(wrapper._fit_infer(Some(mock[StructType])))
+      inferredModelWrapper.parentEstimator.sparkEstimator shouldBe wrapper.sparkEstimator
     }
   }
 }

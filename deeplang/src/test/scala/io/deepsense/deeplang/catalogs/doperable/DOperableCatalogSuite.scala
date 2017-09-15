@@ -134,28 +134,22 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
     descriptor.classes should contain theSameElementsAs classes
   }
 
-  test("Registering class extending parametrized class should produce exception") {
-    intercept[ParametrizedTypeException] {
-      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
-      val p = new DOperableCatalog
-      p.registerDOperable[B]()
-    }
+  test("Registering class extending parametrized class") {
+    import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+    val p = new DOperableCatalog
+    p.registerDOperable[B]()
   }
 
-  test("Registering parametrized class should produce exception") {
-    intercept[ParametrizedTypeException] {
-      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
-      val p = new DOperableCatalog
-      p.registerDOperable[A[Int]]()
-    }
+  test("Registering parametrized class") {
+    import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+    val p = new DOperableCatalog
+    p.registerDOperable[A[Int]]()
   }
 
-  test("Registering parametrized trait should produce exception") {
-    intercept[ParametrizedTypeException] {
-      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
-      val p = new DOperableCatalog
-      p.registerDOperable[T[Int]]()
-    }
+  test("Registering parametrized trait") {
+    import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+    val p = new DOperableCatalog
+    p.registerDOperable[T[Int]]()
   }
 
   test("Registering concrete class with no parameter-less constructor should produce exception") {

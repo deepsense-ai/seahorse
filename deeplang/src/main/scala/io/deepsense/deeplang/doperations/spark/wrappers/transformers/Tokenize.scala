@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperations.spark.wrappers.transformers
 
 import scala.reflect.runtime.universe.TypeTag
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.MissingValuesHandler
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.StringTokenizer
+import io.deepsense.deeplang.doperations.TransformerAsOperation
 
-class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] {
+class Tokenize extends TransformerAsOperation[StringTokenizer] {
 
-  override val name: String = "Handle Missing Values"
-  override val id: Id = "d5f4e717-429f-4a28-a0d3-eebba036363a"
-  override val description: String =
-    "Handles missing values in a DataFrame"
+  override val id: Id = "38751243-5e0e-435a-b366-8d225c9fd5ca"
+  override val name: String = "Tokenize"
+  override val description: String = "Converts text to lowercase and splits it by spaces"
 
-  override lazy val tTagTO_1: TypeTag[MissingValuesHandler] = typeTag
+  override lazy val tTagTO_1: TypeTag[StringTokenizer] = typeTag
 }

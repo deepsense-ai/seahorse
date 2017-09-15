@@ -20,7 +20,12 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LogisticRegression
+import io.deepsense.deeplang.doperables.spark.wrappers.models.LogisticRegressionModel
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.StringTokenizer
 import io.deepsense.deeplang.doperations._
+import io.deepsense.deeplang.doperations.spark.wrappers.estimators.CreateLogisticRegression
+import io.deepsense.deeplang.doperations.spark.wrappers.transformers.Tokenize
 
 /**
  * Object used to register all desired DOperables and DOperations.
@@ -36,6 +41,13 @@ object CatalogRecorder {
     catalog.registerDOperable[MissingValuesHandler]()
     catalog.registerDOperable[SqlExpression]()
     catalog.registerDOperable[TypeConverter]()
+
+    // wrapped Spark ML estimators & models
+    catalog.registerDOperable[LogisticRegression]()
+    catalog.registerDOperable[LogisticRegressionModel]()
+
+    // wrapped Spark transformers
+    catalog.registerDOperable[StringTokenizer]()
   }
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
@@ -87,5 +99,13 @@ object CatalogRecorder {
 
     catalog.registerDOperation[Union](
       DOperationCategories.DataManipulation)
+
+    // operations generated from Spark estimators
+    catalog.registerDOperation[CreateLogisticRegression](
+      DOperationCategories.ML)
+
+    // operations generated from Spark transformers
+    catalog.registerDOperation[Tokenize](
+      DOperationCategories.Transformation)
   }
 }

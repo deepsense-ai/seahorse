@@ -39,21 +39,22 @@ abstract class SparkEstimatorWrapper
     [MD <: ml.Model[MD], E <: ml.Estimator[MD], MW <: SparkModelWrapper[MD, E]]
     (implicit val modelWrapperTag: TypeTag[MW], implicit val estimatorTag: TypeTag[E])
   extends Estimator
-  with ParamsWithSparkWrappers[E] {
+  with ParamsWithSparkWrappers {
 
   val sparkEstimator: E = createEstimatorInstance()
 
   override private[deeplang] def _fit(dataFrame: DataFrame): Transformer = {
+    val sparkParams = sparkParamMap(sparkEstimator, dataFrame.sparkDataFrame.schema)
     val sparkModel = sparkEstimator.fit(
       dataFrame.sparkDataFrame,
-      sparkParamMap(sparkEstimator, dataFrame.sparkDataFrame.schema))
-    createModelWrapperInstance().setModel(sparkModel)
+      sparkParams)
+    createModelWrapperInstance().setModel(sparkModel).setParent(this)
   }
 
   override private[deeplang] def _fit_infer(maybeSchema: Option[StructType]): Transformer = {
     // We want to throw validation exceptions here
     maybeSchema.foreach(schema => sparkParamMap(sparkEstimator, schema))
-    createModelWrapperInstance().setParent(sparkEstimator)
+    createModelWrapperInstance().setParent(this)
   }
 
   def createEstimatorInstance(): E = TypeUtils.instanceOfType(estimatorTag)

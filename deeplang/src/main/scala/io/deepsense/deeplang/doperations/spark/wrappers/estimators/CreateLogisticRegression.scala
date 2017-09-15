@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
-
-import scala.reflect.runtime.universe.TypeTag
+package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.MissingValuesHandler
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LogisticRegression
+import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
-class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] {
+class CreateLogisticRegression extends EstimatorAsFactory[LogisticRegression] {
 
-  override val name: String = "Handle Missing Values"
-  override val id: Id = "d5f4e717-429f-4a28-a0d3-eebba036363a"
-  override val description: String =
-    "Handles missing values in a DataFrame"
-
-  override lazy val tTagTO_1: TypeTag[MissingValuesHandler] = typeTag
+  override val id: Id = "7f9e459e-3e11-4c5f-9137-94447d53ff60"
+  override val name: String = "Logistic Regression"
+  override val description: String = "Creates a logistic regression model"
 }

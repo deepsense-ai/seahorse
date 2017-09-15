@@ -36,7 +36,7 @@ class ParamsWithSparkWrappersSpec extends WordSpec
     override def copy(extra: ParamMap): Params = ???
   }
 
-  case class ParamsWithSparkWrappersClass() extends ParamsWithSparkWrappers[ExampleSparkParams] {
+  case class ParamsWithSparkWrappersClass() extends ParamsWithSparkWrappers {
 
     val exampleSparkParams = new ExampleSparkParams
 

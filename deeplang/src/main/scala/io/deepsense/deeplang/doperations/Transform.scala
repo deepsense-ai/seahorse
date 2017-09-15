@@ -46,9 +46,9 @@ case class Transform() extends DOperation2To1[Transformer, DataFrame, DataFrame]
 
   override val params = declareParams(transformerParams)
 
-  override val tTagTI_0: TypeTag[Transformer] = typeTag[Transformer]
-  override val tTagTI_1: TypeTag[DataFrame] = typeTag[DataFrame]
-  override val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
+  override lazy val tTagTI_0: TypeTag[Transformer] = typeTag
+  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag
 
   override protected def _execute(
       context: ExecutionContext)(

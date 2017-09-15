@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
+import io.deepsense.deeplang.params.ParamMap
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -26,6 +27,10 @@ class SparkModelWrapperSpec extends UnitSpec {
   import EstimatorModelWrappersFixtures._
 
   "SparkModelWrapper" should {
+    "ignore default parameter values" in {
+      val wrapper = new ExampleSparkModelWrapper()
+      wrapper.extractParamMap() shouldBe ParamMap.empty
+    }
     "transform a DataFrame" in {
       val wrapper = prepareWrapperWithParams()
       wrapper._transform(mock[ExecutionContext], mockInputDataFrame()) shouldBe
@@ -48,10 +53,10 @@ class SparkModelWrapperSpec extends UnitSpec {
     }
   }
 
-  private def prepareWrapperAndEstimator: (ExampleSparkModelWrapper, ExampleSparkEstimator) = {
+  private def prepareWrapperAndEstimator = {
     val model = new ExampleSparkModel()
     val wrapper = new ExampleSparkModelWrapper().setModel(model)
-    (wrapper, new ExampleSparkEstimator())
+    (wrapper, new ExampleSparkEstimatorWrapper())
   }
 
   private def prepareWrapperWithoutParams(): ExampleSparkModelWrapper = {
@@ -61,7 +66,6 @@ class SparkModelWrapperSpec extends UnitSpec {
 
   private def prepareWrapperWithParams(): ExampleSparkModelWrapper = {
     val (wrapper, parentEstimator) = prepareWrapperAndEstimator
-    wrapper.setNumericParamParamWrapper(paramValueToSet)
-      .setParent(parentEstimator.setNumericParam(paramValueToSet))
+    wrapper.setParent(parentEstimator).setNumericParamWrapper(paramValueToSet)
   }
 }

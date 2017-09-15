@@ -48,6 +48,6 @@ abstract class TransformerAsOperation[T <: Transformer]
     ((outputDfKnowledge, DKnowledge(transformer)), warnings)
   }
 
-  override val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag
 }

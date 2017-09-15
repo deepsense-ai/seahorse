@@ -26,7 +26,7 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.{Params, Param}
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 
 object EstimatorModelWrappersFixtures extends MockitoSugar {
@@ -42,14 +42,19 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
     inputDataFrame
   }
 
-  class ExampleSparkEstimatorWrapper
-    extends SparkEstimatorWrapper
-      [ExampleSparkModel, ExampleSparkEstimator, ExampleSparkModelWrapper] {
-
-    val numericParamWrapper = new DoubleParamWrapper[ExampleSparkEstimator](
+  trait HasNumericParam extends Params {
+    val numericParamWrapper = new DoubleParamWrapper[
+        ml.param.Params { val numericParam: ml.param.DoubleParam }](
       "name",
       "description",
       _.numericParam)
+    setDefault(numericParamWrapper, 1.0)
+  }
+
+  class ExampleSparkEstimatorWrapper
+    extends SparkEstimatorWrapper
+      [ExampleSparkModel, ExampleSparkEstimator, ExampleSparkModelWrapper]
+    with HasNumericParam {
 
     def setNumericParamWrapper(value: Double): this.type = set(numericParamWrapper, value)
 
@@ -107,14 +112,10 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
   }
 
   class ExampleSparkModelWrapper
-    extends SparkModelWrapper[ExampleSparkModel, ExampleSparkEstimator] {
+    extends SparkModelWrapper[ExampleSparkModel, ExampleSparkEstimator]
+    with HasNumericParam {
 
-    val numericParamWrapper = new DoubleParamWrapper[ExampleSparkModel](
-      "name",
-      "description",
-      _.numericParam)
-
-    def setNumericParamParamWrapper(value: Double): this.type = set(numericParamWrapper, value)
+    def setNumericParamWrapper(value: Double): this.type = set(numericParamWrapper, value)
 
     override def report(executionContext: ExecutionContext): Report = ???
     override val params: Array[Param[_]] = declareParams(numericParamWrapper)

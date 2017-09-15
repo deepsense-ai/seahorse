@@ -46,7 +46,6 @@ abstract class DOperationsCatalog {
    * Registers DOperation, which can be later viewed and created.
    * DOperation has to have parameterless constructor.
    * @param category category to which this operation directly belongs
-   * @param description description of operation
    * @tparam T DOperation class to register
    */
   def registerDOperation[T <: DOperation : ru.TypeTag](

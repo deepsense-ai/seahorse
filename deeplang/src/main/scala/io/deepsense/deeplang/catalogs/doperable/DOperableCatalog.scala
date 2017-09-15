@@ -48,10 +48,6 @@ class DOperableCatalog {
       return None
     }
 
-    if (TypeUtils.isParametrized(t)) {
-      throw new ParametrizedTypeException(t)
-    }
-
     val node = TypeNode(javaType)
 
     val registeredNode = nodes.get(node.fullName)

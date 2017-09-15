@@ -29,5 +29,5 @@ class ExecuteMathematicalTransformation
   override val description: String =
     "Executes a mathematical transformation on a column of a DataFrame"
 
-  override val tTagTO_1: TypeTag[MathematicalTransformation] = typeTag
+  override lazy val tTagTO_1: TypeTag[MathematicalTransformation] = typeTag
 }

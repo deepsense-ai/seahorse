@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.catalogs.doperable
 
-import scala.reflect.runtime.universe.TypeTag
+import io.deepsense.deeplang.{DOperable, CatalogRecorder, UnitSpec}
 
-import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.MissingValuesHandler
+class DOperableRegistrationSpec extends UnitSpec {
 
-class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] {
-
-  override val name: String = "Handle Missing Values"
-  override val id: Id = "d5f4e717-429f-4a28-a0d3-eebba036363a"
-  override val description: String =
-    "Handles missing values in a DataFrame"
-
-  override lazy val tTagTO_1: TypeTag[MissingValuesHandler] = typeTag
+  "DOperableCatalog" should {
+    "successfully register and create all DOperables" in {
+      val catalog = new DOperableCatalog()
+      CatalogRecorder.registerDOperables(catalog)
+      catalog.concreteSubclassesInstances[DOperable]
+    }
+  }
 }

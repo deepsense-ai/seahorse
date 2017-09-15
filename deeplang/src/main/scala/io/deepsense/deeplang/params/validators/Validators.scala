@@ -84,6 +84,14 @@ object RangeValidator {
   val Epsilon = 1e-10
 
   def all: RangeValidator = RangeValidator(begin = Double.MinValue, end = Double.MaxValue)
+
+  def positiveIntegers: RangeValidator =
+    RangeValidator(
+      begin = 0.0,
+      end = Int.MaxValue,
+      beginIncluded = true,
+      endIncluded = true,
+      step = Some(1.0))
 }
 
 /**

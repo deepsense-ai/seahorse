@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import scala.reflect.runtime.universe.TypeTag
+import io.deepsense.deeplang.params.ParamPair
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.MissingValuesHandler
+class StringTokenizerSmokeTest extends AbstractTransformerWrapperSmokeTest {
 
-class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] {
+  override def className: String = "StringTokenizer"
 
-  override val name: String = "Handle Missing Values"
-  override val id: Id = "d5f4e717-429f-4a28-a0d3-eebba036363a"
-  override val description: String =
-    "Handles missing values in a DataFrame"
+  override val transformer: StringTokenizer = new StringTokenizer()
 
-  override lazy val tTagTO_1: TypeTag[MissingValuesHandler] = typeTag
+  override val transformerParams: Seq[ParamPair[_]] = Seq(
+    ParamPair(transformer.inputColumn, NameSingleColumnSelection("s")),
+    ParamPair(transformer.outputColumn, "tokenized")
+  )
 }

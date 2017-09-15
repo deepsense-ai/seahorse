@@ -22,6 +22,7 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.params.{ParamPair, Param}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
 /**
@@ -33,9 +34,10 @@ import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
  * @tparam MD type of wrapped ml.Model
  * @tparam E type of wrapped ml.Estimator
  */
-abstract class SparkModelWrapper[MD <: ml.Model[MD], E <: ml.Estimator[MD]]
+abstract class SparkModelWrapper[
+    MD <: ml.Model[MD], E <: ml.Estimator[MD]]
   extends Transformer
-  with ParamsWithSparkWrappers[MD] {
+  with ParamsWithSparkWrappers {
 
   /**
    * Model has to be set before _transform() execution.
@@ -46,23 +48,32 @@ abstract class SparkModelWrapper[MD <: ml.Model[MD], E <: ml.Estimator[MD]]
   var model: MD = _
 
   /**
-   * Parent ml.Estimator has to be set before _transformSchema() execution - estimators
+   * Parent EstimatorWrapper has to be set before _transformSchema() execution - estimators
    * are responsible for schema inference in models. We use a mutable field because
    * estimator instances that contain fresh parameters are created dynamically.
    * Passing an estimator to _transformSchema by parameter would require a change
    * of Transformer.transformSchema signature.
    */
-  var parentSparkEstimator: E = _
+  var parentEstimator: SparkEstimatorWrapper[MD, E, _] = _
 
   def setModel(model: MD) : this.type = {
     this.model = model
     this
   }
 
-  def setParent(estimator: E): this.type = {
-    parentSparkEstimator = estimator
-    this
+  def setParent(estimator: SparkEstimatorWrapper[MD, E, _]): this.type = {
+    parentEstimator = estimator
+    // Model wrapper should inherit parameter values from Estimator wrapper
+    this.set(parentEstimator.extractParamMap())
   }
+
+  /**
+    * Spark model wrappers mustn't have default parameters.
+    * All initial parameter values are inherited from parent estimator.
+    */
+  override protected def setDefault[T](param: Param[T], value: T): this.type = this
+
+  override protected def setDefault(paramPairs: ParamPair[_]*): this.type = this
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame =
     DataFrame.fromSparkDataFrame(
@@ -71,8 +82,11 @@ abstract class SparkModelWrapper[MD <: ml.Model[MD], E <: ml.Estimator[MD]]
         sparkParamMap(df.sparkDataFrame.schema)))
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
-    val copy = parentSparkEstimator.copy(sparkParamMap(schema))
-    Some(copy.transformSchema(schema))
+    // We assume that all params of model are also params of estimator
+    val sparkEstimatorWithParams = parentEstimator.sparkEstimator
+      .copy(parentEstimator.sparkParamMap(parentEstimator.sparkEstimator, schema))
+      .copy(sparkParamMap(parentEstimator.sparkEstimator, schema))
+    Some(sparkEstimatorWithParams.transformSchema(schema))
   }
 
   private def sparkParamMap(schema: StructType): ParamMap = sparkParamMap(model, schema)

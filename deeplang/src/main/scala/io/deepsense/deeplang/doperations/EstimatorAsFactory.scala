@@ -28,7 +28,7 @@ abstract class EstimatorAsFactory[T <: Estimator]
   extends DOperation0To1[T] {
 
   val estimator: T = TypeUtils.instanceOfType(typeTag)
-  override val tTagTO_0: TypeTag[T] = typeTag[T]
+  override lazy val tTagTO_0: TypeTag[T] = typeTag[T]
   override val params: Array[Param[_]] = estimator.params
 
   setDefault(estimator.extractParamMap().toSeq: _*)

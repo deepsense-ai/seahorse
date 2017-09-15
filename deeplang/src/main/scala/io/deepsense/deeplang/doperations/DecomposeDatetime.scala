@@ -28,5 +28,5 @@ class DecomposeDatetime extends TransformerAsOperation[DatetimeDecomposer] {
   override val description: String =
     "Extracts Numeric fields (year, month, etc.) from a Timestamp column"
 
-  override val tTagTO_1: TypeTag[DatetimeDecomposer] = typeTag
+  override lazy val tTagTO_1: TypeTag[DatetimeDecomposer] = typeTag
 }

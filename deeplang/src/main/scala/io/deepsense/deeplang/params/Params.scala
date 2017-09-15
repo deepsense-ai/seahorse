@@ -168,12 +168,12 @@ trait Params extends Serializable {
 
   protected final def $[T](param: Param[T]): T = getOrDefault(param)
 
-  protected final def setDefault[T](param: Param[T], value: T): this.type = {
+  protected def setDefault[T](param: Param[T], value: T): this.type = {
     defaultParamMap.put(param -> value)
     this
   }
 
-  protected final def setDefault(paramPairs: ParamPair[_]*): this.type = {
+  protected def setDefault(paramPairs: ParamPair[_]*): this.type = {
     paramPairs.foreach { p =>
       setDefault(p.param.asInstanceOf[Param[Any]], p.value)
     }
