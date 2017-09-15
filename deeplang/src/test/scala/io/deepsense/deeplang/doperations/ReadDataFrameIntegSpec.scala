@@ -36,9 +36,9 @@ class ReadDataFrameIntegSpec extends SparkIntegTestSupport {
       StructField("column4", StringType, true)))
 
     val manualRowsSeq: Seq[Row] = Seq(
-      Row("aaa,1,1.2,2007-12-02 03:10:11.0000001"),
-      Row("bbb,2,2.2,2007-12-02 03:10:11.0000001"),
-      Row("ccc,3,3.4,2007-12-02 03:10:11.0000001"))
+      Row("aaa", 1L, 1.2, "2007-12-02 03:10:11.0000001"),
+      Row("bbb", 2L, 2.2, "2007-12-02 03:10:11.0000001"),
+      Row("ccc", 3L, 3.4, "2007-12-02 03:10:11.0000001"))
 
     val manualRDD: RDD[Row] = sparkContext.parallelize(manualRowsSeq)
 
@@ -48,9 +48,7 @@ class ReadDataFrameIntegSpec extends SparkIntegTestSupport {
     assert(operationRows.length == manualRows.length)
 
     val zipped = operationRows zip manualRows
-    assert(zipped.forall(row => row._1.toString == row._2.toString))
-    assert(zipped.forall(row => row._1.schema == row._2.schema))
+    assert(zipped.forall(rowPair => rowPair._1 == rowPair._2))
+    assert(zipped.forall(rowPair => rowPair._1.schema == rowPair._2.schema))
   }
 }
-
-

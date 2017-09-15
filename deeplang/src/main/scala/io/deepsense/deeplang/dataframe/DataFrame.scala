@@ -14,5 +14,8 @@ import io.deepsense.deeplang.DOperable
  * @param sparkDataFrame spark representation of data. Client of this class has to assure that
  *                       sparkDataFrame data fulfills its internal schema.
  */
-case class DataFrame private[dataframe] (val sparkDataFrame: sql.DataFrame)
-  extends DOperable
+case class DataFrame private[dataframe] (val sparkDataFrame: sql.DataFrame) extends DOperable {
+  def save(path: String): Unit = {
+    sparkDataFrame.toJSON.saveAsTextFile(path)
+  }
+}

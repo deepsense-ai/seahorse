@@ -6,7 +6,7 @@
 
 package io.deepsense.deeplang
 
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkContext, SparkConf}
 import org.scalatest.BeforeAndAfterAll
 

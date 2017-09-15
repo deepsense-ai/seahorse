@@ -6,24 +6,19 @@
 
 package io.deepsense.deeplang.doperations
 
+import io.deepsense.deeplang.{ExecutionContext, DOperation1To0}
 import io.deepsense.deeplang.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter, ParametersSchema}
-import io.deepsense.deeplang.{ExecutionContext, DOperation0To1}
 
 /**
- * Operation which is able to read DataFrame and deserialize it.
+ * Operation which is able to serialize DataFrame and write it.
  */
-class ReadDataFrame extends DOperation0To1[DataFrame] {
+class WriteDataFrame extends DOperation1To0[DataFrame] {
   parameters = ParametersSchema("path" -> StringParameter(
     "path to dataframe", None, required = true, validator = new AcceptAllRegexValidator))
 
-  override protected def _execute(context: ExecutionContext)(): DataFrame = {
+  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
     val pathParameter = parameters.getStringParameter("path")
-
-    val sqlContext = context.sqlContext
-    val dataFrame = sqlContext.jsonFile(pathParameter.value.get)
-
-    val builder = context.dataFrameBuilder
-    builder.buildDataFrame(dataFrame)
+    dataFrame.save(pathParameter.value.get)
   }
 }
