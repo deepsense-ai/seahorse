@@ -27,8 +27,6 @@ function ExperimentController(
   internal.init = function init() {
     PageService.setTitle('Experiment: ' + experiment.experiment.name);
 
-    NotificationService.initEventListeners();
-
     ExperimentService.setExperiment(ExperimentService.createExperiment(experiment, Operations.getData()));
     GraphPanelRendererService.setExperiment(ExperimentService.getExperiment());
 
