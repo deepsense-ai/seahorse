@@ -80,8 +80,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
           val runningExperiments = TestProbe()
           val ge = TestProbe()
           launchAndWaitForSpawn(mockedExperiment, spawner, gecActor, runningExperiments)
-          ge.send(gecActor, ExecutorReady(mockedExperiment.id))
-          ge.expectMsg(Launch(mockedExperiment))
+          signalExecutorReady(gecActor, ge)
           runningExperiments.send(gecActor, Abort(mockedExperiment.id))
           ge.expectMsg(Abort(mockedExperiment.id))
           ge.reply(Update(abortedExperiment))
@@ -96,8 +95,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
         val runningExperiments = TestProbe()
         launchAndWaitForSpawn(mockedExperiment, spawner, gecActor, runningExperiments)
         val ge = TestProbe()
-        ge.send(gecActor, ExecutorReady(mockedExperiment.id))
-        ge.expectMsg(Launch(mockedExperiment))
+        signalExecutorReady(gecActor, ge)
       }
     }
     "spawn of GE failed" should {
@@ -118,14 +116,19 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
         val ge = TestProbe()
 
         launchAndWaitForSpawn(mockedExperiment, spawner, gecActor, runningExperiments)
-        ge.send(gecActor, ExecutorReady(mockedExperiment.id))
-        ge.expectMsg(Launch(mockedExperiment))
-
+        signalExecutorReady(gecActor, ge)
         val updates = List.fill(3)(Update(mockExperimentWithId(mockedExperiment.id)))
 
         updates.foreach(u => ge.send(gecActor, u))
         runningExperiments.expectMsgAllOf(updates: _*)
       }
+    }
+  }
+
+  def signalExecutorReady(gecActor: ActorRef, ge: TestProbe): Unit = {
+    eventually {
+      ge.send(gecActor, ExecutorReady(mockedExperiment.id))
+      ge.expectMsg(1.millisecond, Launch(mockedExperiment))
     }
   }
 
