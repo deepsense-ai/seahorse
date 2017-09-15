@@ -13,7 +13,7 @@ title: Seahorse Standalone
 ## Overview
 
 Seahorse Standalone allows you to install and run Seahorse on your local computer
-or set it up in a server mode (for details see [Server Mode](../server_mode.html) section).
+or set it up in a server mode (for details see [Server Mode](../reference/server_mode.html) section).
 
 Seahorse Standalone:
 

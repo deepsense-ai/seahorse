@@ -6,7 +6,7 @@ description: Read DataFrame
 includeOperationsMenu: true
 ---
 
-Reads a `DataFrame` from a specified [data source](../_reference/data_sources.html).
+Reads a `DataFrame` from a specified [data source](../reference/data_sources.html).
 
 **Since**: Seahorse 0.4.0
 

@@ -57,9 +57,9 @@ please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-fo
 
 #### What is New
 
-* Support for defining reusable [data sources and sinks](/reference/data_sources.html)
+* Support for defining reusable [data sources and sinks](./data_sources.html)
 * Support for reading and writing from/to Google Spreadsheets
-* Support for user-defined operations via [Software Developement Kit](/reference/sdk_user_guide.html)
+* Support for user-defined operations via [Software Developement Kit](./sdk_user_guide.html)
 * Scheduled workflow execution with customizable Notebook-based email notifications
 * Completely redesigned UI for building workflows
 * Spark 2.0.2 support
@@ -95,7 +95,7 @@ please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-fo
       * [Get From Vector](/1.2/operations/get_from_vector.html)
     * Model Evaluation
       * [Python Evaluator](/1.2/operations/python_evaluator.html)
-* Extended [Split](/1.2/operations/split.html) and [Handle Missing Values](./operations/handle_missing_values.html) operations
+* Extended [Split](/1.2/operations/split.html) and [Handle Missing Values](/1.2/operations/handle_missing_values.html) operations
 * Improved operations on vectors
 * Improved reports formatting
 

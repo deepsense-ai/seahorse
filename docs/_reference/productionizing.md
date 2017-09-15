@@ -22,7 +22,7 @@ This functionality can facilitate integration of Seahorse with other data proces
 and manage the execution of workflows outside of Seahorse Editor.
 
 <div class="centered-container" markdown="1">
-  ![Seahorse Batch Workflow Executor Overview](/img/batch_overview.png){: .centered-image .img-responsive}
+  ![Seahorse Batch Workflow Executor Overview](../img/batch_overview.png){: .centered-image .img-responsive}
   *Seahorse Batch Workflow Executor Overview*
 </div>
 
@@ -136,9 +136,9 @@ compiled for Hadoop {{ site.WORKFLOW_EXECUTOR_HADOOP_VERSION }} package.
 ## Custom JDBC Drivers
 
 To allow usage of SQL databases for
-[Read DataFrame](operations/read_dataframe.html)
+[Read DataFrame](../operations/read_dataframe.html)
 and
-[Write DataFrame](operations/write_dataframe.html),
+[Write DataFrame](../operations/write_dataframe.html),
 a proper JDBC driver has to be accessible during workflow's execution.
 This requirement can be satisfied by:
 

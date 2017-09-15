@@ -21,15 +21,15 @@ It has to be set to such an IP of the machine with Seahorse that is visible from
 Conveniently, Seahorse allows you to store configurations for various clusters.
 
 <div class="centered-container" markdown="1">
-  ![Cluster Presets](/img/cluster_presets.png){: .centered-image .img-responsive .bordered-image}
+  ![Cluster Presets](../img/cluster_presets.png){: .centered-image .img-responsive .bordered-image}
   *Cluster Presets in Seahorse*
 </div>
 
 ## External Clusters with Seahorse as a Vagrant Image
 
 While working with external clusters is straight-forward when running
-[Dockerized Seahorse Standalone](deployment/standalone.html#dockerized-seahorse-standalone),
-it's also possible using [Seahorse Standalone as a Vagrant Image](#seahorse-standalone-as-a-vagrant-image).
+[Dockerized Seahorse Standalone](../deployment/standalone.html#dockerized-seahorse-standalone),
+it's also possible using [Seahorse Standalone as a Vagrant Image](../deployment/standalone.html#seahorse-standalone-as-a-vagrant-image).
 There is a commented line in the `Vagrantfile`.
 It needs to be uncommented in order for the VM to receive its own IP address, that is visible from
 the Spark cluster.

@@ -74,5 +74,5 @@ application on production clusters.
 * [Getting Started](./getting_started.html)
 * [Seahorse Operations List](./operations.html)
 * [Example Use Case - Text Message Spam Detection](./casestudies/text_message_spam_detection.html)
-* [SDK User Guide](./sdk_user_guide.html)
+* [SDK User Guide](./reference/sdk_user_guide.html)
 {% include contact_box.html %}

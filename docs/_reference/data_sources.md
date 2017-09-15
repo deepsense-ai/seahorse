@@ -18,7 +18,7 @@ Read more about [supported file formats](#supported-file-formats-details).
 <br>
 <div class="align-left">
     <div class="img-responsive image-with-caption-container" style="width: 700px">
-        <img class="img-responsive bordered-image" alt="Data Sources List" src="/img/data_sources.png">
+        <img class="img-responsive bordered-image" alt="Data Sources List" src="../img/data_sources.png">
     </div>
 </div>
 
@@ -41,7 +41,7 @@ Google Sheets Data Source has two parameters that require more detailed descript
 <br>
 <div class="align-left">
   <div class="img-responsive image-with-caption-container" style="width: 700px">
-      <img class="img-responsive bordered-image" alt="Google Spreadsheet Params Forms" src="/img/google_sheet_params.png">
+      <img class="img-responsive bordered-image" alt="Google Spreadsheet Params Forms" src="../img/google_sheet_params.png">
   </div>
 </div>
 <br>
@@ -65,7 +65,7 @@ how to share the spreadsheets with the Seahorse instance.
    <br>
    <div class="align-left-indented">
       <div class="img-responsive image-with-caption-container" style="width: 400px">
-          <img class="img-responsive bordered-image" alt="Create Service Account Form" src="/img/create_new_service_account.png">
+          <img class="img-responsive bordered-image" alt="Create Service Account Form" src="../img/create_new_service_account.png">
       </div>
    </div>
    <br>
@@ -82,7 +82,7 @@ how to share the spreadsheets with the Seahorse instance.
    <br>
    <div class="align-left-indented">
      <div class="img-responsive image-with-caption-container" style="width: 600px">
-         <img class="img-responsive bordered-image" alt="Email Address for Google Service Account" src="/img/service_account_email.png">
+         <img class="img-responsive bordered-image" alt="Email Address for Google Service Account" src="../img/service_account_email.png">
      </div>
    </div>
    <br>
@@ -92,7 +92,7 @@ how to share the spreadsheets with the Seahorse instance.
    <br>
    <div class="align-left-indented">
       <div class="img-responsive image-with-caption-container" style="width: 400px">
-          <img class="img-responsive bordered-image" alt="Google Spreadsheet Share Form" src="/img/share-google-account.png">
+          <img class="img-responsive bordered-image" alt="Google Spreadsheet Share Form" src="../img/share-google-account.png">
       </div>
    </div>
    <br>
@@ -103,7 +103,7 @@ Google Spreadsheet Data Source in Seahorse.
    <br>
    <div class="align-left-indented">
       <div class="img-responsive image-with-caption-container" style="width: 700px">
-          <img class="img-responsive bordered-image" alt="Google Spreadsheet Param Forms" src="/img/google_sheet_params.png">
+          <img class="img-responsive bordered-image" alt="Google Spreadsheet Param Forms" src="../img/google_sheet_params.png">
       </div>
    </div>
    <br>

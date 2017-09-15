@@ -455,7 +455,7 @@ exported model. Note that the `Export model` step from Example 1 must be finishe
    * Create an `Assemble Vector` operation and set parameters as explained in Example 1.
 
    Hint: if the data preprocessing is built of many operations it might be a
-   good idea to encapsulate these operations inside a [Custom Transformer](operations/custom_transformer.html)
+   good idea to encapsulate these operations inside a [Custom Transformer](./operations/create_custom_transformer.html)
    operation and export it as well. Importing and using this `Custom Transformer`
    allows user to reuse preprocessing logic.
 5. Use the imported model with new data:

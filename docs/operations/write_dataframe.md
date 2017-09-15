@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Saves a `DataFrame` to a specified [data source](../_reference/data_sources.html).
+Saves a `DataFrame` to a specified [data source](../reference/data_sources.html).
 
 **Since**: Seahorse 0.4.0
 
