@@ -11,7 +11,7 @@
     </h2>
   </div>
 
-  <div class="modal-footer">
+  <div class="modal-footer" ng-show="!deleteExprModal.loading">
     <button type="button" class="btn btn-white" ng-click="deleteExprModal.cancel()">Close</button>
     <button type="button" class="btn btn-primary" ng-click="deleteExprModal.delete()">Delete</button>
   </div>

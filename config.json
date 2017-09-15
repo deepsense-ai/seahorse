@@ -56,7 +56,9 @@
           "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.js",
           "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js",
-          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js"
+          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
+          "./node_modules/switchery/switchery.min.js",
+          "./node_modules/switchery/ng-switchery.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -87,7 +89,9 @@
           "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.js",
           "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js",
-          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js"
+          "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
+          "./node_modules/switchery/switchery.min.js",
+          "./node_modules/switchery/ng-switchery.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

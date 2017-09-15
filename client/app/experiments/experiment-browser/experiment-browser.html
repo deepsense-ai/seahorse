@@ -15,12 +15,12 @@
       <td>{{ ::item.state.status }}</td>
       <td>{{ ::item.updated | date: 'medium' }}</td>
       <td class="text-center">
-        <a class="btn btn-primary btn-sm" ng-click="experimentCRUD.modifyExperiment(item)">
+        <button class="btn btn-primary btn-sm" ng-click="experimentCRUD.modifyExperiment(item)">
           <i class="fa fa-edit fa-lg"></i>
-        </a>
-        <a class="btn btn-primary btn-sm" ng-click="experimentCRUD.removeExperiment(item)">
+        </button>
+        <button class="btn btn-primary btn-sm" ng-click="experimentCRUD.removeExperiment(item)">
           <i class="fa fa-trash-o fa-lg"></i>
-        </a>
+        </button>
       </td>
     </tr>
     </tbody>

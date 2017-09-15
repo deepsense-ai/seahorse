@@ -15,4 +15,5 @@ exports.inject = function (module) {
   require('./common-stick-onscroll.js').inject(module);
   require('./common-context-menu-blocker.js').inject(module);
   require('./common-custom-scrollbar.js').inject(module);
+  require('./common-focused.js').inject(module);
 };

@@ -39,7 +39,7 @@ class AddModifyExperimentModalController {
           'description': this.experimentDescription || ''
         }).
         then(DI.get(this).modalInstance.close).
-        catch(function () {
+        catch(() => {
           DI.get(this).modalInstance.dismiss(`Could not create the experiment`);
         });
     } else {
