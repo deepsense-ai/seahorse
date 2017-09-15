@@ -43,7 +43,7 @@ private[doperable] abstract class Node {
    */
   private[doperable] def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]]
 
-  private[doperable] def info: TypeInfo
+  private[doperable] def descriptor: TypeDescriptor
 
   private def sumSets[T](sets: Iterable[Set[T]]): Set[T] = {
     sets.foldLeft(Set[T]())((x, y) => x ++ y)

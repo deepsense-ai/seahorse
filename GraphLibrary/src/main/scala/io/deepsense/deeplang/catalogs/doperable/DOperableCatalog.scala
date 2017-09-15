@@ -105,9 +105,9 @@ class DOperableCatalog {
   }
 
   /** Returns structure describing hierarchy. */
-  def info: (Iterable[TypeInfo], Iterable[TypeInfo]) = {
+  def descriptor: HierarchyDescriptor = {
     val (traits, classes) = nodes.values.partition(_.isTrait)
-    (traits.map(_.info), classes.map(_.info))
+    HierarchyDescriptor(traits.map(_.descriptor), classes.map(_.descriptor))
   }
 }
 

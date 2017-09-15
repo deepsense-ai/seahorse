@@ -96,22 +96,21 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
     h.registerDOperable[H.B]()
     h.registerDOperable[H.C]()
 
-    val traitsMock = TraitInfo("DOperable", Nil)::
-      TraitInfo("T2", List("T1"))::
-      TraitInfo("T", List("DOperable"))::
-      TraitInfo("T1", List("DOperable"))::
-      TraitInfo("T3", List("T1"))::
+    val traits = TraitDescriptor("DOperable", Nil)::
+      TraitDescriptor("T2", List("T1"))::
+      TraitDescriptor("T", List("DOperable"))::
+      TraitDescriptor("T1", List("DOperable"))::
+      TraitDescriptor("T3", List("T1"))::
       Nil
 
-    val classesMock = ClassInfo("A", None, List("T3"))::
-      ClassInfo("B", Some("A"), List("T"))::
-      ClassInfo("C", Some("A"), List("T2"))::
+    val classes = ClassDescriptor("A", None, List("T3"))::
+      ClassDescriptor("B", Some("A"), List("T"))::
+      ClassDescriptor("C", Some("A"), List("T2"))::
       Nil
 
-    val (traitsInfo, classesInfo) = h.info
-    traitsInfo should contain theSameElementsAs traitsMock
-    classesInfo should contain theSameElementsAs classesMock
-
+    val descriptor = h.descriptor
+    descriptor.traits should contain theSameElementsAs traits
+    descriptor.classes should contain theSameElementsAs classes
   }
 
   test("Registering class extending parametrized class should produce exception") {

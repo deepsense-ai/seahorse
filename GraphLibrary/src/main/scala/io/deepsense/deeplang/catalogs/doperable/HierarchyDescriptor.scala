@@ -6,15 +6,19 @@
 
 package io.deepsense.deeplang.catalogs.doperable
 
-trait TypeInfo
+case class HierarchyDescriptor(
+    traits: Iterable[TypeDescriptor],
+    classes: Iterable[TypeDescriptor])
 
-case class ClassInfo(
+trait TypeDescriptor
+
+case class ClassDescriptor(
     name: String,
     parent: Option[String],
     traits: List[String])
-  extends TypeInfo
+  extends TypeDescriptor
 
-case class TraitInfo(
+case class TraitDescriptor(
     name: String,
     parents: List[String])
-  extends TypeInfo
+  extends TypeDescriptor

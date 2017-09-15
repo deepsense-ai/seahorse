@@ -27,8 +27,8 @@ private[doperable] class TraitNode(protected override val javaType: Class[_]) ex
     baseJavaTypes.find(!_.isInterface)
   }
 
-  private[doperable] override def info: TypeInfo = {
-    TraitInfo(displayName, supertraits.values.map(_.displayName).toList)
+  private[doperable] override def descriptor: TypeDescriptor = {
+    TraitDescriptor(displayName, supertraits.values.map(_.displayName).toList)
   }
 
   override def toString = s"DTrait($fullName)"

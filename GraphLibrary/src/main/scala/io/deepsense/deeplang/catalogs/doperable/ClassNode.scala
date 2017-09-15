@@ -21,9 +21,9 @@ private[doperable] class ClassNode(protected override val javaType: Class[_]) ex
     if (parentType <:< upperBoundType) Some(parentJavaType) else None
   }
 
-  private[doperable] override def info: TypeInfo = {
+  private[doperable] override def descriptor: TypeDescriptor = {
     val parentName = if (parent.isDefined) Some(parent.get.displayName) else None
-    ClassInfo(displayName, parentName, supertraits.values.map(_.displayName).toList)
+    ClassDescriptor(displayName, parentName, supertraits.values.map(_.displayName).toList)
   }
 
   override def toString: String = s"DClass($fullName)"
