@@ -391,7 +391,8 @@ class WorkflowExecutorActorSpec
       Execution(StatefulGraph(
         workflow.graph,
         workflow.graph.nodes.map(_.id -> completedState()).toMap,
-        None))
+        None)),
+      new DefaultStateInferrer(wea.underlyingActor.executionContext, workflow.id)
     )
     wea.underlyingActor.statefulWorkflow = statefulWorkflow
     wea.underlyingActor.context.become(wea.underlyingActor.ready())

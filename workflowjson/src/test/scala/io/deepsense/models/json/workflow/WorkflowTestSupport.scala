@@ -97,6 +97,7 @@ trait WorkflowTestSupport
     when(knowledge.filterTypes(any())).thenReturn(knowledge)
     when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
       (Vector.fill(outArity)(knowledge), InferenceWarnings.empty))
+    when(dOperation.sameAs(isA(classOf[DOperation]))).thenReturn(true)
     dOperation
   }
 

@@ -168,7 +168,7 @@ case class IdleExecution(
     } else {
       val wholeGraph = StatefulGraph(newStructure, noMissingStates, None)
 
-      val newNodes = newStructure.nodes.diff(graph.directedGraph.nodes).map(_.id)
+      val newNodes = newStructure.nodes.map(_.id).diff(graph.directedGraph.nodes.map(_.id))
 
       val nodesToExecute = substructure.nodes.filter { case Node(id, _) =>
         nodes.contains(id) || !wholeGraph.states(id).isCompleted

@@ -32,7 +32,8 @@ class StatefulWorkflow(
   val workflowId: Workflow.Id,
   val metadata: WorkflowMetadata,
   private val thirdPartyData: JsObject,
-  private val startingExecution: Execution) extends Logging {
+  private val startingExecution: Execution,
+  private val stateInferrer: StateInferrer) extends Logging {
 
   private var execution: Execution = startingExecution
   private var additionalData = thirdPartyData
@@ -107,8 +108,7 @@ class StatefulWorkflow(
   }
 
   def inferState(): InferredState = {
-    val knowledge = execution.inferKnowledge(executionContext.inferContext)
-    InferredState(workflowId, knowledge, executionReport.statesOnly)
+    stateInferrer.inferState(execution)
   }
 
   private def getChangedNodes(startingPointExecution: Execution): Map[Id, NodeState] = {
@@ -138,6 +138,24 @@ object StatefulWorkflow extends Logging {
       workflow.id,
       workflow.metadata,
       workflow.thirdPartyData,
-      execution)
+      execution,
+      new DefaultStateInferrer(executionContext, workflow.id)
+    )
+  }
+}
+
+trait StateInferrer {
+
+  def inferState(execution: Execution): InferredState
+}
+
+class DefaultStateInferrer(
+    executionContext: CommonExecutionContext,
+    workflowId: Workflow.Id)
+  extends StateInferrer {
+
+  override def inferState(execution: Execution): InferredState = {
+    val knowledge = execution.inferKnowledge(executionContext.inferContext)
+    InferredState(workflowId, knowledge, execution.executionReport.statesOnly)
   }
 }

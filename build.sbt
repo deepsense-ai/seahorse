@@ -38,7 +38,8 @@ lazy val workflowexecutor       = project dependsOn (
   deeplang % "test->test",
   deeplang % "test->it",
   models,
-  workflowjson)
+  workflowjson,
+  workflowjson % "test -> test")
 
 // Sequentially perform integration tests
 addCommandAlias("ds-it",
