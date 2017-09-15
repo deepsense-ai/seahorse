@@ -7,22 +7,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/decomposeDatetime/input.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/decomposeDatetime/input.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+            }
           }
         }
       }

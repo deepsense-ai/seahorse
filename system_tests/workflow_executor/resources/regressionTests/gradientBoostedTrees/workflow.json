@@ -60,22 +60,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/training.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/training.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+            }
           }
         }
       }
@@ -126,22 +130,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/test.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/test.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+            }
           }
         }
       }
@@ -152,17 +160,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/output.csv"
           }
-        },
-        "output file": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/output.csv"
+        }
       }
     }, {
       "id": "ecdcf75a-25d5-c393-4592-068a9e70b5ec",

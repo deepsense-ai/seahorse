@@ -7,21 +7,20 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocalJson/input.json",
-        "format": {
-          "JSON": {
-            "categorical columns": {
-              "selections": [{
-                "type": "columnList",
-                "values": ["col_a"]
-              }],
-              "excluding": false
+        "data storage type": {
+          "FILE": {
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocalJson/input.json",
+            "format": {
+              "JSON": {
+                "categorical columns": {
+                  "selections": [{
+                    "type": "columnList",
+                    "values": ["col_a"]
+                  }],
+                  "excluding": false
+                }
+              }
             }
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
           }
         }
       }
@@ -32,12 +31,16 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "JSON": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "JSON": {
 
+              }
+            },
+            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutputJson/output.json"
           }
-        },
-        "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutputJson/output.json"
+        }
       }
     }],
     "connections": [{

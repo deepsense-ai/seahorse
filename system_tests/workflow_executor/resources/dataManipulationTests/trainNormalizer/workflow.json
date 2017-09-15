@@ -16,22 +16,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame1.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame1.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+            }
           }
         }
       }
@@ -42,17 +46,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "hdfs://spark-cluster-1/system_tests/trainNormalizer/output1.csv"
           }
-        },
-        "output file": "hdfs://spark-cluster-1/system_tests/trainNormalizer/output1.csv"
+        }
       }
     }, {
       "id": "7123550a-656c-33cd-6bfd-a2f6676951f3",
@@ -61,17 +69,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "hdfs://spark-cluster-1/system_tests/trainNormalizer/output2.csv"
           }
-        },
-        "output file": "hdfs://spark-cluster-1/system_tests/trainNormalizer/output2.csv"
+        }
       }
     }, {
       "id": "8223aac0-024d-3a10-5382-7dd5667fe730",
@@ -95,22 +107,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame2.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame2.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+            }
           }
         }
       }

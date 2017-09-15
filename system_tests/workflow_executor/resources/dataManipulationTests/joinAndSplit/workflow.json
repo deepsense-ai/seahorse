@@ -7,22 +7,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/joinAndSplit/frame2.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/joinAndSplit/frame2.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+            }
           }
         }
       }
@@ -33,17 +37,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
           }
-        },
-        "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
+        }
       }
     }, {
       "id": "94d963d6-92e7-64b9-05e8-15661774d1bb",
@@ -91,17 +99,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
           }
-        },
-        "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
+        }
       }
     }, {
       "id": "c21973ce-4bea-ba68-9d92-d4045d11dda2",
@@ -110,22 +122,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/joinAndSplit/frame1.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/joinAndSplit/frame1.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+            }
           }
         }
       }

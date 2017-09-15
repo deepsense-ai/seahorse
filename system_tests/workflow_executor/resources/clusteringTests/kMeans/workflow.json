@@ -16,20 +16,24 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/kMeans/input.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {}
-            },
-            "names included": true,
-            "convert to boolean": false,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/kMeans/input.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {}
+                },
+                "names included": true,
+                "convert to boolean": false,
+                "categorical columns": null
+              }
+            }
           }
         }
       }
@@ -72,15 +76,19 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {}
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {}
+                },
+                "write header": true
+              }
             },
-            "write header": true
+            "output file": "hdfs://spark-cluster-1/system_tests/kMeans/output.csv"
           }
-        },
-        "output file": "hdfs://spark-cluster-1/system_tests/kMeans/output.csv"
+        }
       }
     }],
     "connections": [{

@@ -7,15 +7,14 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocalParquet/input.parquet",
-        "format": {
-          "PARQUET": {
+        "data storage type": {
+          "FILE": {
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocalParquet/input.parquet",
+            "format": {
+              "PARQUET": {
 
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
+              }
+            }
           }
         }
       }
@@ -26,12 +25,16 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "PARQUET": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "PARQUET": {
 
+              }
+            },
+            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutputParquet/output.parquet"
           }
-        },
-        "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutputParquet/output.parquet"
+        }
       }
     }],
     "connections": [{

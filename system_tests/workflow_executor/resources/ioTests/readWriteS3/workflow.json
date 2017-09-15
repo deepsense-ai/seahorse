@@ -7,22 +7,26 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/ioTests/input.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/ioTests/input.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Custom line separator": {
+                    "Custom line separator": ";"
+                  }
+                },
+                "separator": {
+                  "Comma": {
 
+                  }
+                },
+                "names included": true,
+                "categorical columns": null,
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Custom line separator": {
-            "Custom line separator": ";"
+            }
           }
         }
       }
@@ -33,17 +37,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/ioTests/output.csv"
           }
-        },
-        "output file": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/ioTests/output.csv"
+        }
       }
     }],
     "connections": [{

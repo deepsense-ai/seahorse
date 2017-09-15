@@ -35,12 +35,14 @@ fi
 if [ "$1" == "workflow_executor" ]; then
     find . -not -path "./ds_studio/*" -not -name "ds_studio" -not -path "./test-output/*"\
         -not -name "test-output" -not -name "publish.sh" -not -name "*.zip" -not -name "\.*"\
-        -not -name "*.pyc" -not -name "*.jar" -not -name "*.html" -not -name "*.xml"\
+        -not -name "*.pyc" -not -name "*.html" -not -name "*.xml"\
+        -not -name "workflowexecutor*.jar"\
         | zip -@ $ARTIFACT_FILE_PATH
 elif [ "$1" == "ds_studio" ]; then
     find . -not -path "./workflow_executor/*" -not -name "workflow_executor" -not -path "./test-output/*"\
         -not -name "test-output" -not -name "publish.sh" -not -name "*.zip" -not -name "\.*"\
-        -not -name "*.pyc" -not -name "*.jar" -not -name "*.html" -not -name "*.xml"\
+        -not -name "*.pyc" -not -name "*.html" -not -name "*.xml"\
+        -not -name "workflowexecutor*.jar"\
         | zip -@ $ARTIFACT_FILE_PATH
 else
     usage

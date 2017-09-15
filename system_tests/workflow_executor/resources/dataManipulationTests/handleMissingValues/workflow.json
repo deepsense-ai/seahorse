@@ -111,17 +111,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "hdfs://spark-cluster-1/system_tests/handleMissingValues/output.csv"
           }
-        },
-        "output file": "hdfs://spark-cluster-1/system_tests/handleMissingValues/output.csv"
+        }
       }
     }, {
       "id": "446a6ad3-ab7c-b4ab-92a7-df76710c18a2",
@@ -130,28 +134,32 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/handleMissingValues/input.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/handleMissingValues/input.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": {
+                  "selections": [{
+                    "type": "columnList",
+                    "values": ["col5"]
+                  }],
+                  "excluding": false
+                },
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": {
-              "selections": [{
-                "type": "columnList",
-                "values": ["col5"]
-              }],
-              "excluding": false
             }
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
           }
         }
       }

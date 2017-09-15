@@ -7,28 +7,32 @@
         "name": "Read DataFrame"
       },
       "parameters": {
-        "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocal/input.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocal/input.csv",
+            "format": {
+              "CSV": {
+                "line separator": {
+                  "Unix line separator": {
 
+                  }
+                },
+                "separator": {
+                  "Comma": {
+
+                  }
+                },
+                "names included": true,
+                "categorical columns": {
+                  "selections": [{
+                    "type": "columnList",
+                    "values": ["col_a"]
+                  }],
+                  "excluding": false
+                },
+                "convert to boolean": true
               }
-            },
-            "names included": true,
-            "convert to boolean": true,
-            "categorical columns": {
-              "selections": [{
-                "type": "columnList",
-                "values": ["col_a"]
-              }],
-              "excluding": false
             }
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
           }
         }
       }
@@ -39,17 +43,21 @@
         "name": "Write DataFrame"
       },
       "parameters": {
-        "format": {
-          "CSV": {
-            "column separator": {
-              "Comma": {
+        "data storage type": {
+          "FILE": {
+            "format": {
+              "CSV": {
+                "column separator": {
+                  "Comma": {
 
+                  }
+                },
+                "write header": true
               }
             },
-            "write header": true
+            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutput/output.csv"
           }
-        },
-        "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutput/output.csv"
+        }
       }
     }],
     "connections": [{
