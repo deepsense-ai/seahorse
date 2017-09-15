@@ -157,18 +157,19 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
   });
 
   $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    var operation = that.getOperationById(args.classId);
-    var moveX = args.dropEvent.x - args.target[0].getBoundingClientRect().left;
-    var moveY = args.dropEvent.y - args.target[0].getBoundingClientRect().top;
-    var offsetX = -100;
-    var offsetY = -50;
-    var node = internal.experiment.createNode(
-      that.generateUUID(),
-      operation,
-      {},
-      moveX + offsetX,
-      moveY + offsetY
-    );
+    let operation = that.getOperationById(args.classId),
+        boxPosition = args.target[0].getBoundingClientRect(),
+        positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0,
+        positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,
+        offsetX = 100,
+        offsetY = 30,
+        node = internal.experiment.createNode(
+          that.generateUUID(),
+          operation,
+          {},
+          positionX > offsetX ? positionX - offsetX : 0,
+          positionY > offsetY ? positionY - offsetY : 0
+        );
     internal.experiment.addNode(node);
     DrawingService.repaintEverything();
     $rootScope.$apply();
