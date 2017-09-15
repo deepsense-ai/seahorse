@@ -67,6 +67,9 @@ case class Experiment(
   def markFailed(message: String): Experiment = copy(state = State.failed(message))
 
   def isRunning: Boolean = state.status == Experiment.Status.Running
+  def isFailed: Boolean = state.status == Experiment.Status.Failed
+  def isAborted: Boolean = state.status == Experiment.Status.Aborted
+  def isDraft: Boolean = state.status == Experiment.Status.Draft
 }
 
 object Experiment {

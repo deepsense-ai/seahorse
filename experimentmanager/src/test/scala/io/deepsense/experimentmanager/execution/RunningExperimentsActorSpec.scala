@@ -3,6 +3,10 @@
  */
 package io.deepsense.experimentmanager.execution
 
+import java.util.UUID
+
+import io.deepsense.deeplang.doperations.LoadDataFrame
+
 import scala.concurrent.duration._
 
 import akka.actor.Props
@@ -14,7 +18,6 @@ import org.scalatest.{BeforeAndAfter, WordSpecLike}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.DOperation
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.{GraphExecutorClient, SimpleGraphExecutionIntegSuiteEntities}
@@ -28,141 +31,233 @@ class RunningExperimentsActorSpec
   with Eventually
   with ScaledTimeSpans {
 
-  val tenantIdA = "A"
   val created = DateTimeConverter.now
   val updated = created.plusHours(2)
-  val experiment = Experiment(
-    Experiment.Id.randomId,
-    tenantIdA,
-    "Experiment",
-    Graph(),
-    created,
-    updated)
-  val updatedGraph = Graph()
-  val launched = experiment.markRunning
-  val mockClientFactory = mock[GraphExecutorClientFactory]
+  type TestCode = (TestActorRef[RunningExperimentsActor], TestProbe,
+    RunningExperimentsActor, GraphExecutorClient) => Any
 
-  var runningExperimentActorRef: TestActorRef[RunningExperimentsActor] = _
-  var actor: RunningExperimentsActor = _
-  var probe: TestProbe = TestProbe()
-  var graphExecutorClient: GraphExecutorClient = _
+  val emptyExperiment = Experiment(Experiment.Id.randomId,
+    "B", "Experiment", Graph(), created, updated)
+  val failedExperiment = Experiment(Experiment.Id.randomId, "B", "Experiment", Graph(nodes =
+    Set(Node(Node.Id.randomId, LoadDataFrame(UUID.randomUUID().toString)).markFailed)),
+    created, updated)
+  val experiment = Experiment(Experiment.Id.randomId, "B", "Experiment",
+    Graph(nodes = Set(Node(Node.Id.randomId, LoadDataFrame(UUID.randomUUID().toString)))),
+    created, updated)
+  val runningExperiment = Experiment(Experiment.Id.randomId, "B", "Experiment",
+    Graph(nodes =
+      Set(Node(Node.Id.randomId, LoadDataFrame(UUID.randomUUID().toString)).markQueued)),
+    created, updated)
 
-  before {
-    graphExecutorClient = createMockGraphExecutorClient(updatedGraph)
-    runningExperimentActorRef = createTestedActor(3L, 15000L)
-    actor = runningExperimentActorRef.underlyingActor
-    probe = TestProbe()
+  private def withExperiment(experiment: Experiment)(testCode: TestCode): Unit = {
+    val mockClientFactory = mock[GraphExecutorClientFactory]
+    val graphExecutorClient = createMockGraphExecutorClient(experiment.graph)
+    val actorRef = createTestedActor(3L, 15000L, mockClientFactory)
+    val actor = actorRef.underlyingActor
+    val probe = TestProbe()
     when(mockClientFactory.create()).thenReturn(graphExecutorClient)
+    testCode(actorRef, probe, actor, graphExecutorClient)
   }
 
-  private def withLaunchedExperiments(experiments: Set[Experiment])(testCode: => Any): Unit = {
-    withLaunchedExperiments(runningExperimentActorRef, experiments)(testCode)
-  }
 
-  private def withLaunchedExperiments(
-      ar: TestActorRef[RunningExperimentsActor],
-      experiments: Set[Experiment])(testCode: => Any): Unit = {
-    experiments.foreach(e => probe.send(ar, Launch(e)))
-    probe.receiveN(experiments.size)
-    testCode
+  private def withLaunchedExperiments(experimentsToLaunch: Set[Experiment],
+      experimentForGEC: Experiment = emptyExperiment)(testCode: TestCode): Unit = {
+    withExperiment(experimentForGEC) {
+      (actorRef, probe, actor, gec) => {
+        experimentsToLaunch.foreach(e => probe.send(actorRef, Launch(e)))
+        probe.receiveN(experimentsToLaunch.size)
+        testCode(actorRef, probe, actor, gec)
+      }
+    }
   }
 
   "RunningExperimentsActor" should {
+
     "launch experiment" when {
-      "received Launch" in {
-        probe.send(runningExperimentActorRef, Launch(experiment))
-        probe.expectMsg(Launched(launched))
-        eventually {
-          verify(graphExecutorClient).sendExperiment(launched)
-          actor.experiments should contain key experiment.id
-        }
-      }
-    }
-    "should mark experiment as failed" when {
-      "launch fails" in {
-        pending
-      }
-    }
-    "answer with Status(Some(...))" when {
-      "received GetStatus and the experiment was queued" in {
-        probe.send(runningExperimentActorRef, Launch(experiment))
-        probe.expectMsgAnyClassOf(classOf[Launched])
-        probe.send(runningExperimentActorRef, GetStatus(experiment.id))
-        probe.expectMsg(Status(Some(launched)))
-      }
-    }
-    "answer with Status(None)" when {
-      "received GetStatus but the experiment was not queued" in {
-        probe.send(runningExperimentActorRef, GetStatus(experiment.id))
-        probe.expectMsg(Status(None))
-      }
-    }
-    "abort experiment" when {
-      "received Abort" in {
-        val testedActor = createTestedActor(10000, 10000)
-        withLaunchedExperiments(testedActor,Set(experiment)) {
-          val abortedExperiment = experiment.markAborted
-          probe.send(testedActor, Abort(experiment.id))
-          probe.expectMsg(Status(Some(abortedExperiment)))
-          probe.send(testedActor, GetStatus(experiment.id))
-          probe.expectMsg(Status(Some(abortedExperiment)))
-          eventually {
-            verify(graphExecutorClient).terminateExecution()
+      "received Launch on empty experiment" in {
+        withExperiment(emptyExperiment) {
+          (actorRef, probe, actor, gec) => {
+            probe.send(actorRef, Launch(emptyExperiment))
+            probe.expectMsg(Launched(emptyExperiment.markRunning))
+            eventually {
+              actor.experiments should contain key emptyExperiment.id
+              verify(gec).sendExperiment(emptyExperiment.markRunning)
+              probe.send(actorRef, GetStatus(emptyExperiment.id))
+              probe.expectMsg(Status(Some(emptyExperiment.markCompleted)))
+            }
           }
         }
       }
     }
+
+    "launch experiment" when {
+      "received launch on not empty experiment" in {
+        withExperiment(runningExperiment) {
+          (actorRef, probe, actor, gec) => {
+            probe.send(actorRef, Launch(runningExperiment))
+            probe.expectMsg(Launched(runningExperiment.markRunning))
+            eventually {
+              actor.experiments should contain key runningExperiment.id
+              verify(gec).sendExperiment(runningExperiment.markRunning)
+              probe.send(actorRef, GetStatus(runningExperiment.id))
+              probe.expectMsg(Status(Some(runningExperiment.markRunning)))
+            }
+          }
+        }
+      }
+    }
+
+    "should mark experiment as failed" when {
+      "Launch fails" in {
+        withExperiment(experiment) {
+          (actorRef, probe, actor, gec) => {
+            when(gec.waitForSpawn(anyInt()))
+              .thenThrow(new RuntimeException("Launching failed"))
+            probe.send(actorRef, Launch(experiment))
+            probe.expectMsg(Launched(experiment.markRunning))
+            eventually {
+              actor.experiments(experiment.id)._1.state.status shouldBe Experiment.Status.Failed
+              probe.send(actorRef, GetStatus(experiment.id))
+              val msg = probe.expectMsgClass(classOf[Status])
+              msg.experiment.get.isFailed shouldBe true
+            }
+          }
+        }
+      }
+    }
+
+    "answer with Status(None)" when {
+      "received GetStatus but the experiment was not launched" in {
+        withLaunchedExperiments(Set()) {
+          (actorRef, probe, actor, gec) => {
+            probe.send(actorRef, GetStatus(emptyExperiment.id))
+            probe.expectMsg(Status(None))
+          }
+        }
+      }
+    }
+
+    "abort experiment" when {
+      "received Abort on launched experiment" in {
+        withExperiment(experiment) {
+          (actorRef, probe, actor, gec) => {
+            probe.send(actorRef, Launch(experiment))
+            probe.send(actorRef, Abort(experiment.id))
+            eventually {
+              probe.send(actorRef, GetStatus(experiment.id))
+              val msg = probe.expectMsgClass(classOf[Status])
+              msg.experiment.get.isAborted shouldBe true
+              verify(gec).terminateExecution()
+            }
+          }
+        }
+      }
+    }
+
+    // TODO DS - 769 After aborting failed experiment, status shouldn 't change.
+    "abort experiment" when {
+      "received Abort on failed experiment" ignore {
+        withExperiment(failedExperiment) {
+          (actorRef, probe, actor, gec) => {
+            probe.send(actorRef, Launch(failedExperiment))
+            probe.send(actorRef, Abort(failedExperiment.id))
+            eventually {
+              probe.send(actorRef, GetStatus(failedExperiment.id))
+              val msg = probe.expectMsgClass(classOf[Status])
+              msg.experiment.get.isFailed shouldBe true
+            }
+          }
+        }
+      }
+    }
+
+    "abort experiment" when {
+      "received Abort on inDraft experiment" in {
+        withExperiment(experiment) {
+          (actorRef, probe, actor, gec) => {
+            probe.send(actorRef, Abort(experiment.id))
+            eventually {
+              probe.send(actorRef, GetStatus(experiment.id))
+              probe.expectMsg(Status(None))
+            }
+          }
+        }
+      }
+    }
+
     "list experiments" when {
-      val experiment1 = experiment.copy(id = Experiment.Id.randomId, description = "1")
-      val experiment2 = experiment.copy(id = Experiment.Id.randomId, description = "2")
-      val experiment3 = experiment.copy(id = Experiment.Id.randomId, description = "3")
-      val tenantIdOther = tenantIdA + "other"
-      val experiment4 = experiment.copy(
-        id = Experiment.Id.randomId,
-        tenantId = tenantIdOther,
+      val updatedGraph = Graph()
+      val tenantId = emptyExperiment.tenantId
+      val experiment1 = emptyExperiment.copy(id = UUID.randomUUID(), description = "1")
+      val experiment2 = emptyExperiment.copy(id = UUID.randomUUID(), description = "2")
+      val experiment3 = emptyExperiment.copy(id = UUID.randomUUID(), description = "3")
+      val otherTenantId = tenantId + "other"
+      val experiment4 = emptyExperiment.copy(
+        id = UUID.randomUUID(),
+        tenantId = otherTenantId,
         description = "4")
       val experiments = Set(experiment1, experiment2, experiment3, experiment4)
       val expectedExperimentsOfTenant1 =
-        Map(tenantIdA ->
+        Map(tenantId ->
           Set(experiment1.withGraph(updatedGraph),
             experiment2.withGraph(updatedGraph),
             experiment3.withGraph(updatedGraph)))
       val expectedExperimentsOfTenant2 =
-        Map(experiment4.tenantId -> Set(experiment4.withGraph(updatedGraph)))
+        Map(otherTenantId -> Set(experiment4.withGraph(updatedGraph)))
 
-      "received ListExperiments with tenantId and tenant has experiments" in {
-        pending
+      "received ListExperiments with id of tenant that has experiments" in {
+        withLaunchedExperiments(experiments) {
+          (actorRef, probe, actor, gec) => {
+            eventually {
+              probe.send(actorRef, ExperimentsByTenant(Some(experiment1.tenantId)))
+              val receivedExperiments = probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
+              receivedExperiments.experimentsByTenantId should have size 1
+              receivedExperiments.experimentsByTenantId(experiment1.tenantId) should
+                contain theSameElementsAs expectedExperimentsOfTenant1(experiment1.tenantId)
+            }
+          }
+        }
       }
+
       "received ListExperiments without tenantId" in {
-        pending
+        withLaunchedExperiments(experiments) {
+          (actorRef, probe, actor, gec) => {
+            eventually {
+              probe.send(actorRef, ExperimentsByTenant(None))
+              val receivedExperiments = probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
+              receivedExperiments.experimentsByTenantId should have size 2
+              receivedExperiments.experimentsByTenantId(tenantId) should
+                contain theSameElementsAs expectedExperimentsOfTenant1(tenantId)
+              receivedExperiments.experimentsByTenantId(otherTenantId) should
+                contain theSameElementsAs expectedExperimentsOfTenant2(otherTenantId)
+            }
+          }
+        }
       }
     }
+
     "answer with empty map" when {
-      "received ListExperiments with tenantId and tenant has no experiments" in {
-        probe.send(runningExperimentActorRef, ExperimentsByTenant(Some("tenantWithNoExperiments")))
-        probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
-          .experimentsByTenantId shouldBe Map.empty
+      "received ListExperiments with id of tenant that has no experiments" in {
+        withExperiment(emptyExperiment) {
+          (actorRef, probe, actor, gec) => {
+            probe.send(actorRef, ExperimentsByTenant(Some("tenantWithNoExperiments")))
+            probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
+              .experimentsByTenantId shouldBe Map.empty
+          }
+        }
       }
     }
+
     "update experiments' statuses when they are running" in {
-      val mockOperation = mock[DOperation]
-      when(mockOperation.inArity).thenReturn(1)
-      when(mockOperation.outArity).thenReturn(1)
-      when(mockOperation.id).thenReturn(DOperation.Id.randomId)
-      val mockNode = Node(Node.Id.randomId, mockOperation)
-      val experimentWithNode = Experiment(
-        Experiment.Id.randomId,
-        "A",
-        "Experiment",
-        Graph(Set(mockNode)),
-        created,
-        updated)
-      val expectedExperiment = experimentWithNode.withGraph(updatedGraph)
-      withLaunchedExperiments(Set(experimentWithNode)) {
-        eventually (timeout(6.seconds), interval(1.second)) {
-          probe.send(runningExperimentActorRef, GetStatus(experimentWithNode.id))
-          val Status(Some(exp)) = probe.expectMsgType[Status]
-          exp shouldBe expectedExperiment
+      val experimentWithNode = experiment
+      val expectedExperiment = experimentWithNode.withGraph(Graph())
+      withLaunchedExperiments(Set(experimentWithNode), expectedExperiment) {
+        (actorRef, probe, actor, gec) => {
+          eventually {
+            probe.send(actorRef, GetStatus(experimentWithNode.id))
+            val Status(Some(exp)) = probe.expectMsgType[Status]
+            exp shouldBe expectedExperiment
+          }
         }
       }
     }
@@ -178,8 +273,9 @@ class RunningExperimentsActorSpec
   }
 
   private def createTestedActor(
-      refreshIntervalMillis: Long,
-      refreshTimeoutMillis: Long): TestActorRef[RunningExperimentsActor] =
+     refreshIntervalMillis: Long,
+     refreshTimeoutMillis: Long,
+     mockClientFactory: GraphExecutorClientFactory): TestActorRef[RunningExperimentsActor] =
     TestActorRef(Props(new RunningExperimentsActor(
       SimpleGraphExecutionIntegSuiteEntities.Name,
       5000L,
