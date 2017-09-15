@@ -9,8 +9,6 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const NODE_ENV = process.env.NODE_ENV || "production";
 
 module.exports = function (_path) {
-  const rootAssetPath = _path + 'client';
-
   const webpackConfig = {
     entry: {
       libs: _path + '/client/app/libs.js', //TODO: remove
@@ -141,6 +139,7 @@ module.exports = function (_path) {
         minChunks: 2
       }),
       new HtmlWebpackPlugin({
+        favicon: path.join(_path, 'client', 'favicon.ico'),
         filename: 'index.html',
         template: path.join(_path, 'client', 'index.html'),
         gitHash: JSON.stringify(new GitRevisionPlugin().commithash())
