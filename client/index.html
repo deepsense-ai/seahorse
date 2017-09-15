@@ -9,33 +9,10 @@
 </head>
 <body>
   <div id="wrapper">
-    <nav class="navbar-default navbar-static-side" role="navigation">
-      <div class="sidebar-collapse">
-        <ul class="nav" id="side-menu">
-          <li class="nav-header">
-            <div class="logo-image">
-              <a ui-sref="lab.home"><img src="img/logo.png" class="logo" alt="deepsense.io" title=""></a>
-            </div>
-            <div class="logo-element">ds</div>
-          </li>
-
-          <li><a ui-sref="lab.experiments">
-            <i class="fa fa-cube"></i>
-            <span class="nav-label">Experiments</span>
-          </a></li>
-          <li><a ui-sref="lab.datasets">
-            <i class="fa fa-database"></i>
-            <span class="nav-label">Datasets</span>
-          </a></li>
-        </ul>
-      </div>
-    </nav>
-
     <div id="page-wrapper" class="gray-bg">
       <div class="row border-bottom" ng-controller="NavigationController as navigationController">
         <navigation-bar title="navigationController.getTitle()"></navigation-bar>
       </div>
-
       <div class="wrapper wrapper-content" ng-cloak>
         <div ui-view="errorView"></div>
 
