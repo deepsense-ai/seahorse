@@ -56,7 +56,7 @@ module.exports = function (_path) {
         test: /\.html$/,
         loaders: [
           'ngtemplate-loader?relativeTo=' + _path,
-          'html-loader?attrs[]=img:src&attrs[]=img:data-src'
+          'html?-minimize'
         ]
       }, {
         test: /\.css$/,
