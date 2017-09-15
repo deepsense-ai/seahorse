@@ -24,7 +24,7 @@ if (args.host && args.token) {
 // TODO: remove after removing deploy mock
 let Q = require('q');
 apiConfig.resources.models = {
-  'deployURL': 'http://localhost:3000/webservice/',
+  'deployURL': 'http://localhost:3000/webservice/regression/',
   'handler': (data, request) => {
     let deferred = Q.defer();
     data.link = apiConfig.resources.models.deployURL + data.id;
