@@ -100,7 +100,7 @@ Detailed information about command line parameters can be obtained by executing 
 |``-d ID``, ``--download-workflow ID``       | Download workflow; if specified, workflow with passed ID will be downloaded from Seahorse Editor |
 |``-o DIR``, ``--output-directory DIR``      | Output directory path; directory will be created if it does not exists; execution fails if any file is to be overwritten |
 | ``-u``, ``--upload-report``                | Upload execution report; if specified, POST request with execution report will be sent after completing workflow execution |
-| ``-e HOST``, ``--editor-host HOST``        | Hostname or IP of Seahorse Editor (optional)  |
+| ``-a ADDRESS``, ``--api-address ADDRESS``  | Address of Seahorse Editor API (optional)  |
 
 
 
