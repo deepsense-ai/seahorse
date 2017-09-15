@@ -15,6 +15,8 @@
 ## Building Site
 
 * jekyll build
+# OR
+* jekyll build --watch # Refresh after file changes
 
 ## Serving
 
