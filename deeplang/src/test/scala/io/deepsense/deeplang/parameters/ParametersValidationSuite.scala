@@ -30,8 +30,8 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val param1 = NumericParameter("example1", None, RangeValidator(3, 4))
     val param2 = StringParameter("example2", Some("default"), RegexValidator("abc".r))
 
-    param1.value = Some(3.5)
-    param2.value = Some("abc")
+    param1.value = 3.5
+    param2.value = "abc"
 
     val parametersSchema = ParametersSchema("x" -> param1, "y" -> param2)
     parametersSchema.validate
@@ -40,7 +40,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   test("Validation of invalid parameter using range validator should throw an exception") {
     val exception = intercept[OutOfRangeException] {
       val param = NumericParameter("description", None, RangeValidator(3, 4))
-      param.value = Some(4.1)
+      param.value = 4.1
 
       val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
@@ -52,7 +52,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val exception = intercept[OutOfRangeWithStepException] {
       val validator = RangeValidator(3, 5.4, step = Some(1.2))
       val param = NumericParameter("description", None, validator)
-      param.value = Some(4.1)
+      param.value = 4.1
 
       val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
@@ -88,8 +88,8 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   }
 
   test("Validation empty parameter with default value should not throw an exception") {
-    val default = Option("someDefault")
-    val param = StringParameter("description", default, new AcceptAllRegexValidator)
+    val default = "someDefault"
+    val param = StringParameter("description", Some(default), new AcceptAllRegexValidator)
     val parametersSchema = ParametersSchema("x" -> param)
     parametersSchema.validate
     assert(param.value == default)
@@ -100,7 +100,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val exception = intercept[MatchException] {
       val validator = RegexValidator(regex)
       val param = StringParameter("description", None, validator)
-      param.value = Some("abc")
+      param.value = "abc"
 
       val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
@@ -112,7 +112,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val mockSchema = mock[ParametersSchema]
     val possibleChoices = ListMap("onlyChoice" -> mockSchema)
     val choice = ChoiceParameter("choice", None, possibleChoices)
-    choice.value = Some("onlyChoice")
+    choice.value = "onlyChoice"
     choice.validate("choice")
     verify(mockSchema).validate
   }
@@ -131,7 +131,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   test("Validation of parameters sequence should validate inner schemas") {
     val mockSchema = mock[ParametersSchema]
     val multiplicator = ParametersSequence("description", mockSchema)
-    multiplicator.value = Some(Vector(mockSchema, mockSchema))
+    multiplicator.value = Vector(mockSchema, mockSchema)
     multiplicator.validate("someParamName")
     verify(mockSchema, times(2)).validate
   }
@@ -140,7 +140,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val selections = Vector.fill(3)({mock[ColumnSelection]})
     val selectorParameter = ColumnSelectorParameter("description", 0)
     val multipleColumnSelection = MultipleColumnSelection(selections, false)
-    selectorParameter.value = Some(multipleColumnSelection)
+    selectorParameter.value = multipleColumnSelection
     selectorParameter.validate("someParamName")
     selections.foreach {
       case selection => verify(selection).validate

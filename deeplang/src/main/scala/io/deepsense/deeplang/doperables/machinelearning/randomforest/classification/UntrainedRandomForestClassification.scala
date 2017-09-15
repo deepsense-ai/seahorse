@@ -21,7 +21,6 @@ import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
-import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
 import io.deepsense.deeplang.doperables._
@@ -55,7 +54,7 @@ case class UntrainedRandomForestClassification(
 
   override protected def actualInference(
       context: InferContext)(
-      parameters: Parameters)(
+      parameters: TrainableParameters)(
       dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
     (DKnowledge(new TrainedRandomForestClassification()), InferenceWarnings.empty)
 

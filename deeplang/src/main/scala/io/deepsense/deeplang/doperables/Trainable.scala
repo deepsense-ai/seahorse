@@ -19,19 +19,17 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 
-import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.entitystorage.UniqueFilenameUtil
 
 trait Trainable extends DOperable {
-  val train: DMethod1To1[Trainable.Parameters, DataFrame, Scorable] =
-    new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
+  val train: DMethod1To1[TrainableParameters, DataFrame, Scorable] =
+    new DMethod1To1[TrainableParameters, DataFrame, Scorable] {
 
       override def apply(context: ExecutionContext)
-          (parameters: Parameters)
+          (parameters: TrainableParameters)
           (dataFrame: DataFrame): Scorable = {
 
         val scorable = runTraining(context, parameters, dataFrame)(actualTraining)
@@ -40,7 +38,7 @@ trait Trainable extends DOperable {
 
       override def infer(
           context: InferContext)(
-          parameters: Trainable.Parameters)(
+          parameters: TrainableParameters)(
           dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) = {
 
         actualInference(context)(parameters)(dataFrame)
@@ -50,7 +48,7 @@ trait Trainable extends DOperable {
   protected type TrainScorable = TrainingParameters => Scorable
 
   protected type RunTraining = (
-    ExecutionContext, Trainable.Parameters, DataFrame) => (TrainScorable => Scorable)
+    ExecutionContext, TrainableParameters, DataFrame) => (TrainScorable => Scorable)
 
   /**
    * This is the main method of train()
@@ -104,7 +102,7 @@ trait Trainable extends DOperable {
 
   protected def actualInference(
       context: InferContext)(
-      parameters: Trainable.Parameters)(
+      parameters: TrainableParameters)(
       dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings)
 
   /**
@@ -136,23 +134,3 @@ trait Trainable extends DOperable {
     target: String)
 }
 
-object Trainable {
-
-  case class Parameters(
-      featureColumns: Option[MultipleColumnSelection] = None,
-      targetColumn: Option[SingleColumnSelection] = None) {
-
-    def featureColumnNames(dataframe: DataFrame): Seq[String] =
-      dataframe.getColumnNames(featureColumns.get)
-
-    def targetColumnName(dataframe: DataFrame): String = dataframe.getColumnName(targetColumn.get)
-
-    /**
-     * Names of columns w.r.t. certain dataframe.
-     * @param dataframe DataFrame that we want to use.
-     * @return A tuple in form (sequence of feature column names, target column name)
-     */
-    def columnNames(dataframe: DataFrame): (Seq[String], String) =
-      (featureColumnNames(dataframe), targetColumnName(dataframe))
-  }
-}

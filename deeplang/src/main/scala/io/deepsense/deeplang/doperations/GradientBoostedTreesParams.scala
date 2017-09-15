@@ -60,19 +60,19 @@ trait GradientBoostedTreesParams {
                     impurity: String,
                     maxDepth: Int,
                     maxBins: Int): Unit = {
-    numIterationsParameter.value = Some(numIterations)
-    lossParameter.value = Some(loss)
-    impurityParameter.value = Some(impurity)
-    maxDepthParameter.value = Some(maxDepth)
-    maxBinsParameter.value = Some(maxBins)
+    numIterationsParameter.value = numIterations
+    lossParameter.value = loss
+    impurityParameter.value = impurity
+    maxDepthParameter.value = maxDepth
+    maxBinsParameter.value = maxBins
   }
 
   def modelParameters: GradientBoostedTreesParameters = {
-    val numIterations = numIterationsParameter.value.get
-    val loss = lossParameter.value.get
-    val impurity = impurityParameter.value.get
-    val maxDepth = maxDepthParameter.value.get
-    val maxBins = maxBinsParameter.value.get
+    val numIterations = numIterationsParameter.value
+    val loss = lossParameter.value
+    val impurity = impurityParameter.value
+    val maxDepth = maxDepthParameter.value
+    val maxBins = maxBinsParameter.value
 
     GradientBoostedTreesParameters(
       numIterations.toInt, loss, impurity, maxDepth.toInt, maxBins.toInt)

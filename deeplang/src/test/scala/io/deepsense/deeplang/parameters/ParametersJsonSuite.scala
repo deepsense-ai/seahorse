@@ -113,7 +113,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Json representation of value of not set parameter value is null") {
     val notFilledMockParameter = mock[Parameter]
     when(notFilledMockParameter.valueToJson) thenCallRealMethod()
-    when(notFilledMockParameter.value) thenReturn None
+    when(notFilledMockParameter.maybeValue) thenReturn None
     assert(notFilledMockParameter.valueToJson == JsNull)
   }
 
@@ -133,7 +133,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Boolean parameter can provide json representation of it's value") {
     val booleanParameter = BooleanParameter("", None)
     val value = true
-    booleanParameter.value = Some(value)
+    booleanParameter.value = value
     assert(booleanParameter.valueToJson == JsBoolean(value))
   }
 
@@ -141,13 +141,13 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val booleanParameter = BooleanParameter("", None)
     val value = true
     booleanParameter.fillValueWithJson(JsBoolean(value))
-    assert(booleanParameter.value == Some(value))
+    assert(booleanParameter.value == value)
   }
 
   test("Boolean parameter can be filled with JsNull") {
     val booleanParameter = BooleanParameter("", None)
     booleanParameter.fillValueWithJson(JsNull)
-    assert(booleanParameter.value == None)
+    assert(booleanParameter.maybeValue == None)
   }
 
   test("Numeric parameter can provide its json representation") {
@@ -179,7 +179,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val mockValidator = mock[Validator[Double]]
     val numericParameter = NumericParameter("", None, mockValidator, _value = None)
     val value = 3.14
-    numericParameter.value = Some(value)
+    numericParameter.value = value
     assert(numericParameter.valueToJson == JsNumber(value))
   }
 
@@ -188,14 +188,14 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val numericParameter = NumericParameter("", None, mockValidator, _value = None)
     val value = 3.15
     numericParameter.fillValueWithJson(JsNumber(value))
-    assert(numericParameter.value == Some(value))
+    assert(numericParameter.value == value)
   }
 
   test("Numeric parameter can be filled with JsNull") {
     val mockValidator = mock[Validator[Double]]
     val numericParameter = NumericParameter("", None, mockValidator, _value = None)
     numericParameter.fillValueWithJson(JsNull)
-    assert(numericParameter.value == None)
+    assert(numericParameter.maybeValue == None)
   }
 
   test("String parameter can provide its json representation") {
@@ -231,14 +231,14 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val stringParameter = StringParameter("", None, mockValidator, _value = None)
     val value = "abcd"
     stringParameter.fillValueWithJson(JsString(value))
-    assert(stringParameter.value == Some(value))
+    assert(stringParameter.value == value)
   }
 
   test("String parameter can be filled with JsNull") {
     val mockValidator = mock[Validator[String]]
     val stringParameter = StringParameter("", None, mockValidator, _value = None)
     stringParameter.fillValueWithJson(JsNull)
-    assert(stringParameter.value == None)
+    assert(stringParameter.maybeValue == None)
   }
 
   test("Choice parameter can provide its json representation") {
@@ -297,7 +297,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "emptyChoice" -> ParametersSchema()
     )
     val choiceParameter = ChoiceParameter("", None, possibleChoices, _value = None)
-    choiceParameter.value = Some("filledChoice")
+    choiceParameter.value = "filledChoice"
 
     val expectedJson = JsObject("filledChoice" -> filledSchema.valueToJson)
     assert(choiceParameter.valueToJson == expectedJson)
@@ -339,7 +339,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Choice parameter can be filled with JsNull") {
     val choiceParameter = ChoiceParameter("", None, ListMap.empty, _value = None)
     choiceParameter.fillValueWithJson(JsNull)
-    assert(choiceParameter.value == None)
+    assert(choiceParameter.maybeValue == None)
   }
 
   test("Multiple choice parameter can provide its json representation") {
@@ -400,7 +400,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     )
     val multipleChoiceParameter = MultipleChoiceParameter(
       "", None, possibleChoices, _value = None)
-    multipleChoiceParameter.value = Some(Traversable("filledChoice", "emptyChoice"))
+    multipleChoiceParameter.value = Traversable("filledChoice", "emptyChoice")
 
     val expectedJson = JsObject(
       "filledChoice" -> filledSchema.valueToJson,
@@ -436,7 +436,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val multipleChoiceParameter = MultipleChoiceParameter(
       "", None, ListMap.empty, _value = None)
     multipleChoiceParameter.fillValueWithJson(JsNull)
-    assert(multipleChoiceParameter.value == None)
+    assert(multipleChoiceParameter.maybeValue == None)
   }
 
   test("Parameters sequence can provide its json representation") {
@@ -458,7 +458,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val innerSchema = mock[ParametersSchema]
     when(innerSchema.valueToJson) thenReturn JsObject("x" -> JsString("y"))
     val parametersSequence = ParametersSequence("", innerSchema, _value = None)
-    parametersSequence.value = Some(Vector(innerSchema))
+    parametersSequence.value = Vector(innerSchema)
     val expectedJson = JsArray(innerSchema.valueToJson)
     assert(parametersSequence.valueToJson == expectedJson)
   }
@@ -478,7 +478,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val parametersSequence = ParametersSequence(
       "", ParametersSchema(), _value = None)
     parametersSequence.fillValueWithJson(JsNull)
-    assert(parametersSequence.value == None)
+    assert(parametersSequence.maybeValue == None)
   }
 
   test("Single column selector can provide its json representation") {
@@ -497,7 +497,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Single column selector by index can provide json representation of it's value") {
     val columnSelectorParameter = SingleColumnSelectorParameter("", portIndex = 0)
     val value = 4
-    columnSelectorParameter.value = Some(IndexSingleColumnSelection(value))
+    columnSelectorParameter.value = IndexSingleColumnSelection(value)
 
     val expectedJson = JsObject("type" -> JsString("index"), "value" -> JsNumber(value))
     assert(columnSelectorParameter.valueToJson == expectedJson)
@@ -506,7 +506,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Single column selector by name can provide json representation of it's value") {
     val columnSelectorParameter = SingleColumnSelectorParameter("", portIndex = 0)
     val value = "some_name"
-    columnSelectorParameter.value = Some(NameSingleColumnSelection(value))
+    columnSelectorParameter.value = NameSingleColumnSelection(value)
 
     val expectedJson = JsObject("type" -> JsString("column"), "value" -> JsString(value))
     assert(columnSelectorParameter.valueToJson == expectedJson)
@@ -518,7 +518,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     columnSelectorParameter.fillValueWithJson(JsObject(
       "type" -> JsString("index"),
       "value" -> JsNumber(someValue)))
-    assert(columnSelectorParameter.value.get == IndexSingleColumnSelection(someValue))
+    assert(columnSelectorParameter.value == IndexSingleColumnSelection(someValue))
   }
 
   test("Single column selector can be filled with json selection by name") {
@@ -527,13 +527,13 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     columnSelectorParameter.fillValueWithJson(JsObject(
       "type" -> JsString("column"),
       "value" -> JsString(someName)))
-    assert(columnSelectorParameter.value.get == NameSingleColumnSelection(someName))
+    assert(columnSelectorParameter.value == NameSingleColumnSelection(someName))
   }
 
   test("Single column selector can be filled with JsNull") {
     val columnSelectorParameter = SingleColumnSelectorParameter("", portIndex = 0)
     columnSelectorParameter.fillValueWithJson(JsNull)
-    assert(columnSelectorParameter.value == None)
+    assert(columnSelectorParameter.maybeValue == None)
   }
 
   test("Multiple column selector can provide its json representation") {
@@ -551,12 +551,12 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Multiple column selector can provide json representation of it's value") {
     val columnSelectorParameter = ColumnSelectorParameter("", portIndex = 0)
-    columnSelectorParameter.value = Some(MultipleColumnSelection(Vector(
+    columnSelectorParameter.value = MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
       TypeColumnSelection(Set(ColumnType.categorical))
-    ), false))
+    ), false)
 
     val expectedJson = JsObject(
       "selections" -> JsArray(
@@ -605,12 +605,12 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "excluding" -> JsBoolean(false)
     ))
 
-    val expectedValue = Some(MultipleColumnSelection(Vector(
+    val expectedValue = MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
       TypeColumnSelection(Set(ColumnType.categorical))
-    ), false))
+    ), false)
     assert(columnSelectorParameter.value == expectedValue)
   }
 
@@ -637,19 +637,19 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "excluding" -> JsBoolean(true)
     ))
 
-    val expectedValue = Some(MultipleColumnSelection(Vector(
+    val expectedValue = MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
       TypeColumnSelection(Set(ColumnType.categorical))
-    ), true))
+    ), true)
     assert(columnSelectorParameter.value == expectedValue)
   }
 
   test("Column selector can be filled with JsNull") {
     val columnSelectorParameter = ColumnSelectorParameter("", portIndex = 0)
     columnSelectorParameter.fillValueWithJson(JsNull)
-    assert(columnSelectorParameter.value == None)
+    assert(columnSelectorParameter.maybeValue == None)
   }
 
   test("IndexRangeColumnSelection can be filled with an empty or too short list") {
@@ -668,10 +668,10 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "excluding" -> JsBoolean(false)
     ))
 
-    val expectedValue = Some(MultipleColumnSelection(Vector(
+    val expectedValue = MultipleColumnSelection(Vector(
       IndexRangeColumnSelection(None, None),
       IndexRangeColumnSelection(Some(1), Some(1))
-    ), false))
+    ), false)
     assert(columnSelectorParameter.value == expectedValue)
   }
 
@@ -713,7 +713,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val singleColumnCreatorParameter = SingleColumnCreatorParameter(
       "", None)
     val value = "abc"
-    singleColumnCreatorParameter.value = Some(value)
+    singleColumnCreatorParameter.value = value
     assert(singleColumnCreatorParameter.valueToJson == JsString(value))
   }
 
@@ -722,14 +722,14 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "", None)
     val value = "abcd"
     singleColumnCreatorParameter.fillValueWithJson(JsString(value))
-    assert(singleColumnCreatorParameter.value == Some(value))
+    assert(singleColumnCreatorParameter.value == value)
   }
 
   test("SingleColumnCreator parameter can be filled with JsNull") {
     val singleColumnCreatorParameter = SingleColumnCreatorParameter(
       "", None)
     singleColumnCreatorParameter.fillValueWithJson(JsNull)
-    assert(singleColumnCreatorParameter.value == None)
+    assert(singleColumnCreatorParameter.maybeValue == None)
   }
 
   test("MultipleColumnCreator parameter can provide its json representation") {
@@ -759,14 +759,14 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "", None)
     val value = Vector("a", "b", "c")
     multipleColumnCreatorParameter.fillValueWithJson(JsArray(value.map(JsString(_))))
-    assert(multipleColumnCreatorParameter.value == Some(value))
+    assert(multipleColumnCreatorParameter.value == value)
   }
 
   test("MultipleColumnCreator parameter can be filled with JsNull") {
     val multipleColumnCreatorParameter = MultipleColumnCreatorParameter(
       "", None)
     multipleColumnCreatorParameter.fillValueWithJson(JsNull)
-    assert(multipleColumnCreatorParameter.value == None)
+    assert(multipleColumnCreatorParameter.maybeValue == None)
   }
 
   test("PrefixBasedColumnCreator parameter can provide its json representation") {
@@ -787,7 +787,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val prefixBasedCreatorParameter = PrefixBasedColumnCreatorParameter(
       "", None)
     val value = "abc"
-    prefixBasedCreatorParameter.value = Some(value)
+    prefixBasedCreatorParameter.value = value
     assert(prefixBasedCreatorParameter.valueToJson == JsString(value))
   }
 
@@ -796,14 +796,14 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "", None)
     val value = "abcd"
     prefixBasedCreatorParameter.fillValueWithJson(JsString(value))
-    assert(prefixBasedCreatorParameter.value == Some(value))
+    assert(prefixBasedCreatorParameter.value == value)
   }
 
   test("PrefixBasedColumnCreator parameter can be filled with JsNull") {
     val prefixBasedCreatorParameter = PrefixBasedColumnCreatorParameter(
       "", None)
     prefixBasedCreatorParameter.fillValueWithJson(JsNull)
-    assert(prefixBasedCreatorParameter.value == None)
+    assert(prefixBasedCreatorParameter.maybeValue == None)
   }
 
   private def choicesAndJsFieldsForParametersWithOptions: (

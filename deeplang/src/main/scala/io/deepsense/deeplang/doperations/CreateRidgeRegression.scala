@@ -55,9 +55,9 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
     "mini batch fraction" -> miniBatchFractionParameter)
 
   override protected def _execute(context: ExecutionContext)(): UntrainedRidgeRegression = {
-    val regParam = regularizationParameter.value.get
-    val numberOfIterations = iterationsNumberParameter.value.get
-    val miniBatchFraction = miniBatchFractionParameter.value.get
+    val regParam = regularizationParameter.value
+    val numberOfIterations = iterationsNumberParameter.value
+    val miniBatchFraction = miniBatchFractionParameter.value
 
     def createModelInstance(): RidgeRegressionWithSGD = {
       val model = new RidgeRegressionWithSGD
@@ -85,9 +85,9 @@ object CreateRidgeRegression {
   def apply(regularization: Double, iterationsNumber: Int,
       miniBatchFraction: Double = 1.0): CreateRidgeRegression = {
     val createRidgeRegression = CreateRidgeRegression()
-    createRidgeRegression.regularizationParameter.value = Some(regularization)
-    createRidgeRegression.iterationsNumberParameter.value = Some(iterationsNumber.toDouble)
-    createRidgeRegression.miniBatchFractionParameter.value = Some(miniBatchFraction)
+    createRidgeRegression.regularizationParameter.value = regularization
+    createRidgeRegression.iterationsNumberParameter.value = iterationsNumber.toDouble
+    createRidgeRegression.miniBatchFractionParameter.value = miniBatchFraction
     createRidgeRegression
   }
 }

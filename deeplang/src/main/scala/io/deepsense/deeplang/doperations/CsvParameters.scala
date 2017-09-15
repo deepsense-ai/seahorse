@@ -50,7 +50,7 @@ trait CsvParameters {
 
   def determineColumnSeparator(): Char = {
     val fieldSeparator = try {
-      ColumnSeparator.withName(csvColumnSeparatorParameter.value.get)
+      ColumnSeparator.withName(csvColumnSeparatorParameter.value)
     } catch {
       // Comma by default
       case e: NoSuchElementException => ColumnSeparator.COMMA
@@ -62,7 +62,7 @@ trait CsvParameters {
       case ColumnSeparator.COLON => ':'
       case ColumnSeparator.SPACE => ' '
       case ColumnSeparator.TAB => '\t'
-      case ColumnSeparator.CUSTOM => csvCustomColumnSeparatorParameter.value.get(0)
+      case ColumnSeparator.CUSTOM => csvCustomColumnSeparatorParameter.value(0)
     }
   }
 }

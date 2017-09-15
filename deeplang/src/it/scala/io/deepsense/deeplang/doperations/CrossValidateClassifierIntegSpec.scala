@@ -77,14 +77,14 @@ class CrossValidateClassifierIntegSpec
 
   def createClassifier(numberOfFolds: Int) = {
     val classifier = new CrossValidateRegressor
-    classifier.shuffleParameter.value = Some(BinaryChoice.YES.toString)
-    classifier.seedShuffleParameter.value = Some(0.0)
-    classifier.numberOfFoldsParameter.value = Some(numberOfFolds)
+    classifier.shuffleParameter.value = BinaryChoice.YES.toString
+    classifier.seedShuffleParameter.value = 0.0
+    classifier.numberOfFoldsParameter.value = numberOfFolds
 
     classifier.targetColumnParameter.value =
-      Some(NameSingleColumnSelection("column3"))
+      NameSingleColumnSelection("column3")
     classifier.featureColumnsParameter.value =
-      Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("column2")))))
+      MultipleColumnSelection(Vector(NameColumnSelection(Set("column2"))))
 
     classifier
   }

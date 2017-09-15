@@ -48,9 +48,9 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val categoricalMetadata = CategoricalMetadata(dataFrame)
-    val selectedColumnNames = dataFrame.getColumnNames(selectedColumnsParam.value.get)
-    val withRedundant = withRedundantParam.value.get
-    val prefix = prefixParam.value.getOrElse("")
+    val selectedColumnNames = dataFrame.getColumnNames(selectedColumnsParam.value)
+    val withRedundant = withRedundantParam.value
+    val prefix = prefixParam.value
 
     def sqlOneHotEncodingExpression(
         columnName: String,
@@ -90,8 +90,8 @@ object OneHotEncoder {
       prefix: Option[String]): OneHotEncoder = {
 
     val encoder = new OneHotEncoder
-    encoder.selectedColumnsParam.value = Some(selection)
-    encoder.withRedundantParam.value = Some(withRedundancy)
+    encoder.selectedColumnsParam.value = selection
+    encoder.withRedundantParam.value = withRedundancy
     encoder.prefixParam.value = prefix
     encoder
   }

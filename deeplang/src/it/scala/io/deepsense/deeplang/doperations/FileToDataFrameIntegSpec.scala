@@ -106,18 +106,18 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
       separator: String,
       file: File,
       fileTypeName: String,
-      categoricalColumnsSelection: Option[MultipleColumnSelection]): DataFrame = {
+      categoricalColumnsSelection: Option[MultipleColumnSelection] = None): DataFrame = {
     val operation = new FileToDataFrame
 
     val formatParameter = operation.parameters.getChoiceParameter(FileToDataFrame.formatParameter)
-    formatParameter.value = Some(fileTypeName)
+    formatParameter.value = fileTypeName
     val fileTypeParameters = formatParameter.options(fileTypeName)
     fileTypeParameters
       .getStringParameter(FileToDataFrame.separatorParameter)
-      .value = Some(separator)
+      .value = separator
     fileTypeParameters
       .getBooleanParameter(FileToDataFrame.namesIncludedParameter)
-      .value = Some(namesIncluded)
+      .value = namesIncluded
 
     val categoricalColumnsParam = operation.parameters
       .getColumnSelectorParameter(FileToDataFrame.categoricalColumnsParameter)

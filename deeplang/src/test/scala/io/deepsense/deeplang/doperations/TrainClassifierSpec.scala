@@ -30,19 +30,14 @@ class TrainClassifierSpec extends UnitSpec with MockitoSugar {
 
   val classifier = TrainClassifier()
 
-  val trainableParametersStub = Trainable.Parameters(
-    Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
+  classifier.targetColumnParameter.value = mock[SingleColumnSelection]
+  classifier.featureColumnsParameter.value = mock[MultipleColumnSelection]
 
-  classifier.parameters.
-    getSingleColumnSelectorParameter("target column").value = trainableParametersStub.targetColumn
-
-  classifier.parameters.
-    getColumnSelectorParameter("feature columns").value = trainableParametersStub.featureColumns
 
   "TrainClassifier with parameters set" should {
     "train untrained model on dataframe" in {
       val trainableMock = mock[Trainable with Classifier]
-      val trainMethodMock = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
+      val trainMethodMock = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
       val executionContextStub = mock[ExecutionContext]
       val scorableStub = mock[Scorable]
@@ -50,7 +45,7 @@ class TrainClassifierSpec extends UnitSpec with MockitoSugar {
 
       when(trainableMock.train).thenReturn(trainMethodMock)
       when(trainMethodMock.apply(
-        executionContextStub)(trainableParametersStub)(dataframeStub)).thenReturn(scorableStub)
+        executionContextStub)(classifier)(dataframeStub)).thenReturn(scorableStub)
 
       val result = classifier.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
 
@@ -67,10 +62,10 @@ class TrainClassifierSpec extends UnitSpec with MockitoSugar {
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]
 
       val trainableMock1 = mock[Trainable with Classifier]
-      val trainMethodMock1 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
+      val trainMethodMock1 = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
       val trainableMock2 = mock[Trainable with Classifier]
-      val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
+      val trainMethodMock2 = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)
       when(trainMethodMock1.infer(any())(any())(any()))

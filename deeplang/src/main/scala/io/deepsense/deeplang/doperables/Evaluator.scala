@@ -30,8 +30,8 @@ trait Evaluator extends DOperation1To1[DataFrame, Report] with EvaluatorParams {
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 
     val predictionsAndLabels = dataFrame.selectPredictionsAndLabelsRDD(
-      dataFrame.getColumnName(targetColumnParameter.value.get),
-      dataFrame.getColumnName(predictionColumnParameter.value.get),
+      dataFrame.getColumnName(targetColumnParameter.value),
+      dataFrame.getColumnName(predictionColumnParameter.value),
       labelPredicate = validateTarget,
       predictionPredicate = validatePrediction)
 

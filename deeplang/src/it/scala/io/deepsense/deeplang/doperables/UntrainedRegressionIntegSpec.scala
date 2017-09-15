@@ -104,10 +104,10 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
       withMockedModel(Seq(-2.22, -22.2, -2222.0)) {
         (untrainedModel, trainedModel, context) =>
 
-          val parameters = Trainable.Parameters(
-            featureColumns = Some(MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column0", "column1"))))),
-            targetColumn = Some(NameSingleColumnSelection("column3")))
+          val parameters = TrainableParameters(
+            featureColumns = MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column0", "column1")))),
+            targetColumn = NameSingleColumnSelection("column3"))
 
           val result = untrainedModel.train(context)(parameters)(inputDataFrame)
           validateResult(trainedModel, result, "column3")
@@ -117,40 +117,40 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
       "non-existing column was selected as target" in {
         a[ColumnDoesNotExistException] shouldBe thrownBy {
           val regression = constructUntrainedModel(mockUntrainedModel())
-          val parameters = Trainable.Parameters(
-            featureColumns = Some(MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column0", "column1"))))),
-            targetColumn = Some(NameSingleColumnSelection("not exists")))
+          val parameters = TrainableParameters(
+            featureColumns = MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column0", "column1")))),
+            targetColumn = NameSingleColumnSelection("not exists"))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }
       "non-existing columns was selected as features" in {
         a[ColumnsDoNotExistException] shouldBe thrownBy {
           val regression = constructUntrainedModel(mockUntrainedModel())
-          val parameters = Trainable.Parameters(
-            featureColumns = Some(MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("not exists", "column1"))))),
-            targetColumn = Some(NameSingleColumnSelection("column3")))
+          val parameters = TrainableParameters(
+            featureColumns = MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("not exists", "column1")))),
+            targetColumn = NameSingleColumnSelection("column3"))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }
       "not all selected features were Double" in {
         a[WrongColumnTypeException] shouldBe thrownBy {
           val regression = constructUntrainedModel(mockUntrainedModel())
-          val parameters = Trainable.Parameters(
-            featureColumns = Some(MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column2", "column1"))))),
-            targetColumn = Some(NameSingleColumnSelection("column3")))
+          val parameters = TrainableParameters(
+            featureColumns = MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column2", "column1")))),
+            targetColumn = NameSingleColumnSelection("column3"))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }
       "selected target was not Double" in {
         a[WrongColumnTypeException] shouldBe thrownBy {
           val regression = constructUntrainedModel(mockUntrainedModel())
-          val parameters = Trainable.Parameters(
-            featureColumns = Some(MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column0", "column1"))))),
-            targetColumn = Some(NameSingleColumnSelection("column2")))
+          val parameters = TrainableParameters(
+            featureColumns = MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column0", "column1")))),
+            targetColumn = NameSingleColumnSelection("column2"))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }

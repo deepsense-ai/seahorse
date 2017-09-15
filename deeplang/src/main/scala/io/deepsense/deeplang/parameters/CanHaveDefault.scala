@@ -27,7 +27,14 @@ trait CanHaveDefault extends Parameter {
   val default: Option[HeldValue]
 
   /** Returns default if _value is None, _value otherwise */
-  override def value: Option[HeldValue] = {
+  override def value: HeldValue = {
+    _value match {
+      case Some(_) => _value.get
+      case None => default.get
+    }
+  }
+
+  override def maybeValue: Option[HeldValue] = {
     _value match {
       case Some(_) => _value
       case None => default

@@ -27,7 +27,6 @@ import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType._
 import io.deepsense.deeplang.PrebuiltTypedColumns._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates._
-import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
@@ -40,11 +39,10 @@ class TrainableIntegSpec extends DeeplangIntegTestSupport with PrebuiltTypedColu
 
   "Trainable" should {
     "receive properly selected LabeledPoints" in {
-      val trainableParameters =
-      Trainable.Parameters(
-        featureColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set(featureName(nonBinaryValuedNumeric)))))),
-        targetColumn = Some(NameSingleColumnSelection(targetName(nonBinaryValuedNumeric))))
+      val trainableParameters = TrainableParameters(
+        featureColumns = MultipleColumnSelection(
+          Vector(NameColumnSelection(Set(featureName(nonBinaryValuedNumeric))))),
+        targetColumn = NameSingleColumnSelection(targetName(nonBinaryValuedNumeric)))
 
       val dataFrame = makeDataFrame(nonBinaryValuedNumeric, nonBinaryValuedNumeric)
 
@@ -70,7 +68,7 @@ class TrainableIntegSpec extends DeeplangIntegTestSupport with PrebuiltTypedColu
 
         override protected def actualInference(
           context: InferContext)(
-          parameters: Parameters)(
+          parameters: TrainableParameters)(
           dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
           mock[(DKnowledge[Scorable], InferenceWarnings)]
       }

@@ -75,14 +75,14 @@ class CrossValidateRegressorIntegSpec
 
   val numberOfFolds = 4
   val regressor = new CrossValidateRegressor
-  regressor.numberOfFoldsParameter.value = Some(numberOfFolds * 1.0)
-  regressor.shuffleParameter.value = Some(BinaryChoice.YES.toString)
-  regressor.seedShuffleParameter.value = Some(0.0)
+  regressor.numberOfFoldsParameter.value = numberOfFolds * 1.0
+  regressor.shuffleParameter.value = BinaryChoice.YES.toString
+  regressor.seedShuffleParameter.value = 0.0
 
   regressor.targetColumnParameter.value =
-    Some(NameSingleColumnSelection("column3"))
+    NameSingleColumnSelection("column3")
   regressor.featureColumnsParameter.value =
-    Some(MultipleColumnSelection(Vector(NameColumnSelection(Set("column2"))), excluding = false))
+    MultipleColumnSelection(Vector(NameColumnSelection(Set("column2"))), excluding = false)
 
   "CrossValidateRegressor with parameters set" should {
     "train untrained model on DataFrame and produce report" in {
@@ -115,7 +115,7 @@ class CrossValidateRegressorIntegSpec
       dataFrame: DataFrame): Unit = {
     val effectiveNumberOfFolds = math.min(
       if (dataFrame.sparkDataFrame.count() == 1) 0 else dataFrame.sparkDataFrame.count(),
-      math.round(regressor.numberOfFoldsParameter.value.get).toInt)
+      math.round(regressor.numberOfFoldsParameter.value).toInt)
 
     // Training untrained RidgeReggressor
     val createRidgeRegression = CreateRidgeRegression(0.0, 10)

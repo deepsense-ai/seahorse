@@ -38,20 +38,17 @@ class CrossValidateClassifierSpec extends UnitSpec with MockitoSugar {
 
   val classifier = new CrossValidateClassifier
   // NOTE: When folds == 0, only training is performed (returned report is empty)
-  classifier.numberOfFoldsParameter.value = Some(0.0)
-  classifier.shuffleParameter.value = Some(BinaryChoice.NO.toString)
-  classifier.seedShuffleParameter.value = Some(0.0)
+  classifier.numberOfFoldsParameter.value = 0.0
+  classifier.shuffleParameter.value = BinaryChoice.NO.toString
+  classifier.seedShuffleParameter.value = 0.0
 
-  val trainableParametersStub = Trainable.Parameters(
-    Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
-
-  classifier.featureColumnsParameter.value = trainableParametersStub.featureColumns
-  classifier.targetColumnParameter.value = trainableParametersStub.targetColumn
+  classifier.featureColumnsParameter.value = mock[MultipleColumnSelection]
+  classifier.targetColumnParameter.value = mock[SingleColumnSelection]
+  val trainableMock = mock[UntrainedLogisticRegression]
+  val trainMethodMock = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
   "CrossValidateClassifier with parameters set" should {
     "train untrained model on DataFrame" in {
-      val trainableMock = mock[UntrainedLogisticRegression]
-      val trainMethodMock = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       val executionContextStub = mock[ExecutionContext]
       val scorableStub = mock[TrainedLogisticRegression]
@@ -62,7 +59,7 @@ class CrossValidateClassifierSpec extends UnitSpec with MockitoSugar {
 
       when(trainableMock.train).thenReturn(trainMethodMock)
       when(trainMethodMock.apply(
-        executionContextStub)(trainableParametersStub)(dataframeStub)).thenReturn(scorableStub)
+        executionContextStub)(classifier)(dataframeStub)).thenReturn(scorableStub)
 
       val result = classifier.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
 
@@ -85,10 +82,10 @@ class CrossValidateClassifierSpec extends UnitSpec with MockitoSugar {
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]
 
       val trainableMock1 = mock[UntrainedLogisticRegression]
-      val trainMethodMock1 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
+      val trainMethodMock1 = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
       val trainableMock2 = mock[UntrainedLogisticRegression]
-      val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
+      val trainMethodMock2 = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)
       when(trainMethodMock1.infer(any())(any())(any()))

@@ -65,8 +65,8 @@ case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] {
     }
   }
 
-  def dataFrameId: String = dataFrameIdParameter.value.get
-  def expression: String = expressionParameter.value.get
+  def dataFrameId: String = dataFrameIdParameter.value
+  def expression: String = expressionParameter.value
 }
 
 object SqlExpression {
@@ -75,8 +75,8 @@ object SqlExpression {
 
   def apply(sqlExpression: String, dataFrameId: String): SqlExpression = {
     val operation = SqlExpression()
-    operation.expressionParameter.value = Some(sqlExpression)
-    operation.dataFrameIdParameter.value = Some(dataFrameId)
+    operation.expressionParameter.value = sqlExpression
+    operation.dataFrameIdParameter.value = dataFrameId
     operation
   }
 }

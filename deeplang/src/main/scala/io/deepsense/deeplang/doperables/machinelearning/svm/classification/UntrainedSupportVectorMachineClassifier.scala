@@ -22,14 +22,12 @@ import org.apache.spark.mllib.optimization.{L1Updater, SimpleUpdater, SquaredL2U
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
-import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.RegularizationType
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedSupportVectorMachineClassifier(
     svmParameters: SupportVectorMachineParameters)
@@ -62,7 +60,7 @@ case class UntrainedSupportVectorMachineClassifier(
 
   override protected def actualInference(
       context: InferContext)(
-      parameters: Parameters)(
+      parameters: TrainableParameters)(
       dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
     (DKnowledge(new TrainedSupportVectorMachineClassifier()), InferenceWarnings.empty)
 

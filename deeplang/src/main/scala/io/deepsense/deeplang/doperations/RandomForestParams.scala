@@ -62,19 +62,19 @@ trait RandomForestParams {
       impurity: String,
       maxDepth: Int,
       maxBins: Int): Unit = {
-    numTreesParameter.value = Some(numTrees)
-    featureSubsetStrategyParameter.value = Some(featureSubsetStrategy)
-    impurityParameter.value = Some(impurity)
-    maxDepthParameter.value = Some(maxDepth)
-    maxBinsParameter.value = Some(maxBins)
+    numTreesParameter.value = numTrees
+    featureSubsetStrategyParameter.value = featureSubsetStrategy
+    impurityParameter.value = impurity
+    maxDepthParameter.value = maxDepth
+    maxBinsParameter.value = maxBins
   }
 
   def modelParameters: RandomForestParameters = {
-    val numTrees = numTreesParameter.value.get
-    val featureSubsetStrategy = featureSubsetStrategyParameter.value.get
-    val impurity = impurityParameter.value.get
-    val maxDepth = maxDepthParameter.value.get
-    val maxBins = maxBinsParameter.value.get
+    val numTrees = numTreesParameter.value
+    val featureSubsetStrategy = featureSubsetStrategyParameter.value
+    val impurity = impurityParameter.value
+    val maxDepth = maxDepthParameter.value
+    val maxBins = maxBinsParameter.value
 
     RandomForestParameters(
       numTrees.toInt, featureSubsetStrategy, impurity, maxDepth.toInt, maxBins.toInt)

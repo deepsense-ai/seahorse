@@ -130,7 +130,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     choice.value = Some("onlyChoice")
 
     val parametersSchema = ParametersSchema("choice" -> choice)
-    assert(parametersSchema.getChoice("choice").get == Selection("onlyChoice", choiceSchema))
+    assert(parametersSchema.getChoice("choice") == Selection("onlyChoice", choiceSchema))
   }
 
   test("Getting MultipleChoiceParameter value from schema") {
@@ -139,7 +139,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val multipleChoice = MultipleChoiceParameter("", None, possibleChoices)
     multipleChoice.value = Some(Traversable("onlyChoice"))
     val parametersSchema = ParametersSchema("multipleChoice" -> multipleChoice)
-    val actualMultipleSelection = parametersSchema.getMultipleChoice("multipleChoice").get
+    val actualMultipleSelection = parametersSchema.getMultipleChoice("multipleChoice")
     val expectedMultipleSelection = Traversable(Selection("onlyChoice", choiceSchema))
     assert(actualMultipleSelection == expectedMultipleSelection)
   }
@@ -159,7 +159,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val schema = ParametersSchema("x" -> param)
     val parameter = IndexSingleColumnSelection(1)
     param.value = Some(parameter)
-    assert(schema.getSingleColumnSelection("x").get == parameter)
+    assert(schema.getSingleColumnSelection("x") == parameter)
   }
 
   test("Getting ColumnSelector value from schema") {
@@ -168,7 +168,7 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val values = IndexColumnSelection(Set(1, 3))
     val parameter = MultipleColumnSelection(Vector(values), false)
     param.value = Some(parameter)
-    assert(schema.getColumnSelection("x").get == parameter)
+    assert(schema.getColumnSelection("x") == parameter)
   }
 
   test("Getting SingleColumnCreator value from schema") {

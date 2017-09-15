@@ -49,9 +49,9 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
       validator = RangeValidator(begin = 0.0, end = EndOfRange, beginIncluded = false)))
 
   override protected def _execute(context: ExecutionContext)(): UntrainedLogisticRegression = {
-    val regParam = parameters.getDouble(Regularization).get
-    val iterationsParam = parameters.getDouble(IterationsNumberKey).get
-    val toleranceParam = parameters.getDouble(Tolerance).get
+    val regParam = parameters.getDouble(Regularization)
+    val iterationsParam = parameters.getDouble(IterationsNumberKey)
+    val toleranceParam = parameters.getDouble(Tolerance)
 
     def createModelInstance(): LogisticRegressionWithLBFGS = {
       val model = new LogisticRegressionWithLBFGS
@@ -85,11 +85,11 @@ object CreateLogisticRegression {
       : CreateLogisticRegression = {
     val createLogisticRegression: CreateLogisticRegression = CreateLogisticRegression()
     createLogisticRegression.parameters.getNumericParameter(
-      CreateLogisticRegression.Regularization).value = Some(regularization)
+      CreateLogisticRegression.Regularization).value = regularization
     createLogisticRegression.parameters.getNumericParameter(
-      CreateLogisticRegression.IterationsNumberKey).value = Some(numberOfIterations)
+      CreateLogisticRegression.IterationsNumberKey).value = numberOfIterations
     createLogisticRegression.parameters.getNumericParameter(
-      CreateLogisticRegression.Tolerance).value = Some(tolerance)
+      CreateLogisticRegression.Tolerance).value = tolerance
     createLogisticRegression
   }
 }

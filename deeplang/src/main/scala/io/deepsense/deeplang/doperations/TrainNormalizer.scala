@@ -48,7 +48,7 @@ case class TrainNormalizer() extends DOperation1To2[DataFrame, DataFrame, Normal
   }
 
   def createTrainedNormalizer(dataFrame: DataFrame): Normalizer = {
-    val columnsNames: Seq[String] = dataFrame.getColumnNames(selectedColumnsParameter.value.get)
+    val columnsNames: Seq[String] = dataFrame.getColumnNames(selectedColumnsParameter.value)
     val scaler = createTrainedScaler(dataFrame, columnsNames)
     Normalizer(columnsNames, scaler)
   }
@@ -79,9 +79,9 @@ object TrainNormalizer {
     val trainNormalizer = new TrainNormalizer
     val params = trainNormalizer.parameters
     params.getColumnSelectorParameter(SelectedColumns).value =
-      Some(MultipleColumnSelection(Vector(
+      MultipleColumnSelection(Vector(
         NameColumnSelection(names),
-        IndexColumnSelection(indices))))
+        IndexColumnSelection(indices)))
     trainNormalizer
   }
 }

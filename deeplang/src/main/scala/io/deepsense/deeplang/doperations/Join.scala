@@ -48,10 +48,10 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with J
                                  (ldf: DataFrame, rdf: DataFrame): DataFrame = {
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 
-    val leftJoinColumnNames = joinColumnsParam.value.get.map(
-      schema => ldf.getColumnName(schema.getSingleColumnSelection(leftColumnParamKey).get))
-    val rightJoinColumnNames = joinColumnsParam.value.get.map(
-      schema => rdf.getColumnName(schema.getSingleColumnSelection(rightColumnParamKey).get))
+    val leftJoinColumnNames = joinColumnsParam.value.map(
+      schema => ldf.getColumnName(schema.getSingleColumnSelection(leftColumnParamKey)))
+    val rightJoinColumnNames = joinColumnsParam.value.map(
+      schema => rdf.getColumnName(schema.getSingleColumnSelection(rightColumnParamKey)))
 
     var lsdf = ldf.sparkDataFrame
     var rsdf = rdf.sparkDataFrame
@@ -97,13 +97,10 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with J
     prefixedLeftJoinColumnNames.zipWithIndex.foreach { case (col, index) =>
       if (lcm.isCategorical(col)) {
         val rightJoinColumnName = prefixedRightJoinColumnNames(index)
-
         val lMapping = lcm.mapping(col)
         val rMapping = rcm.mapping(rightJoinColumnName)
-
         val merged = lMapping.mergeWith(rMapping)
         val otherToFinal = merged.otherToFinal
-
         val columnIndex = rsdf.columns.indexOf(rightJoinColumnName)
         val rddWithFinalMapping = rsdf.map { r =>
           val id = r.getInt(columnIndex)
@@ -166,14 +163,13 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with J
     columnNames.map((name: String) => new NameColumnSelection(Set(name))).toVector
   }
 
-  private def appendPrefixes(dataFrame: sql.DataFrame, prefixParam: Option[String])
+  private def appendPrefixes(dataFrame: sql.DataFrame, prefixParam: String)
     : (sql.DataFrame, mutable.HashMap[String, String]) = {
 
     val columnNamesMap = new mutable.HashMap[String, String]()
-    val prefix = prefixParam.getOrElse("")
 
     val renamedColumns = dataFrame.schema.fieldNames.map(col => {
-      val newCol = prefix + col
+      val newCol = prefixParam + col
       columnNamesMap.put(col, newCol)
       newCol
     })
@@ -218,7 +214,7 @@ object Join {
             prefixLeft: Option[String],
             prefixRight: Option[String]): Join = {
     val join = new Join
-    join.joinColumnsParam.value = Some(joinColumns)
+    join.joinColumnsParam.value = joinColumns
     join.leftTablePrefixParam.value = prefixLeft
     join.rightTablePrefixParam.value = prefixRight
     join

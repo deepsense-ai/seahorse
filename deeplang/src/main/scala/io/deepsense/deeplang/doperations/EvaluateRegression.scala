@@ -42,9 +42,9 @@ object EvaluateRegression {
     val operation = EvaluateRegression()
 
     operation.targetColumnParameter.value =
-      Some(NameSingleColumnSelection(targetColumnName))
+      NameSingleColumnSelection(targetColumnName)
     operation.predictionColumnParameter.value =
-      Some(NameSingleColumnSelection(predictionColumnName))
+      NameSingleColumnSelection(predictionColumnName)
 
     operation
   }

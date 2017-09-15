@@ -53,7 +53,7 @@ case class ReadFile() extends DOperation0To1[File] {
   override val name: String = "Read File"
 
   override protected def _execute(context: ExecutionContext)(): File = {
-    val path = parameters.getString(ReadFile.pathParam).get
+    val path = parameters.getString(ReadFile.pathParam)
     val separator = chosenLineSeparatorValue
     val sparkContext = context.sqlContext.sparkContext
 
@@ -71,7 +71,7 @@ case class ReadFile() extends DOperation0To1[File] {
   }
 
   def chosenLineSeparatorValue: String = {
-    val chosenParam = parameters.getChoice(ReadFile.lineSeparatorParam).get
+    val chosenParam = parameters.getChoice(ReadFile.lineSeparatorParam)
     chosenParam.label match {
       case ReadFile.windowsSeparatorLabel => ReadFile.windowsSeparatorValue
       case ReadFile.unixSeparatorLabel => ReadFile.unixSeparatorValue
@@ -79,7 +79,6 @@ case class ReadFile() extends DOperation0To1[File] {
         chosenParam
           .selectedSchema
           .getString(ReadFile.customLineSeparatorParam)
-          .get
       case _ => ReadFile.defaultSeparatorValue
     }
   }

@@ -62,9 +62,9 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
-    val targetType = ColumnType.withName(targetTypeParameter.selection.get.label)
+    val targetType = ColumnType.withName(targetTypeParameter.selection.label)
     val columns = dataFrame
-      .getColumnNames(selectedColumnsParameter.value.get)
+      .getColumnNames(selectedColumnsParameter.value)
 
     if (targetType == ColumnType.categorical) {
       val metadata = CategoricalMetadata(dataFrame)
@@ -122,11 +122,11 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
 
   override protected def _inferFullKnowledge(context: InferContext)(
     inputKnowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
-    val targetType = ColumnType.withName(targetTypeParameter.selection.get.label)
+    val targetType = ColumnType.withName(targetTypeParameter.selection.label)
     val inputDF = inputKnowledge.types.head
     val inputDFMetadata = inputDF.inferredMetadata.get
     val (columnsToConvert, selectionsWarnings) =
-      inputDFMetadata.select(selectedColumnsParameter.value.get)
+      inputDFMetadata.select(selectedColumnsParameter.value)
     val columnNamesToConvert = columnsToConvert.map(_.name)
 
     val outputMetadata = convertDataFrameMetadata(
@@ -241,11 +241,11 @@ object ConvertType {
     val ct = new ConvertType
     val params = ct.parameters
     params.getColumnSelectorParameter(SelectedColumns).value =
-      Some(MultipleColumnSelection(Vector(
+      MultipleColumnSelection(Vector(
         NameColumnSelection(names),
-        IndexColumnSelection(indices)), excluding))
+        IndexColumnSelection(indices)), excluding)
 
-    params.getChoiceParameter(TargetType).value = Some(targetType.toString)
+    params.getChoiceParameter(TargetType).value = targetType.toString
     ct
   }
 

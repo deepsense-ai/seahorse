@@ -52,10 +52,10 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
     "line separator" -> lineSeparatorParameter)
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
-    val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(sourceFileParameter.value.get)
+    val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(sourceFileParameter.value)
 
     try {
-      FileFormat.withName(formatParameter.value.get) match {
+      FileFormat.withName(formatParameter.value) match {
         case FileFormat.CSV =>
           val conf = new Configuration(context.sparkContext.hadoopConfiguration)
           conf.set(
@@ -98,7 +98,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
 
   private def determineLineSeparator() : String = {
     val lineSeparator = try {
-      LineSeparator.withName(lineSeparatorParameter.value.get)
+      LineSeparator.withName(lineSeparatorParameter.value)
     } catch {
       // Unix line separator by default
       case e: NoSuchElementException => LineSeparator.UNIX
@@ -107,7 +107,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
     lineSeparator match {
       case LineSeparator.WINDOWS => "\r\n"
       case LineSeparator.UNIX => "\n"
-      case LineSeparator.CUSTOM => customLineSeparatorParameter.value.get
+      case LineSeparator.CUSTOM => customLineSeparatorParameter.value
     }
   }
 
@@ -115,9 +115,9 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
   private def dataFrameFromCSV(
       context: ExecutionContext,
       rdd: RDD[String],
-      categoricalColumnsSelection: Option[MultipleColumnSelection]): DataFrame = {
+      categoricalColumnsSelection: MultipleColumnSelection): DataFrame = {
 
-    val namesIncluded = csvNamesIncludedParameter.value.get
+    val namesIncluded = csvNamesIncludedParameter.value
     val lines = splitLinesIntoColumns(rdd, determineColumnSeparator()).cache()
 
     val (columnNames, dataLines) = if (namesIncluded) {
@@ -127,7 +127,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
       (generateColumnNames(columnsNo = lines.first().length), lines)
     }
 
-    val shouldConvertToBoolean = csvShouldConvertToBooleanParameter.value.get
+    val shouldConvertToBoolean = csvShouldConvertToBooleanParameter.value
     val linesInferences = dataLines.map(_.map {
       case cell => cellTypeInference(cell, shouldConvertToBoolean)
     })
@@ -224,8 +224,8 @@ object ReadDataFrame {
       format: FileFormat,
       categoricalColumns: Option[MultipleColumnSelection] = None): ReadDataFrame = {
     val operation = new ReadDataFrame()
-    operation.sourceFileParameter.value = Some(filePath)
-    operation.formatParameter.value = Some(format.toString)
+    operation.sourceFileParameter.value = filePath
+    operation.formatParameter.value = format.toString
     operation.categoricalColumnsParameter.value = categoricalColumns
     operation
   }
@@ -240,14 +240,14 @@ object ReadDataFrame {
 
     val operation = new ReadDataFrame()
 
-    operation.formatParameter.value = Some("CSV")
-    operation.lineSeparatorParameter.value = Some(lineSeparator._1.toString)
+    operation.formatParameter.value = "CSV"
+    operation.lineSeparatorParameter.value = lineSeparator._1.toString
     operation.customLineSeparatorParameter.value = lineSeparator._2
-    operation.sourceFileParameter.value = Some(filePath)
-    operation.csvColumnSeparatorParameter.value = Some(csvColumnSeparator._1.toString)
+    operation.sourceFileParameter.value = filePath
+    operation.csvColumnSeparatorParameter.value = csvColumnSeparator._1.toString
     operation.csvCustomColumnSeparatorParameter.value = csvColumnSeparator._2
-    operation.csvNamesIncludedParameter.value = Some(csvNamesIncluded)
-    operation.csvShouldConvertToBooleanParameter.value = Some(csvShouldConvertToBoolean)
+    operation.csvNamesIncludedParameter.value = csvNamesIncluded
+    operation.csvShouldConvertToBooleanParameter.value = csvShouldConvertToBoolean
     operation.categoricalColumnsParameter.value = categoricalColumns
     operation
   }
@@ -299,24 +299,18 @@ object ReadDataFrame {
    */
   private def getCategoricalColumns(
       schema: StructType,
-      categoricalColumnsSelection: Option[MultipleColumnSelection]): (Set[Int], Seq[String]) = {
+      categoricalColumnsSelection: MultipleColumnSelection): (Set[Int], Seq[String]) = {
+    val columnNames: Seq[String] = schema.fields.map(_.name)
+    val categoricalColumnNames =
+      DataFrameColumnsGetter.getColumnNames(schema, categoricalColumnsSelection)
+    val categoricalColumnNamesSet = categoricalColumnNames.toSet
+    val categoricalColumnIndices = (for {
+      (name, index) <- columnNames.zipWithIndex if categoricalColumnNamesSet.contains(name)
+    } yield index).toSet
 
-    val columnNames : Seq[String] = schema.fields.map( _.name )
-
-    categoricalColumnsSelection match {
-      case Some(selection) =>
-        val categoricalColumnNames = DataFrameColumnsGetter.getColumnNames(schema, selection)
-        val categoricalColumnNamesSet = categoricalColumnNames.toSet
-
-        val categoricalColumnIndices = (for {
-          (name, index) <- columnNames.zipWithIndex if categoricalColumnNamesSet.contains(name)
-        } yield index).toSet
-
-        (categoricalColumnIndices, categoricalColumnNames)
-
-      case None => (Set.empty, Seq.empty)
-    }
+    (categoricalColumnIndices, categoricalColumnNames)
   }
+
 
   /**
    * Splits string lines by separator, but escapes separator within double quotes.

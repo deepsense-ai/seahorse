@@ -22,7 +22,6 @@ import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
-import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.RidgeRegressionParameters
@@ -66,7 +65,7 @@ case class UntrainedRidgeRegression(
 
   override protected def actualInference(
       context: InferContext)(
-      parameters: Parameters)(
+      parameters: TrainableParameters)(
       dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
     (DKnowledge(new TrainedRidgeRegression), InferenceWarnings.empty)
 

@@ -56,7 +56,7 @@ class ParametersSerializationSuite
   test("NumericParameter, it's validator and it's value should be serializable") {
     val rangeValidator = RangeValidator(3, 4)
     val param = NumericParameter("", None, validator = rangeValidator)
-    param.value = Some(1420)
+    param.value = 1420
     testParameterSerialization(param)
   }
 

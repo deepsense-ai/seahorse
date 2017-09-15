@@ -67,10 +67,10 @@ class UntrainedLogisticRegressionIntegSpec
         (untrainedModel, trainedModel, context) =>
           val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column5"))
 
-          val parameters = Trainable.Parameters(
-            featureColumns = Some(MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column1", "column0"))))),
-            targetColumn = Some(NameSingleColumnSelection("column5")))
+          val parameters = TrainableParameters(
+            featureColumns = MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column1", "column0")))),
+            targetColumn = NameSingleColumnSelection("column5"))
 
           val result = untrainedModel.train(context)(parameters)(dataFrame)
           validateResult(trainedModel, result, "column5")
@@ -81,10 +81,10 @@ class UntrainedLogisticRegressionIntegSpec
         (untrainedModel, trainedModel, context) =>
           val dataFrame = createDataFrame(inputRows, inputSchema)
 
-          val parameters = Trainable.Parameters(
-            featureColumns = Some(MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column1", "column0"))))),
-            targetColumn = Some(NameSingleColumnSelection("column4")))
+          val parameters = TrainableParameters(
+            featureColumns = MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column1", "column0")))),
+            targetColumn = NameSingleColumnSelection("column4"))
 
           val result = untrainedModel.train(context)(parameters)(dataFrame)
           validateResult(trainedModel, result, "column4")
@@ -95,10 +95,10 @@ class UntrainedLogisticRegressionIntegSpec
 
       a[WrongColumnTypeException] shouldBe thrownBy {
         val regression = constructUntrainedModel(mockUntrainedModel())
-        val parameters = Trainable.Parameters(
-          featureColumns = Some(MultipleColumnSelection(
-            Vector(NameColumnSelection(Set("column1", "column0"))))),
-          targetColumn = Some(NameSingleColumnSelection("column2")))
+        val parameters = TrainableParameters(
+          featureColumns = MultipleColumnSelection(
+            Vector(NameColumnSelection(Set("column1", "column0")))),
+          targetColumn = NameSingleColumnSelection("column2"))
         regression.train(executionContext)(parameters)(dataFrame)
       }
     }

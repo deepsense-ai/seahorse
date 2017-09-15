@@ -53,8 +53,8 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
       uniqueFilename: String,
       dataFrameReport: Report,
       metadata: DataFrameMetadata): CreateEntityRequest = {
-    val name = parameters.getStringParameter(SaveDataFrame.nameParam).value.get
-    val description = parameters.getStringParameter(SaveDataFrame.descriptionParam).value.get
+    val name = parameters.getStringParameter(SaveDataFrame.nameParam).value
+    val description = parameters.getStringParameter(SaveDataFrame.descriptionParam).value
     CreateEntityRequest(
       context.tenantId,
       name,
@@ -80,8 +80,8 @@ object SaveDataFrame {
 
   def apply(name: String, description: String = ""): SaveDataFrame = {
     val saveDataFrame = new SaveDataFrame
-    saveDataFrame.parameters.getStringParameter(nameParam).value = Some(name)
-    saveDataFrame.parameters.getStringParameter(descriptionParam).value = Some(description)
+    saveDataFrame.parameters.getStringParameter(nameParam).value = name
+    saveDataFrame.parameters.getStringParameter(descriptionParam).value = description
     saveDataFrame
   }
 }

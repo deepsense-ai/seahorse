@@ -37,7 +37,7 @@ case class ScoreRegressor() extends Scorer[Regressor with Scorable] {
 object ScoreRegressor {
   def apply(targetColumnName: String): ScoreRegressor = {
     val regressor = new ScoreRegressor
-    regressor.predictionColumnParam.value = Some(targetColumnName)
+    regressor.predictionColumnParam.value = targetColumnName
     regressor
   }
 }

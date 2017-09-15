@@ -38,7 +38,7 @@ abstract class CrossValidate[T <: Evaluable]()
     Trainable with T, DataFrame,
     Scorable with T, Report]
   with CrossValidateParams
-  with WithTrainParameters {
+  with TrainableParameters {
 
   def reportName: String
 
@@ -58,7 +58,7 @@ abstract class CrossValidate[T <: Evaluable]()
 
     val dataFrameSize = dataFrame.sparkDataFrame.count()
 
-    val effectiveNumberOfFolds = (dataFrameSize, numberOfFoldsParameter.value.get) match {
+    val effectiveNumberOfFolds = (dataFrameSize, numberOfFoldsParameter.value) match {
       case (0, _) => throw InvalidDataFrameException("cannot train a model on an empty DataFrame")
       // If either dataFrameSize or numberOfFolds is 1, no folds can be performed
       case (1, _) => 0
@@ -67,9 +67,9 @@ abstract class CrossValidate[T <: Evaluable]()
       case (dfs, nof) => math.min(dfs, math.round(nof)).toInt
     }
 
-    val seed = BinaryChoice.withName(shuffleParameter.value.get) match {
+    val seed = BinaryChoice.withName(shuffleParameter.value) match {
       case BinaryChoice.NO => 0
-      case BinaryChoice.YES => math.round(seedShuffleParameter.value.get)
+      case BinaryChoice.YES => math.round(seedShuffleParameter.value)
     }
 
     logger.debug(
@@ -77,7 +77,7 @@ abstract class CrossValidate[T <: Evaluable]()
 
     // TODO: (DS-546) Do not use sample method, perform shuffling "in flight"
     // during splitting DataFrame on training and test DataFrame.
-    val shuffledDataFrame = BinaryChoice.withName(shuffleParameter.value.get) match {
+    val shuffledDataFrame = BinaryChoice.withName(shuffleParameter.value) match {
       case BinaryChoice.NO => dataFrame
       case BinaryChoice.YES =>
         context.dataFrameBuilder.buildDataFrame(
@@ -93,7 +93,7 @@ abstract class CrossValidate[T <: Evaluable]()
       }
 
     logger.debug("Train model on all available data")
-    val scorable = trainable.train(context)(parametersForTrainable)(dataFrame)
+    val scorable = trainable.train(context)(this)(dataFrame)
 
     logger.debug("Execution of CrossValidator ends")
     (scorable.asInstanceOf[T with Scorable], report)
@@ -126,14 +126,14 @@ abstract class CrossValidate[T <: Evaluable]()
         context.sqlContext.createDataFrame(test, schema))
 
       // Train model on trainingDataFrame
-      val trained: Scorable = trainable.train(context)(parametersForTrainable)(trainingDataFrame)
+      val trained: Scorable = trainable.train(context)(this)(trainingDataFrame)
 
       // Score model on trainingDataFrame (with random column name for predictions)
       val predictionColumnName = UUID.randomUUID().toString
       val scoredDataFrame = trained.score(context)(predictionColumnName)(testDataFrame)
 
       val observationColumnName =
-        testDataFrame.getColumnName(parametersForTrainable.targetColumn.get)
+        testDataFrame.getColumnName(targetColumnParameter.value)
 
       val predictionsAndLabels =
         scoredDataFrame.sparkDataFrame
@@ -160,7 +160,7 @@ abstract class CrossValidate[T <: Evaluable]()
 
     val scorableKnowledge = for {
       trainable <- trainableKnowledge.types
-      (result, _) = trainable.train.infer(context)(parametersForTrainable)(dataFrameKnowledge)
+      (result, _) = trainable.train.infer(context)(this)(dataFrameKnowledge)
     } yield result.asInstanceOf[DKnowledge[T with Scorable]]
 
     ((DKnowledge(scorableKnowledge), DKnowledge(Report())), InferenceWarnings.empty)

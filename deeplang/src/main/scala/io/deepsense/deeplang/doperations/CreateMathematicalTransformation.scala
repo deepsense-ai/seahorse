@@ -32,8 +32,8 @@ case class CreateMathematicalTransformation() extends DOperation0To1[Mathematica
   // TODO: DS-635 This operation will fail if user provide column name with '.'
 
   override protected def _execute(context: ExecutionContext)(): MathematicalTransformation = {
-    val formula = formulaParam.value.get
-    val columnName = columnNameParam.value.get
+    val formula = formulaParam.value
+    val columnName = columnNameParam.value
     MathematicalTransformation(formula, columnName)
   }
 
@@ -61,8 +61,8 @@ object CreateMathematicalTransformation {
   def apply(formula: String, columnName: String): CreateMathematicalTransformation = {
 
     val operation = new CreateMathematicalTransformation
-    operation.formulaParam.value = Some(formula)
-    operation.columnNameParam.value = Some(columnName)
+    operation.formulaParam.value = formula
+    operation.columnNameParam.value = columnName
     operation
   }
 }

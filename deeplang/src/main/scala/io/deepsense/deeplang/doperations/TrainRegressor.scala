@@ -21,7 +21,7 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Regressor, Scorable, Trainable}
-import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
+import io.deepsense.deeplang.parameters.{ColumnSelectorParameter, MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
 case class TrainRegressor() extends Trainer[Regressor with Trainable, Regressor with Scorable] {
   override val id: DOperation.Id = "c526714c-e7fb-11e4-b02c-1681e6b88ec1"
@@ -39,18 +39,10 @@ case class TrainRegressor() extends Trainer[Regressor with Trainable, Regressor 
 object TrainRegressor {
   def apply(featureColumns: Set[String], targetColumn: String): TrainRegressor = {
     val regressor = TrainRegressor()
-
-    val trainableParametersStub = Trainable.Parameters(
-      Some(MultipleColumnSelection(Vector(NameColumnSelection(featureColumns)), false)),
-      Some(NameSingleColumnSelection(targetColumn))
-    )
-
-    regressor.parameters.
-      getSingleColumnSelectorParameter("target column").value = trainableParametersStub.targetColumn
-
-    regressor.parameters.
-      getColumnSelectorParameter("feature columns").value = trainableParametersStub.featureColumns
-
+    regressor.featureColumnsParameter.value =
+      MultipleColumnSelection(Vector(NameColumnSelection(featureColumns)), false)
+    regressor.targetColumnParameter.value =
+      NameSingleColumnSelection(targetColumn)
     regressor
   }
 }

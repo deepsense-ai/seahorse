@@ -128,39 +128,39 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
     get[PrefixBasedColumnCreatorParameter](name)
   }
 
-  def getBoolean(name: String): Option[Boolean] = getBooleanParameter(name).value
+  def getBoolean(name: String): Boolean = getBooleanParameter(name).value
 
-  def getString(name: String): Option[String] = getStringParameter(name).value
+  def getString(name: String): String = getStringParameter(name).value
 
-  def getDouble(name: String): Option[Double] = getNumericParameter(name).value
+  def getDouble(name: String): Double = getNumericParameter(name).value
 
-  def getChoice(name: String): Option[Selection] = getChoiceParameter(name).selection
+  def getChoice(name: String): Selection = getChoiceParameter(name).selection
 
-  def getMultipleChoice(name: String): Option[Traversable[Selection]] = {
+  def getMultipleChoice(name: String): Traversable[Selection] = {
     getMultipleChoiceParameter(name).selections
   }
 
-  def getMultiplicatedSchema(name: String): Option[Vector[ParametersSchema]] = {
+  def getMultiplicatedSchema(name: String): Vector[ParametersSchema] = {
     getParametersSequence(name).value
   }
 
-  def getSingleColumnSelection(name: String): Option[SingleColumnSelection] = {
+  def getSingleColumnSelection(name: String): SingleColumnSelection = {
     getSingleColumnSelectorParameter(name).value
   }
 
-  def getColumnSelection(name: String): Option[MultipleColumnSelection] = {
+  def getColumnSelection(name: String): MultipleColumnSelection = {
     getColumnSelectorParameter(name).value
   }
 
-  def getNewColumnName(name: String): Option[String] = {
+  def getNewColumnName(name: String): String = {
     getSingleColumnCreatorParameter(name).value
   }
 
-  def getNewColumnNames(name: String): Option[Vector[String]] = {
+  def getNewColumnNames(name: String): Vector[String] = {
     getMultipleColumnCreatorParameter(name).value
   }
 
-  def getNewColumnsPrefix(name: String): Option[String] = {
+  def getNewColumnsPrefix(name: String): String = {
     getPrefixBasedColumnCreatorParameter(name).value
   }
 

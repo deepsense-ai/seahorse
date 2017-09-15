@@ -47,8 +47,8 @@ case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
 
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {
-    val range: Double = splitRatioParam.value.get
-    val seed: Long = seedParam.value.get.toLong
+    val range: Double = splitRatioParam.value
+    val seed: Long = seedParam.value.toLong
     val Array(f1: RDD[Row], f2: RDD[Row]) = split(df, range, seed)
     val schema = df.sparkDataFrame.schema
     val dataFrame1 = context.dataFrameBuilder.buildDataFrame(schema, f1)
@@ -82,8 +82,8 @@ case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
 object Split {
   def apply(splitRatio: Double, seed: Long): Split = {
     val splitter = new Split
-    splitter.splitRatioParam.value = Some(splitRatio)
-    splitter.seedParam.value = Some(seed)
+    splitter.splitRatioParam.value = splitRatio
+    splitter.seedParam.value = seed
     splitter
   }
 }

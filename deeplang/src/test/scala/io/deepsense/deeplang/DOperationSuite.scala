@@ -57,7 +57,7 @@ class DOperationSuite extends FunSuite with MockitoSugar {
       override val id: DOperation.Id = DOperation.Id.randomId
 
       override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = {
-        val param = parameters.getDouble("param").get
+        val param = parameters.getDouble("param")
         if (param % 2 == 1) t1 else t2
       }
       override val name: String = "Some name"
@@ -70,9 +70,9 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     }
 
     val firstPicker: DOperation = new PickOne
-    firstPicker.parameters.getNumericParameter("param").value = Some(1)
+    firstPicker.parameters.getNumericParameter("param").value = 1
     val secondPicker: DOperation = new PickOne
-    secondPicker.parameters.getNumericParameter("param").value = Some(2)
+    secondPicker.parameters.getNumericParameter("param").value = 2
 
     val input = Vector(A1(), A2())
     assert(firstPicker.execute(mock[ExecutionContext])(input) == Vector(A1()))

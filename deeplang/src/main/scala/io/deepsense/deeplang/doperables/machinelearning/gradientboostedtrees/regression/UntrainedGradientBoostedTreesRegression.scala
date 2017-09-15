@@ -23,7 +23,6 @@ import org.apache.spark.mllib.tree.{GradientBoostedTrees => SparkGradientBoosted
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
-import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
@@ -78,7 +77,7 @@ case class UntrainedGradientBoostedTreesRegression(
 
   override protected def actualInference(
       context: InferContext)(
-      parameters: Parameters)(
+      parameters: TrainableParameters)(
       dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
     (DKnowledge(new TrainedGradientBoostedTreesRegression()), InferenceWarnings.empty)
 

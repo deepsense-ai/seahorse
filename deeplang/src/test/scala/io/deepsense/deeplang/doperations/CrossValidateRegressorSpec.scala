@@ -38,20 +38,17 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
 
   val regressor = new CrossValidateRegressor
   // NOTE: When folds == 0, only regression train is performed (returned report is empty)
-  regressor.numberOfFoldsParameter.value = Some(0.0)
-  regressor.shuffleParameter.value = Some(BinaryChoice.NO.toString)
-  regressor.seedShuffleParameter.value = Some(0.0)
+  regressor.numberOfFoldsParameter.value = 0.0
+  regressor.shuffleParameter.value = BinaryChoice.NO.toString
+  regressor.seedShuffleParameter.value = 0.0
 
-  val trainableParametersStub = Trainable.Parameters(
-      Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
-
-  regressor.featureColumnsParameter.value = trainableParametersStub.featureColumns
-  regressor.targetColumnParameter.value = trainableParametersStub.targetColumn
+  regressor.featureColumnsParameter.value = mock[MultipleColumnSelection]
+  regressor.targetColumnParameter.value = mock[SingleColumnSelection]
 
   "CrossValidateRegressor with parameters set" should {
     "train untrained model on DataFrame" in {
       val trainableMock = mock[UntrainedRidgeRegression]
-      val trainMethodMock = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
+      val trainMethodMock = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
       val executionContextStub = mock[ExecutionContext]
       val scorableStub = mock[TrainedRidgeRegression]
@@ -62,7 +59,7 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
 
       when(trainableMock.train).thenReturn(trainMethodMock)
       when(trainMethodMock.apply(
-        executionContextStub)(trainableParametersStub)(dataframeStub)).thenReturn(scorableStub)
+        executionContextStub)(regressor)(dataframeStub)).thenReturn(scorableStub)
 
       val result = regressor.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
 
@@ -85,23 +82,19 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]
 
       val trainableMock1 = mock[UntrainedRidgeRegression]
-      val trainMethodMock1 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
+      val trainMethodMock1 = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
 
       val trainableMock2 = mock[UntrainedRidgeRegression]
-      val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
-
+      val trainMethodMock2 = mock[DMethod1To1[TrainableParameters, DataFrame, Scorable]]
       when(trainableMock1.train).thenReturn(trainMethodMock1)
       when(trainMethodMock1.infer(any())(any())(any()))
         .thenReturn((scorableKnowledgeStub1, InferenceWarnings.empty))
-
       when(trainableMock2.train).thenReturn(trainMethodMock2)
       when(trainMethodMock2.infer(any())(any())(any()))
         .thenReturn((scorableKnowledgeStub2, InferenceWarnings.empty))
-
       val (result, _) = regressorWithoutParams.inferKnowledge(
         inferContextStub)(
-            Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
-
+          Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
       result.head shouldBe DKnowledge(scorableStubs.toSet)
       result.size shouldBe 2
     }

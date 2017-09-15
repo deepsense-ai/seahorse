@@ -70,10 +70,10 @@ trait SupportVectorMachineInterfaceParameters {
 
   def modelParameters: SupportVectorMachineParameters = {
     SupportVectorMachineParameters(
-      RegularizationType.withName(regularizationTypeParameter.value.get),
-      numberOfIterations.value.get.toInt,
-      regularizationParameterParameter.value.get,
-      miniBatchFractionParameter.value.get
+      RegularizationType.withName(regularizationTypeParameter.value),
+      numberOfIterations.value.toInt,
+      regularizationParameterParameter.value,
+      miniBatchFractionParameter.value
     )
   }
 }

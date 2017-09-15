@@ -75,11 +75,11 @@ abstract class TrainableBaseIntegSpec extends DeeplangIntegTestSupport with Preb
       }
 
       "feature column does not exist" in {
-        val trainableParameters = Trainable.Parameters(
-          featureColumns = Some(MultipleColumnSelection(
+        val trainableParameters = TrainableParameters(
+          MultipleColumnSelection(
             // Existing feature as an addition to the selection
-            Vector(NameColumnSelection(Set("non-existent", featureName(nonBinaryValuedNumeric)))))),
-          targetColumn = Some(NameSingleColumnSelection(targetName(nonBinaryValuedNumeric))))
+            Vector(NameColumnSelection(Set("non-existent", featureName(nonBinaryValuedNumeric))))),
+          NameSingleColumnSelection(targetName(nonBinaryValuedNumeric)))
 
         val dataFrame = makeDataFrame(nonBinaryValuedNumeric, nonBinaryValuedNumeric)
 
@@ -90,10 +90,10 @@ abstract class TrainableBaseIntegSpec extends DeeplangIntegTestSupport with Preb
       }
 
       "target column does not exist" in {
-        val trainableParameters = Trainable.Parameters(
-          featureColumns = Some(MultipleColumnSelection(
-            Vector(NameColumnSelection(Set(targetName(nonBinaryValuedNumeric)))))),
-          targetColumn = Some(NameSingleColumnSelection("non-existent")))
+        val trainableParameters = TrainableParameters(
+          MultipleColumnSelection(
+            Vector(NameColumnSelection(Set(targetName(nonBinaryValuedNumeric))))),
+          NameSingleColumnSelection("non-existent"))
 
         val dataFrame = makeDataFrame(nonBinaryValuedNumeric, nonBinaryValuedNumeric)
 
@@ -139,9 +139,11 @@ abstract class TrainableBaseIntegSpec extends DeeplangIntegTestSupport with Preb
   }
 
   protected def makeTrainableParameters(
-      target: ExtendedColumnType, features: Set[ExtendedColumnType]): Trainable.Parameters =
-    Trainable.Parameters(
-      featureColumns = Some(MultipleColumnSelection(
-        Vector(NameColumnSelection(features.map(featureName))))),
-      targetColumn = Some(NameSingleColumnSelection(targetName(target))))
+      target: ExtendedColumnType, features: Set[ExtendedColumnType]): TrainableParameters = {
+    TrainableParameters(
+      MultipleColumnSelection(
+        Vector(NameColumnSelection(features.map(featureName)))),
+      NameSingleColumnSelection(targetName(target))
+    )
+  }
 }

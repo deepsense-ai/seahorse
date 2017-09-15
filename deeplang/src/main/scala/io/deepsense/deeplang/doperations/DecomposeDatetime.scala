@@ -65,13 +65,13 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val decomposedColumnName: String =
-      dataFrame.getColumnName(timestampColumnParam.value.get)
+      dataFrame.getColumnName(timestampColumnParam.value)
 
     DataFrame.assertExpectedColumnType(
       dataFrame.sparkDataFrame.schema.fields.filter(_.name == decomposedColumnName).head,
       ColumnType.timestamp)
 
-    val selectedParts = timestampPartsParam.selections.get.map(_.label).toSet
+    val selectedParts = timestampPartsParam.selections.map(_.label).toSet
 
     val newColumns = for {
       part <- timestampParts
@@ -86,7 +86,7 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
       columnName: String,
       timestampPart: DecomposeDatetime.TimestampPart): Column = {
 
-    val newColumnName = timestampPrefixParam.value.getOrElse("") + timestampPart.name
+    val newColumnName = timestampPrefixParam.value + timestampPart.name
 
     (sparkDataFrame(columnName).substr(timestampPart.start, timestampPart.length)
       as newColumnName cast DoubleType)
@@ -116,8 +116,8 @@ object DecomposeDatetime {
             selectedParts: Seq[String],
             prefix: Option[String]): DecomposeDatetime = {
     val operation = new DecomposeDatetime
-    operation.timestampColumnParam.value = Some(columnSelection)
-    operation.timestampPartsParam.value = Some(selectedParts)
+    operation.timestampColumnParam.value = columnSelection
+    operation.timestampPartsParam.value = selectedParts
     operation.timestampPrefixParam.value = prefix
     operation
   }

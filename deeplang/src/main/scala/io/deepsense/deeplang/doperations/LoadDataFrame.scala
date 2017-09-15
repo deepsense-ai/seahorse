@@ -45,7 +45,7 @@ case class LoadDataFrame() extends DOperation0To1[DataFrame] {
       context.entityStorageClient)(
         DataFrame.loadFromFs(context))(
         context.tenantId,
-        idParameter.value.get)
+        idParameter.value)
   }
 
   override protected def _inferFullKnowledge(
@@ -53,7 +53,7 @@ case class LoadDataFrame() extends DOperation0To1[DataFrame] {
     implicit val timeout = 5.seconds
     val entityFuture = context.entityStorageClient.getEntityData(
       context.tenantId,
-      idParameter.value.get)
+      idParameter.value)
     val entity = Await.result(entityFuture, timeout)
     val metadata = DataFrameMetadata.deserializeFromJson(
       entity.get.dataReference.metadata.parseJson)
@@ -70,7 +70,7 @@ object LoadDataFrame {
 
   def apply(id: String): LoadDataFrame = {
     val loadDF = new LoadDataFrame
-    loadDF.idParameter.value = Some(id)
+    loadDF.idParameter.value = id
     loadDF
   }
 }

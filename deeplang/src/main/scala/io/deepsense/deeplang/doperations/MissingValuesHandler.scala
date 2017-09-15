@@ -51,8 +51,8 @@ case class MissingValuesHandler()
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
 
-    val strategy = Strategy.withName(strategyParam.value.get)
-    val columns = dataFrame.getColumnNames(selectedColumnsParam.value.get)
+    val strategy = Strategy.withName(strategyParam.value)
+    val columns = dataFrame.getColumnNames(selectedColumnsParam.value)
     val indicator = getIndicator()
 
     val indicatedDataFrame = addNullIndicatorColumns(context, dataFrame, columns, indicator)
@@ -66,7 +66,7 @@ case class MissingValuesHandler()
         replaceWithMode(context, indicatedDataFrame, columns, indicator)
       case Strategy.REPLACE_WITH_CUSTOM_VALUE =>
         replaceWithCustomValue(
-          context, indicatedDataFrame, columns, customValueParameter.value.get, indicator)
+          context, indicatedDataFrame, columns, customValueParameter.value, indicator)
     }
   }
 
@@ -151,7 +151,7 @@ case class MissingValuesHandler()
     var resultDF = MissingValuesHandlerUtils.replaceNulls(context, dataFrame, columns,
       columnName => nonEmptyColumnModes.getOrElse(columnName, null))
 
-    if (emptyColumnStrategyParameter.value.get ==
+    if (emptyColumnStrategyParameter.value ==
       MissingValuesHandler.EmptyColumnsMode.REMOVE.toString) {
       val retainedColumns = dataFrame.sparkDataFrame.columns.filter(
         !allEmptyColumns.toList.contains(_))
@@ -163,8 +163,8 @@ case class MissingValuesHandler()
   }
 
   private def getIndicator(): Option[String] = {
-    if (missingValueIndicatorParam.value.get == BinaryChoice.YES.toString) {
-      indicatorPrefixParam.value
+    if (missingValueIndicatorParam.value == BinaryChoice.YES.toString) {
+      Some(indicatorPrefixParam.value)
     } else {
       None
     }
@@ -225,9 +225,9 @@ object MissingValuesHandler {
             indicatorPrefix: Option[String] = None): MissingValuesHandler = {
 
     val handler = MissingValuesHandler()
-    handler.selectedColumnsParam.value = Some(columns)
-    handler.strategyParam.value = Some(strategy.toString)
-    handler.missingValueIndicatorParam.value = Some(indicator.toString)
+    handler.selectedColumnsParam.value = columns
+    handler.strategyParam.value = strategy.toString
+    handler.missingValueIndicatorParam.value = indicator.toString
     handler.indicatorPrefixParam.value = indicatorPrefix
     handler
   }
@@ -243,7 +243,7 @@ object MissingValuesHandler {
       Strategy.REPLACE_WITH_CUSTOM_VALUE,
       indicator,
       indicatorPrefix)
-    handler.customValueParameter.value = Some(customValue)
+    handler.customValueParameter.value = customValue
     handler
   }
 
@@ -258,7 +258,7 @@ object MissingValuesHandler {
       Strategy.REPLACE_WITH_MODE,
       indicator,
       indicatorPrefix)
-    handler.emptyColumnStrategyParameter.value = Some(emptyColumnsMode.toString)
+    handler.emptyColumnStrategyParameter.value = emptyColumnsMode.toString
     handler
   }
 }

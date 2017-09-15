@@ -35,7 +35,7 @@ trait Scorer[T <: Scorable] extends DOperation2To1[T, DataFrame, DataFrame] {
   override protected def _execute(
       context: ExecutionContext)(
       scorable: T, dataframe: DataFrame): DataFrame = {
-    scorable.score(context)(predictionColumnParam.value.get)(dataframe)
+    scorable.score(context)(predictionColumnParam.value)(dataframe)
   }
 
   override protected def _inferFullKnowledge(
@@ -43,7 +43,7 @@ trait Scorer[T <: Scorable] extends DOperation2To1[T, DataFrame, DataFrame] {
       scorableKnowledge: DKnowledge[T], dataFrameKnowledge: DKnowledge[DataFrame])
       : (DKnowledge[DataFrame], InferenceWarnings) = {
     val inferenceResults = for (scorable <- scorableKnowledge.types)
-      yield scorable.score.infer(context)(predictionColumnParam.value.get)(dataFrameKnowledge)
+      yield scorable.score.infer(context)(predictionColumnParam.value)(dataFrameKnowledge)
     val (inferredDataFrameKnowledge, inferenceWarnings) = inferenceResults.unzip
     (DKnowledge(inferredDataFrameKnowledge), InferenceWarnings.flatten(inferenceWarnings.toVector))
   }

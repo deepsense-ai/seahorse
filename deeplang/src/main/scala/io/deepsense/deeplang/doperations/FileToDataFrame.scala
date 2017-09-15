@@ -43,24 +43,24 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
         separatorParameter -> StringParameter(
           "Column separator",
           Some(","),
-          new AcceptAllRegexValidator,
-          _value = None
+          new AcceptAllRegexValidator
         ),
         namesIncludedParameter -> BooleanParameter(
           "Does the first row include column names?",
           Some(true)
         )
-      )),
-      _value = None),
+      ))
+    ),
     categoricalColumnsParameter -> ColumnSelectorParameter(
       "Categorical columns in the input File",
-      portIndex = 0
+      portIndex = 0,
+      default = Some(MultipleColumnSelection.emptySelection)
     )
   )
 
   override protected def _execute(context: ExecutionContext)(file: File): DataFrame = {
     val categoricalColumnsSelection = parameters.getColumnSelection(categoricalColumnsParameter)
-    val formatChoice = parameters.getChoice(formatParameter).get
+    val formatChoice = parameters.getChoice(formatParameter)
     FileType.forName(formatChoice.label) match {
       case CSV => dataFrameFromCSV(
         context, file, formatChoice.selectedSchema, categoricalColumnsSelection)
@@ -72,10 +72,9 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
       context: ExecutionContext,
       file: File,
       params: ParametersSchema,
-      categoricalColumnsSelection: Option[MultipleColumnSelection]): DataFrame = {
-
-    val separator = params.getString(separatorParameter).get
-    val namesIncluded = params.getBoolean(namesIncludedParameter).get
+      categoricalColumnsSelection: MultipleColumnSelection): DataFrame = {
+    val separator = params.getString(separatorParameter)
+    val namesIncluded = params.getBoolean(namesIncludedParameter)
     val lines = splitLines(file.rdd.get, separator).cache()
     val firstLine = lines.first()
     val columnsNo = firstLine.length
@@ -126,19 +125,17 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
   private def getCategoricalColumns(
       schema: StructType,
       columnNames: Seq[String],
-      categoricalColumnsSelection: Option[MultipleColumnSelection]): (Set[Int], Seq[String]) = {
-    categoricalColumnsSelection match {
-      case Some(selection) =>
-        val categoricalColumnNames = DataFrameColumnsGetter.getColumnNames(schema, selection)
-        val categoricalColumnNamesSet = categoricalColumnNames.toSet
-        val categoricalColumnIndices = (for {
-          (columnName, index) <- columnNames.zipWithIndex
-          if categoricalColumnNamesSet.contains(columnName)
-        } yield index).toSet
-        (categoricalColumnIndices, categoricalColumnNames)
-      case None => (Set.empty, Seq.empty)
-    }
+      categoricalColumnsSelection: MultipleColumnSelection): (Set[Int], Seq[String]) = {
+    val categoricalColumnNames =
+      DataFrameColumnsGetter.getColumnNames(schema, categoricalColumnsSelection)
+    val categoricalColumnNamesSet = categoricalColumnNames.toSet
+    val categoricalColumnIndices = (for {
+      (columnName, index) <- columnNames.zipWithIndex
+      if categoricalColumnNamesSet.contains(columnName)
+    } yield index).toSet
+    (categoricalColumnIndices, categoricalColumnNames)
   }
+
 
   /**
    * Splits string lines by separator, but escapes separator within double quotes.
@@ -267,13 +264,13 @@ object FileToDataFrame {
     val formatParam = params.getChoiceParameter(formatParameter)
     formatParam.value = Option(fileType.toString)
     val formatOptions = formatParam.options(fileType.toString)
-    formatOptions.getStringParameter(separatorParameter).value = Some(columnSeparator)
-    formatOptions.getBooleanParameter(namesIncludedParameter).value = Some(namesIncluded)
+    formatOptions.getStringParameter(separatorParameter).value = columnSeparator
+    formatOptions.getBooleanParameter(namesIncludedParameter).value = namesIncluded
     params.getColumnSelectorParameter(categoricalColumnsParameter)
-      .value = Some(MultipleColumnSelection(Vector(
+      .value = MultipleColumnSelection(Vector(
         NameColumnSelection(categoricalNames),
         IndexColumnSelection(categoricalIds)
-    ), false))
+    ), false)
     fileToDataFrame
   }
 }

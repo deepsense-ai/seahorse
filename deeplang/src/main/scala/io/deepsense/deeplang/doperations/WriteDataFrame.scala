@@ -66,16 +66,16 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] with CsvParameters
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
-    val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(outputFileParameter.value.get)
+    val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(outputFileParameter.value)
 
     try {
-      FileFormat.withName(formatParameter.value.get) match {
+      FileFormat.withName(formatParameter.value) match {
         case FileFormat.CSV =>
           val categoricalMetadata = CategoricalMetadata(dataFrame.sparkDataFrame)
           val csv = dataFrame.sparkDataFrame.rdd
             .map(rowToStringArray(categoricalMetadata) andThen convertToCsv)
 
-          val result = if (csvNamesIncludedParameter.value.get) {
+          val result = if (csvNamesIncludedParameter.value) {
             context.sparkContext.parallelize(Seq(
               convertToCsv(dataFrame.sparkDataFrame.schema.fieldNames)
             )).union(csv)
@@ -163,11 +163,11 @@ object WriteDataFrame {
 
     val (separator, customSeparator) = columnSeparator
     val writeDataFrame = WriteDataFrame()
-    writeDataFrame.formatParameter.value = Some(FileFormat.CSV.toString)
-    writeDataFrame.csvColumnSeparatorParameter.value = Some(separator.toString)
+    writeDataFrame.formatParameter.value = FileFormat.CSV.toString
+    writeDataFrame.csvColumnSeparatorParameter.value = separator.toString
     writeDataFrame.csvCustomColumnSeparatorParameter.value = customSeparator
-    writeDataFrame.csvNamesIncludedParameter.value = Some(writeHeader)
-    writeDataFrame.outputFileParameter.value = Some(path)
+    writeDataFrame.csvNamesIncludedParameter.value = writeHeader
+    writeDataFrame.outputFileParameter.value = path
     writeDataFrame
   }
 }

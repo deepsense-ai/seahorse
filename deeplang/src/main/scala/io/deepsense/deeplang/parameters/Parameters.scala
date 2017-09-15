@@ -138,7 +138,7 @@ case class ChoiceParameter(
       s"object expected.")
   }
 
-  def selection: Option[Selection] = value.map(selectionForChoice)
+  def selection: Selection = selectionForChoice(value)
 }
 
 object ChoiceParameter {
@@ -216,8 +216,8 @@ case class MultipleChoiceParameter(
     }
   }
 
-  def selections: Option[Traversable[Selection]] = {
-    value.map(labels => labels.map(selectionForChoice))
+  def selections: Traversable[Selection] = {
+    value.map(selectionForChoice)
   }
 }
 

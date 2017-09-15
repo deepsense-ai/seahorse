@@ -18,7 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Scorable, Trainable, WithTrainParameters}
+import io.deepsense.deeplang.doperables.{TrainableParameters, Scorable, Trainable}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 /**
@@ -26,7 +26,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
  */
 trait Trainer[T1 <: Trainable, T2 <: Scorable]
   extends DOperation2To1[T1, DataFrame, T2]
-  with WithTrainParameters {
+  with TrainableParameters {
 
   override val parameters = trainParameters
 
@@ -35,7 +35,7 @@ trait Trainer[T1 <: Trainable, T2 <: Scorable]
   override protected def _execute(
       context: ExecutionContext)(
       trainable: T1, dataframe: DataFrame): T2 = {
-    trainable.train(context)(parametersForTrainable)(dataframe).asInstanceOf[T2]
+    trainable.train(context)(this)(dataframe).asInstanceOf[T2]
   }
 
   override protected def _inferKnowledge(context: InferContext)(
@@ -43,7 +43,7 @@ trait Trainer[T1 <: Trainable, T2 <: Scorable]
       dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[T2], InferenceWarnings) = {
     val outputKnowledge = for {
       trainable <- trainableKnowledge.types
-      (result, _) = trainable.train.infer(context)(parametersForTrainable)(dataframeKnowledge)
+      (result, _) = trainable.train.infer(context)(this)(dataframeKnowledge)
     } yield result.asInstanceOf[DKnowledge[T2]]
     (DKnowledge(outputKnowledge), InferenceWarnings.empty)
   }
