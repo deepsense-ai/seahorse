@@ -17,7 +17,7 @@
 package io.deepsense.workflowexecutor
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.language.postfixOps
+import scala.concurrent.duration.FiniteDuration
 
 import akka.actor.Status.Failure
 import akka.actor._
@@ -28,7 +28,7 @@ import io.deepsense.deeplang.CommonExecutionContext
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.GetWorkflow
-import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageType, ReadyContent, Ready}
+import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
 import io.deepsense.workflowexecutor.partialexecution.Execution
 
 /**
@@ -38,9 +38,11 @@ class SessionWorkflowExecutorActor(
     executionContext: CommonExecutionContext,
     nodeExecutorFactory: GraphNodeExecutorFactory,
     workflowManagerClientActor: ActorRef,
-    publisher: ActorSelection,
+    publisher: ActorRef,
     seahorseTopicPublisher: ActorRef,
-    wmTimeout: Int)
+    wmTimeout: Int,
+    sessionId: String,
+    heartbeatInterval: FiniteDuration)
   extends WorkflowExecutorActor(
     executionContext,
     nodeExecutorFactory,
@@ -52,22 +54,21 @@ class SessionWorkflowExecutorActor(
 
   import scala.concurrent.duration._
 
+  private val heartbeat = Heartbeat(sessionId)
+  private var scheduledHeartbeat: Option[Cancellable] = None
 
   override def receive: Receive = {
     case Init() =>
-      logger.debug("SessionWorkflowExecutorActor for: {} received INIT", workflowId.toString)
-      workflowManagerClientActor.ask(GetWorkflow(workflowId))(wmTimeout seconds) pipeTo self
-      context.become(waitingForWorkflow)
+      initiate()
   }
 
   override def postRestart(reason: Throwable): Unit = {
     super.postRestart(reason)
     logger.warn(
-      s"SessionWorkflowExecutor actor for workflow: ${workflowId.toString} restarted.",
+      s"SessionWorkflowExecutor actor for workflow: ${workflowId.toString} " +
+        "restarted. Re-initiating!",
       reason)
-    logger.info("Sending Ready message to seahorse topic after restart.")
-    seahorseTopicPublisher !
-      Ready(Some(workflowId), ReadyContent(ReadyMessageType.Error, reason.getMessage))
+    initiate()
   }
 
   def waitingForWorkflow: Actor.Receive = {
@@ -82,21 +83,45 @@ class SessionWorkflowExecutorActor(
       logger.error("Could not get workflow with id", e)
       context.unbecome()
   }
+
+  override protected def onInitiated(): Unit = {
+    scheduleHeartbeats()
+  }
+
+  private def scheduleHeartbeats(): Unit = {
+    logger.info("Scheduling heartbeats.")
+    scheduledHeartbeat.foreach(_.cancel())
+    scheduledHeartbeat = Some(
+      context.system.scheduler.schedule(
+        Duration.Zero,
+        heartbeatInterval,
+        seahorseTopicPublisher,
+        heartbeat))
+  }
+
+  private def initiate(): Unit = {
+    logger.debug("SessionWorkflowExecutorActor for: {} received INIT", workflowId.toString)
+    workflowManagerClientActor.ask(GetWorkflow(workflowId))(wmTimeout.seconds) pipeTo self
+    context.become(waitingForWorkflow)
+  }
 }
 
 object SessionWorkflowExecutorActor {
   def props(
     ec: CommonExecutionContext,
     workflowManagerClientActor: ActorRef,
-    publisher: ActorSelection,
+    publisher: ActorRef,
     seahorseTopicPublisher: ActorRef,
     wmTimeout: Int,
-    statusListener: Option[ActorRef] = None): Props =
+    sessionId: String,
+    heartbeatInterval: FiniteDuration): Props =
     Props(new SessionWorkflowExecutorActor(
       ec,
       new GraphNodeExecutorFactoryImpl,
       workflowManagerClientActor,
       publisher,
       seahorseTopicPublisher,
-      wmTimeout))
+      wmTimeout,
+      sessionId,
+      heartbeatInterval))
 }

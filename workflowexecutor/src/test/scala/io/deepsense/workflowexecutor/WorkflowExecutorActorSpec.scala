@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor
 
+import scala.concurrent.duration._
+
 import akka.actor.{Actor, ActorRef, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.mockito.Matchers._
@@ -28,15 +30,13 @@ import org.scalatest.mock.MockitoSugar
 import spray.json.JsObject
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{CommonExecutionContext, DOperable, DOperation, ExecutionContext}
-import io.deepsense.graph.DeeplangGraph.DeeplangNode
+import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Aborted, NodeStatus, Queued, Running}
@@ -45,7 +45,6 @@ import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWorkflow, SaveState, SaveWorkflow}
-import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.partialexecution._
@@ -306,9 +305,11 @@ class WorkflowExecutorActorSpec
           SessionWorkflowExecutorActor.props(
             mock[CommonExecutionContext],
             wmClient.ref,
-            system.actorSelection(publisher.ref.path),
+            publisher.ref,
             TestProbe().ref,
-            3), Workflow.Id.randomId.toString)
+            3,
+            "",
+            3.seconds), Workflow.Id.randomId.toString)
         wea.underlyingActor.statefulWorkflow = statefulWorkflow
         wea.underlyingActor.context.become(wea.underlyingActor.ready())
         val workflow: Workflow = mock[Workflow]
@@ -447,9 +448,11 @@ class WorkflowExecutorActorSpec
         commonExecutionContext,
         nodeExecutorFactory,
         wmClient,
-        system.actorSelection(publisher.ref.path),
+        publisher.ref,
         TestProbe().ref,
-        5), workflow.id.toString)
+        5,
+        "",
+        3.seconds), workflow.id.toString)
 
     val statusListeners = Seq(publisher)
     (probe, wea, executors, statusListeners, subscriber, testWMClientProbe)

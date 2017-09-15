@@ -17,20 +17,13 @@
 package io.deepsense.workflowexecutor.communication.message.global
 
 import spray.httpx.SprayJsonSupport
-import spray.json.{RootJsonFormat, DefaultJsonProtocol}
+import spray.json.DefaultJsonProtocol
 
-case class Heartbeat(sessionId: String,
-                     heartbeatContent: HeartbeatContent = HeartbeatContent())
+case class Heartbeat(sessionId: String)
 
-trait HeartbeatJsonProtocol extends HeartbeatContentJsonProtocol {
-  implicit val heartbeatFormat = jsonFormat2(Heartbeat.apply)
+trait HeartbeatJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit val heartbeatFormat = jsonFormat1(Heartbeat)
 }
 
-case class HeartbeatContent(msgType: String = "heartbeat")
-
-trait HeartbeatContentJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val heartbeatContentFormat: RootJsonFormat[HeartbeatContent] =
-    jsonFormat1(HeartbeatContent)
-}
-
+object HeartbeatJsonProtocol extends HeartbeatJsonProtocol
 

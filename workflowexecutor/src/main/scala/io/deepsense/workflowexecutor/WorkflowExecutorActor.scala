@@ -16,10 +16,7 @@
 
 package io.deepsense.workflowexecutor
 
-import java.util.concurrent.TimeUnit
-
 import akka.actor._
-import akka.util.Timeout
 
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Entity
@@ -42,7 +39,7 @@ abstract class WorkflowExecutorActor(
     val executionContext: CommonExecutionContext,
     nodeExecutorFactory: GraphNodeExecutorFactory,
     workflowManagerClientActor: Option[ActorRef],
-    publisher: Option[ActorSelection],
+    publisher: Option[ActorRef],
     terminationListener: Option[ActorRef],
     executionFactory: StatefulGraph => Execution)
   extends Actor
@@ -51,17 +48,18 @@ abstract class WorkflowExecutorActor(
 
   import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 
-  implicit val wmClientTiemout: Timeout = Timeout(5, TimeUnit.SECONDS)
   val progressReporter = WorkflowProgress()
   val workflowId = Workflow.Id.fromString(self.path.name)
 
   private[workflowexecutor] var statefulWorkflow: StatefulWorkflow = null
 
   def ready(): Receive = {
-    case Launch(nodes) => launch(nodes.toSet)
+    case Launch(nodes) => launch(nodes)
     case UpdateStruct(workflow) => updateStruct(workflow)
-    case Init() => initWhenStateIsAvailable()
+    case Init() => unhandledInit()
   }
+
+  private def unhandledInit(): Unit = logger.warn("Already initiated but received Init - ignoring!")
 
   def launched(): Receive = {
     waitingForFinish().orElse {
@@ -73,7 +71,7 @@ abstract class WorkflowExecutorActor(
   def waitingForFinish(): PartialFunction[Any, Unit] = {
     case NodeCompleted(id, nodeExecutionResult) => nodeCompleted(id, nodeExecutionResult)
     case NodeFailed(id, failureDescription) => nodeFailed(id, failureDescription)
-    case Init() => initWhenStateIsAvailable()
+    case Init() => unhandledInit()
     case UpdateStruct(workflow) => updateStruct(workflow)
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
@@ -83,6 +81,7 @@ abstract class WorkflowExecutorActor(
     statefulWorkflow = StatefulWorkflow(executionContext, workflowWithResults, executionFactory)
     context.become(ready())
     initWhenStateIsAvailable()
+    onInitiated()
   }
 
   def initWhenStateIsAvailable(): Unit = {
@@ -216,6 +215,8 @@ abstract class WorkflowExecutorActor(
   }
 
   def execution: Execution = statefulWorkflow.currentExecution
+
+  protected def onInitiated(): Unit = {}
 }
 
 object WorkflowExecutorActor {

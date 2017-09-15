@@ -131,8 +131,6 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
 
     if (params.interactiveMode) {
       // Interactive mode (SessionExecutor)
-      logger.info("Starting SessionExecutor.")
-      logger.debug("Starting SessionExecutor.")
       SessionExecutor(
         params.messageQueueHost.get,
         params.pyExecutorPath.get,

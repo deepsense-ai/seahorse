@@ -41,7 +41,6 @@ class ProtocolJsonSerializerSpec
   with PythonGatewayAddressJsonProtocol
   with WorkflowWithResultsJsonProtocol
   with InferredStateJsonProtocol
-  with ReadyJsonProtocol
   with HeartbeatJsonProtocol {
 
   override val graphReader: GraphReader = mock[GraphReader]
@@ -87,12 +86,6 @@ class ProtocolJsonSerializerSpec
         InferredState(Workflow.Id.randomId, GraphKnowledge(), ExecutionReport(Map()))
       protocolJsonSerializer.serializeMessage(inferredState) shouldBe
       expectedSerializationResult("inferredState", inferredState.toJson)
-    }
-
-    "serialize Ready" in {
-      val ready = Ready(Some(Workflow.Id.randomId), ReadyContent(ReadyMessageType.Info, "blah"))
-      protocolJsonSerializer.serializeMessage(ready) shouldBe
-      expectedSerializationResult("ready", ready.toJson)
     }
 
     "serialize Heartbeat" in {

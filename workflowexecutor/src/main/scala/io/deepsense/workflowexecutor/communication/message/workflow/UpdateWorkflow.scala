@@ -16,7 +16,7 @@
 
 package io.deepsense.workflowexecutor.communication.message.workflow
 
-import spray.json.{RootJsonFormat, DefaultJsonProtocol}
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.utils.Logging
