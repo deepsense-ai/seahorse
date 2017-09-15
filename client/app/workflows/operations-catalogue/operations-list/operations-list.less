@@ -3,25 +3,39 @@
 
 @inner-border-color: #c0c0c0;
 @outer-border-color: #b3b3b3;
+@outer-border-color-brighter: #d3d3d3;
+
 
 .operations-list {
   position: relative;
   width: 200px;
   border: 2px solid @outer-border-color;
-  background-color: @color-light-grey;
+  background-color: @color-white;
   direction: rtl;
+
+  &--smaller {
+    width: 180px;
+  }
+
+  &--hide {
+    border: 2px solid @outer-border-color-brighter;
+  }
 
   &__wrapper {
     max-height: 240px;
     overflow-x: hidden;
     overflow-y: auto;
+
+    &--hide {
+      opacity: 0.4;
+    }
   }
 
   &__item {
     font-size: 14px;
     font-weight: 600;
     height: 40px;
-    width: 200px;
+    width: 100%;
     transition: background-color .3s ease;
     direction: ltr;
     padding-left: 5px;
@@ -30,16 +44,43 @@
     align-items: center;
 
     &:hover {
-      background-color: @color-white;
+      background-color: @color-active;
+      color: @color-white;
       cursor: pointer;
     }
 
-    &.category {
+    &--category {
       border-bottom: 1px solid @inner-border-color;
+      color: #000;
+
+      &:hover {
+        color: @color-white;
+        cursor: pointer;
+      }
 
       &:last-child {
         border-bottom: none;
       }
+    }
+
+    &--item {
+      font-size: 12px;
+      line-height: 20px;
+      height: 20px;
+      margin-bottom: 5px;
+
+      &:first-child {
+        margin-top: 10px;
+      }
+
+      &:last-child {
+        margin-bottom: 10px;
+      }
+    }
+
+    &--active {
+      background-color: @color-active;
+      color: @color-white;
     }
   }
 
@@ -48,12 +89,6 @@
     padding: 0 10px;
     flex: 1;
     .text-elipsis();
-  }
-
-  &__icon {
-    pointer-events: none;
-    font-size: 22px;
-    width: 30px;
   }
 
   &__next-level {

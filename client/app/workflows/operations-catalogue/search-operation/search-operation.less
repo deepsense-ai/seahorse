@@ -1,7 +1,7 @@
 @import "../../../../css/variables";
 @import "../../../mixins.less";
 
-@main-category-color: #999999;
+@main-category-color: #000;
 @subcategory-color: #666;
 
 .search-operation {
@@ -10,7 +10,7 @@
   width: 100%;
 
   .message {
-    background-color: @color-light-grey;
+    background-color: @color-white;
     margin-bottom: 15px;
     text-align: center;
   }
@@ -69,7 +69,8 @@
       .text-elipsis();
 
       &:hover {
-        background-color: @color-white;
+        background-color: @color-active;
+        color: @color-white;
         cursor: pointer;
       }
     }
