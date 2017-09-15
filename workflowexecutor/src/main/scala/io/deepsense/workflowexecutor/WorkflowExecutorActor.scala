@@ -95,7 +95,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   }
 
   def launchReadyNodes(graph: Graph): Unit = {
-    logger.debug("launchReadyNodes(graph={})", graph)
+    logger.debug("launchReadyNodes")
     for {
       node <- graph.readyNodes
       if !startedNodes.contains(node.id)

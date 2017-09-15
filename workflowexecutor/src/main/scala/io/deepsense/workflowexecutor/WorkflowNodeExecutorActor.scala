@@ -72,7 +72,7 @@ class WorkflowNodeExecutorActor(
       } catch {
         case e: Throwable =>
           logger.error(
-            s"Workflow execution failed in node with id=${runningNode.id}. Exception {}", e)
+            s"Workflow execution failed in node with id=${runningNode.id}. Exception $e")
           val nodeFailed = NodeFinished(runningNode.markFailed(e), results = Map.empty)
           sender ! nodeFailed
           logger.debug(s"Sending $nodeFailed")
