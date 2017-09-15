@@ -12,9 +12,7 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "INDEX.LIST")                => MergeStrategy.discard
   case PathList("META-INF", "ECLIPSEF.SF")               => MergeStrategy.discard
   case PathList("META-INF", "ECLIPSEF.RSA")              => MergeStrategy.discard
-  case PathList("entitystorage-communication.conf")      => MergeStrategy.discard
-  case PathList("graphexecutor.conf")                    => MergeStrategy.discard
-  case PathList("testEnvironment.conf")                  => MergeStrategy.discard
+  case PathList("application.conf")                      => MergeStrategy.discard
   case PathList("conf", "hadoop", "core-site.xml")       => MergeStrategy.discard
   case PathList("conf", "hadoop", "hdfs-site.xml")       => MergeStrategy.discard
   case PathList("conf", "hadoop", "yarn-site.xml")       => MergeStrategy.discard
@@ -28,6 +26,5 @@ assemblyOption in assembly :=
   (assemblyOption in assembly).value.copy(includeScala = false, includeDependency = false)
 
 unmanagedClasspath in Runtime += (baseDirectory.value / "conf")
-
 
 enablePlugins(BuildInfoPlugin)

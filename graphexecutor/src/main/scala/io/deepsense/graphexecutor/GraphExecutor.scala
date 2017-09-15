@@ -12,7 +12,7 @@ import scala.collection.mutable
 import akka.actor.ActorSystem
 import com.google.inject.name.Names
 import com.google.inject.{Guice, Key}
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.permission.{FsAction, FsPermission}
@@ -25,6 +25,7 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
+import io.deepsense.commons.akka.RemoteAddressExtension
 import io.deepsense.commons.config.ConfigModule
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
@@ -108,13 +109,7 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     import executionContext._
     createHdfsDir(hdfsClient, GraphExecutor.sparkEventLogDir)
 
-    val graphExecutorYarnWorkerConfig = geConfig.getConfig("graphexecutor-yarn-worker")
-    logger.debug("graphexecutor-yarn-worker config:")
-    logger.debug(s"$graphExecutorYarnWorkerConfig")
-    val actorSystem = ActorSystem("graphexecutor-on-yarn", graphExecutorYarnWorkerConfig)
-
-    val remotePort = actorSystem.settings.config.getInt("akka.remote.netty.tcp.port")
-    logger.debug(s">>> Actor system's port: $remotePort")
+    val (actorSystem, remotePort) = startActorSystem()
     registerApplicationMaster(resourceManagerClient, remotePort)
 
     val geRef = actorSystem.actorOf(
@@ -125,6 +120,29 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     actorSystem.awaitTermination()
     logger.debug("awaitTermination AFTER")
     cleanup(resourceManagerClient, entityStorageClientFactory, actorSystem)
+  }
+
+  /**
+   * Starts an actor system on the local domain.
+   * @return The started actor system and port on which the system works.
+   */
+  def startActorSystem(): (ActorSystem, Int) = {
+    val akkaConfig = geConfig.getConfig("graphexecutor-yarn-worker")
+    logger.debug("graphexecutor-yarn-worker config:")
+    logger.debug(s"$akkaConfig")
+
+    val addressKey = "akka.remote.netty.tcp.hostname"
+    val configuredAddress = akkaConfig.getString(addressKey)
+    val address = InetAddress.getLocalHost.getHostName
+    logger.debug(s"Overriding '$addressKey'. Using '$address' instead of '$configuredAddress'")
+    val modifiedConfig = akkaConfig.withValue(
+      "akka.remote.netty.tcp.hostname",
+      ConfigValueFactory.fromAnyRef(address))
+
+    val actorSystem = ActorSystem("graphexecutor-on-yarn", modifiedConfig)
+    val remotePort = RemoteAddressExtension(actorSystem).address.port.get
+    logger.debug(s">>> Actor system's port: $remotePort")
+    (actorSystem, remotePort)
   }
 
   def registerApplicationMaster(
