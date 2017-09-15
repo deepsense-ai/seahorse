@@ -26,7 +26,7 @@ class ParametersSuite extends FunSuite {
   }
 
   test("Getting String Parameter") {
-    val holder = StringParameterHolder("example", "default", true)
+    val holder = StringParameterHolder("example", "default", true, RegexValidator("a".r))
     holder.value = Some(StringParameter("abc"))
     val parametersSchema = ParametersSchema("x" -> holder)
     assert(parametersSchema.getStringParameter("x").get.value == "abc")
@@ -36,7 +36,7 @@ class ParametersSuite extends FunSuite {
     val parameter = Some(StringParameter("abc"))
     val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
     val exception = intercept[TypeConversionException] {
-      val holder = StringParameterHolder("description", None, true)
+      val holder = StringParameterHolder("description", None, true, RegexValidator("a".r))
       holder.value = parameter
       val parametersSchema = ParametersSchema("x" -> holder)
       parametersSchema.getNumericParameter("x")

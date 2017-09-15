@@ -50,8 +50,10 @@ object NumericParameterHolder {
 case class StringParameterHolder(
     description: String,
     default: Option[StringParameter],
-    required: Boolean)
-  extends ParameterHolder {
+    required: Boolean,
+    validator: Validator[StringParameter])
+  extends ParameterHolder
+  with HasValidator {
   type HeldParameter = StringParameter
 
   val parameterType = ParameterType.String
@@ -61,7 +63,8 @@ object StringParameterHolder {
   def apply(
       description: String,
       default: String,
-      required: Boolean): StringParameterHolder = {
-    StringParameterHolder(description, Some(StringParameter(default)), required)
+      required: Boolean,
+      validator: Validator[StringParameter]): StringParameterHolder = {
+    StringParameterHolder(description, Some(StringParameter(default)), required, validator)
   }
 }

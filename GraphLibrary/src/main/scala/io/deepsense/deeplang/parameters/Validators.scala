@@ -6,7 +6,9 @@
 
 package io.deepsense.deeplang.parameters
 
-import io.deepsense.deeplang.parameters.exceptions.{OutOfRangeWithStepException, OutOfRangeException}
+import scala.util.matching.Regex
+
+import io.deepsense.deeplang.parameters.exceptions.{MatchException, OutOfRangeWithStepException, OutOfRangeException}
 
 /**
  * Validates if NumericParameter value is within range bounds.
@@ -51,4 +53,16 @@ case class RangeValidator(
 
   /** Computes the value after given number of steps starting at `begin` of range. */
   private def makeSteps(count: Int, step: Double): Double = begin + step * count
+}
+
+/**
+ * Validates if StringParameter value matches the given regex.
+ */
+case class RegexValidator(regex: Regex) extends Validator[StringParameter] {
+  val validatorType = ValidatorType.Regex
+  override def validate(parameter: StringParameter): Unit = {
+    if (!(parameter.value matches regex.toString)) {
+      throw MatchException(parameter.value, regex)
+    }
+  }
 }

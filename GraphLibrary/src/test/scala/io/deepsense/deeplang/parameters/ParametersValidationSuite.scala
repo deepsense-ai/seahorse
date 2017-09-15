@@ -13,7 +13,7 @@ import io.deepsense.deeplang.parameters.exceptions._
 class ParametersValidationSuite extends FunSuite {
   test("Validation of valid parameters is possible") {
     val holder1 = NumericParameterHolder("example1", None, true, RangeValidator(3, 4))
-    val holder2 = StringParameterHolder("example2", "default", true)
+    val holder2 = StringParameterHolder("example2", "default", true, RegexValidator("abc".r))
 
     holder1.value = Some(NumericParameter(3.5))
     holder2.value = Some(StringParameter("abc"))
@@ -59,10 +59,23 @@ class ParametersValidationSuite extends FunSuite {
 
   test("Missing required parameter should throw an exception") {
     val exception = intercept[ParameterRequiredException] {
-      val holder = StringParameterHolder("description", None, true)
+      val holder = StringParameterHolder("description", None, true, RegexValidator("a".r))
       val parametersSchema = ParametersSchema("x" -> holder)
       parametersSchema.validate
     }
     assert(exception == ParameterRequiredException(ParameterType.String))
+  }
+
+  test("Validation of invalid parameter using regex validator should throw an exception") {
+    val regex = "a".r
+    val exception = intercept[MatchException] {
+      val validator = RegexValidator(regex)
+      val holder = StringParameterHolder("description", None, true, validator)
+      holder.value = Some(StringParameter("abc"))
+
+      val parametersSchema = ParametersSchema("x" -> holder)
+      parametersSchema.validate
+    }
+    assert(exception == MatchException("abc", regex))
   }
 }
