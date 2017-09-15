@@ -132,6 +132,10 @@ function WorkflowsEditorController(workflow,
     NotificationService.clearToasts();
   });
 
+  $scope.$on('AttributesPanel.UPDATED', () => {
+    WorkflowService.saveWorkflow();
+  });
+
   $scope.$on('StatusBar.HOME_CLICK', () => {
     let url = $state.href('home');
     window.open(url, '_blank');
