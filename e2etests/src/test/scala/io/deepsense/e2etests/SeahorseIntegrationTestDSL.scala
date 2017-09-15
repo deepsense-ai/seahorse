@@ -153,7 +153,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
       workflowId = workflowId,
       cluster = ClusterDetails(
         name = "some-name" + UUID.randomUUID(),
-        id = 1L,
+        id = Some(1L),
         clusterType = "local",
         uri = ignoredInLocal,
         userIP = ignoredInLocal
