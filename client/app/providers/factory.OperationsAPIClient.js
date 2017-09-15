@@ -9,6 +9,7 @@
 /* @ngInject */
 function OperationsAPIClientFactory(BaseAPIClient) {
   const PATH_OPERATIONS = '/operations/';
+  const PATH_CATALOG    = '/operations/catalog';
 
   function OperationsAPIClient() {
     BaseAPIClient.call(this);
@@ -23,6 +24,15 @@ function OperationsAPIClientFactory(BaseAPIClient) {
    */
   OperationsAPIClient.prototype.getAll = function() {
     return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_OPERATIONS);
+  };
+
+  /**
+   * Returns list of all operations.
+   *
+   * @return {Promise}
+   */
+  OperationsAPIClient.prototype.getCatalog = function() {
+    return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_CATALOG);
   };
 
   return new OperationsAPIClient();
