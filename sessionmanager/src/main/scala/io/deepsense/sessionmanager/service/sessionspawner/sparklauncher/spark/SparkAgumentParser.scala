@@ -20,8 +20,8 @@ object SparkAgumentParser extends Logging {
 
   def parse(paramsStringOpt: Option[String]): Validation[UnknownOption, Map[String, String]] = {
     paramsStringOpt match {
+      case Some("") | None => Map.empty[String, String].success
       case Some(paramsString) => parse(paramsString)
-      case None => Map.empty[String, String].success
     }
   }
 
