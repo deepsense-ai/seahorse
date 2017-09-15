@@ -62,13 +62,13 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>input columns</code></td>
 <td><code><a href="../parameter_types.html#multiple-column-selector">MultipleColumnSelector</a></code></td>
-<td>Input columns.</td>
+<td>The input columns.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Name of created output column.</td>
+<td>The name of created output column.</td>
 </tr>
 
 </tbody>

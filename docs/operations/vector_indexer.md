@@ -6,7 +6,9 @@ description: Vector Indexer
 usesMathJax: true
 includeOperationsMenu: true
 ---
-VectorIndexer helps index categorical features inside of a Vector.It decides which features are categorical and converts them to category indices. Decision is based on the number of distinct values of a feature.
+Vector Indexer indexes categorical features inside of a Vector. It decides which features
+are categorical and converts them to category indices. The decision is based on the number of
+distinct values of a feature.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.VectorIndexer">org.apache.spark.ml.feature.VectorIndexer documentation</a>.
 
@@ -62,7 +64,8 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>max categories</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Threshold for the number of values a categorical feature can take. If a feature is found to have more values, then it is declared continuous.</td>
+<td>The threshold for the number of values a categorical feature can take.
+If a feature is found to have more values, then it is declared continuous.</td>
 </tr>
 
 <tr>

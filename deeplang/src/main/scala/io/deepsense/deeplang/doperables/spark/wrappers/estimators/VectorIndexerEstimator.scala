@@ -32,8 +32,9 @@ class VectorIndexerEstimator
 
   val maxCategories = new IntParamWrapper[SparkVectorIndexer](
     name = "max categories",
-    description = "Threshold for the number of values a categorical feature can take. " +
-      "If a feature is found to have more values, then it is declared continuous.",
+    description =
+      """The threshold for the number of values a categorical feature can take.
+        |If a feature is found to have more values, then it is declared continuous.""".stripMargin,
     sparkParamGetter = _.maxCategories,
     validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(maxCategories, 20.0)

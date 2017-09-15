@@ -26,8 +26,10 @@ class Binarizer extends SparkTransformerAsMultiColumnTransformer[SparkBinarizer]
 
   val threshold = new DoubleParamWrapper[SparkBinarizer](
     name = "threshold",
-    description = "Threshold used to binarize continuous features. Feature values greater than " +
-      "the threshold will be binarized to 1.0. Remaining values will be binarized to 0.0.",
+    description =
+      """The threshold used to binarize continuous features. Feature values greater
+        |than the threshold will be binarized to 1.0. Remaining values will be binarized
+        |to 0.0.""".stripMargin,
     sparkParamGetter = _.threshold)
   setDefault(threshold, 0.0)
 

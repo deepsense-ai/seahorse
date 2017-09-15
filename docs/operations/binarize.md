@@ -62,7 +62,9 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>threshold</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Threshold used to binarize continuous features. Feature values greater than the threshold will be binarized to 1.0. Remaining values will be binarized to 0.0.</td>
+<td>The threshold used to binarize continuous features. Feature values greater
+than the threshold will be binarized to 1.0. Remaining values will be binarized
+to 0.0.</td>
 </tr>
 
 <tr>
