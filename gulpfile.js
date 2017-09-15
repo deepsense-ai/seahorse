@@ -17,7 +17,7 @@ var gulp = require('gulp'),
     babelifygul = require('babelify'),
     uglify = require('gulp-uglify'),
     source = require('vinyl-source-stream'),
-    del = require('del'),
+    clean = require('gulp-clean'),
     concat = require('gulp-concat'),
     size = require('gulp-size'),
     less = require('gulp-less'),
@@ -34,11 +34,10 @@ var config = require('./package.json'),
 
 var BROWSER_SYNC_RELOAD_DELAY = 2000;
 
-
-gulp.task('clean', function () {
-  return del([build.path]);
+gulp.task('clean', function() {
+  return gulp.src([build.path], {read: false})
+    .pipe(clean({force: true}));
 });
-
 
 gulp.task('nodemon', function (callback) {
   var called = false;
@@ -177,7 +176,6 @@ gulp.task('watch', function (callback) {
   gulp.watch(client.path + client.less, ['less']);
   gulp.watch(client.path + client.js, ['jshint', 'browserify', browserSync.reload]);
 });
-
 
 gulp.task('default', function () {
   gutil.log(gutil.colors.red('Please select task to run.'));
