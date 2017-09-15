@@ -213,6 +213,20 @@ In the next example we will try to improve these metrics.
   *The Simple Regression Model's performance*
 </div>
 
+#### Export the Model
+
+<img class="img-responsive" style="float:right; padding: 1em;" src="./img/write_transformer.png" />
+
+Model training might take a lot of time. It is possible to export trained
+models for further reuse with `Write Transformer` operation.
+An exported model can also be shared with other users.
+
+1.  Drag the `Write Transformer` operation onto your canvas.
+2.  Set **OUTPUT PATH** parameter's value to `/vagrant/model_example_1`.
+    This path refers to the directory containing the Vagrantfile in the host OS.
+3.  Drag the `Fit` output to the `Write Transformer` operation.
+4.  Click **RUN** to execute the workflow again and write the transformer to the specified path.
+
 ### Example 2 - Build a Better Model
 
 The goal of this exercise is to improve our previous model's performance.
@@ -520,3 +534,37 @@ p.set_xlabel('Score')
 </td>
 </tr>
 </table>
+
+### Example 4 - Import a Model
+
+The goal of this exercise is to import and use a previously trained and
+exported model. Note that the `Export model` step from Example 1 must be finished prior to this example.
+
+####  Import Model
+
+<img class="img-responsive" style="float:right; padding: 1em;" src="./img/read_transformer_04.png" />
+
+1. Create an empty workflow.
+2. Import the model:
+   * Drag a `Read Transformer` operation onto your canvas.
+   * Set **SOURCE** parameter's value to `/vagrant/model_example_1`.
+     This path refers to the model saved in the Example 1.
+3. Load the data to be run with the imported model:
+   * Drag the `Read DataFrame` operation onto your canvas and set parameters as listed in Example 1.
+     Note that in a real life scenario new data would be used.
+4. The data passed to the model must have the same schema as the data used in training.
+   We need to recreate preprocessing from Example 1:
+   * Drag the `Assembly Vector` operation onto your canvas and set parameters as listed in Example 1.
+
+   Hint: if the data preprocessing is built of many operations it might be a
+   good idea to encapsulate these operations inside a `Custom Transformer`
+   operation and export it as well. Importing and using this `Custom Transformer`
+   allows user to reuse preprocessing logic.
+5. Use the imported model with new data:
+   * Drag the `Transform` operation onto your canvas.
+   * Drag the `Read Transformer` output to the `Transform` operation input.
+   * Drag the `Assembly Vector` output to the `Transform` operation input.
+   * Click **RUN** to execute the workflow.
+
+To make sure that your imported model is working correctly you can view
+the data report to check the generated predictions.
