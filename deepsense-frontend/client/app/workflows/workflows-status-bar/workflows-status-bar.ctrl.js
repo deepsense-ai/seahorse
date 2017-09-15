@@ -1,26 +1,10 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowStatusBarController($stateParams, WorkflowService,
-  WorkflowsApiClient, WorkflowStatusBarService, config) {
+function WorkflowStatusBarController($scope, WorkflowStatusBarService) {
 
-  this.data = WorkflowStatusBarService.data;
+  $scope.getMenuItems = (workflowType, isRunning) => WorkflowStatusBarService.getMenuItems(workflowType, isRunning);
 
-  _.assign(this, {
-    getReportName() {
-        let name = WorkflowService.getCurrentWorkflow()
-          .name;
-        return name.toLowerCase()
-          .split(' ')
-          .join('-');
-      },
-
-      getDocsHost() {
-        return config.docsHost;
-      },
-
-      exportReportLink: WorkflowsApiClient.getDownloadReportUrl($stateParams.reportId)
-  });
 }
 
 exports.inject = function(module) {

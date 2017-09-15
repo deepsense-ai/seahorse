@@ -1,4 +1,8 @@
-<div flowchart-box-undraggable tabindex="0" class="flowchart-box">
+<div flowchart-box-undraggable tabindex="0"
+     class="flowchart-box"
+     ng-class="{
+      'flowchart-box--is-running': isRunning
+     }">
   <!--tabindex="0" makes flowchart focusable-->
   <div class="flowchart-mask">
     <div class="flowchart-paint-area"
@@ -34,7 +38,6 @@
       </span>
     </sticky-window>
   </div>
-  <deepsense-interaction-toolbar close-inner-workflow-btn-visible="!flowChartBoxCtrl.isRootWorkflow()"
-                                 zoom-id="{{::flowChartBoxCtrl.zoomId}}" autorun="true"></deepsense-interaction-toolbar>
+  <deepsense-interaction-toolbar zoom-id="{{::flowChartBoxCtrl.zoomId}}" autorun="true"></deepsense-interaction-toolbar>
 
 </div>

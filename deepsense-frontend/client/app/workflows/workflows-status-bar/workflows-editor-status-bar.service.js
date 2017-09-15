@@ -1,62 +1,73 @@
 'use strict';
 
 class WorkflowStatusBarService {
-  constructor($rootScope, $stateParams, config) {
+  constructor($rootScope, config) {
 
     this.$rootScope = $rootScope;
-    this.$stateParams = $stateParams;
     this.config = config;
 
-    this.data = {
-      menuItems: [{
+    let menuItems = {
+      clear: {
         label: 'Clear',
         icon: 'fa-trash-o',
         callFunction: () => $rootScope.$broadcast('StatusBar.CLEAR_CLICK')
-      }, {
+      },
+      documentation: {
         label: 'Documentation',
         icon: 'fa-book',
         href: this.config.docsHost + '/docs/latest/index.html',
         target: '_blank'
-      }, {
+      },
+      export: {
         label: 'Export',
         icon: 'fa-angle-double-down',
         callFunction: () => this.$rootScope.$broadcast('StatusBar.EXPORT_CLICK')
-      }, {
+      },
+      run: {
         label: 'Run',
         icon: 'fa-play',
-        callFunction: this.executionRun.bind(this)
-      }]
+        callFunction: () => this.$rootScope.$broadcast('StatusBar.RUN')
+      },
+      abort: {
+        label: 'Abort',
+        icon: 'fa-ban',
+        callFunction: () => this.$rootScope.$broadcast('StatusBar.ABORT')
+      },
+      closeInnerWorkflow: {
+        label: 'Close inner workflow',
+        icon: 'fa-ban',
+        color: '#216477',
+        callFunction: () => this.$rootScope.$broadcast('StatusBar.CLOSE-INNER-WORKFLOW')
+      }
+    };
+
+    this._menuItemViews = {
+      edit: [menuItems.clear, menuItems.documentation, menuItems.export, menuItems.run],
+      running: [menuItems.clear, menuItems.documentation, menuItems.export, menuItems.abort],
+      editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
     };
   }
 
-  executionRun() {
-    this.createAbortButton();
-    this.$rootScope.$broadcast('StatusBar.RUN');
+  getMenuItems(workflowType, isRunning) {
+    let view = this._getView(workflowType, isRunning);
+    return this._menuItemViews[view];
   }
 
-  executionAbort() {
-    this.createRunButton();
-    this.$rootScope.$broadcast('StatusBar.ABORT');
-  }
-
-  createAbortButton() {
-    let abortButton = {
-      label: 'Abort',
-      icon: 'fa-ban',
-      callFunction: this.executionAbort.bind(this)
-    };
-    this.data.menuItems.pop();
-    this.data.menuItems.push(abortButton);
-  }
-
-  createRunButton() {
-    let runButton = {
-      label: 'Run',
-      icon: 'fa-play',
-      callFunction: this.executionRun.bind(this)
-    };
-    this.data.menuItems.pop();
-    this.data.menuItems.push(runButton);
+  _getView(workflowType, isRunning) {
+    switch (workflowType) {
+      case 'root':
+        if (isRunning) {
+          return 'running'
+        } else {
+          return 'edit'
+        }
+      case 'inner':
+        if (isRunning) {
+          throw "Cannot run inner workflow"
+        } else {
+          return 'editInnerWorkflow'
+        }
+    }
   }
 
 }

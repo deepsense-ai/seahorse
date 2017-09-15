@@ -30,13 +30,15 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
         this._workflowsStack.push(workflow);
       });
 
-      $rootScope.$on('INTERACTION-PANEL.CLOSE-INNER-WORKFLOW', () => {
+      $rootScope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
         this._workflowsStack.pop();
       });
     }
 
     initRootWorkflow(workflowData) {
       let workflow = this._deserializeWorkflow(workflowData);
+      workflow.workflowType = 'root';
+      workflow.isRunning = false;
 
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
@@ -55,6 +57,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
     initInnerWorkflow(node) {
       let innerWorkflowData = node.parametersValues[INNER_WORKFLOW_PARAM_NAME];
       let innerWorkflow = this._deserializeInnerWorkflow(innerWorkflowData);
+      innerWorkflow.workflowType = 'inner';
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
 
       let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === CUSTOM_TRANSFORMER_ID);

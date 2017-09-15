@@ -18,10 +18,6 @@ function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPa
     return nodeDimensions;
   };
 
-  this.isRootWorkflow = function isTopLevelWorkflow() {
-    return WorkflowService.getRootWorkflow() === this.workflow;
-  };
-
   $scope.$on('ZOOM.ZOOM_PERFORMED', (_, data) => {
     GraphPanelRendererService.setZoom(data.zoomRatio);
   });

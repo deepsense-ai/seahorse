@@ -1,6 +1,6 @@
 {
   "name": "deepsense-navigation-panel",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "The navigation panel including zooming and movable functionalities.",
   "scripts": {
     "prestart": "npm install",

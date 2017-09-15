@@ -16,7 +16,6 @@
       templateUrl: 'ui-widgets/deepsense-interaction-toolbar.html',
       scope: {
         'zoomId': '@',
-        'closeInnerWorkflowBtnVisible': '=?'
       },
       link: (scope) => {
         scope.zoomId = scope.zoomId || DEFAULT_ID;
@@ -31,10 +30,6 @@
             $rootScope.$broadcast('INTERACTION-PANEL.ZOOM-IN', {
               zoomId: scope.zoomId
             });
-          };
-
-          scope.handleCloseInnerWorkflowBtn = () => {
-            $rootScope.$broadcast('INTERACTION-PANEL.CLOSE-INNER-WORKFLOW');
           };
 
           scope.activeMoveBtn = false;

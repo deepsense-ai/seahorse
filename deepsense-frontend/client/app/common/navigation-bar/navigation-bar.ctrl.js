@@ -1,16 +1,16 @@
 'use strict';
 
 /* @ngInject */
-function NavigationController($rootScope, config, PageService) {
+function NavigationController($rootScope, config, PageService, WorkflowService) {
   _.assign(this, {
-    getTitle() {
-        return PageService.getTitle();
-      },
-      home() {
+    home() {
         $rootScope.$broadcast('StatusBar.HOME_CLICK');
       },
       getAPIVersion() {
         return config.editorVersion;
+      },
+      getCurrentWorkflow() {
+        return WorkflowService.getCurrentWorkflow();
       }
   });
 }

@@ -12,7 +12,7 @@ class WorkflowsEditorController {
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout,
     GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
     WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-    ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService) {
+    ServerCommunication, CopyPasteService, SideBarService, BottomBarService) {
 
     WorkflowService.initRootWorkflow(workflowWithResults);
 
@@ -20,7 +20,7 @@ class WorkflowsEditorController {
       $scope, $state, $q, $rootScope, $log, $timeout,
       GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
       WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-      ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService
+      ServerCommunication, CopyPasteService, SideBarService, BottomBarService
     });
 
     this.BottomBarData = BottomBarService.tabsState;
@@ -283,7 +283,7 @@ class WorkflowsEditorController {
   changeToRunningMode() {
     this.unbindListeners();
     this.isReportMode = true;
-    this.WorkflowStatusBarService.createAbortButton();
+    this.WorkflowService.getCurrentWorkflow().isRunning = true;
     this.CopyPasteService.setEnabled(false);
     this.isRunning = true;
   }
@@ -291,7 +291,7 @@ class WorkflowsEditorController {
   restoreEditableMode() {
     this.initUnbindableListeners();
     this.isReportMode = false;
-    this.WorkflowStatusBarService.createRunButton();
+    this.WorkflowService.getCurrentWorkflow().isRunning = false;
     this.CopyPasteService.setEnabled(true);
     this.isRunning = false;
   }
