@@ -21,7 +21,7 @@ class TrainedRidgeRegressionTrainScoreIntegTest
   private def deleteDataFile(): Unit =
     executionContext.hdfsClient.hdfsClient.delete(fileName, false)
 
-  override def beforeAll(): Registration = {
+  override def beforeAll(): Unit = {
     super.beforeAll()
     deleteDataFile()
     executionContext.hdfsClient.copyLocalFile(
@@ -29,7 +29,10 @@ class TrainedRidgeRegressionTrainScoreIntegTest
       fileName)
   }
 
-  override def afterAll(): Registration = deleteDataFile()
+  override def afterAll(): Unit = {
+    super.afterAll()
+    deleteDataFile()
+  }
 
   "TrainedRidgeRegression" should {
     "give satisfactory results" in {
