@@ -28,6 +28,10 @@
   .height-with-nav-offset();
 
   display: block;
+
+  @media(max-width: @media-break) {
+    .height-with-nav-offset(@navigation-bar-height-expanded - @navigation-bar-height);
+  }
 }
 
 .c-main-header {
@@ -45,7 +49,7 @@
   }
 
   @media(max-width: @media-break) {
-    height: @navigation-bar-height + 15px;
+    height: @navigation-bar-height-expanded;
   }
 }
 
