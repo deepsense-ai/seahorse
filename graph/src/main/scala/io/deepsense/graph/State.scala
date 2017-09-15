@@ -7,6 +7,7 @@ package io.deepsense.graph
 import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.models.entities.Entity
 
 /**
@@ -21,8 +22,8 @@ case class State private[graph](
     started: Option[DateTime] = None,
     ended: Option[DateTime] = None,
     progress: Option[Progress] = None,
-    // TODO: results should be changed to list of datasets UUIDs
-    results: Option[Seq[Entity.Id]] = None) {
+    results: Option[Seq[Entity.Id]] = None,
+    error: Option[FailureDescription] = None) {
 
   private[graph] def completed(results: Seq[Entity.Id]): State = {
     copy(status = Status.Completed,
@@ -31,8 +32,8 @@ case class State private[graph](
       results = Some(results))
   }
 
-  private[graph] def failed: State =
-    copy(status = Status.Failed, ended = Some(DateTimeConverter.now))
+  private[graph] def failed(error: FailureDescription): State =
+    copy(status = Status.Failed, ended = Some(DateTimeConverter.now), error = Some(error))
 
   private[graph] def aborted: State =
     copy(status = Status.Aborted, ended = Some(DateTimeConverter.now))

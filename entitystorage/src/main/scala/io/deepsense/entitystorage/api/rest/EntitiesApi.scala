@@ -105,7 +105,7 @@ class EntitiesApi @Inject() (
   override def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
     super.exceptionHandler(log) orElse ExceptionHandler {
       case e: EntityNotFoundException =>
-        complete(StatusCodes.NotFound, FailureDescription.fromException(e))
+        complete(StatusCodes.NotFound, e.failureDescription)
     }
   }
 

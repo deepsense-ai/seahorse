@@ -8,6 +8,7 @@ import org.joda.time.DateTime
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.json.envelope.EnvelopeJsonFormat
 import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.deeplang.InferContext
@@ -36,6 +37,8 @@ trait ExperimentJsonProtocol
     override def read(json: JsValue): Graph = json.convertTo[Graph](graphReader)
     override def write(obj: Graph): JsValue = obj.toJson(GraphWriter)
   }
+
+  implicit val experimentErrorFormat = jsonFormat5(FailureDescription.apply)
 
   implicit object ExperimentFormat extends RootJsonFormat[Experiment] {
 
@@ -78,16 +81,16 @@ trait ExperimentJsonProtocol
         Updated -> experiment.updated.toJson,
         State -> JsObject(
           Status -> JsString(experiment.state.status.toString),
-          Error -> experiment.state.error.map(JsString(_)).getOrElse(JsNull),
+          Error -> experiment.state.error.toJson,
           Nodes -> JsObject(
-            experiment.graph.nodes.map(node => {
+            experiment.graph.nodes.map {node =>
               node.id.value.toString -> node.state.toJson
-            }).toMap)
+            }.toMap)
         ),
         TypeKnowledge -> JsObject(
-          experiment.graph.nodes.map(node => {
+          experiment.graph.nodes.map {node =>
             node.id.value.toString -> knowledge.getKnowledge(node.id).toJson
-          }).toMap
+          }.toMap
         )
       )
     }

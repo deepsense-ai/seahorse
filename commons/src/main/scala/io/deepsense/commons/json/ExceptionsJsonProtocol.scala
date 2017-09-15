@@ -7,19 +7,25 @@ package io.deepsense.commons.json
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.exception.{ExceptionDetails, FailureDescription}
+import io.deepsense.commons.exception.FailureCode.FailureCode
+import io.deepsense.commons.exception.{FailureCode, FailureDescription, IllegalDeepSenseArgumentException}
 
 trait ExceptionsJsonProtocol
   extends DefaultJsonProtocol
+  with IdJsonProtocol
   with SprayJsonSupport {
 
-  implicit val restExceptionJsonWriter = jsonFormat4(FailureDescription.apply)
+  implicit object FailureCodeJsonFormat extends JsonFormat[FailureCode] with SprayJsonSupport {
+    override def write(code: FailureCode): JsValue = JsNumber(code.id)
 
-  implicit object ExceptionDetailsWriter extends JsonWriter[ExceptionDetails] {
-    override def write(obj: ExceptionDetails): JsValue = {
-      JsObject() // TODO Define and implement exceptions details.
+    override def read(json: JsValue): FailureCode = json match {
+      case JsNumber(code) => FailureCode.fromCode(code.toInt)
+        .getOrElse(throw new IllegalDeepSenseArgumentException((s"Unknown FailureCode: $code")))
+      case x => deserializationError(s"Expected code as JsNumber, but got $x")
     }
   }
+
+  implicit val failureDescriptionJsonProtocol = jsonFormat5(FailureDescription.apply)
 }
 
 object ExceptionsJsonProtocol extends ExceptionsJsonProtocol

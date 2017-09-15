@@ -15,6 +15,7 @@ import akka.actor.{Actor, ActorLogging}
 import akka.pattern.{after, pipe}
 import akka.util.Timeout
 
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graphexecutor.{Constants, GraphExecutorClient}
 import io.deepsense.models.experiments.Experiment
@@ -87,11 +88,23 @@ class RunningExperimentsActor @Inject() (
           throw new IllegalStateException("Spawning Failed for experiment: " + experiment)
         }
       }.onFailure { case reason =>
-        log.error(reason, s"Launching experiment failed $experiment")
+        val failureDetails: FailureDescription = buildFailureDetails(experiment, reason)
         self ! ExperimentStatusUpdated(
-          markExperimentAsFailed(resultExp.id, Option(reason.getMessage)))
+          markExperimentAsFailed(resultExp.id, failureDetails))
       }
     }
+  }
+
+  private def buildFailureDetails(experiment: Experiment, reason: Throwable): FailureDescription = {
+    val errorId = DeepSenseFailure.Id.randomId
+    val failureMessage = s"Launching experiment: ${experiment.id} failed. Error id: $errorId"
+    log.error(reason, failureMessage)
+    FailureDescription(
+      errorId,
+      FailureCode.LaunchingFailure,
+      failureMessage,
+      Option(reason.getMessage),
+      FailureDescription.stacktraceDetails(reason.getStackTrace))
   }
 
   private def delete(experimentId: Id): Unit =
@@ -160,7 +173,8 @@ class RunningExperimentsActor @Inject() (
       state.onFailure { case reason =>
         log.error(
           reason,
-          "getExecutionState of experiment ${experiment.id} failed! (Is it already started?)")
+          "getExecutionState of experiment {} failed! (Is it already started?)",
+          experiment.id)
       }
       val stateWithTimeout = Future firstCompletedOf Seq(state,
         after(refreshTimeout, context.system.scheduler)(Future.failed {
@@ -178,11 +192,9 @@ class RunningExperimentsActor @Inject() (
 
   private def markExperimentAsFailed(
       experimentId: Id,
-      failureMessage: Option[String]): Experiment = {
-    log.info(s"Marking experiment: $experimentId as failed with message: $failureMessage")
-    val message: String = s"Experiment $experimentId failed. " +
-      failureMessage.map(m => s"With message: $m").getOrElse("")
-    experiments(experimentId)._1.markFailed(message)
+      failureDetails: FailureDescription): Experiment = {
+    log.info(s"Marking experiment: $experimentId as failed with details: $failureDetails")
+    experiments(experimentId)._1.markFailed(failureDetails)
   }
 }
 

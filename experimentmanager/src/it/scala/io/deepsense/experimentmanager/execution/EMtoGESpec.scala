@@ -14,7 +14,8 @@ import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.{Millis, Seconds, Span}
 
-import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.FailureCode.NodeFailure
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.doperations.LoadDataFrame
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor.{GetStatus, Launch, Launched, Status}
 import io.deepsense.graph.{Graph, Node}
@@ -61,7 +62,13 @@ class EMtoGESpec
 
       stateOfExperiment(experiment) shouldBe Experiment.State.running
       waitTillExperimentFinishes(experiment)
-      stateOfExperiment(experiment) shouldBe Experiment.State.failed("1")
+      val state = stateOfExperiment(experiment)
+      state.status shouldBe Experiment.Status.Failed
+      val failureDescription: FailureDescription = state.error.get
+      failureDescription.code shouldBe NodeFailure
+      failureDescription.title shouldBe "Node Failure"
+      failureDescription.message shouldBe None
+      failureDescription.details shouldBe None
     }
   }
 

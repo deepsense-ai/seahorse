@@ -7,7 +7,7 @@ lazy val reportlib              = project
 lazy val `deploy-model-service` = project dependsOn (
   commons,
   commons % "test->test")
-lazy val models                 = project dependsOn graph
+lazy val models                 = project dependsOn (commons, graph)
 lazy val deeplang               = project dependsOn (
   commons,
   `deploy-model-service`,

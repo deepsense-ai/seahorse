@@ -6,6 +6,7 @@ package io.deepsense.graph
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.{DKnowledge, DOperable, InferContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.models.entities.Entity
@@ -49,11 +50,11 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
 
   def markAsRunning(id: Node.Id): Graph = withChangedNode(id, _.markRunning)
 
-  def markAsCompleted(id: Node.Id, results: List[Entity.Id]): Graph = {
+  def markAsCompleted(id: Node.Id, results: List[Entity.Id]): Graph =
     withChangedNode(id, _.markCompleted(results))
-  }
 
-  def markAsFailed(id: Node.Id): Graph = withChangedNode(id, _.markFailed)
+  def markAsFailed(id: Node.Id, failureDetails: FailureDescription): Graph =
+    withChangedNode(id, _.markFailed(failureDetails))
 
   def markAsAborted(id: Node.Id): Graph = withChangedNode(id, _.markAborted)
 

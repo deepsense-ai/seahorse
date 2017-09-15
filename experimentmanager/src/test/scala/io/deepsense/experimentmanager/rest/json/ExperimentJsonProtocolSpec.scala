@@ -12,6 +12,7 @@ import org.mockito.Mockito._
 import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.parameters.ParametersSchema
@@ -70,7 +71,11 @@ class ExperimentJsonProtocolSpec
     created,
     updated,
     description,
-    State.failed("This is a description of an error"))
+    State.failed(FailureDescription(
+      DeepSenseFailure.Id.randomId,
+      FailureCode.UnexpectedError,
+      "Error title",
+      Some("This is a description of an error"))))
 
   "Experiment" should {
     "be properly transformed to Json" in {
@@ -86,8 +91,14 @@ class ExperimentJsonProtocolSpec
       val state = experimentJson.fields("state").asJsObject
       val status = state.fields("status").asInstanceOf[JsString].value
       status shouldBe experiment.state.status.toString
-      val error = state.fields("error").asInstanceOf[JsString].value
-      error shouldBe experiment.state.error.get
+      val experimentError: FailureDescription = experiment.state.error.get
+      state.fields("error") shouldBe JsObject(
+        "id" -> JsString(experimentError.id.toString),
+        "code" -> JsNumber(experimentError.code.id),
+        "title" -> JsString(experimentError.title),
+        "message" -> JsString(experimentError.message.get),
+        "details" -> JsObject()
+      )
 
       val nodeStatuses = state.fields("nodes").asJsObject
       graph.nodes.foreach(node => {

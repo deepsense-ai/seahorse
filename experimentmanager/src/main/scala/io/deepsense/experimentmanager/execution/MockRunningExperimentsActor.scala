@@ -13,6 +13,7 @@ import akka.actor.{Actor, ActorLogging}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.experimentmanager.execution.MockRunningExperimentsActor.Tick
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graph.Node
@@ -106,7 +107,11 @@ class MockRunningExperimentsActor @Inject()(
           node.withProgress(nextProgress)
         }
       } else {
-        node.markFailed
+        node.markFailed(FailureDescription(
+          DeepSenseFailure.Id.randomId,
+          FailureCode.UnexpectedError,
+          "Random failure for tests",
+          message = Some("Random failure")))
       }
     } else {
       node

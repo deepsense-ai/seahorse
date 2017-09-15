@@ -6,8 +6,6 @@ package io.deepsense.experimentmanager.execution
 
 import java.util.UUID
 
-import io.deepsense.deeplang.doperations.LoadDataFrame
-
 import scala.concurrent.duration._
 
 import akka.actor.Props
@@ -18,7 +16,10 @@ import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
 import org.scalatest.{BeforeAndAfter, WordSpecLike}
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.FailureCode.UnexpectedError
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureDescription}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.deeplang.doperations.LoadDataFrame
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.{GraphExecutorClient, SimpleGraphExecutionIntegSuiteEntities}
@@ -39,9 +40,17 @@ class RunningExperimentsActorSpec
 
   val emptyExperiment = Experiment(Experiment.Id.randomId,
     "B", "Experiment", Graph(), created, updated)
-  val failedExperiment = Experiment(Experiment.Id.randomId, "B", "Experiment", Graph(nodes =
-    Set(Node(Node.Id.randomId, LoadDataFrame(UUID.randomUUID().toString)).markFailed)),
-    created, updated)
+  val failedExperiment = Experiment(
+    Experiment.Id.randomId,
+    "B",
+    "Experiment",
+    Graph(nodes = Set(Node(Node.Id.randomId, LoadDataFrame("dataframe_id")).markFailed(
+      FailureDescription(
+        DeepSenseFailure.Id.randomId,
+        UnexpectedError,
+        "Something went wrong")))),
+    created,
+    updated)
   val experiment = Experiment(Experiment.Id.randomId, "B", "Experiment",
     Graph(nodes = Set(Node(Node.Id.randomId, LoadDataFrame(UUID.randomUUID().toString)))),
     created, updated)

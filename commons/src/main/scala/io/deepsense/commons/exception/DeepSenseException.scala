@@ -4,24 +4,26 @@
 
 package io.deepsense.commons.exception
 
-import io.deepsense.commons.models
+import io.deepsense.commons.exception.FailureCode.FailureCode
 
 /**
  * Base exception for all DeepSense exceptions
  */
 abstract class DeepSenseException(
-  val id: DeepSenseException.Id,
-  val code: Int,
+  val code: FailureCode,
   val title: String,
   val message: String,
-  val cause: Option[Throwable],
-  val details: Option[ExceptionDetails]) extends Exception(message, cause.orNull)
+  val cause: Option[Throwable] = None,
+  val details: Map[String, String] = Map()) extends Exception(message, cause.orNull) {
 
-object DeepSenseException {
-  type Id = models.Id
-  val Id = models.Id
+  val id = DeepSenseFailure.Id.randomId
+
+  def failureDescription: FailureDescription = FailureDescription(
+    id,
+    code,
+    title,
+    Some(message),
+    details ++ additionalDetails)
+
+  protected def additionalDetails: Map[String, String] = Map()
 }
-
-trait ExceptionDetails
-
-case class StringExceptionDetails(details: String) extends ExceptionDetails

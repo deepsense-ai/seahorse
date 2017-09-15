@@ -31,6 +31,6 @@ trait Serialization {
   }
 
   def serializeDeserialize[T](obj: T): T = deserialize[T](serialize[T](obj))
-
-  object Serialization extends Serialization
 }
+
+object Serialization extends Serialization

@@ -10,6 +10,8 @@ import scala.concurrent.{Await, duration}
 
 import com.typesafe.scalalogging.LazyLogging
 
+import io.deepsense.commons.exception.FailureCode.{NodeFailure, UnexpectedError}
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureDescription}
 import io.deepsense.commons.metrics.Instrumented
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClient
@@ -73,22 +75,8 @@ class GraphNodeExecutor(
       }
     } catch {
       case e: Exception => {
-        logger.error(s"${node.id} Graph execution failed $e", e)
-        // Exception thrown here, during handling exception could result in application deadlock
-        // (node stays in status RUNNING forever, Graph Executor waiting for this status change)
         graphExecutor.graphGuard.synchronized {
-          // TODO: Exception should be relayed to graph
-          // TODO: To decision: exception in single node should result in abortion of:
-          // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
-
-          // TODO Include ERROR in Node's status instead of Experiment's status
-          val errorMessage = graphExecutor.experiment.get.state.error
-            .map(previous => s"$previous, \n${node.id}:  ${e.toString}")
-            .getOrElse(e.toString)
-          graphExecutor.experiment =
-            Some(graphExecutor.experiment.get
-              .copy(graph = graphExecutor.graph.get.markAsFailed(node.id))
-              .markFailed(errorMessage))
+          markNodeFailureInExperiment(e)
         }
       }
     } finally {
@@ -99,6 +87,28 @@ class GraphNodeExecutor(
       graphExecutor.nodeTiming.put(nodeDescription, duration)
       graphExecutor.graphEventBinarySemaphore.release()
     }
+  }
+
+  private def markNodeFailureInExperiment(e: Exception): Unit = {
+    val errorId: DeepSenseFailure.Id = DeepSenseFailure.Id.randomId
+    val failureTitle: String = s"Node: ${node.id} failed. Error Id: $errorId"
+    logger.error(failureTitle, e)
+    // TODO: To decision: exception in single node should result in abortion of:
+    // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
+    val nodeFailureDetails = FailureDescription(
+      errorId,
+      UnexpectedError,
+      failureTitle,
+      Some(e.toString),
+      FailureDescription.stacktraceDetails(e.getStackTrace))
+    val experimentFailureDetails = FailureDescription(
+      errorId,
+      NodeFailure,
+      s"One or more nodes failed in experiment: ${graphExecutor.experiment.get.id}")
+    graphExecutor.experiment =
+      Some(graphExecutor.experiment.get
+        .copy(graph = graphExecutor.graph.get.markAsFailed(node.id, nodeFailureDetails))
+        .markFailed(experimentFailureDetails))
   }
 
   /**

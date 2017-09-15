@@ -8,6 +8,7 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.auth.Ownable
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models
 import io.deepsense.graph.Graph
 import io.deepsense.models.experiments.Experiment.State
@@ -64,7 +65,7 @@ case class Experiment(
 
   def markRunning: Experiment = copy(graph = graph.enqueueNodes, state = State.running)
   def markCompleted: Experiment = copy(state = State.completed)
-  def markFailed(message: String): Experiment = copy(state = State.failed(message))
+  def markFailed(details: FailureDescription): Experiment = copy(state = state.failed(details))
 
   def isRunning: Boolean = state.status == Experiment.Status.Running
   def isFailed: Boolean = state.status == Experiment.Status.Failed
@@ -98,8 +99,8 @@ object Experiment {
     } else if (nodes.forall(n => n.isDraft || n.isCompleted || n.isQueued || n.isRunning)) {
       running
     } else if (nodes.exists(_.isFailed)) {
-      val failedNodesCount = nodes.count(_.isFailed)
-      failed(s"$failedNodesCount")
+      val failureId = DeepSenseFailure.Id.randomId
+      failed(FailureDescription(failureId, FailureCode.NodeFailure, "Node Failure"))
     } else {
       aborted
     }
@@ -114,19 +115,19 @@ object Experiment {
     val Aborted = Value(4, "ABORTED")
   }
 
-  case class State(status: Status, error: Option[String]) {
+  case class State(status: Status, error: Option[FailureDescription] = None) {
     def draft: State = State.draft
     def running: State = State.running
     def completed: State = State.completed
-    def failed(message: String): State = State.failed(message)
+    def failed(error: FailureDescription): State = State.failed(error)
     def aborted: State = State.aborted
   }
 
   object State {
-    val draft = State(Status.Draft, None)
-    val running = State(Status.Running, None)
-    val completed = State(Status.Completed, None)
-    def failed(message: String): State = State(Status.Failed, Some(message))
-    val aborted = State(Status.Aborted, None)
+    val draft = State(Status.Draft)
+    val running = State(Status.Running)
+    val completed = State(Status.Completed)
+    def failed(error: FailureDescription): State = State(Status.Failed, Some(error))
+    val aborted = State(Status.Aborted)
   }
 }

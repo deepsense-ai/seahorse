@@ -4,6 +4,7 @@
 
 package io.deepsense.graph
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models
 import io.deepsense.deeplang.DOperation
 import io.deepsense.models.entities.Entity
@@ -17,7 +18,7 @@ case class Node(
 
   def markQueued: Node = copy(state = State.queued)
 
-  def markFailed: Node = copy(state = state.failed)
+  def markFailed(error: FailureDescription): Node = copy(state = state.failed(error))
 
   def markAborted: Node = copy(state = state.aborted)
 
@@ -40,6 +41,8 @@ case class Node(
   def isRunning: Boolean = state.status == Status.Running
 
   def isCompleted: Boolean = state.status == Status.Completed
+
+  def failureDetails: Option[FailureDescription] = state.error
 
   private def total: Int = 100
 }
