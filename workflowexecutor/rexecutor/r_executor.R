@@ -1,12 +1,10 @@
 args <- commandArgs(trailingOnly = TRUE)
-sparkVersion <- args[1]
-backendPort <- as.integer(args[2])
-workflowId <- args[3]
-nodeId <- args[4]
-entryPointId <- args[5]
-code <- URLdecode(args[6])
+backendPort <- as.integer(args[1])
+workflowId <- args[2]
+nodeId <- args[3]
+entryPointId <- args[4]
+code <- URLdecode(args[5])
 
-print(sparkVersion)
 print(backendPort)
 print(workflowId)
 print(nodeId)
@@ -30,6 +28,7 @@ assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 
 sparkSQLSession <- SparkR:::callJMethod(entryPoint, "getNewSparkSQLSession")
 
+sparkVersion <- SparkR:::callJMethod(sc, "version")
 if (sparkVersion == "2.0.0") {
   assign(".sparkRsession", SparkR:::callJMethod(sparkSQLSession, "getSparkSession"), envir = SparkR:::.sparkREnv)
   assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)

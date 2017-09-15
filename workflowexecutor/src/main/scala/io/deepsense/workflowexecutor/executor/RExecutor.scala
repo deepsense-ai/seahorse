@@ -36,7 +36,6 @@ case class RExecutor(rBackendPort: Int,
 
   def run(workflowId: String, nodeId: String, code: String): Unit = {
     val command = s"""$RExecutable $rExecutorScript """ +
-        s""" ${org.apache.spark.SPARK_VERSION} """ +
         s""" $rBackendPort """ +
         s""" $workflowId """ +
         s""" $nodeId """ +
