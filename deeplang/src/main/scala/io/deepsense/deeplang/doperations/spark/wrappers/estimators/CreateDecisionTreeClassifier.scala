@@ -19,11 +19,11 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.documentation.SparkOperationDocumentation
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.VanillaDecisionTreeClassifier
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.{DecisionTreeClassifier, VanillaDecisionTreeClassifier}
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
 class CreateDecisionTreeClassifier
-  extends EstimatorAsFactory[VanillaDecisionTreeClassifier]
+  extends EstimatorAsFactory[DecisionTreeClassifier]
   with SparkOperationDocumentation {
 
   override val id: Id = "81039036-bb26-445b-81b5-63fbc9295c00"
@@ -34,6 +34,6 @@ class CreateDecisionTreeClassifier
       |as well as both continuous and categorical features.""".stripMargin
 
   override protected[this] val docsGuideLocation =
-    Some("ml-classification-regression.html#decision-trees")
+    Some("ml-classification-regression.html#decision-tree-classifier")
   override val since: Version = Version(1, 1, 0)
 }

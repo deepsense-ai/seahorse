@@ -78,6 +78,7 @@ List of all currently supported operations:
     * [Isotonic Regression](operations/isotonic_regression.html)
     * [Linear Regression](operations/linear_regression.html)
     * [Random Forest Regression](operations/random_forest_regression.html)
+    * [Decision Tree Regression](operations/decision_tree_regression.html)
   * Clustering
     * [K-Means](operations/k-means.html)
     * [LDA](operations/lda.html)

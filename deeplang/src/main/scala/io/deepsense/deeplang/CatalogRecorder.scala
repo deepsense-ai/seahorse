@@ -72,6 +72,8 @@ object CatalogRecorder {
     catalog.registerDOperable[LinearRegressionModel]()
     catalog.registerDOperable[RandomForestRegression]()
     catalog.registerDOperable[RandomForestRegressionModel]()
+    catalog.registerDOperable[DecisionTreeRegression]()
+    catalog.registerDOperable[DecisionTreeRegressionModel]()
     catalog.registerDOperable[PCAEstimator]()
     catalog.registerDOperable[PCAModel]()
     catalog.registerDOperable[StandardScalerEstimator]()
@@ -263,6 +265,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateRandomForestRegression](
+      DOperationCategories.ML.Regression)
+
+    catalog.registerDOperation[CreateDecisionTreeRegression](
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateGBTRegressor](
