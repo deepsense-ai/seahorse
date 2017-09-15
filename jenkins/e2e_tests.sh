@@ -19,12 +19,12 @@ fi
 
 ./jenkins/scripts/sync_up_docker_images_with_git_repo.sh
 
-SPARK_STANDALONE_DOCKER_COMPOSE="testing/spark-standalone-cluster/standalone-cluster.dc.yml"
+SPARK_STANDALONE_MANAGEMENT="./seahorse-workflow-executor/docker/spark-standalone-cluster-manage.sh"
 MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
 
 ## Make sure that when job is aborted/killed all dockers will be turned off
 function cleanup {
-    docker-compose -f $SPARK_STANDALONE_DOCKER_COMPOSE down
+    $SPARK_STANDALONE_MANAGEMENT down
     docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
     (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
 }
@@ -39,14 +39,8 @@ cleanup # in case something was already running
 
 ## Start Spark Standalone cluster dockers
 
-testing/spark-standalone-cluster/build-cluster-node-docker.sh
-docker-compose -f $SPARK_STANDALONE_DOCKER_COMPOSE up -d
-
-export SPARK_STANDALONE_MASTER_IP=$(
-docker inspect --format='{{.Name}}-{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q) \
-  | grep sparkMaster \
-  | cut -f2 -d"-"
-)
+seahorse-workflow-executor/docker/spark-standalone-cluster/build-cluster-node-docker.sh
+$SPARK_STANDALONE_MANAGEMENT up
 
 ## Start Mesos Spark cluster dockers
 
