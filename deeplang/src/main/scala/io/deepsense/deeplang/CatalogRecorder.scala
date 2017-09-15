@@ -25,6 +25,7 @@ import io.deepsense.deeplang.doperables.spark.wrappers.evaluators._
 import io.deepsense.deeplang.doperables.spark.wrappers.models._
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers._
 import io.deepsense.deeplang.doperations._
+import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators._
 import io.deepsense.deeplang.doperations.spark.wrappers.evaluators._
 import io.deepsense.deeplang.doperations.spark.wrappers.transformers._
@@ -110,6 +111,14 @@ object CatalogRecorder {
 
     catalog.registerDOperation[Notebook](
       DOperationCategories.IO)
+
+    // Operations API uses catalog to fetch data even for operation/{id} calls.
+    // To make Source and Sink accessible with this call they are added here.
+    // As a workaround frontend filter outs those from operations pallete.
+    // FIXME Make operation/{id} calls not rely on catalog and introduce some kind of
+    // additional 'all operations' map to be used in operation/{id} calls.
+    catalog.registerDOperation[Source](DOperationCategories.IO)
+    catalog.registerDOperation[Sink](DOperationCategories.IO)
 
     catalog.registerDOperation[Fit](
       DOperationCategories.Action)
