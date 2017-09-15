@@ -90,11 +90,21 @@
       color: grey;
       font-weight: 500;
       padding-left: 10px;
+      display: flex;
+      max-width: 330px;
 
       .parent {
-        &:hover {
-          cursor: pointer;
-          text-decoration: underline;
+        display: flex;
+
+        &-name {
+          padding: 0 2px;
+          max-width: 145px;
+          .text-elipsis();
+
+          &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+          }
         }
       }
     }

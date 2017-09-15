@@ -9,7 +9,7 @@
     <div class="extension"
          ng-class="{[$ctrl.extension]: $ctrl.canShowExtension}"
          ng-if="$ctrl.canShowExtension"
-      >
+    >
       {{$ctrl.extension}}
     </div>
   </div>
@@ -20,15 +20,19 @@
     <div class="name" title={{$ctrl.item.name}}>
       {{$ctrl.item.name}}
     </div>
-    <span class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status !== 'error'">
-      <span ng-repeat="parent in $ctrl.parents">
-        <span class="parent" ng-click="$ctrl.goToUri(parent.uri)">{{parent.name}}</span>
-        <span ng-if="!$last">/</span>
-      </span>
-    </span>
-    <span class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status === 'error'">
+    <div class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status !== 'error'">
+      <div class="parent" ng-repeat="parent in $ctrl.parents">
+        <div class="parent-name" ng-click="$ctrl.goToUri(parent.uri)" title={{parent.name}}>
+          {{parent.name}}
+        </div>
+        <div ng-if="!$last">
+          /
+        </div>
+      </div>
+    </div>
+    <div class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status === 'error'">
       (upload failed)
-    </span>
+    </div>
   </div>
 
   <div class="actions"
