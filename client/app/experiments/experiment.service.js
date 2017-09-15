@@ -5,9 +5,9 @@
 
 var Experiment = require('./common-objects/common-experiment.js');
 
-function ExperimentFactory() {
-
+function ExperimentService() {
   var that = this;
+  var internal = {};
 
   that.createExperiment = function createExperiment(data, operations) {
     var experiment = new Experiment();
@@ -18,11 +18,19 @@ function ExperimentFactory() {
     return experiment;
   };
 
+  that.getExperiment = function getExperiment () {
+    return internal.experiment;
+  };
+
+  that.setExperiment = function storeExperiment (experiment) {
+    internal.experiment = experiment;
+  };
+
   return that;
 }
 
-exports.function = ExperimentFactory;
+exports.function = ExperimentService;
 
 exports.inject = function (module) {
-  module.service('ExperimentFactory', ExperimentFactory);
+  module.service('ExperimentService', ExperimentService);
 };

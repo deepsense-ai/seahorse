@@ -95,7 +95,7 @@ GraphNode.prototype.setStatus = function setStatus(state) {
  * @param {object} state
  */
 GraphNode.prototype.updateState = function updateState(state) {
-  this.results = state.results;
+  this.results = state.results || [];
   this.setStatus(state);
 };
 

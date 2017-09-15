@@ -93,7 +93,7 @@ function DrawingService($rootScope) {
     for (var nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         var node = internal.getNodeById(nodeId);
-        that.addOutputPoint(node, nodes[nodeId].output);
+        that.addOutputPoint(node, nodes[nodeId].output, nodes[nodeId]);
         that.addInputPoint(node, nodes[nodeId].input);
       }
     }
@@ -107,44 +107,41 @@ function DrawingService($rootScope) {
     for (let id in edges) {
       var edge = edges[id];
       var connection = jsPlumb.connect({
-          uuids: [
-            outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
-            inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
-          ]
-        });
+        uuids: [
+          outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
+          inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
+        ]
+      });
       connection.setParameter('edgeId', edge.id);
     }
   };
 
-  that.contextMenuHandler = function contextMenuHandler(endPoint, event) {
-    $rootScope.$broadcast('OutputPoint.CONTEXTMENU', {
-      event: event,
-      thisPoint: {
-        'type': 'endPoint',
-        'reference': endPoint
-      }
+  that.portContextMenuHandler = function portContextMenuHandler(port, event) {
+    $rootScope.$broadcast('OutputPort.RIGHT_CLICK', {
+      reference: port,
+      event: event
     });
   };
 
-  that.outputClickHandler = function clickHandler () {
-    $rootScope.$broadcast('OutputPoint.CLICK');
+  that.outputClickHandler = function outputClickHandler() {
+    $rootScope.$broadcast('OutputPort.LEFT_CLICK');
   };
 
-  that.addOutputPoint = function addOutputPoint(node, ports) {
+  that.addOutputPoint = function addOutputPoint(nodeElement, ports, nodeObj) {
     var anchors = ['BottomCenter', 'BottomLeft', 'BottomRight'];
     for (let i = 0; i < ports.length; i++) {
-      let port = jsPlumb.addEndpoint(node, outputStyle, {
+      let port = jsPlumb.addEndpoint(nodeElement, outputStyle, {
         anchor: anchors[i],
         uuid: ports[i].id
       });
       port.setParameter('portIndex', i);
-
-      port.bind('contextmenu', that.contextMenuHandler);
+      port.setParameter('nodeId', nodeObj.id);
+      port.bind('contextmenu', that.portContextMenuHandler);
       port.bind('click', that.outputClickHandler);
     }
   };
 
-  that.inputClickHandler = function inputClickHandler () {
+  that.inputClickHandler = function inputClickHandler() {
     $rootScope.$broadcast('InputPoint.CLICK');
   };
 

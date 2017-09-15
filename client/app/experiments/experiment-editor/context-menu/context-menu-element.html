@@ -1,0 +1,8 @@
+<li ng-show="visible">
+  <a ng-href="{{::href}}"
+     ng-class="{'disabled' : !active}"
+     ng-click="action()">
+    <i class="fa" ng-class="icon"></i>
+    <span>{{::description}}</span>
+  </a>
+</li>

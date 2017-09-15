@@ -3,13 +3,13 @@
  */
 
 .context-menu {
-  position: fixed;
+  position: absolute;
   z-index: 100;
   background: #fff;
   border: 1px solid #E0E0E0;
-  -webkit-box-shadow: 2px 2px 5px 0 rgba(102,102,102,1);
-  -moz-box-shadow: 2px 2px 5px 0 rgba(102,102,102,1);
-  box-shadow: 2px 2px 5px 0 rgba(102,102,102,1);
+  -webkit-box-shadow: 2px 2px 5px 0 rgba(102, 102, 102, 1);
+  -moz-box-shadow: 2px 2px 5px 0 rgba(102, 102, 102, 1);
+  box-shadow: 2px 2px 5px 0 rgba(102, 102, 102, 1);
 
   div.panel-body {
     padding: 10px;
@@ -28,6 +28,16 @@
 
         &:hover {
           color: #2A6496;
+        }
+
+        &.disabled {
+          @color: #E0E0E0;
+          color: @color;
+          pointer-events: none;
+          cursor: default;
+          i {
+            color: @color;
+          }
         }
       }
 

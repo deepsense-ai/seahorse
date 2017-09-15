@@ -4,8 +4,10 @@
 'use strict';
 
 /* @ngInject */
-
-function ExperimentController($http, $modal, $timeout, $stateParams, $scope, PageService, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient, UUIDGenerator) {
+function ExperimentController(
+  $http, $modal, $timeout, $stateParams, $scope,
+  PageService, Operations, DrawingService, ExperimentService, ExperimentAPIClient, UUIDGenerator
+) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
   var that = this;
@@ -14,22 +16,8 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   var GraphNode = require('./common-objects/common-graph-node.js');
   var Edge = require('./common-objects/common-edge.js');
 
-  internal.operations = null;
   internal.selectedNode = null;
   internal.isDataLoaded = false;
-
-  internal.init = function init() {
-    internal.initializeOperations().then(internal.loadExperiment);
-  };
-
-  internal.loadCatalog = () => {
-    return Operations
-      .getCatalog()
-      .then((operationCatalog) => {
-        console.log('Catalog downloaded successfully');
-        that.operationsCatalog = operationCatalog;
-      });
-  };
 
   internal.initializeOperations = () => {
     return Operations.load().then(() => {
@@ -43,8 +31,8 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
       .then((data) => {
         console.log('Experiment downloaded successfully');
         PageService.setTitle('Experiment: ' + data.experiment.name);
-        internal.experiment = ExperimentFactory.createExperiment(data, Operations.getData());
-        DrawingService.renderExperiment(internal.experiment);
+        ExperimentService.setExperiment(ExperimentService.createExperiment(data, Operations.getData()));
+        DrawingService.renderExperiment(ExperimentService.getExperiment());
         internal.isDataLoaded = true;
       });
   };
@@ -67,7 +55,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
    * @param {object} data
    */
   that.handleExperimentStateChange = function handleExperimentStateChange(data) {
-    internal.experiment.updateState(data.experiment.state);
+    ExperimentService.getExperiment().updateState(data.experiment.state);
     that.checkExperimentState();
   };
 
@@ -75,7 +63,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
    * Loads experiment state data.
    */
   that.loadExperimentState = function loadExperimentState() {
-    ExperimentAPIClient.getData(internal.experiment.getId()).then(that.handleExperimentStateChange,
+    ExperimentAPIClient.getData(ExperimentService.getExperiment().getId()).then(that.handleExperimentStateChange,
       (error) => {
         console.error('experiment fetch state error', error);
       }
@@ -87,7 +75,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
    */
   that.checkExperimentState = function checkExperimentState() {
     $timeout.cancel(internal.runStateTimeout);
-    if (internal.experiment.isRunning()) {
+    if (ExperimentService.getExperiment().isRunning()) {
       internal.runStateTimeout = $timeout(that.loadExperimentState, RUN_STATE_CHECK_INTERVAL, false);
     }
   };
@@ -96,21 +84,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
     return internal.isDataLoaded ? Operations.getCatalog() : undefined;
   };
 
-  that.getOperations = function getOperations() {
-    return internal.operations;
-  };
-
-  that.getOperationById = function getOperationById(id) {
-    return internal.operations[id];
-  };
-
-  that.getExperiment = function getExperiment() {
-    return internal.experiment;
-  };
-
-  that.getParametersSchemaById = function getParametersSchemaById(id) {
-    return internal.experiment.getParametersSchema()[id];
-  };
+  that.getExperiment = ExperimentService.getExperiment;
 
   that.getSelectedNode = function getSelectedNode() {
     return internal.selectedNode;
@@ -121,7 +95,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   };
 
   that.saveData = function saveData() {
-    let data = that.getExperiment().serialize();
+    let data = ExperimentService.getExperiment().serialize();
     ExperimentAPIClient.saveData({
       'experiment': data
     }).then((result) => {
@@ -153,20 +127,20 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   });
 
   $scope.$on(Edge.CREATE, (data, args)  => {
-    internal.experiment.addEdge(args.edge);
+    ExperimentService.getExperiment().addEdge(args.edge);
     $scope.$digest();
     that.saveData();
   });
 
   $scope.$on(Edge.REMOVE, (data, args)  => {
-    internal.experiment.removeEdge(args.edge);
+    ExperimentService.getExperiment().removeEdge(args.edge);
     $scope.$digest();
     that.saveData();
   });
 
   $scope.$on('Keyboard.KEY_PRESSED', (event, data) => {
     if (internal.selectedNode) {
-      internal.experiment.removeNode(internal.selectedNode.id);
+      ExperimentService.getExperiment().removeNode(internal.selectedNode.id);
       DrawingService.removeNode(internal.selectedNode.id);
       that.unselectNode();
       that.onRenderFinish();
@@ -182,13 +156,13 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
       positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,
       offsetX = 100,
       offsetY = 30,
-      node = internal.experiment.createNode({
+      node = ExperimentService.getExperiment().createNode({
         'id': UUIDGenerator.generateUUID(),
         'operation': operation,
         'x': positionX > offsetX ? positionX - offsetX : 0,
         'y': positionY > offsetY ? positionY - offsetY : 0
       });
-    internal.experiment.addNode(node);
+    ExperimentService.getExperiment().addNode(node);
     DrawingService.repaintEverything();
     $scope.$digest();
     that.onRenderFinish();
@@ -196,7 +170,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   });
 
   $scope.$on('Experiment.RUN', () => {
-    ExperimentAPIClient.runExperiment(internal.experiment.getId()).then((data) => {
+    ExperimentAPIClient.runExperiment(ExperimentService.getExperiment().getId()).then((data) => {
       that.handleExperimentStateChange(data);
     }, (error) => {
       console.log('experiment launch error', error);
@@ -204,7 +178,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   });
 
   $scope.$on('Experiment.ABORT', () => {
-    ExperimentAPIClient.abortExperiment(internal.experiment.getId()).then((data) => {
+    ExperimentAPIClient.abortExperiment(ExperimentService.getExperiment().getId()).then((data) => {
       that.handleExperimentStateChange(data);
     }, (error) => {
       console.log('experiment abort error', error);
@@ -219,6 +193,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   // --- MOCK ---
   // TODO: remove when it won't be needed anymore
   $scope.$on('Model.DEPLOY', (event, data) => {
+    console.log('catching Model.DEPLOY');
     $modal.open({
       template: '<div class="inmodal"><div class="modal-header"><h4 class="modal-title">Deploy model</h4></div><div class="modal-body" style="height:75px;"><loading-spinner-sm ng-if="!linkValue && !error" style="font-size:10px;position:relative;top:-23px;"></loading-spinner-sm><p ng-hide="linkValue===undefined"><input type="text" class="form-control" value="{{::linkValue}}" ng-focus="linkValue!==undefined" readonly="true"></p><p ng-hide="error!==true" style="color:red;margin-top:10px;">Error occurred while deploying model!</p></div><div class="modal-footer"><button type="button" class="btn btn-white" ng-click="close()">Close</button></div></div>',
       controller: ($scope, $modalInstance) => {
@@ -231,11 +206,10 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
           console.error('deploy api call error', error);
           $scope.error = true;
         });
-      },
+      }
     });
   });
   // --- --- ---
-
 
   internal.init();
   return that;

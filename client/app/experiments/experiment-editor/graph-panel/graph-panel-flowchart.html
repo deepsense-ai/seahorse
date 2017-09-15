@@ -1,4 +1,14 @@
-<div drop-target class="flowchart-box">
+<div drop-target context-menu-blocker class="flowchart-box">
+  <div>
+    <context-menu ng-controller="ReportOptionsController as reportOptionsController"
+                  elements="reportOptionsController.getReportOptions()"
+                  container-x="::flowChartBoxController.getPositionX()"
+                  container-y="::flowChartBoxController.getPositionY()"
+                  position-x="flowChartBoxController.getContextMenuPositionX()"
+                  position-y="flowChartBoxController.getContextMenuPositionY()"
+                  state="flowChartBoxController.getContextMenuState()">
+    </context-menu>
+  </div>
   <graph-node on-render-finish
               jsplumb-draggable
               keyboard
@@ -6,10 +16,4 @@
               ng-class="{'selected-node': experiment.getSelectedNode().id === nodeId }"
               ng-repeat="(nodeId, node) in experiment.getExperiment().getNodes()">
   </graph-node>
-  <context-menu ng-style="{
-    'display': contextMenuController.isVisible(),
-    'left': contextMenuController.getPositionX() + 'px',
-    'top': contextMenuController.getPositionY() + 'px'
-  }">
-  </context-menu>
 </div>

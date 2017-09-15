@@ -1,24 +1,15 @@
-<div class="context-menu panel panel-default">
+<div class="context-menu panel panel-default" ng-style="{display: contextMenuController.getDisplay(),
+                'left':  contextMenuController.getPositionX() + 'px',
+                'top':   contextMenuController.getPositionY() + 'px'}">
   <div class="panel-body">
     <ul class="folder-list">
-      <li>
-        <a href="#/report/test-01">
-          <i class="fa fa-dot-circle-o"></i>
-          <span>Go to report</span>
-        </a>
-      </li>
-      <li>
-        <a href="#/report/test-02">
-          <i class="fa fa-database"></i>
-          <span>This is the report</span>
-        </a>
-      </li>
-      <li>
-        <a href="#/report/test-01">
-          <i class="fa fa-sort-amount-asc"></i>
-          <span>Again the same report</span>
-        </a>
-      </li>
+      <context-menu-element ng-repeat="element in elements"
+                            visible="::element.visible"
+                            icon="::element.icon"
+                            href="::element.href"
+                            active="::element.active"
+                            action="::element.action()"
+                            description="::element.description"></context-menu-element>
     </ul>
   </div>
 </div>

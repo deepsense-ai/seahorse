@@ -12,10 +12,10 @@ function FlowChartBox() {
   return {
     restrict: 'E',
     controller: FlowChartBoxController,
-    replace: true,
     controllerAs: 'flowChartBoxController',
+    replace: true,
     templateUrl: 'app/experiments/experiment-editor/graph-panel/graph-panel-flowchart.html',
-    link: (scope, element, attrs, controller) => {
+    link: (scope, element) => {
       element.on('click', function (event) {
         if (event.target.classList.contains('flowchart-box')) {
           scope.experiment.unselectNode();
@@ -27,53 +27,78 @@ function FlowChartBox() {
 }
 
 function FlowChartBoxController($scope, $element, $window) {
-  var internals = {};
+  var that = this;
+  var internal = {};
 
-  internals.closeContextMenu = function closeContextMenu () {
-    $scope.contextMenuController.setInvisible();
+  internal.contextMenuState = 'invisible';
+  internal.contextMenuPosition = {};
+
+  internal.closeContextMenu = function closeContextMenu () {
+    $scope.$broadcast('ContextMenu.CLOSE');
+    internal.contextMenuState = 'invisible';
+    console.log('Set invisible ', internal.contextMenuState);
     $scope.$digest();
   };
 
-  internals.checkClosing = function checkClosing (event) {
+  internal.contextMenuOpener = function contextMenuOpener (event, data) {
+    console.log('Context menu getting the data');
+    internal.contextMenuPosition.x = data.event.pageX;
+    internal.contextMenuPosition.y = data.event.pageY;
+    internal.contextMenuState = 'visible';
+    $scope.$digest();
+    console.log('Changing the contextMenuState', internal.contextMenuState);
+  };
+
+  internal.isNotInternal = function isNotInternal (event) {
     return event.target && event.target.matches('.context-menu *') === false;
   };
 
-  internals.checkAndClose = function checkAndClose (event) {
-    if (internals.checkClosing(event)) {
-      internals.closeContextMenu();
+  internal.checkClickAndClose = function checkClickAndClose (event) {
+    if (internal.isNotInternal(event)) {
+      internal.closeContextMenu();
     }
   };
 
-  $scope.$on('OutputPoint.CONTEXTMENU', function (customEvent, endPointData) {
-    var event = endPointData.event;
+  internal.checkKeyAndClose = function checkKeyAndClose (event) {
+    if (event.keyCode === 27) {
+      internal.closeContextMenu();
+    }
+  };
 
-    event.preventDefault();
+  that.getContextMenuState = function getContextMenuState () {
+    return internal.contextMenuState;
+  };
 
-    $scope.contextMenuController.setPosition({
-      x: $element[0].offsetLeft,
-      y: $element[0].offsetTop
-    }, {
-      x: event.pageX,
-      y: event.pageY
-    });
+  that.getContextMenuPositionY = function getContextMenuPositionY() {
+    return internal.contextMenuPosition.y;
+  };
 
-    $scope.contextMenuController.setVisible();
-    $scope.$digest();
+  that.getContextMenuPositionX = function getContextMenuPositionX() {
+    return internal.contextMenuPosition.x;
+  };
 
-    return false;
-  });
+  that.getPositionY = function getPositionY() {
+    return $element[0].getBoundingClientRect().top;
+  };
 
-  $scope.$on(GraphNode.MOUSEDOWN, internals.closeContextMenu);
-  $scope.$on(Edge.DRAG, internals.closeContextMenu);
-  $scope.$on('OutputPoint.CLICK', internals.closeContextMenu);
-  $scope.$on('InputPoint.CLICK', internals.closeContextMenu);
+  that.getPositionX = function getPositionX() {
+    return $element[0].getBoundingClientRect().left;
+  };
 
-  $window.addEventListener('mousedown', internals.checkAndClose);
-  $window.addEventListener('blur', internals.closeContextMenu);
+  $scope.$on(GraphNode.MOUSEDOWN, internal.closeContextMenu);
+  $scope.$on(Edge.DRAG, internal.closeContextMenu);
+  $scope.$on('InputPoint.CLICK', internal.closeContextMenu);
+  $scope.$on('OutputPort.LEFT_CLICK', internal.closeContextMenu);
+  $scope.$on('ReportOptions.UPDATED', internal.contextMenuOpener);
+
+  $window.addEventListener('mousedown', internal.checkClickAndClose);
+  $window.addEventListener('keydown', internal.checkKeyAndClose);
+  $window.addEventListener('blur', internal.closeContextMenu);
 
   $scope.$on('$destroy', () => {
-    $window.removeEventListener('mousedown', internals.checkAndClose);
-    $window.removeEventListener('blur', internals.closeContextMenu);
+    $window.removeEventListener('mousedown', internal.checkClickAndClose);
+    $window.removeEventListener('keydown', internal.checkKeyAndClose);
+    $window.removeEventListener('blur', internal.closeContextMenu);
   });
 }
 

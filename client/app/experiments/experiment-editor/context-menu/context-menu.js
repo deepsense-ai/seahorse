@@ -7,43 +7,70 @@ function ContextMenu() {
   return {
     restrict: 'E',
     replace: true,
+    scope: {
+      elements: '=',
+      containerX: '=',
+      containerY: '=',
+      positionX: '=',
+      positionY: '=',
+      state: '='
+    },
     controller: ContextMenuController,
     controllerAs: 'contextMenuController',
-    templateUrl: 'app/experiments/experiment-editor/context-menu/context-menu.html'
+    templateUrl: 'app/experiments/experiment-editor/context-menu/context-menu.html',
+    link: function (scope, element, attribtues, controller) {
+      scope.$watch('state', function(newValue) {
+        console.log(scope.positionX, scope.positionY);
+        if (newValue === 'visible') {
+          controller.open();
+        } else {
+          controller.close();
+        }
+      });
+    }
   };
 }
 
 /* @ngInject */
-function ContextMenuController() {
+function ContextMenuController($scope) {
   var that = this;
-  var internal = {};
+  var internals = {};
 
-  internal.visible = false;
-  internal.position = { x: 0, y: 0 };
+  internals.visible = false;
+  internals.position = {x: 0, y: 0};
+
+  that.open = function open() {
+    that.setPosition(
+      {
+        x: $scope.containerX,
+        y: $scope.containerY
+      },
+      {
+        x: $scope.positionX,
+        y: $scope.positionY
+      });
+    internals.visible = true;
+  };
+
+  that.close = function close () {
+    internals.visible = false;
+  };
 
   that.setPosition = function setPosition(parent, object) {
-    internal.position.x = object.x - parent.x;
-    internal.position.y = object.y - parent.y;
+    internals.position.x = object.x - parent.x;
+    internals.position.y = object.y - parent.y;
   };
 
   that.getPositionX = function getPositionX() {
-    return internal.position.x;
+    return internals.position.x;
   };
 
   that.getPositionY = function getPositionY() {
-    return internal.position.y;
+    return internals.position.y;
   };
 
-  that.isVisible = function isVisible() {
-    return internal.visible ? 'visible' : 'none';
-  };
-
-  that.setVisible = function setVisible() {
-    internal.visible = true;
-  };
-
-  that.setInvisible = function setInvisible() {
-    internal.visible = false;
+  that.getDisplay = function getDisplay() {
+    return internals.visible ? 'block' : 'none';
   };
 
   return that;
