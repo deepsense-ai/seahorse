@@ -44,11 +44,6 @@ object CatalogRecorder {
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
-    catalog.registerDOperation[FileToDataFrame](
-      DOperationCategories.IO,
-      "Converts a file to a DataFrame"
-    )
-
     catalog.registerDOperation[ReadDataFrame](
       DOperationCategories.IO,
       "Loads a DataFrame from a file"
@@ -62,20 +57,6 @@ object CatalogRecorder {
     catalog.registerDOperation[MathematicalOperation](
       DOperationCategories.Transformation,
       "Creates a Transformation that creates a new column based on a mathematical formula."
-    )
-
-    catalog.registerDOperation[ReadFile](
-      DOperationCategories.IO,
-      "Reads a file from HDFS")
-
-    catalog.registerDOperation[LoadDataFrame](
-      DOperationCategories.IO,
-      "Loads a DataFrame from HDFS"
-    )
-
-    catalog.registerDOperation[SaveDataFrame](
-      DOperationCategories.IO,
-      "Saves a DataFrame to HDFS"
     )
 
     catalog.registerDOperation[Split](
