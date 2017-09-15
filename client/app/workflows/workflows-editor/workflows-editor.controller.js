@@ -105,7 +105,19 @@ function WorkflowsEditorController(workflow,
     });
 
     WorkflowService.getWorkflow().addNode(node);
-    WorkflowService.saveWorkflow();
+
+    /* Checks if parameters schema has been already fetched */
+    if (Operations.hasWithParams(operation.id)) {
+      WorkflowService.saveWorkflow();
+    } else {
+      Operations.getWithParams(operation.id).
+        then((operationData) => {
+          node.setParameters(operationData.parameters, DeepsenseNodeParameters);
+          WorkflowService.saveWorkflow();
+        }, (error) => {
+          console.error('operation fetch error', error);
+        });
+    }
   });
 
   $scope.$on('AttributePanel.UNSELECT_NODE', () => {

@@ -201,6 +201,18 @@ function OperationsFactory(OperationsApiClient, $q) {
   };
 
   /**
+   * Checks if details for the particular operation has been fetched.
+   *
+   * @param {string} id
+   *
+   * @return {boolean}
+   */
+  service.hasWithParams = function hasWithParams(id) {
+    let operation = operationsData[id] || null;
+    return !!(isLoaded && operation && operation.parameters);
+  };
+
+  /**
    * Returns category catalog data.
    *
    * @param {string} id

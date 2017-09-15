@@ -128,6 +128,7 @@ describe('Operations', () => {
     expect(Operations.getData).toEqual(jasmine.any(Function));
     expect(Operations.get).toEqual(jasmine.any(Function));
     expect(Operations.getWithParams).toEqual(jasmine.any(Function));
+    expect(Operations.hasWithParams).toEqual(jasmine.any(Function));
     expect(Operations.getCatalog).toEqual(jasmine.any(Function));
     expect(Operations.getCategory).toEqual(jasmine.any(Function));
   });
@@ -290,6 +291,8 @@ describe('Operations', () => {
 
       spyOn(OperationsApiClient, 'get').and.callThrough();
 
+      expect(Operations.hasWithParams(id)).toBe(false);
+
       Operations.getWithParams(id).then((data) => {
         success = true;
         responseData = data;
@@ -300,6 +303,7 @@ describe('Operations', () => {
 
       expect(OperationsApiClient.get).toHaveBeenCalled();
       expect(OperationsApiClient.get.calls.count()).toBe(1);
+      expect(Operations.hasWithParams(id)).toBe(true);
       expect(success).toBe(true);
       expect(error).toBe(false);
       expect(responseData.parameters).toBeDefined();
