@@ -46,8 +46,9 @@
         </a>
       </div>
       <div
-        class="operation-attributes-panel__open-button"
+        ng-if="controller.hasCodeEdit()"
         ng-click="controller.showNotebook()"
+        class="operation-attributes-panel__open-button"
       >
         <i class="fa fa-file-text-o"></i>
         <span>

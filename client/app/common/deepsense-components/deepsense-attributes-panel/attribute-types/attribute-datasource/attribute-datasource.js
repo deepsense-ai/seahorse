@@ -45,7 +45,7 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
 
       scope.clearDatasource = function () {
         scope.datasource = null;
-        scope.parameter.value = '';
+        scope.parameter.value = null;
       };
 
       scope.editDatasource = function () {
