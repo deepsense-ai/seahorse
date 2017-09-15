@@ -16,10 +16,12 @@
 
 package io.deepsense.deeplang.params.custom
 
+import spray.json.JsObject
+
 import io.deepsense.graph.{Node, DeeplangGraph}
 
 case class InnerWorkflow(
    graph: DeeplangGraph,
-   thirdPartyData: String,
+   thirdPartyData: JsObject,
    source: Node.Id,
    sink: Node.Id)

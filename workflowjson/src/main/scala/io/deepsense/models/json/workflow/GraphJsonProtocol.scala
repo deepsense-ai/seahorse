@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.workflows
+package io.deepsense.models.json.workflow
 
 import spray.json._
 
-case class ThirdPartyData(data: String = "{}") {
+import io.deepsense.graph.DeeplangGraph
+import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
 
-  override def equals(o: Any): Boolean = o match {
-    case that: ThirdPartyData => this.data.parseJson == that.data.parseJson
-    case _ => false
+trait GraphJsonProtocol {
+
+  val graphReader: GraphReader
+
+  implicit val graphFormat: JsonFormat[DeeplangGraph] = new JsonFormat[DeeplangGraph] {
+    override def read(json: JsValue): DeeplangGraph = json.convertTo[DeeplangGraph](graphReader)
+    override def write(obj: DeeplangGraph): JsValue = obj.toJson(GraphWriter)
   }
-
-  override def hashCode: Int = data.parseJson.compactPrint.hashCode
 }

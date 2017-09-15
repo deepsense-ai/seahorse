@@ -80,7 +80,7 @@ class WorkflowVersionUtilSpec
   val correctVersionMeta = WorkflowMetadata(WorkflowType.Batch, currentVersionString)
   val incorrectVersionMeta = correctVersionMeta.copy(apiVersion = "X" + currentVersionString)
 
-  val correctWorkflow = Workflow(correctVersionMeta, DeeplangGraph(), ThirdPartyData("{}"))
+  val correctWorkflow = Workflow(correctVersionMeta, DeeplangGraph(), JsObject())
   val correctWorkflowString = correctWorkflow.toJson.prettyPrint
 
   val incorrectVersionJson = JsObject(
@@ -93,7 +93,7 @@ class WorkflowVersionUtilSpec
     Workflow.Id.randomId,
     correctVersionMeta,
     DeeplangGraph(),
-    ThirdPartyData("{}"),
+    JsObject(),
     ExecutionReport(Map(),
       EntitiesMap(), None))
 

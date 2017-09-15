@@ -16,31 +16,32 @@
 
 package io.deepsense.models.json.workflow
 
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
-import io.deepsense.models.workflows.{WorkflowType, ThirdPartyData, WorkflowMetadata, Workflow}
 import spray.json._
 
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
+import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
 
-class WorkflowJsonProtocolSpec extends WorkflowJsonTestSupport {
+
+class WorkflowJsonProtocolSpec extends WorkflowJsonTestSupport with WorkflowJsonProtocol {
 
   "Workflow" should {
+    "be serialized to json" in {
+      val (workflow, json) = workflowFixture
+      workflow.toJson shouldBe json
+    }
 
-  "be serialized to json" in {
-    val (workflow, json) = workflowFixture
-    workflow.toJson shouldBe json
+    "be deserialized from json" in {
+      val (workflow, json) = workflowFixture
+      json.convertTo[Workflow] shouldBe workflow
+    }
   }
-
-  "be deserialized from json" in {
-    val (workflow, json) = workflowFixture
-    json.convertTo[Workflow] shouldBe workflow
-  }
-}
 
   def workflowFixture: (Workflow, JsObject) = {
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, "0.4.0"),
       graph,
-      ThirdPartyData("{ \"example\": [1, 2, 3] }"))
+      JsObject(
+        "example" -> JsArray(JsNumber(1), JsNumber(2), JsNumber(3))))
     val workflowJson = JsObject(
       "metadata" -> JsObject(
         "type" -> JsString("batch"),

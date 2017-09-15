@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor.partialexecution
 
+import spray.json.JsObject
+
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable}
@@ -29,7 +31,7 @@ class StatefulWorkflow(
   private val executionContext: CommonExecutionContext,
   val workflowId: Workflow.Id,
   val metadata: WorkflowMetadata,
-  private val thirdPartyData: ThirdPartyData,
+  private val thirdPartyData: JsObject,
   private val startingExecution: Execution) extends Logging {
 
   private var execution: Execution = startingExecution
@@ -52,7 +54,7 @@ class StatefulWorkflow(
 
   def currentExecution: Execution = execution
 
-  def currentAdditionalData: ThirdPartyData = additionalData
+  def currentAdditionalData: JsObject = additionalData
 
   def executionReport: ExecutionReport = execution.executionReport
 

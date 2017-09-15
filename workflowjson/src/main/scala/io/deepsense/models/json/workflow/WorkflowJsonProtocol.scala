@@ -21,8 +21,6 @@ import spray.json._
 
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.{DateTimeJsonProtocol, EnumerationSerializer, IdJsonProtocol}
-import io.deepsense.graph.DeeplangGraph
-import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.models.json.graph.{DKnowledgeJsonProtocol, NodeJsonProtocol, NodeStatusJsonProtocol}
 import io.deepsense.models.workflows._
 
@@ -38,23 +36,12 @@ trait WorkflowJsonProtocol
   with DateTimeJsonProtocol
   with InferenceErrorJsonProtocol
   with InferenceWarningJsonProtocol
-  with WorkflowInfoJsonProtocol {
-
-  val graphReader: GraphReader
-
-  implicit val graphFormat: JsonFormat[DeeplangGraph] = new JsonFormat[DeeplangGraph] {
-    override def read(json: JsValue): DeeplangGraph = json.convertTo[DeeplangGraph](graphReader)
-    override def write(obj: DeeplangGraph): JsValue = obj.toJson(GraphWriter)
-  }
+  with WorkflowInfoJsonProtocol
+  with GraphJsonProtocol {
 
   implicit val workflowTypeFormat = EnumerationSerializer.jsonEnumFormat(WorkflowType)
 
   implicit val workflowMetadataFormat = jsonFormat(WorkflowMetadata, "type", "apiVersion")
-
-  implicit val thirdPartyDataFormat: JsonFormat[ThirdPartyData] = new JsonFormat[ThirdPartyData] {
-    override def read(json: JsValue): ThirdPartyData = ThirdPartyData(json.compactPrint)
-    override def write(thirdPartyData: ThirdPartyData): JsValue = thirdPartyData.data.parseJson
-  }
 
   implicit val workflowFormat = jsonFormat(Workflow.apply, "metadata", "workflow", "thirdPartyData")
 

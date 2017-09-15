@@ -44,7 +44,7 @@ abstract class WorkflowCreator extends WorkflowWithVariablesJsonProtocol {
   def buildWorkflow(): WorkflowWithVariables = {
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion)
     val graph: DeeplangGraph = DeeplangGraph(nodes.toSet, edges.toSet)
-    val thirdPartyData: ThirdPartyData = ThirdPartyData("{}")
+    val thirdPartyData: JsObject = JsObject()
     val variables: Variables = Variables()
     val result =
       WorkflowWithVariables(Workflow.Id.randomId, metadata, graph, thirdPartyData, variables)

@@ -66,7 +66,7 @@ class WorkflowManagerClientActorSpec
     workflowId,
     WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
     DeeplangGraph(),
-    ThirdPartyData("{}"),
+    JsObject(),
     ExecutionReport(Map(), None))
 
   override def beforeEach(): Unit = {

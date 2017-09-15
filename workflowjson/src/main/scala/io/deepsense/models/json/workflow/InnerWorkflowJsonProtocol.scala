@@ -19,13 +19,9 @@ package io.deepsense.models.json.workflow
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
-import io.deepsense.commons.json.{DateTimeJsonProtocol, EnumerationSerializer, IdJsonProtocol}
+import io.deepsense.commons.json.{DateTimeJsonProtocol, IdJsonProtocol}
 import io.deepsense.deeplang.params.custom.InnerWorkflow
-import io.deepsense.graph.DeeplangGraph
-import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.models.json.graph.{DKnowledgeJsonProtocol, NodeJsonProtocol, NodeStatusJsonProtocol}
-import io.deepsense.models.workflows._
 
 trait InnerWorkflowJsonProtocol
   extends DefaultJsonProtocol
@@ -34,14 +30,8 @@ trait InnerWorkflowJsonProtocol
   with NodeStatusJsonProtocol
   with DKnowledgeJsonProtocol
   with IdJsonProtocol
-  with DateTimeJsonProtocol {
-
-  val graphReader: GraphReader
-
-  implicit val graphFormat: JsonFormat[DeeplangGraph] = new JsonFormat[DeeplangGraph] {
-    override def read(json: JsValue): DeeplangGraph = json.convertTo[DeeplangGraph](graphReader)
-    override def write(obj: DeeplangGraph): JsValue = obj.toJson(GraphWriter)
-  }
+  with DateTimeJsonProtocol
+  with GraphJsonProtocol {
 
   implicit val innerWorkflowFormat = jsonFormat(
     InnerWorkflow.apply, "workflow", "thirdPartyData", "source", "sink")

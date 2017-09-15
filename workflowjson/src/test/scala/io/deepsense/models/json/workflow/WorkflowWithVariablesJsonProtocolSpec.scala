@@ -44,7 +44,7 @@ class WorkflowWithVariablesJsonProtocolSpec extends WorkflowJsonTestSupport
       workflowId,
       WorkflowMetadata(WorkflowType.Batch, "0.4.0"),
       graph,
-      ThirdPartyData("{ \"example\": [1, 2, 3] }"),
+      JsObject("example" -> JsArray(JsNumber(1), JsNumber(2), JsNumber(3))),
       Variables())
 
     val workflowJson = JsObject(

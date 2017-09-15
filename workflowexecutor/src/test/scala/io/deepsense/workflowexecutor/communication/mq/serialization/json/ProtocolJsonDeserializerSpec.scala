@@ -24,7 +24,7 @@ import spray.json._
 import io.deepsense.commons.StandardSpec
 import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
+import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
 import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch, UpdateWorkflow}
 import io.deepsense.workflowexecutor.executor.Executor
 
@@ -106,7 +106,7 @@ class ProtocolJsonDeserializerSpec
       val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe UpdateWorkflow(
         workflowId,
-        Workflow(WorkflowMetadata(WorkflowType.Batch, "1.0.0"), DeeplangGraph(), ThirdPartyData()))
+        Workflow(WorkflowMetadata(WorkflowType.Batch, "1.0.0"), DeeplangGraph(), JsObject()))
     }
   }
 

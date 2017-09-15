@@ -18,6 +18,7 @@ package io.deepsense.workflowexecutor.partialexecution
 
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
+import spray.json.JsObject
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.models.Id
@@ -34,10 +35,10 @@ class StatefulWorkflowSpec extends StandardSpec with MockitoSugar {
       Workflow.Id.randomId,
       WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
       originalGraph,
-      ThirdPartyData(),
+      JsObject(),
       ExecutionReport(Map()))
     val newGraph = mock[DeeplangGraph]
-    val newThirdPartyData = mock[ThirdPartyData]
+    val newThirdPartyData = mock[JsObject]
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
       newGraph,
@@ -80,5 +81,4 @@ class StatefulWorkflowSpec extends StandardSpec with MockitoSugar {
         ExecutionReport(Map(nodeId -> NodeState(Draft(), None))) // removed reports
     }
   }
-
 }

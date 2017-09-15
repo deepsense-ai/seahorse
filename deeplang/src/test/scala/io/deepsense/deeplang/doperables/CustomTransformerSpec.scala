@@ -21,6 +21,7 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.types._
 import org.mockito.Matchers._
 import org.mockito.Mockito.when
+import spray.json.JsObject
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
@@ -58,7 +59,7 @@ class CustomTransformerSpec extends UnitSpec {
   "CustomTransfromer" should {
 
     "execute inner workflow" in {
-      val workflow = InnerWorkflow(simpleGraph, "{}", sourceNodeId, sinkNodeId)
+      val workflow = InnerWorkflow(simpleGraph, JsObject(), sourceNodeId, sinkNodeId)
       val outputDataFrame = mock[DataFrame]
 
       val innerWorkflowExecutor = mock[InnerWorkflowExecutor]
@@ -92,7 +93,7 @@ class CustomTransformerSpec extends UnitSpec {
         innerWorkflowParser)
 
       when(innerWorkflowParser.parse(any())).thenReturn(
-        InnerWorkflow(simpleGraph, "{}", sourceNodeId, sinkNodeId))
+        InnerWorkflow(simpleGraph, JsObject(), sourceNodeId, sinkNodeId))
 
       val transformer = CustomTransformer()
 

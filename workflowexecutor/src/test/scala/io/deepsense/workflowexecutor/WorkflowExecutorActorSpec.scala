@@ -25,6 +25,7 @@ import org.mockito.stubbing.Answer
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
+import spray.json.JsObject
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
@@ -662,7 +663,7 @@ class WorkflowExecutorActorSpec
     DeeplangGraph(
       Set(node1, node2),
       Set(Edge(node1, 0, node2, 0))),
-    ThirdPartyData(),
+    JsObject(),
     ExecutionReport(Map(node1.id -> NodeState.draft, node2.id -> NodeState.draft))
   )
 

@@ -103,7 +103,7 @@ class InnerWorkflowExecutorSpec
   "InnerWorkflowExecutor" should {
 
     "parse inner workflow json" in {
-      val innerWorkflow = InnerWorkflow(simpleGraph, "{}", sourceNodeId, sinkNodeId)
+      val innerWorkflow = InnerWorkflow(simpleGraph, JsObject(), sourceNodeId, sinkNodeId)
       executor.parse(innerWorkflow.toJson.asJsObject) shouldBe innerWorkflow
     }
 
@@ -118,14 +118,14 @@ class InnerWorkflowExecutorSpec
         Row(2.0, 3.0, 4.0))
       val expected = createDataFrame(expectedRows, expectedSchema)
 
-      val innerWorkflow = InnerWorkflow(simpleGraph, "{}", sourceNodeId, sinkNodeId)
+      val innerWorkflow = InnerWorkflow(simpleGraph, JsObject(), sourceNodeId, sinkNodeId)
       val transformed = executor.execute(commonExecutionContext, innerWorkflow, df)
 
       assertDataFramesEqual(transformed, expected)
     }
 
     "execute workflow with more ready nodes" in {
-      val innerWorkflow = InnerWorkflow(otherGraph, "{}", sourceNodeId, sinkNodeId)
+      val innerWorkflow = InnerWorkflow(otherGraph, JsObject(), sourceNodeId, sinkNodeId)
       val transformed = executor.execute(commonExecutionContext, innerWorkflow, df)
 
       assertDataFramesEqual(transformed, df)
@@ -140,21 +140,21 @@ class InnerWorkflowExecutorSpec
       }
 
       "workflow contains cycle" in {
-        val innerWorkflow = InnerWorkflow(cyclicGraph, "{}", sourceNodeId, sinkNodeId)
+        val innerWorkflow = InnerWorkflow(cyclicGraph, JsObject(), sourceNodeId, sinkNodeId)
         a[DeepSenseException] should be thrownBy {
           executor.execute(commonExecutionContext, innerWorkflow, df)
         }
       }
 
       "workflow is not connected" in {
-        val innerWorkflow = InnerWorkflow(disconnectedGraph, "{}", sourceNodeId, sinkNodeId)
+        val innerWorkflow = InnerWorkflow(disconnectedGraph, JsObject(), sourceNodeId, sinkNodeId)
         a[DeepSenseException] should be thrownBy {
           executor.execute(commonExecutionContext, innerWorkflow, df)
         }
       }
 
       "workflow execution fails" in {
-        val innerWorkflow = InnerWorkflow(failingGraph, "{}", sourceNodeId, sinkNodeId)
+        val innerWorkflow = InnerWorkflow(failingGraph, JsObject(), sourceNodeId, sinkNodeId)
         a[DeepSenseException] should be thrownBy {
           executor.execute(commonExecutionContext, innerWorkflow, df)
         }

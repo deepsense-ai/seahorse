@@ -75,7 +75,7 @@ class ProtocolJsonSerializerSpec
         Workflow.Id.randomId,
         WorkflowMetadata(WorkflowType.Streaming, "1.0.0"),
         DeeplangGraph(),
-        ThirdPartyData("{}"),
+        JsObject(),
         ExecutionReport(Map()))
 
       protocolJsonSerializer.serializeMessage(workflowWithResults) shouldBe
