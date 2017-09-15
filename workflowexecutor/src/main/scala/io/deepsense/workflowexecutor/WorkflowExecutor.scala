@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor
 
+import java.io.{InputStream, Serializable}
+
 import scala.collection.mutable
 import scala.concurrent.Promise
 import scala.util.{Failure, Success, Try}
@@ -28,7 +30,7 @@ import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.deeplang.{CatalogRecorder, DOperable, ExecutionContext}
+import io.deepsense.deeplang._
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{GraphFinished, Launch}
@@ -82,7 +84,7 @@ case class WorkflowExecutor(
     executionContext.sparkContext = createSparkContext()
     executionContext.sqlContext = createSqlContext(executionContext.sparkContext)
     executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
-    executionContext.fsClient = null // Not used
+    executionContext.fsClient = FileSystemClientStub() // TODO temporarily mocked
     executionContext.entityStorageClient = null // Not used
     executionContext
   }
@@ -109,4 +111,23 @@ case class WorkflowExecutor(
     executionContext.sparkContext.stop()
     logger.debug("Spark terminated!")
   }
+}
+
+private case class FileSystemClientStub() extends FileSystemClient {
+  override def copyLocalFile[T <: Serializable]
+  (localFilePath: String, remoteFilePath: String): Unit = ()
+
+  override def delete(path: String): Unit = ()
+
+  override def saveObjectToFile[T <: Serializable](path: String, instance: T): Unit = ()
+
+  override def fileExists(path: String): Boolean = throw new UnsupportedOperationException
+
+  override def saveInputStreamToFile(
+    inputStream: InputStream,destinationPath: String): Unit = ()
+
+  override def getFileInfo(path: String): Option[FileInfo] = throw new UnsupportedOperationException
+
+  override def readFileAsObject[T <: Serializable](path: String): T =
+    throw new UnsupportedOperationException
 }
