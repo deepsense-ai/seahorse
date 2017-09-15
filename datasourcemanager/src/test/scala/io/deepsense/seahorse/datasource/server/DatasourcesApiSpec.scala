@@ -8,9 +8,9 @@ import java.util.UUID
 
 import org.scalatest.{FreeSpec, Matchers}
 
-import io.deepsense.seahorse.datasource.api.{ApiException, DatasourceManagerApi}
+import io.deepsense.seahorse.datasource.api.{ApiException, ApiExceptionWithJsonBody, DatasourceManagerApi}
 import io.deepsense.seahorse.datasource.db.FlywayMigration
-import io.deepsense.seahorse.datasource.model.{AccessLevel, Datasource}
+import io.deepsense.seahorse.datasource.model.Error
 
 class DatasourcesApiSpec extends FreeSpec with Matchers {
 
@@ -44,6 +44,19 @@ class DatasourcesApiSpec extends FreeSpec with Matchers {
           api.deleteDatasourceImpl(userId, id)
         ).errorCode shouldBe 404
       }
+    }
+    "cannot add datasource with multichar separator" in {
+      val id = UUID.randomUUID()
+      val putDatasourceExpectedError =
+        Error(code = 400, message = "CSV custom separator should be single character")
+      val putDatasourceException = intercept[ApiExceptionWithJsonBody] {
+        api.putDatasourceImpl(userId, userName, id, TestData.multicharSeparatorLibraryCsvDatasource)
+      }
+      putDatasourceException.error shouldBe putDatasourceExpectedError
+      info("Operation yields 404 for wrong datasource")
+      the[ApiException].thrownBy(
+        api.getDatasourceImpl(userId, id)
+      ).errorCode shouldBe 404
     }
   }
 

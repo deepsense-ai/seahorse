@@ -52,4 +52,22 @@ object TestData {
     googleSpreadsheetParams = None
   )
 
+  def multicharSeparatorLibraryCsvDatasource() = DatasourceParams(
+    name = "some-name" + UUID.randomUUID(),
+    downloadUri = None,
+    visibility = Visibility.publicVisibility,
+    datasourceType = DatasourceType.libraryFile,
+    jdbcParams = None,
+    externalFileParams = None,
+    libraryFileParams = Some(LibraryFileParams(
+      "some_path",
+      fileFormat = FileFormat.csv,
+      csvFileFormatParams = Some(CsvFileFormatParams(
+        includeHeader = true, convert01ToBoolean = true, CsvSeparatorType.custom, Some(",,")
+      ))
+    )),
+    hdfsParams = None,
+    googleSpreadsheetParams = None
+  )
+
 }

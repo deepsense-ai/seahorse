@@ -95,6 +95,16 @@ object DatasourceDbFromApi {
     )
   }
 
+  private def checkCustomSeparatorIsValid(csvFileFormatParams: CsvFileFormatParams) = {
+    val csvCustomSeparatorShouldBeAChar = ApiException(
+      message = s"CSV custom separator should be single character", errorCode = 400)
+
+    csvFileFormatParams.customSeparator.find(sep => sep.length > 1) match {
+      case Some(_) => csvCustomSeparatorShouldBeAChar.failure
+      case None => csvFileFormatParams.success
+    }
+  }
+
   private def withCommonFileParams[T <: {
     def fileFormat : FileFormat
     def csvFileFormatParams : Option[CsvFileFormatParams]
@@ -102,6 +112,7 @@ object DatasourceDbFromApi {
     if (apiFileParams.fileFormat == FileFormat.csv) {
       for {
         csvFileFormatParams <- validateDefined("csvFileFormatParams", apiFileParams.csvFileFormatParams)
+        csvFileFormatParams <- checkCustomSeparatorIsValid(csvFileFormatParams)
       } yield datasource.copy(
         fileCsvIncludeHeader = Some(csvFileFormatParams.includeHeader),
         fileCsvConvert01ToBoolean = Some(csvFileFormatParams.convert01ToBoolean),
