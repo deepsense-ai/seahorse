@@ -40,7 +40,7 @@ class DeployModelServiceSpec extends StandardSpec {
       } with DeployModelService {
         repository += (uuid -> Model(false, 1.5, Seq(2.2), Seq(3.3), Seq(4.4)))
         override implicit def actorRefFactory: ActorRefFactory = system
-        Get(s"/$path/$uuid", GetScoringRequest(Seq(6.0))) ~> myRoute ~> check {
+        Post(s"/$path/$uuid", GetScoringRequest(Seq(6.0))) ~> myRoute ~> check {
           status shouldBe StatusCodes.OK
           val cr = responseAs[ScoreResult]
           cr.score shouldBe 2.85 +- 0.1
@@ -56,7 +56,7 @@ class DeployModelServiceSpec extends StandardSpec {
         repository += (uuid -> Model(true, 0.5, Seq(2.2), Seq(3.3), Seq(5.4)))
         override implicit def actorRefFactory: ActorRefFactory = system
 
-        Get(s"/$path/$uuid", GetScoringRequest(Seq(6.0))) ~> myRoute ~> check {
+        Post(s"/$path/$uuid", GetScoringRequest(Seq(6.0))) ~> myRoute ~> check {
           status shouldBe StatusCodes.OK
           val cr = responseAs[ScoreResult]
           cr.score shouldBe 0.83 +- 0.01
@@ -64,13 +64,13 @@ class DeployModelServiceSpec extends StandardSpec {
       }
     }
 
-    "leave GET requests to other paths unhandled" in {
+    "leave POST requests to other paths unhandled" in {
       new {
         override val repository: ModelRepository = new ModelRepository()
       } with DeployModelService {
         override implicit def actorRefFactory: ActorRefFactory = system
 
-        Get("/kermit") ~> myRoute ~> check {
+        Post("/kermit") ~> myRoute ~> check {
           handled shouldBe false
         }
       }

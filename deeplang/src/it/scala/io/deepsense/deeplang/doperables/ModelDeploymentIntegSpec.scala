@@ -12,7 +12,6 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.factories.TrainedRidgeRegressionTestFactory
 import io.deepsense.deploymodelservice.{CreateResult, Model}
-import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 import io.deepsense.models.entities.{DataObjectReference, Entity, InputEntity}
 
 
@@ -38,12 +37,11 @@ class ModelDeploymentIntegSpec
 
   "Model" should {
     "be deployable" in {
-      DOperableSaver.saveDOperableWithEntityStorageRegistration(
-        executionContext)(
-        testTrainedRidgeRegression,
-        inputEntity)
-      val id: Entity.Id = executionContext.entityStorageClient
-        .asInstanceOf[EntityStorageClientTestInMemoryImpl].storage.keys.head._2
+      val id: Entity.Id = DOperableSaver
+        .saveDOperableWithEntityStorageRegistration(executionContext)(
+          testTrainedRidgeRegression,
+          inputEntity)
+        .id
 
       val retrieved: Deployable = DOperableLoader.load(
         executionContext.entityStorageClient)(

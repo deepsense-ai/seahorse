@@ -14,7 +14,7 @@ trait DOperableSaver {
   def saveDOperableWithEntityStorageRegistration(
       context: ExecutionContext)(
       dOperable: DOperable,
-      inputEntity: InputEntity): Unit = {
+      inputEntity: InputEntity): Entity = {
     val uniqueFilename: String = inputEntity.data.get.url
     dOperable.save(context)(uniqueFilename)
     saveEntity(context, uniqueFilename, inputEntity)

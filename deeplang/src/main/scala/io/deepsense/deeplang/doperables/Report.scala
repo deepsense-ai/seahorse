@@ -14,6 +14,9 @@ import io.deepsense.reportlib.model.{ReportContent, ReportJsonProtocol}
 
 case class Report(content: ReportContent = ReportContent("empty report"))
   extends DOperable {
+
+  def this() = this(ReportContent("empty report"))
+
   import ReportJsonProtocol._
   override def report: Report = this
 

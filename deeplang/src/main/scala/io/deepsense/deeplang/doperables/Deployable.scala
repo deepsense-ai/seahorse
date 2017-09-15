@@ -15,6 +15,7 @@ trait Deployable extends Serializable {
 
 object DeployableLoader {
   def loadFromHdfs(hdfsClient: DSHdfsClient)(path: String): Deployable = {
+    println("################ Trying to read path:" + path)
     hdfsClient.readFileAsObject[Deployable](path)
   }
 }

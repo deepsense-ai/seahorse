@@ -2,7 +2,7 @@ package io.deepsense.experimentmanager.rest
 
 import java.net.URI
 
-import scala.util.{Failure, Success}
+import scala.util.{Try, Failure, Success}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
@@ -17,8 +17,10 @@ import scala.concurrent.ExecutionContext
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.rest.{RestApi, RestComponent}
-import io.deepsense.deeplang.DSHdfsClient
+import io.deepsense.deeplang
+import io.deepsense.deeplang.{DSHdfsClient, ExecutionContext => DExecutionContext}
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
+import io.deepsense.entitystorage.EntityStorageClientFactoryImpl
 import io.deepsense.experimentmanager.rest.actions.DeployModel
 
 
@@ -34,17 +36,15 @@ class ModelsApi @Inject()(
   require(StringUtils.isNotBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
-  def createExecutionContext(): io.deepsense.deeplang.ExecutionContext = {
-    val executionContext = new io.deepsense.deeplang.ExecutionContext
-    val sparkConf = new SparkConf()
-    sparkConf.setAppName("Spark DeepSense Akka PoC")
-    sparkConf.set("spark.executor.memory", "512m")
-    val sparkContext = new SparkContext(sparkConf)
-    executionContext.sqlContext = new SQLContext(sparkContext)
-    new DSHdfsClient(new DFSClient(new URI("/"), new Configuration()))
-    executionContext
+  val deeplangContext: deeplang.ExecutionContext = {
+    val ctx = new DExecutionContext
+    ctx.hdfsClient = new DSHdfsClient(new DFSClient(new URI("hdfs://ds-dev-env-master:8020"), new Configuration()))
+    val esFactory = EntityStorageClientFactoryImpl()
+    ctx.entityStorageClient =
+      Try(esFactory.create("root-actor-system", "127.0.0.1", 2552, "EntitiesApiActor", 10))
+        .getOrElse(null)
+    ctx
   }
-
 
   override def route = {
     handleRejections(rejectionHandler) {
@@ -54,14 +54,13 @@ class ModelsApi @Inject()(
             post {
               withUserContext { context =>
                 onComplete(context) {
-                  case Success(uc: UserContext) => {
+                  case Success(uc: UserContext) =>
                     import scala.concurrent.duration._
-                    implicit val timeout = 5.seconds
-                    onComplete(deployModel.deploy(id, uc, createExecutionContext())) {
+                    implicit val timeout = 15.seconds
+                    onComplete(deployModel.deploy(id, uc, deeplangContext)) {
                       case Success(r) => complete(r)
                       case Failure(e) => failWith(e)
                     }
-                  }
                   case Failure(e) => failWith(e)
                 }
               }

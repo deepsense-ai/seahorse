@@ -29,15 +29,18 @@ trait DeployModelService extends HttpService {
 
   val myRoute = pathPrefix(path) {
     path(JavaUUID) { id =>
-      get {
+      post {
         entity(as[GetScoringRequest]) { request =>
+          println("get " + id.toString())
           val model = repository(id)
           val score = model.score(request)
           complete(ScoreResult(score))
         }
       }
-    } ~ post {
+    } ~
+    post {
       entity(as[Model]) { model =>
+        println("post " + model.toString())
         val uuid = UUID.randomUUID()
         repository.put(uuid, model)
         println(model)
