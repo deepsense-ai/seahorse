@@ -12,7 +12,13 @@ function OperationsFactory(OperationsAPIClient, $q) {
     '11111-5555-9999': 'fa-cube',
     '23123-12312-43242': 'fa-download',
     '91111-111111-11111': 'fa-filter',
-    '234234-756756-34234': 'fa-gear'
+    '234234-756756-34234': 'fa-gear',
+    '5a39e324-15f4-464c-83a5-2d7fba2858aa': 'fa-exchange', // Input/Output
+    '3fcc6ce8-11df-433f-8db3-fa1dcc545ed8': 'fa-bolt', // Transformation
+    '6c730c11-9708-4a84-9dbd-3845903f32ac': 'fa-pencil-square-o', // Data Manipulation
+    'c80397a8-7840-4bdb-83b3-dc12f1f5bc3c': 'fa-line-chart', // Regression
+    'ff13cbbd-f4ec-4df3-b0c3-f6fd4b019edf': 'fa-tag', // Classification
+    'dd29042a-a32c-4948-974f-073c41230da0': 'fa-filter' // Feature Selection
   };
   const DEFAULT_ICON = 'fa-square';
 
