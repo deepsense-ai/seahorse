@@ -18,7 +18,7 @@ function LibraryModalService($uibModal) {
   service.showNewDirectoryInput = showNewDirectoryInput;
   service.hideNewDirectoryInput = hideNewDirectoryInput;
 
-  function openLibraryModal(mode) {
+  function openLibraryModal(mode, params) {
     return $uibModal.open({
       animation: false,
       templateUrl: tpl,
@@ -30,6 +30,9 @@ function LibraryModalService($uibModal) {
       resolve: {
         mode: () => {
           return mode;
+        },
+        params: () => {
+          return params;
         }
       }
     }).result.then((result) => {

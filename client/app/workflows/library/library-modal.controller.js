@@ -7,7 +7,7 @@ const TITLE_MAP = {
 };
 
 /* @ngInject */
-function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModalService, mode, DeleteModalService) {
+function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModalService, mode, DeleteModalService, params) {
   const vm = this;
 
   vm.loading = true;
@@ -39,12 +39,24 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
     .fetchAll()
     .then(() => {
       vm.loading = false;
+      handleDeeplink(params);
     })
     .catch(() => {
       vm.loading = false;
       vm.message = 'There was an error during downloading list of files.';
     });
 
+
+  function handleDeeplink(param) {
+    const test = /(library:\/\/)(.*)/.exec(param);
+    if (test && test.length > 1) {
+      const pathElements = test[2].split('/');
+      const file = pathElements.slice(-1);
+      const uri = test[1] + pathElements.slice(0, -1).join('/');
+      vm.selectedItem = file;
+      LibraryService.changeDirectory(uri);
+    }
+  }
 
   function deleteFile(file) {
     DeleteModalService.handleDelete(() => {
@@ -54,7 +66,6 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
         });
     }, COOKIE_NAME);
   }
-
 
   function clearSearchInput() {
     this.filterString = '';

@@ -11,8 +11,8 @@ function AttributeSaveToLibrary(LibraryModalService) {
     templateUrl: tpl,
     replace: true,
     link: function (scope) {
-      scope.openLibrary = () => {
-        LibraryModalService.openLibraryModal(LIBRARY_MODE)
+      scope.openLibrary = (params) => {
+        LibraryModalService.openLibraryModal(LIBRARY_MODE, params)
           .then((result) => {
             if (result) {
               scope.parameter.value = result;
