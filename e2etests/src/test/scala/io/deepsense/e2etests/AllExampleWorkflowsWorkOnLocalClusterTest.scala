@@ -53,7 +53,7 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
       val clonedWorkflowId = clonedWorkflow.id
       createSessionSynchronously(clonedWorkflowId)
       smclient.launchSession(clonedWorkflowId)
-      assertAllNodesCompletedSuccessfully(wflow)
+      assertAllNodesCompletedSuccessfully(clonedWorkflow)
       smclient.deleteSession(clonedWorkflowId)
       wmclient.deleteWorkflow(clonedWorkflowId)
     }
