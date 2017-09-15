@@ -7,11 +7,11 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes a Spark SQL expression provided by the user on a DataFrame connected to its input port.
-Returns the results of the execution as a DataFrame.
+Executes a Spark SQL expression provided by the user on a `DataFrame` connected to its input port.
+Returns the results of the execution as a `DataFrame`.
 
-Returns also a [Transformer](../classes/transformer.html) that can be later applied
-to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
+Also returns a [Transformer](../classes/transformer.html) that can be later applied
+to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
@@ -29,7 +29,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame that the SQL expression will be executed on.</td>
+<td>The <code>DataFrame</code> that the SQL expression will be executed on.</td>
 </tr>
 </tbody>
 </table>
@@ -53,7 +53,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>Transformer that allows to apply the operation on other DataFrames using
+<td><code>Transformer</code> that allows to apply the operation on another <code>DataFrames</code> using
 <a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
@@ -73,7 +73,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>dataframe id</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>An identifier that can be used in the SQL expression to refer to the input DataFrame.</td>
+<td>The identifier that can be used in the SQL expression to refer the input <code>DataFrame</code>.</td>
 </tr>
 <tr>
 <td><code>expression</code></td>
