@@ -36,7 +36,6 @@ import io.deepsense.workflowexecutor.communication.message.workflow.Synchronize
 class ProtocolJsonSerializerSpec
   extends StandardSpec
   with MockitoSugar
-  with ExecutionReportJsonProtocol
   with WorkflowWithResultsJsonProtocol
   with InferredStateJsonProtocol
   with HeartbeatJsonProtocol {
@@ -46,18 +45,6 @@ class ProtocolJsonSerializerSpec
   "ProtocolJsonSerializer" should {
     val protocolJsonSerializer = ProtocolJsonSerializer(graphReader)
 
-    "serialize ExecutionReport" in {
-      val executionReport = ExecutionReport(
-        Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft()),
-        EntitiesMap(
-          Map[Entity.Id, DOperable](
-            Entity.Id.randomId -> new ColumnsFilterer),
-          Map(Entity.Id.randomId -> ReportContentTestFactory.someReport)),
-        None)
-
-      protocolJsonSerializer.serializeMessage(executionReport) shouldBe
-        expectedSerializationResult("executionStatus", executionReport.toJson)
-    }
 
     "serialize Synchronize messages" in {
       protocolJsonSerializer.serializeMessage(Synchronize()) shouldBe

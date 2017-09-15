@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.workflow
+package io.deepsense.workflowexecutor.communication.message.global
 
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import spray.httpx.SprayJsonSupport
+import spray.json.DefaultJsonProtocol
 
 import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.Node
 import io.deepsense.models.workflows.Workflow
 
 case class Launch(workflowId: Workflow.Id, nodesToExecute: Set[Node.Id])
 
-trait LaunchJsonProtocol
-    extends DefaultJsonProtocol
-    with IdJsonProtocol
-    with Logging {
-
-  implicit val launchFormat: RootJsonFormat[Launch] = jsonFormat2(Launch.apply)
+trait LaunchJsonProtocol extends DefaultJsonProtocol
+  with IdJsonProtocol
+  with SprayJsonSupport {
+  implicit val launchFormat = jsonFormat2(Launch)
 }
 
 object LaunchJsonProtocol extends LaunchJsonProtocol

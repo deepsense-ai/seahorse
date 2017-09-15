@@ -27,7 +27,7 @@ import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
-import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Launch, Synchronize, UpdateWorkflow}
+import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Synchronize, UpdateWorkflow}
 import io.deepsense.workflowexecutor.executor.Executor
 
 class ProtocolJsonDeserializerSpec
@@ -35,22 +35,6 @@ class ProtocolJsonDeserializerSpec
   with MockitoSugar {
 
   "ProtocolJsonDeserializer" should {
-    "deserialize Launch messages" in {
-      val workflowId = Workflow.Id.randomId
-      val nodesToExecute = Vector(Workflow.Id.randomId, Workflow.Id.randomId, Workflow.Id.randomId)
-      val jsNodesToExecute = JsArray(nodesToExecute.map(id => JsString(id.toString)))
-
-      val rawMessage = JsObject(
-        "messageType" -> JsString("launch"),
-        "messageBody" -> JsObject(
-          "workflowId" -> JsString(workflowId.toString),
-          "nodesToExecute" -> jsNodesToExecute
-        )
-      )
-
-      val readMessage: Any = serializeAndRead(rawMessage)
-      readMessage shouldBe Launch(workflowId, nodesToExecute.toSet)
-    }
     "deserialize Abort messages" in {
       val workflowId = Workflow.Id.randomId
 

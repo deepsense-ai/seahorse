@@ -20,6 +20,7 @@ import akka.actor._
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowexecutor.communication.message.global.Launch
 import io.deepsense.workflowexecutor.communication.message.{global, workflow}
 import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, WorkflowExecutorActor}
@@ -41,7 +42,7 @@ case class WorkflowTopicSubscriber(
     case WorkflowExecutorActor.Messages.Init() =>
       logger.debug(s"Initializing SessionWorkflowExecutorActor for workflow '$workflowId'")
       executorActor ! WorkflowExecutorActor.Messages.Init()
-    case workflow.Launch(id, nodesToExecute) if id == workflowId =>
+    case global.Launch(id, nodesToExecute) if id == workflowId =>
       logger.debug(s"LAUNCH! '$workflowId'")
       executorActor ! WorkflowExecutorActor.Messages.Launch(nodesToExecute)
     case workflow.Abort(id) if id == workflowId =>

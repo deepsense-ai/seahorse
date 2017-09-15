@@ -19,9 +19,10 @@ package io.deepsense.workflowexecutor.communication.mq.json
 import java.nio.charset.StandardCharsets
 
 import org.scalatest.mockito.MockitoSugar
-import spray.json.{JsObject, JsString}
+import spray.json.{JsArray, JsObject, JsString}
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.mq.json.Global.GlobalMQDeserializer
 
@@ -30,6 +31,23 @@ class GlobalMQDeserializerSpec
   with MockitoSugar {
 
   "GlobalMQDeserializer" should {
+    "deserialize Launch messages" in {
+      val workflowId = Workflow.Id.randomId
+      val nodesToExecute = Vector(Workflow.Id.randomId, Workflow.Id.randomId, Workflow.Id.randomId)
+      val jsNodesToExecute = JsArray(nodesToExecute.map(id => JsString(id.toString)))
+
+      val rawMessage = JsObject(
+        "messageType" -> JsString("launch"),
+        "messageBody" -> JsObject(
+          "workflowId" -> JsString(workflowId.toString),
+          "nodesToExecute" -> jsNodesToExecute
+        )
+      )
+
+      val readMessage: Any = serializeAndRead(rawMessage)
+      readMessage shouldBe Launch(workflowId, nodesToExecute.toSet)
+    }
+
     "deserialize Heartbeat messages" in {
       val workflowId = "foo-workflow"
       val rawMessage = JsObject(

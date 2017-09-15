@@ -52,7 +52,13 @@ trait DKnowledgeJsonProtocol extends DefaultJsonProtocol {
     def typeArray(dKnowledge: DKnowledge[DOperable]): JsArray =
       JsArray(dKnowledge.types.map(_.getClass.getName.toJson).toVector)
 
-    override def read(json: JsValue): DKnowledge[DOperable] = ???
+    // FIXME: This isn't much better deserialization than the previous
+    // FIXME: '???' placeholder, but at least it doesn't throw an exception.
+    // FIXME: We should consider in a near future (today is 16.11.2016) to
+    // FIXME: implement it properly or find some other means to not silently
+    // FIXME: discard the information contained inside passed json value.
+    override def read(json: JsValue): DKnowledge[DOperable] = DKnowledge()
+
   }
 }
 

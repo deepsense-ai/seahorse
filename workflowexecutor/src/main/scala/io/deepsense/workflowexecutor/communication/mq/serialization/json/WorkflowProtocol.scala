@@ -23,7 +23,6 @@ import io.deepsense.models.workflows.{ExecutionReport, InferredState, WorkflowWi
 import io.deepsense.models.json.workflow.ExecutionReportJsonProtocol._
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow.AbortJsonProtocol._
-import io.deepsense.workflowexecutor.communication.message.workflow.LaunchJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.workflow.SynchronizeJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.json.Constants.MessagesTypes._
@@ -31,23 +30,14 @@ import io.deepsense.workflowexecutor.communication.mq.json.{DefaultJsonMessageDe
 
 object WorkflowProtocol {
   val abort = "abort"
-  val executionReport = "executionStatus" // 'status' for backward compatibility
   val launch = "launch"
   val updateWorkflow = "updateWorkflow"
-  val inferredState = "inferredState"
   val synchronize = "synchronize"
-
 
   object AbortDeserializer extends DefaultJsonMessageDeserializer[Abort](abort)
 
-  object LaunchDeserializer extends DefaultJsonMessageDeserializer[Launch](launch)
-
   object SynchronizeDeserializer extends DefaultJsonMessageDeserializer[Synchronize](synchronize)
   object SynchronizeSerializer extends DefaultJsonMessageSerializer[Synchronize](synchronize)
-
-
-  object ExecutionStatusSerializer
-    extends DefaultJsonMessageSerializer[ExecutionReport](executionReport)
 
   case class UpdateWorkflowDeserializer(graphReader: GraphReader)
     extends JsonMessageDeserializer
@@ -58,15 +48,5 @@ object WorkflowProtocol {
 
     override def deserialize: PartialFunction[(String, JsObject), Any] =
       defaultDeserializer.deserialize
-  }
-
-  case class InferredStateSerializer(graphReader: GraphReader)
-    extends JsonMessageSerializer
-    with InferredStateJsonProtocol {
-
-    private val defaultSerializer =
-      new DefaultJsonMessageSerializer[InferredState](inferredState)
-
-    override def serialize: PartialFunction[Any, JsObject] = defaultSerializer.serialize
   }
 }

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.mq.json
+package io.deepsense.graph.nodestate.name
 
-object Constants {
-  object JsonKeys {
-    val messageTypeKey = "messageType"
-    val messageBodyKey = "messageBody"
-  }
+sealed trait NodeStatusName
 
-  object MessagesTypes {
-    val heartbeat = "heartbeat"
-    val poisonPill = "poisonPill"
-    val ready = "ready"
-    val launch = "launch"
-    val inferredState = "inferredState"
-    val executionReport = "executionStatus"
-  }
+
+object NodeStatusName {
+  case object Queued extends NodeStatusName
+  case object Draft extends NodeStatusName
+  case object Running extends NodeStatusName
+  case object Completed extends NodeStatusName
+  case object Aborted extends NodeStatusName
+  case object Failed extends NodeStatusName
+
 }
+

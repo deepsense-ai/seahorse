@@ -22,7 +22,7 @@ import java.util.concurrent.TimeoutException
 import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, PoisonPill, Props}
 import com.thenewmotion.akka.rabbitmq.ChannelActor.{Connected, Disconnected}
 import com.thenewmotion.akka.rabbitmq._
 
@@ -30,21 +30,41 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.workflowexecutor.communication.mq.{MQCommunication, MQDeserializer, MQSerializer}
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory.NotifyingChannelActor
 
+/**
+  * A class used as a way to return data from the setupChannel callback
+  *
+  * @param data whatever the setupChannel returned
+  * @param channelActor the channel that was just set up
+  * @tparam T setupChannel return type
+  */
+case class ChannelSetupResult[T](data: T, channelActor: ActorRef)
+
 case class MQCommunicationFactory(
   system: ActorSystem,
   connection: ActorRef,
   mqMessageSerializer: MQSerializer,
   mqMessageDeserializer: MQDeserializer) extends Logging {
 
+  type QueueName = String
+
   val exchangeType = "topic"
 
-  def registerSubscriber(topic: String, subscriber: ActorRef): Future[Unit] = {
-    val channelConnected = Promise[Unit]()
+  /**
+    * @return future containing queue name and channel actor so we can
+    *         later unsubscribe and close the channel
+    */
+  def registerSubscriber(topic: String, subscriber: ActorRef): Future[ChannelSetupResult[QueueName]] = {
+    val channelConnected = Promise[ChannelSetupResult[QueueName]]()
     val subscriberName = MQCommunication.subscriberName(topic)
     val actorProps: Props =
-      NotifyingChannelActor.props(channelConnected, setupSubscriber(topic, subscriber))
+      NotifyingChannelActor.props[QueueName](channelConnected, setupSubscriber(topic, subscriber))
     connection.createChannel(actorProps, Some(subscriberName))(timeout = 10.seconds)
     channelConnected.future
+  }
+
+  def deleteQueue(queue: String, channelActor: ActorRef): Unit = {
+    channelActor ! ChannelMessage(_.queueDelete(queue))
+    channelActor ! PoisonPill
   }
 
   def createPublisher(topic: String, publisherActorName: String): ActorRef = {
@@ -60,7 +80,7 @@ case class MQCommunicationFactory(
   private def setupSubscriber(
     topic: String,
     subscriber: ActorRef)(
-    channel: Channel, self: ActorRef): Unit = {
+    channel: Channel, self: ActorRef): QueueName = {
     val queueName: String = MQCommunication.queueName(topic)
     val queue = channel.queueDeclare(
       queueName,
@@ -71,6 +91,7 @@ case class MQCommunicationFactory(
     channel.queueBind(queue, MQCommunication.Exchange.seahorse, topic)
     val consumer = MQSubscriber(subscriber, mqMessageDeserializer, channel)
     channel.basicConsume(queue, true, consumer)
+    queue
   }
 
   private def createMQPublisher(topic: String) = withTimeoutClue(channelTimeoutMsg){
@@ -139,20 +160,29 @@ object MQCommunicationFactory {
    *
    * Thus, it is possible that the handler responds ChannelCreated before the channel is Created.
    */
-  class NotifyingChannelActor(
-      channelConnected: Promise[Unit],
-      setupChannel: (Channel, ActorRef) => Any)
-    extends ChannelActor(setupChannel) {
+  class NotifyingChannelActor[T <: AnyRef](
+      channelConnected: Promise[ChannelSetupResult[T]],
+      setupChannel: (Channel, ActorRef) => T) extends {
+    private val setupPromise = Promise[ChannelSetupResult[T]]()
+    private val setupResults: Future[ChannelSetupResult[T]] = setupPromise.future
+  } with ChannelActor({
+    case (channel, channelActor) =>
+      // FIXME: using non-deterministic try* method as the setup may occur more than once
+      setupPromise.trySuccess(ChannelSetupResult(setupChannel(channel, channelActor), channelActor))
+  }) {
+
     onTransition {
-      case Disconnected -> Connected => channelConnected.trySuccess(Unit)
+      // FIXME: using non-deterministic try* method as the state transition may occur more than once
+      case Disconnected -> Connected => channelConnected.tryCompleteWith(setupResults)
     }
+
   }
 
   object NotifyingChannelActor {
-    def props(
-        channelConnected: Promise[Unit],
-        setupChannel: (Channel, ActorRef) => Any = (_, _) => ()): Props = {
-      Props(classOf[NotifyingChannelActor], channelConnected, setupChannel)
+    def props[T](
+        channelConnected: Promise[ChannelSetupResult[T]],
+        setupChannel: (Channel, ActorRef) => T): Props = {
+      Props(classOf[NotifyingChannelActor[T]], channelConnected, setupChannel)
     }
   }
 }

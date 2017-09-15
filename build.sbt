@@ -50,7 +50,9 @@ lazy val reportlib              = project dependsOn commons settings settingsFor
 lazy val workflowexecutormqprotocol = project dependsOn (
   commons,
   commons % "test->test",
-  models) settings settingsForNotPublished
+  models,
+  reportlib % "test->test",
+  workflowjson) settings settingsForNotPublished
 
 lazy val sdk                    = project dependsOn (
   deeplang

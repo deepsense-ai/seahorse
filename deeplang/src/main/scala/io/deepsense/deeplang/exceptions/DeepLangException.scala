@@ -18,7 +18,7 @@ package io.deepsense.deeplang.exceptions
 
 import io.deepsense.commons.exception.{FailureDescription, FailureCode, DeepSenseException}
 
-abstract class DeepLangException(
+class DeepLangException(
     override val message: String,
     cause: Throwable = null)
   extends DeepSenseException(
