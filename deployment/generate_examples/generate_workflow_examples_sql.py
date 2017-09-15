@@ -29,7 +29,7 @@ def jsonFiles(dir):
             if file.endswith(".json"))
 
 if __name__ == "__main__":
-    examplesDir = "examples"
+    examplesDir = "examples" if len(sys.argv) < 2 else sys.argv[1]
 
     print DELETE_NOTEBOOK
     print DELETE_WF

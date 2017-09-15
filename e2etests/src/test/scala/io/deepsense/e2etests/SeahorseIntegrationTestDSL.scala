@@ -220,6 +220,6 @@ trait SeahorseIntegrationTestDSL
   }
 
   private def getJarsFrom(dir: File): Seq[File] = {
-    dir.listFiles.filter(f => f.isFile && f.getName.endsWith(".jar"))
+    Option(dir.listFiles).getOrElse(Array()).filter(f => f.isFile && f.getName.endsWith(".jar"))
   }
 }
