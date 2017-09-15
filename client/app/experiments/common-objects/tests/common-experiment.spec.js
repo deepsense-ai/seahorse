@@ -326,14 +326,16 @@ describe('experiment', () => {
           return {
             IsDescendantOf: (node, ancestors) => {
               let matrix = {
-                'T31': {
-                  'T21': true,
-                  'T22': true,
-                  'T23': true
+                'T21': {
+                  'T31': true,
+                  'T32': true
                 },
-                'T32': {
-                  'T21': true,
-                  'T22': true
+                'T22': {
+                  'T31': true,
+                  'T32': true
+                },
+                'T23': {
+                  'T31': true
                 }
               };
 

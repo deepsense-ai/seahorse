@@ -34,6 +34,8 @@ function ExperimentController(
         ExperimentService.setExperiment(ExperimentService.createExperiment(data, Operations.getData()));
         GraphPanelRendererService.setExperiment(ExperimentService.getExperiment());
 
+        internal.updateAndRerenderEdges(data);
+
         internal.isDataLoaded = true;
       });
   };

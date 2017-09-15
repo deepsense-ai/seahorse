@@ -311,11 +311,11 @@ function Experiment() {
       let inputTypes = _.find(endNode.input, (port) => port.index === edge.endPortId).typeQualifier;
 
       let numberOfValidTypes = 0;
-      _.each(inputTypes, (inputType) => {
-        numberOfValidTypes += (OperationsHierarchyService.IsDescendantOf(inputType, outputTypes) ? 1 : 0);
+      _.each(outputTypes, (outputType) => {
+        numberOfValidTypes += (OperationsHierarchyService.IsDescendantOf(outputType, inputTypes) ? 1 : 0);
       });
 
-      if (numberOfValidTypes === inputTypes.length) {
+      if (numberOfValidTypes === outputTypes.length) {
         edge.state = edge.STATE_TYPE.ALWAYS;
       } else if (numberOfValidTypes === 0) {
         edge.state = edge.STATE_TYPE.NEVER;
