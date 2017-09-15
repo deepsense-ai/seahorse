@@ -104,8 +104,9 @@ object DefaultCustomTransformerWorkflow {
   val defaultWorkflow = JsObject(
     "workflow" -> JsObject(
       "nodes" -> JsArray(node(Source(), sourceNodeId), node(Sink(), sinkNodeId)),
-      "connections" -> JsArray(connection(sourceNodeId, sinkNodeId)),
-      "thirdPartyData" -> JsString("{}")
-    )
+      "connections" -> JsArray(connection(sourceNodeId, sinkNodeId))
+    ),
+    "thirdPartyData" -> JsObject(),
+    "publicParams" -> JsArray()
   )
 }
