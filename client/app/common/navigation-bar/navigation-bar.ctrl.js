@@ -3,7 +3,7 @@
 /* @ngInject */
 function NavigationController($rootScope, config, PageService) {
   _.assign(this, {
-      getTitle() {
+    getTitle() {
         return PageService.getTitle();
       },
       home() {
