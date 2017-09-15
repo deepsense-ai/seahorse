@@ -35,6 +35,10 @@ sed -i 's|\$EXPOSED_NOTEBOOK_PORT|'"$EXPOSED_NOTEBOOK_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_FRONTEND_PORT|'"$EXPOSED_FRONTEND_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_LIBRARY_PORT|'"$EXPOSED_LIBRARY_PORT"'|g' $TARGET
 
+DOCKERCOMPOSE_NETWORK_FILE="/etc/default/seahorse-dockercompose-network-settings"
+if [ -f $DOCKERCOMPOSE_NETWORK_FILE ]; then
+    cat $DOCKERCOMPOSE_NETWORK_FILE >> $TARGET
+fi
 
 VERSION_SBT_PATH=`dirname $0`"/../../version.sbt"
 API_VERSION=`cat "$VERSION_SBT_PATH" | sed -n  's/version in ThisBuild := "\([0-9.]\+\).*/\1/p'`
