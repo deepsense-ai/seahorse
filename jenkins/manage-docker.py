@@ -154,8 +154,9 @@ def push_docker_with_branch_latest_tag_if_on_branch(docker_configuration):
         sha_for_tip_of_remote_branch = subprocess.check_output(sha_for_tip_of_remote_branch_cmd, shell=True, cwd=cwd).strip()
         is_this_tip_of_remote_branch = sha_for_tip_of_remote_branch == git_sha()
         if is_this_tip_of_remote_branch:
-            tag = tag_with_custom_label(docker_configuration, branch + "-latest")
-            docker.push(tag)
+            docker_tag = tag_with_custom_label(docker_configuration, branch + "-latest")
+            docker.tag(base_sha_tag(docker_configuration), docker_tag)
+            docker.push(docker_tag)
 
 
 def assign_base_sha_tag_to_locally_built_image(docker_configuration):
