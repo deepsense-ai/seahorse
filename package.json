@@ -2,7 +2,7 @@
   "name": "DeepSense.io",
   "version": "0.1.0",
   "private": true,
-  "description": "DeepSense.io UI application",
+  "description": "DeepSense.io LAB application",
   "author": "CodiLime, Inc.",
   "license": "ISC",
   "homepage": "http://deepsense.io/",
@@ -13,7 +13,8 @@
   "main": "./client/app/app.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "gulp start"
+    "start": "gulp start",
+    "dev": "gulp dev"
   },
   "dependencies": {},
   "devDependencies": {
