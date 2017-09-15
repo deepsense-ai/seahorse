@@ -159,6 +159,13 @@ function GraphPanelRendererService($rootScope) {
     $rootScope.$broadcast('OutputPort.LEFT_CLICK');
   };
 
+  internal.broadcastHoverEvent = (eventName, portElement, portObject) => {
+    $rootScope.$broadcast(eventName, {
+      portElement: portElement,
+      portObject: portObject
+    });
+  };
+
   that.addOutputPoint = function addOutputPoint(nodeElement, ports, nodeObj) {
     var anchors = ['BottomCenter', 'BottomLeft', 'BottomRight'];
     for (let i = 0; i < ports.length; i++) {
@@ -166,10 +173,20 @@ function GraphPanelRendererService($rootScope) {
         anchor: anchors[i],
         uuid: ports[i].id
       });
+
       port.setParameter('portIndex', i);
       port.setParameter('nodeId', nodeObj.id);
+
       port.bind('contextmenu', that.portContextMenuHandler);
       port.bind('click', that.outputClickHandler);
+
+      port.bind('mouseover', (endpoint) => {
+        internal.broadcastHoverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
+      });
+
+      port.bind('mouseout', (endpoint) => {
+        internal.broadcastHoverEvent('OutputPoint.MOUSEOUT', endpoint.canvas, ports[i]);
+      });
     }
   };
 
@@ -184,9 +201,18 @@ function GraphPanelRendererService($rootScope) {
         anchor: anchors[i],
         uuid: ports[i].id
       });
+
       port.setParameter('portIndex', i);
 
       port.bind('click', that.inputClickHandler);
+
+      port.bind('mouseover', (endpoint) => {
+        internal.broadcastHoverEvent('InputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
+      });
+
+      port.bind('mouseout', (endpoint) => {
+        internal.broadcastHoverEvent('InputPoint.MOUSEOUT', endpoint.canvas, ports[i]);
+      });
     }
   };
 

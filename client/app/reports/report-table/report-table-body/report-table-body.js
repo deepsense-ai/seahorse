@@ -33,7 +33,7 @@ function ReportTableBody() {
   };
 }
 
-function ReportTableBodyeController($scope, $rootScope, $element, TopWalkerService) {
+function ReportTableBodyeController($scope, $rootScope, $element) {
   let that = this;
   let internals = {};
 
@@ -75,20 +75,14 @@ function ReportTableBodyeController($scope, $rootScope, $element, TopWalkerServi
       }
     },
     selectColumn: function selectColumn (event) {
-      let cell;
-      let tableEl = $element[0];
-
       // get exactly the cell, not a <span> or <a> or something else
-      cell = TopWalkerService.walk(event.target, function (node) {
-        let tagName = node.tagName.toLowerCase();
-        return tagName === 'td' || tagName === 'th';
-      }, tableEl);
+      let cell = $(event.target).closest('td, th');
 
-      if (!cell) {
+      if (!cell.length) {
         return false;
       } else {
         internals.clearSelection();
-        internals.selectColumn(cell.cellIndex);
+        internals.selectColumn(cell[0].cellIndex);
       }
     }
   });

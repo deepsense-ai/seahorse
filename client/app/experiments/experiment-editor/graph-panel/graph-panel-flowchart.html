@@ -9,6 +9,19 @@
                   state="flowChartBoxController.getContextMenuState()">
     </context-menu>
   </div>
+
+  <div ng-controller="PortStatusesTooltipController as portStatusesTooltipController">
+    <sticky-window
+      ng-if="portStatusesTooltipController.tooltipIsVisible"
+      x="::portStatusesTooltipController.getPositionX()"
+      y="::portStatusesTooltipController.getPositionY()"
+    >
+      <span ng-repeat="type in ::portStatusesTooltipController.getTypes()">
+        <span>{{ ::type }}</span><span ng-if="::!$last">,</span>
+      </span>
+    </sticky-window>
+  </div>
+
   <graph-node on-render-finish
               jsplumb-draggable
               keyboard

@@ -12,7 +12,7 @@ function OperationAttributesView($timeout) {
     scope: false,
     templateUrl: 'app/experiments/experiment-editor/attributes-panel/attributes-panel.html',
     replace: true,
-    link: (scope, element, attrs) => {
+    link: (scope, element) => {
       scope.closePanel = function () {
         element.addClass('fadeOut');
         $timeout(() => { scope.experiment.unselectNode(); }, 1000, false);

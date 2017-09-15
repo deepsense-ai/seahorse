@@ -193,18 +193,19 @@ function ExperimentController(
   });
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    let operation = Operations.get(args.classId),
-      boxPosition = args.target[0].getBoundingClientRect(),
-      positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0,
-      positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,
-      offsetX = 100,
-      offsetY = 30,
-      node = ExperimentService.getExperiment().createNode({
+    let operation = Operations.get(args.classId);
+    let boxPosition = args.target[0].getBoundingClientRect();
+    let positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0;
+    let positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0;
+    let offsetX = 100;
+    let offsetY = 30;
+    let node = ExperimentService.getExperiment().createNode({
         'id': UUIDGenerator.generateUUID(),
         'operation': operation,
         'x': positionX > offsetX ? positionX - offsetX : 0,
         'y': positionY > offsetY ? positionY - offsetY : 0
       });
+
     ExperimentService.getExperiment().addNode(node);
     GraphPanelRendererService.repaintEverything();
     $scope.$digest();
