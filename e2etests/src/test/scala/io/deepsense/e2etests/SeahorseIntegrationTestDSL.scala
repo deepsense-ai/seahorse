@@ -128,7 +128,8 @@ trait SeahorseIntegrationTestDSL
         case Success(_) =>
         case Failure(nodeReport) =>
           fail(s"Some nodes failed for workflow id: ${workflow.id}." +
-            s"name: ${workflow.name}'. Node report: $nodeReport")
+            s"name: ${workflow.name}'. Node report: $nodeReport. Cluster failed: ${cluster.name}. " +
+            s"Details in log containing ${cluster.name} string.")
       }
     }
   }
