@@ -8,7 +8,6 @@ package io.deepsense.graph
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
@@ -59,12 +58,11 @@ object DOperationTestClasses {
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
   }
 
-  class DOperation1To1Logging
-    extends DOperation1To1[A, A]
-    with DOperationBaseFields
-    with LazyLogging {
-
+  class DOperation1To1Logging extends DOperation1To1[A, A] with DOperationBaseFields {
+    logger.trace("Initializing logging to test the serialization")
     override protected def _execute(context: ExecutionContext)(t0: A): A = ???
+
+    def trace(message: String) = logger.trace(message)
   }
 }
 
@@ -297,9 +295,11 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
 
   test("Non-empty Graph should be serializable") {
     import DOperationTestClasses._
+    val operationWithInitedLogger = new DOperation1To1Logging
+    val id = UUID.randomUUID()
     val node1 = Node(UUID.randomUUID(), new DOperation0To1Test)
     val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node3 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = Node(id, operationWithInitedLogger)
     val node4 = Node(UUID.randomUUID(), new DOperation2To1Test)
     val edges = List(
       (node1, node2, 0, 0),
@@ -312,5 +312,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     assert(graphIn.size == graph.size)
     // Verify that both graphs have the same nodes ids set
     assert(graphIn.nodes.map(n => n.id) == graph.nodes.map(n => n.id))
+    graphIn.node(id).operation.asInstanceOf[DOperation1To1Logging]
+      .trace("Logging just to clarify that it works after deserialization!")
   }
 }

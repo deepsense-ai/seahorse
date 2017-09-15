@@ -9,6 +9,7 @@ package io.deepsense.deeplang
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.models
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 /**
@@ -16,7 +17,7 @@ import io.deepsense.deeplang.parameters.ParametersSchema
  * Can infer its output type basing on type knowledge.
  */
 @SerialVersionUID(1L)
-abstract class DOperation extends Serializable {
+abstract class DOperation extends Serializable with Logging {
   val inArity: Int
   val outArity: Int
   val id: DOperation.Id

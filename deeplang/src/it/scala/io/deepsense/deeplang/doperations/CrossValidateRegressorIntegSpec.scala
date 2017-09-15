@@ -13,6 +13,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
+import io.deepsense.reportlib.model.ReportJsonProtocol._
 
 class CrossValidateRegressorIntegSpec
   extends DeeplangIntegTestSupport
@@ -119,7 +120,6 @@ class CrossValidateRegressorIntegSpec
     val content = report.content
 
     import spray.json._
-    import io.deepsense.reportlib.model.ReportJsonProtocol._
     logger.debug("Cross-validation report=" + content.toJson.prettyPrint)
 
     if (effectiveNumberOfFolds > 0) {

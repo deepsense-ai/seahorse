@@ -5,7 +5,6 @@ package io.deepsense.deeplang.doperations
 
 import scala.collection.mutable
 
-import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.mllib.evaluation.RegressionMetrics
 
 import io.deepsense.deeplang._
@@ -16,8 +15,7 @@ import io.deepsense.reportlib.model.{ReportContent, Table}
 
 class CrossValidateRegressor
   extends DOperation2To2[Trainable, DataFrame, Scorable, Report]
-  with Trainer
-  with LazyLogging {
+  with Trainer {
 
   override val parameters = trainerParameters ++ ParametersSchema(
     CrossValidateRegressor.numOfFoldsParamKey ->
