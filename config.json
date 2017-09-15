@@ -113,6 +113,7 @@
           "./node_modules/angular-sanitize/angular-sanitize.min.js",
           "./node_modules/ace-webapp/src-min-noconflict/ace.js",
           "./node_modules/ace-webapp/src-min-noconflict/mode-python.js",
+          "./node_modules/angular-ui-ace/src/ui-ace.js",
           "./node_modules/deepsense-context-menu/dist/context-menu.js",
           "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4-min.js",
           "./bower_components/mousetrap/mousetrap.min.js",
