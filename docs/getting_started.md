@@ -84,7 +84,7 @@ Home screen of Seahorse is a list of all workflows - initially filled with examp
 
 <!--Ten screen jest potrzebny, bo ikonka 'Library' wizualnie rozdziela labelke `SOURCE` i text input-->
 <!--i nie wiadomo gdzie jest pole tekstowe opisane przez labelke 'Source'-->
-<img class="centered-image img-responsive" style="width:300px; height:auto" src="./img/getting_started/source_param.png" />
+<img class="centered-image img-responsive bordered-image" style="width:300px; height:auto" src="./img/getting_started/source_param.png" />
 
 * Run operation by clicking
   <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/run.png" />

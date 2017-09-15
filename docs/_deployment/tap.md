@@ -63,7 +63,7 @@ You can also create new workflows from scratch by pressing the
 **NEW WORKFLOW** button.
 
 <div class="centered-container" markdown="1">
-  ![List of workflows](../img/tap_list_of_workflows.png){: .centered-image .img-responsive}
+  ![List of workflows](../img/tap_list_of_workflows.png){: .centered-image .img-responsive .bordered-image}
   *List of workflows*
 </div>
 
@@ -76,7 +76,7 @@ This will start the Seahorse Spark application responsible for executing
 your workflow.
 
 <div class="centered-container" markdown="1">
-  ![List of workflows](../img/tap_seahorse_editor.png){: .centered-image .img-responsive}
+  ![List of workflows](../img/tap_seahorse_editor.png){: .centered-image .img-responsive .bordered-image}
   *Seahorse editor*
 </div>
 

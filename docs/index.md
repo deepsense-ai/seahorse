@@ -21,7 +21,7 @@ All while connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundl
 
 <div class="centered-container spacer" markdown="1">
   <img src="img/seahorse_editor.png"
-    class="centered-image img-responsive spacer" style="width:90%"/>
+    class="centered-image img-responsive spacer bordered-image" style="width:90%"/>
   *Seahorse's interface*
 </div>
 
