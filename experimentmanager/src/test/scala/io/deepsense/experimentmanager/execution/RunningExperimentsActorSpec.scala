@@ -79,7 +79,7 @@ class RunningExperimentsActorSpec
           (actorRef, probe, actor, gec) => {
             probe.send(actorRef, Launch(emptyExperiment))
             probe.expectMsg(Launched(emptyExperiment.markRunning))
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               actor.experiments should contain key emptyExperiment.id
               verify(gec).sendExperiment(emptyExperiment.markRunning)
               probe.send(actorRef, GetStatus(emptyExperiment.id))
@@ -96,11 +96,29 @@ class RunningExperimentsActorSpec
           (actorRef, probe, actor, gec) => {
             probe.send(actorRef, Launch(runningExperiment))
             probe.expectMsg(Launched(runningExperiment.markRunning))
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               actor.experiments should contain key runningExperiment.id
               verify(gec).sendExperiment(runningExperiment.markRunning)
               probe.send(actorRef, GetStatus(runningExperiment.id))
               probe.expectMsg(Status(Some(runningExperiment.markRunning)))
+            }
+          }
+        }
+      }
+    }
+
+    "answer Rejected" when {
+      "launching already-running experiment" in {
+        withLaunchedExperiments(Set(runningExperiment), runningExperiment) {
+          (actorRef, probe, actor, gec) => {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
+              probe.send(actorRef, GetStatus(runningExperiment.id))
+              val msg = probe.expectMsgClass(classOf[Status])
+              msg.experiment.get.isRunning shouldBe true
+            }
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
+              probe.send(actorRef, Launch(runningExperiment))
+              probe.expectMsgType[Rejected]
             }
           }
         }
@@ -115,7 +133,7 @@ class RunningExperimentsActorSpec
               .thenThrow(new RuntimeException("Launching failed"))
             probe.send(actorRef, Launch(experiment))
             probe.expectMsg(Launched(experiment.markRunning))
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               actor.experiments(experiment.id)._1.state.status shouldBe Experiment.Status.Failed
               probe.send(actorRef, GetStatus(experiment.id))
               val msg = probe.expectMsgClass(classOf[Status])
@@ -143,7 +161,7 @@ class RunningExperimentsActorSpec
           (actorRef, probe, actor, gec) => {
             probe.send(actorRef, Launch(experiment))
             probe.send(actorRef, Abort(experiment.id))
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               probe.send(actorRef, GetStatus(experiment.id))
               val msg = probe.expectMsgClass(classOf[Status])
               msg.experiment.get.isAborted shouldBe true
@@ -159,13 +177,13 @@ class RunningExperimentsActorSpec
         withExperiment(failedExperiment) {
           (actorRef, probe, actor, gec) => {
             probe.send(actorRef, Launch(failedExperiment))
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               probe.send(actorRef, GetStatus(failedExperiment.id))
               val msg = probe.expectMsgClass(classOf[Status])
               msg.experiment.get.isFailed shouldBe true
             }
             probe.send(actorRef, Abort(failedExperiment.id))
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               probe.send(actorRef, GetStatus(failedExperiment.id))
               val msg = probe.expectMsgClass(classOf[Status])
               msg.experiment.get.isFailed shouldBe true
@@ -180,7 +198,7 @@ class RunningExperimentsActorSpec
         withExperiment(experiment) {
           (actorRef, probe, actor, gec) => {
             probe.send(actorRef, Abort(experiment.id))
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               probe.send(actorRef, GetStatus(experiment.id))
               probe.expectMsg(Status(None))
             }
@@ -212,7 +230,7 @@ class RunningExperimentsActorSpec
       "received ListExperiments with id of tenant that has experiments" in {
         withLaunchedExperiments(experiments) {
           (actorRef, probe, actor, gec) => {
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               probe.send(actorRef, ExperimentsByTenant(Some(experiment1.tenantId)))
               val receivedExperiments = probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
               receivedExperiments.experimentsByTenantId should have size 1
@@ -226,7 +244,7 @@ class RunningExperimentsActorSpec
       "received ListExperiments without tenantId" in {
         withLaunchedExperiments(experiments) {
           (actorRef, probe, actor, gec) => {
-            eventually {
+            eventually(timeout(1.seconds), interval(100.milliseconds)) {
               probe.send(actorRef, ExperimentsByTenant(None))
               val receivedExperiments = probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
               receivedExperiments.experimentsByTenantId should have size 2
@@ -257,7 +275,7 @@ class RunningExperimentsActorSpec
       val expectedExperiment = experimentWithNode.withGraph(Graph())
       withLaunchedExperiments(Set(experimentWithNode), expectedExperiment) {
         (actorRef, probe, actor, gec) => {
-          eventually {
+          eventually(timeout(1.seconds), interval(100.milliseconds)) {
             probe.send(actorRef, GetStatus(experimentWithNode.id))
             val Status(Some(exp)) = probe.expectMsgType[Status]
             exp shouldBe expectedExperiment

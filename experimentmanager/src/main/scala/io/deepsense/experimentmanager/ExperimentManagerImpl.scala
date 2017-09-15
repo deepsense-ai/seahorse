@@ -139,14 +139,14 @@ class ExperimentManagerImpl @Inject()(
       targetNodes: Seq[Node.Id]): Future[Experiment] = {
     logger.debug("Launch experiment id: {}, targetNodes: {}", id, targetNodes)
     authorizator.withRole(roleLaunch) { userContext =>
-      val experimentFuture = storage.get(id)
-      experimentFuture.flatMap {
+      storage.get(id).flatMap {
         case Some(experiment) =>
           val ownedExperiment = experiment.assureOwnedBy(userContext)
-          runningExperimentsActor
-            .ask(Launch(ownedExperiment))
-            .mapTo[Launched]
-            .map(_.experiment)
+          val launched = runningExperimentsActor.ask(Launch(ownedExperiment))
+          launched.map {
+            case l: Launched => l.experiment
+            case r: Rejected => throw new ExperimentRunningException(experiment.id)
+          }
         case None => throw new ExperimentNotFoundException(id)
       }
     }

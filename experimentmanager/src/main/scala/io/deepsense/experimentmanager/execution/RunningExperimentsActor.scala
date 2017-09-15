@@ -65,24 +65,31 @@ class RunningExperimentsActor @Inject() (
   }
 
   private def launch(experiment: Experiment): Unit = {
-    log.info(s"RunningExperimentsActor starts launching experiment: $experiment")
-    val gec = graphExecutorFactory.create()
-    val resultExp = experiment.markRunning
-    experiments.put(resultExp.id, (resultExp, gec))
+    log.info(s"RunningExperimentsActor launches experiment: $experiment")
     val s = sender()
-    s ! Launched(resultExp)
-    Future {
-      gec.spawnOnCluster(entitystorageLabel)
-      val spawned = gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
-      if (spawned) {
-        gec.sendExperiment(resultExp)
-      } else {
-        throw new IllegalStateException("Spawning Failed for experiment: " + experiment)
-      }
-    }.onFailure { case reason =>
+    val isExperimentAlreadyRunning = experiments.get(experiment.id).map(_._1).exists(_.isRunning)
+    if (isExperimentAlreadyRunning) {
+      log.info(s"Experiment ${experiment.id} is already running. Rejecting request to launch")
+      s ! Rejected(experiment)
+    } else {
+      log.info(s"Experiment ${experiment.id} is not running. Accepting request to launch")
+      val gec = graphExecutorFactory.create()
+      val resultExp = experiment.markRunning
+      experiments.put(resultExp.id, (resultExp, gec))
+      s ! Launched(resultExp)
+      Future {
+        gec.spawnOnCluster(entitystorageLabel)
+        val spawned = gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
+        if (spawned) {
+          gec.sendExperiment(resultExp)
+        } else {
+          throw new IllegalStateException("Spawning Failed for experiment: " + experiment)
+        }
+      }.onFailure { case reason =>
         log.error(reason, s"Launching experiment failed $experiment")
         self ! ExperimentStatusUpdated(
           markExperimentAsFailed(resultExp.id, Option(reason.getMessage)))
+      }
     }
   }
 
@@ -182,6 +189,9 @@ object RunningExperimentsActor {
   sealed trait Message
   case class Launch(experiment: Experiment) extends Message
   case class Launched(experiment: Experiment) extends Message
+  case class Rejected(
+    experiment: Experiment,
+    reason: String = "Experiment is already running") extends Message
   case class Abort(experimentId: Id) extends Message
   case class GetStatus(experimentId: Id) extends Message
   case class ExperimentsByTenant(tenantId: Option[String]) extends Message
