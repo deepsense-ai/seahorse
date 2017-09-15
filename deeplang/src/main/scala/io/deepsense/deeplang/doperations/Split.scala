@@ -30,14 +30,16 @@ case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
   override val name: String = "Split"
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 
-  val splitRatioParam = NumericParameter("Proportion of splitting",
+  val splitRatioParam = NumericParameter(
+    "Percentage of rows that should end up in the first output DataFrame",
     default = Some(0.5),
     required = true,
     RangeValidator(0.0, 1.0, true, true),
     value = None
   )
 
-  val seedParam = NumericParameter("Seed value",
+  val seedParam = NumericParameter(
+    "Seed for random generator used during splitting",
     default = Some(1.0),
     required = true,
     // TODO Fix RangeValidator, because now it can't handle Int.MinValue and Int.MaxValue

@@ -47,10 +47,10 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
     "Timestamp column to decompose", required = true, portIndex = 0)
 
   val timestampPartsParam = MultipleChoiceParameter(
-    "Parts of the date time to select", None, required = true, timeUnits, value = None)
+    "Parts of the date/time to retain", None, required = true, timeUnits, value = None)
 
   val timestampPrefixParam = PrefixBasedColumnCreatorParameter(
-    "Common prefix for created column names", None, required = false)
+    "Common prefix for names of created columns", None, required = false)
 
   override val parameters = ParametersSchema(
     "timestamp column" -> timestampColumnParam,

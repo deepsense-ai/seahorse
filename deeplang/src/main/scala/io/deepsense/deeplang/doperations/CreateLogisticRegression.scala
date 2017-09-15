@@ -42,7 +42,7 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
       validator = RangeValidator(begin = 1.0, end = EndOfRange, step = Some(1.0))),
     Tolerance -> NumericParameter(
       description = "The convergence tolerance of iterations for LBFGS. " +
-        "Smaller value will lead to higher accuracy with the cost of more iterations.",
+        "Smaller value will lead to higher accuracy at a cost of more iterations.",
       default = Some(0.0001),
       required = true,
       validator = RangeValidator(begin = 0.0, end = EndOfRange, beginIncluded = false)))

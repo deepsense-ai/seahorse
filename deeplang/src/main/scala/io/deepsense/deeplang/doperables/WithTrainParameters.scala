@@ -22,12 +22,12 @@ trait WithTrainParameters {
   protected val dataFramePortIndex: Int
 
   val featureColumnsParameter = ColumnSelectorParameter(
-    "Columns which are to be used as features in regression",
+    "Columns which are to be used as features",
     required = true,
     portIndex = dataFramePortIndex)
 
   val targetColumnParameter = SingleColumnSelectorParameter(
-    "Column against which the regression will be performed",
+    "Column containing observations (labels)",
     required = true,
     portIndex = dataFramePortIndex)
 

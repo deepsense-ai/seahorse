@@ -198,19 +198,19 @@ trait JoinParams {
     required = true,
     predefinedSchema = ParametersSchema(
       leftColumnParamKey -> SingleColumnSelectorParameter(
-        "Column from the left table", required = true, portIndex = 0),
+        "Column from the left DataFrame", required = true, portIndex = 0),
       rightColumnParamKey -> SingleColumnSelectorParameter(
-        "Column from the right table", required = true, portIndex = 1)
+        "Column from the right DataFrame", required = true, portIndex = 1)
     )
   )
 
   val leftTablePrefixParam = PrefixBasedColumnCreatorParameter(
-    "Prefix for columns of left table",
+    "Prefix for columns of left DataFrame",
     default = None,
     required = false)
 
   val rightTablePrefixParam = PrefixBasedColumnCreatorParameter(
-    "Prefix for columns of right table",
+    "Prefix for columns of right DataFrame",
     default = None,
     required = false)
 }

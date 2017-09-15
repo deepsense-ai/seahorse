@@ -178,7 +178,7 @@ abstract class CrossValidate[T <: Evaluable]()
 trait CrossValidateParams {
   import CrossValidate._
   val numberOfFoldsParameter = NumericParameter(
-    "Number of folds",
+    "How many folds should be used in cross-validation?",
     Some(10.0),
     required = true,
     validator = RangeValidator(
@@ -186,7 +186,7 @@ trait CrossValidateParams {
     value = None)
 
   val seedShuffleParameter = NumericParameter(
-    "Seed value",
+    "Seed for random generator used during shuffling",
     default = Some(0.0),
     required = true,
     validator = RangeValidator(
@@ -194,7 +194,7 @@ trait CrossValidateParams {
     value = None)
 
   val shuffleParameter = ChoiceParameter(
-    "Perform shuffle",
+    "Should the DataFrame be shuffled before cross-validation?",
     Some(BinaryChoice.YES.toString),
     required = true,
     options = ListMap(

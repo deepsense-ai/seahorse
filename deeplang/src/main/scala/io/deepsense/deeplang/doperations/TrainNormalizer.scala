@@ -30,7 +30,7 @@ case class TrainNormalizer() extends DOperation1To2[DataFrame, DataFrame, Normal
   override val name = "Train Normalizer"
 
   val selectedColumnsParameter = ColumnSelectorParameter(
-    "Columns to be normalized",
+    "Columns that the normalizer should be able to normalize",
     required = true,
     portIndex = 0
   )

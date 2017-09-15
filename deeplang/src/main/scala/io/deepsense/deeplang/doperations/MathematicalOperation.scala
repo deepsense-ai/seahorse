@@ -38,7 +38,9 @@ case class MathematicalOperation() extends DOperation0To1[Transformation] {
   }
 
   val formulaParam = StringParameter(
-    "formula", None, required = true, validator = new AcceptAllRegexValidator)
+    "Mathematical formula to be placed in a column named with AS directive. " +
+    "For example, \"(myColumn * myColumn)\" AS myColumnSquared",
+    None, required = true, validator = new AcceptAllRegexValidator)
 
   override val parameters = ParametersSchema("formula" -> formulaParam)
   @transient

@@ -40,14 +40,14 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
   override val name: String = "Write DataFrame"
 
   val columnSeparatorParameter = StringParameter(
-    description = "Column separator",
+    description = "String separating fields in a row",
     default = Some(","),
     required = true,
     validator = RegexValidator(".".r)
   )
 
   val writeHeaderParameter = BooleanParameter(
-    description = "Write header with column names",
+    description = "Should the output file include a header with column names?",
     default = Some(true),
     required = true
   )
@@ -63,7 +63,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
   )
 
   val pathParameter = StringParameter(
-    description = "Path",
+    description = "Output file path",
     default = None,
     required = true,
     // Do not accept paths with protocol prefix
@@ -71,7 +71,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
   )
 
   val outputFileParameter = ChoiceParameter(
-    description = "Output file",
+    description = "Where should the output file be stored?",
     default = Some(StorageType.FILE.toString),
     required = true,
     options = ListMap(
