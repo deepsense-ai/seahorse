@@ -64,7 +64,8 @@ class SessionExecutorRequestBodyBuilder @Inject() (
         "-m", queueHost,
         "--message-queue-port", queuePort.toString,
         "--wm-address", wmAddress,
-        "-j", workflowId.toString(),
+        // TODO: Currently sessionId == workflowId
+        "--workflow-id", workflowId.toString(),
         "-d", getFileName(depsZipPath),
         "--wm-username", wmUsername,
         "--wm-password", wmPassword,
