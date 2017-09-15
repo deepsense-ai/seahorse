@@ -8,6 +8,7 @@ object Version {
   val mockito       = "1.10.19"
   val nsscalaTime   = "1.8.0"
   val scala         = "2.11.6"
+  val scalacheck    = "1.12.2"
   val scalatest     = "3.0.0-SNAP4"
   val spray         = "1.3.3"
 }
@@ -23,13 +24,17 @@ object Library {
   val log4JExtras        = "log4j"                             %  "apache-log4j-extras" % "1.2.17"
   val nscalaTime         = "com.github.nscala-time"           %%  "nscala-time"         % Version.nsscalaTime
   val mockitoCore        = "org.mockito"                       %  "mockito-core"        % Version.mockito
+  val scalacheck         = "org.scalacheck"                   %%  "scalacheck"          % Version.scalacheck
   val slf4jLog4j         = "org.slf4j"                         %  "slf4j-log4j12"       % "1.7.12"
   val sprayCan           = spray("can")
   val sprayHttpx         = spray("httpx")
   val sprayJson          = "io.spray"                         %% "spray-json"           % Version.sprayJson
   val scalaLogging       = "com.typesafe.scala-logging"       %% "scala-logging"        % "3.1.0"
+  val scalaReflect       = "org.scala-lang"                    % "scala-reflect"        % Version.scala
   val scalatest          = "org.scalatest"                    %% "scalatest"            % Version.scalatest
   val sparkCore          = spark("core")
+  val sparkMLLib         = spark("mllib")
+  val sparkSql           = spark("sql")
 }
 
 object Dependencies {
@@ -48,14 +53,33 @@ object Dependencies {
     nscalaTime,
     scalaLogging,
     slf4jLog4j,
+    sparkSql,
     sprayCan,
     sprayHttpx,
     sprayJson
   ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
+  val deeplang = Seq(
+    nscalaTime,
+//    sprayClient,
+    scalaReflect,
+    sparkSql,
+    sparkMLLib,
+    sparkCore
+  ) ++ Seq(scalatest, mockitoCore, scalacheck).map(_ % Test)
+
   val entitystorageClient = Seq(
     akkaActor
   ) ++ Seq(scalatest, mockitoCore, akkaTestkit).map(_ % Test)
+
+  val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+
+  val graphJson = Seq(
+    nscalaTime,
+    sprayJson
+  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+
+  val models = Seq(scalatest, mockitoCore).map(_ % Test)
 
   val reportlib = Seq(
     sprayJson

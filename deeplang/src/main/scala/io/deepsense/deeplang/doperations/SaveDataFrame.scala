@@ -1,0 +1,72 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+
+package io.deepsense.deeplang.doperations
+
+import spray.json._
+
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadata, DataFrame}
+import io.deepsense.deeplang.doperables.{DOperableSaver, Report}
+import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
+import io.deepsense.deeplang.{DOperation, DOperation1To0, ExecutionContext}
+import io.deepsense.entitystorage.UniqueFilenameUtil
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, CreateEntityRequest}
+
+/**
+ * Operation which is able to serialize DataFrame and save it.
+ */
+case class SaveDataFrame() extends DOperation1To0[DataFrame] {
+
+  override val parameters = ParametersSchema(
+    SaveDataFrame.nameParam -> StringParameter(
+      "user friendly name", None, required = true, validator = new AcceptAllRegexValidator),
+    SaveDataFrame.descriptionParam -> StringParameter(
+      "description for DataFrame", None, required = true, validator = new AcceptAllRegexValidator))
+
+  override val id: DOperation.Id = "58025c36-e28b-11e4-8a00-1681e6b88ec1"
+
+  override val name: String = "Save DataFrame"
+
+  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
+    val uniqueFilename: String = getUniqueFileName(context)
+    DOperableSaver.saveDOperableWithEntityStorageRegistration(
+      context)(
+      dataFrame,
+      inputEntity(context, uniqueFilename, dataFrame.report, dataFrame.metadata.get))
+  }
+
+  private def inputEntity(
+      context: ExecutionContext,
+      uniqueFilename: String,
+      dataFrameReport: Report,
+      metadata: DataFrameMetadata): CreateEntityRequest = {
+    val name = parameters.getStringParameter(SaveDataFrame.nameParam).value.get
+    val description = parameters.getStringParameter(SaveDataFrame.descriptionParam).value.get
+    CreateEntityRequest(
+      context.tenantId,
+      name,
+      description,
+      dClass = DataFrame.getClass.toString,  // TODO https://codilime.atlassian.net/browse/DS-869
+      dataReference = Some(DataObjectReference(
+        uniqueFilename,
+        metadata.serializeToJson.compactPrint)),
+      report = dataFrameReport.toDataObjectReport,
+      saved = true)
+  }
+
+  private def getUniqueFileName(context: ExecutionContext): String =
+    context.uniqueHdfsFileName(UniqueFilenameUtil.DataFrameEntityCategory)
+}
+
+object SaveDataFrame {
+  val nameParam = "name"
+  val descriptionParam = "description"
+
+  def apply(name: String, description: String = ""): SaveDataFrame = {
+    val saveDataFrame = new SaveDataFrame
+    saveDataFrame.parameters.getStringParameter(nameParam).value = Some(name)
+    saveDataFrame.parameters.getStringParameter(descriptionParam).value = Some(description)
+    saveDataFrame
+  }
+}
