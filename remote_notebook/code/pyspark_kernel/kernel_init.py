@@ -48,4 +48,7 @@ def dataframe():
     except Py4JJavaError:
         raise Exception("Input operation is not yet executed")
 
-    return DataFrame(jdf=java_data_frame, sql_ctx=sqlContext)
+    return move_to_local_sqlContext(DataFrame(jdf=java_data_frame, sql_ctx=sqlContext))
+
+def move_to_local_sqlContext(df):
+    return sqlContext.createDataFrame(df.rdd)
