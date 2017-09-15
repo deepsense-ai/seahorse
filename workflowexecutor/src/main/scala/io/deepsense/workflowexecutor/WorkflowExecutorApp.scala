@@ -21,10 +21,7 @@ import java.net.URL
 import org.apache.log4j.xml.DOMConfigurator
 import scopt.OptionParser
 
-import io.deepsense.commons.utils.{Logging, Version}
-import io.deepsense.deeplang.CatalogRecorder
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow._
+import io.deepsense.commons.utils.Logging
 import io.deepsense.workflowexecutor.buildinfo.BuildInfo
 import io.deepsense.workflowexecutor.executor.{SessionExecutor, WorkflowExecutor}
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
@@ -33,10 +30,7 @@ import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
  * WorkflowExecutor
  * workflow file name has to be passed via command-line parameter
  */
-object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
-
-  val dOperationsCatalog = CatalogRecorder.catalogs.dOperationsCatalog
-  override val graphReader = new GraphReader(dOperationsCatalog)
+object WorkflowExecutorApp extends Logging {
 
   private val parser: OptionParser[ExecutionParams]
       = new scopt.OptionParser[ExecutionParams](BuildInfo.name) {
@@ -217,9 +211,6 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       }
     }
   }
-
-  override def currentVersion: Version =
-    Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
 
   def main(args: Array[String]): Unit = {
     configureLogging()

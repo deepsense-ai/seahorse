@@ -30,11 +30,10 @@ import io.deepsense.workflowexecutor.communication.message.global.PoisonPillJson
 import io.deepsense.workflowexecutor.communication.message.global.ReadyJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.global.LaunchJsonProtocol._
 
-
 object Global {
   val charset = Charset.forName("UTF-8")
 
-  val dOperationsCatalog = CatalogRecorder.catalogs.dOperationsCatalog
+  val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
 
   val graphReader = new GraphReader(dOperationsCatalog)
 

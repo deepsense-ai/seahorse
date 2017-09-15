@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor.executor
 
+import java.io.File
+
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.BuildInfo
@@ -50,7 +52,8 @@ trait Executor extends Logging {
       libraryPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
-    val CatalogPair(operableCatalog, operationsCatalog) = CatalogRecorder.catalogs
+    val CatalogPair(operableCatalog, operationsCatalog) =
+      CatalogRecorder.fromSparkContext(sparkContext).catalogs
 
     val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
       new GraphReader(operationsCatalog))

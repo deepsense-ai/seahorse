@@ -16,6 +16,13 @@
 
 package io.deepsense.deeplang
 
+import java.io.File
+import java.net.URL
+
+import com.typesafe.config.ConfigFactory
+import org.apache.spark.SparkContext
+
+import io.deepsense.commons.utils.LoggerForCallerClass
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -34,9 +41,26 @@ import io.deepsense.deeplang.doperations.spark.wrappers.transformers._
 import io.deepsense.deeplang.refl.CatalogScanner
 
 /**
- * Object used to register all desired DOperables and DOperations.
+ * Class used to register all desired DOperables and DOperations.
  */
-object CatalogRecorder {
+class CatalogRecorder private (jars: Seq[URL]) {
+  def withDir(jarsDir: File): CatalogRecorder = {
+    val additionalJars =
+      if (jarsDir.exists && jarsDir.isDirectory) {
+        jarsDir.listFiles().toSeq.filter(f => f.isFile && f.getName.endsWith(".jar"))
+      } else {
+        Seq.empty
+      }
+    withJars(additionalJars)
+  }
+
+  def withJars(additionalJars: Seq[File]): CatalogRecorder = {
+    new CatalogRecorder(jars ++ additionalJars.map(_.toURI.toURL))
+  }
+
+  def withSparkContext(sparkContext: SparkContext): CatalogRecorder = {
+    new CatalogRecorder(jars ++ sparkContext.jars.map(new URL(_)))
+  }
 
   private def registerDOperables(catalog: DOperableCatalog): Unit = {
     catalog.registerDOperable[DataFrame]()
@@ -230,13 +254,13 @@ object CatalogRecorder {
 
   private def createDOperableCatalog(): DOperableCatalog = {
     val catalog = new DOperableCatalog
-    CatalogRecorder.registerDOperables(catalog)
+    registerDOperables(catalog)
     catalog
   }
 
   private def createDOperationsCatalog(): DOperationsCatalog = {
     val catalog = DOperationsCatalog()
-    CatalogRecorder.registerDOperations(catalog)
+    registerDOperations(catalog)
     catalog
   }
 
@@ -244,9 +268,27 @@ object CatalogRecorder {
     val dOperableCatalog = createDOperableCatalog()
     val dOperationsCatalog = createDOperationsCatalog()
 
-    CatalogScanner.scanAndRegister(dOperableCatalog, dOperationsCatalog)
+    new CatalogScanner(jars).scanAndRegister(dOperableCatalog, dOperationsCatalog)
 
     CatalogPair(dOperableCatalog, dOperationsCatalog)
   }
 
+}
+
+object CatalogRecorder {
+  val logger = LoggerForCallerClass()
+
+  def fromDir(dir: File): CatalogRecorder = {
+    new CatalogRecorder(Seq.empty).withDir(dir)
+  }
+  def fromJars(jars: Seq[URL]): CatalogRecorder = {
+    new CatalogRecorder(jars)
+  }
+  def fromSparkContext(sparkContext: SparkContext): CatalogRecorder = {
+    new CatalogRecorder(Seq.empty).withSparkContext(sparkContext)
+  }
+
+  lazy val resourcesCatalogRecorder: CatalogRecorder = {
+    fromDir(Config.jarsDir)
+  }
 }

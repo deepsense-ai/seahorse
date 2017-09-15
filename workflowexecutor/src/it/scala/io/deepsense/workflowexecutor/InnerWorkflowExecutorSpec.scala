@@ -99,7 +99,7 @@ class InnerWorkflowExecutorSpec
     Set(sourceNode, sinkNode, otherNode),
     Set(Edge(sourceNode, 0, sinkNode, 0)))
 
-  val dOperationsCatalog = CatalogRecorder.catalogs.dOperationsCatalog
+  val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
   val graphReader = new GraphReader(dOperationsCatalog)
   val executor: InnerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
 

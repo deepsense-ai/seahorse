@@ -29,14 +29,16 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.{DOperation, DOperationCategories, TypeUtils}
 
-object CatalogScanner extends Logging {
-
-  val resourcesDirname = "/resources/jars"
-
-
+/**
+  * Scanner for operations and operables. It scans given jars and additionally a jar containing this
+  * class.
+  * @param jarsUrls Jars to scan
+  */
+class CatalogScanner(jarsUrls: Seq[URL]) extends Logging {
 
   /**
-    * Scans jars on classpath for classes annotated with [[io.deepsense.deeplang.refl.Register Register]]
+    * Scans jars on classpath for classes annotated with [[io.deepsense.deeplang.refl.Register
+    * Register]]
     * annotation and at the same time implementing [[io.deepsense.deeplang.DOperation DOperation]]
     * interface. Found classes are then registered in appropriate catalogs.
     *
@@ -45,7 +47,9 @@ object CatalogScanner extends Logging {
   def scanAndRegister(
       dOperableCatalog: DOperableCatalog,
       dOperationsCatalog: DOperationsCatalog
-    ): Unit = {
+  ): Unit = {
+    logger.info(
+      s"Scanning registrables. Following jars will be scanned: ${jarsUrls.mkString(";")}.")
     for (registrable <- scanForRegistrables()) {
       logger.debug(s"Trying to register class $registrable")
       registrable match {
@@ -55,16 +59,16 @@ object CatalogScanner extends Logging {
     }
   }
 
-  private def scanForRegistrables() : Set[Class[_]] = {
+  private def scanForRegistrables(): Set[Class[_]] = {
 
-    val urls = thisJarURLOpt ++ resourcesURLs
+    val urls = thisJarURLOpt ++ jarsUrls
 
     if (urls.nonEmpty) {
 
       val configBuilder = ConfigurationBuilder.build(urls.toSeq: _*)
 
-      if (resourcesURLs.nonEmpty) {
-        configBuilder.addClassLoader(URLClassLoader.newInstance(resourcesURLs.toArray))
+      if (jarsUrls.nonEmpty) {
+        configBuilder.addClassLoader(URLClassLoader.newInstance(jarsUrls.toArray))
       }
 
       new Reflections(configBuilder).getTypesAnnotatedWith(classOf[Register]).toSet
@@ -72,17 +76,6 @@ object CatalogScanner extends Logging {
       Set()
     }
 
-  }
-
-  private lazy val resourcesURLs: Seq[URL] = {
-    val resourcesDir = new File(resourcesDirname)
-    try {
-      resourcesDir.listFiles().map(_.toURI.toURL)
-    } catch {
-      case e: Exception =>
-        logger.warn(s"Couldn't list files in $resourcesDirname dir", e)
-        Seq()
-    }
   }
 
   private lazy val thisJarURLOpt: Option[URL] = {
@@ -99,8 +92,8 @@ object CatalogScanner extends Logging {
 
 
   private def registerDOperation(
-    catalog: DOperationsCatalog,
-    operation: Class[DOperation]
+      catalog: DOperationsCatalog,
+      operation: Class[DOperation]
   ): Unit = TypeUtils.constructorForClass(operation) match {
     case Some(constructor) =>
       catalog.registerDOperation(

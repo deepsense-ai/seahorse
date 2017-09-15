@@ -26,10 +26,10 @@ import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.doperables.ColumnsFilterer
 import io.deepsense.graph.Node
-import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport, Workflow}
-import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.models.json.workflow.ExecutionReportJsonProtocol._
+import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport, Workflow}
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
+import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.mq.json.Global.GlobalMQSerializer
 
 class GlobalMQSerializerSpec

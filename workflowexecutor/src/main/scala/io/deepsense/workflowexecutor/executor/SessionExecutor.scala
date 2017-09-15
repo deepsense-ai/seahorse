@@ -16,12 +16,12 @@
 
 package io.deepsense.workflowexecutor.executor
 
+import java.io.File
 import java.net.{InetAddress, URL}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
-
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.routing._
 import com.rabbitmq.client.ConnectionFactory
@@ -37,7 +37,7 @@ import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.sparkutils.{SparkSQLSession, AkkaUtils}
+import io.deepsense.sparkutils.{AkkaUtils, SparkSQLSession}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
@@ -83,8 +83,8 @@ case class SessionExecutor(
   private val workflowManagerTimeout = config.getInt("workflow-manager.timeout")
   private val wmWorkflowsPath = config.getString("workflow-manager.workflows.path")
   private val wmReportsPath = config.getString("workflow-manager.reports.path")
-
-  val CatalogPair(dOperableCatalog, dOperationsCatalog) = CatalogRecorder.catalogs
+  val CatalogPair(dOperableCatalog, dOperationsCatalog) =
+    CatalogRecorder.resourcesCatalogRecorder.catalogs
 
   val graphReader = new GraphReader(dOperationsCatalog)
 

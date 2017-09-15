@@ -18,7 +18,11 @@ package io.deepsense.workflowexecutor.executor
 
 import java.io._
 import java.net.InetAddress
-import javax.sql.rowset.spi.SyncProvider
+
+import akka.actor.ActorSystem
+import com.typesafe.config.ConfigFactory
+import org.apache.spark.SparkContext
+import spray.json._
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,24 +30,22 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future, Promise}
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
-import akka.actor.ActorSystem
-import com.typesafe.config.ConfigFactory
-import spray.json._
-import io.deepsense.api.datasourcemanager.model.Datasource
+
 import io.deepsense.commons.json.datasources.DatasourceListJsonProtocol
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.rest.client.datasources.DatasourceInMemoryClientFactory
 import io.deepsense.commons.rest.client.datasources.DatasourceTypes.DatasourceList
-import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang.{OperationExecutionDispatcher, _}
 import io.deepsense.graph.CyclicGraphException
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.WorkflowVersionUtil
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowInfo, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.sparkutils.AkkaUtils
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
-import io.deepsense.workflowexecutor.WorkflowExecutorApp._
 import io.deepsense.workflowexecutor._
+import io.deepsense.workflowexecutor.buildinfo.BuildInfo
 import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
@@ -62,7 +64,7 @@ case class WorkflowExecutor(
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
   private val actorSystemName = "WorkflowExecutor"
 
-  def execute(): Try[ExecutionReport] = Try {
+  def execute(sparkContext: SparkContext): Try[ExecutionReport] = Try {
 
     if (workflow.graph.containsCycle) {
       val cyclicGraphException = new CyclicGraphException
@@ -72,7 +74,6 @@ case class WorkflowExecutor(
 
     val dataFrameStorage = new DataFrameStorageImpl
 
-    val sparkContext = createSparkContext()
     val sparkSQLSession = createSparkSQLSession(sparkContext)
 
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
@@ -173,7 +174,7 @@ case class WorkflowExecutor(
   }
 }
 
-object WorkflowExecutor extends Logging {
+object WorkflowExecutor extends Logging with Executor {
 
   private val outputFile = "result.json"
 
@@ -186,10 +187,19 @@ object WorkflowExecutor extends Logging {
   def runInNoninteractiveMode(
       params: ExecutionParams,
       pythonPathGenerator: PythonPathGenerator): Unit = {
-    val workflow = loadWorkflow(params)
+    val sparkContext = createSparkContext()
+    val dOperationsCatalog = CatalogRecorder.fromSparkContext(sparkContext).catalogs.dOperationsCatalog
+
+    val workflowVersionUtil: WorkflowVersionUtil = new WorkflowVersionUtil with Logging {
+      override def currentVersion: Version =
+        Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
+
+      override protected val graphReader: GraphReader = new GraphReader(dOperationsCatalog)
+    }
+    val workflow = loadWorkflow(params, workflowVersionUtil)
 
     val executionReport = workflow.map(w => {executeWorkflow(w, params.customCodeExecutorsPath.get,
-      pythonPathGenerator, params.tempPath.get)
+      pythonPathGenerator, params.tempPath.get, sparkContext)
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -220,7 +230,7 @@ object WorkflowExecutor extends Logging {
         // Saving execution report to file
         val reportPathFuture: Future[Option[String]] = params.outputDirectoryPath match {
           case None => Future.successful(None)
-          case Some(path) => saveWorkflowToFile(path, workflowWithResults)
+          case Some(path) => saveWorkflowToFile(path, workflowWithResults, workflowVersionUtil)
         }
 
         val reportPathTry: Try[Option[String]] =
@@ -228,12 +238,12 @@ object WorkflowExecutor extends Logging {
             Await.ready(reportPathFuture, 1.minute).value.get
           } catch {
             case e: Exception =>
-              executionReportDump(workflowWithResults)
+              executionReportDump(workflowWithResults, workflowVersionUtil)
               throw e
           }
 
         if (reportPathTry.isFailure) {
-          executionReportDump(workflowWithResults)
+          executionReportDump(workflowWithResults, workflowVersionUtil)
         }
 
         reportPathTry match {
@@ -250,7 +260,10 @@ object WorkflowExecutor extends Logging {
     }
   }
 
-  private def executionReportDump(workflowWithResults: WorkflowWithResults): Unit = {
+  private def executionReportDump(
+      workflowWithResults: WorkflowWithResults,
+      workflowVersionUtil: WorkflowVersionUtil): Unit = {
+    import workflowVersionUtil._
     logger.error("Execution report dump: \n" + workflowWithResults.toJson.prettyPrint)
   }
 
@@ -276,24 +289,29 @@ object WorkflowExecutor extends Logging {
       workflow: WorkflowWithVariables,
       customCodeExecutorsPath: String,
       pythonPathGenerator: PythonPathGenerator,
-      tempPath: String): Try[ExecutionReport] = {
+      tempPath: String,
+      sparkContext: SparkContext): Try[ExecutionReport] = {
 
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, customCodeExecutorsPath, pythonPathGenerator, tempPath).execute()
+    WorkflowExecutor(workflow, customCodeExecutorsPath, pythonPathGenerator, tempPath).execute(sparkContext)
   }
 
-  private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {
+  private def loadWorkflow(params: ExecutionParams,
+      workflowVersionUtil: WorkflowVersionUtil): Future[WorkflowWithVariables] = {
     val content = Future(Source.fromFile(params.workflowFilename.get).mkString)
     content.map(_.parseJson)
       .map(w => WorkflowJsonParamsOverrider.overrideParams(w, params.extraVars))
-      .map(_.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader))
+      .map(_.convertTo[WorkflowWithVariables](
+        workflowVersionUtil.versionedWorkflowWithVariablesReader))
   }
 
   private def saveWorkflowToFile(
       outputDir: String,
-      result: WorkflowWithResults): Future[Option[String]] = {
+      result: WorkflowWithResults,
+      workflowVersionUtil: WorkflowVersionUtil): Future[Option[String]] = {
+    import workflowVersionUtil._
     logger.info(s"Execution report file ($outputFile) will be written on host: " +
       s"${InetAddress.getLocalHost.getHostName} (${InetAddress.getLocalHost.getHostAddress})")
     var writerOption: Option[PrintWriter] = None

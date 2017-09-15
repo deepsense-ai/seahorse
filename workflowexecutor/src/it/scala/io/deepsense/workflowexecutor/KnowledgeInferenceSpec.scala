@@ -91,5 +91,6 @@ class KnowledgeInferenceSpec
     MockedInferContext(dOperableCatalog = dOperableCatalog, innerWorkflowParser = executor)
   }
   override protected lazy val graphReader = new GraphReader(operationCatalog)
-  private lazy val CatalogPair(dOperableCatalog, operationCatalog) = CatalogRecorder.catalogs
+  private lazy val CatalogPair(dOperableCatalog, operationCatalog) =
+    CatalogRecorder.resourcesCatalogRecorder.catalogs
 }

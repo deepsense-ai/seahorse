@@ -25,7 +25,8 @@ import io.deepsense.deeplang.inference.InferContext
 
 object MockedInferContext extends MockitoSugar {
 
-  def apply(dOperableCatalog: DOperableCatalog = CatalogRecorder.catalogs.dOperableCatalog,
+  def apply(dOperableCatalog: DOperableCatalog =
+              CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperableCatalog,
             dataFrameBuilder: DataFrameBuilder = mock[DataFrameBuilder],
             innerWorkflowParser: InnerWorkflowParser = mock[InnerWorkflowParser],
             datasourceClient: DatasourceClient = new DatasourceInMemoryClientFactory(List.empty).createClient

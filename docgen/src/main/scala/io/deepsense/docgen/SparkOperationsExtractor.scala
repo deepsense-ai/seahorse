@@ -24,7 +24,7 @@ import io.deepsense.deeplang.{CatalogRecorder, DOperation}
 
 trait SparkOperationsExtractor {
 
-  private val catalog = CatalogRecorder.catalogs.dOperationsCatalog
+  private val catalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
 
   def sparkOperations(): Seq[OperationWithSparkClassName] = {
     val operationIds = catalog.operations.keys

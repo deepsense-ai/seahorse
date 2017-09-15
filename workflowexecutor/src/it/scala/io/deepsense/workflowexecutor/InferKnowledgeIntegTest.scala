@@ -23,7 +23,7 @@ import io.deepsense.graph.{DefaultKnowledgeService, Node, NodeInferenceImpl, Nod
 class InferKnowledgeIntegTest extends DeeplangIntegTestSupport with DeeplangTestSupport {
   val nodeInference = new NodeInferenceImpl{}
 
-  val CatalogPair(doplCatalog, dopsCatalog) = CatalogRecorder.catalogs
+  val CatalogPair(doplCatalog, dopsCatalog) = CatalogRecorder.resourcesCatalogRecorder.catalogs
   val inferCtx = createInferContext(doplCatalog)
 
   for (operation <- dopsCatalog.operations.values) {

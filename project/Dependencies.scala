@@ -206,7 +206,7 @@ object Dependencies {
     rabbitmq
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
 
-  val workflowexecutorMqProtocol = Seq(
+  val workflowexecutorMqProtocol = usedSpark.onlyInTests ++ Seq(
     akkaActor,
     rabbitmq,
     sprayJson,

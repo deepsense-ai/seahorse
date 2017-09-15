@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2017, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.catalogs.doperable
+package io.deepsense.deeplang
 
-import io.deepsense.deeplang.{CatalogRecorder, DOperable, UnitSpec}
+import java.io.File
 
-class DOperableRegistrationSpec extends UnitSpec {
+import com.typesafe.config.ConfigFactory
 
-  "DOperableCatalog" should {
-    "successfully register and create all DOperables" in {
-      val catalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperableCatalog
-      catalog.concreteSubclassesInstances[DOperable]
-    }
-  }
+object Config {
+  def jarsDir = new File(ConfigFactory.load("deeplang.conf").getString("spark-resources-jars-dir"))
 }
