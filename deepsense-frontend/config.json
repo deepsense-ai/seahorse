@@ -111,6 +111,7 @@
           "./node_modules/ace-webapp/src-min-noconflict/ace.js",
           "./node_modules/ace-webapp/src-min-noconflict/mode-python.js",
           "./node_modules/ace-webapp/src-min-noconflict/mode-sql.js",
+          "./node_modules/ace-webapp/src-min-noconflict/mode-r.js",
           "./node_modules/angular-ui-ace/src/ui-ace.js",
           "./bower_components/jsPlumb/dist/js/jsPlumb-1.7.10-min.js",
           "./bower_components/mousetrap/mousetrap.min.js",
