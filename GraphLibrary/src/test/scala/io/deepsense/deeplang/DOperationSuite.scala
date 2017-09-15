@@ -8,7 +8,6 @@ package io.deepsense.deeplang
 
 import org.scalatest.FunSuite
 
-/** */
 class DOperationSuite extends FunSuite {
 
   test("It is possible to implement simple operations") {

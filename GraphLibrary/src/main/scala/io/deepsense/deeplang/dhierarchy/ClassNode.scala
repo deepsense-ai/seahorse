@@ -15,4 +15,6 @@ private[dhierarchy] class ClassNode(protected override val typeInfo: Class[_]) e
     val parentName = if (parent.isDefined) Some(parent.get.displayName) else None
     ClassInfo(displayName, parentName, supertraits.values.map(_.displayName).toList)
   }
+
+  override def toString: String = s"DClass($fullName)"
 }

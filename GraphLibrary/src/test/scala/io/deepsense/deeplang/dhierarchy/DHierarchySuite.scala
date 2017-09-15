@@ -12,6 +12,7 @@ import scala.reflect.runtime.{universe => ru}
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.dhierarchy.exceptions.ParametrizedTypeException
 
 object H {
   trait T1 extends DOperable
@@ -87,7 +88,7 @@ class DHierarchySuite extends FunSuite with Matchers {
   }
 
   test("Registering class extending parametrized class should produce exception") {
-    intercept[RuntimeException] {
+    intercept[ParametrizedTypeException] {
       import Parametrized._
       val p = new DHierarchy
       p.registerDOperable[B]()
@@ -95,7 +96,7 @@ class DHierarchySuite extends FunSuite with Matchers {
   }
 
   test("Registering parametrized class should produce exception") {
-    intercept[RuntimeException] {
+    intercept[ParametrizedTypeException] {
       import Parametrized._
       val p = new DHierarchy
       p.registerDOperable[A[Int]]()
@@ -103,7 +104,7 @@ class DHierarchySuite extends FunSuite with Matchers {
   }
 
   test("Registering parametrized trait should produce exception") {
-    intercept[RuntimeException] {
+    intercept[ParametrizedTypeException] {
       import Parametrized._
       val p = new DHierarchy
       p.registerDOperable[T[Int]]()

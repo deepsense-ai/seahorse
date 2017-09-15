@@ -10,6 +10,7 @@ import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.dhierarchy.exceptions.ParametrizedTypeException
 
 /**
  * Allows to register and validate hierarchy of DClasses, DTraits and DOperations.
@@ -44,7 +45,7 @@ class DHierarchy {
     }
 
     if (isParametrized(t)) {
-      throw new RuntimeException // TODO: What is the exceptions convention here?
+      throw new ParametrizedTypeException(t)
     }
 
     val node = Node(typeInfo)
