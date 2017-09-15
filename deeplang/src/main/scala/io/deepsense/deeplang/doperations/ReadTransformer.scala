@@ -23,7 +23,6 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.Transformer
-import io.deepsense.deeplang.doperables.serialization.ParamsSerialization
 import io.deepsense.deeplang.doperations.ReadTransformer.ReadTransformerParameters
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.params.{Params, StringParam}
