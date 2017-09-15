@@ -13,14 +13,11 @@ const POSITION_BOUNDS = {
 };
 
 const ZOOM_BOUNDS = [0.5, 1.5];
-const ZOOM_STEP = 0.1;
 
 class CanvasService {
   /*@ngInject*/
-  constructor(AdapterService, NewNodeService, $rootScope, MouseEvent) {
+  constructor(AdapterService, $rootScope) {
     this.AdapterService = AdapterService;
-    this.NewNodeService = NewNodeService;
-    this.MouseEvent = MouseEvent;
     this.$rootScope = $rootScope;
 
     this.slidingWindowSize = {
@@ -54,7 +51,6 @@ class CanvasService {
     }, true); // deep
 
     this.setZoom(1);
-    this.bindEvents();
     this.applyToWindow();
   }
 
@@ -63,44 +59,6 @@ class CanvasService {
       width: this.$slidingWindow.width(),
       height: this.$slidingWindow.height()
     }
-  }
-
-  bindEvents() {
-    //Wheel handling
-    this.$slidingWindow.bind('wheel', (e) => {
-      let zoomDelta = ZOOM_STEP;
-      if (e.originalEvent.deltaY < 0) {
-        zoomDelta = -1 * ZOOM_STEP;
-      }
-      this.centerZoom(zoomDelta);
-    });
-
-    // Drag handling in JSPlumb
-    const moveHandler = (event) => {
-      if (this.MouseEvent.isModKeyDown(event)) {
-        this.moveWindow(event.originalEvent.movementX, event.originalEvent.movementY);
-      } else {
-        this.$slidingWindow.off('mousemove', moveHandler);
-      }
-    };
-
-    this.$slidingWindow.bind('mousedown', () => {
-      if (this.MouseEvent.isModKeyDown(event)) {
-        this.$slidingWindow.bind('mousemove', moveHandler);
-      }
-    });
-
-    this.$slidingWindow.bind('mouseup', () => {
-      this.$slidingWindow.off('mousemove', moveHandler);
-    });
-
-    // Drag and Drop from toolbar handling
-    this.$slidingWindow.bind('drop', (event) => {
-      const originalEvent = event.originalEvent;
-      if (originalEvent.dataTransfer.getData('draggableExactType') === 'graphNode') {
-        this.NewNodeService.startWizard(originalEvent.layerX, originalEvent.layerY);
-      }
-    });
   }
 
   applyToWindow() {

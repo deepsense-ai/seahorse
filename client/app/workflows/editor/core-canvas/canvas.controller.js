@@ -1,10 +1,9 @@
 'use strict';
 
 class CanvasController {
-  constructor(CanvasService, NewNodeService, $element, $timeout) {
+  constructor(CanvasService, $element, $timeout) {
     'ngInject';
     this.CanvasService = CanvasService;
-    this.NewNodeService = NewNodeService;
     this.$element = $element;
     this.$timeout = $timeout;
   }
@@ -12,10 +11,8 @@ class CanvasController {
   $postLink() {
     const jsPlumbContainer = this.$element[0].querySelector('.flowchart-paint-area');
     const slidingWindow = this.$element[0].querySelector('.sliding-window');
-    const canvasContainer = this.$element[0].querySelector('.flowchart-box');
 
     this.CanvasService.initialize(jsPlumbContainer, slidingWindow);
-    this.NewNodeService.initialize(canvasContainer);
 
     //this must be done in the next digest cycle because of ng-repeat are not available
     this.$timeout(() => {
