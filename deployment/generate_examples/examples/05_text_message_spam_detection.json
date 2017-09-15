@@ -199,7 +199,11 @@
         "name": "Python Notebook"
       },
       "parameters": {
+        "execute notebook": {
+          "": {
 
+          }
+        }
       }
     }, {
       "id": "96470bf5-4a9e-472e-3e4b-59cf42153bbb",

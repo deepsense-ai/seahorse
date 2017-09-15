@@ -90,7 +90,11 @@
         "name": "Python Notebook"
       },
       "parameters": {
+        "execute notebook": {
+          "": {
 
+          }
+        }
       }
     }, {
       "id": "eb61b61e-b5a5-5d00-27f9-5c944a97705a",

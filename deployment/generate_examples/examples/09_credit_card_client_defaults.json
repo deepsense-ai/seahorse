@@ -7,7 +7,11 @@
         "name": "R Notebook"
       },
       "parameters": {
+        "execute notebook": {
+          "": {
 
+          }
+        }
       }
     }, {
       "id": "e50621be-eca8-6af8-f851-098111514757",
@@ -60,7 +64,11 @@
         "name": "R Notebook"
       },
       "parameters": {
+        "execute notebook": {
+          "": {
 
+          }
+        }
       }
     }, {
       "id": "a5e471f2-84fc-af78-9bf7-cdd942798abd",

@@ -25,7 +25,11 @@
         "name": "Python Notebook"
       },
       "parameters": {
+        "execute notebook": {
+          "": {
 
+          }
+        }
       }
     }],
     "connections": [{
