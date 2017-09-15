@@ -26,7 +26,7 @@ object CommonApiExceptions {
   )
 
   def fieldMustBeDefined(fieldName: String) = ApiException(
-    message = s"Field $fieldName must be defined",
+    message = s"Field `$fieldName` missing or invalid",
     errorCode = 422
   )
 

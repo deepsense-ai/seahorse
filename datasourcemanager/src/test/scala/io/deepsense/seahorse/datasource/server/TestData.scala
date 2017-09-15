@@ -11,7 +11,8 @@ import io.deepsense.seahorse.datasource.model._
 object TestData {
 
   def someDatasources() = Seq(
-    someJdbcDatasource()
+    someJdbcDatasource(),
+    someLibraryCsvDatasource()
   )
 
   def someDatasource() = someJdbcDatasource()
@@ -29,6 +30,24 @@ object TestData {
     )),
     externalFileParams = None,
     libraryFileParams = None,
+    hdfsParams = None,
+    googleSpreadsheetParams = None
+  )
+
+  def someLibraryCsvDatasource() = DatasourceParams(
+    name = "some-name" + UUID.randomUUID(),
+    downloadUri = None,
+    visibility = Visibility.publicVisibility,
+    datasourceType = DatasourceType.libraryFile,
+    jdbcParams = None,
+    externalFileParams = None,
+    libraryFileParams = Some(LibraryFileParams(
+      "some_path",
+      fileFormat = FileFormat.csv,
+      csvFileFormatParams = Some(CsvFileFormatParams(
+        includeHeader = true, convert01ToBoolean = true, CsvSeparatorType.comma, None
+      ))
+    )),
     hdfsParams = None,
     googleSpreadsheetParams = None
   )
