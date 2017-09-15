@@ -34,14 +34,12 @@ trait GraphJsonTestSupport
       outArity: Int,
       id: DOperation.Id,
       name: String,
-      version: String,
       parameters: ParametersSchema = mock[ParametersSchema]): DOperation = {
     val dOperation = mock[DOperation]
     when(dOperation.inArity).thenReturn(inArity)
     when(dOperation.outArity).thenReturn(outArity)
     when(dOperation.id).thenReturn(id)
     when(dOperation.name).thenReturn(name)
-    when(dOperation.version).thenReturn(version)
     when(dOperation.parameters).thenReturn(parameters)
     dOperation
   }

@@ -51,7 +51,7 @@ class OperationsApiSpec
   when(mockCategory.name) thenReturn "some category name"
 
   val existingOperationDescriptor = DOperationDescriptor(
-    existingOperationId, "operation name", "0.1.0", "operation description",
+    existingOperationId, "operation name", "operation description",
     mockCategory, ParametersSchema(), Nil, Nil)
   val envelopedExistingOperationDescription = Map("operation" -> existingOperationDescriptor)
 

@@ -40,10 +40,10 @@ class WorkflowResultsDaoCassandraImplIntegSpec
 
   val paramSchema = ParametersSchema("param1" -> new BooleanParameter("desc", None, false, None))
 
-  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", "version1", paramSchema)
-  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", "version2", paramSchema)
-  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3", "version3", paramSchema)
-  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4", "version4", paramSchema)
+  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", paramSchema)
+  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", paramSchema)
+  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3", paramSchema)
+  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4", paramSchema)
 
   when(catalog.createDOperation(operation1.id)).thenReturn(operation1)
   when(catalog.createDOperation(operation2.id)).thenReturn(operation2)
