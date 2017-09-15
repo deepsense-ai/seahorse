@@ -13,6 +13,8 @@ class ServerCommunication {
     this.config = config;
     this.connectionAttemptId = Math.floor(Math.random() * 1000000);
 
+    this.exchangeSubscriptions = {};
+
     this.seahorseTopicListeningUri = () => {
       return '/exchange/seahorse/seahorse.to';
     };
@@ -37,9 +39,9 @@ class ServerCommunication {
     return messages.indexOf(msgType) !== -1;
   }
 
-  messageHandler(message) {
+  messageHandler(uri, message) {
     let parsedBody = JSON.parse(message.body);
-    this.$log.info('ServerCommunication messageHandler messageType and messageBody',
+    this.$log.info('ServerCommunication messageHandler(uri=' + uri + '): ',
       parsedBody.messageType, parsedBody.messageBody);
 
     if (!ServerCommunication.isMessageKnown(parsedBody.messageType)) {
@@ -116,9 +118,15 @@ class ServerCommunication {
 
   // uri - exchange name
   subscribeToExchange(uri) {
-    var result = this.client.subscribe(uri, this.messageHandler.bind(this));
-    this.$log.info('Subscribe to exchange ' + uri + ', result: ', result);
-    return result;
+    let previousSubscription = this.exchangeSubscriptions[uri];
+    if (previousSubscription) {
+      previousSubscription.unsubscribe();
+    }
+
+    let newSubscription = this.client.subscribe(uri, this.messageHandler.bind(this, uri));
+    this.exchangeSubscriptions[uri] = newSubscription;
+
+    this.$log.info('Subscribe to exchange ' + uri + ', subscription: ', newSubscription);
   }
 
   onWebSocketConnect() {
