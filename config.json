@@ -1,0 +1,10 @@
+{
+  "dist": "./dist/",
+  "src": "./src/",
+  "temp": "./.tmp/",
+  "test": "./test/",
+  "files": {
+    "entryPointFile": "deepsense-node-parameters.module.js",
+    "distFile": "deepsense-node-parameters.js"
+  }
+}

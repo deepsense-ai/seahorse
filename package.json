@@ -1,0 +1,47 @@
+{
+  "name": "deepsense-node-parameters",
+  "version": "0.0.4",
+  "main": "./src/node-parameters.js",
+  "description": "Parameter-related objects",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.4.1",
+    "lodash": "^3.9.3"
+  },
+  "devDependencies": {
+    "babelify": "^6.1.2",
+    "browserify": "^10.2.4",
+    "browserify-ngannotate": "^1.0.1",
+    "browserify-shim": "^3.8.9",
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-uglify": "^1.2.0",
+    "jasmine": "^2.3.1",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.12.36",
+    "karma-browserify": "^4.2.1",
+    "karma-chrome-launcher": "^0.1.12",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "phantomjs": "^1.9.17",
+    "run-sequence": "^1.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "pretest": "npm install",
+    "test": "karma start karma.conf.js",
+    "prestart": "npm install",
+    "start": "gulp start"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "angular": "global:angular",
+    "_": ""
+  }
+}
