@@ -126,13 +126,11 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     val description = " some description "
     val ownerId = UUID.randomUUID.toString
     val ownerName = "some@email.com"
-    val hidden = false
 
     val workflowInfo = WorkflowInfo(
       workflowId,
       workflowName,
       description,
-      hidden,
       createdDateTime,
       updatedDateTime,
       ownerId,
@@ -143,7 +141,6 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
       "id" -> JsString(workflowId.toString),
       "name" -> JsString(workflowName),
       "description" -> JsString(description),
-      "hidden" -> JsBoolean(hidden),
       "created" -> JsString(createdTimestamp),
       "updated" -> JsString(updatedTimestamp),
       "ownerId" -> JsString(ownerId),
