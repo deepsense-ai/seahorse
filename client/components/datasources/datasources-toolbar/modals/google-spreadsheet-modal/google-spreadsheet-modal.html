@@ -15,12 +15,12 @@
         />
         <div class="icon-input__status">
           <div
-            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId !== ''"
+            ng-if="$ctrl.isGoogleSpreadsheetIdValid()"
             class="sa sa-ok icon-input__status--ok"
           >
           </div>
           <div
-            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId === ''"
+            ng-if="!$ctrl.isGoogleSpreadsheetIdValid()"
             class="sa sa-cross icon-input__status--error"
           >
           </div>
@@ -33,18 +33,19 @@
       <div class="icon-input">
         <input
           ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials"
+          ng-change="$ctrl.isGoogleCrendetialsValid()"
           type="text"
           class="form-control"
           placeholder="JSON credentials"
         />
         <div class="icon-input__status">
           <div
-            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials !== ''"
+            ng-if="$ctrl.areCredentialsValid"
             class="sa sa-ok icon-input__status--ok"
           >
           </div>
           <div
-            ng-if="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials === ''"
+            ng-if="!$ctrl.areCredentialsValid"
             class="sa sa-cross icon-input__status--error"
           >
           </div>
