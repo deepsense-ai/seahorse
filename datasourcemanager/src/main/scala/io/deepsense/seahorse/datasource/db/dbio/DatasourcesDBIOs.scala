@@ -21,6 +21,11 @@ object DatasourcesDBIOs {
   import Database.api._
   import DatasourcesSchema._
 
+  def get(datasourceId: UUID): DBIOAction[Datasource, NoStream, Read with Effect] = for {
+    datasourceOpt <- datasourcesTable.filter(_.id === datasourceId).result.headOption
+    datasource <- checkExists(datasourceId, datasourceOpt)
+  } yield DatasourceConverters.fromDb(datasource)
+
   def getAll: DBIOAction[List[Datasource], NoStream, Read] = for {
     datasourceDbs <- datasourcesTable.result
   } yield datasourceDbs.map(DatasourceConverters.fromDb).toList
@@ -35,7 +40,12 @@ object DatasourcesDBIOs {
     _ <- datasourcesTable.filter(_.id === id).delete
   } yield ()
 
-  private def pathParamsMustMatchBodyParams(id: UUID, datasource: Datasource): DBIOAction[Unit, NoStream, Effect] = {
+  private def checkExists(id: UUID, datasourceOpt: Option[DatasourceDB]) = datasourceOpt match {
+    case Some(datasource) => DBIO.successful(datasource)
+    case None => DBIO.failed(ApiExceptions.DatasourceDoesNotExist(id))
+  }
+
+  private def pathParamsMustMatchBodyParams(id: UUID, datasource: Datasource) = {
     if (datasource.id == id) {
       DBIO.successful(())
     } else {

@@ -31,6 +31,32 @@
       }
     },
     "/datasources/{datasourceId}": {
+      "get": {
+        "operationId": "getDatasource",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted or updated datasource",
+            "schema": {
+              "$ref": "#/definitions/Datasource"
+            }
+          },
+          "404": {
+            "description": "Datasource not exists",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
       "put": {
         "description": "Creates a new datasource or overrides datasource for given id",
         "operationId": "putDatasource",

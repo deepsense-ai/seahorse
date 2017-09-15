@@ -13,4 +13,9 @@ object ApiExceptions {
     errorCode = 400
   )
 
+  case class DatasourceDoesNotExist(id: UUID) extends ApiExceptionWithJsonBody(
+    message = s"Datasource with id $id does not exist.",
+    errorCode = 404
+  )
+
 }

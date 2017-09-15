@@ -25,6 +25,9 @@ class DefaultApiImpl extends DefaultApi with CorsSupport {
   override def putDatasourceImpl(datasourceId: UUID, datasource: Datasource) =
     DatasourcesDBIOs.insertOrUpdate(datasourceId, datasource).run()
 
+  override def getDatasourceImpl(datasourceId: UUID): Datasource =
+    DatasourcesDBIOs.get(datasourceId).run()
+
   override def getDatasourcesImpl() = DatasourcesDBIOs.getAll.run()
 
   // Codegen abstracts from application-specific error body format
