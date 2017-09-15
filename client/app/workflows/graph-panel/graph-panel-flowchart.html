@@ -5,7 +5,7 @@
          multi-selection
          deepsense-interactive
          deepsense-interactive-autorun="true"
-         collection="flowChartBoxCtrl.nodes"
+         collection="flowChartBoxCtrl.workflow.getNodes()"
          collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
          zoom-id="{{::flowChartBoxCtrl.zoomId}}"
          max-zoom-ratio="1.5"
@@ -16,7 +16,7 @@
       <graph-node jsplumb-draggable
                   keyboard
                   ng-class="{'selected-node': flowChartBoxCtrl.selectedNode.id === nodeId }"
-                  ng-repeat="(nodeId, node) in flowChartBoxCtrl.nodes"
+                  ng-repeat="(nodeId, node) in flowChartBoxCtrl.workflow.getNodes()"
                   node="node">
       </graph-node>
     </div>
