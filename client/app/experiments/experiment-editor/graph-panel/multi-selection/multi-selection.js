@@ -15,7 +15,6 @@ function MultiSelection(MouseEvent, ExperimentService,
   return {
     restrict: 'A',
     link: (scope, element) => {
-      // settings
       const CLASS_NAME = 'selection-element';
 
       var selectionElement = $document[0].createElement('div');
@@ -40,7 +39,11 @@ function MultiSelection(MouseEvent, ExperimentService,
       var disabled;
 
       var startPainting = function startPainting (event) {
-        if (disabled) {
+        /**
+         * event.button 0: Main button pressed, usually the left button
+         * https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+         */
+        if (disabled || event.button !== 0) {
           return false;
         }
 
