@@ -3,6 +3,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
 import argparse
+import signal
 import subprocess
 import tempfile
 import sys
@@ -77,6 +78,9 @@ def main():
         with tempfile.NamedTemporaryFile(dir='.') as temp:
             temp.write(docker_compose)
             temp.flush()
+            # Ignore interruptions - they'll still be passed to the child process and this
+            # process will finish gracefully after the child finishes.
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
             subprocess.call(['docker-compose', '-f', temp.name] + extra_args)
 
 if __name__ == '__main__':
