@@ -41,4 +41,13 @@ class DynamicParamSpec extends AbstractParamSpec[JsValue, DynamicParam] {
     val anyJson = JsObject("a" -> JsNumber(3), "b" -> JsString("c"))
     (anyJson, anyJson)
   }
+
+  it should {
+    "skip JsNull values" in {
+      val (param, _) = paramFixture
+      val input = JsObject("a" -> JsNumber(3), "b" -> JsNull)
+      val expected = JsObject("a" -> JsNumber(3))
+      param.valueFromJson(input) shouldBe expected
+    }
+  }
 }
