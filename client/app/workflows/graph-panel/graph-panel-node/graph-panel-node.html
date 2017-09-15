@@ -19,7 +19,7 @@
   <i class="fa status-icon"
      ng-class="{
       'status-icon--completed fa-check': node.state.status === 'status_completed',
-      'status-icon--running fa-cogs': node.state.status === 'status_running',
+      'status-icon--running fa-cog spinning': node.state.status === 'status_running',
       'status-icon--queued fa-clock-o': node.state.status === 'status_queued',
       'status-icon--aborted fa-exclamation': node.state.status === 'status_aborted',
       'status-icon--failed fa-ban': node.state.status === 'status_failed',

@@ -47,6 +47,7 @@
     position: absolute;
     right: 5px;
     top: 15px;
+    font-size: 20px;
 
     &--completed {
       color: @color-action;
@@ -155,4 +156,20 @@
 .selected-node:after,
 .selected-node:hover:after {
   right: 3px;
+}
+
+.spinning {
+  animation-name: spin;
+  animation-duration: 1500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
