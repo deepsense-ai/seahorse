@@ -23,6 +23,19 @@ const inputStyle = {
   maxConnections: 1
 };
 
+
+const inputAnchorByPosition = {
+  left: 'TopLeft',
+  center: 'TopCenter',
+  right: 'TopRight'
+};
+
+const outputAnchorByPosition = {
+  left: 'BottomLeft',
+  center: 'BottomCenter',
+  right: 'BottomRight'
+};
+
 /* beautify preserve:start */
 import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
 /* beautify preserve:end */
@@ -149,9 +162,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     let nodes = workflow.getNodes();
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
-        let node = internal.getNodeById(nodeId);
-        that._addOutputPoints(workflow, node, nodes[nodeId].output, nodes[nodeId], selectedPort);
-        that._addInputPoints(node, nodes[nodeId].input);
+        const nodeElement = internal.getNodeById(nodeId);
+        const nodeObject = nodes[nodeId];
+        that._addOutputPoints(workflow, nodeElement, nodeObject.output, nodes[nodeId], selectedPort);
+        that._addInputPoints(nodeElement, nodeObject.input);
       }
     }
   };
@@ -192,90 +206,89 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
   };
 
-  that._addOutputPoints = function _addOutputPoints(workflow, nodeElement, ports, nodeObj, selectedPort) {
-    let anchors = (ports.length === 1) ? ['BottomCenter'] : ['BottomLeft', 'BottomCenter', 'BottomRight'];
-
-    for (let i = 0; i < ports.length; i++) {
-      let reportEntityId = nodeObj.getResult(i);
-      let hasReport = Report.hasReportEntity(reportEntityId);
-
-      let outputStyle = angular.copy(OUTPUT_STYLE);
-
-      if (hasReport) {
-        // HACK We would like to use jsPlumb types for all styling. Unfortunately it seems like jsPlumb
-        // ignores CSS classes from type in endpoints when dragging connection. Explicit cssClass works though.
-        outputStyle = _.assign(outputStyle, {
-          cssClass: GraphPanelStyler.getTypes().outputWithReport.cssClass
-        });
-      }
-
-      if (internal.renderMode === GraphPanelRendererBase.RUNNING_RENDER_MODE) {
-        outputStyle.isSource = false;
-      }
-
-      let jsPlumbPort = jsPlumb.addEndpoint(nodeElement, outputStyle, {
-        anchor: anchors[i],
-        uuid: ports[i].id
-      });
-
-      jsPlumbPort.setParameter('portIndex', i);
-      jsPlumbPort.setParameter('nodeId', nodeObj.id);
-
-      GraphPanelStyler.styleOutputEndpointDefault(jsPlumbPort, hasReport);
-
-      if(ports[i] === selectedPort) {
-        GraphPanelStyler.styleSelectedOutputEndpoint(jsPlumbPort);
-      }
-
-      // FIXME Quickfix to make reports browseable in read-only mode.
-      // There is a conflict between multiselection and output port click when isSource = false.
-      let eventForLeftClick = internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? 'click' : 'mousedown';
-      jsPlumbPort.bind(eventForLeftClick, (port, event) => {
-        if (hasReport) {
-          let thisPortObject = ports[i];
-          $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
-            reference: port,
-            portObject: thisPortObject,
-            event: event
-          });
-        }
-      });
-
-      jsPlumbPort.bind('mouseover', (endpoint) => {
-        internal.emitMouseOverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
-      });
-
-      jsPlumbPort.bind('mouseout', (endpoint) => {
-        $rootScope.$emit('OutputPoint.MOUSEOUT');
-      });
-    }
+  that._addOutputPoints = function (workflow, nodeElement, ports, nodeObj, selectedPort) {
+    ports.forEach((port) => that._addOutputPoint(workflow, nodeElement, port, nodeObj, selectedPort));
   };
 
-  that._addInputPoints = function _addInputPoints(node, ports) {
-    let anchors = (ports.length === 1) ? ['TopCenter'] : ['TopLeft', 'TopCenter', 'TopRight'];
+  that._addOutputPoint = function (workflow, nodeElement, port, nodeObj, selectedPort) {
+    const reportEntityId = nodeObj.getResult(port.index);
+    const hasReport = Report.hasReportEntity(reportEntityId);
 
-    for (let i = 0; i < ports.length; i++) {
-      let port = jsPlumb.addEndpoint(node, inputStyle, {
-        anchor: anchors[i],
-        uuid: ports[i].id
-      });
+    let outputStyle = angular.copy(OUTPUT_STYLE);
 
-      port.setParameter('portIndex', i);
-
-      GraphPanelStyler.styleInputEndpointDefault(port);
-
-      port.bind('click', () => {
-        $rootScope.$broadcast('InputPoint.CLICK');
-      });
-
-      port.bind('mouseover', (endpoint) => {
-        internal.emitMouseOverEvent('InputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
-      });
-
-      port.bind('mouseout', (endpoint) => {
-        $rootScope.$broadcast('InputPoint.MOUSEOUT');
+    if (hasReport) {
+      // HACK We would like to use jsPlumb types for all styling. Unfortunately it seems like jsPlumb
+      // ignores CSS classes from type in endpoints when dragging connection. Explicit cssClass works though.
+      outputStyle = _.assign(outputStyle, {
+        cssClass: GraphPanelStyler.getTypes().outputWithReport.cssClass
       });
     }
+
+    if (internal.renderMode === GraphPanelRendererBase.RUNNING_RENDER_MODE) {
+      outputStyle.isSource = false;
+    }
+
+    const jsPlumbPort = jsPlumb.addEndpoint(nodeElement, outputStyle, {
+      anchor: outputAnchorByPosition[port.portPosition],
+      uuid: port.id
+    });
+
+    jsPlumbPort.setParameter('portIndex', port.index);
+    jsPlumbPort.setParameter('nodeId', nodeObj.id);
+
+    GraphPanelStyler.styleOutputEndpointDefault(jsPlumbPort, hasReport);
+
+    if(port === selectedPort) {
+      GraphPanelStyler.styleSelectedOutputEndpoint(jsPlumbPort);
+    }
+
+    // FIXME Quickfix to make reports browseable in read-only mode.
+    // There is a conflict between multiselection and output port click when isSource = false.
+    let eventForLeftClick = internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? 'click' : 'mousedown';
+    jsPlumbPort.bind(eventForLeftClick, (clickedPort, event) => {
+      if (hasReport) {
+        $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
+          reference: clickedPort,
+          portObject: port,
+          event: event
+        });
+      }
+    });
+
+    jsPlumbPort.bind('mouseover', (endpoint) => {
+      internal.emitMouseOverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, port);
+    });
+
+    jsPlumbPort.bind('mouseout', () => {
+      $rootScope.$emit('OutputPoint.MOUSEOUT');
+    });
+  };
+
+  that._addInputPoints = function(node, ports) {
+    ports.forEach((port) => that._addInputPoint(node, port));
+  };
+
+  that._addInputPoint = function(node, port) {
+    const jsPlumbPort = jsPlumb.addEndpoint(node, inputStyle, {
+      anchor: inputAnchorByPosition[port.portPosition],
+      uuid: port.id
+    });
+
+    jsPlumbPort.setParameter('portIndex', port.index);
+
+    GraphPanelStyler.styleInputEndpointDefault(jsPlumbPort);
+
+    jsPlumbPort.bind('click', () => {
+      $rootScope.$broadcast('InputPoint.CLICK');
+    });
+
+    jsPlumbPort.bind('mouseover', (endpoint) => {
+      internal.emitMouseOverEvent('InputPoint.MOUSEOVER', endpoint.canvas, port);
+    });
+
+    jsPlumbPort.bind('mouseout', () => {
+      $rootScope.$broadcast('InputPoint.MOUSEOUT');
+    });
   };
 
   that._bindEdgeEvent = function _bindEdgeEvent(workflow) {

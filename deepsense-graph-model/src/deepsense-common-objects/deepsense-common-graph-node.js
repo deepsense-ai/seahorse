@@ -43,18 +43,14 @@ angular.module('deepsense.graph-model').
     GraphNode.prototype.STATUS_DEFAULT = GraphNode.prototype.STATUS.DRAFT;
 
     GraphNode.prototype.fetchPorts = function fetchPorts(type, ports) {
-      var array = [];
-      for (var i = 0; i < ports.length; i++) {
-        var port = new Port({
+      return _.map(ports, (portFromApi) => new Port({
           nodeId: this.id,
           type: type,
-          portIndex: ports[i].portIndex,
-          required: ports[i].required,
-          typeQualifier: ports[i].typeQualifier
-        });
-        array.push(port);
-      }
-      return array;
+          portIndex: portFromApi.portIndex,
+          portPosition: portFromApi.portPosition,
+          required: portFromApi.required,
+          typeQualifier: portFromApi.typeQualifier
+        }));
     };
 
     GraphNode.prototype.serialize = function serialize() {

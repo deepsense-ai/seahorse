@@ -8,6 +8,7 @@ angular.module('deepsense.graph-model').
         this.index = options.portIndex;
         this.type = options.type;
         this.required = options.required;
+        this.portPosition = options.portPosition;
         this.typeQualifier = options.typeQualifier;
         this.id = this.generateId();
       }
