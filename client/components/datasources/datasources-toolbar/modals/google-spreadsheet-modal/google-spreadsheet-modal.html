@@ -1,0 +1,68 @@
+<div class="datasources-modal">
+  <div class="datasources-modal__header">
+    <div class="modal-title">Google Spreadsheet</div>
+  </div>
+
+  <div class="datasources-modal__body">
+    <div class="datasources-modal__body-row">
+      <label class="title">Google sheet ID</label>
+      <div class="google-spreadsheet-input">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Connection string"
+        />
+        <div class="google-spreadsheet-input__status"></div>
+      </div>
+
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <label class="title">Google service account credentials JSON</label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Connection string"
+      />
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="checkbox-row">
+        <div class="checkbox-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.includesNames}">
+            <input type="checkbox"
+                   ng-model="$ctrl.includesNames"/>
+            <span>First row includes column names</span>
+          </label>
+        </div>
+        <div class="checkbox-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.convert}">
+            <input type="checkbox"
+                   ng-model="$ctrl.convert"/>
+            <span>Convert 0 and 1 to boolean</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="public-param-row">
+        <div class="checkbox-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.public}">
+            <input type="checkbox"
+                   ng-model="$ctrl.public"/>
+            <span>Public</span>
+          </label>
+        </div>
+        <div class="public-param-row__label">
+          (Public data sources are accessible by all users of this instance of Seahorse)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-include="$ctrl.footerTpl"></div>
+</div>

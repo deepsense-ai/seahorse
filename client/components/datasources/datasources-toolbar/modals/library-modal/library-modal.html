@@ -1,0 +1,27 @@
+<div class="datasources-modal">
+  <div class="datasources-modal__header">
+    <div class="modal-title">Library</div>
+  </div>
+
+  <div class="datasources-modal__body">
+    <div class="datasources-modal__body-row">
+      <label class="title">Source</label>
+      <div class="source-input">
+        <input
+          class="form-control"
+          type="text"
+          placeholder="library/your-file.csv"
+        />
+        <div class="btn browse-btn">
+          <i class="sa sa-library icon"></i>
+          <span>Browse</span>
+        </div>
+      </div>
+
+    </div>
+
+    <file-settings />
+  </div>
+
+  <div ng-include="$ctrl.footerTpl"></div>
+</div>

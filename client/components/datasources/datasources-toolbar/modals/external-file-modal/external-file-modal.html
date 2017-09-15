@@ -1,0 +1,16 @@
+<div class="datasources-modal">
+  <div class="datasources-modal__header">
+    <div class="modal-title">External file</div>
+  </div>
+
+  <div class="datasources-modal__body">
+    <div class="datasource-name-form__input">
+      <label class="title">Source (http, https, ftp, sftp, ...)</label>
+      <input type="text" class="form-control" placeholder="my-file">
+    </div>
+
+    <file-settings />
+  </div>
+
+  <div ng-include="$ctrl.footerTpl"></div>
+</div>

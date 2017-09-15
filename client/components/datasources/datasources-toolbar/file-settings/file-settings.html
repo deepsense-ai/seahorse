@@ -1,0 +1,135 @@
+<div class="file-settings">
+  <div class="file-settings__row-wrapper">
+    <div class="title-row">Format</div>
+    <div class="inputs-row vertical-align-bottom">
+      <div class="col">
+        <select
+          ng-init="$ctrl.selectedFormat = $ctrl.formats[0]"
+          ng-options="format for format in $ctrl.formats"
+          ng-model="$ctrl.selectedFormat"
+          class="form-control"
+        >
+        </select>
+      </div>
+      <div
+        class="col checkbox-wrapper"
+      >
+        <label
+          class="format-form-label"
+          ng-class="{'active': $ctrl.includesNames}"
+        >
+          <input
+            type="checkbox"
+            ng-model="$ctrl.includesNames"
+          />
+          <span>
+            First row includes column names
+          </span>
+        </label>
+      </div>
+      <div
+        class="col checkbox-wrapper"
+      >
+        <label
+          ng-class="{'active': $ctrl.convert}"
+          class="format-form-label"
+        >
+          <input
+            type="checkbox"
+            ng-model="$ctrl.convert"
+          />
+          <span>
+            Convert 0 and 1 to boolean
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="file-settings__row-wrapper">
+    <div class="title-row">Separator</div>
+    <div class="inputs-row space-between">
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.type === 'coma'}">
+          <input
+            ng-model="$ctrl.type"
+            type="radio"
+            value="coma"
+          />
+          <span class="radio-title">. (coma)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.type === 'semicolon'}">
+          <input type="radio"
+                 value="semicolon"
+                 ng-model="$ctrl.type"/>
+          <span class="radio-title">; (semicolon)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.type === 'colon'}">
+          <input type="radio"
+                 value="colon"
+                 ng-model="$ctrl.type"/>
+          <span class="radio-title">: (colon)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.type === 'space'}">
+          <input type="radio"
+                 value="space"
+                 ng-model="$ctrl.type"/>
+          <span class="radio-title">space</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.type === 'tab'}">
+          <input type="radio"
+                 value="tab"
+                 ng-model="$ctrl.type"/>
+          <span class="radio-title">tab</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.type === 'custom' || $ctrl.focused}">
+          <input type="radio"
+                 value="custom"
+                 ng-model="$ctrl.type"/>
+          <span class="radio-title">
+          <input ng-focus="$ctrl.focused = true; $ctrl.type = 'custom'"
+                 ng-blur="$ctrl.focused = false"
+                 ng-model="$ctrl.customType"
+                 placeholder="custom"
+                 type="text"
+          />
+        </span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="file-settings__row-wrapper">
+    <div class="inputs-row vertical-align-middle">
+      <div class="checkbox-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.public}">
+          <input type="checkbox"
+                 ng-model="$ctrl.public"/>
+          <span>Public</span>
+        </label>
+      </div>
+      <div class="public-param-label">
+        <span>
+          (Public data sources are accessible by all users of this instance of Seahorse)
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,224 @@
+@import "../../../../css/variables";
+
+.datasources-modal {
+  &__header {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 24px;
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
+
+  &__body {
+    padding: 20px;
+    min-height: 200px;
+
+    &-row {
+      &:not(:first-child):not(:last-child) {
+        margin: 20px 0;
+      }
+
+      .title {
+        font-size: 16px;
+        font-weight: normal;
+      }
+
+      .radio-row, .checkbox-row {
+        display: flex;
+
+        .radio-wrapper:not(:first-child),
+        .checkbox-wrapper:not(:first-child) {
+          margin: 0 10px;
+        }
+      }
+
+      .query-row {
+        margin-top: 5px;
+      }
+
+      .public-param-row {
+        display: flex;
+        align-items: center;
+
+        &__label {
+          margin-left: 10px;
+          font-style: italic;
+          font-weight: 500;
+        }
+      }
+
+      .hdfs-input {
+        display: flex;
+
+        input.form-control {
+          border-radius: 0;
+          border-left-width: 0;
+        }
+
+        &__prefix {
+          display: flex;
+          align-items: center;
+          background-color: @color-grey;
+          color: @color-white;
+          font-weight: 600;
+          padding: 5px;
+        }
+      }
+
+      .source-input {
+        display: flex;
+
+        .browse-btn {
+          font-weight: 600;
+          margin-left: 10px;
+          padding: 0 10px;
+          color: @color-white;
+          background-color: @seahorse-blue;
+          display: flex;
+          align-items: center;
+
+          .icon {
+            padding-right: 10px;
+            font-size: 20px;
+          }
+        }
+      }
+
+      .google-spreadsheet-input {
+        display: flex;
+
+        input.form-control {
+          border-radius: 0;
+          border-right-width: 0;
+        }
+
+        &__status {
+          height: 34px;
+          width: 34px;
+          background-color: @light-grey;
+          border: 1px solid #ccc;
+        }
+      }
+    }
+  }
+
+  .datasources-modal-footer {
+    width: 100%;
+    padding: 20px;
+    background-color: #50c7e2;
+    display: flex;
+    align-items: flex-end;
+
+    &__input {
+      flex: 1;
+    }
+
+    .btn {
+      padding: 0 30px;
+      height: 34px;
+      margin: 0 5px;
+    }
+
+    .btn-blue {
+      color: @color-white;
+      background-color: @seahorse-blue;
+    }
+
+    label {
+      padding-left: 3px;
+      font-size: 16px;
+    }
+
+    .title {
+      color: @color-white;
+    }
+  }
+
+  .checkbox-wrapper, .radio-wrapper {
+    label.format-form-label {
+      background-color: @light-grey;
+      padding: 5px;
+      border: 1px solid @grey;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      height: 36px;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 1em;
+      margin-bottom: 0;
+      transition: background ease-in 0.2s;
+
+      &.active {
+        background-color: #50c7e2;
+        color: @color-white;
+        border: 1px solid @color-grey;
+      }
+
+      .radio-title {
+        display: flex;
+        align-items: center;
+        padding: 0 5px;
+        white-space: nowrap;
+
+        input {
+          color: black;
+          padding-left: 5px;
+          margin-left: 5px;
+        }
+      }
+
+      input[type=checkbox], input[type=radio] {
+        display: none;
+      }
+
+      input[type=checkbox] + span:before {
+        .input-basic-styles();
+        border: 1px solid @deepsense-blue;
+        border-radius: 2px;
+        width: 1em;
+        height: 1em;
+        margin: 0 5px;
+      }
+
+      input[type=radio] + span:before {
+        .input-basic-styles();
+        border-radius: 50%;
+        margin-right: 5px;
+        width: 1.2em;
+        height: 1.2em;
+      }
+
+      input[type=checkbox]:checked + span:before {
+        content: "\0056";
+        color: #fff;
+        background: @seahorse-blue;
+      }
+
+      input[type=radio]:checked + span:before {
+        width: 1.2em;
+        height: 1.2em;
+        background-color: @color-white;
+        border: 4px solid @seahorse-blue;
+      }
+
+      input[type=checkbox]:disabled + span:before {
+        color: #000;
+        background: #EEE;
+        border: 1px solid #EEE;
+      }
+    }
+  }
+
+  .input-basic-styles {
+    font-family: "Seahorse Symbol";
+    content: "\0057";
+    display: inline-block;
+    background-color: @color-grey;
+    transition: background ease-in 0.2s;
+  }
+
+}

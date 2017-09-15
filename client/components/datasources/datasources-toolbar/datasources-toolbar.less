@@ -1,0 +1,36 @@
+@import "../../../css/variables";
+
+.datasources-toolbar {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #50c7e2;
+  color: @color-white;
+  min-height: 40px;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 5px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .title {
+    margin-left: 50px;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-modal {
+    max-height: 34px;
+    margin: 3px 10px;
+    background-color: @color-white;
+    color: #000;
+    display: flex;
+    align-items: center;
+
+    &__icon {
+      font-size: 23px;
+      color: @seahorse-blue;
+      padding-right: 3px;
+    }
+  }
+}

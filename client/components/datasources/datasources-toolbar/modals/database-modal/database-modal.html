@@ -1,0 +1,78 @@
+<div class="datasources-modal">
+  <div class="datasources-modal__header">
+    <div class="modal-title">Select from Database</div>
+  </div>
+
+  <div class="datasources-modal__body">
+    <div class="datasources-modal__body-row">
+      <label class="title">Driver</label>
+      <select ng-init="$ctrl.selectedFormat = $ctrl.formats[0]"
+              ng-options="format for format in $ctrl.formats"
+              ng-model="$ctrl.selectedFormat"
+              class="form-control">
+      </select>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <label class="title">JDBC connection string</label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Connection string"
+      />
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="radio-row">
+        <div class="radio-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.queryType === 'table'}">
+            <input
+              type="radio"
+              value="table"
+              ng-model="$ctrl.queryType"
+            />
+            <span class="radio-title">Table name</span>
+          </label>
+        </div>
+        <div class="radio-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.queryType === 'customQuery'}">
+            <input
+              type="radio"
+              value="customQuery"
+              ng-model="$ctrl.queryType"
+            />
+            <span class="radio-title">Custom SQL query</span>
+          </label>
+        </div>
+      </div>
+      <div class="query-row">
+        <input
+          type="text"
+          class="form-control"
+          ng-model="$ctrl.query"
+          placeholder="Custom query"
+        />
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="public-param-row">
+        <div class="checkbox-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.public}">
+            <input type="checkbox"
+                   ng-model="$ctrl.public"/>
+            <span>Public</span>
+          </label>
+        </div>
+        <div class="public-param-row__label">
+          (Public data sources are accessible by all users of this instance of Seahorse)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-include="$ctrl.footerTpl"></div>
+</div>
