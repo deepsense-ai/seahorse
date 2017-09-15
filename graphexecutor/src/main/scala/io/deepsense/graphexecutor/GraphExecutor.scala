@@ -19,6 +19,7 @@ import org.apache.avro.ipc.NettyServer
 import org.apache.avro.ipc.specific.SpecificResponder
 import org.apache.avro.specific.SpecificData
 import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.permission.{FsAction, FsPermission}
 import org.apache.hadoop.hdfs.DFSClient
 import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
@@ -40,6 +41,7 @@ import io.deepsense.models.experiments.Experiment
 
 object GraphExecutor extends LazyLogging {
   var entityStorageClientFactory: EntityStorageClientFactory = _
+  val sparkEventLogDir = "/tmp/spark-events"
 
   def main(args: Array[String]): Unit = {
     // All INFOs are printed out to stderr on Hadoop YARN (dev env)
@@ -132,10 +134,16 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       }
       logger.debug("All nodes marked as QUEUED")
       val executionContext = new ExecutionContext()
+
+      val hdfsClient = new DSHdfsClient(
+        new DFSClient(new URI(getHdfsAddressFromConfig(geConfig)), new Configuration()))
+
+      createHdfsDir(hdfsClient, GraphExecutor.sparkEventLogDir)
+
       // Acquire Spark Context
       val sparkConf = new SparkConf()
       sparkConf.setAppName("Spark DeepSense Akka PoC")
-        .set("spark.eventLog.dir", "hdfs:///tmp/spark-events")
+        .set("spark.eventLog.dir", s"hdfs://${GraphExecutor.sparkEventLogDir}")
         .set("spark.eventLog.enabled", "true")
         .set("spark.ui.retainedStages", "5000")
         .set("spark.logConf", "true")
@@ -149,9 +157,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       UserDefinedFunctions.registerFunctions(executionContext.sqlContext.udf)
       executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
       executionContext.entityStorageClient = entityStorageClient
-      executionContext.hdfsClient =
-        new DSHdfsClient(
-          new DFSClient(new URI(getHdfsAddressFromConfig(geConfig)), new Configuration()))
+      executionContext.hdfsClient = hdfsClient
       graphGuard.synchronized {
         executionContext.tenantId = experiment.get.tenantId
       }
@@ -325,5 +331,11 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     logger.debug(
       s"EntityStorageClient($actorSystemName, $hostName, $port, $actorName, $timeoutSeconds)")
     entityStorageClientFactory.create(actorSystemName, hostName, port, actorName, timeoutSeconds)
+  }
+
+  def createHdfsDir(dsHdfsClient: DSHdfsClient, path: String): Unit = {
+    dsHdfsClient
+      .hdfsClient
+      .mkdirs(path, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
   }
 }
