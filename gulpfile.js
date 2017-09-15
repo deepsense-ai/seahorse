@@ -200,7 +200,7 @@ gulp.task('build', function (callback) {
 gulp.task('start', function (callback) {
   runSequence('build', 'server', 'browser-sync', callback);
   if (devMode) {
-    gulp.watch(client.path + client.html, ['html', browserSync.reload]);
+    gulp.watch(client.path + client.html, ['html:index', 'html:partials', browserSync.reload]);
     gulp.watch(client.path + client.images, ['images', browserSync.reload]);
     gulp.watch(client.path + client.lessSources, ['less']);
     gulp.watch(
@@ -213,7 +213,7 @@ gulp.task('start', function (callback) {
 gulp.task('watch', function (callback) {
   devMode = true;
   runSequence('browser-sync', callback);
-  gulp.watch(client.path + client.html, ['html', browserSync.reload]);
+  gulp.watch(client.path + client.html, ['html:index', 'html:partials', browserSync.reload]);
   gulp.watch(client.path + client.lessSources, ['less']);
   gulp.watch(
     [client.path + client.js, '|', '!' + __dirname + '/' + config.files.tests.client],
