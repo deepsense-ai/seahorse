@@ -16,11 +16,11 @@
 
 package io.deepsense.models.workflows
 
-import io.deepsense.graph.{Graph, GraphKnowledge}
+import io.deepsense.graph.{GraphKnowledge, StatefulGraph}
 
 case class WorkflowWithKnowledge(
     id: Workflow.Id,
     metadata: WorkflowMetadata,
-    graph: Graph,
+    graph: StatefulGraph,
     thirdPartyData: ThirdPartyData,
     knowledge: GraphKnowledge)

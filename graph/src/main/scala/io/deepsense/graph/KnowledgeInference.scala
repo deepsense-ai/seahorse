@@ -16,13 +16,12 @@
 
 package io.deepsense.graph
 
-import io.deepsense.graph.GraphKnowledge.InferenceErrors
-
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.graph.GraphKnowledge.InferenceErrors
 import io.deepsense.graph.TypesAccordance.TypesAccordance
 
 case class SinglePortKnowledgeInferenceResult(
@@ -31,7 +30,7 @@ case class SinglePortKnowledgeInferenceResult(
   errors: InferenceErrors)
 
 trait KnowledgeInference {
-  self: Graph =>
+  self: TopologicallySortable =>
 
   /**
    * @return A graph knowledge with inferred results for every node.
@@ -49,12 +48,12 @@ trait KnowledgeInference {
       nodeId: Node.Id,
       outPortIndex: Int,
       context: InferContext): SinglePortKnowledgeInferenceResult = {
-    val subgraphNodes = allPredecessorsOf(nodeId) + nodeById(nodeId)
+    val subgraphNodes = allPredecessorsOf(nodeId) + node(nodeId)
     val subgraphEdges = edges.filter(edge =>
-      subgraphNodes.contains(nodeById(edge.from.nodeId)) &&
-        subgraphNodes.contains(nodeById(edge.to.nodeId)))
+      subgraphNodes.contains(node(edge.from.nodeId)) &&
+        subgraphNodes.contains(node(edge.to.nodeId)))
     val inferenceResult =
-      Graph(subgraphNodes, subgraphEdges).inferKnowledge(context).getResult(nodeId)
+      DirectedGraph(subgraphNodes, subgraphEdges).inferKnowledge(context).getResult(nodeId)
     SinglePortKnowledgeInferenceResult(
       inferenceResult.ports(outPortIndex),
       inferenceResult.warnings,

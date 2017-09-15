@@ -16,12 +16,12 @@
 
 package io.deepsense.graph
 
-object Status extends Enumeration {
-  type Status = Value
-  val Draft = Value(0, "DRAFT")
-  val Queued = Value(1, "QUEUED")
-  val Running = Value(2, "RUNNING")
-  val Completed = Value(3, "COMPLETED")
-  val Failed = Value(4, "FAILED")
-  val Aborted = Value(5, "ABORTED")
+trait TopologicallySortable {
+  def topologicallySorted: Option[List[Node]]
+  def allPredecessorsOf(id: Node.Id): Set[Node]
+  def edges: Set[Edge]
+  def nodes: Set[Node]
+  def node(id: Node.Id): Node
+  def predecessors(id: Node.Id): IndexedSeq[Option[Endpoint]]
+  def successors(id: Node.Id): IndexedSeq[Set[Endpoint]]
 }

@@ -16,12 +16,13 @@
 
 package io.deepsense.graph
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.parameters.ParametersSchema
-import scala.reflect.runtime.{universe => ru}
 
 object RandomNodeFactory {
   def randomNode(operation: DOperation): Node = Node(Node.Id.randomId, operation)

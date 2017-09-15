@@ -20,7 +20,7 @@ import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.DOperable.AbstractMetadata
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.graph.GraphKnowledge.InferenceErrors
-import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graph.{Node, StatefulGraph}
 
 case class MetadataInferenceResult(
   metadata: Seq[Option[AbstractMetadata]],
@@ -29,7 +29,7 @@ case class MetadataInferenceResult(
 
 object MetadataInference {
   def run(
-      graph: Graph,
+      graph: StatefulGraph,
       nodeId: Node.Id,
       portIndex: Int,
       baseContext: InferContext): MetadataInferenceResult = {

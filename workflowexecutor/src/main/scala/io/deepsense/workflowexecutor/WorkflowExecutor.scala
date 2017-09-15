@@ -69,11 +69,10 @@ case class WorkflowExecutor(
       case Success(GraphFinished(graph, entitiesMap)) =>
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
         Try(ExecutionReport(
-          graph.state.status,
+          graph.state,
           startedTime,
           DateTimeConverter.now,
-          graph.state.error,
-          graph.nodeById.mapValues(_.state),
+          graph.states,
           entitiesMap
         ))
     }

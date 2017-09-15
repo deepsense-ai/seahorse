@@ -300,7 +300,7 @@ class KnowledgeInferenceSpec
   private def nodeAToA1A2 = Node(idAToA1A2, DOperationAToA1A2())
   private def nodeA1A2ToFirst = Node(idA1A2ToFirst, DOperationA1A2ToFirst())
 
-  def validGraph: Graph = Graph(
+  def validGraph: DirectedGraph = DirectedGraph(
     nodes = Set(nodeCreateA1, nodeAToA1A2, nodeA1A2ToFirst),
     edges = Set(
       Edge(nodeCreateA1, 0, nodeAToA1A2, 0),
@@ -308,7 +308,7 @@ class KnowledgeInferenceSpec
       Edge(nodeAToA1A2, 1, nodeA1A2ToFirst, 1))
   )
 
-  def graphWithNotAccordingTypes: Graph = Graph(
+  def graphWithNotAccordingTypes: DirectedGraph = DirectedGraph(
     nodes = Set(nodeCreateA1, nodeA1ToA, nodeAToA1A2, nodeA1A2ToFirst),
     edges = Set(
       Edge(nodeCreateA1, 0, nodeA1ToA, 0),
@@ -317,22 +317,23 @@ class KnowledgeInferenceSpec
       Edge(nodeA1ToA, 0, nodeA1A2ToFirst, 1))
   )
 
-  def graphWithNotProvidedInputs: Graph = Graph(
+  def graphWithNotProvidedInputs: DirectedGraph = DirectedGraph(
     nodes = Set(nodeCreateA1, nodeA1A2ToFirst),
     edges = Set(Edge(nodeCreateA1, 0, nodeA1A2ToFirst, 0))
   )
 
-  def graphWithCycle: Graph = new Graph() {
+  def graphWithCycle: DirectedGraph = new DirectedGraph() {
     override def topologicallySorted: Option[List[Node]] = None
   }
 
-  def setParamsValid(graph: Graph): Unit = setInGraph(graph, _.setParamsValid())
+  def setParamsValid(graph: DirectedGraph): Unit = setInGraph(graph, _.setParamsValid())
 
-  def setParamsInvalid(graph: Graph): Unit = setInGraph(graph, _.setParamsInvalid())
+  def setParamsInvalid(graph: DirectedGraph): Unit = setInGraph(graph, _.setParamsInvalid())
 
-  def setThrowingError(graph: Graph): Unit = setInGraph(graph, _.setInferenceErrorThrowing())
+  def setThrowingError(graph: DirectedGraph): Unit =
+    setInGraph(graph, _.setInferenceErrorThrowing())
 
-  def setInGraph(graph: Graph, f: DOperationA1A2ToFirst => Unit): Unit = {
+  def setInGraph(graph: DirectedGraph, f: DOperationA1A2ToFirst => Unit): Unit = {
     val node = graph.node(idA1A2ToFirst)
     f(node.operation.asInstanceOf[DOperationA1A2ToFirst])
   }

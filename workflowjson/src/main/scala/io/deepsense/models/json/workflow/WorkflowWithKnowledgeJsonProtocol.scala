@@ -16,12 +16,12 @@
 
 package io.deepsense.models.json.workflow
 
-import io.deepsense.graph.{NodeInferenceResult, GraphKnowledge, Graph}
+import spray.json._
+
+import io.deepsense.graph.NodeInferenceResult
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
 import io.deepsense.models.json.graph.GraphKnowledgeJsonProtocol
-import io.deepsense.models.workflows.{ThirdPartyData, WorkflowMetadata, Workflow, WorkflowWithKnowledge}
-
-import spray.json._
+import io.deepsense.models.workflows.WorkflowWithKnowledge
 
 /**
  * Deserialization of WorkflowWithKnowledge is not supported.

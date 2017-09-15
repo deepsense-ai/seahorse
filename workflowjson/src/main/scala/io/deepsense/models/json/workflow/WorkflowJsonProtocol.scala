@@ -21,7 +21,7 @@ import spray.json._
 
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.{DateTimeJsonProtocol, EnumerationSerializer, IdJsonProtocol}
-import io.deepsense.graph.Graph
+import io.deepsense.graph.StatefulGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.models.json.graph.{GraphKnowledgeJsonProtocol, NodeJsonProtocol, NodeStateJsonProtocol}
 import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
@@ -43,9 +43,9 @@ trait WorkflowJsonProtocol
 
   val graphReader: GraphReader
 
-  implicit val graphFormat: JsonFormat[Graph] = new JsonFormat[Graph] {
-    override def read(json: JsValue): Graph = json.convertTo[Graph](graphReader)
-    override def write(obj: Graph): JsValue = obj.toJson(GraphWriter)
+  implicit val graphFormat: JsonFormat[StatefulGraph] = new JsonFormat[StatefulGraph] {
+    override def read(json: JsValue): StatefulGraph = json.convertTo[StatefulGraph](graphReader)
+    override def write(obj: StatefulGraph): JsValue = obj.toJson(GraphWriter)
   }
 
   implicit val workflowTypeFormat = EnumerationSerializer.jsonEnumFormat(WorkflowType)

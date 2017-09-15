@@ -18,7 +18,7 @@ package io.deepsense.graph
 
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.InferenceWarnings
-import io.deepsense.deeplang.inference.exceptions.{NoInputEdgesException, AllTypesNotCompilableException}
+import io.deepsense.deeplang.inference.exceptions.{AllTypesNotCompilableException, NoInputEdgesException}
 import io.deepsense.deeplang.inference.warnings.SomeTypesNotCompilableWarning
 import io.deepsense.deeplang.{DKnowledge, DOperable}
 import io.deepsense.graph.GraphKnowledge.InferenceErrors

@@ -16,113 +16,143 @@
 
 package io.deepsense.workflowexecutor
 
-import akka.actor.{ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.testkit.{TestKit, TestProbe}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.scalatest.concurrent.Eventually
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Matchers, WordSpecLike}
 
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, ExecutionContext}
-import io.deepsense.graph.{Endpoint, Graph, Node}
-import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeFinished, NodeStarted}
+import io.deepsense.graph.Node
+import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
-import io.deepsense.models.entities.Entity
-import io.deepsense.models.workflows.Workflow
 
 class WorkflowNodeExecutorActorSpec
   extends TestKit(ActorSystem("WorkflowNodeExecutorActorSpec"))
   with WordSpecLike
   with Matchers
   with MockitoSugar
+  with BeforeAndAfter
   with BeforeAndAfterAll
-  with ImplicitSender {
+  with Eventually {
 
-  override protected def afterAll(): Unit = {
-    system.shutdown()
-  }
+  override protected def afterAll(): Unit = system.shutdown()
 
-  // TODO increase coverage of these tests: https://codilime.atlassian.net/browse/DS-823
-  "WorkflowNodeExecutorActor" should {
-    "start execution of Nodes and respond NodeStarted (and NodeFinished)" when {
-      "receives Start" in {
-        val mEC = mock[ExecutionContext]
+  "WorkflowNodeExecutorActor" when {
+    "receives start" should {
+      "infer knowledge and start execution of a node with correct parameters" in {
+        val (probe, testedActor, node, operation, input) = fixutre()
+        probe.send(testedActor, Start())
+        probe.expectMsg(NodeStarted(node.id))
 
-        val mDOp = mock[DOperation]
-        when(mDOp.name).thenReturn("mockedName")
-        when(mDOp.execute(any[ExecutionContext])(any[Vector[DOperable]]))
-          .thenReturn(Vector[DOperable]())
-        when(mDOp.inferKnowledge(any())(any()))
-          .thenReturn((Vector[DKnowledge[DOperable]](), mock[InferenceWarnings]))
-
-        // FIXME node in DRAFT state must not be Completed -> None.get exception
-        val node = Node(Node.Id.randomId, mDOp).markRunning
-
-        val mGraph = mock[Graph]
-        val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
-        when(mGraph.predecessors).thenReturn(predecessors)
-        val dOperationCache = Map.empty[Entity.Id, DOperable]
-
-        val gnea = system.actorOf(
-          Props(new WorkflowNodeExecutorActor(mEC, node, mGraph, dOperationCache)))
-        gnea ! Start()
-
-        expectMsgType[NodeStarted] shouldBe NodeStarted(node.id)
-        expectMsgType[NodeFinished].node shouldBe 'Completed
+        eventually {
+          verify(operation).inferKnowledge(any())(any())
+          verify(operation).execute(executionContext)(input)
+        }
       }
     }
-    "respond NodeFinished with appropriate failure description" when {
-      "its Node throws an exception" in {
-        val mEC = mock[ExecutionContext]
-
-        val mDOp = mock[DOperation]
-        when(mDOp.name).thenReturn("mockedName")
-        when(mDOp.inferKnowledge(any())(any()))
-          .thenReturn((Vector[DKnowledge[DOperable]](), mock[InferenceWarnings]))
-        when(mDOp.execute(any[ExecutionContext])(any[Vector[DOperable]]))
-          .thenThrow(new RuntimeException("Exception from mock"))
-
-        // FIXME node in DRAFT state must not be Completed -> None.get exception
-        val node = Node(Node.Id.randomId, mDOp).markRunning
-
-        val mExperiment = mock[Workflow]
-        val mGraph = mock[Graph]
-        val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
-        when(mGraph.predecessors).thenReturn(predecessors)
-        val dOperationCache = Map.empty[Entity.Id, DOperable]
-
-        val gnea = system.actorOf(
-          Props(new WorkflowNodeExecutorActor(mEC, node, mGraph, dOperationCache)))
-        gnea ! Start()
-
-        expectMsgType[NodeStarted] shouldBe NodeStarted(node.id)
-        expectMsgType[NodeFinished].node shouldBe 'Failed
+    "node completed" should {
+      "respond NodeCompleted" in {
+        val (probe, testedActor, node, output) = fixtureSucceedingOperation()
+        probe.send(testedActor, Start())
+        probe.expectMsg(NodeStarted(node.id))
+        val nodeCompleted = probe.expectMsgType[NodeCompleted]
+        nodeCompleted.id shouldBe node.id
+        nodeCompleted.results.doperables.values should contain theSameElementsAs output
       }
-      "its Node inference throws an exception" in {
-        val mEC = mock[ExecutionContext]
-
-        val mDOp = mock[DOperation]
-        when(mDOp.name).thenReturn("mockedName")
-        when(mDOp.inferKnowledge(any())(any()))
-          .thenThrow(new RuntimeException("Inference exception from mock"))
-
-        // FIXME node in DRAFT state must not be Completed -> None.get exception
-        val node = Node(Node.Id.randomId, mDOp).markRunning
-
-        val mExperiment = mock[Workflow]
-        val mGraph = mock[Graph]
-        val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
-        when(mGraph.predecessors).thenReturn(predecessors)
-        val dOperationCache = Map.empty[Entity.Id, DOperable]
-
-        val gnea = system.actorOf(
-          Props(new WorkflowNodeExecutorActor(mEC, node, mGraph, dOperationCache)))
-        gnea ! Start()
-
-        expectMsgType[NodeStarted] shouldBe NodeStarted(node.id)
-        expectMsgType[NodeFinished].node shouldBe 'Failed
+    }
+    "respond NodeFailed" when {
+      "node failed" in {
+        val (probe, testedActor, node, cause) = fixtureFailingOperation()
+        probe.send(testedActor, Start())
+        probe.expectMsg(NodeStarted(node.id))
+        probe.expectMsgType[NodeFailed] shouldBe NodeFailed(node.id, cause)
+      }
+      "node's inference throws an exception" in {
+        val (probe, testedActor, node, cause) = fixtureFailingInference()
+        probe.send(testedActor, Start())
+        probe.expectMsg(NodeStarted(node.id))
+        probe.expectMsgType[NodeFailed] shouldBe NodeFailed(node.id, cause)
       }
     }
   }
+
+  private def nodeExecutorActor(input: Vector[DOperable], node: Node): ActorRef = {
+    system.actorOf(
+      Props(new WorkflowNodeExecutorActor(executionContext, node, input)))
+  }
+
+  private def inferableOperable: DOperable = {
+    val operable = mock[DOperable]
+    when(operable.toInferrable).thenReturn(operable)
+    operable
+  }
+
+  private def operableWithReports: DOperable = {
+    val operable = mock[DOperable]
+    val report = mock[Report]
+    when(report.content).thenReturn(mock[ReportContent])
+    when(operable.report(any())).thenReturn(report)
+    operable
+  }
+
+  private def mockOperation: DOperation = {
+    val dOperation = mock[DOperation]
+    when(dOperation.name).thenReturn("mockedName")
+    dOperation
+  }
+
+  private def fixtureFailingInference(): (TestProbe, ActorRef, Node, NullPointerException) = {
+    val operation = mockOperation
+    val cause = new NullPointerException("test exception")
+    when(operation.inferKnowledge(any())(any()))
+      .thenThrow(cause)
+    val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
+    (probe, testedActor, node, cause)
+  }
+
+  private def fixtureFailingOperation(): (TestProbe, ActorRef, Node, NullPointerException) = {
+    val operation = mockOperation
+    val cause = new NullPointerException("test exception")
+    when(operation.execute(any[ExecutionContext]())(any[Vector[DOperable]]()))
+      .thenThrow(cause)
+    val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
+    (probe, testedActor, node, cause)
+  }
+
+  private def fixtureSucceedingOperation(): (TestProbe, ActorRef, Node, Vector[DOperable]) = {
+    val operation = mockOperation
+    val output = Vector(operableWithReports, operableWithReports)
+    when(operation.execute(any())(any()))
+      .thenReturn(output)
+    val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
+    (probe, testedActor, node, output)
+  }
+
+  private def fixtureWithOperation(dOperation: DOperation):
+      (TestProbe, ActorRef, Node, DOperation, Vector[DOperable]) = {
+    val node = mock[Node]
+    when(node.id).thenReturn(Node.Id.randomId)
+    when(node.operation).thenReturn(dOperation)
+    val probe = TestProbe()
+    val input = Vector(inferableOperable, inferableOperable)
+    val testedActor = nodeExecutorActor(input, node)
+    (probe, testedActor, node, dOperation, input)
+  }
+
+  private def fixutre(): (TestProbe, ActorRef, Node, DOperation, Vector[DOperable]) = {
+    val dOperation = mockOperation
+    when(dOperation.inferKnowledge(any())(any()))
+      .thenReturn((Vector[DKnowledge[DOperable]](), mock[InferenceWarnings]))
+    when(dOperation.execute(any())(any()))
+      .thenReturn(Vector())
+    fixtureWithOperation(dOperation)
+  }
+
+  val executionContext = mock[ExecutionContext]
 }

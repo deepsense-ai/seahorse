@@ -16,11 +16,12 @@
 
 package io.deepsense.models.json.graph
 
+import spray.json._
+
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.graph.{Edge, Graph, Node}
+import io.deepsense.graph.{Edge, Node, StatefulGraph}
 import io.deepsense.models.json.graph.OperationJsonProtocol.DOperationReader
-import spray.json._
 
 object GraphJsonProtocol {
 
@@ -32,12 +33,12 @@ object GraphJsonProtocol {
   val NodeId = "id"
 
   class GraphReader(catalog: DOperationsCatalog)
-    extends JsonReader[Graph]
+    extends JsonReader[StatefulGraph]
     with DefaultJsonProtocol {
 
     private val dOperationReader = new DOperationReader(catalog)
 
-    override def read(json: JsValue): Graph = json match {
+    override def read(json: JsValue): StatefulGraph = json match {
       case JsObject(fields) => read(fields)
       case x =>
         throw new DeserializationException(s"Expected JsObject with a Graph but got $x")
@@ -68,18 +69,18 @@ object GraphJsonProtocol {
         throw new DeserializationException(s"Expected JsArray with edges but got $x")
     }
 
-    private def read(fields: Map[String, JsValue]): Graph = {
+    private def read(fields: Map[String, JsValue]): StatefulGraph = {
       val nodes: Set[Node] = fields.get(Nodes).map(readNodes).getOrElse(Set())
       val edges: Set[Edge] = fields.get(Edges).map(readEdges).getOrElse(Set())
-      Graph(nodes, edges)
+      StatefulGraph(nodes, edges)
     }
   }
 
-  implicit object GraphWriter extends JsonWriter[Graph] with DefaultJsonProtocol {
-    override def write(graph: Graph): JsValue = {
+  implicit object GraphWriter extends JsonWriter[StatefulGraph] with DefaultJsonProtocol {
+    override def write(graph: StatefulGraph): JsValue = {
       JsObject(
-        Nodes -> JsArray(graph.nodes.map(_.toJson).toVector),
-        Edges -> JsArray(graph.edges.map(_.toJson).toVector))
+        Nodes -> JsArray(graph.directedGraph.nodes.map(_.toJson).toVector),
+        Edges -> JsArray(graph.directedGraph.edges.map(_.toJson).toVector))
     }
   }
 }

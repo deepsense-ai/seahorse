@@ -19,7 +19,7 @@ package io.deepsense.models.json.graph
 import spray.json._
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
+import io.deepsense.graph.{Edge, Endpoint, Node, StatefulGraph}
 
 class GraphWriterSpec extends GraphJsonTestSupport {
 
@@ -41,7 +41,7 @@ class GraphWriterSpec extends GraphJsonTestSupport {
     (node2, node4, 0, 0),
     (node3, node4, 0, 1))
   val edges = edgesList.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
-  val graph = Graph(nodes, edges)
+  val graph = StatefulGraph(nodes, edges)
   val graphJson = graph.toJson.asJsObject
 
   "Graph transformed to Json" should {

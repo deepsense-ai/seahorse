@@ -24,7 +24,11 @@ lazy val deeplang               = project dependsOn (
   reportlib)
 lazy val `entitystorage-client` = project dependsOn `entitystorage-model`
 lazy val `entitystorage-model`  = project dependsOn commons
-lazy val graph                  = project dependsOn (commons, deeplang, reportlib)
+lazy val graph                  = project dependsOn (
+  commons,
+  commons % "test->test",
+  deeplang,
+  reportlib)
 lazy val workflowjson           = project dependsOn (commons, deeplang, graph, models)
 lazy val models                 = project dependsOn (commons, graph)
 lazy val reportlib              = project dependsOn commons

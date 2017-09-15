@@ -16,269 +16,284 @@
 
 package io.deepsense.workflowexecutor
 
-import scala.concurrent.{Promise, Future}
-import scala.util.Success
+import scala.concurrent.Promise
 
-import akka.actor.{ActorSystem, Actor, ActorRef, Props}
-import akka.testkit.{TestKit, TestActorRef, TestProbe}
+import akka.actor.{ActorRef, ActorSystem}
+import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.mockito.Matchers._
-import org.mockito.Mockito
 import org.mockito.Mockito._
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import org.scalatest._
-import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
+import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.commons.exception.FailureDescription
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
-import io.deepsense.graph._
-import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{Launch, GraphFinished}
-import io.deepsense.workflowexecutor.WorkflowExecutorActor._
+import io.deepsense.graph.Node.Id
+import io.deepsense.graph.nodestate.NodeState
+import io.deepsense.graph.{Node, ReadyNode, StatefulGraph, graphstate}
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.workflows.{ThirdPartyData, WorkflowMetadata, Workflow}
+import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
+import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
 
 class WorkflowExecutorActorSpec
-  extends StandardSpec
-  with UnitTestSupport
+  extends TestKit(ActorSystem("WorkflowExecutorActorSpec"))
   with WordSpecLike
   with BeforeAndAfterAll
   with Matchers
   with MockitoSugar
   with Eventually
+  with ScalaFutures
   with ScaledTimeSpans {
 
-  trait TestCase {
-    implicit val system = ActorSystem("WorkflowExecutorActorSpec")
-    val executionContext = new ExecutionContext(mock[DOperableCatalog])
-    val graph = {
-      val g = mock[Graph]
-      when(g.enqueueNodes) thenReturn g
-      when(g.markRunning) thenReturn g
-      when(g.abortNodes) thenReturn g
-      when(g.markFailed(any())) thenReturn g
-      when(g.markAsFailed(any(), any())) thenReturn g
-      when(g.markRunning) thenReturn g
-      when(g.updateState) thenReturn g
-      when(g.withChangedNode(any())) thenReturn g
-
-      val knowledgeWithoutErrors = mock[GraphKnowledge]
-      when(knowledgeWithoutErrors.errors)
-        .thenReturn(Map.empty[Node.Id, GraphKnowledge.InferenceErrors])
-      when(g.inferKnowledge(any())) thenReturn knowledgeWithoutErrors
-      g
-    }
-
-    class Wrapper(target: ActorRef) extends Actor {
-      def receive: Receive = {
-        case x => target forward x
+  "WorkflowExecutorActor" when {
+    "received Launch" should {
+      "enqueue graph" in {
+        val (probe, wea, graph, _, _) = readyNodesFixture()
+        probe.send(wea, Launch(graph, mock[Promise[GraphFinished]]))
+        eventually {
+          verify(graph).enqueue
+        }
       }
-    }
+      "infer and apply graph knowledge and pass it to graph" in {
+        val (probe, wea, graph, _, _) = readyNodesFixture()
+        probe.send(wea, Launch(graph, mock[Promise[GraphFinished]]))
+        eventually {
+          verify(graph).inferAndApplyKnowledge(executionContext)
+        }
+      }
+      "launch ready nodes if inference ok" in {
+        val (probe, wea, graph, readyNodes, executors) = readyNodesFixture()
+        probe.send(wea, Launch(graph, mock[Promise[GraphFinished]]))
+        verifyNodesStarted(graph, readyNodes, executors)
+      }
+      "infer graph knowledge and fail graph on exception" in {
+        val probe = TestProbe()
+        val graph = readyGraphWithThrowingInference()
+        val wea = TestActorRef(new WorkflowExecutorActor(
+          executionContext, nodeExecutorFactory(), mock[SystemShutdowner]))
+        val resultPromise: Promise[GraphFinished] = Promise()
 
-    trait TestGraphNodeExecutorFactory extends GraphNodeExecutorFactory {
-      var nodeExecutors: Seq[TestProbe] = _
-      var expectedNodes: List[Node] = _
-      var nodesToVisit: List[Node] = _
-      var expectedDOperableCache: Results = _
-      var expectedGraph = graph
+        probe.send(wea, Launch(graph, resultPromise))
+        eventually {
+          verify(graph).inferAndApplyKnowledge(executionContext)
 
-      def createGraphNodeExecutor(
-          ec: ExecutionContext,
-          node: Node,
-          graph: Graph,
-          dOperableCache: Results): Actor = {
-        synchronized {
-          ec shouldBe executionContext
-          graph shouldBe expectedGraph
-          nodesToVisit should contain(node)
-          dOperableCache shouldBe expectedDOperableCache
-          val indexOfNode = expectedNodes.indexOf(node)
-          val returnedExecutor = nodeExecutors(indexOfNode)
-          nodesToVisit = nodesToVisit.filter(n => n != node)
-          new Wrapper(returnedExecutor.ref)
+          resultPromise shouldBe 'Completed
+          whenReady(resultPromise.future) { result =>
+            result.graph.state shouldBe 'Failed
+          }
         }
       }
     }
+    "received NodeCompleted" should {
+      "tell graph about it" in {
+        val (probe, wea, graph, _, _) = readyNodesFixture()
+        val resultPromise = mock[Promise[GraphFinished]]
+        become(wea, graph, resultPromise)
+        val (completedId, nodeCompletedMessage, results) = nodeCompleted()
+        probe.send(wea, nodeCompletedMessage)
+        eventually {
+          verify(graph).nodeFinished(completedId, results.doperables.keys.toSeq)
+        }
+      }
+      "launch ready nodes" when {
+        "ready nodes exist" in {
+          val (probe, wea, graph, readyNodes, executors) = readyNodesFixture()
+          become(wea, graph, mock[Promise[GraphFinished]])
+          val (_, nodeCompletedMessage, _) = nodeCompleted()
+          probe.send(wea, nodeCompletedMessage)
+          verifyNodesStarted(graph, readyNodes, executors)
+        }
+      }
+      "finish execution if graph Completed/Failed" in {
+        val (probe, wea, graph, _, _) = readyNodesFixture()
+        val completed = completedGraph()
+        when(graph.nodeFinished(any(), any())).thenReturn(completed)
+        val resultPromise: Promise[GraphFinished] = Promise()
+        become(wea, graph, resultPromise)
+        val (_, nodeCompletedMessage, _) = nodeCompleted()
+        probe.send(wea, nodeCompletedMessage)
 
-    val shutdownerProbe = TestProbe()
-
-    trait TestShutdowner extends SystemShutdowner {
-      override def shutdownSystem: Unit = {
-        shutdownerProbe.ref ! shutdownMessage
+        eventually {
+          resultPromise shouldBe 'Completed
+          whenReady(resultPromise.future) { result =>
+            result.graph.state shouldBe 'Completed
+          }
+        }
       }
     }
-
-    val weaRef = TestActorRef[
-      WorkflowExecutorActor
-        with TestGraphNodeExecutorFactory
-        with TestShutdowner
-      ](Props(new WorkflowExecutorActor(executionContext)
-        with TestGraphNodeExecutorFactory
-        with TestShutdowner))
-
-    val wea = weaRef.underlyingActor
-
-    def verifySystemShutDown(): Unit = {
-      shutdownerProbe.expectMsgType[String] shouldBe shutdownMessage
-    }
-
-    def launchGraph(shouldStartExecutors: Boolean = true): Future[GraphFinished] = {
-      val nodes = List(mockNode(), mockNode())
-      val nodeExecutors = Seq(TestProbe(), TestProbe())
-      val running = graph.markRunning
-      when(running.readyNodes).thenReturn(nodes)
-      wea.expectedNodes = nodes
-      wea.nodesToVisit = nodes
-      wea.nodeExecutors = nodeExecutors
-      wea.expectedDOperableCache = Map.empty
-
-      val resultPromise: Promise[GraphFinished] = Promise()
-      weaRef ! Launch(graph, resultPromise)
-
-      if (shouldStartExecutors) {
-        wea.nodeExecutors(0).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
-        wea.nodeExecutors(1).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
-        wea.nodesToVisit shouldBe empty
+    "received NodeFailed" should {
+      "tell graph about it" in {
+        val (probe, wea, graph, _, _) = readyNodesFixture()
+        become(wea, graph, mock[Promise[GraphFinished]])
+        val (completedId, nodeFailedMessage, cause) = nodeFailed()
+        probe.send(wea, nodeFailedMessage)
+        eventually {
+          verify(graph).nodeFailed(completedId, cause)
+        }
       }
-      resultPromise.future
-    }
+      "launch ready nodes" when {
+        "ready nodes exist" in {
+          val (probe, wea, graph, readyNodes, executors) = readyNodesFixture()
+          become(wea, graph, mock[Promise[GraphFinished]])
+          val (_, nodeFailedMessage, _) = nodeFailed()
+          probe.send(wea, nodeFailedMessage)
+          verifyNodesStarted(graph, readyNodes, executors)
+        }
+      }
+      "finish execution if graph Completed/Failed" in {
+        val (probe, wea, graph, _, _) = readyNodesFixture()
+        val failed = failedGraph()
+        when(graph.nodeFailed(any(), any())).thenReturn(failed)
+        val resultPromise: Promise[GraphFinished] = Promise()
+        become(wea, graph, resultPromise)
+        val (_, nodeFailedMessage, _) = nodeFailed()
+        probe.send(wea, nodeFailedMessage)
 
-    def mockOperation(): DOperation = {
-      val operation = mock[DOperation]
-      when(operation.inArity) thenReturn 0
-      when(operation.outArity) thenReturn 1
-      when(operation.id) thenReturn DOperation.Id.randomId
-      operation
-    }
-
-    def mockNode(): Node = {
-      val operation = mockOperation()
-      val node = mock[Node]
-      when(node.id) thenReturn Node.Id.randomId
-      when(node.operation) thenReturn operation
-      node
-    }
-
-    def mockFinishedNode(): Node = {
-      val finishedNode = mockNode()
-      when(finishedNode.isRunning) thenReturn false
-      when(finishedNode.isCompleted) thenReturn true
-      when(finishedNode.isFailed) thenReturn false
-      finishedNode
+        eventually {
+          resultPromise shouldBe 'Completed
+          whenReady(resultPromise.future) { result =>
+            result.graph.state shouldBe 'Failed
+          }
+        }
+      }
     }
   }
 
-  val shutdownMessage = "Shutdown"
+  def become(
+      wea: TestActorRef[WorkflowExecutorActor],
+      graph: StatefulGraph,
+      p: Promise[GraphFinished]): Unit = {
+    wea.underlyingActor.context.become(wea.underlyingActor.launched(graph, p))
+  }
 
-  "WorkflowExecutorActor" should {
-    "start GraphNodeExecutorActor for each ready node and send Start to it" when {
-      "it receives Launch" in { new TestCase {
-        launchGraph()
-      };()}
+  val executionContext = mock[ExecutionContext]
+
+  def verifyNodesStarted(
+      graph: StatefulGraph,
+      readyNodes: Seq[ReadyNode],
+      executors: Seq[TestProbe]): Unit = {
+    eventually {
+      readyNodes.foreach { rn => verify(graph).nodeStarted(rn.node.id) }
+      executors.foreach {
+        _.expectMsg(Start())
+      }
     }
-    "close actor system and returns a result" when {
-      "it receives NodeFinished and there are no nodes left for execution" in { new TestCase {
-        val result = launchGraph()
-        val finishedNode = mockFinishedNode()
-        val finishedGraph = mock[Graph]
-        val runningGraph = mock[Graph]
-        when(runningGraph.withChangedNode(any())) thenReturn runningGraph
-        when(runningGraph.updateState()) thenReturn finishedGraph
-        when(runningGraph.readyNodes) thenReturn List.empty
-        when(runningGraph.runningNodes) thenReturn Set.empty[Node]
-        when(finishedGraph.state) thenReturn mock[GraphState]
+  }
 
-        wea.graph = runningGraph
-        weaRef ! WorkflowExecutorActor.Messages.NodeFinished(finishedNode, Map.empty)
-        verifySystemShutDown()
-        result shouldBe 'completed
-      };()}
-      "graph knowledge contains errors" in { new TestCase {
-        val knowledgeWithErrors = mock[GraphKnowledge]
-        when(knowledgeWithErrors.errors)
-          .thenReturn(Map(Node.Id.randomId ->  Vector(mock[DeepLangException])))
-        when(graph.inferKnowledge(any())) thenReturn knowledgeWithErrors
-        val failedState = GraphState.failed(mock[FailureDescription])
-        val failedGraph = mock[Graph]
-        val failedGraphWithAbortedNodes = mock[Graph]
-        when(graph.markFailed(any())) thenReturn failedGraph
-        when(failedGraph.state) thenReturn failedState
-        when(failedGraph.abortNodes) thenReturn failedGraphWithAbortedNodes
-        when(failedGraph.markAsFailed(any(), any())) thenReturn failedGraph
-        when(failedGraphWithAbortedNodes.state) thenReturn failedState
-        when(failedGraphWithAbortedNodes.updateState()) thenCallRealMethod()
-        when(failedGraphWithAbortedNodes.markAsFailed(
-          any(), any())) thenReturn failedGraphWithAbortedNodes
+  def mockResults(size: Int): NodeExecutionResults = {
+    val ids = (1 to size).map(_ => Entity.Id.randomId).toSeq
+    val reports = ids.map { id => id -> mock[ReportContent]}.toMap
+    val operables = ids.map { id => id -> mock[DOperable]}.toMap
+    NodeExecutionResults(reports, operables)
+  }
 
-        val result = launchGraph(shouldStartExecutors = false)
+  def mockReadyNode(): ReadyNode = {
+    val node = mock[Node]
+    when(node.id).thenReturn(Node.Id.randomId)
+    val dOperation = mock[DOperation]
+    when(dOperation.name).thenReturn("mockedName")
+    when(node.operation).thenReturn(dOperation)
+    ReadyNode(node, Seq())
+  }
 
-        verifySystemShutDown()
-        result shouldBe 'completed
-        whenReady(result) {
-          case GraphFinished(resultGraph, _) =>
-            resultGraph shouldBe failedGraphWithAbortedNodes
-        }
-      };()}
-      "graph contains a cycle" in { new TestCase {
-        when(graph.inferKnowledge(any())) thenThrow classOf[CyclicGraphException]
-        val failedState = GraphState.failed(mock[FailureDescription])
-        val failedGraph = mock[Graph]
-        val failedGraphWithAbortedNodes = mock[Graph]
-        when(graph.markFailed(any())) thenReturn failedGraph
-        when(failedGraph.state) thenReturn failedState
-        when(failedGraph.abortNodes) thenReturn failedGraphWithAbortedNodes
-        when(failedGraphWithAbortedNodes.state) thenReturn failedState
-        when(failedGraphWithAbortedNodes.updateState()) thenCallRealMethod()
+  def nodeCompleted(): (Id, NodeCompleted, NodeExecutionResults) = {
+    val completedId = Node.Id.randomId
+    val results = mockResults(2)
+    (completedId, NodeCompleted(completedId, results), results)
+  }
 
-        val result = launchGraph(shouldStartExecutors = false)
+  def nodeFailed(): (Id, NodeFailed, Exception) = {
+    val failedId = Node.Id.randomId
+    val cause = new IllegalStateException("A node failed because a test told him to do so!")
+    (failedId, NodeFailed(failedId, cause), cause)
+  }
 
-        verifySystemShutDown()
-        result shouldBe 'completed
-        whenReady(result) {
-          case GraphFinished(resultGraph, _) =>
-            resultGraph shouldBe failedGraphWithAbortedNodes
-        }
-      };()}
-      "knowledge inference throws" in { new TestCase {
-        when(graph.inferKnowledge(any())) thenThrow classOf[Exception]
-        val failedState = GraphState.failed(mock[FailureDescription])
-        val failedGraph = mock[Graph]
-        val failedGraphWithAbortedNodes = mock[Graph]
-        when(graph.markFailed(any())) thenReturn failedGraph
-        when(failedGraph.state) thenReturn failedState
-        when(failedGraph.abortNodes) thenReturn failedGraphWithAbortedNodes
-        when(failedGraphWithAbortedNodes.state) thenReturn failedState
-        when(failedGraphWithAbortedNodes.updateState()) thenCallRealMethod()
+  def readyGraph(): (StatefulGraph, Seq[ReadyNode]) = {
+    val graph = mock[StatefulGraph]
+    when(graph.state).thenReturn(graphstate.Running)
+    when(graph.states).thenReturn(Map[Node.Id, NodeState]())
 
-        val result = launchGraph(shouldStartExecutors = false)
+    val readyNodes = Seq(mockReadyNode(), mockReadyNode())
+    when(graph.readyNodes).thenReturn(readyNodes)
+    when(graph.nodeStarted(any())).thenReturn(graph)
+    (graph, readyNodes)
+  }
 
-        verifySystemShutDown()
-        result shouldBe 'completed
-        whenReady(result) {
-          case GraphFinished(resultGraph, _) =>
-            resultGraph shouldBe failedGraphWithAbortedNodes
-        }
-      };()}
-      "it receives NodeFinished and report generation fails" in { new TestCase {
-        val result = launchGraph()
-        val finishedNode = mockFinishedNode()
-        val finishedGraph = mock[Graph]
-        val runningGraph = mock[Graph]
-        val dOperable = mock[DOperable]
-        when(runningGraph.withChangedNode(any())) thenReturn runningGraph
-        when(runningGraph.updateState()) thenReturn finishedGraph
-        when(runningGraph.readyNodes) thenReturn List.empty
-        when(runningGraph.runningNodes) thenReturn Set.empty[Node]
-        when(finishedGraph.state) thenReturn mock[GraphState]
-        when(dOperable.report(executionContext)) thenThrow classOf[Exception]
+  def readyGraphWithOkInference(): (StatefulGraph, Seq[ReadyNode]) = {
+    val (graph, readyNodes) = readyGraph()
 
-        wea.graph = runningGraph
-        weaRef ! WorkflowExecutorActor.Messages.NodeFinished(
-          finishedNode, Map(Node.Id.randomId -> dOperable))
-        verifySystemShutDown()
-        result shouldBe 'completed
-      };()}
-    }
+    when(graph.enqueue).thenReturn(graph)
+    when(graph.inferAndApplyKnowledge(any())).thenReturn(graph)
+
+    (graph, readyNodes)
+  }
+
+  def failedGraph(): StatefulGraph = {
+    val graph = mock[StatefulGraph]
+    when(graph.states).thenReturn(Map[Node.Id, NodeState]())
+    when(graph.state).thenReturn(graphstate.Failed(
+      FailureDescription(
+        DeepSenseFailure.Id.randomId,
+        FailureCode.UnexpectedError,
+        "Mock title"
+      )))
+    when(graph.readyNodes).thenReturn(Seq())
+    graph
+  }
+
+  def completedGraph(): StatefulGraph = {
+    val graph = mock[StatefulGraph]
+    when(graph.state).thenReturn(graphstate.Completed)
+    when(graph.states).thenReturn(Map[Node.Id, NodeState]())
+    when(graph.readyNodes).thenReturn(Seq())
+    graph
+  }
+
+  def readyGraphWithThrowingInference(): StatefulGraph = {
+    val (graph, _) = readyGraph()
+    when(graph.enqueue).thenReturn(graph)
+    val failed = failedGraph()
+    when(graph.inferAndApplyKnowledge(any(classOf[ExecutionContext])))
+      .thenReturn(failed)
+
+    graph
+  }
+
+  def nodeExecutorFactory(): GraphNodeExecutorFactory = {
+    val factory = mock[GraphNodeExecutorFactory]
+    when(factory.createGraphNodeExecutor(any(), any(), any(), any())).thenReturn(TestProbe().ref)
+    factory
+  }
+
+  def readyNodesFixture():
+      (TestProbe,
+        TestActorRef[WorkflowExecutorActor],
+        StatefulGraph,
+        Seq[ReadyNode],
+        Seq[TestProbe]) = {
+    val testProbe = TestProbe()
+    val (graph, readyNodes) = readyGraphWithOkInference()
+    when(graph.nodeFinished(any(), any())).thenReturn(graph)
+    when(graph.nodeFailed(any(), any())).thenReturn(graph)
+    val executors = Seq(TestProbe(), TestProbe())
+
+    val factory = mock[GraphNodeExecutorFactory]
+    when(factory.createGraphNodeExecutor(any(), any(), any(), any()))
+      .thenAnswer(new Answer[ActorRef] {
+      var i = 0
+      override def answer(invocation: InvocationOnMock): ActorRef = {
+        val executor = executors(i)
+        i = i + 1
+        executor.ref
+      }
+    })
+
+    val testedActor = TestActorRef(new WorkflowExecutorActor(
+      executionContext, factory, mock[SystemShutdowner]))
+
+    (testProbe, testedActor, graph, readyNodes, executors)
   }
 }

@@ -21,7 +21,7 @@ import java.util.UUID
 import spray.json._
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.graph.{Edge, Graph, Node}
+import io.deepsense.graph.{Edge, Node, StatefulGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithVariablesJsonProtocol
 import io.deepsense.models.workflows._
@@ -42,7 +42,7 @@ abstract class WorkflowCreator extends WorkflowWithVariablesJsonProtocol {
 
   def buildWorkflow(): WorkflowWithVariables = {
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion)
-    val graph: Graph = Graph(nodes.toSet, edges.toSet)
+    val graph: StatefulGraph = StatefulGraph(nodes.toSet, edges.toSet)
     val thirdPartyData: ThirdPartyData = ThirdPartyData("{}")
     val variables: Variables = Variables()
     val result =

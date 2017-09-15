@@ -21,7 +21,7 @@ import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
+import io.deepsense.graph.{Edge, Endpoint, Node, StatefulGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class GraphReaderSpec extends GraphJsonTestSupport {
@@ -103,7 +103,7 @@ class GraphReaderSpec extends GraphJsonTestSupport {
     "connections" -> edgesArray
   )
 
-  val expectedGraph = Graph(
+  val expectedGraph = StatefulGraph(
     Set(Node(node1Id, operation1), Node(node2Id, operation2), Node(node3Id, operation3)),
     Set(Edge(Endpoint(node1Id, edge1from), Endpoint(node2Id, edge1to)),
       Edge(Endpoint(node2Id, edge2from), Endpoint(node3Id, edge2to)))
@@ -111,14 +111,14 @@ class GraphReaderSpec extends GraphJsonTestSupport {
 
   "GraphReader" should {
     "create Graph from JSON and fill parameters with values from Json" in {
-      graphsSimilar(exampleJson.convertTo[Graph], expectedGraph) shouldBe true
+      graphsSimilar(exampleJson.convertTo[StatefulGraph], expectedGraph) shouldBe true
       verify(operation1.parameters).fillValuesWithJson(parameters1)
       verify(operation2.parameters).fillValuesWithJson(parameters2)
       verify(operation3.parameters).fillValuesWithJson(parameters3)
     }
   }
 
-  def graphsSimilar(g1: Graph, g2: Graph): Boolean = {
+  def graphsSimilar(g1: StatefulGraph, g2: StatefulGraph): Boolean = {
     g1.edges == g2.edges &&
       g1.nodes.size == g2.nodes.size &&
       nodesSimilar(g1.nodes, g2.nodes)

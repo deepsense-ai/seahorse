@@ -16,18 +16,17 @@
 
 package io.deepsense.models.json.workflow
 
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-
 import scala.reflect.runtime.{universe => ru}
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
-import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
+import io.deepsense.graph.{Edge, Endpoint, Node, StatefulGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
 
@@ -69,7 +68,7 @@ trait WorkflowJsonTestSupport
     (node2, node4, 0, 0),
     (node3, node4, 0, 1))
   val edges = preEdges.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4)))
-  val graph = Graph(nodes, edges)
+  val graph = StatefulGraph(nodes, edges)
 
   def mockOperation(
     inArity: Int,
