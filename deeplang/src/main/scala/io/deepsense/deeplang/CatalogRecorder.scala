@@ -141,7 +141,7 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateRandomForestClassification](
       DOperationCategories.ML.Classification,
-      "Creates an untrained random forest regression model"
+      "Creates an untrained random forest classification model"
     )
 
     catalog.registerDOperation[TrainClassifier](
