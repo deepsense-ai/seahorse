@@ -18,6 +18,9 @@ function OperationItemView() {
         scope.highlight = false;
         scope.$digest();
       });
+      scope.getIcons = function () {
+        return scope.icon.split(' ');
+      };
 
       elem.on('mousedown', () => {
         $('.popover').hide();
