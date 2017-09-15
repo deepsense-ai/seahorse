@@ -54,9 +54,10 @@ preparePythonDeps <<= preparePythonDeps dependsOn weJar
 mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
 
 dockerBaseImage := {
-  val pattern = "([0-9]+\\.[0-9]+\\.[0-9]+).*".r
-  val pattern(versionNumber) = version.value
-  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$versionNumber"
+  // Require environment variable SEAHORSE_BUILD_TAG to be set
+  // This variable indicates tag of base image for sessionmanager image
+  val seahorseBuildTag = scala.util.Properties.envOrElse("SEAHORSE_BUILD_TAG", "")
+  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:${seahorseBuildTag}"
 }
 
 dockerCommands ++= Seq(

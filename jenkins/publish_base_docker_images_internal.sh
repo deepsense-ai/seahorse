@@ -2,31 +2,34 @@
 # Copyright (c) 2016, CodiLime Inc.
 #
 # Builds and publishes base docker images for sessionmanager (Spark+Mesos)
-#
-# Usage: `jenkins/publish_base_docker_images_internal.sh VERSION` from deepsense-backend catalog
+
+
+# Set working directory to project root file
+# `dirname $0` gives folder containing script
+cd `dirname $0`"/../"
 
 ./jenkins/scripts/checkout-submodules.sh
 
 # Check if number of parameters is correct
 if [ $# != 1 ]; then
-  echo ">>> Exactly one parameter must be provided."
+  echo "Usage: jenkins/publish_base_docker_images_internal.sh SEAHORSE_BUILD_TAG"
   exit 1
 fi
 
-
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
-VERSION=$1
+SEAHORSE_BUILD_TAG=$1
+
 
 (
-echo "Building and publishing deepsense-spark:$VERSION"
+echo "Building and publishing deepsense-spark:$SEAHORSE_BUILD_TAG"
 cd deployment/spark-docker
-docker build -t $DEEPSENSE_REGISTRY/deepsense-spark:$VERSION .
-docker push $DEEPSENSE_REGISTRY/deepsense-spark:$VERSION
+docker build -t $DEEPSENSE_REGISTRY/deepsense-spark:$SEAHORSE_BUILD_TAG .
+docker push $DEEPSENSE_REGISTRY/deepsense-spark:$SEAHORSE_BUILD_TAG
 )
 
 (
-echo "Building and publishing deepsense-mesos-spark:$VERSION"
+echo "Building and publishing deepsense-mesos-spark:$SEAHORSE_BUILD_TAG"
 cd deployment/mesos-spark-docker
-docker build -t $DEEPSENSE_REGISTRY/deepsense-mesos-spark:$VERSION .
-docker push $DEEPSENSE_REGISTRY/deepsense-mesos-spark:$VERSION
+docker build -t $DEEPSENSE_REGISTRY/deepsense-mesos-spark:$SEAHORSE_BUILD_TAG .
+docker push $DEEPSENSE_REGISTRY/deepsense-mesos-spark:$SEAHORSE_BUILD_TAG
 )
