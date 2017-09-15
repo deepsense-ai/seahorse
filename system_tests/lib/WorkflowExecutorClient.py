@@ -2,7 +2,7 @@
 
 import commons
 import subprocess
-from report_file_utils import match_report
+from json_pattern_utils import match_report
 from robot.libraries.BuiltIn import BuiltIn
 
 

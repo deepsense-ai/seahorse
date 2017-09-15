@@ -6,7 +6,7 @@ import sys, getopt
 from os import path, listdir, makedirs
 
 sys.path.append("lib")
-from report_file_utils import create_extracted_pattern_file
+from json_pattern_utils import create_extracted_pattern_file
 
 
 def main(argv):

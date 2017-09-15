@@ -3,9 +3,9 @@
 import unittest
 import sys
 sys.path.append('..')
-from report_file_utils import extract_pattern, PM
+from json_pattern_utils import extract_pattern, PM
 
-class ReportFileUtilsTest(unittest.TestCase):
+class JSONPatternUtilsTest(unittest.TestCase):
   def test_simple_value_matching(self):
     simple_values = [1, None, "string", {}, {'a': 'a'}, [], [2]]
     for val in simple_values:

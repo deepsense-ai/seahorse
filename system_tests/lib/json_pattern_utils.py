@@ -35,10 +35,12 @@ REPORT_PATTERN = {
           'name': PM.Ignore,
           'tables': {
             'Cross-validate Regression Report': {
+              'description': PM.Ignore,
               'values': PM.Ignore,  # array of floats varies too much
               PM.Any: PM.Match
             },
             "Evaluate Regression Report": {
+              'description': PM.Ignore,
               'values': PM.Ignore,  # array of floats varies too much
               PM.Any: PM.Match
             },
@@ -53,10 +55,10 @@ REPORT_PATTERN = {
               'buckets': PM.Ignore,
               'counts': PM.Ignore,
               'statistics': {
-                  'min': PM.Match,
-                  'max': PM.Match,
-                  'mean': PM.Match
-                },
+                'min': PM.Match,
+                'max': PM.Match,
+                'mean': PM.Match
+              },
               PM.Any: PM.Match
             }
           },
@@ -146,6 +148,7 @@ def extract_list_pattern(source, pattern):
 
   return [extract_pattern(el, pattern[0]) for el in source]
 
+
 def match_report(expected_report_path, result_report_path):
   json_result = load_json(result_report_path)
   json_pattern = load_json(expected_report_path)
@@ -154,6 +157,15 @@ def match_report(expected_report_path, result_report_path):
     check_json_containment(mapped_json_pattern, json_result)
   except Exception as e:
     raise AssertionError('Actual report does not match pattern. ' + str(e))
+
+
+def is_contained(contained, container):
+  try:
+    check_json_containment(contained, container)
+    return True
+  except Exception:
+    return False
+
 
 def check_json_containment(contained, container):
   """ `contained` is contained by `container` if all keys from `contained`        """
@@ -182,13 +194,13 @@ def check_json_containment(contained, container):
   else:
     if contained != container:
       if (isinstance(contained, float) or isinstance(contained, int)) and \
-          (isinstance(container, float) or isinstance(container, int)):
+        (isinstance(container, float) or isinstance(container, int)):
         if not are_in_error_margin(float(container), float(contained)):
           raise Exception(
             "Number is not within margin error " + str(contained) + " !~ " + str(container) + ")")
       else:
         if (isinstance(contained, unicode) or isinstance(contained, str)) and \
-            (isinstance(container, unicode) or isinstance(container, str)):
+          (isinstance(container, unicode) or isinstance(container, str)):
           try:
             if not are_in_error_margin(float(container), float(contained)):
               raise Exception("String number is not within margin error " +
