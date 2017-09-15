@@ -51,7 +51,7 @@ class SessionServiceActor @Inject()(
     val futureBatchesMap = livyClient.listSessions().map(_.sessions.map(b => (b.id, b)).toMap)
     val futureSessionsMap = sessionStorage.getAll
 
-    val running = runningWithoutPurgedDeadSessions(futureSessionsMap, futureBatchesMap)
+    val running = purgeNonExistentSessions(futureSessionsMap, futureBatchesMap)
     val creating = creatingSessions(futureSessionsMap)
 
     for {
@@ -60,7 +60,7 @@ class SessionServiceActor @Inject()(
     } yield seqRunning ++ seqCreating
   }
 
-  private def handleCreate(id: Id): Future[Session] = {
+  private def handleCreate(id: Id): Future[Id] = {
     sessionStorage.create(id).flatMap {
       case Right(CreateSucceeded(version)) =>
         val livyBatch = livyClient.createSession(id)
@@ -71,29 +71,29 @@ class SessionServiceActor @Inject()(
           batch =>
             sessionStorage.setBatchId(id, batch.id, version).flatMap {
               case Right(SetBatchIdSucceeded(_)) =>
-                Future.successful(Session(id, batch))
+                Future.successful(id)
               case Left(OptimisticLockFailed()) =>
                 livyClient.killSession(batch.id).flatMap(_ => handleCreate(id))
             }
         }
-      case Left(CreateFailed()) => Future.successful(Session(id))
+      case Left(CreateFailed()) => Future.successful(id)
     }
   }
 
-  private def handleKill(id: Id): Future[KilledResponse] = {
+  private def handleKill(id: Id): Future[Unit] = {
     sessionStorage.get(id).flatMap {
       case None =>
-        Future.successful(KilledResponse())
+        Future.successful(())
       case Some(SessionRow(_, Some(batchId), version)) =>
         livyClient.killSession(batchId).flatMap {
           _ => sessionStorage.delete(id, version).map {
-            _ => KilledResponse()
+            _ => ()
           }
         }
       case Some(SessionRow(_, None, version)) =>
         logger.error(s"Kill request for session in creating state! No Livy session will be killed.")
         sessionStorage.delete(id, version).map {
-          _ => KilledResponse()
+          _ => ()
         }
     }
   }
@@ -108,7 +108,7 @@ class SessionServiceActor @Inject()(
             val livyBatch = livyClient.getSession(batchId)
             livyBatch.flatMap {
               case None =>
-                deleteNonExistingSession(id, batchId, version).map(_ => None)
+                deleteNonExistentSession(id, batchId, version).map(_ => None)
               case Some(batch) =>
                 Future.successful(Some(Session(id, batch)))
             }
@@ -128,7 +128,7 @@ class SessionServiceActor @Inject()(
     }
   }
 
-  private def runningWithoutPurgedDeadSessions(
+  private def purgeNonExistentSessions(
       storedSessions: Future[Map[Id, SessionRow]],
       livySessions: Future[Map[Int, Batch]] ): Future[Seq[Session]] = {
     for {
@@ -139,12 +139,12 @@ class SessionServiceActor @Inject()(
           case SessionRow(id, Some(batchId), version) if batchesMap.contains(batchId) =>
             Future.successful(Some(Session(id, batchesMap.get(batchId).get)))
           case SessionRow(id, Some(batchId), version) if !batchesMap.contains(batchId) =>
-            deleteNonExistingSession(id, batchId, version).map(_ => None)
+            deleteNonExistentSession(id, batchId, version).map(_ => None)
         }.toSeq)
     } yield running.flatten
   }
 
-  private def deleteNonExistingSession(id: Id, batchId: Int, version: Int): Future[DeleteResult] = {
+  private def deleteNonExistentSession(id: Id, batchId: Int, version: Int): Future[DeleteResult] = {
     logger.error(
       s"""Livy's Batch($batchId) for Workflow('$id') does not exist!
           |Removing from storage...""".stripMargin)
@@ -162,8 +162,4 @@ object SessionServiceActor {
   case class KillRequest(id: Id) extends Request
   case class ListRequest() extends Request
   case class CreateRequest(workflowId: Id) extends Request
-
-  sealed trait Response
-  case class KilledResponse() extends Response
-  case class CreationFailureResponse() extends Response
 }

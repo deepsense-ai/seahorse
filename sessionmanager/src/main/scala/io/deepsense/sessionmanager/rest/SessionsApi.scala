@@ -9,9 +9,12 @@ import javax.inject.Named
 import scala.concurrent.ExecutionContext
 
 import com.google.inject.Inject
+import spray.http.StatusCodes
 import spray.routing.{Directives, PathMatchers, Route}
 
+import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
+import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{Cors, RestComponent}
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.service.{Session, SessionService}
@@ -22,11 +25,13 @@ class SessionsApi @Inject() (
 )(implicit ec: ExecutionContext) extends RestComponent
   with Directives
   with Cors
-  with SessionsJsonProtocol {
+  with SessionsJsonProtocol
+  with IdJsonProtocol {
 
   private val sessionsPathPrefixMatcher = PathMatchers.separateOnSlashes(sessionsApiPrefix)
 
   implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
+  implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
 
   override def route: Route = {
     cors {
@@ -44,7 +49,9 @@ class SessionsApi @Inject() (
             }
           } ~
           delete {
-            complete(sessionService.killSession(sessionId))
+            onSuccess(sessionService.killSession(sessionId)) { _ =>
+              complete(StatusCodes.OK)
+            }
           }
         } ~
         pathEndOrSingleSlash {

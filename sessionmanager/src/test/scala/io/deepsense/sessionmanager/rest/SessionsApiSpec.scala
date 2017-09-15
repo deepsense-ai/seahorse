@@ -19,14 +19,14 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
-import io.deepsense.sessionmanager.service.SessionServiceActor.KilledResponse
 import io.deepsense.sessionmanager.service._
 
 class SessionsApiSpec
   extends StandardSpec
     with UnitTestSupport
     with DefaultJsonProtocol
-    with SprayJsonSupport{
+    with SprayJsonSupport
+    with IdJsonProtocol {
   val apiPrefix: String = "sessions"
 
   def testRoute(service: SessionService): Route = {
@@ -51,6 +51,7 @@ class SessionsApiSpec
   }
 
   implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
+  implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
 
   implicit val listSessionsResponseFormat = new RootJsonFormat[ListSessionsResponse] {
     val protocolFormat = SessionsJsonProtocol.listSessionsResponseFormat
@@ -68,7 +69,6 @@ class SessionsApiSpec
   }
 
   implicit val createSessionFormat = SessionsJsonProtocol.createSessionFormat
-  implicit val killedFormat = SessionsJsonProtocol.killResponseFormat
 
   "GET /sessions" should {
     "list all sessions" in {
@@ -133,15 +133,14 @@ class SessionsApiSpec
     "return a session" in {
       val workflowId: Id = Id.randomId
       val sessionStatus: Status.Value = Status.Error
-      val s = session(workflowId, sessionStatus)
+      val s = workflowId
       val service = mock[SessionService]
       when(service.createSession(workflowId)).thenReturn(Future.successful(s))
 
       Post(s"/$apiPrefix", CreateSession(workflowId)) ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
-        val returnedSession = responseAs[Envelope[Session]].content
-        returnedSession.workflowId shouldBe workflowId
-        returnedSession.status shouldBe sessionStatus
+        val returnedSessionId = responseAs[Envelope[Id]].content
+        returnedSessionId shouldBe workflowId
       }
     }
   }
@@ -149,13 +148,11 @@ class SessionsApiSpec
   "DELETE /sessions/:id" should {
     "pass killing request to the service" in {
       val workflowId: Id = Id.randomId
-      val killed: KilledResponse = KilledResponse()
       val service = mock[SessionService]
-      when(service.killSession(workflowId)).thenReturn(Future.successful(killed))
+      when(service.killSession(workflowId)).thenReturn(Future.successful(()))
 
       Delete(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
-        responseAs[KilledResponse] shouldBe killed
         verify(service, times(1)).killSession(workflowId)
       }
     }

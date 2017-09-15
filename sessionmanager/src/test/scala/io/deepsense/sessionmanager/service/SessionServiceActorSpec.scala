@@ -19,7 +19,6 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.service.SessionServiceActor.KilledResponse
 import io.deepsense.sessionmanager.service.livy.Livy
 import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList, BatchState}
 import io.deepsense.sessionmanager.storage.SessionStorage.SessionRow
@@ -44,19 +43,14 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
       "session does not exist" should {
         val livy = mock[Livy]
         val workflowId = Id.randomId
-        val optBatchId@Some(batchId) = Some(5)
+        val Some(batchId) = Some(5)
         val batchStatus = BatchState.Running
-        val expectedStatus = Status.fromBatchStatus(batchStatus)
         when(livy.createSession(workflowId))
           .thenReturn(Future.successful(Batch(batchId, batchStatus)))
         "create a session" in withActor(livy) {
           actor =>
-            val session = askCreate(actor, workflowId)
-            whenReady(session) {
-              case s =>
-                s.workflowId shouldBe workflowId
-                s.optBatchId shouldBe optBatchId
-                s.status shouldBe expectedStatus
+            whenReady(askCreate(actor, workflowId)) {
+              _ shouldBe workflowId
             }
         }
       }
@@ -71,15 +65,15 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
         "not create a new batch session but return existing" in
           withActor(livy, storageWithRows(row)) { actor =>
             whenReady(askCreate(actor, workflowId)) {
-              session =>
-                session.workflowId shouldBe expectedSession.workflowId
+              sessionId =>
+                sessionId shouldBe expectedSession.workflowId
                 verify(livy, never()).createSession(mockito.any())
             }
           }
         "result in one batch in livy" in withActor(livy, storageWithRows(row)) { actor =>
           whenReady(askCreate(actor, workflowId)) {
-            session =>
-              session.workflowId shouldBe expectedSession.workflowId
+            sessionId =>
+              sessionId shouldBe expectedSession.workflowId
               verify(livy, never()).createSession(mockito.any())
           }
         }
@@ -149,23 +143,23 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
               }
           }
         }
-        "return the killed session" in {
+        "return success" in {
           val client = mock[Livy]
           when(client.killSession(mockito.any[Int]())).thenReturn(Future.successful(true))
           withActor(client, storageWithRows(existingSessions: _*)) {
             actor =>
               whenReady(askKill(actor, toKill.workflowId)) {
-                _ shouldBe KilledResponse()
+                _ shouldBe ()
               }
           }
         }
       }
       "session does not exist" should {
-        "return no session" in withActor(mock[Livy], storageWithRows(existingSessions: _*)) {
+        "return success" in withActor(mock[Livy], storageWithRows(existingSessions: _*)) {
           actor =>
             val randomId: Id = Id.randomId
             whenReady(askKill(actor, randomId)) {
-              _ shouldBe KilledResponse()
+              _ shouldBe ()
             }
         }
         "kill no sessions" in {
@@ -227,16 +221,16 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
     (who ? SessionServiceActor.ListRequest()).mapTo[Seq[Session]]
   }
 
-  private def askKill(who: ActorRef, workflowId: Id): Future[KilledResponse] = {
-    (who ? SessionServiceActor.KillRequest(workflowId)).mapTo[KilledResponse]
+  private def askKill(who: ActorRef, workflowId: Id): Future[Unit] = {
+    (who ? SessionServiceActor.KillRequest(workflowId)).mapTo[Unit]
   }
 
   private def askList(who: ActorRef): Future[List[Session]] = {
     (who ? SessionServiceActor.ListRequest()).mapTo[List[Session]]
   }
 
-  private def askCreate(who: ActorRef, workflowId: Id): Future[Session] = {
-    (who ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Session]
+  private def askCreate(who: ActorRef, workflowId: Id): Future[Id] = {
+    (who ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Id]
   }
 
   private def randomRow(withBatch: Boolean = true): SessionRow =

@@ -52,11 +52,10 @@ object SessionStorage {
   case class SetBatchIdSucceeded(newVersion: Int)
   case class DeleteSucceeded()
 
-  object ErrorCode {
+  object ErrorCodes {
     val UniqueViolation = 23505
   }
 
-  def matchesError(ex: java.sql.SQLException, errorCode: Int): Boolean = {
+  def matchesError(ex: java.sql.SQLException, errorCode: Int): Boolean =
     ex.getErrorCode == errorCode
-  }
 }

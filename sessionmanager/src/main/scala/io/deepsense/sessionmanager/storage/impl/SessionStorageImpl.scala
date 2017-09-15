@@ -42,39 +42,45 @@ case class SessionStorageImpl (
   initRows.foreach(store)
 
   override def create(workflowId: Id): Future[CreateResult] = {
-    val version = Random.nextInt()
+    val version = genNewVersion
     val query = sessions += ((workflowId.value, None, version))
     db.run(query).map(a => Right(CreateSucceeded(version))).recover {
-      case ex: SQLException if matchesError(ex, ErrorCode.UniqueViolation) =>
+      case ex: SQLException if matchesError(ex, ErrorCodes.UniqueViolation) =>
         Left(CreateFailed())
     }
   }
 
   override def setBatchId(id: Id, batchId: Int, lastVersion: Int): Future[SetBatchIdResult] = {
-    val newVersion = Random.nextInt()
-    val purge = sessions.filter(s => s.batchId === batchId).delete
+    val newVersion = genNewVersion
     val query =
       (for {
-        s <- sessions if s.id === id.value && s.version === lastVersion
-      } yield (s.batchId, s.version)).update(Some(batchId), newVersion)
-    db.run(purge).flatMap(d => {
-      if (d != 0) logger.error(s"Purged non existing livy session $batchId")
-      db.run(query).map {
-        case 1 => Right(SetBatchIdSucceeded(newVersion))
-        case 0 => Left(OptimisticLockFailed())
-      }
-    })
+        toPurge <- selectByBatchId(batchId).result
+        _ <- selectByBatchId(batchId).delete
+        updatedRows <- optimisticBatchIdUpdate(id.value, batchId, lastVersion, newVersion)
+      } yield (updatedRows, toPurge)).transactionally
+    db.run(query).map {
+      case (numUpdatedRows, purgedRows) =>
+        purgedRows.foreach {
+          case (purgedId, Some(`batchId`), version) => logger.error(
+            s"""Purged workflowdId=$id because of livy session batchId=$batchId duplication.
+               |New WorkflowId=$Id.""".stripMargin)
+        }
+        numUpdatedRows match {
+          case 1 => Right(SetBatchIdSucceeded(newVersion))
+          case 0 => Left(OptimisticLockFailed())
+        }
+    }
   }
 
   override def get(id: Id): Future[Option[SessionRow]] = {
-    db.run(sessions.filter(s => s.id === id.value).result).map {
+    db.run(selectById(id).result).map {
       case Seq() => None
       case Seq((_, batchId, version)) => Some(SessionRow(id, batchId, version))
     }
   }
 
-  override def delete(id: Id, version: Int): Future[DeleteResult] = {
-    val query = for { s <- sessions if s.id === id.value && s.version === version } yield s
+  override def delete(id: Id, lastVersion: Int): Future[DeleteResult] = {
+    val query = selectById(id, lastVersion)
     db.run(query.delete).map {
       case 1 => Right(DeleteSucceeded())
       case 0 => Left(OptimisticLockFailed())
@@ -93,6 +99,21 @@ case class SessionStorageImpl (
       sessions += ((sessionRow.workflowId.value, sessionRow.optBatchId, sessionRow.version))
     db.run(query).map(_ => ())
   }
+
+  private def genNewVersion: Int = Random.nextInt()
+
+  // Queries
+  private def optimisticBatchIdUpdate(id: Id, batchId: Int, lastVersion: Int, newVersion: Int) =
+    selectById(id, lastVersion).update(id.value, Some(batchId), newVersion)
+
+  private def selectById(id: Id) =
+    sessions.filter(_.id === id.value)
+
+  private def selectById(id: Id, lastVersion: Int) =
+    sessions.filter(s => s.id === id.value && s.version === lastVersion)
+
+  private def selectByBatchId(batchId: Int) =
+    sessions.filter(_.batchId === batchId)
 
   val WorkflowId = "id"
   val BatchId = "batch_id"

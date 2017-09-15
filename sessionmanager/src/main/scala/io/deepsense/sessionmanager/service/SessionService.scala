@@ -16,7 +16,6 @@ import com.google.inject.name.Named
 
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
-import io.deepsense.sessionmanager.service.SessionServiceActor.KilledResponse
 
 class SessionService @Inject() (
   @Named("SessionService.Actor") private val serviceActor: ActorRef,
@@ -29,8 +28,8 @@ class SessionService @Inject() (
     (serviceActor ? SessionServiceActor.GetRequest(workflowId)).mapTo[Option[Session]]
   }
 
-  def createSession(workflowId: Id): Future[Session] = {
-    (serviceActor ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Session]
+  def createSession(workflowId: Id): Future[Id] = {
+    (serviceActor ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Id]
   }
 
   def listSessions(): Future[ListSessionsResponse] = {
@@ -39,7 +38,7 @@ class SessionService @Inject() (
       .map(ListSessionsResponse)
   }
 
-  def killSession(workflowId: Id): Future[KilledResponse] = {
-    (serviceActor ? SessionServiceActor.KillRequest(workflowId)).mapTo[KilledResponse]
+  def killSession(workflowId: Id): Future[Unit] = {
+    (serviceActor ? SessionServiceActor.KillRequest(workflowId)).mapTo[Unit]
   }
 }
