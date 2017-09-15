@@ -12,7 +12,7 @@ Depending on set parameters inner, outer, left outer or right outer join operati
 
 Creates a new `DataFrame` that consists of the values from all the columns of the left `DataFrame`
 and the columns not used in the join conditions from the right `DataFrame`.
-Two rows match when the all of equality conditions created by ``join columns`` are satisfied.
+Two rows match when all of the equality conditions created by ``join columns`` are satisfied.
 That is, the values in the rows are equal. The order of the columns is preserved.
 
 The operation joins two `DataFrames` by the column pairs given in ``join columns`` parameter.
@@ -23,7 +23,7 @@ a ``WrongColumnTypeException`` is thrown.
 
 If values of ``left prefix`` and/or ``right prefix`` are provided,
 the columns in the output `DataFrame` are renamed by prepending the prefix
-proper for the table, which they come from.
+proper for the table they come from.
 
 If the columns' names in the resulting `DataFrame` are not to be unique,
 random strings will be appended to them.
@@ -68,8 +68,9 @@ random strings will be appended to them.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The DataFrame containing all the columns of the left DataFrame and the columns
-   of the right DataFrame not used in join condition (in <code>join columns</code> parameter).</td>
+<td>The <code>DataFrame</code> containing all the columns of the left <code>DataFrame</code> and the
+   columns of the right <code>DataFrame</code> not used in join condition
+   (in <code>join columns</code> parameter).</td>
 </tr>
 </tbody>
 </table>
@@ -97,10 +98,10 @@ random strings will be appended to them.
 <td><code id="join-columns">join columns</code></td>
 <td><code><a href="../parameter_types.html#parameters-sequence">Parameters Sequence</a></code></td>
 <td>The sequence of column pairs (<code>left column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>,
-   <code>right column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>) defining condition for the JOIN operation.
-   Empty join condition is not supported and exception <code>ColumnDoesNotExistException</code> is thrown.
+   <code>right column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>) defining the condition for the JOIN operation.
+   Empty join condition is not supported and <code>ColumnDoesNotExistException</code> is thrown.
    When a column selected by name or by index does not exist, <code>ColumnDoesNotExistException</code> is thrown.
-   When the type of columns to JOIN upon in two DataFrames do not match,
+   When the type of columns to JOIN upon in the two <code>DataFrames</code> do not match,
    <code>WrongColumnTypeException</code> is thrown.</td>
 </tr>
 <tr>

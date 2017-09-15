@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 
 Executes a Python function provided by the user on a `DataFrame` connected to its input port.
-Returns result of the Python function as a `DataFrame`.
+Returns the result of the Python function as a `DataFrame`.
 
 The function that will be executed must:
 
@@ -61,7 +61,7 @@ def transform(dataframe):
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The return value of <code>transform</code> function.</td>
+<td>The return value of the <code>transform</code> function.</td>
 </tr>
 </tbody>
 </table>
@@ -80,7 +80,8 @@ def transform(dataframe):
 <tr>
 <td><code>code</code></td>
 <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
-<td>The Python code to be executed. It has to contain Python function complying to signature presented in the operation's description.</td>
+<td>The Python code to be executed. It has to contain a Python function complying to signature
+presented in the operation's description.</td>
 </tr>
 </tbody>
 </table>

@@ -8,14 +8,14 @@ includeOperationsMenu: true
 ---
 
 Extracts parts of a timestamp from a specified timestamp column to new columns.
-For example: given the timestamp column ``'Birthdate'`` when extracting year part, a new
+For example: given the timestamp column ``'Birthdate'`` when extracting the year part, a new
 column named ``year`` of type `Numeric` will be created.
 
-If the value for parameter ``prefix`` is provided it will be prepended to
+If the value for parameter ``prefix`` is provided it will be prepended to the
 generated columns' names, according to the pattern: ``prefix + timestampPartName``.
 
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
-to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
+to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
@@ -58,7 +58,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>The <code>transformer</code> that allows to apply the operation on another DataFrame using
+<td>The <code>transformer</code> that allows to apply the operation on another DataFrame using a
 <a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
@@ -79,9 +79,9 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <td><code>timestamp column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>One of the <code>DataFrame</code> columns.
-   If the column selected by the user has a type other than <code>Timestamp</code>, <code>WrongColumnTypeException</code>
-   will be thrown.
-   If a selected column does not exist, the <code>ColumnDoesNotExistException</code> will be thrown.</td>
+   If the column selected by the user has a type other than <code>Timestamp</code>,
+   <code>WrongColumnTypeException</code> will be thrown.
+   If the selected column does not exist, a <code>ColumnDoesNotExistException</code> will be thrown.</td>
 </tr>
 <tr>
 <td><code>parts</code></td>
@@ -94,7 +94,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>An optional prefix for the created columns.
    If provided, names of the generated columns will match the <code>prefix + timestampPartName</code> pattern,
-   otherwise names will match a <code>timestampPartName</code> pattern.</td>
+   otherwise names will match the <code>timestampPartName</code> pattern.</td>
 </tr>
 </tbody>
 </table>

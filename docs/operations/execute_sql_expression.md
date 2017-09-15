@@ -7,11 +7,11 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes a Spark SQL expression provided by the user on a `DataFrame` connected to its input port.
-Returns the results of the execution as a `DataFrame`.
+Executes a Spark SQL expression provided by the user on a [DataFrame](../classes/dataframe.html)
+connected to its input port. Returns the results of the execution as a `DataFrame`.
 
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
-to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.html) operation.
+to another `DataFrame` with a [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
@@ -53,8 +53,8 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
 <tr>
 <td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td><code>Transformer</code> that allows to apply the operation on another <code>DataFrames</code> using
-<a href="transform.html">Transform</a>.</td>
+<td>A <code>Transformer</code> that allows to apply the operation to another <code>DataFrames</code>
+using a <a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -73,7 +73,7 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
 <tr>
 <td><code>dataframe id</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The identifier that can be used in the SQL expression to refer the input <code>DataFrame</code>.</td>
+<td>The identifier that can be used in the SQL expression to refer to the input <code>DataFrame</code>.</td>
 </tr>
 <tr>
 <td><code>expression</code></td>

@@ -8,8 +8,8 @@ includeOperationsMenu: true
 ---
 
 Creates a [DataFrame](../classes/dataframe.html) containing only rows satisfying given condition.
-Condition should be simple SQL condition (as used in `WHERE` condition).
-Order of the columns is preserved.
+The condition should be a simple SQL condition (as used in `WHERE` condition).
+The order of the columns is preserved.
 
 Also returns a [Transformer](../classes/transformer.html) that can be later applied
 to another [DataFrame](../classes/dataframe.html) using a [Transform](transform.html) operation.
@@ -75,7 +75,7 @@ a <a href="transform.html">Transform</a>.</td>
 <td><code>condition</code></td>
 <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
 <td>The filtering condition. Rows not satisfying given condition will be excluded from output
-DataFrame. It should be simple SQL condition (as used in <code>WHERE</code> condition).</td>
+DataFrame. It should be a simple SQL condition (as used in <code>WHERE</code> condition).</td>
 </tr>
 </tbody>
 </table>

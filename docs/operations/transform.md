@@ -36,7 +36,7 @@ operation can be supplied to `Transform` with a [DataFrame](../classes/dataframe
 <tr>
 <td><code>1</code></td>
 <td><code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>The <code>Transformer</code> to applied on the input <code>DataFrame</code>.</td>
+<td>The <code>Transformer</code> to be applied on the input <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>

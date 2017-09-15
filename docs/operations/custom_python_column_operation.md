@@ -7,16 +7,17 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes a Python function provided by the user on a column (columns) of DataFrame connected to its input port.
-Returns result of Python function execution as a DataFrame and CustomPythonColumnOperationTransformer.
+Executes a Python function provided by the user on a column (columns) of the
+[DataFrame](../classes/dataframe.html) connected to its input port. Returns the result of the Python
+function execution as a `DataFrame` and a [Transformer](../classes/transformer.html).
 
 The function that will be executed has to:
 
-* have name <code>transform_value</code>,
+* be named <code>transform_value</code>,
 
-* take exactly two arguments: value to be transformed and the name of column currently being transformed,
+* take exactly two arguments: the value to be transformed and the name of column currently being transformed,
 
-* return transformed value that conforms with selected target type (parameter).
+* return the transformed value that conforms to the selected target type (parameter).
 
 The function is applied to the input `DataFrame` in parallel for better performance.
 
@@ -43,7 +44,7 @@ def transform_value(value, column_name):
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>DataFrame to be transformed.</td>
+<td>The <code>DataFrame</code> to be transformed.</td>
 </tr>
 </tbody>
 </table>
@@ -62,12 +63,13 @@ def transform_value(value, column_name):
     <tr>
       <td><code>0</code></td>
       <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-      <td>Output DataFrame</td>
+      <td>The output <code>DataFrame</code>.</td>
     </tr>
     <tr>
       <td><code>1</code></td>
       <td><code><a href="../classes/transformer.html">Transformer</a></code></td>
-      <td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td>
+      <td>A <code>Transformer</code> that allows to apply the operation on other
+      <code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td>
     </tr>
 </tbody>
 </table>
@@ -87,13 +89,15 @@ def transform_value(value, column_name):
 <tr>
   <td><code>code</code></td>
   <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
-  <td>The Python code to be executed. It has to contain Python function complying to signature presented in the operation's description.</td>
+  <td>The Python code to be executed. It has to contain a Python function complying to the signature
+  presented in the operation's description.</td>
 </tr>
 
 <tr>
   <td><code>target type</code></td>
   <td><code><a href="../parameter_types.html#single-choice">Choice</a></code></td>
-  <td>Target type of the conversion. Possible values are: <code>[String, Boolean, Timestamp, Double, Float, Long, Integer, Vector]</code>.</td>
+  <td>The target type of the conversion. Possible values are:
+  <code>[String, Boolean, Timestamp, Double, Float, Long, Integer, Vector]</code>.</td>
 </tr>
 
 <tr>

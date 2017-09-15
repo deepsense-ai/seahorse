@@ -9,7 +9,7 @@ includeOperationsMenu: true
 
 Applies a mathematical formula to a [DataFrame](../classes/dataframe.html) and produces
 a [Transformer](../classes/transformer.html) that represents the mathematical formula.
-Later on, the `Transformer` can be applied to a [DataFrame](../classes/dataframe.html)
+Later on, the `Transformer` can be applied to another [DataFrame](../classes/dataframe.html)
 with a [Transform](transform.html) operation.
 
 
@@ -53,8 +53,8 @@ with a [Transform](transform.html) operation.
 <tr>
 <td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>The <code>transformer</code> that allows to apply the operation on another <code>DataFrame</code> using
-<code><a href="transform.html">Transform</a></code>.</td>
+<td>The <code>transformer</code> that allows to apply the operation to another <code>DataFrame</code>
+using a <code><a href="transform.html">Transform</a></code>.</td>
 </tr>
 </tbody>
 </table>
@@ -112,7 +112,7 @@ Only one column can be created - an expression ``SIN(someColumn), COS(someColumn
 will not be parsed properly.
 
 ``null`` values are propagated. The expression ``POW(SIN(score), 2.0) + 1.0``
-will return null for rows containing null values in ``score`` column.
+will return ``null`` for rows containing ``null`` values in the **score** column.
 
 Available functions and operators:
 

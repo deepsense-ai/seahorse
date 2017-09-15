@@ -54,8 +54,8 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
 <tr>
 <td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>The <code>Transformer</code> that allows to apply the operation on other <code>DataFrames</code> using the
-<a href="transform.html">Transform</a>.</td>
+<td>The <code>Transformer</code> that allows to apply the operation on other <code>DataFrames</code>
+using the <a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -75,13 +75,12 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
 <td><code>columns</code></td>
 <td><code><a href="../parameter_types.html#multiple-column-selector">MultipleColumnSelector</a></code></td>
 <td>The columns to be included in the output <code>DataFrame</code>.
-Even if one of the columns is selected more than once (eg. by name and by type)
-it will be included only once. Empty selection is supported, but when a column selected by name
-or by index does not exist the operation will fail at runtime with <code>ColumnsDoNotExistException</code>.
+Even if one of the columns is selected more than once (e.g. by name and by type)
+it will be included only once. An empty selection is supported, but when a column selected by name
+or by index does not exist, the operation will fail at runtime with <code>ColumnsDoNotExistException</code>.
 </td>
 </tr>
 </tbody>
 </table>
 
 {% markdown operations/examples/FilterColumns.md %}
-
