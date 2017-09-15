@@ -28,11 +28,11 @@ assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 assign(".sparkRsession", SparkR:::callJMethod(entryPoint, "getNewSparkSession"), envir = SparkR:::.sparkREnv)
 assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 
-
-spark <- sparkR.session()
-
 sdf <- SparkR:::callJMethod(entryPoint, "retrieveInputDataFrame", workflowId, nodeId, as.integer(0))
-df <- createDataFrame(SparkR:::toRDD(SparkR:::dataFrame(sdf, isCached = FALSE)))
+df <- SparkR:::dataFrame(SparkR:::callJMethod(spark,
+                                              "createDataFrame",
+                                              SparkR:::callJMethod(sdf, "rdd"),
+                                              SparkR:::callJMethod(sdf, "schema")))
 
 tryCatch({
   eval(parse(text = code))
