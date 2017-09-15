@@ -79,14 +79,10 @@ Then we will apply a simple transformation to the data.
   from the top menu. It will start up an Apache Spark backend for your workflow session.
 
 * Read some data into Seahorse:
-  * Drag **Read Dataframe** from the left-hand side panel onto the canvas.
-  * Click on the dragged **Read Dataframe** and change its parameters using the right-hand side panel.
-    Set `source` parameter to
-    <code>https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv</code>
-
-<!--This screen is needed because 'Library' icon visually separates `SOURCE` -->
-<!-- and text input and it can be hard for user to know at once where should he input the text -->
-<img class="align-left img-responsive bordered-image" style="width:300px; height:auto" src="./img/getting_started/source_param.png" />
+  * Drag and drop a `Node` from the toolbox on the left to the canvas, or just right-click on the canvas.
+  * Select `Input/Output` > `Read DataFrame` from the operation selector.
+  * Click on the created `Read Dataframe`. You can set its parameters on the right-hand side panel.
+    Select the `transactions.csv` data source.
 
 * Run the operation by clicking the
   <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/run.png" />
@@ -106,8 +102,8 @@ Then we will apply a simple transformation to the data.
 
 In the next step you will apply a simple transformation to your data.
 
-* Drag a `Filter Columns` operation onto the canvas.
-* Drag the Dataframe produced by the `Read Dataframe` operation to the `Filter Columns` operation.
+* Drag an edge from the output port of the `Read DataFrame`.
+* Select `Filter Columns` operation from the operation selector.
 
 <img class="align-left img-responsive" style="width:250px; height:auto" src="./img/getting_started/dragging_dataframe.png" />
 
