@@ -1,6 +1,9 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Created by: Grzegorz Swatowski
  */
+
 'use strict';
 
 describe('Numeric range validator', () => {
@@ -18,30 +21,96 @@ describe('Numeric range validator', () => {
     expect(validator.validate).toEqual(jasmine.any(Function));
   });
 
-  it('does not validate the value which does not belong to the interior of the range', () => {
-    let validator = new NumericRangeValidator({
-      'type': 'range',
-      'configuration': {
-        'begin': 41,
-        'end': 43
-      }
-    });
-
-    expect(validator.validate(40)).toBe(false);
-    expect(validator.validate(44)).toBe(false);
-  });
-
-  describe('validates the value which belongs to the interior of the range', () => {
-    it('', () => {
+  describe('does not validate the value which does not belong to the interior of the range', () => {
+    it('. The interval is bounded on both sides.', () => {
       let validator = new NumericRangeValidator({
         'type': 'range',
         'configuration': {
           'begin': 41,
-          'end': 43
+          'end': 43,
+          'step': null
+        }
+      });
+
+      expect(validator.validate(40)).toBe(false);
+      expect(validator.validate(44)).toBe(false);
+    });
+
+    it('. The interval is bounded on the left side and unbounded on the right side', () => {
+      let validator = new NumericRangeValidator({
+        'type': 'range',
+        'configuration': {
+          'begin': 41,
+          'end': null,
+          'step': null
+        }
+      });
+
+      expect(validator.validate(-100)).toBe(false);
+      expect(validator.validate(0)).toBe(false);
+      expect(validator.validate(40)).toBe(false);
+    });
+
+    it('. The interval is unbounded on the left side and bounded on the right side', () => {
+      let validator = new NumericRangeValidator({
+        'type': 'range',
+        'configuration': {
+          'begin': null,
+          'end': 100,
+          'step': null
+        }
+      });
+
+      expect(validator.validate(101)).toBe(false);
+      expect(validator.validate(110)).toBe(false);
+      expect(validator.validate(1000000)).toBe(false);
+    });
+  });
+
+  describe('validates the value which belongs to the interior of the range', () => {
+    it('. The interval is bounded on both sides.', () => {
+      let validator = new NumericRangeValidator({
+        'type': 'range',
+        'configuration': {
+          'begin': 41,
+          'end': 43,
+          'step': null
+        }
+      });
+
+      expect(validator.validate(41.5)).toBe(true);
+      expect(validator.validate(42)).toBe(true);
+      expect(validator.validate(42.63929)).toBe(true);
+    });
+
+    it('. The interval is bounded on the left side and unbounded on the right side', () => {
+      let validator = new NumericRangeValidator({
+        'type': 'range',
+        'configuration': {
+          'begin': 41,
+          'end': null,
+          'step': null
         }
       });
 
       expect(validator.validate(42)).toBe(true);
+      expect(validator.validate(50)).toBe(true);
+      expect(validator.validate(40000)).toBe(true);
+    });
+
+    it('. The interval is unbounded on the left side and bounded on the right side', () => {
+      let validator = new NumericRangeValidator({
+        'type': 'range',
+        'configuration': {
+          'begin': null,
+          'end': 100,
+          'step': null
+        }
+      });
+
+      expect(validator.validate(-101)).toBe(true);
+      expect(validator.validate(-1)).toBe(true);
+      expect(validator.validate(99)).toBe(true);
     });
 
     it('and additionally is a multiple of the step', () => {
@@ -74,7 +143,8 @@ describe('Numeric range validator', () => {
         'begin': 41,
         'end': 43,
         'beginIncluded': false,
-        'endIncluded': false
+        'endIncluded': false,
+        'step': null
       }
     });
 
@@ -89,7 +159,8 @@ describe('Numeric range validator', () => {
         'begin': 41,
         'end': 43,
         'beginIncluded': true,
-        'endIncluded': true
+        'endIncluded': true,
+        'step': null
       }
     });
 

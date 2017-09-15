@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Grzegorz Swatowski
+ * Created by: Grzegorz Swatowski
  */
 
 'use strict';
@@ -23,49 +23,78 @@ NumericRangeValidator.prototype.validate = function(value) {
     let rangeEnd = this.schema.configuration.end;
     let step = this.schema.configuration.step;
 
-    if (value < rangeBegin || value > rangeEnd) {
-      return false;
-    } else if (value === rangeBegin) {
-      return this.schema.configuration.beginIncluded;
-    } else if (value === rangeEnd) {
-      return this.schema.configuration.endIncluded;
-    } else {
-      if (!step) {
-        return true;
+    let beginIncluded = this.schema.configuration.beginIncluded;
+    let endIncluded = this.schema.configuration.endIncluded;
+
+    /* checks whether |v - boundary| is a multiple of step */
+    let isMultipleOfStep = (v, boundary) => {
+      /* returns the length of the decimal part of the number */
+      let getLengthOfDecimalPart = (num) => {
+        let numStr = num.toString();
+        let commaPos = numStr.indexOf('.');
+        return commaPos === -1 ? -1 : numStr.length - commaPos - 1;
+      };
+
+      /* returns num * 10^power */
+      let getMultipliedNumber = (num, power) => {
+        let lengthOfDecimalPart = getLengthOfDecimalPart(num);
+        let multipliedNumberStr = num.toString().replace('.', '').concat(_.repeat('0', power - lengthOfDecimalPart));
+        return parseInt(multipliedNumberStr, 10);
+      };
+
+      let valueDecLength = getLengthOfDecimalPart(v);
+      let boundaryDecLength = getLengthOfDecimalPart(boundary);
+      let stepDecLength = getLengthOfDecimalPart(step);
+      let maxDecLength = Math.max.call(null, valueDecLength, boundaryDecLength, stepDecLength);
+
+      if (maxDecLength === -1) {
+        return Math.abs(v - boundary) % step === 0;
       } else {
-        /*
-         * (value - rangeBegin) needs to be a multiple of step
-         */
+        let multipliedValue = getMultipliedNumber(v, maxDecLength);
+        let multipliedBoundary = getMultipliedNumber(boundary, maxDecLength);
+        let multipliedStep = getMultipliedNumber(step, maxDecLength);
 
-        /* returns the length of the decimal part of the number */
-        let getLengthOfDecimalPart = (num) => {
-          let numStr = num.toString();
-          let commaPos = numStr.indexOf('.');
-          return commaPos === -1 ? -1 : numStr.length - commaPos - 1;
-        };
-
-        /* returns num * 10^power */
-        let getMultipliedNumber = (num, power) => {
-          let lengthOfDecimalPart = getLengthOfDecimalPart(num);
-          let multipliedNumberStr = num.toString().replace('.', '').concat(_.repeat('0', power - lengthOfDecimalPart));
-          return parseInt(multipliedNumberStr, 10);
-        };
-
-        let valueCommaPos = getLengthOfDecimalPart(value);
-        let rangeBeginCommaPos = getLengthOfDecimalPart(rangeBegin);
-        let stepCommaPos = getLengthOfDecimalPart(step);
-        let maxCommaPos = Math.max.call(null, valueCommaPos, rangeBeginCommaPos, stepCommaPos);
-
-        if (maxCommaPos === -1) {
-          return (value - rangeBegin) % step === 0;
-        } else {
-          let multipliedValue = getMultipliedNumber(value, maxCommaPos);
-          let multipliedRangeBegin = getMultipliedNumber(rangeBegin, maxCommaPos);
-          let multipliedStep = getMultipliedNumber(step, maxCommaPos);
-
-          return (multipliedValue - multipliedRangeBegin) % multipliedStep === 0;
-        }
+        return Math.abs(multipliedValue - multipliedBoundary) % multipliedStep === 0;
       }
+    };
+    let belongsToLeftInfiniteRightBoundedInterval = (v, rB) => {
+      if (v === rB) {
+        return endIncluded;
+      } else {
+        return _.isNull(step) ?
+          v < rB :
+          isMultipleOfStep(v, rB);
+      }
+    };
+    let belongsToLeftBoundedRightInfiniteInterval = (lB, v) => {
+      if (v === lB) {
+        return beginIncluded;
+      } else {
+        return _.isNull(step) ?
+          lB < v :
+          isMultipleOfStep(v, lB);
+      }
+    };
+    let belongsToBoundedInterval = (lB, v, rB) => {
+      if (v === lB) {
+        return beginIncluded;
+      } else if (v === rB) {
+        return endIncluded;
+      } else {
+        return _.isNull(step) ?
+          (lB < v) && (v < rB) :
+          isMultipleOfStep(v, lB);
+      }
+    };
+
+    if (_.isNull(rangeBegin) && _.isNull(rangeEnd)) {
+      return true;
+    } else if (_.isNull(rangeBegin)) {
+      return belongsToLeftInfiniteRightBoundedInterval(value, rangeEnd);
+    } else if (_.isNull(rangeEnd)) {
+      return belongsToLeftBoundedRightInfiniteInterval(rangeBegin, value);
+    } else {
+      return belongsToBoundedInterval(rangeBegin, value, rangeEnd);
     }
   }
 };

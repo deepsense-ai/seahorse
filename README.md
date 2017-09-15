@@ -36,7 +36,3 @@ RESULT
 `npm run start` to build the project and start watchers
 
 `npm run test` to run tests.
-
-### Version
-
-0.0.9

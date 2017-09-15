@@ -31,15 +31,15 @@ module.exports = function (config) {
 
         browsers: ['PhantomJS'],
 
-        reporters: ['progress','coverage'],
+        reporters: ['progress', 'coverage'],
 
         preprocessors: {
-            'src/**/*.js': ['browserify','coverage']
+            'src/**/*.js': ['browserify', 'coverage']
         },
 
         browserify: {
             debug: true,
-            transform: ['browserify-shim', 'babelify','browserify-istanbul']
+            transform: ['browserify-shim', 'babelify', 'browserify-istanbul']
         },
 
         junitReporter: {
