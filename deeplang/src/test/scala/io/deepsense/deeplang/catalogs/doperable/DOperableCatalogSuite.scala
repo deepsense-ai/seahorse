@@ -64,6 +64,17 @@ object TraitInheritance {
   trait S3 extends A1 with S1 with S2
 }
 
+object MixinInheritance {
+  trait P extends DOperable
+
+  trait TrA extends DOperable
+  trait TrB extends DOperable
+  class OpC extends DOperable
+
+  class OpA extends TrA with P
+  class OpB extends TrB with P
+}
+
 class DOperableCatalogSuite extends FunSuite with Matchers {
 
   def testGettingSubclasses[T <: DOperable : ru.TypeTag](
@@ -169,19 +180,14 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
     h.registerDOperable[AuxiliaryParameterless]()
   }
 
-  test("Registering hierarchy with trait extending class should produce exception") {
-    intercept[TraitInheritingFromClassException] {
-      import io.deepsense.deeplang.catalogs.doperable.TraitInheritance._
-      val h = new DOperableCatalog
-      h.registerDOperable[C2]()
-    }
-  }
-
-  test("Registering trait extending class should produce exception") {
-    intercept[TraitInheritingFromClassException] {
-      import io.deepsense.deeplang.catalogs.doperable.TraitInheritance._
-      val h = new DOperableCatalog
-      h.registerDOperable[S3]()
-    }
+  test("It is possible to register a trait that extends a class") {
+    import io.deepsense.deeplang.catalogs.doperable.MixinInheritance._
+    val h = new DOperableCatalog
+    h.registerDOperable[OpB]()
+    h.registerDOperable[OpA]()
+    val subclasses = h.concreteSubclassesInstances[P]
+    assert(subclasses.size == 2)
+    assert(subclasses.exists(x => x.isInstanceOf[OpA]))
+    assert(subclasses.exists(x => x.isInstanceOf[OpB]))
   }
 }

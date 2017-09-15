@@ -48,7 +48,7 @@ trait SparkOperationsExtractor {
         e.estimator match {
           case (se: SparkEstimatorWrapper[_, _, _]) =>
             Some(se.sparkEstimator.getClass.getCanonicalName)
-          case (se: SparkMultiColumnEstimatorWrapper[_, _, _, _, _]) =>
+          case (se: SparkMultiColumnEstimatorWrapper[_, _, _, _, _, _]) =>
             Some(se.sparkEstimatorWrapper.getClass.getCanonicalName)
           case (ses: SimpleSparkEstimatorWrapper[_, _]) =>
             Some(ses.sparkEstimator.getClass.getCanonicalName)
@@ -62,7 +62,7 @@ trait SparkOperationsExtractor {
         }
       case es: (EstimatorAsOperation[_, _]) =>
         es.estimator match {
-          case (ses: SparkMultiColumnEstimatorWrapper[_, _, _, _, _]) =>
+          case (ses: SparkMultiColumnEstimatorWrapper[_, _, _, _, _, _]) =>
             Some(ses.sparkEstimatorWrapper.getClass.getCanonicalName)
           case (ses: SparkEstimatorWrapper[_, _, _]) =>
             Some(ses.sparkEstimator.getClass.getCanonicalName)

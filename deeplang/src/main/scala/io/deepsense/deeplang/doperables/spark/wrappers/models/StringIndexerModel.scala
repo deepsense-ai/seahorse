@@ -18,16 +18,19 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
-import io.deepsense.deeplang.doperables.MultiColumnModel
-import io.deepsense.deeplang.doperables.report.Report
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.SingleStringIndexerModel
+import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
+import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.{MultiColumnModel, SparkSingleColumnModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
-case class StringIndexerModel()
+trait StringIndexerModel extends Transformer
+
+case class MultiColumnStringIndexerModel()
   extends MultiColumnModel[
     SparkStringIndexerModel,
     SparkStringIndexer,
-    SingleStringIndexerModel]{
+    SingleColumnStringIndexerModel]
+  with StringIndexerModel {
 
   override def getSpecificParams: Array[Param[_]] = Array()
 
@@ -40,3 +43,23 @@ case class StringIndexerModel()
           seqTables.foldRight(accReport)((t, r) => r.withAdditionalTable(t)))
   }
 }
+
+class SingleColumnStringIndexerModel
+  extends SparkSingleColumnModelWrapper[SparkStringIndexerModel, SparkStringIndexer]
+  with StringIndexerModel {
+
+  override def getSpecificParams: Array[Param[_]] = Array()
+
+  override def report: Report = {
+    val summary =
+      List(
+        SparkSummaryEntry(
+          name = "labels",
+          value = model.labels,
+          description = "Ordered list of labels, corresponding to indices to be assigned."))
+
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
+}
+

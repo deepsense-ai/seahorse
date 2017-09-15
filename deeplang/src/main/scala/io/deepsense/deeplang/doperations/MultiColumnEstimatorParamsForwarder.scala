@@ -16,10 +16,10 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.doperables.{Transformer, MultiColumnEstimator}
+import io.deepsense.deeplang.doperables.MultiColumnEstimator
 
-trait MultiColumnEstimatorParamsForwarder[E <: MultiColumnEstimator[Transformer, _, _]] {
-  self: EstimatorAsOperation[E, Transformer] =>
+trait MultiColumnEstimatorParamsForwarder[E <: MultiColumnEstimator[_, _, _]] {
+  self: EstimatorAsOperation[E, _] =>
 
   def setSingleColumn(inputColumnName: String, outputColumnName: String): this.type = {
     estimator.setSingleColumn(inputColumnName, outputColumnName)

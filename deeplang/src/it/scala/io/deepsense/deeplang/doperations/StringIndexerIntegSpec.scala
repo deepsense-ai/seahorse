@@ -18,17 +18,16 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types._
 
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.SingleStringIndexerModel
-import io.deepsense.deeplang.doperables.spark.wrappers.models.StringIndexerModel
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.MultiColumnNoInPlace
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{YesInPlaceChoice, NoInPlaceChoice}
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{SingleColumnStringIndexerModel, MultiColumnStringIndexerModel}
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.StringIndexer
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import io.deepsense.deeplang.{UnitSpec, DKnowledge, DOperable, DeeplangIntegTestSupport}
+import io.deepsense.deeplang.{DKnowledge, DOperable, DeeplangIntegTestSupport, UnitSpec}
 
 class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
 
@@ -38,8 +37,8 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
       transformerKnowledge: DKnowledge[Transformer],
       inputColumn: Option[String],
       outputColumn: Option[String]): Unit = {
-    val t = validateSingleType[SingleStringIndexerModel](
-      transformerKnowledge.asInstanceOf[DKnowledge[SingleStringIndexerModel]])
+    val t = validateSingleType[SingleColumnStringIndexerModel](
+      transformerKnowledge.asInstanceOf[DKnowledge[SingleColumnStringIndexerModel]])
 
     val choice = singleColumnStringIndexerParams(inputColumn, outputColumn)
     val choiceParamMap = choice.extractParamMap()
@@ -52,8 +51,8 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
     transformerKnowledge: DKnowledge[Transformer],
     inputColumn: Option[String],
     outputColumn: Option[String]): Unit = {
-    val t = validateSingleType[StringIndexerModel](
-      transformerKnowledge.asInstanceOf[DKnowledge[StringIndexerModel]])
+    val t = validateSingleType[MultiColumnStringIndexerModel](
+      transformerKnowledge.asInstanceOf[DKnowledge[MultiColumnStringIndexerModel]])
 
     val choice = multiColumnStringIndexerParams(inputColumn, outputColumn)
     val choiceParamMap = choice.extractParamMap()

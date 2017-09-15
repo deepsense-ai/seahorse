@@ -26,22 +26,43 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColum
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
+/**
+ * SparkMultiColumnEstimatorWrapper represents an estimator that is backed up by a Spark estimator.
+ * The wrapped estimator (and it's model) must operate on a single column.
+ * SparkMultiColumnEstimatorWrapper allows to create (basing on a Spark estimator) an estimator that
+ * is capable of working on both single columns and multiple columns. Depending on the mode it
+ * returns different types of models (SingleColumnModel or MultiColumnModel). Both of the returned
+ * models have to have a common ancestor ("the parent model").
+ * @param ev1 Evidence that the single column model is a subclass of the parent model.
+ * @param ev2 Evidence that the multi column model is a subclass of the parent model.
+ * @tparam MD Spark model used in Single- and MultiColumnModel.
+ * @tparam E The wrapped Spark estimator.
+ * @tparam MP A common ancestor of the single and multi column models
+ *            produced by the SparkMultiColumnEstimatorWrapper.
+ * @tparam SMW Type of the model returned when the estimator is working on a single column.
+ * @tparam EW Type of the single column estimator.
+ * @tparam MMW Type of the model returned when the estimator is working on multiple columns.
+ */
 abstract class SparkMultiColumnEstimatorWrapper[
   MD <: ml.Model[MD]  { val outputCol: ml.param.Param[String] },
   E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
-  MW <: SparkSingleColumnModelWrapper[MD, E],
-  EW <: SparkSingleColumnEstimatorWrapper[MD, E, MW],
-  MMW <: MultiColumnModel[MD, E, MW]]
-(implicit val modelWrapperTag: TypeTag[MW],
+  MP <: Transformer,
+  SMW <: SparkSingleColumnModelWrapper[MD, E] with MP,
+  EW <: SparkSingleColumnEstimatorWrapper[MD, E, SMW],
+  MMW <: MultiColumnModel[MD, E, SMW] with MP]
+(implicit val modelWrapperTag: TypeTag[SMW],
   implicit val estimatorTag: TypeTag[E],
+  implicit val modelsParentTag: TypeTag[MP],
   implicit val estimatorWrapperTag: TypeTag[EW],
-  implicit val multiColumnModelTag: TypeTag[MMW])
- extends MultiColumnEstimator[Transformer, MMW, MW]
+  implicit val multiColumnModelTag: TypeTag[MMW],
+  implicit val ev1: SMW <:< MP,
+  implicit val ev2: MMW <:< MP
+)
+ extends MultiColumnEstimator[MP, MMW, SMW]
  with ParamsWithSparkWrappers {
 
   val sparkEstimatorWrapper: EW = createEstimatorWrapperInstance()
@@ -49,7 +70,7 @@ abstract class SparkMultiColumnEstimatorWrapper[
   override def handleSingleColumnChoice(
       ctx: ExecutionContext,
       df: DataFrame,
-      single: SingleColumnChoice): MW = {
+      single: SingleColumnChoice): SMW = {
 
     val estimator = sparkEstimatorWrapper.replicate()
       .set(sparkEstimatorWrapper.inputColumn -> single.getInputColumn)
@@ -88,7 +109,7 @@ abstract class SparkMultiColumnEstimatorWrapper[
 
   override def handleSingleColumnChoiceInfer(
       schema: Option[StructType],
-      single: SingleColumnChoice): MW = {
+      single: SingleColumnChoice): SMW = {
 
     import sparkEstimatorWrapper._
 

@@ -21,19 +21,18 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
-import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
-import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.models.StringIndexerModel
-import io.deepsense.deeplang.doperables.{SparkMultiColumnEstimatorWrapper, SparkSingleColumnEstimatorWrapper, SparkSingleColumnModelWrapper}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{StringIndexerModel, SingleColumnStringIndexerModel, MultiColumnStringIndexerModel}
+import io.deepsense.deeplang.doperables.{SparkMultiColumnEstimatorWrapper, SparkSingleColumnEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 
 class StringIndexerEstimator
   extends SparkMultiColumnEstimatorWrapper[
     SparkStringIndexerModel,
     SparkStringIndexer,
-    SingleStringIndexerModel,
+    StringIndexerModel,
+    SingleColumnStringIndexerModel,
     SingleStringIndexer,
-    StringIndexerModel] {
+    MultiColumnStringIndexerModel] {
 
   setDefault(singleOrMultiChoiceParam, SingleColumnChoice())
 
@@ -44,25 +43,8 @@ class SingleStringIndexer
   extends SparkSingleColumnEstimatorWrapper[
     SparkStringIndexerModel,
     SparkStringIndexer,
-    SingleStringIndexerModel] {
+    SingleColumnStringIndexerModel] {
 
   override def getSpecificParams: Array[Param[_]] = Array()
 }
 
-class SingleStringIndexerModel
-  extends SparkSingleColumnModelWrapper[SparkStringIndexerModel, SparkStringIndexer] {
-
-  override def getSpecificParams: Array[Param[_]] = Array()
-
-  override def report: Report = {
-    val summary =
-      List(
-        SparkSummaryEntry(
-          name = "labels",
-          value = model.labels,
-          description = "Ordered list of labels, corresponding to indices to be assigned."))
-
-    super.report
-      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
-  }
-}

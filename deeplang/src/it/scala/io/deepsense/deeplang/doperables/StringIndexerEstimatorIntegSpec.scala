@@ -18,9 +18,9 @@ package io.deepsense.deeplang.doperables
 
 import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{YesInPlaceChoice, NoInPlaceChoice}
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.{SingleStringIndexerModel, StringIndexerEstimator}
-import io.deepsense.deeplang.doperables.spark.wrappers.models.StringIndexerModel
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.StringIndexerEstimator
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{SingleColumnStringIndexerModel, MultiColumnStringIndexerModel}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
@@ -31,7 +31,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       val si = new StringIndexerEstimator()
       si.setSingleColumn("a", "overriddenBelow")
       val t = si.fit(executionContext)(())(inputDataFrame)
-        .asInstanceOf[SingleStringIndexerModel]
+        .asInstanceOf[SingleColumnStringIndexerModel]
 
       t.setInputColumn("c")
       t.setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn("out"))
@@ -47,7 +47,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       val si = new StringIndexerEstimator()
       si.setSingleColumn("a", "overriddenBelow")
       val t = si.fit(executionContext)(())(inputDataFrame)
-        .asInstanceOf[SingleStringIndexerModel]
+        .asInstanceOf[SingleColumnStringIndexerModel]
 
       t.setInputColumn("c")
       t.setSingleInPlaceParam(YesInPlaceChoice())
@@ -67,7 +67,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       si.setMultipleColumn(Set("a", "b"), outputPrefix)
 
       val t = si.fit(executionContext)(())(inputDataFrame)
-        .asInstanceOf[StringIndexerModel]
+        .asInstanceOf[MultiColumnStringIndexerModel]
 
       val transformed = t.transform(executionContext)(())(inputDataFrame)
       assertDataFramesEqual(
@@ -81,7 +81,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       si.setMultipleColumnInPlace(Set("a", "b"))
 
       val t = si.fit(executionContext)(())(inputDataFrame)
-        .asInstanceOf[StringIndexerModel]
+        .asInstanceOf[MultiColumnStringIndexerModel]
 
       t.validateParams shouldBe empty
 
@@ -99,7 +99,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
       val (transformerKnowledge, _) = si.fit.infer(mock[InferContext])(())(inputKnowledge)
       val t = transformerKnowledge.single
-        .asInstanceOf[SingleStringIndexerModel]
+        .asInstanceOf[SingleColumnStringIndexerModel]
 
       t.setInputColumn("c")
       t.setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn("out"))
@@ -116,7 +116,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
       val (transformerKnowledge, _) = si.fit.infer(mock[InferContext])(())(inputKnowledge)
       val inf = transformerKnowledge.single
-        .asInstanceOf[StringIndexerModel]
+        .asInstanceOf[MultiColumnStringIndexerModel]
 
       val (outputKnowledge, _) = inf.transform.infer(mock[InferContext])(())(inputKnowledge)
       val inferredSchema = outputKnowledge.single.schema.get

@@ -19,16 +19,11 @@ package io.deepsense.deeplang.catalogs.doperable
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.TypeUtils
-import io.deepsense.deeplang.catalogs.doperable.exceptions.TraitInheritingFromClassException
 
 /**
  * Node that represents trait in hierarchy stored in DOperableCatalog.
  */
 private[doperable] class TraitNode(protected override val javaType: Class[_]) extends TypeNode {
-
-  private[doperable] override def setParent(node: TypeNode): Unit = {
-    throw new TraitInheritingFromClassException(this, node)
-  }
 
   private[doperable] override def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]] = {
     val t = TypeUtils.classToType(javaType)
@@ -38,7 +33,7 @@ private[doperable] class TraitNode(protected override val javaType: Class[_]) ex
   }
 
   private[doperable] override def descriptor: TypeDescriptor = {
-    TraitDescriptor(fullName, supertraits.values.map(_.fullName).toList)
+    TraitDescriptor(fullName, (supertraits.values ++ parent).map(_.fullName).toList)
   }
 }
 
