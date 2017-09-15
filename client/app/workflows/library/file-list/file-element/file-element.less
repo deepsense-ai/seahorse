@@ -36,14 +36,38 @@
     }
   }
 
-  .icon {
+  .icon-wrapper {
     width: 36px;
 
-    div {
+    .icon {
       padding-left: 5px;
-      font-size: 26px;
+      padding-top: 3px;
+      font-size: 35px;
       font-family: seahorse-symbol;
       color: @seahorse-light-blue;
+
+      &.sa-directory, &.sa-directory-parent {
+        padding-bottom: 5px;
+      }
+    }
+
+    .extension {
+      position: absolute;
+      color: white;
+      font-weight: 900;
+      text-transform: uppercase;
+
+      &.csv {
+        font-size: 11px;
+        top: 12px;
+        left: 8px;
+      }
+
+      &.json {
+        font-size: 9px;
+        top: 13px;
+        left: 8px;
+      }
     }
   }
 
@@ -56,6 +80,14 @@
       color: grey;
       font-weight: 500;
       padding-left: 10px;
+    }
+
+    .new-dir {
+      padding: 0 5px;
+
+      &.cancel {
+        color: grey;
+      }
     }
   }
 
@@ -78,7 +110,7 @@
   }
 
   &-progress-upload {
-    background: linear-gradient(to right, rgba(179,220,237,1) 0%,rgba(41,184,229,1) 100%,rgba(188,224,238,1) 100%);
+    background: linear-gradient(to right, rgba(179, 220, 237, 1) 0%, rgba(41, 184, 229, 1) 100%, rgba(188, 224, 238, 1) 100%);
     position: absolute;
     top: 0;
     bottom: 0;

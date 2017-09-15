@@ -2,7 +2,14 @@ require('./file-list.less');
 
 class FileListController {
   /* @ngInject */
-  constructor($scope) {
+  constructor($scope, LibraryModalService) {
+
+    $scope.$watch(() => LibraryModalService.getNewDirectoryInputVisibility(), (newValue) => {
+      this.newDir = newValue;
+      this.newDirItem = {
+        kind: 'newDir'
+      };
+    });
 
     $scope.$watch(() => this.parents, (parents) => {
       if (parents && parents.length > 0) {

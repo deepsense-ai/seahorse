@@ -6,6 +6,12 @@
   </file-element>
 
   <file-element
+    ng-if="$ctrl.newDir"
+    item="$ctrl.newDirItem"
+  >
+  </file-element>
+
+  <file-element
     ng-repeat="item in $ctrl.items"
     item="item"
     is-last="$last"

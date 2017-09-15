@@ -3,7 +3,7 @@
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 
 /* @ngInject */
-function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, DeleteModalService, $log) {
+function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModalService, mode, DeleteModalService, $log) {
   const vm = this;
 
   vm.loading = true;
@@ -13,15 +13,11 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, Delet
   vm.mode = mode;
   vm.selectedItem = '';
 
-  vm.openFileBrowser = openFileBrowser;
-  vm.onFileSelectedHandler = onFileSelectedHandler;
-  vm.getFilesForUri = getFilesForUri;
-  vm.goToParentDirectory = goToParentDirectory;
   vm.deleteFile = deleteFile;
-  vm.deleteUploadedFile = deleteUploadedFile;
   vm.onSelect = onSelect;
   vm.close = close;
   vm.ok = ok;
+  vm.showNewDirectoryInput = showNewDirectoryInput;
 
   $scope.$watch(() => LibraryService.getDirectoryContent(), (newValue) => {
     handleResults(newValue);
@@ -44,22 +40,6 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, Delet
       vm.message = 'There was an error during downloading list of files.';
     });
 
-  function openFileBrowser() {
-    document.getElementById('uploader-input').click();
-  }
-
-  function onFileSelectedHandler(files) {
-    LibraryService.uploadFiles([...files]);
-  }
-
-  function getFilesForUri(uri) {
-    LibraryService.getDirectoryContent(uri);
-  }
-
-  function goToParentDirectory() {
-    vm.getFilesForUri(_.last(vm.parents).uri);
-  }
-
   function deleteFile(file) {
     DeleteModalService.handleDelete(() => {
       LibraryService.removeFile(file)
@@ -69,16 +49,12 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, Delet
     }, COOKIE_NAME);
   }
 
-  function deleteUploadedFile(file) {
-    DeleteModalService.handleDelete(() => {
-      LibraryService.removeFile(file).then(() => {
-        LibraryService.removeUploadingFile(file);
-      });
-    }, COOKIE_NAME);
-  }
-
   function close() {
     $uibModalInstance.dismiss();
+  }
+
+  function showNewDirectoryInput() {
+    LibraryModalService.showNewDirectoryInput();
   }
 
   function handleResults(result) {

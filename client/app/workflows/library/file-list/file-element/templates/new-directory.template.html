@@ -1,0 +1,23 @@
+<div class="file-element directory" ng-class="{'last-elem': false}">
+  <div class="icon-wrapper">
+    <div class="icon sa sa-directory"></div>
+  </div>
+
+  <div class="name">
+    <input
+      autofocus
+      ng-init="$ctrl.newDirectoryName = ''"
+      ng-model="$ctrl.newDirectoryName"
+    />
+    <span
+      class="new-dir"
+      ng-click="$ctrl.saveNewDir()">
+      Ok
+    </span>
+    <span
+      class="new-dir cancel"
+      ng-click="$ctrl.cancelAddingNewDir()">
+      Cancel
+    </span>
+  </div>
+</div>

@@ -21,6 +21,10 @@
     <div class="content-wrapper">
       <div class="files-list">
         <div class="dataframe-form">
+          <button class="btn btn-grey add-folder" ng-click="controller.showNewDirectoryInput()">
+            <i class="sa sa-directory add-folder__icon"></i>
+            <span class="add-folder__label">New</span>
+          </button>
           <file-upload-section style="flex: 1;"></file-upload-section>
           <recent-files-indicator></recent-files-indicator>
         </div>

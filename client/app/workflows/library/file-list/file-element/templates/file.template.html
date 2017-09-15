@@ -4,8 +4,14 @@
        'upload-error': $ctrl.item.status === 'error'
      }">
 
-  <div class="icon">
-    <div>w</div>
+  <div class="icon-wrapper">
+    <div class="icon sa sa-file"></div>
+    <div class="extension"
+         ng-class="{[$ctrl.extension]: $ctrl.canShowExtension}"
+         ng-if="$ctrl.canShowExtension"
+      >
+      {{$ctrl.extension}}
+    </div>
   </div>
 
   <div class="name"
@@ -26,9 +32,8 @@
   </div>
 
   <div class="actions">
-    <span class="sa" title="Open directory"
+    <span class="sa sa-directory" title="Open directory"
           ng-if="$ctrl.item.progress" ng-click="$ctrl.goToUri($ctrl.item.parent.uri)">
-      w
     </span>
     <a ng-href={{$ctrl.item.downloadUrl}} download>
       <span class="sa sa-download"></span>

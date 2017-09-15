@@ -46,14 +46,36 @@
     }
 
     .btn-grey {
+      display: flex;
+      align-items: center;
+      height: 35px;
+      margin: 0 5px;
       border: 1px solid @grey;
       background-color: @light-grey;
+
+      span {
+        padding-left: 3px;
+      }
     }
 
     .dataframe-form {
       padding: 15px;
       display: flex;
       align-items: center;
+
+      .add-folder {
+        &__icon {
+          color: @seahorse-blue;
+          font-size: 28px;
+          position: relative;
+          right: 2px;
+          bottom: 4px;
+        }
+
+        &__label {
+          padding-bottom: 5px;
+        }
+      }
     }
 
     .dataframe-info {
@@ -139,8 +161,15 @@
 
   &__footer {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     padding: 15px;
+
+    button {
+      margin-top: 10px;
+      margin-right: 10px;
+      width: 80px;
+      height: 40px;
+    }
   }
 }
 

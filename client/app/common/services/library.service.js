@@ -25,6 +25,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
   service.getSearchResults = getSearchResults;
   service.getUploadingFiles = getUploadingFiles;
   service.removeFile = removeFile;
+  service.addDirectory = addDirectory;
   service.removeDirectory = removeDirectory;
   service.removeUploadingFile = removeUploadingFile;
   service.searchFilesInDirectory = searchFilesInDirectory;
@@ -132,6 +133,21 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
   function removeFile(file) {
     return LibraryApiService
       .removeFile(file.downloadUrl)
+      .then((result) => {
+        service.fetchAll();
+        return result;
+      });
+  }
+
+  /**
+   * @param {String} directoryName
+   * @returns {Promise} Promise with parsed data from API
+   */
+  function addDirectory(directoryName) {
+    const currentPath = currentDirectoryUri.replace('library://', '/');
+
+    return LibraryApiService
+      .addDirectory(directoryName, currentPath)
       .then((result) => {
         service.fetchAll();
         return result;
