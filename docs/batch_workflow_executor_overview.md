@@ -114,7 +114,7 @@ with a proper HDFS path.
 Apache Spark assembly jar can be found in Apache Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
 compiled for Hadoop 2.6.0 package.
 
-
+**NOTE:** Paths of files listed in the `--files` option cannot contain white or special characters.
 
 ## Custom JDBC Drivers
 
