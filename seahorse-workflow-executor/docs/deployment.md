@@ -1,8 +1,8 @@
 ---
 layout: global
 menuTab: deployment
-description: Seahorse Standalone Deployment Mode Overview
-title: Seahorse Standalone
+description: Seahorse Deployment Overview
+title: Seahorse Deployment
 ---
 
 **Table of Contents**
@@ -12,12 +12,10 @@ title: Seahorse Standalone
 
 ## Overview
 
-Seahorse Standalone allows you to install and run Seahorse on your local computer
+You can install and run Seahorse on your local computer
 or set it up in a server mode (for details see [Server Mode](../reference/server_mode.html) section).
 
-Seahorse Standalone:
-
-* is distributed as a virtualized environment that you can quickly set up and get started;
+Seahorse
 * works with self-contained local Spark;
 * can connect to any external Spark cluster (YARN, Mesos or Spark Standalone);
 * works on multiple platforms, including
@@ -26,19 +24,19 @@ Seahorse Standalone:
 <img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux.
 
 If you want to install Seahorse on <img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
-you should use [Dockerized Seahorse](#dockerized-seahorse-standalone).
+you should use [Dockerized Seahorse](#dockerized-seahorse).
 
 If you want to install Seahorse on
 <img src="../img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X or
 <img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows
-you should use [Seahorse as a Vagrant Image](#seahorse-standalone-as-a-vagrant-image).
+you should use [Seahorse as a Vagrant Image](#seahorse-as-a-vagrant-image).
 
-You can also build Seahorse Standalone from source code. Follow instructions at
+You can also build Seahorse from source code. Follow instructions at
 <a target="_blank" target="https://github.com/deepsense-ai/seahorse/">
 Seahorse github repo
 </a>.
 
-## Dockerized Seahorse Standalone
+## Dockerized Seahorse
 
 **Works on:** <img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
 
@@ -64,7 +62,7 @@ or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a
 the `docker-compose.yml` file, which serves as a config for Docker Compose (this may take a
 few minutes).
 2. Run `docker-compose up` in the directory containing the downloaded file.
-3. When Seahorse Standalone is ready, open it in your browser. It is accessible at
+3. When Seahorse is ready, open it in your browser. It is accessible at
     <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}.
     </a>
 
@@ -83,11 +81,11 @@ few minutes).
 Seahorse, by default listens on port `{{ site.SEAHORSE_EDITOR_PORT }}`. In rare cases this
 configuration may conflict with services running on your computer. This can be easily remedied by
 replacing `{{ site.SEAHORSE_EDITOR_PORT }}` with a port of your choosing in `docker-compose.yml` file. After restarting
-Seahorse Standalone, it will be available under the address with the new port.
+Seahorse, it will be available under the address with the new port.
 
 <br />
 
-## Seahorse Standalone as a Vagrant Image
+## Seahorse as a Vagrant Image
 
 **Works on:** <img src="../img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X,
               <img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows,
@@ -96,7 +94,7 @@ Seahorse Standalone, it will be available under the address with the new port.
 ### Installation
 
 On some operating systems Docker is not supported natively.
-That's why we also distribute Seahorse Standalone as a Vagrant
+That's why we also distribute Seahorse as a Vagrant
 image.
 
 **Prerequisites**
@@ -112,7 +110,7 @@ or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a
 1. <a target="_blank" href="https://get-seahorse.deepsense.ai/">Download</a>
 the Vagrantfile that will allow you to spin up Seahorse’s virtual machine.
 2. Run `vagrant up` in the directory containing `Vagrantfile`. This may take a few minutes.
-3. When Seahorse Standalone is ready, go to
+3. When Seahorse is ready, go to
 <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a>
 in your browser.
 
@@ -131,7 +129,7 @@ in your browser.
 Seahorse, by default listens on port `{{ site.SEAHORSE_EDITOR_PORT }}`. In rare cases this
 configuration may conflict with services running on your computer. This can be easily remedied by
 replacing `{{ site.SEAHORSE_EDITOR_PORT }}` with a port of your choosing in `Vagrantfile`. After restarting
-Seahorse Standalone, it will be available under the address with the new port.
+Seahorse, it will be available under the address with the new port.
 
 ### Notes for Windows Users
 
@@ -169,10 +167,7 @@ To overcome this
 install
 <a target="_blank" href="http://www.microsoft.com/en-us/download/confirmation.aspx?id=8328">Microsoft Visual C++ 2010 SP1 Redistributable Package (x86)</a>.
 
-## Other Deployment Modes
-
-For ready-to-use Seahorse in cloud deployment, you can try Seahorse
-on [Data Scientist Workbench](dswb.html) or [Trusted Analytics Platform](tap.html).
+## Seahorse in Production Environment
 
 To learn more about scaling up and using Seahorse in production,
 please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.

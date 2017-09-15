@@ -8,7 +8,7 @@ description: Using an External Cluster
 
 ## Overview
 
-Seahorse Standalone comes bundled with a local, single-node Spark cluster to allow you to get started quickly.
+Seahorse comes bundled with a local, single-node Spark cluster to allow you to get started quickly.
 To assess its full potential, however, configure Seahorse to utilize external clusters.
 
 In order to connect to a cluster, the machine with Seahorse must be addressable from every node of the cluster.
@@ -28,8 +28,8 @@ Conveniently, Seahorse allows you to store configurations for various clusters.
 ## External Clusters with Seahorse as a Vagrant Image
 
 While working with external clusters is straight-forward when running
-[Dockerized Seahorse Standalone](../deployment/standalone.html#dockerized-seahorse-standalone),
-it's also possible using [Seahorse Standalone as a Vagrant Image](../deployment/standalone.html#seahorse-standalone-as-a-vagrant-image).
+[Dockerized Seahorse](../deployment.html#dockerized-seahorse),
+it's also possible using [Seahorse as a Vagrant Image](../deployment.html#seahorse-as-a-vagrant-image).
 There is a commented line in the `Vagrantfile`.
 It needs to be uncommented in order for the VM to receive its own IP address, that is visible from
 the Spark cluster.

@@ -18,7 +18,7 @@ All while connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundl
 
 For a more detailed overview go to the [Overview](./index.html) section.
 
-## Run Seahorse Standalone on Your Machine
+## Run Seahorse on Your Machine
 
 #### Mac or Windows
 
@@ -33,7 +33,7 @@ is distributed in the form of a Vagrant image.
 3. Go to the catalog with `Vagrantfile` and run `vagrant up` from the command line.
 4. Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a> and start using Seahorse!
 
-For more details and troubleshooting go to the [Seahorse Standalone Deployment mode page](./deployment/standalone.html#seahorse-standalone-as-a-vagrant-image).
+For more details and troubleshooting go to the [Seahorse Standalone Deployment mode page](./deployment.html#seahorse-standalone-as-a-vagrant-image).
 
 #### Linux
 
@@ -47,7 +47,7 @@ is distributed in the form of docker images.
 3. Go to the catalog with `docker-compose.yml` file and run `docker-compose up` from the command line.
 4. Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a> and start using Seahorse!
 
-For more details and troubleshooting go to [Seahorse Standalone Deployment mode page](./deployment/standalone.html#dockerized-seahorse-standalone).
+For more details and troubleshooting go to [Seahorse Deployment page](./deployment.html#dockerized-seahorse).
 
 ## Use Seahorse
 

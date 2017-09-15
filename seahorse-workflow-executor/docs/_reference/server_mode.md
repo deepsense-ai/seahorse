@@ -6,7 +6,7 @@ title: Server Mode
 description: Seahorse in Server Mode
 ---
 
-[Dockerized Seahorse Standalone](../deployment/standalone.html#dockerized-seahorse-standalone)
+[Dockerized Seahorse](../deployment.html#dockerized-seahorse)
 is designed to work as a server application,
 which allows multiple users to access a single instance of Seahorse.
 

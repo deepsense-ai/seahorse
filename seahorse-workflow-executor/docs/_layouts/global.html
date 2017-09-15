@@ -41,14 +41,7 @@
           <ul class="nav navbar-nav">
             <li class="{% if page.menuTab == 'overview' %}active{% endif %}"><a href="{{base}}">Overview</a></li>
             <li class="{% if page.menuTab == 'getting_started' %}active{% else %}editor-link{% endif %}"><a href="{{base}}/getting_started.html">Getting Started</a></li>
-            <li class="{% if page.menuTab == 'deployment' %}active{% endif %} dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Deployment Modes<span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li class="{% if page.title == 'Seahorse Standalone' %}active{% endif %}"><a href="{{base}}/deployment/standalone.html">Standalone</a></li>
-                <li class="{% if page.title == 'Seahorse on Data Scientist Workbench' %}active{% endif %}"><a href="{{base}}/deployment/dswb.html">Cloud - Data Scientist Workbench</a></li>
-                <li class="{% if page.title == 'Seahorse on Trusted Analytics Platform' %}active{% endif %}"><a href="{{base}}/deployment/tap.html">Cloud - Trusted Analytics Platform</a></li>
-              </ul>
-            </li>
+            <li class="{% if page.menuTab == 'deployment' %}active{% else %}editor-link{% endif %}"><a href="{{base}}/deployment.html">Deployment</a></li>
             <li class="{% if page.menuTab == 'caseStudy' %}active{% endif %} dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples<span class="caret"></span></a>
               <ul class="dropdown-menu">
