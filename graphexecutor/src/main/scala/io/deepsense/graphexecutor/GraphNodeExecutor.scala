@@ -7,6 +7,7 @@ package io.deepsense.graphexecutor
 
 import java.util.UUID
 
+import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, duration}
 
@@ -14,8 +15,8 @@ import com.typesafe.scalalogging.LazyLogging
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClient
-import io.deepsense.graph.Node
-import io.deepsense.models.entities.InputEntity
+import io.deepsense.graph.{Graph, Node}
+import io.deepsense.models.entities.{DataObjectReport, InputEntity}
 
 /**
  * GraphNodeExecutor is responsible for execution of single node.
@@ -46,7 +47,10 @@ class GraphNodeExecutor(
       // TODO: pass real vector of DOperable's, not "deceptive mock"
       // (we are assuming that all DOperation's return at most one DOperable)
 
-      val resultVector = executeOperation(collectOutputs())
+      val collectedOutput = graphExecutor.graphGuard.synchronized {
+        collectOutputs(graphExecutor.graph.get, graphExecutor.dOperableCache)
+      }
+      val resultVector = executeOperation(collectedOutput)
 
       graphExecutor.graphGuard.synchronized {
         graphExecutor.experiment = Some(graphExecutor.experiment.get.copy(graph =
@@ -78,17 +82,27 @@ class GraphNodeExecutor(
     }
   }
 
-  private def collectOutputs() = {
+  /**
+   * Returns Vector of DOperable's to pass to current node as DOperation arguments.
+   * NOTE: Currently we do not support optional input ports.
+   * @param graph graph of operations to execute (contains current node)
+   * @param dOperableCache mutable map UUID -> DOperable
+   * @return Vector of DOperable's to pass to current node
+   */
+  def collectOutputs(
+                      graph: Graph,
+                      dOperableCache: mutable.Map[UUID, DOperable]): Vector[DOperable] = {
     var collectedOutputs = Vector.empty[DOperable]
-    graphExecutor.graphGuard.synchronized {
-      for (preNodeIds <- graphExecutor.graph.get.predecessors.get(node.id)) {
-        for (preNodeId <- preNodeIds) {
-          if (graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.nonEmpty) {
-            collectedOutputs = collectedOutputs ++ graphExecutor.dOperableCache.get(
-              graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.get.head)
-          }
-        }
-      }
+    // Iterate through predecessors, constructing Vector of DOperable's
+    // (predecessors are ordered by current node input port number connected with them)
+    for (predecessorEndpoint <- graph.predecessors.get(node.id).get) {
+      // NOTE: Currently we do not support optional input ports
+      // (require assures that all ports are obligatory)
+      require(predecessorEndpoint.nonEmpty)
+      val nodeId = predecessorEndpoint.get.nodeId
+      val portIndex = predecessorEndpoint.get.portIndex
+      collectedOutputs = collectedOutputs ++ dOperableCache.get(
+        graph.node(nodeId).state.results.get(portIndex))
     }
     collectedOutputs
   }
