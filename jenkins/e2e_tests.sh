@@ -2,8 +2,6 @@
 
 set -ex
 
-./jenkins/scripts/checkout-submodules.sh
-
 SPARK_STANDALONE_DOCKER_COMPOSE="testing/spark-standalone-cluster/standalone-cluster.dc.yml"
 
 ## Make sure that when job is aborted/killed all dockers will be turned off

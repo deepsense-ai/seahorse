@@ -8,8 +8,6 @@
 # `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
 
-./jenkins/scripts/checkout-submodules.sh
-
 # Check if number of parameters is correct
 if [ $# != 1 ]; then
   echo "Usage: jenkins/build_vagrant_with_docker.sh SEAHORSE_BUILD_TAG"
