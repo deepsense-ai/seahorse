@@ -1,10 +1,9 @@
 'use strict';
 
 /* @ngInject */
-function SelectionItemsController($scope, $rootScope, MultiSelectionService, WorkflowService, DeleteModalService,
-                                  UserService, EventsService) {
+function SelectionItemsController($scope, $rootScope, MultiSelectionService, WorkflowService,
+                                  UserService, WorkflowsEditorService) {
 
-  const COOKIE_NAME = 'SEAHORSE_NODE_DELETE_NO_CONFIMRATION';
   const vm = this;
 
   vm.selection = MultiSelectionService.getSelectedNodeIds();
@@ -47,12 +46,8 @@ function SelectionItemsController($scope, $rootScope, MultiSelectionService, Wor
     return vm.currentWorkflow.owner.id === UserService.getSeahorseUser().id;
   }
 
-  function deleteSelection() {
-    EventsService.publish(EventsService.EVENTS.WORKFLOW_DELETE_SELECTED_ELEMENT);
-  }
-
   function deleteSelectedNodes() {
-    DeleteModalService.handleDelete(deleteSelection, COOKIE_NAME);
+    WorkflowsEditorService.handleDelete();
   }
 
   function hasElements() {
