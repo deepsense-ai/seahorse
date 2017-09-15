@@ -1,19 +1,19 @@
 #!/bin/bash
 # Copyright (c) 2016, CodiLime Inc.
 #
-# Tags latest dockers with UUID and releases docker-compose.yml
+# Tags latest dockers with TAG and releases docker-compose.yml
 #
-# Usage: `jenkins/release_docker_images.sh` from deepsense-backend catalog
+# Usage: `jenkins/release_docker_images.sh TAG` from deepsense-backend catalog
 
 set -e
 
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
 QUAY_REGISTRY="quay.io/deepsense_io"
-UUID=`uuidgen`
+TAG=$1
 GIT_BRANCH="master"
 
 echo "This script assumes it is run from deepsense-backend directory"
-echo "Release UUID $UUID"
+echo "Release TAG $TAG"
 
 DOCKER_IMAGES=("deepsense-sessionmanager" "deepsense-workflowmanager" "deepsense-notebooks" "deepsense-rabbitmq" "deepsense-h2" "deepsense-frontend" "deepsense-proxy")
 for DOCKER_IMAGE in "${DOCKER_IMAGES[@]}"
@@ -22,7 +22,7 @@ do
 
   LATEST_IMAGE_DEEPSENSE=$DEEPSENSE_REGISTRY/$DOCKER_IMAGE:$GIT_BRANCH-latest
 
-  RELEASE_TAG="$DOCKER_IMAGE:$GIT_BRANCH-$UUID"
+  RELEASE_TAG="$DOCKER_IMAGE:$GIT_BRANCH-$TAG"
   QUAY_IMAGE=$QUAY_REGISTRY/$RELEASE_TAG
 
   echo ">>> pulling docker image $LATEST_IMAGE_DEEPSENSE"
@@ -41,13 +41,13 @@ do
 
 done
 
-echo "Generating docker compose file with docker images tagged with $UUID"
+echo "Generating docker compose file with docker images tagged with $TAG"
 
 ARTIFACT_NAME="docker-compose.yml"
 
 DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
 rm -f $ARTIFACT_NAME
-sed 's|\$DOCKER_REPOSITORY|'"$QUAY_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$UUID"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME
+sed 's|\$DOCKER_REPOSITORY|'"$QUAY_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME
 
 echo 'Sending docker-compose.yml to snapshot artifactory'
 
@@ -66,14 +66,14 @@ md5Value="${md5Value:0:32}"
 sha1Value="`sha1sum "${ARTIFACT_NAME}"`"
 sha1Value="${sha1Value:0:40}"
 
-URL_WITH_UUID="${REPOSITORY_URL}/docker-compose/${UUID}/${ARTIFACT_NAME}"
+URL_WITH_TAG="${REPOSITORY_URL}/docker-compose/${TAG}/${ARTIFACT_NAME}"
 
-echo "** INFO: Uploading $ARTIFACT_NAME to ${URL_WITH_UUID} **"
+echo "** INFO: Uploading $ARTIFACT_NAME to ${URL_WITH_TAG} **"
 curl -i -X PUT -u $ARTIFACTORY_USER:$ARTIFACTORY_PASSWORD \
  -H "X-Checksum-Md5: $md5Value" \
  -H "X-Checksum-Sha1: $sha1Value" \
  -T "${ARTIFACT_NAME}" \
- "${URL_WITH_UUID}"
+ "${URL_WITH_TAG}"
 
 URL_LATEST="${REPOSITORY_URL}/docker-compose/latest/${ARTIFACT_NAME}"
 
