@@ -89,13 +89,15 @@ class WorkflowVersionUtilSpec
     "foo" -> JsString("bar"))
   val incorrectVersionJsonString = incorrectVersionJson.compactPrint
 
+  val workflowId = Workflow.Id.randomId
   val workflowWithResults = WorkflowWithResults(
-    Workflow.Id.randomId,
+    workflowId,
     correctVersionMeta,
     DeeplangGraph(),
     JsObject(),
-    ExecutionReport(Map(),
-      EntitiesMap(), None))
+    ExecutionReport(Map(), EntitiesMap(), None),
+    WorkflowInfo.forId(workflowId)
+  )
 
   val workflowWithResultsString = workflowWithResults.toJson.compactPrint
 }

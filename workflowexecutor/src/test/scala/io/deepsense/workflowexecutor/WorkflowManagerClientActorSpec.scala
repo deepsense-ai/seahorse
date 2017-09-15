@@ -66,7 +66,8 @@ class WorkflowManagerClientActorSpec
     WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
     DeeplangGraph(),
     JsObject(),
-    ExecutionReport(Map(), None))
+    ExecutionReport(Map(), None),
+    WorkflowInfo.empty())
 
   override def beforeEach(): Unit = {
     wireMockServer.start()

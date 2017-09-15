@@ -26,3 +26,11 @@ case class WorkflowInfo(
   updated: DateTime,
   ownerId: String,
   ownerName: String)
+
+object WorkflowInfo {
+  def empty(): WorkflowInfo =
+    WorkflowInfo(Workflow.Id.randomId, "", "", DateTime.now, DateTime.now, "", "")
+
+  def forId(id: Workflow.Id): WorkflowInfo =
+    WorkflowInfo(id, "", "", DateTime.now, DateTime.now, "", "")
+}

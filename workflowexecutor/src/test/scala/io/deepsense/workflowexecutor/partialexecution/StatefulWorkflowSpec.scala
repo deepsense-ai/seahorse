@@ -37,7 +37,8 @@ class StatefulWorkflowSpec extends WorkflowTestSupport with MockitoSugar {
       WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
       originalGraph,
       JsObject(),
-      ExecutionReport(Map()))
+      ExecutionReport(Map()),
+      WorkflowInfo.empty())
     val newGraph = mock[DeeplangGraph]
     val newThirdPartyData = mock[JsObject]
     val workflow = Workflow(
@@ -97,6 +98,7 @@ class StatefulWorkflowSpec extends WorkflowTestSupport with MockitoSugar {
         mock[CommonExecutionContext],
         workflowId,
         metadata,
+        WorkflowInfo.forId(workflowId),
         JsObject(),
         successfulExecution,
         new MockStateInferrer())

@@ -16,8 +16,9 @@
 
 package io.deepsense.models.json.workflow
 
-import spray.json._
+import java.util.UUID
 
+import spray.json._
 import io.deepsense.commons.datetime.DateTimeConverter.{dateTime, toString => dateToString}
 import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate
@@ -43,6 +44,7 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
   private def workflowWithResultsFixture: (WorkflowWithResults, JsObject) = {
 
     val (executionReport, executionReportJson) = executionReportFixture
+    val (workflowInfo, workflowInfoJson) = workflowInfoFixture
 
     val workflowId = Workflow.Id.randomId
 
@@ -51,7 +53,8 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
       WorkflowMetadata(WorkflowType.Batch, "0.4.0"),
       graph,
       JsObject("example" -> JsArray(JsNumber(1), JsNumber(2), JsNumber(3))),
-      executionReport)
+      executionReport,
+      workflowInfo)
 
     val workflowJson = JsObject(
       "id" -> JsString(workflowId.toString),
@@ -63,7 +66,8 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
       "thirdPartyData" -> JsObject(
         "example" -> JsArray(Vector(1, 2, 3).map(JsNumber(_)))
       ),
-      "executionReport" -> executionReportJson
+      "executionReport" -> executionReportJson,
+      "workflowInfo" -> workflowInfoJson
     )
 
     (workflow, workflowJson)
@@ -110,4 +114,39 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     (executionReport, executionReportJson)
   }
 
+  private def workflowInfoFixture: (WorkflowInfo, JsObject) = {
+
+    val createdDateTime = dateTime(2015, 5, 12, 21, 11, 9)
+    val updatedDateTime = dateTime(2015, 5, 12, 21, 12, 50)
+    val createdTimestamp = dateToString(createdDateTime)
+    val updatedTimestamp = dateToString(updatedDateTime)
+
+    val workflowId = Workflow.Id.randomId
+    val workflowName = " workflow name "
+    val description = " some description "
+    val ownerId = UUID.randomUUID.toString
+    val ownerName = "some@email.com"
+
+    val workflowInfo = WorkflowInfo(
+      workflowId,
+      workflowName,
+      description,
+      createdDateTime,
+      updatedDateTime,
+      ownerId,
+      ownerName
+    )
+
+    val workflowInfoJson = JsObject(
+      "id" -> JsString(workflowId.toString),
+      "name" -> JsString(workflowName),
+      "description" -> JsString(description),
+      "created" -> JsString(createdTimestamp),
+      "updated" -> JsString(updatedTimestamp),
+      "ownerId" -> JsString(ownerId),
+      "ownerName" -> JsString(ownerName)
+    )
+
+    (workflowInfo, workflowInfoJson)
+  }
 }

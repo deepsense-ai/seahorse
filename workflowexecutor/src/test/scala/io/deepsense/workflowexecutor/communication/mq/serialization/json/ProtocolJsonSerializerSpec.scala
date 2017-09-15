@@ -64,7 +64,8 @@ class ProtocolJsonSerializerSpec
         WorkflowMetadata(WorkflowType.Streaming, "1.0.0"),
         DeeplangGraph(),
         JsObject(),
-        ExecutionReport(Map()))
+        ExecutionReport(Map()),
+        WorkflowInfo.empty())
 
       protocolJsonSerializer.serializeMessage(workflowWithResults) shouldBe
       expectedSerializationResult("workflowWithResults", workflowWithResults.toJson)

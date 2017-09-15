@@ -26,5 +26,5 @@ trait WorkflowWithResultsJsonProtocol
 
   implicit val workflowWithResultsFormat =
     jsonFormat(WorkflowWithResults,
-      "id", "metadata", "workflow", "thirdPartyData", "executionReport")
+      "id", "metadata", "workflow", "thirdPartyData", "executionReport", "workflowInfo")
 }
