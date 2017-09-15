@@ -28,13 +28,12 @@ The `Evaluate` operation is used to calculate a metric value from a given
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The input <code>DataFrame</code>.</td>
-</tr>
+<td><code><a href="../classes/evaluator.html">Evaluator</a></code></td>
+<td>The <code>Evaluator</code> that represents the evaluation algorithm.</td></tr>
 <tr>
 <td><code>1</code></td>
-<td><code><a href="../classes/evaluator.html">Evaluator</a></code></td>
-<td>The <code>Evaluator</code> that represents the evaluation algorithm.</td>
+<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
+<td>The input <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>

@@ -74,10 +74,10 @@ In the report below, every parameter combination is listed along with its grade.
       </td>
       <td>
         <code>
-          <a href="../classes/dataframe.html">DataFrame</a>
+          <a href="../classes/estimator.html">Estimator</a>
         </code>
       </td>
-      <td>The <code>DataFrame</code> on which the estimator will be fitted and evaluated.</td>
+      <td>The <code>Estimator</code> to be fitted and evaluated.</td>
     </tr>
     <tr>
       <td>
@@ -85,10 +85,10 @@ In the report below, every parameter combination is listed along with its grade.
       </td>
       <td>
         <code>
-          <a href="../classes/estimator.html">Estimator</a>
+          <a href="../classes/dataframe.html">DataFrame</a>
         </code>
       </td>
-      <td>The <code>Estimator</code> to be fitted and evaluated.</td>
+      <td>The <code>DataFrame</code> on which the estimator will be fitted and evaluated.</td>
     </tr>
     <tr>
       <td>

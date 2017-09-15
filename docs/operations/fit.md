@@ -29,14 +29,13 @@ The `Fit` operation is used to fit an [Estimator](../classes/estimator.html)
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The <code>DataFrame</code> to fit the <code>Estimator</code> on.</td>
-</tr>
-<tr>
-<td><code>1</code></td>
 <td><code><a href="../classes/estimator.html">Estimator</a></code></td>
 <td>The <code>Estimator</code> to fit.</td>
 </tr>
+<tr>
+<td><code>1</code></td>
+<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
+<td>The <code>DataFrame</code> to fit the <code>Estimator</code> on.</td></tr>
 </tbody>
 </table>
 

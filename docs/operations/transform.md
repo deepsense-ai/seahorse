@@ -30,13 +30,13 @@ using a [Transformer](../classes/transformer.html). For example, a trained model
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The <code>DataFrame</code> to transform.</td>
+<td><code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>The <code>Transformer</code> to be applied on the input <code>DataFrame</code>.</td>
 </tr>
 <tr>
 <td><code>1</code></td>
-<td><code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>The <code>Transformer</code> to be applied on the input <code>DataFrame</code>.</td>
+<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
+<td>The <code>DataFrame</code> to transform.</td>
 </tr>
 </tbody>
 </table>
