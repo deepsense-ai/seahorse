@@ -1,6 +1,5 @@
-#!/bin/bash -ex
-
-# Copyright 2016 deepsense.ai (CodiLime, Inc)
+#!/usr/bin/env bash
+# Copyright 2017 deepsense.ai (CodiLime, Inc)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,15 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -ex
 
-# Enter main directory
 cd `dirname $0`"/../"
 
-export NPM_REGISTRY_URL="https://registry.npmjs.org"
-npm set registry $NPM_REGISTRY_URL
+GIT_TAG=`git rev-parse HEAD`
 
-cat ~/.npmrc
-pwd
-
-cd docker
-./build-local-docker.sh ./ deepsense-frontend
+./build/build_docker_compose_internal.sh $GIT_TAG
+./build/manage-docker.py -b --all
