@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
-  DefaultInnerWorkflowGenerator) {
+  DefaultInnerWorkflowGenerator, debounce) {
 
   // TODO Disable clean/export/run in inner workflows
   // TODO Prevent deleting Sink and Source
@@ -16,6 +16,16 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       this._workflowsStack = [];
       this._innerWorkflowByNodeId = {};
       this.init();
+      // We want to save workflow after all intermediate changes are resolved. Intermediate state might be invalid.
+      // Debounce takes care of that and additionally reduces unnecessary client-server communication.
+      // Example:
+      // Inner workflow has nodes and publicParam list. Public params point at specific nodes.
+      // Let's say we are removing node with public params. This change gets propagated to publicParam list next
+      // digest cycle. For one digest cycle state is invalid - public params list points non-existing node.
+      this._saveWorkflow = debounce((serializedWorkflow) => {
+        console.log('Saving workflow after change...', serializedWorkflow);
+        WorkflowsApiClient.updateWorkflow(serializedWorkflow);
+      }, 200);
     }
 
     init() {
@@ -44,10 +54,8 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
         .forEach((node) => this.initInnerWorkflow(node));
 
-      $rootScope.$watch(() => workflow.serialize(), (newSerializedWorkflow) => {
-        console.log('Saving workflow after change...', newSerializedWorkflow);
-        WorkflowsApiClient.updateWorkflow(newSerializedWorkflow);
-      }, true);
+
+      $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
 
       this._watchForNewCustomTransformers(workflow);
 

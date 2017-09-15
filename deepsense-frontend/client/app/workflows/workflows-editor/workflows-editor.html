@@ -26,7 +26,7 @@
       is-inner-workflow="workflow.WorkflowService.getCurrentWorkflow().workflowType === 'inner'"
       node="workflow.getSelectedNode()"
       ng-if="workflow.getSelectedNode()"
-      disabled-mode="workflow.isReportMode"
+      disabled-mode="workflow.WorkflowService.getCurrentWorkflow().workflowStatus !== 'editor'"
       predef-colors="workflow.getPredefColors()"
       class="o-panel o-panel--scroll-right animated fadeInRight"
       custom-scroll-bar

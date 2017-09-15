@@ -27,7 +27,6 @@ class WorkflowsEditorController {
     this.SideBarData = SideBarService.data;
     this.selectedNode = null;
     this.catalog = Operations.getCatalog();
-    this.isReportMode = false;
     this._editableModeEventListeners = [];
     this.zoomId = 'flowchart-box';
     this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q,
@@ -267,7 +266,6 @@ class WorkflowsEditorController {
 
   _setRunningMode() {
     this._unbindEditorListeners();
-    this.isReportMode = true;
     this.WorkflowService.getCurrentWorkflow().workflowStatus = 'running';
     this.CopyPasteService.setEnabled(false);
     // This event and WorkflowEditor.EDITOR_MODE_SET are used here ONLY for toggle directive, because its
@@ -278,7 +276,6 @@ class WorkflowsEditorController {
 
   _setEditableMode() {
     this._reinitEditableModeListeners();
-    this.isReportMode = false;
     this.WorkflowService.getCurrentWorkflow().workflowStatus = 'editor';
     this.CopyPasteService.setEnabled(true);
     this.$rootScope.$broadcast('WorkflowEditor.EDITOR_MODE_SET');
