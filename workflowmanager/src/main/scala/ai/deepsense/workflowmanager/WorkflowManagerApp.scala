@@ -28,7 +28,7 @@ import com.google.inject.{Guice, Key, Stage}
 import ai.deepsense.commons.rest.RestServer
 import ai.deepsense.commons.utils.Logging
 import ai.deepsense.sparkutils.AkkaUtils
-import ai.deepsense.workflowmanager.migration.{Migration1_3To1_4, Migration1_4To1_5, SeahorseDbMigration}
+import ai.deepsense.workflowmanager.migration.{Migration1_3To1_4, SeahorseDbMigration}
 import ai.deepsense.workflowmanager.storage.WorkflowStorage
 
 /**

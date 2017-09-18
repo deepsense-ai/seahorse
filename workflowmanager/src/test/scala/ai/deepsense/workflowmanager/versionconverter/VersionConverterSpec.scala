@@ -139,16 +139,4 @@ class VersionConverterSpec extends WordSpec with Matchers {
     }
 
   }
-
-
-  "WorkflowMetadataConverter" should {
-    "convert 1.4 workflow to 1.5" in {
-      new Setup {
-        override val workflowResourceName = "versionconverter/empty_workflow_1.4.1.json"
-        val convertedWorkflow = WorkflowMetadataConverter.setWorkflowVersion(workflowJson, Version(1, 5, 0))
-        val metadata = convertedWorkflow.asJsObject.fields("metadata").asJsObject
-        metadata.fields("apiVersion").asInstanceOf[JsString].value shouldBe "1.5.0"
-      }
-    }
-  }
 }

@@ -136,10 +136,8 @@ object SeahorseDbMigration {
   def migrate(datasourcemanagerUrl: URL, workflowStorage: WorkflowStorage, actorSystem: ActorSystem)
       (implicit ec: ExecutionContext) = {
     val migration1_4 = Migration1_3To1_4(datasourcemanagerUrl, workflowStorage, actorSystem)
-    val migration1_5 = Migration1_4To1_5(datasourcemanagerUrl, workflowStorage, actorSystem)
     for {
       _ <- migration1_4.migrate
-      _ <- migration1_5.migrate
     } yield ()
   }
 
