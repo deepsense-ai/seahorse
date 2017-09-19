@@ -35,7 +35,6 @@ object Version {
   val (scala, hadoop, akka, sprayRoutingLib) = spark match {
     case "2.1.0" | "2.1.1" => ("2.11.8", "2.7", "2.4.9", "routing-shapeless2")
     case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "2.7", "2.4.9", "routing")
-    case "1.6.1" => ("2.10.5", "2.6", "2.3.11", "routing")
   }
 
   val spray = "1.3.3"

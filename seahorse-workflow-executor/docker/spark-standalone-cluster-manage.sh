@@ -63,9 +63,6 @@ if  [ "$SPARK_VERSION" == "2.1.0" ] || [ "$SPARK_VERSION" == "2.1.1" ]; then
 elif [ "$SPARK_VERSION" == "2.0.0" ] || [ "$SPARK_VERSION" == "2.0.1" ] || [ "$SPARK_VERSION" == "2.0.2" ]; then
   export HADOOP_VERSION="2.7"
   export HADOOP_VERSION_FULL="2.7.1"
-elif [ "$SPARK_VERSION" == "1.6.1" ]; then
-  export HADOOP_VERSION="2.6"
-  export HADOOP_VERSION_FULL="2.6.0"
 else
   echo 'Unhandled Spark version ${$SPARK_VERSION}'
   exit 1

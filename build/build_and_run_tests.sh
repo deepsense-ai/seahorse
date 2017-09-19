@@ -34,7 +34,6 @@ run_tests() {
 }
 run_tests 2.1.1
 run_tests 2.0.2
-run_tests 1.6.1
 
 (
   cd seahorse-workflow-executor

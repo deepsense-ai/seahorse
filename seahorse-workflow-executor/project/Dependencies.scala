@@ -22,7 +22,6 @@ object Version {
   val (scala, java, hadoop, akka, apacheCommons) = spark match {
     case "2.1.0" | "2.1.1" => ("2.11.8", "1.8", "2.7.3", "2.4.9", "3.5")
     case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "1.8", "2.7.1", "2.4.9", "3.3.+")
-    case "1.6.1" => ("2.10.5", "1.7", "2.6.0", "2.3.11", "3.3.+")
   }
 
   val amazonS3 = "1.10.16"
@@ -108,11 +107,6 @@ object Dependencies {
     "central.maven.org" at "http://central.maven.org/maven2/"
   )
 
-  val sparkCSV: Seq[ModuleID] = Version.spark match {
-    case "1.6.1" => Seq("com.databricks" %% "spark-csv" % "1.4.0")
-    case "2.0.0" | "2.0.1" | "2.0.2" | "2.1.0" | "2.1.1" => Seq()
-  }
-
   class Spark(version: String) {
     private val unversionedComponents = Seq(
       sparkMLLib,
@@ -120,7 +114,7 @@ object Dependencies {
       sparkCore,
       sparkHive
     )
-    val components = unversionedComponents.map(_(version)) ++ sparkCSV
+    val components = unversionedComponents.map(_(version))
     val provided = components.map(_ % Provided)
     val test = components.map(_ % s"$Test,it")
     val onlyInTests = provided ++ test
@@ -181,7 +175,6 @@ object Dependencies {
     scalaReflect,
     apacheCommonsCsv,
     reflections) ++
-    sparkCSV ++
     Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 
   val docgen = usedSpark.components

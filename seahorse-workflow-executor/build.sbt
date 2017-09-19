@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 // scalastyle:off
 
 lazy val settingsForPublished = CommonSettingsPlugin.assemblySettings ++
@@ -23,14 +22,7 @@ lazy val settingsForNotPublished = CommonSettingsPlugin.assemblySettings ++
 
 lazy val sparkVersion = Version.spark
 
-// helperSparkUtils is introduced because sparkUtils needs to depend on other project, which also
-// depends on sparkVersion. It is top-level, since sbt only registers top-level values;
-// if we did it inside sparkUtils initialization, it would result in error.
-lazy val ignoredProject = project in file("empty")
-
-lazy val helperSparkUtils = sparkVersion match {
-  case "1.6.1" =>
-    ignoredProject
+lazy val sparkUtils = sparkVersion match {
   case "2.0.0" | "2.0.1" | "2.0.2" =>
     val sparkUtils2_0_x = project in file("sparkutils2.0.x") settings settingsForPublished
     sparkUtils2_0_x
@@ -39,70 +31,74 @@ lazy val helperSparkUtils = sparkVersion match {
     sparkUtils2_1_0
 }
 
-lazy val sparkUtils = sparkVersion match {
-  case "1.6.1" =>
-    val sparkUtils = project in file (s"sparkutils1.6.1") settings settingsForPublished
-    sparkUtils
-  case "2.0.0" | "2.0.1" | "2.0.2" | "2.1.0" | "2.1.1" =>
-    val sparkUtils = project in file(s"sparkutils2.x") dependsOn helperSparkUtils settings settingsForPublished
-    sparkUtils
-}
-lazy val rootProject = project.in(file("."))
+lazy val sparkUtils2_x = project in file(s"sparkutils2.x") dependsOn sparkUtils settings settingsForPublished
+
+lazy val rootProject = project
+  .in(file("."))
   .settings(name := "seahorse")
   .settings(PublishSettings.disablePublishing)
-  .aggregate(api, helperSparkUtils, sparkUtils, commons, deeplang, docgen, graph, workflowjson, reportlib, workflowexecutormqprotocol,
+  .aggregate(
+    api,
+    sparkUtils2_x,
+    sparkUtils,
+    commons,
+    deeplang,
+    docgen,
+    graph,
+    workflowjson,
+    reportlib,
+    workflowexecutormqprotocol,
     workflowexecutor)
 
-lazy val api                    = project settings settingsForPublished
+lazy val api = project settings settingsForPublished
 
-lazy val commons                = project dependsOn (api, sparkUtils) settings settingsForPublished
+lazy val commons = project dependsOn (api, sparkUtils2_x) settings settingsForPublished
 
-lazy val deeplang               = project dependsOn (
-  commons,
-  commons % "test->test",
-  graph,
-  graph % "test->test",
-  reportlib,
-  reportlib % "test->test") settings settingsForPublished
-lazy val docgen                 = project dependsOn (
-  deeplang) settings settingsForNotPublished
-lazy val graph                  = project dependsOn (
-  commons,
-  commons % "test->test") settings settingsForPublished
-lazy val workflowjson           = project dependsOn (commons, deeplang, graph) settings settingsForNotPublished
-lazy val reportlib              = project dependsOn commons settings settingsForPublished
-lazy val workflowexecutormqprotocol = project dependsOn (
-  commons,
-  commons % "test->test",
-  deeplang,
-  reportlib % "test->test",
-  workflowjson) settings settingsForNotPublished
+lazy val deeplang = project dependsOn (commons,
+commons % "test->test",
+graph,
+graph % "test->test",
+reportlib,
+reportlib % "test->test") settings settingsForPublished
+lazy val docgen = project dependsOn (deeplang) settings settingsForNotPublished
+lazy val graph = project dependsOn (commons,
+commons % "test->test") settings settingsForPublished
+lazy val workflowjson = project dependsOn (commons, deeplang, graph) settings settingsForNotPublished
+lazy val reportlib = project dependsOn commons settings settingsForPublished
+lazy val workflowexecutormqprotocol = project dependsOn (commons,
+commons % "test->test",
+deeplang,
+reportlib % "test->test",
+workflowjson) settings settingsForNotPublished
 
-lazy val sdk                    = project dependsOn (
+lazy val sdk = project dependsOn (
   deeplang
 ) settings settingsForPublished
 
-lazy val workflowexecutor       = project dependsOn (
-  commons % "test->test",
-  deeplang,
-  deeplang % "test->test",
-  deeplang % "test->it",
-  workflowjson,
-  workflowjson % "test -> test",
-  sdk,
-  workflowexecutormqprotocol,
-  workflowexecutormqprotocol % "test -> test") settings settingsForNotPublished
+lazy val workflowexecutor = project dependsOn (commons % "test->test",
+deeplang,
+deeplang % "test->test",
+deeplang % "test->it",
+workflowjson,
+workflowjson % "test -> test",
+sdk,
+workflowexecutormqprotocol,
+workflowexecutormqprotocol % "test -> test") settings settingsForNotPublished
 
 // Sequentially perform integration tests
-addCommandAlias("ds-it",
-    ";commons/it:test " +
+addCommandAlias(
+  "ds-it",
+  ";commons/it:test " +
     ";deeplang/it:test " +
     ";graph/it:test " +
     ";workflowjson/it:test " +
     ";reportlib/it:test " +
     ";workflowexecutor/it:test" +
-    ";workflowexecutormqprotocol/it:test")
+    ";workflowexecutormqprotocol/it:test"
+)
 
-addCommandAlias("generateExamples", "deeplang/it:testOnly ai.deepsense.deeplang.doperations.examples.*")
+addCommandAlias(
+  "generateExamples",
+  "deeplang/it:testOnly ai.deepsense.deeplang.doperations.examples.*")
 
 // scalastyle:on

@@ -93,8 +93,6 @@ class CodeExecutor(object):
         spark_version = self.spark_context.version
         if spark_version in ["2.0.0", "2.0.1", "2.0.2", "2.1.0", "2.1.1"]:
             new_sql_context = SQLContext(self.spark_context, new_spark_session)
-        elif spark_version == "1.6.1":
-            new_sql_context = new_spark_session
         else:
             raise ValueError("Spark version {} is not supported".format(spark_version))
 
