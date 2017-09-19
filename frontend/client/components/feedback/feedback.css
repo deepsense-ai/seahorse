@@ -1,0 +1,13 @@
+.feedback-button-container {
+  top: 45px;
+  transform: rotate(-90deg);
+  transform-origin: 25% 100% 0;
+  position: absolute;
+  background: #01b1eb;
+}
+
+.feedback-button {
+  margin: 5px 10px 5px 10px;
+  color: #fff;
+  font-size: 15px;
+}

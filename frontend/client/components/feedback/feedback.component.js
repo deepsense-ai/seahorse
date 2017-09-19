@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-'use strict';
+require('./feedback.css');
 
-// Libs
-import angular from 'angular';
+const FeedbackComponent = {
+  template: `
+    <div class="feedback-button-container">
+      <a href="https://community.seahorse.deepsense.ai" target="blank" class="feedback-button">feedback</a>
+    </div>
+  `
+};
 
-// App
-import { datasourcesModule } from './datasources/datasources.module';
-import { SchedulesModule } from './schedules/schedules.module';
-import { FeedbackModule } from './feedback/feedback.module';
-
-export const ComponentModule = angular
-  .module('components', [
-    datasourcesModule,
-    SchedulesModule,
-    FeedbackModule
-  ])
-  .name;
+export default FeedbackComponent;
