@@ -20,14 +20,8 @@
 import angular from 'angular';
 
 // App
-import { datasourcesModule } from './datasources/datasources.module';
-import { SchedulesModule } from './schedules/schedules.module';
-import { FeedbackModule } from './feedback/feedback.module';
+import FeedbackComponent from './feedback.component';
 
-export const ComponentModule = angular
-  .module('components', [
-    datasourcesModule,
-    SchedulesModule,
-    FeedbackModule
-  ])
+export const FeedbackModule = angular.module('feedback', [])
+  .component('feedback', FeedbackComponent)
   .name;

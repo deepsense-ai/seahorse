@@ -29,7 +29,6 @@ module.exports = function (_path) {
     entry: {
       libs: _path + '/client/app/libs.js', // TODO: remove
       app: _path + '/client/app/app.js',
-      fe: _path + '/client/app/app.fe.js',
       ga: _path + '/client/app/app.ga.js'
     },
 
