@@ -33,7 +33,7 @@ Seahorse Batch Workflow Executor is available in a form of both precompiled bina
 #### Use Precompiled Binaries
 
 | **Seahorse Batch Workflow Executor Version** | **Apache Spark Version** | **Scala Version** | **Link** |
-| 1.4.1 | 2.0 | 2.11 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.4.1/workflowexecutor_2.11-1.4.1.jar">download</a> |
+| 1.4.2 | 2.1.1 | 2.11 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.4.2/workflowexecutor_2.11-1.4.2.jar">download</a> |
 
 #### Build from Source
 
