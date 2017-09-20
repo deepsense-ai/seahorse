@@ -73,7 +73,7 @@ few minutes).
         docker-compose up
 
 * Bug reports and all other feedback can be sent using the
-  <a target="_blank" href="http://feedback.seahorse.deepsense.ai">Feedback</a>
+  <a target="_blank" href="https://community.seahorse.deepsense.ai">Feedback</a>
   option in the Seahorse Editor in the upper-left corner.
 
 ### Conflicting Ports
@@ -121,7 +121,7 @@ in your browser.
         vagrant reload
 
 * Bug reports and all other feedback can be sent using the
-  <a target="_blank" href="http://feedback.seahorse.deepsense.ai">Feedback</a>
+  <a target="_blank" href="https://community.seahorse.deepsense.ai">Feedback</a>
   option in the Seahorse Editor in the upper-left corner.
 
 
