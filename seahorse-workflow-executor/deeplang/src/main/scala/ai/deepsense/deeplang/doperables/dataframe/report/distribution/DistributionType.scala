@@ -27,5 +27,6 @@ private[distribution] object DistributionType extends Enumeration {
     case StringType | BooleanType => Discrete
     case BinaryType | _: ArrayType | _: MapType |
          _: StructType | _: ai.deepsense.sparkutils.Linalg.VectorUDT => NotApplicable
+    case _ => NotApplicable
   }
 }
