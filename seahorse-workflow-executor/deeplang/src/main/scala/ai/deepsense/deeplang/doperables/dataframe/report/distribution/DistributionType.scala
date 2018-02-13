@@ -25,7 +25,6 @@ private[distribution] object DistributionType extends Enumeration {
   def forStructField(structField: StructField): DistributionType = structField.dataType match {
     case TimestampType | DateType | _: NumericType => Continuous
     case StringType | BooleanType => Discrete
-    case BinaryType | _: ArrayType | _: MapType |
-         _: StructType | _: ai.deepsense.sparkutils.Linalg.VectorUDT => NotApplicable
+    case _ => NotApplicable
   }
 }
