@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Copyright 2016 deepsense.ai (CodiLime, Inc)
 #

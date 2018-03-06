@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
 # Copyright 2017 deepsense.ai (CodiLime, Inc)
 #
