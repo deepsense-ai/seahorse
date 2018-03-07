@@ -36,7 +36,7 @@ class SparkArgumentParserTest extends FunSuite with Matchers {
     val mulitpleConf =
       """
         |--conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
-        | --conf "spark.driver.extraJavaOptions=-XX:+PrintGCDetails"
+        |--conf "spark.driver.extraJavaOptions=-XX:+PrintGCDetails"
         |""".stripMargin
 
 

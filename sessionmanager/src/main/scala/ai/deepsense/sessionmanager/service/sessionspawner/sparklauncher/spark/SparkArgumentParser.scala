@@ -70,8 +70,9 @@ object SparkArgumentParser extends Logging {
   }
 
   def parse(paramsString: String): Validation[UnknownOption, SparkOptionsMultiMap] = {
+    val paramsStringNoNewlines = paramsString.replace("\n", " ")
     val executable = "fake-executable-to-prevent-cutting-of-first-argument"
-    val command = CommandLine.parse(s"$executable $paramsString")
+    val command = CommandLine.parse(s"$executable $paramsStringNoNewlines")
     val args = command.getArguments
 
     // `Apache commons exec`s argument tokenization is not fully bash-sh like.
