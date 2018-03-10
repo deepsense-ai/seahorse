@@ -20,9 +20,10 @@ import java.lang.reflect.Constructor
 
 import scala.reflect.runtime.universe.Type
 import scala.reflect.runtime.{universe => ru}
-
 import ai.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import ai.deepsense.sparkutils
+
+import scala.util.Try
 
 /**
  * Holds methods used for manipulating objects representing types.
@@ -57,10 +58,10 @@ object TypeUtils {
   }
 
   def instanceOfType[T](typeTag: ru.TypeTag[T]): T = {
-    val constructorT = constructorForType(typeTag.tpe).getOrElse {
+    val clazz = typeTag.mirror.runtimeClass(typeTag.tpe)
+    Try(clazz.newInstance.asInstanceOf[T]).getOrElse {
       throw NoArgumentConstructorRequiredException(typeTag.tpe.typeSymbol.asClass.name.decodedName.toString)
     }
-    createInstance(constructorT).asInstanceOf[T]
   }
 
   private val TypeSeparator = " with "
