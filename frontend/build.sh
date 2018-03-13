@@ -16,17 +16,6 @@
 
 
 function prepare_environment() {
-  echo "** Preparing Environment **"
-  # this returns an error unless it's run for the first time on a machine
-  # we know about it and want to continue anyway
-  npmrc -c codilime || test 1
-  npmrc codilime
-
-  export NPM_REGISTRY_URL="https://registry.npmjs.org"
-  npm set registry $NPM_REGISTRY_URL
-
-  npm install webpack
-  npm install npmrc
   npm install
 }
 
