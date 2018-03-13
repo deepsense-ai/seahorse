@@ -32,18 +32,28 @@ class SparkArgumentParserTest extends FunSuite with Matchers {
     }
   }
 
+  val multipleConfValues = mutable.Set[String](
+    "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps",
+    "spark.driver.extraJavaOptions=-XX:+PrintGCDetails")
+  val mutipleConfOutput = Map("--conf" -> multipleConfValues)
+
   test("Parsing - multiple conf options") {
+    val mulitpleConf =
+      """
+        |--conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+        |--conf "spark.driver.extraJavaOptions=-XX:+PrintGCDetails"
+        |""".stripMargin
+
+
+    SparkArgumentParser.parse(mulitpleConf) shouldEqual mutipleConfOutput.success
+  }
+
+  test("Parsing - space after new line") {
     val mulitpleConf =
       """
         |--conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
         | --conf "spark.driver.extraJavaOptions=-XX:+PrintGCDetails"
         |""".stripMargin
-
-
-    val multipleConfValues = mutable.Set[String](
-      "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps",
-      "spark.driver.extraJavaOptions=-XX:+PrintGCDetails")
-    val mutipleConfOutput = Map("--conf" -> multipleConfValues)
     SparkArgumentParser.parse(mulitpleConf) shouldEqual mutipleConfOutput.success
   }
 
