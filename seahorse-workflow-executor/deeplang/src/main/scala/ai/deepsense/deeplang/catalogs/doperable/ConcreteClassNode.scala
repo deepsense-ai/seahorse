@@ -32,7 +32,7 @@ private[doperable] class ConcreteClassNode(javaType: Class[_]) extends ClassNode
    * Invokes first constructor and assumes that it takes no parameters.
    */
   private[doperable] def createInstance[T <: DOperable]: T = {
-    TypeUtils.createInstance[T](constructor)
+    TypeUtils.createInstance[T](constructor.asInstanceOf[Constructor[T]])
   }
 
   override private[doperable] def subclassesInstances: Set[ConcreteClassNode] = {

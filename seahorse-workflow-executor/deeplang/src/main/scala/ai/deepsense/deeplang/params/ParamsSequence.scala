@@ -40,7 +40,7 @@ case class ParamsSequence[T <: Params](
     JsArray(cells: _*)
   }
 
-  private val constructor: Constructor[_] = TypeUtils.constructorForType(tag.tpe).getOrElse {
+  private val constructor: Constructor[_] = TypeUtils.constructorForTypeTag(tag).getOrElse {
     throw NoArgumentConstructorRequiredException(tag.tpe.typeSymbol.asClass.name.decodedName.toString)
   }
 
