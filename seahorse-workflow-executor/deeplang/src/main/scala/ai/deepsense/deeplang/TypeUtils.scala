@@ -23,8 +23,6 @@ import scala.reflect.runtime.{universe => ru}
 import ai.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import ai.deepsense.sparkutils
 
-import scala.util.Try
-
 /**
  * Holds methods used for manipulating objects representing types.
  */
