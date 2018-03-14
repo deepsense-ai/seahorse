@@ -16,7 +16,7 @@ Prerequisites:
 * sbt 0.13
 * python 2.7
   * PyYAML
-* npm 4.6 (with npmrc)
+* npm 4.6
 * jekyll 3.2
   * pygments.rb
   * jekyll-sass-converter
