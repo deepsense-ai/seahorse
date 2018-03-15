@@ -38,7 +38,7 @@ case class MissingValuesHandler()
 
   import ai.deepsense.deeplang.doperables.MissingValuesHandler._
 
-  override def _transformSchema(schema: StructType): Option[StructType] = {
+  override def applyTransformSchema(schema: StructType): Option[StructType] = {
     getStrategy match {
       case Strategy.RemoveColumn() => None
       case _ =>
@@ -102,7 +102,7 @@ case class MissingValuesHandler()
     missingValueIndicator,
     userDefinedMissingValues)
 
-  override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
+  override def applyTransform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
 
     val strategy = getStrategy
     val columns = dataFrame.getColumnNames(getSelectedColumns)

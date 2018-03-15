@@ -37,7 +37,7 @@ class Projector extends Transformer {
 
   override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(projectionColumns)
 
-  override def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val exprSeq = getProjectionColumns.map { cp =>
       val renameExpressionPart = cp.getRenameColumn.getColumnName match {
         case None => ""
@@ -53,7 +53,7 @@ class Projector extends Transformer {
     }
   }
 
-  override def _transformSchema(schema: StructType): Option[StructType] = {
+  override def applyTransformSchema(schema: StructType): Option[StructType] = {
     val namesPairsSeq = getProjectionColumns.map { cp =>
       val originalColumnName = DataFrameColumnsGetter.getColumnName(schema, cp.getOriginalColumn)
       val resultColumnName = cp.getRenameColumn.getColumnName match {

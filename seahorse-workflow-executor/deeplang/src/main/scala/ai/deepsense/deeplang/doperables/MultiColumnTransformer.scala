@@ -91,7 +91,7 @@ abstract class MultiColumnTransformer
     setSingleOrMultiChoice(multiChoice)
   }
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     $(singleOrMultiChoiceParam) match {
       case single: SingleColumnChoice =>
         handleSingleColumnChoice(ctx, df, single)
@@ -100,7 +100,7 @@ abstract class MultiColumnTransformer
     }
   }
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     $(singleOrMultiChoiceParam) match {
       case single: SingleColumnChoice =>
         handleSingleColumnChoiceSchema(schema, single)

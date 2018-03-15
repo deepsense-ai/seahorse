@@ -37,7 +37,7 @@ abstract class CustomCodeTransformer extends Transformer {
 
   def runCode(context: ExecutionContext, code: String): Result
 
-  override def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val code = $(codeParameter)
 
     if (!isValid(ctx, code)) {

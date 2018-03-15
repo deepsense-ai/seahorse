@@ -53,7 +53,7 @@ abstract class MultiColumnModel[
       multiColumnChoice.inputColumnsParam :+
       multiColumnChoice.multiInPlaceChoiceParam
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val inputColumnNames = df.getColumnNames($(multiColumnChoice.inputColumnsParam))
 
     $(multiColumnChoice.multiInPlaceChoiceParam) match {
@@ -80,7 +80,7 @@ abstract class MultiColumnModel[
     }
   }
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     if (models.isEmpty) {
       None
     } else {

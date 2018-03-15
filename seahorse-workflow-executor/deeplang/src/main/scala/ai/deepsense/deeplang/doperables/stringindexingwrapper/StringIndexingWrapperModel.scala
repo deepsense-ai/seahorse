@@ -59,15 +59,15 @@ abstract class StringIndexingWrapperModel[M <: ml.Model[M], E <: ml.Estimator[M]
       .asInstanceOf[this.type]
   }
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     DataFrame.fromSparkDataFrame(pipelinedModel.transform(df.sparkDataFrame))
   }
 
-  override private[deeplang] def _transformSchema(
+  override protected def applyTransformSchema(
       schema: StructType, inferContext: InferContext): Option[StructType] =
     wrappedModel._transformSchema(schema, inferContext)
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] =
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] =
     wrappedModel._transformSchema(schema)
 
   override def report: Report = wrappedModel.report

@@ -55,11 +55,11 @@ case class DatetimeComposer() extends Transformer {
   override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(timestampColumnsParam, outputColumnParam)
 
 
-  override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
+  override def applyTransform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
     val sparkDataFrame = dataFrame.sparkDataFrame
     val dataColumns = getTimestampColumns().map(p => p.name -> p.getTimestampColumn).toMap
     // this will never fail, as _transformSchema is always ran before _transform
-    val newSchema = _transformSchema(sparkDataFrame.schema).get
+    val newSchema = applyTransformSchema(sparkDataFrame.schema).get
 
     val partColumns = for {part <- orderedTimestampParts}
       yield dataColumns.get(part.name) match {
@@ -83,7 +83,7 @@ case class DatetimeComposer() extends Transformer {
     DataFrame.fromSparkDataFrame(context.sparkSQLSession.createDataFrame(appendedFrame.rdd, newSchema))
   }
 
-  override def _transformSchema(schema: StructType): Option[StructType] = {
+  override def applyTransformSchema(schema: StructType): Option[StructType] = {
     assertCorrectColumnTypes(schema)
     val newColumn = StructField(getOutputColumn(), TimestampType, nullable = true)
     val inferredSchema = StructType(schema.fields :+ newColumn)

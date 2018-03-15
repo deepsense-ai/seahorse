@@ -38,13 +38,13 @@ abstract class SparkTransformerWrapper[T <: ml.Transformer](implicit tag: TypeTa
 
   lazy val sparkTransformer: T = TypeUtils.instanceOfType(tag)
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val paramMap = sparkParamMap(sparkTransformer, df.sparkDataFrame.schema)
     DataFrame.fromSparkDataFrame(
       sparkTransformer.transform(df.sparkDataFrame, paramMap))
   }
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     val paramMap = sparkParamMap(sparkTransformer, schema)
     val transformerForInference = sparkTransformer.copy(paramMap)
 

@@ -48,7 +48,7 @@ abstract class SparkSingleColumnModelWrapper[
   override lazy val params: Array[Param[_]] =
     Array(inputColumn, singleInPlaceChoice) ++ getSpecificParams
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val schema = df.schema.get
     val inputColumnName = DataFrameColumnsGetter.getColumnName(schema, $(inputColumn))
     val conversionDoubleToVectorIsNecessary = convertInputNumericToVector &&
@@ -72,7 +72,7 @@ abstract class SparkSingleColumnModelWrapper[
     }
 
     if(conversionDoubleToVectorIsNecessary && convertOutputVectorToDouble) {
-      val expectedSchema = _transformSchema(schema)
+      val expectedSchema = applyTransformSchema(schema)
       val revertedTransformedDf =
         NumericToVectorUtils.revertDataFrame(
           transformedDataFrame.sparkDataFrame,
@@ -87,7 +87,7 @@ abstract class SparkSingleColumnModelWrapper[
     }
   }
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     val inputColumnName = DataFrameColumnsGetter.getColumnName(schema, $(inputColumn))
     val conversionDoubleToVectorIsNecessary = convertInputNumericToVector &&
       NumericToVectorUtils.isColumnNumeric(schema, inputColumnName)
@@ -150,7 +150,7 @@ abstract class SparkSingleColumnModelWrapper[
     ctx: ExecutionContext,
     df: DataFrame)(outputColumnName: String): DataFrame = {
     withOutputColumnValue(outputColumnName) {
-      super._transform(ctx, df)
+      super.applyTransform(ctx, df)
     }
   }
 
@@ -158,7 +158,7 @@ abstract class SparkSingleColumnModelWrapper[
       schema: StructType,
       temporaryColumnName: String): Option[StructType] = {
     withOutputColumnValue(temporaryColumnName) {
-      super._transformSchema(schema)
+      super.applyTransformSchema(schema)
     }
   }
 
