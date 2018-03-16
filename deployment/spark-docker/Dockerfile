@@ -42,7 +42,9 @@ RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \
     'ipykernel=4.3.1' 'jupyter_client=4.3.0' 'pandas=0.16*' 'matplotlib=1.4*' \
     'scipy=0.15*' 'seaborn=0.6*' 'scikit-learn=0.16*' && \
 # Install r packages
-    /opt/conda/bin/conda install --yes -c r r-essentials && \
+#    r-essentials installation hangs during installation
+#    disable it for now
+#    /opt/conda/bin/conda install --yes -c r r-essentials && \
     /opt/conda/bin/conda install --yes -c r r-base='3.3.1 1' && \
     /opt/conda/bin/conda install --yes -c r r-irkernel=0.7 && \
     /opt/conda/bin/conda clean --all --yes
