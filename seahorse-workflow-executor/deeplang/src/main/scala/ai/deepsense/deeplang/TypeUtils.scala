@@ -31,7 +31,7 @@ object TypeUtils {
 
   def classToType[T](c: Class[T]): ru.Type = classMirror(c).classSymbol(c).toType
 
-  def typeToClass(t: ru.Type): Class[_] = classMirror(t.getClass).runtimeClass(t.typeSymbol.asClass)
+  def typeToClass(t: ru.Type): Class[_] = classMirror(TypeUtils.getClass).runtimeClass(t.typeSymbol.asClass)
 
   def typeTagToClass[T](t: ru.TypeTag[T]): Class[T] =
     t.mirror.runtimeClass(t.tpe.typeSymbol.asClass).asInstanceOf[Class[T]]
