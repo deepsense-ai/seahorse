@@ -17,7 +17,6 @@
 package ai.deepsense.deeplang.catalogs.doperable
 
 import scala.reflect.runtime.{universe => ru}
-
 import ai.deepsense.deeplang.TypeUtils
 
 /**

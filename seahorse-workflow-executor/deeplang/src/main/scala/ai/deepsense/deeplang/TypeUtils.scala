@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor
 
 import scala.reflect.runtime.universe.Type
 import scala.reflect.runtime.{universe => ru}
-
 import ai.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import ai.deepsense.sparkutils
 
@@ -28,11 +27,14 @@ import ai.deepsense.sparkutils
  * Holds methods used for manipulating objects representing types.
  */
 object TypeUtils {
-  private val mirror = ru.runtimeMirror(getClass.getClassLoader)
+  private def classMirror(c: Class[_]) = ru.runtimeMirror(c.getClassLoader)
 
-  def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
+  def classToType[T](c: Class[T]): ru.Type = classMirror(c).classSymbol(c).toType
 
-  def typeToClass(t: ru.Type): Class[_] = mirror.runtimeClass(t.typeSymbol.asClass)
+  def typeToClass(t: ru.Type): Class[_] = classMirror(TypeUtils.getClass).runtimeClass(t.typeSymbol.asClass)
+
+  def typeTagToClass[T](t: ru.TypeTag[T]): Class[T] =
+    t.mirror.runtimeClass(t.tpe.typeSymbol.asClass).asInstanceOf[Class[T]]
 
   def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
 
@@ -41,26 +43,30 @@ object TypeUtils {
   def isAbstract(c: Class[_]): Boolean =
     sparkutils.TypeUtils.isAbstract(classToType(c).typeSymbol.asClass)
 
-  def constructorForClass(c: Class[_]): Option[Constructor[_]] = {
+  def constructorForClass[T](c: Class[T]): Option[Constructor[T]] = {
     val constructors = c.getConstructors
     val isParameterLess: (Constructor[_] => Boolean) = constructor =>
       constructor.getParameterTypes.isEmpty
-    constructors.find(isParameterLess)
+    constructors.find(isParameterLess).map(_.asInstanceOf[Constructor[T]])
+  }
+
+  def constructorForTypeTag[T](t: ru.TypeTag[T]): Option[Constructor[T]] = {
+    constructorForClass(typeTagToClass(t))
   }
 
   def constructorForType(t: ru.Type): Option[Constructor[_]] = {
     constructorForClass(typeToClass(t))
   }
 
-  def createInstance[T](constructor: Constructor[_]): T = {
-    constructor.newInstance().asInstanceOf[T]
+  def createInstance[T](constructor: Constructor[T]): T = {
+    constructor.newInstance()
   }
 
   def instanceOfType[T](typeTag: ru.TypeTag[T]): T = {
-    val constructorT = constructorForType(typeTag.tpe).getOrElse {
+    val constructorT = constructorForTypeTag(typeTag).getOrElse {
       throw NoArgumentConstructorRequiredException(typeTag.tpe.typeSymbol.asClass.name.decodedName.toString)
     }
-    createInstance(constructorT).asInstanceOf[T]
+    createInstance(constructorT)
   }
 
   private val TypeSeparator = " with "
