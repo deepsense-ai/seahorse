@@ -47,7 +47,7 @@ abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) ext
   val choiceInstances: Seq[T] = {
     val directSubclasses = tag.tpe.typeSymbol.asClass.knownDirectSubclasses
     val instances: Set[T] = for (symbol <- directSubclasses)
-      yield TypeUtils.constructorForType(symbol.typeSignature).getOrElse {
+      yield TypeUtils.constructorForType(symbol.typeSignature, tag.mirror).getOrElse {
         throw NoArgumentConstructorRequiredException(symbol.asClass.name.decodedName.toString)
       }.newInstance().asInstanceOf[T]
     val allSubclassesDeclared =
