@@ -15,7 +15,6 @@
  */
 
 
-
 const cataloguePanel = angular.module('deepsense-catalogue-panel', ['ui.bootstrap.tpls', 'ui.bootstrap']);
 
 require('./catalogue-panel/catalogue-panel.js');
