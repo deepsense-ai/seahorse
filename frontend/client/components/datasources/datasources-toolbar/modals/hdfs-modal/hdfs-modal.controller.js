@@ -40,7 +40,7 @@ class HdfsModalController extends DatasourceModal {
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
       this.datasourceParams = editedDatasource.params;
-      this.hdfsPathBuffer = this.datasourceParams.hdfsParams.hdfsPath.toLowerCase().replace(HDFS_PREFIX, '');
+      this.hdfsPathBuffer = this.datasourceParams.hdfsParams.hdfsPath.replace(HDFS_PREFIX, '');
       this.validateHdfsPath();
     } else {
       this.datasourceParams = {
@@ -84,7 +84,7 @@ class HdfsModalController extends DatasourceModal {
 
 
   hideHdfsPrefix() {
-    this.hdfsPathBuffer = this.hdfsPathBuffer.toLowerCase().replace(HDFS_PREFIX, '');
+    this.hdfsPathBuffer = this.hdfsPathBuffer.replace(HDFS_PREFIX, '');
     this.datasourceParams.hdfsParams.hdfsPath = `${HDFS_PREFIX}${this.hdfsPathBuffer}`;
   }
 
