@@ -67,7 +67,7 @@ class OutputInterceptorFactory @Inject()(
     new File(executorsLogDirectory).mkdirs()
 
     val childProcLoggerName = s"WE-app-${UUID.randomUUID()}"
-    val logger = Logger.getLogger(s"org.apache.spark.launcher.app.$childProcLoggerName")
+    val logger = Logger.getLogger(childProcLoggerName)
 
     val fileName = {
       val time = Calendar.getInstance().getTime()
