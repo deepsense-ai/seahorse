@@ -49,11 +49,11 @@ case class CustomTransformer(
 
   def getDatasourcesId: Set[UUID] = innerWorkflow.getDatasourcesIds
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     ctx.innerWorkflowExecutor.execute(CommonExecutionContext(ctx), workflowWithParams(), df)
   }
 
-  override private[deeplang] def _transformSchema(
+  override protected def applyTransformSchema(
       schema: StructType, inferCtx: InferContext): Option[StructType] = {
     val workflow = workflowWithParams()
     val initialKnowledge = GraphKnowledge(Map(

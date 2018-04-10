@@ -40,7 +40,7 @@ class VanillaGBTClassificationModel()
   with PredictorParams
   with Logging {
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     val predictionColumnName = $(predictionColumn)
     Some(StructType(schema.fields :+ StructField(predictionColumnName, DoubleType)))
   }

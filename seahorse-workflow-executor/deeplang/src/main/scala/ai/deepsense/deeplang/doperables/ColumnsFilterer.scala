@@ -43,7 +43,7 @@ class ColumnsFilterer extends Transformer {
 
   override val params: Array[Param[_]] = Array(selectedColumns)
 
-  override def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val columns = df.getColumnNames(getSelectedColumns)
     if (columns.isEmpty) {
       DataFrame.empty(ctx)
@@ -53,7 +53,7 @@ class ColumnsFilterer extends Transformer {
     }
   }
 
-  override def _transformSchema(schema: StructType): Option[StructType] = {
+  override def applyTransformSchema(schema: StructType): Option[StructType] = {
     val outputColumns = DataFrameColumnsGetter.getColumnNames(schema, getSelectedColumns)
     val inferredSchema = if (outputColumns.isEmpty) {
       StructType(Seq.empty)

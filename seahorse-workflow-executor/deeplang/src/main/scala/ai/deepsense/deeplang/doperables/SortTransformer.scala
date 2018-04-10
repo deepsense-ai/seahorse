@@ -40,7 +40,7 @@ class SortTransformer extends Transformer {
   def setColumns(sortColumnParams: Seq[SortColumnParam]): this.type =
     set(columns, sortColumnParams)
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     getColumns match {
       case Nil => df  // Sort in Spark 2.0 is no-op for empty columns, but in 1.6 it throws. Here we always do no-op.
       case selectedColumns =>
@@ -52,7 +52,7 @@ class SortTransformer extends Transformer {
 
   override def params: Array[Param[_]] = Array(columns)
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     // Check that all columns selected for sorting exist
     getSelectedSortColumnNames(schema, _.getColumn)
     Some(schema)

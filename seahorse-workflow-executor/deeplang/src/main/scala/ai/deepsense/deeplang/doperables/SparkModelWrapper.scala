@@ -78,13 +78,13 @@ abstract class SparkModelWrapper[M <: ml.Model[M], E <: ml.Estimator[M]]
 
   override protected def setDefault(paramPairs: ParamPair[_]*): this.type = this
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame =
+  override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame =
     DataFrame.fromSparkDataFrame(
       serializableModel.transform(
         df.sparkDataFrame,
         sparkParamMap(df.sparkDataFrame.schema)))
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     // If parentEstimator is null then the wrapper was probably
     // created for inference purposes. This model just defines the type of model
     // it is impossible to use.

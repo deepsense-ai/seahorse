@@ -49,14 +49,14 @@ object MockTransformers extends UnitSpec with DeeplangTestSupport {
 
     override def report: Report = ???
 
-    private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+    override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
       $(paramA) match {
         case 1 => outputDataFrame1
         case -2 | 2 => outputDataFrame2
       }
     }
 
-    override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+    override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
       Some($(paramA) match {
         case 1 => outputSchema1
         case -2 | 2 => outputSchema2

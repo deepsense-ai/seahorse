@@ -45,7 +45,7 @@ class VanillaRandomForestClassificationModel
     SparkRandomForestClassifier]
   with ProbabilisticClassifierParams {
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override protected def applyTransformSchema(schema: StructType): Option[StructType] = {
     val predictionColumnName = $(predictionColumn)
     val probabilityColumnName = $(probabilityColumn)
     val rawPredictionColumnName = $(rawPredictionColumn)

@@ -71,7 +71,7 @@ case class DatetimeDecomposer() extends Transformer {
   override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(
     timestampColumnParam, timestampPartsParam, timestampPrefixParam)
 
-  override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
+  override def applyTransform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
     DataFrameColumnsGetter.assertExpectedColumnType(
       dataFrame.sparkDataFrame.schema,
       getTimestampColumn,
@@ -98,7 +98,7 @@ case class DatetimeDecomposer() extends Transformer {
       as newColumnName cast DoubleType)
   }
 
-  override def _transformSchema(schema: StructType): Option[StructType] = {
+  override def applyTransformSchema(schema: StructType): Option[StructType] = {
     DataFrameColumnsGetter.assertExpectedColumnType(
       schema,
       getTimestampColumn,

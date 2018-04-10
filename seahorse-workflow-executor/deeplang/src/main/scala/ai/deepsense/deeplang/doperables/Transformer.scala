@@ -43,35 +43,52 @@ abstract class Transformer
   /**
    * Creates a transformed DataFrame based on input DataFrame.
    */
-  private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame
+  protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame
+
+  /**
+   * Library internal direct access to `applyTransform`.
+   */
+  private[deeplang] final def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = applyTransform(ctx, df)
 
   /**
    * Should be implemented in subclasses.
    * For known schema of input DataFrame, infers schema of output DataFrame.
    * If it is not able to do it for some reasons, it returns None.
    */
-  private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = None
+  protected def applyTransformSchema(schema: StructType): Option[StructType] = None
+
+  /**
+    * Library internal direct access to `applyTransformSchema`.
+    */
+  private[deeplang] final def _transformSchema(schema: StructType): Option[StructType] = applyTransformSchema(schema)
 
   /**
     * Can be implemented in a subclass, if access to infer context is required.
     * For known schema of input DataFrame, infers schema of output DataFrame.
     * If it is not able to do it for some reasons, it returns None.
     */
-  private[deeplang] def _transformSchema(
+  protected def applyTransformSchema(
       schema: StructType,
-      inferContext: InferContext): Option[StructType] = _transformSchema(schema)
+      inferContext: InferContext): Option[StructType] = applyTransformSchema(schema)
+
+  /**
+    * Library internal direct access to `applyTransformSchema`.
+    */
+  private[deeplang] final def _transformSchema(
+    schema: StructType,
+    inferContext: InferContext): Option[StructType] = applyTransformSchema(schema, inferContext)
 
   def transform: DMethod1To1[Unit, DataFrame, DataFrame] = {
     new DMethod1To1[Unit, DataFrame, DataFrame] {
       override def apply(ctx: ExecutionContext)(p: Unit)(df: DataFrame): DataFrame = {
-        _transform(ctx, df)
+        applyTransform(ctx, df)
       }
 
       override def infer(
         ctx: InferContext)(
         p: Unit)(
         k: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
-        val df = DataFrame.forInference(k.single.schema.flatMap(s => _transformSchema(s, ctx)))
+        val df = DataFrame.forInference(k.single.schema.flatMap(s => applyTransformSchema(s, ctx)))
         (DKnowledge(df), InferenceWarnings.empty)
       }
     }
