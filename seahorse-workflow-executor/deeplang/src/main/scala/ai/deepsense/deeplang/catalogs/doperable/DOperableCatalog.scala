@@ -87,7 +87,16 @@ class DOperableCatalog {
    * @return Some(node) if succeed and None otherwise
    */
   def register(t: ru.Type): Option[TypeNode] = {
-    register(t, TypeUtils.typeToClass(t))
+    register(t, TypeUtils.typeToClass(t, TypeUtils.classMirror(getClass)))
+  }
+
+  /**
+    * Tries to register type in hierarchy.
+    * @param t runtime `TypeTag` of class being registered
+    * @return Some(node) if succeed and None otherwise
+    */
+  def register(t: ru.TypeTag[_]): Option[TypeNode] = {
+    register(t.tpe, TypeUtils.typeTagToClass(t))
   }
 
   /**

@@ -27,7 +27,8 @@ private[doperable] class TraitNode(protected override val javaType: Class[_]) ex
   private[doperable] override def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]] = {
     val t = TypeUtils.classToType(javaType)
     val baseTypes = t.baseClasses.map(TypeUtils.symbolToType)
-    val baseJavaTypes = baseTypes.filter(_ <:< upperBoundType).map(TypeUtils.typeToClass)
+    val mirror = TypeUtils.classMirror(javaType)
+    val baseJavaTypes = baseTypes.filter(_ <:< upperBoundType).map(TypeUtils.typeToClass(_, mirror))
     baseJavaTypes.find(!_.isInterface)
   }
 
