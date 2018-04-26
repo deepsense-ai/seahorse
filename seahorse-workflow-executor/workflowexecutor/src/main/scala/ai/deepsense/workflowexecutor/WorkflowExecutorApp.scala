@@ -243,7 +243,7 @@ object WorkflowExecutorApp extends Logging {
       ).execute()
     } else {
       // Running in non-interactive mode
-      val pythonPathGenerator = new pyspark.Loader(None).load
+      val pythonPathGenerator = pyspark.Loader.load
         .map(new PythonPathGenerator(_))
         .getOrElse(throw new RuntimeException("Could not find PySpark!"))
 
