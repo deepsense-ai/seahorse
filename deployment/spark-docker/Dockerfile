@@ -42,7 +42,7 @@ RUN wget -q -O /tmp/Miniconda2-4.3.27.1-Linux-x86_64.sh \
 # jupyter_client/ioloop/restarter.py (jupyter_client < 5.1) needs tornado in that version
     /opt/conda/bin/conda install --yes \
     'tornado=4.1' 'ipykernel=4.3.1' 'jupyter_client=4.3.0' 'pandas=0.16*' 'matplotlib=1.4*' \
-    'scipy=0.15*' 'seaborn=0.6*' 'scikit-learn=0.16*' && \
+    'scipy=0.15*' 'seaborn=0.6*' 'scikit-learn=0.16*' 'libgfortran=1' && \
 # Install r packages
     /opt/conda/bin/conda install --yes -c r r-essentials && \
     /opt/conda/bin/conda install --yes -c r r-base='3.3.1 1' && \
