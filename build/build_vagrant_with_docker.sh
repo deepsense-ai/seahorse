@@ -28,7 +28,7 @@ fi
 
 # Settings
 GIT_TAG=$1
-ARTIFACT_NAME="docker-compose-internal.yml"
+ARTIFACT_NAME="docker-compose.yml"
 VAGRANT_BOX_NAME="seahorse-vm"
 PUBLISH_DIR="../image_publication"
 
@@ -37,21 +37,19 @@ cd deployment/vagrant_with_docker
 rm -f $ARTIFACT_NAME
 
 
-
-./build/build_docker_compose_internal.sh $GIT_TAG
-print "Using $ROOT_DIR/$ARTIFACT_NAME"
-mv $ROOT_DIR/$ARTIFACT_NAME docker-compose.yml
+"$ROOT_DIR/build/build_docker_compose_internal.sh" $GIT_TAG
+echo "Using $ROOT_DIR/$ARTIFACT_NAME"
+mv $ROOT_DIR/docker-compose.yml $ARTIFACT_NAME
 
 # Inside Vagrant we need Seahorse to listen on 0.0.0.0,
 # so that Vagrant's port forwarding works. So, let's replace the host which
 # proxy listens on.
-"$ROOT_DIR/build/scripts/proxy_on_any_interface.py" docker-compose.yml
+"$ROOT_DIR/build/scripts/proxy_on_any_interface.py" $ARTIFACT_NAME
 
-
-./build/manage-docker.py -b --all
+"$ROOT_DIR/build/manage-docker.py" -b --all
 
 echo "Save docker images to files"
-DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d" " -f 6 | tr " " "\n"`)
+DOCKER_IMAGES=(`cat $ARTIFACT_NAME | grep image: | cut -d" " -f 6 | tr " " "\n"`)
 for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
   # Strip docker repository and docker tag from image.
