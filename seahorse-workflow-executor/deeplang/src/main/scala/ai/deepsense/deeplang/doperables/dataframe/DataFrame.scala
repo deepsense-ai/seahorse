@@ -73,7 +73,7 @@ case class DataFrame private[dataframe] (
   }
 
   override def report: Report = {
-    DataFrameReportGenerator.report(sparkDataFrame)
+    DataFrameReportGenerator.minimalReport(sparkDataFrame)
   }
 
   override def inferenceResult: Option[DataFrameInferenceResult] =
