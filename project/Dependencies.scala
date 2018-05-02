@@ -31,8 +31,9 @@ object Version {
   val scoverage = "1.0.4"
   val slick = "3.1.1"
 
-  val spark = sys.props.getOrElse("SPARK_VERSION", "2.1.1")
+  val spark = sys.props.getOrElse("SPARK_VERSION", "2.2.0")
   val (scala, hadoop, akka, sprayRoutingLib) = spark match {
+    case "2.2.0"  => ("2.11.8", "2.7", "2.4.9", "routing-shapeless2")
     case "2.1.0" | "2.1.1" => ("2.11.8", "2.7", "2.4.9", "routing-shapeless2")
     case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "2.7", "2.4.9", "routing")
   }

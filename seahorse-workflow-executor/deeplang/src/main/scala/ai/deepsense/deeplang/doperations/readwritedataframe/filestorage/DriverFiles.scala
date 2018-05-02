@@ -19,18 +19,20 @@ package ai.deepsense.deeplang.doperations.readwritedataframe.filestorage
 import java.io.{File, IOException, PrintWriter}
 
 import scala.io.Source
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.execution.datasources.csv.{DataframeToDriverCsvFileWriter, RawCsvRDDToDataframe}
-import org.apache.spark.sql.{SaveMode, DataFrame => SparkDataFrame}
+import org.apache.spark.sql.{Dataset, Encoders, Row, SaveMode, DataFrame => SparkDataFrame}
 import ai.deepsense.commons.resources.ManagedResource
 import ai.deepsense.deeplang.ExecutionContext
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
 import ai.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvOptions
 import ai.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
+import ai.deepsense.deeplang.readjsondataset.JsonReader
 import ai.deepsense.sparkutils.SQL
 
-object DriverFiles {
+object DriverFiles extends JsonReader {
 
   def read(driverPath: String, fileFormat: InputFileFormatChoice)
           (implicit context: ExecutionContext): SparkDataFrame = fileFormat match {
@@ -59,13 +61,14 @@ object DriverFiles {
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
-    RawCsvRDDToDataframe.parse(fileLinesRdd, context.sparkSQLSession, params)
+    RawCsvRDDToDataframe.parse(fileLinesRdd, context.sparkSQLSession.sparkSession, params)
   }
 
   private def readJson(driverPath: String)(implicit context: ExecutionContext) = {
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
-    context.sparkSQLSession.read.json(fileLinesRdd)
+    val sparkSession = context.sparkSQLSession.sparkSession
+    readJsonFromRdd(fileLinesRdd, sparkSession)
   }
 
   private def writeCsv
@@ -77,7 +80,8 @@ object DriverFiles {
       dataFrame.sparkDataFrame,
       params,
       dataFrame.schema.get,
-      path.pathWithoutScheme
+      path.pathWithoutScheme,
+      context.sparkSQLSession.sparkSession
     )
   }
 

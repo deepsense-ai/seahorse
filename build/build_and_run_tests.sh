@@ -32,6 +32,7 @@ run_tests() {
   sbt clean
   sbt -DSPARK_VERSION=$1 test ds-it
 }
+run_tests 2.2.0
 run_tests 2.1.1
 run_tests 2.0.2
 

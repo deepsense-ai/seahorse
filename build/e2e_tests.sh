@@ -70,7 +70,7 @@ SPARK_STANDALONE_MANAGEMENT="./seahorse-workflow-executor/docker/spark-standalon
 MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
 YARN_SPARK_DOCKER_COMPOSE="testing/yarn-spark-cluster/yarn-cluster.dc.yml"
 
-SPARK_VERSION="2.1.1"
+SPARK_VERSION="2.2.0"
 HADOOP_VERSION="2.7"
 
 ## Make sure that when job is aborted/killed all dockers will be turned off
