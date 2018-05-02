@@ -21,7 +21,6 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.execution.LogicalRDD
 import org.apache.spark.sql.types.{StructType, _}
 
-import ai.deepsense.sparkutils.SparkSQLSession
 /**
   * Heavily based on org.apache.spark.sql.execution.datasources.csv.CSVFileFormat
   */
@@ -29,9 +28,9 @@ object RawCsvRDDToDataframe {
 
   def parse(
       rdd: RDD[String],
-      sparkSQLSession: SparkSQLSession,
+      sparkSession: SparkSession,
       options: Map[String, String]): DataFrame = {
-    val csvOptions = new CSVOptions(options)
+    val csvOptions = MapToCsvOptions(options, sparkSession.sessionState.conf)
     val csvReader = SparkCsvReader.create(csvOptions)
     val firstLine = findFirstLine(csvOptions, rdd)
     val firstRow = csvReader.parseLine(firstLine)
@@ -60,7 +59,6 @@ object RawCsvRDDToDataframe {
       parser(row, ignoreMalformedRows)
     }
 
-    val sparkSession = sparkSQLSession.getSparkSession
     Dataset.ofRows(
       sparkSession,
       LogicalRDD(

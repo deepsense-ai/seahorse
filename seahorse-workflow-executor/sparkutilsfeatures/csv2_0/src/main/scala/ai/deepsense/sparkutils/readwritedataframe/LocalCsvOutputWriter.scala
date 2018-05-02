@@ -21,27 +21,6 @@ import java.io.PrintWriter
 import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.types._
 
-import ai.deepsense.sparkutils.readwritedataframe.ManagedResource
-
-object DataframeToDriverCsvFileWriter {
-
-  def write(
-       dataFrame: DataFrame,
-       options: Map[String, String],
-       dataSchema: StructType,
-       pathWithoutScheme: String): Unit = {
-    val data = dataFrame.rdd.collect()
-    val params = new CSVOptions(options)
-    ManagedResource(
-      new LocalCsvOutputWriter(dataSchema, params, pathWithoutScheme)
-    ) { writer =>
-      data.foreach(row => {
-        writer.write(row.toSeq.map(_.asInstanceOf[String]))
-      })
-    }
-  }
-
-}
 
 /**
   * Heavily based on org.apache.spark.sql.execution.datasources.csv.CsvOutputWriter
