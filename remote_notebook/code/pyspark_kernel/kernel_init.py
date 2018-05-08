@@ -73,4 +73,4 @@ def dataframe():
     return move_to_local_sqlContext(DataFrame(jdf=java_data_frame, sql_ctx=sqlContext))
 
 def move_to_local_sqlContext(df):
-    return sqlContext.createDataFrame(df.rdd)
+    return sqlContext.createDataFrame(df.rdd, df.schema)
