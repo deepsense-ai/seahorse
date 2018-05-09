@@ -85,7 +85,7 @@ To compile and test SDK operations on local repository, you can use `seahorse-sd
 ```console
 git submodule init
 git submodule update
-./build/prepare-sdk-dependencies.sh
+./build/prepare_sdk_dependencies.sh
 ```
 Now it will compile and test against the local Seahorse repository:
 ```console

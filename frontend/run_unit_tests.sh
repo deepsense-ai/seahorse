@@ -16,10 +16,7 @@
 
 
 # Enter main directory
-cd `dirname $0`"/../"
-
-pwd
-ls -l
+cd $( dirname "${BASH_SOURCE[0]}" ) 
 
 NPM_REGISTRY_URL="https://registry.npmjs.org"
 npm set registry $NPM_REGISTRY_URL
