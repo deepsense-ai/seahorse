@@ -188,6 +188,7 @@ class CatalogRecorder private (jars: Seq[URL]) {
     catalog.registerDOperation(DOperationCategories.Filtering, () => new FilterRows())
     catalog.registerDOperation(DOperationCategories.Filtering, () => new HandleMissingValues())
     catalog.registerDOperation(DOperationCategories.Filtering, () => new Projection())
+    catalog.registerDOperation(DOperationCategories.Filtering, () => new Imputer())
 
     catalog.registerDOperation(DOperationCategories.Transformation.Custom, () => new CreateCustomTransformer())
     catalog.registerDOperation(DOperationCategories.Transformation.Custom, () => new SqlColumnTransformation())
