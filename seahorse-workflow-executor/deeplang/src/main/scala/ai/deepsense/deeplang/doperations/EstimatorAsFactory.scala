@@ -29,7 +29,7 @@ abstract class EstimatorAsFactory[E <: Estimator[Transformer]]
 
   val estimator: E = TypeUtils.instanceOfType(typeTagE)
   override lazy val tTagTO_0: TypeTag[E] = typeTag[E]
-  override val params: Array[Param[_]] = estimator.params
+  override val specificParams: Array[Param[_]] = estimator.params
 
   setDefault(estimator.extractParamMap().toSeq: _*)
 

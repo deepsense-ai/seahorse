@@ -25,7 +25,7 @@ ENV SPARK_PACKAGE spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION
 ENV SPARK_HOME /opt/spark-$SPARK_VERSION
 ENV PATH $PATH:$SPARK_HOME/bin
 RUN wget -q -O - \
-  "http://d3kbcqa49mib13.cloudfront.net/$SPARK_PACKAGE.tgz" \
+  "https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/$SPARK_PACKAGE.tgz" \
   | gunzip \
   | tar x -C /tmp/ \
   && mv /tmp/$SPARK_PACKAGE $SPARK_HOME \

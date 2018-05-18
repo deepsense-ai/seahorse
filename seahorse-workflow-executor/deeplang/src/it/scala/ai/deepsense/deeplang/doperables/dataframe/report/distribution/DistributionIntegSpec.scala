@@ -193,7 +193,7 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
             (1 to rowCount).map(x => Row(x.toString))
           )
         )
-        val report = dataFrame.report
+        val report = dataFrame.report()
         val distribution = report.content.distributions("string")
         inside(distribution) {
           case d: NoDistribution =>
@@ -212,7 +212,7 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
   }
 
   private def getDistributions(data: DataFrame) = {
-    val report = data.report
+    val report = data.report()
     report.content.distributions
   }
 

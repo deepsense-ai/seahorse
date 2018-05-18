@@ -30,7 +30,7 @@ abstract class EvaluatorAsFactory[T <: Evaluator]
 
   val evaluator: T = TypeUtils.instanceOfType(typeTag)
   override lazy val tTagTO_0: TypeTag[T] = typeTag[T]
-  override val params: Array[Param[_]] = evaluator.params
+  override val specificParams: Array[Param[_]] = evaluator.params
 
   setDefault(evaluator.extractParamMap().toSeq: _*)
 

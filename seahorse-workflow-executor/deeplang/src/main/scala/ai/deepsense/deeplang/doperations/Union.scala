@@ -48,7 +48,7 @@ case class Union()
 
   override val since: Version = Version(0, 4, 0)
 
-  val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
+  val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
 
   override protected def execute(
     first: DataFrame, second: DataFrame)(

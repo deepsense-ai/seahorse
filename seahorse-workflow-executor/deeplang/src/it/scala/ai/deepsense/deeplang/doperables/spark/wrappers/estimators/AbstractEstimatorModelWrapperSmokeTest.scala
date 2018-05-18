@@ -79,7 +79,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest
     }
     "successfully run report" in {
       val estimatorWithParams = estimator.set(estimatorParams: _*)
-      estimatorWithParams.report
+      estimatorWithParams.report()
     }
   }
 
@@ -119,7 +119,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest
     // Generating reports is one of the most important functionality of our product,
     // when report is generated without error it very often means that everything went fine,
     // and user won't see any errors.
-    transformer.report
+    transformer.report()
   }
 }
 

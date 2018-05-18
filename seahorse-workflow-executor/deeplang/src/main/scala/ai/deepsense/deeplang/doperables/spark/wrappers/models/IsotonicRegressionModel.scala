@@ -35,7 +35,7 @@ class IsotonicRegressionModel
     featuresColumn,
     predictionColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -47,7 +47,7 @@ class IsotonicRegressionModel
           value = sparkModel.predictions,
           description = "Predictions associated with the boundaries at the same index, " +
             "monotone because of isotonic regression."))
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

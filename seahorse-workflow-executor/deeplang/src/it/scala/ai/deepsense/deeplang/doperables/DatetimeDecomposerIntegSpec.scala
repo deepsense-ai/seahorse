@@ -69,7 +69,7 @@ class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport with Transfor
       )
       val transformedDataFrame = appendHour(dataFrame)
       val List(timestamp, hour) =
-        transformedDataFrame.report.content.tables.head.values.head.map(_.get)
+        transformedDataFrame.report().content.tables.head.values.head.map(_.get)
       timestamp.substring(11, 13) shouldBe hour
     }
   }

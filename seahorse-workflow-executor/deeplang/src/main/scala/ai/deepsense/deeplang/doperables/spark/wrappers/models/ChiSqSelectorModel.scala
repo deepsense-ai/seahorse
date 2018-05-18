@@ -38,7 +38,7 @@ class ChiSqSelectorModel
     labelColumn
   )
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -46,7 +46,7 @@ class ChiSqSelectorModel
           value = sparkModel.selectedFeatures,
           description = "List of indices to select."))
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

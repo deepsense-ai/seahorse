@@ -70,7 +70,7 @@ abstract class StringIndexingWrapperModel[M <: ml.Model[M], E <: ml.Estimator[M]
   override protected def applyTransformSchema(schema: StructType): Option[StructType] =
     wrappedModel._transformSchema(schema)
 
-  override def report: Report = wrappedModel.report
+  override def report(extended: Boolean = true): Report = wrappedModel.report(extended)
 
   override def params: Array[Param[_]] = wrappedModel.params
 

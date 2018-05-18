@@ -36,7 +36,7 @@ class QuantileDiscretizerModel
    */
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -44,7 +44,7 @@ class QuantileDiscretizerModel
           value = sparkModel.getSplits,
           description = "Split points for mapping continuous features into buckets."))
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

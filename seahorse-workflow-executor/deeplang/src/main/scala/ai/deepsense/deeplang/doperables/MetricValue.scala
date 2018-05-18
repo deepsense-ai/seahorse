@@ -34,8 +34,8 @@ case class MetricValue(name: String, value: Double) extends DOperable {
 
 
 
-  override def report: Report =
-    super.report
+  override def report(extended: Boolean = true): Report =
+    super.report(extended)
       .withReportName("Report for Metric Value")
       .withReportType(ReportType.MetricValue)
       .withAdditionalTable(

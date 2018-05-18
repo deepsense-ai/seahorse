@@ -33,7 +33,7 @@ class LDAModel extends SparkModelWrapper[SparkLDAModel, SparkLDA]
     featuresColumn,
     seed)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val vocabularySize =
       SparkSummaryEntry(
         name = "vocabulary size",
@@ -46,7 +46,7 @@ class LDAModel extends SparkModelWrapper[SparkLDAModel, SparkLDA]
         value = sparkModel.estimatedDocConcentration,
         description = "Value for `doc concentration` estimated from data.")
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(
         List(
           vocabularySize,

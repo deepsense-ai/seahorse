@@ -82,7 +82,7 @@ case class Join()
   def getJoinColumns: Seq[ColumnPair] = $(joinColumns)
   def setJoinColumns(value: Seq[ColumnPair]): this.type = set(joinColumns, value)
 
-  val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(joinType, leftPrefix, rightPrefix, joinColumns)
+  val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array(joinType, leftPrefix, rightPrefix, joinColumns)
 
   override protected def execute(ldf: DataFrame, rdf: DataFrame)(context: ExecutionContext): DataFrame = {
 

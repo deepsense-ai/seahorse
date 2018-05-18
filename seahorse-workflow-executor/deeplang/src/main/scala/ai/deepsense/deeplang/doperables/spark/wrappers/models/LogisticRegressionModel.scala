@@ -40,7 +40,7 @@ class LogisticRegressionModel
     predictionColumn,
     threshold)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val coefficients =
       SparkSummaryEntry(
         name = "coefficients",
@@ -62,7 +62,7 @@ class LogisticRegressionModel
       Nil
     }
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(coefficients) ++ summary))
   }
 

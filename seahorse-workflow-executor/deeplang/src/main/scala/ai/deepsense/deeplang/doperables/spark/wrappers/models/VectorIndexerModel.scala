@@ -29,8 +29,8 @@ class VectorIndexerModel
 
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report: Report = {
-    super.report.withAdditionalTable(
+  override def report(extended: Boolean = true): Report = {
+    super.report(extended).withAdditionalTable(
       CommonTablesGenerators.categoryMaps(sparkModel.categoryMaps))
   }
 

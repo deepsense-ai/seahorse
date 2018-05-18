@@ -65,7 +65,7 @@ class DatetimeComposerIntegSpec extends DeeplangIntegTestSupport with Transforme
         StructType(List(StructField(Hour.name, DoubleType))))
       val transformedDataFrame = composeHour(dataFrame, outputName)
       val List(hour, timestamp) =
-        transformedDataFrame.report.content.tables.head.values.head.map(_.get)
+        transformedDataFrame.report().content.tables.head.values.head.map(_.get)
       timestamp.substring(11, 13) shouldBe hour
     }
   }

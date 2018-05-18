@@ -72,8 +72,11 @@ case class DataFrame private[dataframe] (
     DataFrame.fromSparkDataFrame(newSparkDataFrame)
   }
 
-  override def report: Report = {
-    DataFrameReportGenerator.report(sparkDataFrame)
+  override def report(extended: Boolean): Report = {
+    extended match {
+      case true => DataFrameReportGenerator.report (sparkDataFrame)
+      case false => DataFrameReportGenerator.schemaReport(sparkDataFrame)
+    }
   }
 
   override def inferenceResult: Option[DataFrameInferenceResult] =

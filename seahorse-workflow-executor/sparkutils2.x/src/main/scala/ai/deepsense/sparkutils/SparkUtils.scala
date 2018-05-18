@@ -17,9 +17,8 @@
 package ai.deepsense.sparkutils
 
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
-import scala.concurrent.Future
 import scala.reflect.ClassTag
 import scala.reflect.api.Symbols
 import scala.reflect.runtime.universe.TypeTag
@@ -37,18 +36,27 @@ import org.apache.spark.sql.types._
 import org.apache.spark.{SparkContext, ml}
 
 
-class SparkSQLSession private[sparkutils](private[sparkutils] val sparkSession: SparkSession) {
+class SparkSQLSession private[sparkutils](val sparkSession: SparkSession) {
   def this(sparkContext: SparkContext) = this(SparkSession.builder().config(sparkContext.getConf).getOrCreate())
 
   def sparkContext: SparkContext = sparkSession.sparkContext
+
   def createDataFrame(rdd: RDD[Row], schema: StructType): DataFrame = sparkSession.createDataFrame(rdd, schema)
+
   def createDataFrame[T <: Product : TypeTag : ClassTag](rdd: RDD[T]): DataFrame = sparkSession.createDataFrame(rdd)
+
   def createDataFrame[A <: Product : TypeTag](data: Seq[A]): DataFrame = sparkSession.createDataFrame(data)
+
   def udfRegistration: UDFRegistration = sparkSession.udf
+
   def table(tableName: String): DataFrame = sparkSession.table(tableName)
+
   def read: DataFrameReader = sparkSession.read
+
   def sql(text: String): DataFrame = sparkSession.sql(text)
+
   def dropTempTable(name: String): Unit = sparkSession.catalog.dropTempView(name)
+
   def newSession(): SparkSQLSession = new SparkSQLSession(sparkSession.newSession())
 
   // This is for pyexecutor.py
@@ -57,13 +65,17 @@ class SparkSQLSession private[sparkutils](private[sparkutils] val sparkSession: 
 
 object SQL {
   def registerTempTable(dataFrame: DataFrame, name: String): Unit = dataFrame.createOrReplaceTempView(name)
+
   def sparkSQLSession(dataFrame: DataFrame): SparkSQLSession = new SparkSQLSession(dataFrame.sparkSession)
+
   def union(dataFrame1: DataFrame, dataFrame2: DataFrame): DataFrame = dataFrame1.union(dataFrame2)
+
   def dataFrameToJsonRDD(dataFrame: DataFrame): RDD[String] = dataFrame.toJSON.rdd
 
   def createEmptySparkSQLSession(): SparkSQLSession = {
     new SparkSQLSession(SparkSession.builder().getOrCreate().newSession())
   }
+
   val SqlParser = catalyst.parser.CatalystSqlParser
 
   type ExceptionThrownByInvalidExpression = org.apache.spark.sql.catalyst.parser.ParseException
@@ -77,27 +89,38 @@ object Linalg {
 }
 
 object ML {
+
   abstract class Transformer extends ml.Transformer {
     final override def transform(dataset: Dataset[_]): DataFrame = transformDF(dataset.toDF)
+
     def transformDF(dataFrame: DataFrame): DataFrame
   }
+
   abstract class Model[T <: ml.Model[T]] extends ml.Model[T] {
     final override def transform(dataset: Dataset[_]): DataFrame = transformDF(dataset.toDF)
+
     def transformDF(dataFrame: DataFrame): DataFrame
   }
+
   abstract class Estimator[M <: ml.Model[M]] extends ml.Estimator[M] {
     final override def fit(dataset: Dataset[_]): M = fitDF(dataset.toDF)
+
     def fitDF(dataFrame: DataFrame): M
   }
+
   abstract class Evaluator extends ml.evaluation.Evaluator {
     final override def evaluate(dataset: Dataset[_]): Double = evaluateDF(dataset.toDF)
+
     def evaluateDF(dataFrame: DataFrame): Double
   }
 
-  trait MLReaderWithSparkContext { self: MLReader[_] =>
+  trait MLReaderWithSparkContext {
+    self: MLReader[_] =>
     def sparkContext: SparkContext = sparkSession.sparkContext
   }
-  trait MLWriterWithSparkContext { self: MLWriter =>
+
+  trait MLWriterWithSparkContext {
+    self: MLWriter =>
     def sparkContext: SparkContext = sparkSession.sparkContext
   }
 
@@ -105,21 +128,27 @@ object ML {
     def decisionTreeClassification(path: String): Option[DecisionTreeClassificationModel] = {
       Some(DecisionTreeClassificationModel.load(path))
     }
+
     def decisionTreeRegression(path: String): Option[DecisionTreeRegressionModel] = {
       Some(DecisionTreeRegressionModel.load(path))
     }
+
     def GBTClassification(path: String): Option[GBTClassificationModel] = {
       Some(GBTClassificationModel.load(path))
     }
+
     def GBTRegression(path: String): Option[GBTRegressionModel] = {
       Some(GBTRegressionModel.load(path))
     }
+
     def multilayerPerceptronClassification(path: String): Option[MultilayerPerceptronClassificationModel] = {
       Some(MultilayerPerceptronClassificationModel.load(path))
     }
+
     def randomForestClassification(path: String): Option[RandomForestClassificationModel] = {
       Some(RandomForestClassificationModel.load(path))
     }
+
     def randomForestRegression(path: String): Option[RandomForestRegressionModel] = {
       Some(RandomForestRegressionModel.load(path))
     }
@@ -130,12 +159,13 @@ object ML {
 
     def pcFromPCAModel(pcaModel: PCAModel): Linalg.DenseMatrix = pcaModel.pc
   }
+
 }
 
 object CSV {
   val EscapeQuoteChar = "\\"
 
-  def additionalEscapings(separator: String)(row: String) : String = row
+  def additionalEscapings(separator: String)(row: String): String = row
 }
 
 object PythonGateway {
@@ -148,6 +178,7 @@ object TypeUtils {
 
 object AkkaUtils {
   def terminate(as: ActorSystem): Unit = as.terminate()
+
   def awaitTermination(as: ActorSystem) = Await.result(as.whenTerminated, Duration.Inf)
 }
 

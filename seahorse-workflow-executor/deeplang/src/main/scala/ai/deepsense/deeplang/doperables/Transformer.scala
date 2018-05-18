@@ -94,8 +94,8 @@ abstract class Transformer
     }
   }
 
-  override def report: Report =
-    super.report
+  override def report(extended: Boolean = true): Report =
+    super.report(extended)
       .withReportName(s"$transformerName Report")
       .withReportType(ReportType.Model)
       .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))

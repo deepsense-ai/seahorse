@@ -22,6 +22,8 @@ lazy val settingsForNotPublished = CommonSettingsPlugin.assemblySettings ++
 
 lazy val sparkVersion = Version.spark
 
+
+
 lazy val sparkUtils = sparkVersion match {
   case "2.0.0" | "2.0.1" | "2.0.2" =>
     val sparkUtils2_0_x = project in file("sparkutils2.0.x") settings settingsForPublished
@@ -29,9 +31,33 @@ lazy val sparkUtils = sparkVersion match {
   case "2.1.0" | "2.1.1" =>
     val sparkUtils2_1_0 = project in file("sparkutils2.1.x") settings settingsForPublished
     sparkUtils2_1_0
+  case "2.2.0" =>
+    val sparkUtils2_1_0 = project in file("sparkutils2.2.x") settings settingsForPublished
+    sparkUtils2_1_0
 }
 
-lazy val sparkUtils2_x = project in file(s"sparkutils2.x") dependsOn sparkUtils settings settingsForPublished
+lazy val sparkUtils2_x = project in file(s"sparkutils2.x") dependsOn (csvlib, sparkUtils) settings settingsForPublished
+
+lazy val csv2_2 = project in file(s"sparkutilsfeatures/csv2_2") settings settingsForPublished
+lazy val csv2_0 = project in file(s"sparkutilsfeatures/csv2_0") dependsOn sparkUtils settings settingsForPublished
+
+lazy val csvlib = sparkVersion match {
+  case "2.0.0" | "2.0.1" | "2.0.2" =>
+    csv2_0
+  case "2.1.0" | "2.1.1" =>
+    csv2_0
+  case "2.2.0" =>
+    csv2_2
+}
+
+lazy val readjsondataset = project in file(s"sparkutilsfeatures/readjsondataset") dependsOn sparkUtils2_x settings settingsForPublished
+lazy val readjsondataframe = project in file(s"sparkutilsfeatures/readjsondataframe") dependsOn sparkUtils2_x settings settingsForPublished
+
+lazy val readjson = sparkVersion match {
+  case "2.0.0" | "2.0.1" | "2.0.2" => readjsondataframe
+  case "2.1.0" | "2.1.1" => readjsondataframe
+  case "2.2.0" => readjsondataset
+}
 
 lazy val rootProject = project
   .in(file("."))
@@ -39,6 +65,8 @@ lazy val rootProject = project
   .settings(PublishSettings.disablePublishing)
   .aggregate(
     api,
+    csvlib,
+    readjson,
     sparkUtils2_x,
     sparkUtils,
     commons,
@@ -54,7 +82,7 @@ lazy val api = project settings settingsForPublished
 
 lazy val commons = project dependsOn (api, sparkUtils2_x) settings settingsForPublished
 
-lazy val deeplang = project dependsOn (commons,
+lazy val deeplang = project dependsOn (commons, readjson, csvlib,
 commons % "test->test",
 graph,
 graph % "test->test",
