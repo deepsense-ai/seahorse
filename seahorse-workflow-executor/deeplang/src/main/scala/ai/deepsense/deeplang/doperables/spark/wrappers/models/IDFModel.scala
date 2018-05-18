@@ -30,7 +30,7 @@ class IDFModel
 
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -38,7 +38,7 @@ class IDFModel
           value = sparkModel.idf,
           description = "The inverse document frequency vector."))
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

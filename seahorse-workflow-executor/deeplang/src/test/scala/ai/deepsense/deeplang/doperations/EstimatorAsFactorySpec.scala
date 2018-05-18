@@ -86,7 +86,7 @@ object EstimatorAsFactorySpec {
 
     override private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer = ???
     override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer = ???
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
   }
 
   class MockEstimatorFactory extends EstimatorAsFactory[MockEstimator] {

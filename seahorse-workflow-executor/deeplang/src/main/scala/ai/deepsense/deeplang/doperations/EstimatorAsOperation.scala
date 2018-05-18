@@ -29,7 +29,7 @@ abstract class EstimatorAsOperation[E <: Estimator[T], T <: Transformer]
 
   val estimator: E = TypeUtils.instanceOfType(typeTagE)
 
-  val params = estimator.params
+  val specificParams = estimator.params
 
   setDefault(estimator.extractParamMap().toSeq: _*)
 

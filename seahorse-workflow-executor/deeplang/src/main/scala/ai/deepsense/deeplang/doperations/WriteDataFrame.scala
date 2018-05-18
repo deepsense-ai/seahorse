@@ -56,7 +56,7 @@ class WriteDataFrame()
   def getStorageType(): OutputStorageTypeChoice = $(storageType)
   def setStorageType(value: OutputStorageTypeChoice): this.type = set(storageType, value)
 
-  val params: Array[Param[_]] = Array(storageType)
+  val specificParams: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new OutputStorageTypeChoice.File())
 
   override def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = {

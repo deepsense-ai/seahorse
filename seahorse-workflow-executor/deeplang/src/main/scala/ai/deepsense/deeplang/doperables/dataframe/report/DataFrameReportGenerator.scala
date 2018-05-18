@@ -47,6 +47,15 @@ object DataFrameReportGenerator {
     }
   }
 
+  def schemaReport(sparkDataFrame: DataFrame): Report = {
+    val table = schemaTable(sparkDataFrame.schema)
+    Report(ReportContent(
+      ReportContentName,
+      ReportType.DataFrameSimplified,
+      Seq(table),
+      noDistributionsForSimplifiedReport(sparkDataFrame.schema)))
+  }
+
   private def fullReport(sparkDataFrame: DataFrame): Report = {
     val multivarStats = calculateMultiColStats(sparkDataFrame)
     val distributions =

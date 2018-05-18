@@ -19,13 +19,12 @@ package ai.deepsense.workflowexecutor
 import scala.util.control.NonFatal
 
 import akka.actor.{Actor, PoisonPill}
-
 import ai.deepsense.commons.models.Entity
 import ai.deepsense.commons.utils.Logging
 import ai.deepsense.deeplang._
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.graph.DeeplangGraph.DeeplangNode
-import ai.deepsense.reportlib.model.ReportContent
+import ai.deepsense.reportlib.model.{ReportContent, ReportType}
 import ai.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
 
 /**
@@ -113,7 +112,7 @@ class WorkflowNodeExecutorActor(
     logger.debug(s"Collecting reports for ${node.id}")
     results.map {
       case (id, dOperable) =>
-        (id, dOperable.report.content)
+        (id, dOperable.report(extended = node.value.getReportType == DOperation.ReportParam.Extended()).content)
     }
   }
 

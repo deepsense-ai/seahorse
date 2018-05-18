@@ -47,7 +47,7 @@ object MockTransformers extends UnitSpec with DeeplangTestSupport {
 
     override val params: Array[Param[_]] = Array(paramA)
 
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
 
     override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
       $(paramA) match {

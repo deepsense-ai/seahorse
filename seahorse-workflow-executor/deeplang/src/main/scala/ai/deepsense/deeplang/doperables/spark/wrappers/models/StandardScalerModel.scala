@@ -33,7 +33,7 @@ class StandardScalerModel
 
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -46,7 +46,7 @@ class StandardScalerModel
           description = "Vector of means of the model."))
 
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

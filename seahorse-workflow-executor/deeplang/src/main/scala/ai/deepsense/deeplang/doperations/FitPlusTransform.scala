@@ -55,7 +55,7 @@ class FitPlusTransform
   setDefault(estimatorParams -> JsNull)
 
   def setEstimatorParams(jsValue: JsValue): this.type = set(estimatorParams -> jsValue)
-  override val params: Array[Param[_]] = Array(estimatorParams)
+  override val specificParams: Array[Param[_]] = Array(estimatorParams)
 
   override protected def execute(
       estimator: Estimator[Transformer],

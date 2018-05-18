@@ -91,7 +91,7 @@ object EstimatorModelWrapperFixtures {
     with HasPredictionColumn {
 
     override val params: Array[Param[_]] = Array(predictionColumn)
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
 
     override protected def loadModel(
       ctx: ExecutionContext,
@@ -103,6 +103,6 @@ object EstimatorModelWrapperFixtures {
     with HasPredictionColumn {
 
     override val params: Array[Param[_]] = Array(predictionColumn)
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
   }
 }

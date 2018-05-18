@@ -38,7 +38,7 @@ class NaiveBayesModel
     rawPredictionColumn,
     predictionColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val pi = SparkSummaryEntry(
       name = "pi",
       value = sparkModel.pi,
@@ -50,7 +50,7 @@ class NaiveBayesModel
       description = "Log of class conditional probabilities, " +
         "whose dimension is C (number of classes) by D (number of features)")
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(pi) ++ List(theta)))
   }
 

@@ -104,7 +104,7 @@ object SparkEvaluatorWrapperSpec {
 
     override def getMetricName: String = metricName
 
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
   }
 
   class ExampleSparkEvaluator extends ML.Evaluator {

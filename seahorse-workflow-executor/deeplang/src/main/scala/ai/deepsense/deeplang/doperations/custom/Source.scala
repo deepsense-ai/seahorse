@@ -33,7 +33,7 @@ case class Source() extends DOperation0To1[DataFrame] with OperationDocumentatio
 
   override val since: Version = Version(1, 0, 0)
 
-  override val params: Array[Param[_]] = Array()
+  override val specificParams: Array[Param[_]] = Array()
 
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]

@@ -32,8 +32,9 @@ class EvaluatorAsFactorySpec extends UnitSpec {
     "have the same parameters as the Evaluator" in {
       val mockEvaluator = new MockEvaluator
       val mockFactory = new MockEvaluatorFactory
-      mockFactory.extractParamMap() shouldBe mockEvaluator.extractParamMap()
-      mockFactory.params shouldBe mockEvaluator.params
+      val paramMapWithoutReport = mockFactory.extractParamMap() - mockFactory.reportType
+      paramMapWithoutReport shouldBe mockEvaluator.extractParamMap()
+      mockFactory.specificParams shouldBe mockEvaluator.params
     }
 
     val paramValue1 = 100
@@ -89,7 +90,7 @@ object EvaluatorAsFactorySpec {
       ???
     override private[deeplang] def _infer(k: DKnowledge[DataFrame]): MetricValue =
       ???
-    override def report: Report =
+    override def report(extended: Boolean = true): Report =
       ???
 
     override def isLargerBetter: Boolean = ???

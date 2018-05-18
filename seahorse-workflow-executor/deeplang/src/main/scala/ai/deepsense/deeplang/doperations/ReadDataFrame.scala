@@ -53,7 +53,7 @@ case class ReadDataFrame()
 
   override val since: Version = Version(0, 4, 0)
 
-  val params: Array[Param[_]] = Array(storageType)
+  val specificParams: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new InputStorageTypeChoice.File())
 
   override def execute()(context: ExecutionContext): DataFrame = {

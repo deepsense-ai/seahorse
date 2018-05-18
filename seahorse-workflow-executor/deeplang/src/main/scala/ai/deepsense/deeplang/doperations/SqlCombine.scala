@@ -110,7 +110,7 @@ final class SqlCombine
   private def moveToSparkSQLSession(df: sql.DataFrame, destinationCtx: SparkSQLSession): sql.DataFrame =
     destinationCtx.createDataFrame(df.rdd, df.schema)
 
-  override def params: Array[Param[_]] =
+  override def specificParams: Array[Param[_]] =
     Array(leftTableName, rightTableName, sqlCombineExpression)
 
   override def since: Version = Version(1, 4, 0)

@@ -38,7 +38,7 @@ class MultilayerPerceptronClassifierModel
     featuresColumn,
     predictionColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val numberOfFeatures =
       SparkSummaryEntry(
         name = "number of features",
@@ -59,7 +59,7 @@ class MultilayerPerceptronClassifierModel
         value = sparkModel.weights,
         description = "The vector of perceptron layers' weights.")
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(
         List(
           numberOfFeatures,

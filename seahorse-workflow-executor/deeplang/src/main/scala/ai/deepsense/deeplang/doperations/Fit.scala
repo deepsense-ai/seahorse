@@ -52,7 +52,7 @@ case class Fit()
 
   def setEstimatorParams(jsValue: JsValue): this.type = set(estimatorParams -> jsValue)
 
-  override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(estimatorParams)
+  override val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array(estimatorParams)
 
   override lazy val tTagTI_0: TypeTag[Estimator[Transformer]] = typeTag
   override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag

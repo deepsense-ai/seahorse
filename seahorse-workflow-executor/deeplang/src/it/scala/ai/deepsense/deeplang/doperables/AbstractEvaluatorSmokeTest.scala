@@ -58,7 +58,7 @@ abstract class AbstractEvaluatorSmokeTest extends DeeplangIntegTestSupport {
       evaluator.set(evaluatorParams: _*)._infer(DKnowledge(inputDataFrame))
     }
     "successfully run report" in {
-      evaluator.set(evaluatorParams: _*).report
+      evaluator.set(evaluatorParams: _*).report()
     }
   }
 }

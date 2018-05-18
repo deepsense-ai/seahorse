@@ -46,7 +46,7 @@ object DOperationTestClasses {
 
     override val description: String = ""
 
-    val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
+    val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
   }
 
   case class DOperationCreateA1() extends DOperation0To1[A1] with DOperationBaseFields {

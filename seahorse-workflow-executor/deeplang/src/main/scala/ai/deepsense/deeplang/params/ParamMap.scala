@@ -52,6 +52,10 @@ case class ParamMap private[deeplang] (private val map: mutable.Map[Param[Any], 
     map.remove(param.asInstanceOf[Param[Any]]).asInstanceOf[Option[T]]
   }
 
+  def -[T](param: Param[T]): ParamMap = {
+    ParamMap(this.map - param.asInstanceOf[Param[Any]])
+  }
+
   def ++(other: ParamMap): ParamMap = {
     ParamMap(this.map ++ other.map)
   }

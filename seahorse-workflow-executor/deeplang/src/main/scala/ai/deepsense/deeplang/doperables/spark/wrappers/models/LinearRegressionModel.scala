@@ -37,7 +37,7 @@ class LinearRegressionModel
     featuresColumn,
     predictionColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val coefficients =
       SparkSummaryEntry(
         name = "coefficients",
@@ -104,7 +104,7 @@ class LinearRegressionModel
       Nil
     }
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(coefficients) ++ summary))
   }
 
