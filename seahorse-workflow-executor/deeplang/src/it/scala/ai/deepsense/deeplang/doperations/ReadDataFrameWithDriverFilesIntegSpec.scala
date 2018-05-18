@@ -189,7 +189,7 @@ class ReadDataFrameWithDriverFilesIntegSpec
         csvNamesIncluded = false,
         csvConvertToBoolean = true
       )
-      dataFrame.report shouldBe a[Report]
+      dataFrame.report() shouldBe a[Report]
     }
 
     "read CSV file with escaped quotes without throwing an exception" in {

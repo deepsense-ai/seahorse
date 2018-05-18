@@ -49,7 +49,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
 
     def setNumericParamWrapper(value: Double): this.type = set(numericParamWrapper, value)
 
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
     override val params: Array[Param[_]] = Array(numericParamWrapper)
   }
 
@@ -112,7 +112,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
 
     def setNumericParamWrapper(value: Double): this.type = set(numericParamWrapper, value)
 
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
     override val params: Array[Param[_]] = Array(numericParamWrapper)
 
     override protected def loadModel(

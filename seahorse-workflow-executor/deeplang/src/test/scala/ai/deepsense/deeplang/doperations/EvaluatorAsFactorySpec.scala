@@ -22,8 +22,8 @@ import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.doperables.report.Report
 import ai.deepsense.deeplang.doperables.{Evaluator, MetricValue}
 import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import ai.deepsense.deeplang.params.{NumericParam, Param}
-import ai.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
+import ai.deepsense.deeplang.params.{NumericParam, Param, ParamMap}
+import ai.deepsense.deeplang.{DKnowledge, ExecutionContext, ReportTypeDefault, UnitSpec}
 
 class EvaluatorAsFactorySpec extends UnitSpec {
   import EvaluatorAsFactorySpec._
@@ -32,8 +32,9 @@ class EvaluatorAsFactorySpec extends UnitSpec {
     "have the same parameters as the Evaluator" in {
       val mockEvaluator = new MockEvaluator
       val mockFactory = new MockEvaluatorFactory
-      mockFactory.extractParamMap() shouldBe mockEvaluator.extractParamMap()
-      mockFactory.params shouldBe mockEvaluator.params
+      val reportType = ReportTypeDefault(mockFactory.reportType)
+      mockFactory.extractParamMap() shouldBe mockEvaluator.extractParamMap() ++ ParamMap(reportType)
+      mockFactory.specificParams shouldBe mockEvaluator.params
     }
 
     val paramValue1 = 100
@@ -89,7 +90,7 @@ object EvaluatorAsFactorySpec {
       ???
     override private[deeplang] def _infer(k: DKnowledge[DataFrame]): MetricValue =
       ???
-    override def report: Report =
+    override def report(extended: Boolean = true): Report =
       ???
 
     override def isLargerBetter: Boolean = ???

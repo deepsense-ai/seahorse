@@ -39,5 +39,5 @@ case class Report(content: ReportContent = ReportContent("Empty Report", ReportT
     copy(content.copy(tables = newTables))
   }
 
-  override def report: Report = this
+  override def report(extended: Boolean = true): Report = this
 }

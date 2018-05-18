@@ -37,7 +37,7 @@ class ALSModel
     predictionColumn,
     userColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -45,7 +45,7 @@ class ALSModel
           value = sparkModel.rank,
           description = "Rank of the matrix factorization model."))
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

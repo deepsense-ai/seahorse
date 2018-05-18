@@ -28,7 +28,7 @@ class KMeansModel extends SparkModelWrapper[SparkKMeansModel, SparkKMeans] {
 
   override val params: Array[Param[_]] = Array()
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -36,7 +36,7 @@ class KMeansModel extends SparkModelWrapper[SparkKMeansModel, SparkKMeans] {
           value = sparkModel.clusterCenters,
           description = "Positions of cluster centers."))
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

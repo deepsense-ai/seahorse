@@ -60,7 +60,7 @@ case class Split()
   def getSplitMode: SplitModeChoice = $(splitMode)
   def setSplitMode(value: SplitModeChoice): this.type = set(splitMode, value)
 
-  val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(splitMode)
+  val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array(splitMode)
 
   override def outPortsLayout: Vector[DPortPosition] =
     Vector(DPortPosition.Left, DPortPosition.Right)

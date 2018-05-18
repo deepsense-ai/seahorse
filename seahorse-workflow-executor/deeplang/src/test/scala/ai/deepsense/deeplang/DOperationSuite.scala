@@ -40,7 +40,7 @@ object DOperationForPortTypes {
     override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
     override val description: String = ""
-    override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
+    override val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
     override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
     override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
   }
@@ -57,7 +57,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       val param = NumericParam("param", None, RangeValidator.all)
       def setParam(int: Int): this.type = set(param -> int)
 
-      val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(param)
+      val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array(param)
 
       override protected def execute(t1: A1, t2: A2)(context: ExecutionContext): A = {
         if ($(param) % 2 == 1) t1 else t2
@@ -107,7 +107,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       override val name: String = ""
       override val description: String = ""
 
-      val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
+      val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
 
       override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
     }

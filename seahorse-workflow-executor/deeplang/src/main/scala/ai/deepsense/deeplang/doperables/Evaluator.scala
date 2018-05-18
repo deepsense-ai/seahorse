@@ -48,8 +48,8 @@ abstract class Evaluator extends DOperable with Params {
     }
   }
 
-  override def report: Report =
-    super.report
+  override def report(extended: Boolean = true): Report =
+    super.report(extended)
       .withReportName(s"${this.getClass.getSimpleName} Report")
       .withReportType(ReportType.Evaluator)
       .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))

@@ -53,7 +53,7 @@ case class Evaluate()
   def getEvaluatorParams: JsValue = $(evaluatorParams)
   def setEvaluatorParams(jsValue: JsValue): this.type = set(evaluatorParams, jsValue)
 
-  override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(evaluatorParams)
+  override val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array(evaluatorParams)
 
   override lazy val tTagTI_0: TypeTag[Evaluator] = typeTag
   override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag

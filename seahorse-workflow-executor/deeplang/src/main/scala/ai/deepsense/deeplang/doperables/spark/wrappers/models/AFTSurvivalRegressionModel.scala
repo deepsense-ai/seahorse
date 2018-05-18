@@ -41,7 +41,7 @@ class AFTSurvivalRegressionModel
     quantileProbabilities,
     optionalQuantilesColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -58,7 +58,7 @@ class AFTSurvivalRegressionModel
           description = "The log of scale parameter - log(sigma).")
       )
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

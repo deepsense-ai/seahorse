@@ -37,11 +37,11 @@ case class MultiColumnStringIndexerModel()
 
   override def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report: Report = {
-    val tables = models.map(model => model.report.content.tables)
+  override def report(extended: Boolean = true): Report = {
+    val tables = models.map(model => model.report(extended).content.tables)
     val name = s"${this.getClass.getSimpleName} with ${models.length} columns"
     tables
-      .foldRight (super.report.withReportName(name))(
+      .foldRight (super.report(extended).withReportName(name))(
         (seqTables, accReport) =>
           seqTables.foldRight(accReport)((t, r) => r.withAdditionalTable(t)))
   }
@@ -111,7 +111,7 @@ class SingleColumnStringIndexerModel
 
   override def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -119,7 +119,7 @@ class SingleColumnStringIndexerModel
           value = sparkModel.labels,
           description = "Ordered list of labels, corresponding to indices to be assigned."))
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

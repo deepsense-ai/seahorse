@@ -46,7 +46,7 @@ abstract class Notebook()
   def setShouldExecute(emailChoice: Set[SendEmailChoice]): this.type =
     set(shouldExecuteParam, emailChoice)
 
-  override val params: Array[ai.deepsense.deeplang.params.Param[_]] =
+  override val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] =
     Array(shouldExecuteParam)
 
   val notebookType: String

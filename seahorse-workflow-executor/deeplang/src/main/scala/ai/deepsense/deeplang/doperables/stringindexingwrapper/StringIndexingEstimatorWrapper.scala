@@ -54,7 +54,7 @@ abstract class StringIndexingEstimatorWrapper
   extends Estimator[SIWP] with ParamsWithSparkWrappers  {
 
   final override def params: Array[Param[_]] = wrappedEstimator.params
-  final override def report: Report = wrappedEstimator.report
+  final override def report(extended: Boolean = true): Report = wrappedEstimator.report(extended)
 
   final def sparkClassCanonicalName: String =
     wrappedEstimator.serializableEstimator.sparkEstimator.getClass.getCanonicalName

@@ -80,7 +80,7 @@ class StatisticsForContinuousIntegSpec extends DeeplangIntegTestSupport with Dat
     val rows = data.map(v => Row(v))
     val dataFrame = createDataFrame(rows, schema)
 
-    val report = dataFrame.report
+    val report = dataFrame.report()
     report.content.distributions(columnName).asInstanceOf[ContinuousDistribution]
   }
 

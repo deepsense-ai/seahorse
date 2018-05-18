@@ -761,7 +761,7 @@ object WorkflowsApiSpec {
     override val id: Id = "7814b1ae-a24d-11e5-bf7f-feff819cdc9f"
     override val name: String = "mock operation"
     override val description: String = "mock operation desc"
-    override val params = Array[Param[_]]()
+    override val specificParams = Array[Param[_]]()
 
     @transient
     override lazy val tTagTI_0: TypeTag[DOperable] = typeTag[DOperable]

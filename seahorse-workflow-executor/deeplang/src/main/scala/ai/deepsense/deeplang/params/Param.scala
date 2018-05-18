@@ -25,7 +25,7 @@ import ai.deepsense.deeplang.exceptions.DeepLangException
 import ai.deepsense.deeplang.params.ParameterType._
 import ai.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
-abstract class Param[T] {
+abstract class Param[T] extends java.io.Serializable {
 
   val name: String
 

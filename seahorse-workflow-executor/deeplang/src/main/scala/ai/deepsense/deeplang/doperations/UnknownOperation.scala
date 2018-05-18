@@ -41,7 +41,7 @@ class UnknownOperation extends DOperation {
   override val name: String = "Unknown Operation"
   override val description: String = "Operation that could not be recognized by Seahorse"
 
-  override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
+  override val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
 
   override def executeUntyped(arguments: Vector[DOperable])(context: ExecutionContext): Vector[DOperable] = {
     throw new UnknownOperationExecutionException

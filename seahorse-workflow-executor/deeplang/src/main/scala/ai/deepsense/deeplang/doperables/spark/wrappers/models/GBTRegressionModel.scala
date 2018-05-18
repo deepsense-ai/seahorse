@@ -32,7 +32,7 @@ class GBTRegressionModel
 
   override val params: Array[Param[_]] = Array(featuresColumn, predictionColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -40,7 +40,7 @@ class GBTRegressionModel
           value = sparkModel.numFeatures,
           description = "Number of features the model was trained on."))
 
-    super.report
+    super.report(extended)
       .withReportName(
         s"${this.getClass.getSimpleName} with ${sparkModel.numTrees} trees")
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))

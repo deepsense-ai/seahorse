@@ -16,10 +16,10 @@
 
 package ai.deepsense.deeplang.doperations
 
+import scala.collection.mutable
 import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.sql.types.StructType
-
 import ai.deepsense.commons.utils.Version
 import ai.deepsense.deeplang.DOperation.Id
 import ai.deepsense.deeplang.doperables.Transformer
@@ -27,8 +27,8 @@ import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.doperables.report.Report
 import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import ai.deepsense.deeplang.params.validators.RangeValidator
-import ai.deepsense.deeplang.params.{NumericParam, Param, ParamMap}
-import ai.deepsense.deeplang.{DKnowledge, DeeplangTestSupport, ExecutionContext, UnitSpec}
+import ai.deepsense.deeplang.params.{NumericParam, Param, ParamMap, ParamPair}
+import ai.deepsense.deeplang._
 
 object MockTransformers extends UnitSpec with DeeplangTestSupport {
   val DefaultForA = 1
@@ -47,7 +47,7 @@ object MockTransformers extends UnitSpec with DeeplangTestSupport {
 
     override val params: Array[Param[_]] = Array(paramA)
 
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
 
     override protected def applyTransform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
       $(paramA) match {
@@ -82,27 +82,30 @@ class TransformerAsOperationSpec extends UnitSpec {
 
   "TransformerAsOperation" should {
     def operation: MockTransformerAsOperation = new MockTransformerAsOperation
-
-    "have params same as Transformer" in {
-      val op = operation
-      op.params shouldBe Array(op.transformer.paramA)
+    val op = operation
+    val changedParamMap =
+      ParamMap(op.transformer.paramA -> 2, op.reportType -> DOperation.ReportParam.Extended())
+    "have specific params same as Transformer" in {
+      op.specificParams shouldBe Array(op.transformer.paramA)
     }
+
+    "have report type param set to extended" in {
+      op.extractParamMap().get(op.reportType).get shouldBe DOperation.ReportParam.Extended()
+    }
+
     "have defaults same as in Transformer" in {
-      val op = operation
-      op.extractParamMap() shouldBe ParamMap(op.transformer.paramA -> DefaultForA)
+      op.extractParamMap() shouldBe ParamMap(op.transformer.paramA -> DefaultForA, ReportTypeDefault(op.reportType))
     }
     "execute transform using transformer with properly set params and return it" in {
-      val op = operation
       op.set(op.transformer.paramA -> 2)
       val result = op.executeUntyped(Vector(mock[DataFrame]))(mock[ExecutionContext])
 
       result should have length 2
       result(0).asInstanceOf[DataFrame] shouldBe outputDataFrame2
-      result(1).asInstanceOf[MockTransformer].extractParamMap() shouldBe
-        ParamMap(op.transformer.paramA -> 2)
+      result(1).asInstanceOf[MockTransformer].extractParamMap() shouldBe changedParamMap
+
     }
     "infer types on transformer with properly set params and return it" in {
-      val op = operation
       op.set(op.transformer.paramA -> 2)
 
       val inputDF = inputDataFrame
@@ -114,8 +117,7 @@ class TransformerAsOperationSpec extends UnitSpec {
       result should have length 2
       result(0).asInstanceOf[DKnowledge[DataFrame]] shouldBe
         DKnowledge(DataFrame.forInference(outputSchema2))
-      result(1).single.asInstanceOf[MockTransformer].extractParamMap() shouldBe
-        ParamMap(op.transformer.paramA -> 2)
+      result(1).single.asInstanceOf[MockTransformer].extractParamMap() shouldBe changedParamMap
     }
   }
 }

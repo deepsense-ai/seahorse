@@ -45,7 +45,7 @@ class DataFrameReportPerformanceSpec
         for (i <- 1 to numberOfTries) {
           val dataFrame: DataFrame = demandDataFrame()
           val start = System.nanoTime()
-          val report = dataFrame.report
+          val report = dataFrame.report()
           val end = System.nanoTime()
           val time1: Double = (end - start).toDouble / 1000000000.0
           results = results :+ time1

@@ -79,7 +79,7 @@ object SparkTransformerWrapperSpec extends MockitoSugar {
     def setParamWrapper(value: Double): this.type = set(paramWrapper, value)
 
     override val params: Array[Param[_]] = Array(paramWrapper)
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
   }
 
   class ParamValueCheckingTransformer extends ML.Transformer {

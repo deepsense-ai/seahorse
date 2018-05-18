@@ -81,7 +81,7 @@ case class GridSearch()
   def getEvaluatorParams: JsValue = $(evaluatorParams)
   def setEvaluatorParams(jsValue: JsValue): this.type = set(evaluatorParams, jsValue)
 
-  override val params: Array[ai.deepsense.deeplang.params.Param[_]] =
+  override val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] =
     Array(estimatorParams, evaluatorParams, numberOfFolds)
 
   override lazy val tTagTI_0: TypeTag[Estimator[Transformer]] = typeTag

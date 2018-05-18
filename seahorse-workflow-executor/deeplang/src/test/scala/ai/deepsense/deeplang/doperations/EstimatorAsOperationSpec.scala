@@ -17,7 +17,6 @@
 package ai.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types.StructType
-
 import ai.deepsense.commons.utils.Version
 import ai.deepsense.deeplang.DOperation.Id
 import ai.deepsense.deeplang._
@@ -32,13 +31,14 @@ class EstimatorAsOperationSpec extends UnitSpec with DeeplangTestSupport {
 
   "EstimatorAsOperation" should {
     def createMockOperation: MockEstimatorOperation = new MockEstimatorOperation
-    "have the same parameters as the Estimator" in {
+    "have the same specific parameters as the Estimator" in {
       val op = createMockOperation
-      op.params shouldBe op.estimator.params
+      op.specificParams shouldBe op.estimator.params
     }
    "have the same default values for parameters as Estimator" in {
      val op = createMockOperation
-     op.extractParamMap() shouldBe ParamMap(createMockOperation.estimator.paramA -> DefaultForA)
+     val estimatorOperation = op.estimator.paramA -> DefaultForA
+     op.extractParamMap() shouldBe ParamMap(estimatorOperation, ReportTypeDefault(op.reportType))
     }
     "execute fit using properly set parameters" in {
       def testFit(

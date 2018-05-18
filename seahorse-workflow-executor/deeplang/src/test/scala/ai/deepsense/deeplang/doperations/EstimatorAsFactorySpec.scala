@@ -17,15 +17,14 @@
 package ai.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types.StructType
-
 import ai.deepsense.commons.utils.Version
 import ai.deepsense.deeplang.DOperation.Id
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.doperables.report.Report
 import ai.deepsense.deeplang.doperables.{Estimator, Transformer}
 import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import ai.deepsense.deeplang.params.{NumericParam, Param}
-import ai.deepsense.deeplang.{ExecutionContext, UnitSpec}
+import ai.deepsense.deeplang.params.{NumericParam, Param, ParamMap}
+import ai.deepsense.deeplang.{DOperation, ExecutionContext, ReportTypeDefault, UnitSpec}
 
 class EstimatorAsFactorySpec extends UnitSpec {
   import EstimatorAsFactorySpec._
@@ -34,8 +33,9 @@ class EstimatorAsFactorySpec extends UnitSpec {
     "have the same parameters as the Estimator" in {
       val mockEstimator = new MockEstimator
       val mockFactory = new MockEstimatorFactory
-      mockFactory.extractParamMap() shouldBe mockEstimator.extractParamMap()
-      mockFactory.params shouldBe mockEstimator.params
+      val reportTypeParamMap = ParamMap(ReportTypeDefault(mockFactory.reportType))
+      mockFactory.extractParamMap() shouldBe mockEstimator.extractParamMap() ++ reportTypeParamMap
+      mockFactory.specificParams shouldBe mockEstimator.params
     }
     val paramValue1 = 100
     val paramValue2 = 1337
@@ -86,7 +86,7 @@ object EstimatorAsFactorySpec {
 
     override private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer = ???
     override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer = ???
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
   }
 
   class MockEstimatorFactory extends EstimatorAsFactory[MockEstimator] {
