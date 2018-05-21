@@ -31,7 +31,7 @@ simple_command_type = 'simple_command'
 sbt_type = 'sbt'
 
 
-spark_version = "2.1.1"
+spark_version = "2.2.0"
 hadoop_version = "2.7"
 
 
