@@ -66,7 +66,7 @@ object DataFrameToFileWriter {
         new java.io.File(libraryPath).getParentFile.mkdirs()
         writeUsingProvidedFileScheme(fileChoice, dataFrame, filePath, saveMode)
       case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
-      case HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
+      case HDFS | S3 | S3A | S3N => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
       case HTTP | HTTPS | FTP => throw NotSupportedScheme(path.fileScheme)
     }
   }
