@@ -179,6 +179,7 @@ class CatalogRecorder private (jars: Seq[URL]) {
     catalog.registerDOperation(DOperationCategories.Action, () => new Fit())
     catalog.registerDOperation(DOperationCategories.Action, () => new FitPlusTransform())
     catalog.registerDOperation(DOperationCategories.Action, () => new Transform())
+    catalog.registerDOperation(DOperationCategories.Action, () => new DataFrameReport())
     catalog.registerDOperation(DOperationCategories.SetOperation, () => new Join())
     catalog.registerDOperation(DOperationCategories.SetOperation, () => new Split())
     catalog.registerDOperation(DOperationCategories.SetOperation, () => new Union())

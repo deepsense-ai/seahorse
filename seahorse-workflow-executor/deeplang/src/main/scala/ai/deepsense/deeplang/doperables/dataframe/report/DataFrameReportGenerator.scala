@@ -38,7 +38,7 @@ object DataFrameReportGenerator {
   val ColumnNumberToGenerateSimplerReportThreshold = 20
   val StringPreviewMaxLength = 300
 
-  def report(sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
+  def standardReport(sparkDataFrame: DataFrame): Report = {
     val columnsCount = sparkDataFrame.schema.length
     if (columnsCount >= DataFrameReportGenerator.ColumnNumberToGenerateSimplerReportThreshold) {
       simplifiedReport(sparkDataFrame)
@@ -47,7 +47,27 @@ object DataFrameReportGenerator {
     }
   }
 
-  private def fullReport(sparkDataFrame: DataFrame): Report = {
+  def minimalReport(sparkDataFrame: DataFrame): Report = {
+    val table = schemaTable(sparkDataFrame.schema)
+    Report(ReportContent(
+      ReportContentName,
+      ReportType.DataFrameSimplified,
+      Seq(table),
+      noDistributionsForSimplifiedReport(sparkDataFrame.schema)))
+  }
+
+  def simplifiedReport(sparkDataFrame: DataFrame): Report = {
+    val tables = Seq(
+      sizeTable(sparkDataFrame.schema, sparkDataFrame.count()),
+      schemaTable(sparkDataFrame.schema))
+    Report(ReportContent(
+      ReportContentName,
+      ReportType.DataFrameSimplified,
+      tables,
+      noDistributionsForSimplifiedReport(sparkDataFrame.schema)))
+  }
+
+  def fullReport(sparkDataFrame: DataFrame): Report = {
     val multivarStats = calculateMultiColStats(sparkDataFrame)
     val distributions =
       DistributionCalculator.distributionByColumn(sparkDataFrame, multivarStats)
@@ -68,16 +88,7 @@ object DataFrameReportGenerator {
     Statistics.colStats(data)
   }
 
-  private def simplifiedReport(sparkDataFrame: DataFrame): Report = {
-    val tables = Seq(
-      sizeTable(sparkDataFrame.schema, sparkDataFrame.count()),
-      schemaTable(sparkDataFrame.schema))
-    Report(ReportContent(
-      ReportContentName,
-      ReportType.DataFrameSimplified,
-      tables,
-      noDistributionsForSimplifiedReport(sparkDataFrame.schema)))
-  }
+
 
   private def noDistributionsForSimplifiedReport(schema: StructType): Map[String, Distribution] = {
     for (field <- schema.fields) yield {
