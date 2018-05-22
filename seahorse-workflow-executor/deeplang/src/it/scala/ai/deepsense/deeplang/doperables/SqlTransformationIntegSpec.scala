@@ -16,15 +16,16 @@
 
 package ai.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.catalyst.analysis.NoSuchTableException
 import org.apache.spark.sql.types._
-
+import org.apache.spark.sql.functions._
 import ai.deepsense.deeplang.DeeplangIntegTestSupport
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import ai.deepsense.deeplang.doperations.exceptions.SqlExpressionException
 import ai.deepsense.sparkutils.SQL
+import ai.deepsense.sparkutils.spi.SparkSessionInitializer
 
 class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with TransformerSerialization {
 
@@ -59,6 +60,19 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
       val selectedColumnsIndices = Seq(1) // 'secondColumn' index
       val expectedDataFrame = subsetDataFrame(selectedColumnsIndices)
       assertDataFramesEqual(result, expectedDataFrame)
+      assertTableUnregistered()
+    }
+    "allow use of UDFs defined in primary SQL Context" in {
+      val fun = sparkSQLSession.getSparkSession.catalog.getFunction("myOp")
+      assert(fun != null)
+      val expression = s"select myOp($secondColumn) as foo from $dataFrameId"
+      val resultSchema = executeSqlSchemaTransformation(expression, dataFrameId, schema)
+      val expectedSchema = StructType(Seq(StructField("foo", IntegerType)))
+      val result = executeSqlTransformation(expression, dataFrameId, sampleDataFrame)
+      val expectedDataFrame = sampleDataFrame.sparkDataFrame.select(col(secondColumn) cast IntegerType as "foo")
+      assertSchemaEqual(resultSchema, expectedSchema)
+
+      assertDataFramesEqual(result, DataFrame.fromSparkDataFrame(expectedDataFrame))
       assertTableUnregistered()
     }
     "correctly infer output DataFrame schema" in {
@@ -143,3 +157,5 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
     createDataFrame(subData, subSchema)
   }
 }
+
+

@@ -106,8 +106,6 @@ object StandaloneSparkClusterForTests {
     sparkContext.hadoopConfiguration.set("parquet.enable.summary-metadata", "false")
     val sparkSQLSession = new SparkSQLSession(sparkContext)
 
-    UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
-
     val inferContext = MockedInferContext(
       dataFrameBuilder = DataFrameBuilder(sparkSQLSession)
     )

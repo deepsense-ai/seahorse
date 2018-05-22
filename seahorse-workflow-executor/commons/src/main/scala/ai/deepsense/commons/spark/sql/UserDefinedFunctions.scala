@@ -18,8 +18,13 @@ package ai.deepsense.commons.spark.sql
 
 import java.lang.{Double => JavaDouble}
 
-import org.apache.spark.sql.UDFRegistration
+import ai.deepsense.sparkutils.spi.SparkSessionInitializer
+import org.apache.spark.sql.{SparkSession, UDFRegistration}
 
+class UserDefinedFunctions() extends SparkSessionInitializer {
+  override def init(sparkSession: SparkSession): Unit =
+    UserDefinedFunctions.registerFunctions(sparkSession.udf)
+}
 /**
  * Holds user defined functions that can be injected to UDFRegistration
  * All the functions have to operate on java.lang.Double as input and output,
@@ -31,7 +36,7 @@ object UserDefinedFunctions extends Serializable {
   /**
    * Registers user defined function in given UDFRegistration
    */
-  def registerFunctions(udf: UDFRegistration): Unit = {
+  private def registerFunctions(udf: UDFRegistration): Unit = {
     udf.register("ABS", nullSafeSingleParamOp(math.abs))
     udf.register("EXP", nullSafeSingleParamOp(math.exp))
     udf.register("POW", nullSafeTwoParamOp(math.pow))
