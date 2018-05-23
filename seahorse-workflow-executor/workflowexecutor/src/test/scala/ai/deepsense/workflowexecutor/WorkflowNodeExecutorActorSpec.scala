@@ -58,6 +58,17 @@ class WorkflowNodeExecutorActorSpec
         }
       }
     }
+    "its operation report type is set to metadata" should {
+      "generate metadata report" in {
+        val (probe, testedActor, node, result) = fixtureSucceedingOperation()
+        node.value.setReportType(DOperation.ReportParam.Metadata())
+        probe.send(testedActor, Start())
+        probe.expectMsg(NodeStarted(node.id))
+        val _ = probe.expectMsgType[NodeCompleted]
+        verify(result(0), times(1)).report(extended = false)
+        verify(result(1), times(1)).report(extended = false)
+      }
+    }
     "receives delete" should {
       "use delete DataFrame from storage" in {
 
@@ -131,7 +142,7 @@ class WorkflowNodeExecutorActorSpec
     val operable = mock[DOperable]
     val report = mock[Report]
     when(report.content).thenReturn(mock[ReportContent])
-    when(operable.report()).thenReturn(report)
+    when(operable.report(extended = false)).thenReturn(report)
     operable
   }
 
@@ -177,7 +188,7 @@ class WorkflowNodeExecutorActorSpec
     val output = Vector(operableWithReports, operableWithReports)
     when(operation.executeUntyped(any())(any()))
       .thenReturn(output)
-    val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
+    val (probe, testedActor, node, doperation, _) = fixtureWithOperation(operation)
     (probe, testedActor, node, output)
   }
 

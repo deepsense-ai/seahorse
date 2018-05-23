@@ -139,6 +139,12 @@ every 10 iterations.</td>
 <td>The column for user ids.</td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

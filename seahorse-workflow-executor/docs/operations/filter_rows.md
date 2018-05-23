@@ -81,6 +81,13 @@ a <a href="transform.html">Transform</a>.</td>
 The filtering condition. Rows not satisfying given condition will be excluded from output <code>DataFrame</code>.
 It should be <code>Spark SQL</code> condition (as used in <code>WHERE</code> condition).</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

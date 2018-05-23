@@ -64,6 +64,13 @@ If schemas of the input `DataFrames` do not match, a ``SchemaMismatchException``
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
 <td>Union of the input <code>DataFrames</code>.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

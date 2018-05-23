@@ -92,6 +92,12 @@ For scala docs details, see
 <td>The upper bound after transformation, shared by all features.</td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

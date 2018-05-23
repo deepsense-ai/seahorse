@@ -128,6 +128,12 @@ selected automatically. Possible values: <code>["auto", "normal", "l-bfgs"]</cod
 <td>The prediction column created during model scoring.</td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

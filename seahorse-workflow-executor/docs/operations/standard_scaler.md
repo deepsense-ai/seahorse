@@ -91,6 +91,12 @@ For scala docs details, see
 <td>Scales the data to unit standard deviation.</td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

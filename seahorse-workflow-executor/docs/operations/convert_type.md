@@ -97,6 +97,13 @@ Integer]</code>.</td>
 <td><code><a href="../parameter_types.html#input-output-column-selector">InputOutputColumnSelector</a></code></td>
 <td>Input and output columns for the operation.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

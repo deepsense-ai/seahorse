@@ -23,6 +23,7 @@ import ai.deepsense.commons.models
 import ai.deepsense.commons.utils.{CollectionExtensions, Logging}
 import ai.deepsense.deeplang.DOperation.{ReportParam, ReportType}
 import ai.deepsense.deeplang.DPortPosition.DPortPosition
+import ai.deepsense.deeplang.catalogs.doperations.DOperationCategory
 import ai.deepsense.deeplang.documentation.OperationDocumentation
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
@@ -45,7 +46,8 @@ abstract class DOperation extends Operation
   val name: String
   val description: String
   def specificParams: Array[Param[_]]
-  def params: Array[Param[_]] = specificParams ++ Array(reportType)
+  def reportTypeParam: Option[Param[_]] = Option(reportType).filter(_ => outArity != 0)
+  def params: Array[Param[_]] = specificParams ++ reportTypeParam
 
   def hasDocumentation: Boolean = false
 
@@ -105,7 +107,7 @@ abstract class DOperation extends Operation
 
   val reportType: ChoiceParam[ReportType] = ChoiceParam[ReportType](
     name = "report type",
-    description = Some("Reports extensiveness"))
+    description = Some("Output entities report type. Computing extended report can be time consuming."))
   setDefault(reportType, ReportParam.Extended())
 
   def getReportType: ReportType = $(reportType)
@@ -118,8 +120,8 @@ object DOperation {
   val Id = models.Id
 
   object ReportParam {
-    case class SchemaOnly() extends ReportType {
-      override val name: String = "Minimal report"
+    case class Metadata() extends ReportType {
+      override val name: String = "Metadata report"
       override val params: Array[Param[_]] = Array()
     }
 
@@ -130,9 +132,9 @@ object DOperation {
   }
 
   sealed trait ReportType extends Choice {
-    import ai.deepsense.deeplang.DOperation.ReportParam.{Extended, SchemaOnly}
+    import ai.deepsense.deeplang.DOperation.ReportParam.{Extended, Metadata}
     override val choiceOrder: List[Class[_ <: Choice]] = List(
-      classOf[SchemaOnly],
+      classOf[Metadata],
       classOf[Extended])
   }
 }

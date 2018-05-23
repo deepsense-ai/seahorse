@@ -59,3 +59,24 @@ using a [Transformer](../classes/transformer.html). For example, a trained model
 </tr>
 </tbody>
 </table>
+
+## Parameters
+
+<table class="table">
+<thead>
+<tr>
+  <th style="width:20%">Name</th>
+  <th style="width:25%">Type</th>
+  <th style="width:55%">Description</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
+</tbody>
+</table>
