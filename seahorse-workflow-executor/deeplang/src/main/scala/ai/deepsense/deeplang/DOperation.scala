@@ -17,16 +17,18 @@
 package ai.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
-
 import java.util.UUID
 
 import ai.deepsense.commons.models
 import ai.deepsense.commons.utils.{CollectionExtensions, Logging}
+import ai.deepsense.deeplang.DOperation.{ReportParam, ReportType}
 import ai.deepsense.deeplang.DPortPosition.DPortPosition
+import ai.deepsense.deeplang.catalogs.doperations.DOperationCategory
 import ai.deepsense.deeplang.documentation.OperationDocumentation
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import ai.deepsense.deeplang.params.Params
+import ai.deepsense.deeplang.params.{Param, Params}
+import ai.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import ai.deepsense.graph.{GraphKnowledge, Operation}
 
 /**
@@ -43,6 +45,10 @@ abstract class DOperation extends Operation
   val id: DOperation.Id
   val name: String
   val description: String
+  def specificParams: Array[Param[_]]
+  def reportTypeParam: Option[Param[_]] = Option(reportType).filter(_ => outArity != 0)
+  def params: Array[Param[_]] = specificParams ++ reportTypeParam
+
   def hasDocumentation: Boolean = false
 
   def inPortTypes: Vector[ru.TypeTag[_]]
@@ -98,9 +104,37 @@ abstract class DOperation extends Operation
   def inferGraphKnowledgeForInnerWorkflow(context: InferContext): GraphKnowledge = GraphKnowledge()
 
   def typeTag[T : ru.TypeTag]: ru.TypeTag[T] = ru.typeTag[T]
+
+  val reportType: ChoiceParam[ReportType] = ChoiceParam[ReportType](
+    name = "report type",
+    description = Some("Output entities report type. Computing extended report can be time consuming."))
+  setDefault(reportType, ReportParam.Extended())
+
+  def getReportType: ReportType = $(reportType)
+
+  def setReportType(value: ReportType): this.type = set(reportType, value)
 }
 
 object DOperation {
   type Id = models.Id
   val Id = models.Id
+
+  object ReportParam {
+    case class Metadata() extends ReportType {
+      override val name: String = "Metadata report"
+      override val params: Array[Param[_]] = Array()
+    }
+
+    case class Extended() extends ReportType {
+      override val name: String = "Extended report"
+      override val params: Array[Param[_]] = Array()
+    }
+  }
+
+  sealed trait ReportType extends Choice {
+    import ai.deepsense.deeplang.DOperation.ReportParam.{Extended, Metadata}
+    override val choiceOrder: List[Class[_ <: Choice]] = List(
+      classOf[Metadata],
+      classOf[Extended])
+  }
 }

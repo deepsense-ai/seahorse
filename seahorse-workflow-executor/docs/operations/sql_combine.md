@@ -87,6 +87,13 @@ the right-hand side <code>DataFrame</code>.</td>
 <td>The <code>Spark SQL</code> expression to be executed.
 The expression must be a valid <code>Spark SQL</code> expression.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

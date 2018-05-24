@@ -58,7 +58,7 @@ case class WriteTransformer()
   def getOutputPath: String = $(outputPath)
   def setOutputPath(value: String): this.type = set(outputPath, value)
 
-  val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(outputPath, shouldOverwrite)
+  val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array(outputPath, shouldOverwrite)
 
   override protected def execute(transformer: Transformer)(context: ExecutionContext): Unit = {
     val outputDictPath = getOutputPath

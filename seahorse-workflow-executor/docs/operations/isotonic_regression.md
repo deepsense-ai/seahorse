@@ -93,6 +93,12 @@ all instances are treated equally with a weight 1.0. Possible values: <code>["no
 <td>The prediction column created during model scoring.</td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

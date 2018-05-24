@@ -98,22 +98,31 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
 ### Parameters
 
 <table class="table">
-  <thead>
-    <tr>
-      <th style="width:20%">Name</th>
-      <th style="width:80%">Value</th>
-    </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td><code>parts</code></td>
-    <td>[(year, "year"), (month, "month"), (day, "day"), (hour, "hour")]</td>
-  </tr>
-  <tr>
-    <td><code>output column</code></td>
-    <td>"birthdate"</td>
-  </tr>
-  </tbody>
+<thead>
+<tr>
+  <th style="width:20%">Name</th>
+  <th style="width:80%">Value</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td><code>parts</code></td>
+<td>[(year, "year"), (month, "month"), (day, "day"), (hour, "hour")]</td>
+</tr>
+
+<tr>
+<td><code>output column</code></td>
+<td>"birthdate"</td>
+</tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
+</tbody>
 </table>
 
 ### Input

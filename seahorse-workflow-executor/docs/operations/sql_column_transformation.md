@@ -74,22 +74,33 @@ to another `DataFrame` with a [Transform](transform.html) operation.
 </tr>
 </thead>
 <tbody>
-  <tr>
-    <td><code>input column alias</code></td>
-    <td><code><a href="../parameter_types.html#string">String</a></code></td>
-    <td>The identifier that can be used in the <code>Spark SQL</code> formula
-        (as used in <code>SELECT</code> statement) to refer the input column.</td>
-  </tr>
-  <tr>
-    <td><code>formula</code></td>
-    <td><code><a href="../parameter_types.html#string">String</a></code></td>
-    <td>The <code>Spark SQL</code> formula (as used in <code>SELECT</code> statement).</td>
-  </tr>
-  <tr>
-    <td><code>operate on</code></td>
-    <td><code><a href="../parameter_types.html#input-output-column-selector">InputOutputColumnSelector</a></code></td>
-    <td>The input and output columns for the operation.</td>
-  </tr>
+
+<tr>
+<td><code>input column alias</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The identifier that can be used in the <code>Spark SQL</code> formula
+    (as used in <code>SELECT</code> statement) to refer the input column.</td>
+</tr>
+
+<tr>
+<td><code>formula</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The <code>Spark SQL</code> formula (as used in <code>SELECT</code> statement).</td>
+</tr>
+
+<tr>
+<td><code>operate on</code></td>
+<td><code><a href="../parameter_types.html#input-output-column-selector">InputOutputColumnSelector</a></code></td>
+<td>The input and output columns for the operation.</td>
+</tr>
+  
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

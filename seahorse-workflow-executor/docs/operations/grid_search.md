@@ -134,25 +134,33 @@ In the report below, every parameter combination is listed along with its grade.
 ## Parameters
 
 <table class="table">
-  <thead>
-    <tr>
-      <th style="width:20%">Name</th>
-      <th style="width:25%">Type</th>
-      <th style="width:55%">Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <code>number of folds</code>
-      </td>
-      <td>
-        <code><a href="../parameter_types.html#numeric">Numeric</a></code>
-      </td>
-      <td>
-        A property of <code>Grid Search</code>'s internal cross validator.
-        Describes how many times the input dataset should be partitioned into training and test datasets.
-      </td>
-    </tr>
-  </tbody>
+<thead>
+<tr>
+<th style="width:20%">Name</th>
+<th style="width:25%">Type</th>
+<th style="width:55%">Description</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td>
+<code>number of folds</code>
+</td>
+<td>
+<code><a href="../parameter_types.html#numeric">Numeric</a></code>
+</td>
+<td>
+A property of <code>Grid Search</code>'s internal cross validator.
+Describes how many times the input dataset should be partitioned into training and test datasets.
+</td>
+</tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
+</tbody>
 </table>

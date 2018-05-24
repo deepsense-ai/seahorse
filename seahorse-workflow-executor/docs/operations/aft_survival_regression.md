@@ -115,6 +115,12 @@ This column will output quantiles of corresponding
 quantileProbabilities if it is set. Possible values: <code>["no", "yes"]</code></td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

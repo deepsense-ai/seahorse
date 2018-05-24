@@ -49,7 +49,7 @@ class WriteDatasource()
   override val name: String = "Write DataFrame"
   override val description: String = "Writes data to the data source"
 
-  override def params: Array[Param[_]] = Array(datasourceId, shouldOverwrite)
+  override def specificParams: Array[Param[_]] = Array(datasourceId, shouldOverwrite)
 
   setDefault(shouldOverwrite, true)
 

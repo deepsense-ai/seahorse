@@ -135,6 +135,9 @@ This parameter holds a JSON object.
 }
 {% endhighlight %}
 
+### Report Type 
+This parameter defines what will be reports content. Choosing `metadata report` might mean that there is no need for additional calculation. 
+`Extended report` might require additional time to compute.
 
 ### Parameters Sequence
 This parameter can be used when the operation requires the user

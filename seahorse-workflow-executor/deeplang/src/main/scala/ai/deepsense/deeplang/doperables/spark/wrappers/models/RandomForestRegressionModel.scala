@@ -34,7 +34,7 @@ class RandomForestRegressionModel
     featuresColumn,
     predictionColumn)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -48,7 +48,7 @@ class RandomForestRegressionModel
         ))
 
     val numTrees = ML.ModelParams.numTreesFromRandomForestRegressionModel(sparkModel)
-    super.report
+    super.report(extended)
       .withReportName(
         s"${this.getClass.getSimpleName} with $numTrees trees")
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))

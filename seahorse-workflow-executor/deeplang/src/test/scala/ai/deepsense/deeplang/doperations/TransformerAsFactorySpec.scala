@@ -16,11 +16,10 @@
 
 package ai.deepsense.deeplang.doperations
 
-import ai.deepsense.commons.utils.Version
 import ai.deepsense.deeplang.DOperation.Id
 import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import ai.deepsense.deeplang.params.ParamMap
-import ai.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
+import ai.deepsense.deeplang._
 
 class TransformerAsFactorySpec extends UnitSpec {
   import MockTransformers._
@@ -36,11 +35,16 @@ class TransformerAsFactorySpec extends UnitSpec {
 
     "have params same as Transformer" in {
       val op = operation
-      op.params shouldBe Array(op.transformer.paramA)
+      op.specificParams shouldBe Array(op.transformer.paramA)
+    }
+    "have report type param set to extended" in {
+      val op = operation
+      op.extractParamMap().get(op.reportType).get shouldBe DOperation.ReportParam.Extended()
     }
     "have defaults same as in Transformer" in {
       val op = operation
-      op.extractParamMap() shouldBe ParamMap(op.transformer.paramA -> DefaultForA)
+      val transformerParam = op.transformer.paramA -> DefaultForA
+      op.extractParamMap() shouldBe ParamMap(transformerParam, ReportTypeDefault(op.reportType))
     }
     "produce transformer with properly set params" in {
       val op = operation
@@ -49,7 +53,7 @@ class TransformerAsFactorySpec extends UnitSpec {
 
       result should have length 1
       result(0).asInstanceOf[MockTransformer].extractParamMap() shouldBe
-        ParamMap(op.transformer.paramA -> 2)
+        ParamMap(op.transformer.paramA -> 2, ReportTypeDefault(op.reportType))
     }
     "infer knowledge" in {
       val op = operation
@@ -62,7 +66,7 @@ class TransformerAsFactorySpec extends UnitSpec {
 
       result should have length 1
       result(0).single.asInstanceOf[MockTransformer].extractParamMap() shouldBe
-        ParamMap(op.transformer.paramA -> 2)
+        ParamMap(op.transformer.paramA -> 2, ReportTypeDefault(op.reportType))
     }
   }
 }

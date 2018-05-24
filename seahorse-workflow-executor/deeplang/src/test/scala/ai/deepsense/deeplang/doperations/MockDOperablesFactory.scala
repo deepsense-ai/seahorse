@@ -69,7 +69,7 @@ object MockDOperablesFactory extends UnitSpec with DeeplangTestSupport {
     val paramA = NumericParam("b", Some("desc"), RangeValidator(0.0, Double.MaxValue))
     setDefault(paramA -> DefaultForA)
     override val params: Array[Param[_]] = Array(paramA)
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
 
     override def fit: DMethod1To1[Unit, DataFrame, Transformer] = {
       new DMethod1To1[Unit, DataFrame, Transformer] {
@@ -105,7 +105,7 @@ object MockDOperablesFactory extends UnitSpec with DeeplangTestSupport {
     val paramA = NumericParam("b", Some("desc"), RangeValidator(0.0, Double.MaxValue))
     setDefault(paramA -> DefaultForA)
     override val params: Array[Param[_]] = Array(paramA)
-    override def report: Report = ???
+    override def report(extended: Boolean = true): Report = ???
 
     override def evaluate: DMethod1To1[Unit, DataFrame, MetricValue] = {
       new DMethod1To1[Unit, DataFrame, MetricValue] {

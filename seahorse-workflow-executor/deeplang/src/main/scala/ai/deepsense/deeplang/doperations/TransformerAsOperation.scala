@@ -30,7 +30,7 @@ abstract class TransformerAsOperation[T <: Transformer]
 
   val transformer: T = TypeUtils.instanceOfType(tag)
 
-  val params = transformer.params
+  val specificParams = transformer.params
 
   setDefault(transformer.extractParamMap().toSeq: _*)
 

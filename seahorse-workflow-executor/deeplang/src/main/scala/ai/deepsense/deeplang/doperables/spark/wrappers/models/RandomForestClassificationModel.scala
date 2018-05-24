@@ -62,14 +62,14 @@ class VanillaRandomForestClassificationModel
     probabilityColumn,
     rawPredictionColumn) // thresholds
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val treeWeight = SparkSummaryEntry(
       name = "tree weights",
       value = sparkModel.treeWeights,
       description = "Weights for each tree."
     )
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(treeWeight)))
   }
 

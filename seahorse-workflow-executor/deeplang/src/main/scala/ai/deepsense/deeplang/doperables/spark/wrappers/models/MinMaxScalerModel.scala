@@ -35,7 +35,7 @@ class MinMaxScalerModel
 
   override protected def getSpecificParams: Array[Param[_]] = Array(min, max)
 
-  override def report: Report = {
+  override def report(extended: Boolean = true): Report = {
     val summary =
       List(
         SparkSummaryEntry(
@@ -47,7 +47,7 @@ class MinMaxScalerModel
           value = sparkModel.originalMax,
           description = "Maximum value for each original column during fitting."))
 
-    super.report
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 

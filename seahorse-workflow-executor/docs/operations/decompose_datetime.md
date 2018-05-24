@@ -96,6 +96,13 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
    If provided, names of the generated columns will match the <code>prefix + timestampPartName</code> pattern,
    otherwise names will match the <code>timestampPartName</code> pattern.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

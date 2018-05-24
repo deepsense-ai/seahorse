@@ -95,6 +95,13 @@ def transform(dataframe):
 <td>The Python code to be executed. It has to contain a Python function complying to signature
 presented in the operation's description.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

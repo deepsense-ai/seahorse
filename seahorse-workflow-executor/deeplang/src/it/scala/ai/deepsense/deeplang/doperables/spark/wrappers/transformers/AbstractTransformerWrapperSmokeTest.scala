@@ -69,8 +69,8 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
       assertSchemaEqual(transformedSchema.get, transformedSchema2.get)
     }
     "succesfully run report" in {
-      val report = transformerWithParams.report
-      val report2 = deserializedTransformer.report
+      val report = transformerWithParams.report()
+      val report2 = deserializedTransformer.report()
       report shouldBe report2
     }
   }

@@ -107,6 +107,13 @@ The split condition. Rows satisfying given condition will be included into first
 and rows not satifying it will be included into second output <code>DataFrame</code>.
 It should be <code>Spark SQL</code> condition (as used in <code>WHERE</code> condition).</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

@@ -116,6 +116,13 @@ a ``DuplicatedColumnsException`` is thrown.
 <td>An optional prefix, which can be prepended
    to these columns in the output table, which come from the right input table.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

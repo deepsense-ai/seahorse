@@ -85,6 +85,12 @@ For scala docs details, see
 <td>Maximum number of buckets (quantiles or categories) into which the data points are grouped. Must be >= 2.</td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

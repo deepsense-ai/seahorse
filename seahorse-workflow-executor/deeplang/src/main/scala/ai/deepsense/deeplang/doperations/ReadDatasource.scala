@@ -50,7 +50,7 @@ class ReadDatasource()
   override val name: String = "Read DataFrame"
   override val description: String = "Reads data from its source to Seahorse's memory"
 
-  override def params: Array[Param[_]] = Array(datasourceId)
+  override def specificParams: Array[Param[_]] = Array(datasourceId)
 
   override def getDatasourcesIds: Set[UUID] = get(datasourceId).toSet
 

@@ -29,7 +29,7 @@ abstract class TransformerAsFactory[T <: Transformer]
 
   val transformer: T = TypeUtils.instanceOfType(typeTag)
   override lazy val tTagTO_0: TypeTag[T] = typeTag[T]
-  override val params: Array[Param[_]] = transformer.params
+  override val specificParams: Array[Param[_]] = transformer.params
 
   setDefault(transformer.extractParamMap().toSeq: _*)
 

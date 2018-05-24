@@ -88,6 +88,12 @@ For scala docs details, see
 If a feature is found to have more values, then it is declared continuous.</td>
 </tr>
 
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

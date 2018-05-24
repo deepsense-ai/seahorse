@@ -32,8 +32,8 @@ class PCAModel
 
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report: Report = {
-    super.report
+  override def report(extended: Boolean = true): Report = {
+    super.report(extended)
       .withAdditionalTable(CommonTablesGenerators.denseMatrix(
         name = "A Principal Components Matrix",
         description = "Each column is one principal component.",

@@ -69,6 +69,13 @@ The sort is performed as in the SQL's ORDER BY clause - the first selected colum
 <tr>
 <td><code>sort columns</code></td><td><code><a href="../parameter_types.html#parameters-sequence">Parameters Sequence</a></code></td><td>Sequence of <code><a href="../parameter_types.html#single-column-selector">single column selector</a></code>s each augmented with <code><a href="../parameter_types.html#boolean">boolean</a></code> <code>descending</code> flag.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

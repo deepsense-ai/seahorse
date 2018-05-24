@@ -55,7 +55,7 @@ case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransfor
     set(innerWorkflow, InnerWorkflowJsonReader.toInner(workflow, graphReader))
   def setInnerWorkflow(workflow: InnerWorkflow): this.type = set(innerWorkflow, workflow)
 
-  override val params: Array[Param[_]] = Array(innerWorkflow)
+  override val specificParams: Array[Param[_]] = Array(innerWorkflow)
 
   override lazy val tTagTO_0: TypeTag[CustomTransformer] = typeTag
 

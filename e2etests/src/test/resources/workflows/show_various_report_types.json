@@ -1,0 +1,132 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "37d25975-a779-5488-355c-a30c3ed9b643",
+      "operation": {
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data source": "8bec8098-0f2d-422a-8300-549bc38774ab"
+      }
+    }, {
+      "id": "dd360b8e-d65a-6ada-842a-24fdcb4d651a",
+      "operation": {
+        "id": "7d7eddfa-c9be-48c3-bb8c-5f7cc59b403a",
+        "name": "Filter Rows"
+      },
+      "parameters": {
+        "condition": "WHERE edible == 'p' LIMIT(50)"
+      }
+    }, {
+      "id": "210106c6-7f84-907e-f16c-8ca0700b4820",
+      "operation": {
+        "id": "6534f3f4-fa3a-49d9-b911-c213d3da8b5d",
+        "name": "Filter Columns"
+      },
+      "parameters": {
+        "selected columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["edible", "odor"]
+          }],
+          "excluding": false
+        },
+        "report type": {
+          "Metadata report": {
+
+          }
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "37d25975-a779-5488-355c-a30c3ed9b643",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "210106c6-7f84-907e-f16c-8ca0700b4820",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "210106c6-7f84-907e-f16c-8ca0700b4820",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "dd360b8e-d65a-6ada-842a-24fdcb4d651a",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "show various report types",
+      "description": "",
+      "nodes": {
+        "37d25975-a779-5488-355c-a30c3ed9b643": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7485,
+            "y": 8523
+          }
+        },
+        "dd360b8e-d65a-6ada-842a-24fdcb4d651a": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7893,
+            "y": 8710
+          }
+        },
+        "210106c6-7f84-907e-f16c-8ca0700b4820": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7710,
+            "y": 8621
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    },
+    "datasources": [{
+      "accessLevel": "read",
+      "params": {
+        "name": "mushrooms.csv",
+        "libraryFileParams": null,
+        "downloadUri": null,
+        "googleSpreadsheetParams": null,
+        "jdbcParams": null,
+        "hdfsParams": null,
+        "externalFileParams": {
+          "url": "https://s3.amazonaws.com/workflowexecutor/examples/data/mushrooms.csv",
+          "fileFormat": "csv",
+          "csvFileFormatParams": {
+            "includeHeader": true,
+            "convert01ToBoolean": false,
+            "separatorType": "comma",
+            "customSeparator": ""
+          }
+        },
+        "datasourceType": "externalFile",
+        "visibility": "publicVisibility"
+      },
+      "creationDateTime": "2016-12-27T17:34:25.342Z",
+      "id": "8bec8098-0f2d-422a-8300-549bc38774ab",
+      "ownerName": "Seahorse examples",
+      "ownerId": "00000000-0000-0000-0000-000000000000"
+    }]
+  },
+  "variables": {
+
+  },
+  "id": "7c7291cc-43ee-4de2-80e9-d95f470106ef",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.4.4"
+  }
+}

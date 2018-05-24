@@ -64,7 +64,7 @@ object DOperationCatalogTestResources {
 
     override val inArity: Int = 2
     override val outArity: Int = 3
-    val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
+    val specificParams: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
   }
 
   case class X() extends DOperableMock

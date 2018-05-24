@@ -80,6 +80,13 @@ it will be included only once. An empty selection is supported, but when a colum
 or by index does not exist, the operation will fail at runtime with <code>ColumnsDoNotExistException</code>.
 </td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 

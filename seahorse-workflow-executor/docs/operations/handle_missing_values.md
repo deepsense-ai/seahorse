@@ -132,6 +132,13 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 <td>The sequence of user-defined missing values. Provided value will be cast to all chosen column types if possible,
 so for example a value <code>-1</code> might be applied to all numeric and string columns.</td>
 </tr>
+
+<tr>
+<td><code>report type</code></td>
+<td><code><a href="../parameter_types.html#report-type">ReportType</a></code></td>
+<td>Type of content for generated reports.</td>
+</tr>
+
 </tbody>
 </table>
 
