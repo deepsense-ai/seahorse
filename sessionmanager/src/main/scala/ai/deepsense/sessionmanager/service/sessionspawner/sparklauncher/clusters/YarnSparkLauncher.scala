@@ -35,8 +35,9 @@ private [clusters] object YarnSparkLauncher {
             config: SparkLauncherConfig,
             clusterConfig: ClusterDetails,
             args: SparkOptionsMultiMap): SparkLauncher = {
-    val updatedArgs = args.updateConfOptions(
-      "spark.yarn.dist.archives", sparkRArchivePath(config.sparkHome))
+    val updatedArgs = args
+      .updateConfOptions("spark.yarn.dist.archives", sparkRArchivePath(config.sparkHome))
+      .updateConfOptions("spark.yarn.dist.archives", pySparkArchivePath(config.sparkHome))
     new SparkLauncher(env(config, clusterConfig))
       .setSparkArgs(updatedArgs)
       .setVerbose(true)
@@ -49,10 +50,13 @@ private [clusters] object YarnSparkLauncher {
       .addAppArgs(applicationArgs: _*)
       .addFile(config.weDepsPath)
       .setConf("spark.driver.host", clusterConfig.userIP)
-      .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
+      .setConf("spark.executorEnv.PYTHONPATH", s"${config.weDepsFileName}:pyspark")
       .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonDriverBinary)
   }
 
+
+  private def pySparkArchivePath(sparkHome: String, linkName: String = "#pyspark") =
+    sparkHome + "/python/lib/pyspark.zip" + linkName
 
   private def sparkRArchivePath(sparkHome: String, linkName: String = "#sparkr") =
     sparkHome + "/R/lib/sparkr.zip" + linkName
