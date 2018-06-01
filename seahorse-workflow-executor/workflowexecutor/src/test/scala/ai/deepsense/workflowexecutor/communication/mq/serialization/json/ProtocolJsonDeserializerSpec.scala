@@ -47,7 +47,7 @@ class ProtocolJsonDeserializerSpec
       readMessage shouldBe Abort(workflowId)
     }
     "deserialize UpdateWorkflow messages" in {
-      val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
+      val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.operations
       val graphReader = new GraphReader(dOperationsCatalog)
       val protocolDeserializer = ProtocolJsonDeserializer(graphReader)
       val workflowId = Workflow.Id.randomId

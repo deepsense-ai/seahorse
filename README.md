@@ -37,6 +37,12 @@ A good place to start using Seahorse is the [basic examples](http://seahorse.dee
 Note that in order to contribute to Seahorse you have to sign the
 [Contributor License Agreement](https://seahorse.deepsense.ai/licenses/cla).
 
+Before submitting a PR, please run the Scala style check:
+
+```console
+sbt scalastylebackend && (cd ./seahorse-workflow-executor && sbt scalastyle)
+```
+
 ### Running tests
 
 Initialize the submodules before running the tests:

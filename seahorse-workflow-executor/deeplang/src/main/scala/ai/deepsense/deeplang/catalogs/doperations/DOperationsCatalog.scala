@@ -16,13 +16,11 @@
 
 package ai.deepsense.deeplang.catalogs.doperations
 
-import java.lang.reflect.Constructor
+import ai.deepsense.deeplang.{DOperation, DOperationCategories}
+import ai.deepsense.deeplang.catalogs.doperations.exceptions._
+import ai.deepsense.deeplang.doperations.UnknownOperation
 
 import scala.collection.mutable
-import scala.reflect.runtime.{universe => ru}
-
-import ai.deepsense.deeplang.catalogs.doperations.exceptions._
-import ai.deepsense.deeplang.{DOperation, TypeUtils}
 
 /**
  * Catalog of DOperations.
@@ -46,9 +44,15 @@ abstract class DOperationsCatalog {
    * Registers DOperation, which can be later viewed and created.
    * @param category category to which this operation directly belongs
    * @param visible a flag determining if the operation should be visible in the category tree
-   * @tparam T DOperation class to register
    */
   def registerDOperation(category: DOperationCategory, factory: () => DOperation, visible: Boolean = true): Unit
+
+  /** Fetch the categories used by the registered operations in this catalog. */
+  def categories: DCategoryCatalog = {
+    val cat = DCategoryCatalog()
+    operations.values.flatMap(_.category.pathFromRoot).toSeq.distinct.foreach(cat.registerDCategory)
+    cat
+  }
 }
 
 object DOperationsCatalog {
@@ -91,5 +95,10 @@ object DOperationsCatalog {
       case Some(factory) => factory()
       case None => throw DOperationNotFoundException(id)
     }
+
+    // This is a special case operation that serves as a fallback when an unrecognized
+    // UUID is encountered in a workflow. It is registered here so that the visibility flag
+    // can be set to false.
+    registerDOperation(DOperationCategories.Other, () => new UnknownOperation, visible = false)
   }
 }

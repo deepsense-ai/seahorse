@@ -32,7 +32,7 @@ import ai.deepsense.workflowmanager.storage.{WorkflowFullInfo, WorkflowRaw, Work
  * Thread-safe, in-memory WorkflowStorage.
  */
 class InMemoryWorkflowStorage extends WorkflowStorage {
-  override val graphReader = new GraphReader(CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog)
+  override val graphReader = new GraphReader(CatalogRecorder.resourcesCatalogRecorder.catalogs.operations)
 
   private val workflows: TrieMap[Workflow.Id, WorkflowRaw] = TrieMap()
   private val now = DateTime.now()

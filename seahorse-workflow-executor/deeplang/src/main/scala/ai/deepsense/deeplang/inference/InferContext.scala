@@ -17,22 +17,20 @@
 package ai.deepsense.deeplang.inference
 
 import ai.deepsense.commons.rest.client.datasources.DatasourceClient
-import ai.deepsense.deeplang.InnerWorkflowParser
-import ai.deepsense.deeplang.catalogs.CatalogPair
-import ai.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import ai.deepsense.deeplang.catalogs.DCatalog
 import ai.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import ai.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 /**
  * Holds information needed by DOperations and DMethods during knowledge inference.
- * @param dOperableCatalog object responsible for registering and validating the type hierarchy
+ * @param catalog object responsible for registering and validating the type hierarchy
  */
 case class InferContext(
     dataFrameBuilder: DataFrameBuilder,
-    catalogPair: CatalogPair,
+    catalog: DCatalog,
     datasourceClient: DatasourceClient) {
-  def dOperableCatalog = catalogPair.dOperableCatalog
-  def dOperationCatalog = catalogPair.dOperationsCatalog
+  def dOperableCatalog = catalog.operables
+  def dOperationCatalog = catalog.operations
 
   def graphReader = new GraphReader(dOperationCatalog)
 }

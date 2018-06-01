@@ -18,14 +18,14 @@ package ai.deepsense.deeplang.catalogs.doperations
 
 
 import scala.reflect.runtime.universe.{TypeTag, typeTag}
-
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
-
 import ai.deepsense.commons.utils.Version
+import ai.deepsense.deeplang.DOperationCategories.UserDefined
 import ai.deepsense.deeplang._
 import ai.deepsense.deeplang.catalogs.doperations.exceptions._
 import ai.deepsense.deeplang.doperables.DOperableMock
+import ai.deepsense.deeplang.doperations.UnknownOperation
 import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 object DOperationCatalogTestResources {
@@ -172,7 +172,9 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
     import DOperationCatalogTestResources._
     import ViewingTestResources._
 
-    catalog.operations shouldBe Map(
+    val exceptUnknown = catalog.operations - new UnknownOperation().id
+
+    exceptUnknown shouldBe Map(
       idA -> expectedA,
       idB -> expectedB,
       idC -> expectedC,
