@@ -241,7 +241,7 @@ class WorkflowManagerClientActorSpec
   }
 
   private def createGraphReader(): GraphReader = {
-    val catalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
+    val catalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.operations
     new GraphReader(catalog)
   }
 }

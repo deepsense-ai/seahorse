@@ -53,3 +53,10 @@ docker-compose.yml
 deployment/mesos-spark-docker/Dockerfile
 
 /credentials/
+
+data/*
+library/*
+spark_applications_logs/*
+h2-data/*
+jars/*
+

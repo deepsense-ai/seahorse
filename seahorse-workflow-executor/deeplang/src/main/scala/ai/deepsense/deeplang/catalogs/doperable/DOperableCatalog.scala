@@ -19,7 +19,6 @@ package ai.deepsense.deeplang.catalogs.doperable
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
-import ai.deepsense.deeplang.catalogs.doperable.exceptions.ParametrizedTypeException
 import ai.deepsense.deeplang.{DOperable, TypeUtils}
 
 /**
@@ -169,6 +168,7 @@ class DOperableCatalog {
 }
 
 object DOperableCatalog {
+  def apply() = new DOperableCatalog()
   /** Intersection of collection of sets. */
   private def intersectSets[T](sets: Traversable[Set[T]]): Set[T] = {
     if (sets.size == 0) {

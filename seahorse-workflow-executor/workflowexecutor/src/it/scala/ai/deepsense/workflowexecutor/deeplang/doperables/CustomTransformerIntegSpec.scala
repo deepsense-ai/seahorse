@@ -57,7 +57,7 @@ class CustomTransformerIntegSpec
     "serialize and deserialize" in {
       val jsonFileURI = getClass.getResource("/customtransformer/innerWorkflow.json").toURI
       val innerWorkflowJson = scala.io.Source.fromFile(jsonFileURI).mkString.parseJson.asJsObject
-      val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
+      val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.operations
       val graphReader = new GraphReader(dOperationsCatalog)
       val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
       val context = executionContext.copy(innerWorkflowExecutor = innerWorkflowExecutor)

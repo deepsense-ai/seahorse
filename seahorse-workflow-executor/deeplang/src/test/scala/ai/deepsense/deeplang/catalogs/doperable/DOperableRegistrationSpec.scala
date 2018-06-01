@@ -22,7 +22,7 @@ class DOperableRegistrationSpec extends UnitSpec {
 
   "DOperableCatalog" should {
     "successfully register and create all DOperables" in {
-      val catalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperableCatalog
+      val catalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.operables
       catalog.concreteSubclassesInstances[DOperable]
     }
   }

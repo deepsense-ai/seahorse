@@ -114,7 +114,7 @@ object VersionConverter extends DefaultJsonProtocol{
   }
 
   private def graphReader = new GraphReader(
-    CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog)
+    CatalogRecorder.resourcesCatalogRecorder.catalogs.operations)
 
   private def convertWdfs(nodesArray: JsArray, ownerId: String, ownerName: String): (JsArray, DatasourceList) = {
     val wdfs = nodesArray.elements.filter(extractOperationId(_) == Js.writeDataFrame13Id)
