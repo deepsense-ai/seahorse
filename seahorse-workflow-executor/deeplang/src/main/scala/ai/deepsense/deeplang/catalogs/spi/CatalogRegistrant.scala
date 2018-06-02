@@ -17,6 +17,7 @@
 package ai.deepsense.deeplang.catalogs.spi
 
 import java.util.ServiceLoader
+
 import scala.collection.JavaConversions._
 
 /**
@@ -29,13 +30,9 @@ trait CatalogRegistrant {
 
 object CatalogRegistrant {
   /** Create the a catalog of workflow nodes. */
-  private[deeplang] def load(registrar: CatalogRegistrar): Unit = {
-    val registrants = ServiceLoader.load(classOf[CatalogRegistrant]).toSeq
-    // So that Seahorse defaults are created first, we move all internal
-    // CatalogRegistrants to the front of the list.
-    val (internal, external) = registrants.partition(_.getClass.getName.startsWith("ai.deepsense"))
-
-    for(r <- internal ++ external) {
+  private[deeplang] def load(registrar: CatalogRegistrar, loader: ClassLoader): Unit = {
+    val registrants = ServiceLoader.load(classOf[CatalogRegistrant], loader).toSeq
+    for(r <- registrants) {
       r.register(registrar)
     }
   }

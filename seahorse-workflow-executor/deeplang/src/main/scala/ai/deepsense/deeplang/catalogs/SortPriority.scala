@@ -20,7 +20,10 @@ package ai.deepsense.deeplang.catalogs
   * Type used to declare a priority based ordering.
   */
 case class SortPriority(value: Int) { self =>
+  /** Construct the next `SortPriority` `skip` values away from this one. */
   def next(skip: Int): SortPriority = SortPriority(value + skip)
+  /** Constructs an iterator generating a sequence of `SortPriority` with `skip` distance between them,
+    * starting with this one. */
   def inSequence(skip: Int): Iterator[SortPriority] = new Iterator[SortPriority]() {
     private var curr = self
     override def hasNext: Boolean = true

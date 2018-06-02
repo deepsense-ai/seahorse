@@ -17,7 +17,7 @@
 package ai.deepsense.deeplang
 
 import java.io.File
-import java.net.URL
+import java.net.{URL, URLClassLoader}
 
 import ai.deepsense.commons.utils.LoggerForCallerClass
 import ai.deepsense.deeplang.catalogs.DCatalog
@@ -50,7 +50,8 @@ class CatalogRecorder private (jars: Seq[URL]) {
 
   lazy val catalogs: DCatalog = {
     val registrar = new DefaultCatalogRegistrar()
-    CatalogRegistrant.load(registrar)
+    val loader = URLClassLoader.newInstance(jars.toArray, getClass.getClassLoader)
+    CatalogRegistrant.load(registrar, loader)
     new CatalogScanner(jars).register(registrar)
     registrar.catalog
   }
