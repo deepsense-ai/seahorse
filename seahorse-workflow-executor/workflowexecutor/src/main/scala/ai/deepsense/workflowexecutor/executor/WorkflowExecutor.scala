@@ -188,7 +188,7 @@ object WorkflowExecutor extends Logging with Executor {
       params: ExecutionParams,
       pythonPathGenerator: PythonPathGenerator): Unit = {
     val sparkContext = createSparkContext()
-    val dOperationsCatalog = CatalogRecorder.fromSparkContext(sparkContext).catalogs.dOperationsCatalog
+    val dOperationsCatalog = CatalogRecorder.fromSparkContext(sparkContext).catalogs.operations
 
     val workflowVersionUtil: WorkflowVersionUtil = new WorkflowVersionUtil with Logging {
       override def currentVersion: Version =

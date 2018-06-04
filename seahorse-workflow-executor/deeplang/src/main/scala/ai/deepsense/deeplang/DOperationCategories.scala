@@ -17,6 +17,7 @@
 package ai.deepsense.deeplang
 
 import ai.deepsense.deeplang.catalogs.doperations.DOperationCategory
+import ai.deepsense.deeplang.catalogs.spi.{CatalogRegistrant, CatalogRegistrar}
 
 object DOperationCategories {
 

@@ -65,8 +65,8 @@ trait SeahorseIntegrationTestDSL
   private def catalogRecorder: CatalogRecorder =
     CatalogRecorder.fromJars(localJarPaths.map(_.toURI.toURL))
   private def catalogs = catalogRecorder.catalogs
-  final def operablesCatalog = catalogs.dOperableCatalog
-  final def operationsCatalog = catalogs.dOperationsCatalog
+  final def operablesCatalog = catalogs.operables
+  final def operationsCatalog = catalogs.operations
   override def graphReader = new GraphReader(operationsCatalog)
 
   import scala.concurrent.ExecutionContext.Implicits.global
