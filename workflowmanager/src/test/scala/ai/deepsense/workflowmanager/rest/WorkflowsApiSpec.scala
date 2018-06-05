@@ -31,7 +31,6 @@ import spray.http.HttpHeaders.{RawHeader, `Content-Disposition`}
 import spray.http._
 import spray.json._
 import spray.routing.{HttpServiceBase, Route}
-
 import ai.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import ai.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import ai.deepsense.commons.buildinfo.BuildInfo
@@ -40,6 +39,7 @@ import ai.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDes
 import ai.deepsense.commons.{StandardSpec, UnitTestSupport}
 import ai.deepsense.deeplang
 import ai.deepsense.deeplang.DOperation.Id
+import ai.deepsense.deeplang.catalogs.SortPriority
 import ai.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import ai.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import ai.deepsense.deeplang.doperations.FilterColumns
@@ -68,7 +68,7 @@ class WorkflowsApiSpec
   override implicit val routeTestTimeout: RouteTestTimeout = RouteTestTimeout((5 seconds) dilated)
 
   val catalog = DOperationsCatalog()
-  catalog.registerDOperation(DOperationCategories.Transformation, () => new MockOperation())
+  catalog.registerDOperation(DOperationCategories.Transformation, () => new MockOperation(), SortPriority.coreDefault)
 
   val dOperableCatalog = new DOperableCatalog
   override val graphReader: GraphReader = new GraphReader(catalog)

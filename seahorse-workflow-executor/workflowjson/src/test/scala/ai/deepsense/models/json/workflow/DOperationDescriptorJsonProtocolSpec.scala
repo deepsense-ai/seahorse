@@ -18,12 +18,12 @@ package ai.deepsense.models.json.workflow
 
 import scala.reflect.runtime.universe.{TypeTag, typeOf}
 
+import ai.deepsense.deeplang.catalogs.SortPriority
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 import spray.json._
-
-import ai.deepsense.deeplang.{DPortPosition, DOperation}
+import ai.deepsense.deeplang.{DOperation, DPortPosition}
 import ai.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationDescriptor}
 import ai.deepsense.deeplang.params.Params
 
@@ -68,6 +68,7 @@ class DOperationDescriptorJsonProtocolSpec
       "operation name",
       "operation description",
       category,
+      SortPriority.coreDefault,
       hasDocumentation = false,
       parameters.paramsToJson,
       Seq(typeOf[A], typeOf[A with T1]),

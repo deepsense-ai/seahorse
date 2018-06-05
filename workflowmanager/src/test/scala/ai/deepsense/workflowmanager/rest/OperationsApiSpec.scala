@@ -16,7 +16,7 @@
 
 package ai.deepsense.workflowmanager.rest
 
-import scala.collection.immutable.ListMap
+import scala.collection.immutable.{ListMap, SortedMap}
 import scala.concurrent._
 
 import org.mockito.Mockito._
@@ -24,11 +24,11 @@ import org.scalatest.Matchers
 import spray.http.StatusCodes
 import spray.json._
 import spray.routing.Route
-
 import ai.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import ai.deepsense.commons.auth.{Authorizator, AuthorizatorProvider, UserContextAuthorizator}
 import ai.deepsense.commons.{StandardSpec, UnitTestSupport}
 import ai.deepsense.deeplang.DOperation
+import ai.deepsense.deeplang.catalogs.SortPriority
 import ai.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, DOperableCatalog, HierarchyDescriptor, TraitDescriptor}
 import ai.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationCategoryNode, DOperationDescriptor, DOperationsCatalog}
 import ai.deepsense.models.json.workflow.DeepLangJsonProtocol
@@ -63,14 +63,14 @@ class OperationsApiSpec
 
   val existingOperationDescriptor = DOperationDescriptor(
     existingOperationId, "operation name", "operation description",
-    mockCategory, hasDocumentation = true, JsNull, Nil, Vector.empty, Nil, Vector.empty)
+    mockCategory, SortPriority.coreDefault, hasDocumentation = true, JsNull, Nil, Vector.empty, Nil, Vector.empty)
   val envelopedExistingOperationDescription = Map("operation" -> existingOperationDescriptor)
 
   val operationsMapMock = Map(existingOperationId -> existingOperationDescriptor)
   when(dOperationsCatalog.operations) thenReturn operationsMapMock
   val operationsResponse = Map("operations" -> operationsMapMock)
 
-  val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), ListMap.empty, List.empty)
+  val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), SortedMap.empty, List.empty)
   when(dOperationsCatalog.categoryTree) thenReturn categoryTreeMock
 
   override def createRestComponent(tokenTranslator: TokenTranslator): Route = {

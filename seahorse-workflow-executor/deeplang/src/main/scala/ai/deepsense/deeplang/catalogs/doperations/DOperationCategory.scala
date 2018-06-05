@@ -17,6 +17,7 @@
 package ai.deepsense.deeplang.catalogs.doperations
 
 import ai.deepsense.commons.models
+import ai.deepsense.deeplang.catalogs.SortPriority
 
 /**
  * Category of DOperations.
@@ -30,12 +31,14 @@ import ai.deepsense.commons.models
 abstract class DOperationCategory(
     val id: DOperationCategory.Id,
     val name: String,
-    val parent: Option[DOperationCategory] = None) {
+    val priority: SortPriority,
+    val parent: Option[DOperationCategory] = None) extends Ordered[DOperationCategory] {
 
   def this(
     id: DOperationCategory.Id,
     name: String,
-    parent: DOperationCategory) = this(id, name, Some(parent))
+    priority: SortPriority,
+    parent: DOperationCategory) = this(id, name, priority, Some(parent))
 
   /** List of categories on path from this category to some top-level category. */
   private[doperations] def pathToRoot: List[DOperationCategory] = parent match {
@@ -45,6 +48,13 @@ abstract class DOperationCategory(
 
   /** List of categories on path from some top-level category to this category. */
   private[doperations] def pathFromRoot: List[DOperationCategory] = pathToRoot.reverse
+
+  override def compare(o: DOperationCategory) = {
+    priority.compare(o.priority) match {
+      case 0 => if (this.equals(o)) 0 else 1
+      case other: Int => other
+    }
+  }
 }
 
 object DOperationCategory {

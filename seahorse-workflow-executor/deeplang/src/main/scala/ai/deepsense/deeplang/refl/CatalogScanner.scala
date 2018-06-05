@@ -45,7 +45,7 @@ class CatalogScanner(jarsUrls: Seq[URL]) extends CatalogRegistrant with  Logging
     logger.info(
       s"Scanning registrables. Following jars will be scanned: ${jarsUrls.mkString(";")}.")
     val scanned = scanForRegistrables().iterator
-    val priorities = SortPriority.REFLECTED_BASE.inSequence(10)
+    val priorities = SortPriority.sdkInSequence
     for {
       (registrable, priority) <- scanned.zip(priorities)
     } {

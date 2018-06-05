@@ -18,11 +18,11 @@ package ai.deepsense.deeplang.catalogs.doperations
 
 
 import scala.reflect.runtime.universe.{TypeTag, typeTag}
+
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
-import ai.deepsense.commons.utils.Version
-import ai.deepsense.deeplang.DOperationCategories.UserDefined
 import ai.deepsense.deeplang._
+import ai.deepsense.deeplang.catalogs.SortPriority
 import ai.deepsense.deeplang.catalogs.doperations.exceptions._
 import ai.deepsense.deeplang.doperables.DOperableMock
 import ai.deepsense.deeplang.doperations.UnknownOperation
@@ -30,24 +30,30 @@ import ai.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 object DOperationCatalogTestResources {
   object CategoryTree {
-    object IO extends DOperationCategory(DOperationCategory.Id.randomId, "Input/Output")
+    object IO extends DOperationCategory(DOperationCategory.Id.randomId, "Input/Output", SortPriority.coreDefault)
 
     object DataManipulation
-      extends DOperationCategory(DOperationCategory.Id.randomId, "Data manipulation")
+      extends DOperationCategory(DOperationCategory.Id.randomId, "Data manipulation", IO.priority.nextCore)
 
-    object ML extends DOperationCategory(DOperationCategory.Id.randomId, "Machine learning") {
-
-      object Regression extends DOperationCategory(DOperationCategory.Id.randomId, "Regression", ML)
+    object ML extends DOperationCategory(
+      DOperationCategory.Id.randomId, "Machine learning", DataManipulation.priority.nextCore) {
 
       object Classification
-        extends DOperationCategory(DOperationCategory.Id.randomId, "Classification", ML)
+        extends DOperationCategory(DOperationCategory.Id.randomId, "Classification", ML.priority.nextCore, ML)
 
-      object Clustering extends DOperationCategory(DOperationCategory.Id.randomId, "Clustering", ML)
+      object Regression
+        extends DOperationCategory(DOperationCategory.Id.randomId, "Regression", Classification.priority.nextCore, ML)
 
-      object Evaluation extends DOperationCategory(DOperationCategory.Id.randomId, "Evaluation", ML)
+
+      object Clustering
+        extends DOperationCategory(DOperationCategory.Id.randomId, "Clustering", Regression.priority.nextCore, ML)
+
+      object Evaluation
+        extends DOperationCategory(DOperationCategory.Id.randomId, "Evaluation", Clustering.priority.nextCore, ML)
     }
 
-    object Utils extends DOperationCategory(DOperationCategory.Id.randomId, "Utilities", None)
+    object Utils
+      extends DOperationCategory(DOperationCategory.Id.randomId, "Utilities", ML.Evaluation.priority.nextCore)
   }
 
   abstract class DOperationMock extends DOperation {
@@ -131,20 +137,24 @@ object ViewingTestResources extends MockitoSugar {
 
   val catalog = DOperationsCatalog()
 
-  catalog.registerDOperation(categoryA, () => new DOperationA())
-  catalog.registerDOperation(categoryB, () => new DOperationB())
-  catalog.registerDOperation(categoryC, () => new DOperationC())
-  catalog.registerDOperation(categoryD, () => new DOperationD())
+  val priorityA = SortPriority(0)
+  val priorityB = SortPriority(-1)
+  val priorityC = SortPriority(2)
+  val priorityD = SortPriority(3)
+  catalog.registerDOperation(categoryA, () => new DOperationA(), priorityA)
+  catalog.registerDOperation(categoryB, () => new DOperationB(), priorityB)
+  catalog.registerDOperation(categoryC, () => new DOperationC(), priorityC)
+  catalog.registerDOperation(categoryD, () => new DOperationD(), priorityD)
 
   val operationD = catalog.createDOperation(idD)
 
-  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA, hasDocumentation = false,
+  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA, priorityA, hasDocumentation = false,
     DOperationA().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB, hasDocumentation = false,
+  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB, priorityB, hasDocumentation = false,
     DOperationB().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC, hasDocumentation = false,
+  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC, priorityC, hasDocumentation = false,
     DOperationC().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD, hasDocumentation = false,
+  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD, priorityD, hasDocumentation = false,
     DOperationD().paramsToJson, List(XTypeTag.tpe, YTypeTag.tpe), operationD.inPortsLayout,
     List(XTypeTag.tpe), operationD.outPortsLayout)
 }
@@ -154,7 +164,7 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
   test("It is possible to create instance of registered DOperation") {
     import DOperationCatalogTestResources._
     val catalog = DOperationsCatalog()
-    catalog.registerDOperation(CategoryTree.ML.Regression, () => new DOperationA())
+    catalog.registerDOperation(CategoryTree.ML.Regression, () => new DOperationA(), ViewingTestResources.priorityA)
     val instance = catalog.createDOperation(idA)
     assert(instance == DOperationA())
   }
@@ -181,6 +191,12 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
       idD -> expectedD)
   }
 
+  test("SortPriority inSequence assigns values with step 100") {
+    import ai.deepsense.deeplang.catalogs.doperations.DOperationCatalogTestResources.CategoryTree
+    CategoryTree.ML.Classification.priority shouldBe SortPriority(300)
+    CategoryTree.ML.Regression.priority shouldBe SortPriority(400)
+  }
+
   test("It is possible to get tree of registered categories and DOperations") {
     import DOperationCatalogTestResources.CategoryTree._
     import ViewingTestResources._
@@ -193,11 +209,11 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
     val mlNode = root.successors(ML)
     mlNode.category shouldBe Some(ML)
     mlNode.operations shouldBe List(expectedD)
-    mlNode.successors.keys should contain theSameElementsAs Seq(ML.Regression, ML.Classification)
+    mlNode.successors.keys.toList shouldBe List(ML.Classification, ML.Regression)
 
     val regressionNode = mlNode.successors(ML.Regression)
     regressionNode.category shouldBe Some(ML.Regression)
-    regressionNode.operations should contain theSameElementsAs Seq(expectedA, expectedB)
+    regressionNode.operations shouldBe List(expectedB, expectedA)
     regressionNode.successors.keys shouldBe empty
 
     val classificationNode = mlNode.successors(ML.Classification)

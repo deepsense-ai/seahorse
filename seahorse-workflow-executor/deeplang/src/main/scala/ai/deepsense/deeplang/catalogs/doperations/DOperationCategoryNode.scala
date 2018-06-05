@@ -16,7 +16,11 @@
 
 package ai.deepsense.deeplang.catalogs.doperations
 
-import scala.collection.immutable.ListMap
+import scala.collection.immutable.SortedMap
+
+import ai.deepsense.deeplang.DOperation
+import ai.deepsense.deeplang.catalogs.SortPriority
+import ai.deepsense.deeplang.catalogs.doperations.DOperationCategoryNode.InnerNodes
 
 /**
  * Node in DOperationCategoryTree.
@@ -28,7 +32,7 @@ import scala.collection.immutable.ListMap
  */
 case class DOperationCategoryNode(
     category: Option[DOperationCategory] = None,
-    successors: ListMap[DOperationCategory, DOperationCategoryNode] = ListMap.empty,
+    successors: InnerNodes = DOperationCategoryNode.emptyInnerNodes,
     operations: List[DOperationDescriptor] = List.empty) {
 
   /**
@@ -41,7 +45,7 @@ case class DOperationCategoryNode(
       operation: DOperationDescriptor,
       path: List[DOperationCategory]): DOperationCategoryNode = {
     path match {
-      case Nil => copy(operations = operations :+ operation)
+      case Nil => copy(operations = (operations :+ operation).sortWith(_.priority < _.priority))
       case category :: tail =>
         val successor = successors.getOrElse(category, DOperationCategoryNode(Some(category)))
         val updatedSuccessor = successor.addOperationAtPath(operation, tail)
@@ -60,4 +64,28 @@ case class DOperationCategoryNode(
       category: DOperationCategory) : DOperationCategoryNode = {
     addOperationAtPath(operation, category.pathFromRoot)
   }
+
+  /**
+    * Gets all operations inside a tree
+    * @return Sequence of tuples containing operation with its priority and category
+    */
+  def getOperations: Seq[(DOperationCategory, DOperation.Id, SortPriority)] = {
+    val thisOperations = operations.map(operation => (operation.category, operation.id, operation.priority))
+    val successorOperations = successors.collect { case successor => successor._2.getOperations }.flatten
+    thisOperations ++ successorOperations
+  }
+
+  /**
+    * Gets all categories inside a tree
+    * @return Sequence of registrated categories
+    */
+  def getCategories: Seq[DOperationCategory] = {
+    val successorOperations = successors.collect { case successor => successor._2.getCategories }.flatten
+    successorOperations.toList ++ category
+  }
+}
+
+object DOperationCategoryNode {
+  type InnerNodes = SortedMap[(DOperationCategory), DOperationCategoryNode]
+  def emptyInnerNodes = SortedMap[(DOperationCategory), DOperationCategoryNode]()
 }

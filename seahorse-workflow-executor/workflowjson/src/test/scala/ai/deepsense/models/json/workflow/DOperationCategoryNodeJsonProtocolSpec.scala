@@ -16,22 +16,25 @@
 
 package ai.deepsense.models.json.workflow
 
+import scala.collection.immutable.SortedMap
 import scala.collection.immutable.ListMap
 
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 import spray.json._
-
 import ai.deepsense.deeplang.DOperation
+import ai.deepsense.deeplang.catalogs.SortPriority
 import ai.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationCategoryNode, DOperationDescriptor}
 import ai.deepsense.models.json.workflow.DOperationCategoryNodeJsonProtocol._
+
+object SortPriorityTest
 
 class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with MockitoSugar {
 
   "DOperationCategoryNode" should "be correctly serialized to json" in {
     val childCategory =
-      new DOperationCategory(DOperationCategory.Id.randomId, "mock child name", None) {}
+      new DOperationCategory(DOperationCategory.Id.randomId, "mock child name", SortPriority.coreDefault) {}
     val childNode = DOperationCategoryNode(Some(childCategory))
 
     val operationDescriptor = mock[DOperationDescriptor]
@@ -41,7 +44,7 @@ class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with
 
     val node = DOperationCategoryNode(
       None,
-      successors = ListMap(childCategory -> childNode),
+      successors = SortedMap(childCategory -> childNode),
       operations = List(operationDescriptor))
 
     val expectedJson = JsObject(

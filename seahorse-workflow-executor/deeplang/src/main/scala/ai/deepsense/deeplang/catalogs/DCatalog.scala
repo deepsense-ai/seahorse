@@ -16,8 +16,11 @@
 
 package ai.deepsense.deeplang.catalogs
 
+import ai.deepsense.deeplang.catalogs.DCatalog.DCategoryCatalog
 import ai.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import ai.deepsense.deeplang.catalogs.doperations.{DCategoryCatalog, DOperationsCatalog}
+import ai.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationsCatalog}
+
+
 
 class DCatalog(
   val categories: DCategoryCatalog,
@@ -25,6 +28,8 @@ class DCatalog(
   val operations: DOperationsCatalog)
 
 object DCatalog {
+  type DCategoryCatalog = Seq[DOperationCategory]
+
   def apply(categories: DCategoryCatalog,
     operables: DOperableCatalog, operations: DOperationsCatalog) =
     new DCatalog(categories, operables, operations)
@@ -35,4 +40,3 @@ object DCatalog {
   def unapply(cat: DCatalog): Option[(DCategoryCatalog, DOperableCatalog, DOperationsCatalog)] =
     Some((cat.categories, cat.operables, cat.operations))
 }
-

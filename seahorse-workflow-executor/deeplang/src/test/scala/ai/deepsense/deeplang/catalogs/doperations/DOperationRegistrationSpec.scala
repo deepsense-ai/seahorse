@@ -28,11 +28,8 @@ class DOperationRegistrationSpec extends UnitSpec {
       operations.operations.keys.foreach(id => operations.createDOperation(id))
     }
     "report assigned categories" in {
-      val delta = catalogs.categories.categories.diff(operations.categories.categories)
-      delta match {
-        case Seq(cat) if cat == UserDefined => ()
-        case _ => fail("Expected UserDefined as the single difference. Had " + delta)
-      }
+      val delta = catalogs.categories.diff(operations.categories)
+      delta shouldBe empty
     }
   }
 }
