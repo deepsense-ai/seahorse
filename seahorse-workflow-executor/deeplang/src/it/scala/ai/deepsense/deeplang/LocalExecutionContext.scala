@@ -91,7 +91,6 @@ object LocalExecutionContext {
   lazy val sparkContext: SparkContext = new SparkContext(sparkConf)
   lazy val sparkSQLSession: SparkSQLSession = {
     val sqlSession = new SparkSQLSession(sparkContext)
-    UserDefinedFunctions.registerFunctions(sqlSession.udfRegistration)
     sqlSession
   }
 

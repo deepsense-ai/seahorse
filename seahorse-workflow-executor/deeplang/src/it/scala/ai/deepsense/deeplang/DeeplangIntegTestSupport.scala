@@ -21,7 +21,7 @@ import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types._
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
@@ -32,6 +32,7 @@ import ai.deepsense.deeplang.OperationExecutionDispatcher.Result
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.utils.DataFrameMatchers
 import ai.deepsense.sparkutils.SparkSQLSession
+import ai.deepsense.sparkutils.spi.SparkSessionInitializer
 
 /**
  * Adds features to facilitate integration testing using Spark
@@ -54,6 +55,12 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll with Loca
 
 object DeeplangIntegTestSupport extends UnitSpec with DataFrameMatchers {
 
+}
+
+class TestUDFRegistrator extends SparkSessionInitializer {
+  val myOp = (d: Double) => d.toInt
+  override def init(sparkSession: SparkSession): Unit =
+    sparkSession.udf.register("myOp", myOp)
 }
 
 private class MockedCodeExecutor extends CustomCodeExecutor {

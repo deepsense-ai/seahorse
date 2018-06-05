@@ -91,7 +91,6 @@ trait Executor extends Logging {
 
   def createSparkSQLSession(sparkContext: SparkContext): SparkSQLSession = {
     val sparkSQLSession = new SparkSQLSession(sparkContext)
-    UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
     sparkSQLSession
   }
 
