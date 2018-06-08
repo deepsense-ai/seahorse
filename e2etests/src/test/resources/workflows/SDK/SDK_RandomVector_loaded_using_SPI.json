@@ -1,0 +1,95 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "7f1268eb-fa6c-dce1-6901-19eab55c30b6",
+      "operation": {
+        "id": "c00bcfe4-c13b-40af-ae4d-bacfe0f1f73a",
+        "name": "Random Vector DataFrame"
+      },
+      "parameters": {
+
+      }
+    }, {
+      "id": "f5dae177-dc21-211c-c222-340c6eff56d6",
+      "operation": {
+        "id": "e9990168-daf7-44c6-8e0c-fbc50456fbec",
+        "name": "Identity"
+      },
+      "parameters": {
+
+      }
+    }, {
+      "id": "4adb4423-5a82-4d78-1241-e2d6a921fd9c",
+      "operation": {
+        "id": "37648959-2424-4c50-b0af-f652565ebd91",
+        "name": "Random Split"
+      },
+      "parameters": {
+
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "7f1268eb-fa6c-dce1-6901-19eab55c30b6",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "f5dae177-dc21-211c-c222-340c6eff56d6",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f5dae177-dc21-211c-c222-340c6eff56d6",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "4adb4423-5a82-4d78-1241-e2d6a921fd9c",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "SDK RandomVector loaded using SPI",
+      "description": "",
+      "nodes": {
+        "7f1268eb-fa6c-dce1-6901-19eab55c30b6": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7808,
+            "y": 8290
+          }
+        },
+        "f5dae177-dc21-211c-c222-340c6eff56d6": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7810,
+            "y": 8409
+          }
+        },
+        "4adb4423-5a82-4d78-1241-e2d6a921fd9c": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 7809,
+            "y": 8532
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    },
+    "datasources": []
+  },
+  "variables": {
+
+  },
+  "id": "f874d44e-ecc2-40c8-8471-ec3134ca167f",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.4.4"
+  }
+}

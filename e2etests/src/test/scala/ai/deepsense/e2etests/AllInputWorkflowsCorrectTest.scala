@@ -26,7 +26,7 @@ import ai.deepsense.workflowexecutor.executor.WorkflowExecutor
 class AllInputWorkflowsCorrectTest extends WordSpec {
 
   val graphReader = {
-    val operationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
+    val operationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.operations
     new GraphReader(operationsCatalog)
   }
 

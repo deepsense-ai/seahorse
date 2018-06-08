@@ -33,7 +33,7 @@ import ai.deepsense.workflowexecutor.communication.message.global.LaunchJsonProt
 object Global {
   val charset = Charset.forName("UTF-8")
 
-  val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
+  val dOperationsCatalog = CatalogRecorder.resourcesCatalogRecorder.catalogs.operations
 
   val graphReader = new GraphReader(dOperationsCatalog)
 

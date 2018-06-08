@@ -19,9 +19,9 @@ package ai.deepsense.deeplang.catalogs.doperations
 import scala.reflect.runtime.universe.Type
 
 import spray.json.JsValue
-
-import ai.deepsense.deeplang.{TypeUtils, DOperation}
+import ai.deepsense.deeplang.{DOperation, TypeUtils}
 import ai.deepsense.deeplang.DPortPosition.DPortPosition
+import ai.deepsense.deeplang.catalogs.SortPriority
 
 /**
  * Represents a registered DOperation and stores its name and i/o port types.
@@ -31,6 +31,7 @@ case class DOperationDescriptor(
     name: String,
     description: String,
     category: DOperationCategory,
+    priority: SortPriority,
     hasDocumentation: Boolean,
     parametersJsonDescription: JsValue,
     inPorts: Seq[Type],

@@ -32,7 +32,7 @@ import ai.deepsense.commons.mail.{EmailSender, EmailSenderAuthorizationConfig, E
 import ai.deepsense.deeplang._
 import ai.deepsense.commons.rest.client.NotebooksClientFactory
 import ai.deepsense.commons.rest.client.datasources.DatasourceRestClientFactory
-import ai.deepsense.deeplang.catalogs.CatalogPair
+import ai.deepsense.deeplang.catalogs.DCatalog
 import ai.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import ai.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import ai.deepsense.models.workflows.Workflow
@@ -82,7 +82,7 @@ case class SessionExecutor(
   private val workflowManagerTimeout = config.getInt("workflow-manager.timeout")
   private val wmWorkflowsPath = config.getString("workflow-manager.workflows.path")
   private val wmReportsPath = config.getString("workflow-manager.reports.path")
-  val CatalogPair(dOperableCatalog, dOperationsCatalog) =
+  val DCatalog(_, dOperableCatalog, dOperationsCatalog) =
     CatalogRecorder.resourcesCatalogRecorder.catalogs
 
   val graphReader = new GraphReader(dOperationsCatalog)

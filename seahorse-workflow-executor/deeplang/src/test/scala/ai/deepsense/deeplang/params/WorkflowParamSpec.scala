@@ -17,8 +17,8 @@
 package ai.deepsense.deeplang.params
 
 import spray.json.{JsString, _}
-
 import ai.deepsense.deeplang.DOperationCategories
+import ai.deepsense.deeplang.catalogs.SortPriority
 import ai.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import ai.deepsense.deeplang.doperations.custom.{Sink, Source}
 import ai.deepsense.deeplang.params.custom.InnerWorkflow
@@ -30,8 +30,8 @@ class WorkflowParamSpec extends AbstractParamSpec[InnerWorkflow, WorkflowParam] 
 
   override def graphReader: GraphReader = {
     val catalog = DOperationsCatalog()
-    catalog.registerDOperation(DOperationCategories.IO, () => Source())
-    catalog.registerDOperation(DOperationCategories.IO, () => Sink())
+    catalog.registerDOperation(DOperationCategories.IO, () => Source(), SortPriority.coreDefault)
+    catalog.registerDOperation(DOperationCategories.IO, () => Sink(), SortPriority.coreDefault)
     new GraphReader(catalog)
   }
 

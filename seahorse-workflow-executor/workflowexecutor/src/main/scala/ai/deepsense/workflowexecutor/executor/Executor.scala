@@ -16,10 +16,6 @@
 
 package ai.deepsense.workflowexecutor.executor
 
-import java.io.File
-
-import org.apache.spark.{SparkConf, SparkContext}
-
 import ai.deepsense.commons.BuildInfo
 import ai.deepsense.commons.mail.EmailSender
 import ai.deepsense.commons.rest.client.NotebooksClientFactory
@@ -27,12 +23,12 @@ import ai.deepsense.commons.rest.client.datasources.DatasourceClientFactory
 import ai.deepsense.commons.spark.sql.UserDefinedFunctions
 import ai.deepsense.commons.utils.{Logging, Version}
 import ai.deepsense.deeplang._
-import ai.deepsense.deeplang.catalogs.CatalogPair
 import ai.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import ai.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import ai.deepsense.deeplang.inference.InferContext
 import ai.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import ai.deepsense.sparkutils.SparkSQLSession
+import org.apache.spark.{SparkConf, SparkContext}
 
 trait Executor extends Logging {
 
@@ -52,8 +48,8 @@ trait Executor extends Logging {
       libraryPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
-    val CatalogPair(operableCatalog, operationsCatalog) =
-      CatalogRecorder.fromSparkContext(sparkContext).catalogs
+    val operationsCatalog =
+      CatalogRecorder.fromSparkContext(sparkContext).catalogs.operations
 
     val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
       new GraphReader(operationsCatalog))

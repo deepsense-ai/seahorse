@@ -16,7 +16,7 @@
 
 package ai.deepsense.workflowexecutor
 
-import ai.deepsense.deeplang.catalogs.CatalogPair
+import ai.deepsense.deeplang.catalogs.DCatalog
 import ai.deepsense.deeplang.doperations.custom.{Sink, Source}
 import ai.deepsense.deeplang.doperations.CreateCustomTransformer
 import ai.deepsense.deeplang.inference.InferContext
@@ -90,6 +90,6 @@ class KnowledgeInferenceSpec
     MockedInferContext(dOperableCatalog = dOperableCatalog)
   }
   override protected lazy val graphReader = new GraphReader(operationCatalog)
-  private lazy val CatalogPair(dOperableCatalog, operationCatalog) =
+  private lazy val DCatalog(_, dOperableCatalog, operationCatalog) =
     CatalogRecorder.resourcesCatalogRecorder.catalogs
 }

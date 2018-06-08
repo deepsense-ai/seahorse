@@ -19,23 +19,21 @@ package ai.deepsense.deeplang.refl
 import java.io.File
 import java.net.{URL, URLClassLoader}
 
-import scala.collection.JavaConversions._
-
+import ai.deepsense.commons.utils.Logging
+import ai.deepsense.deeplang.catalogs.SortPriority
+import ai.deepsense.deeplang.catalogs.spi.{CatalogRegistrant, CatalogRegistrar}
+import ai.deepsense.deeplang.{DOperation, DOperationCategories, TypeUtils}
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
 
-import ai.deepsense.commons.utils.Logging
-import ai.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import ai.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import ai.deepsense.deeplang.{DOperation, DOperationCategories, TypeUtils}
+import scala.collection.JavaConversions._
 
 /**
   * Scanner for operations and operables. It scans given jars and additionally a jar containing this
   * class.
   * @param jarsUrls Jars to scan
   */
-class CatalogScanner(jarsUrls: Seq[URL]) extends Logging {
-
+class CatalogScanner(jarsUrls: Seq[URL]) extends CatalogRegistrant with  Logging {
   /**
     * Scans jars on classpath for classes annotated with [[ai.deepsense.deeplang.refl.Register]]
     * annotation and at the same time implementing [[ai.deepsense.deeplang.DOperation]]
@@ -43,17 +41,18 @@ class CatalogScanner(jarsUrls: Seq[URL]) extends Logging {
     *
     * @see [[ai.deepsense.deeplang.refl.Register]]
     */
-  def scanAndRegister(
-      dOperableCatalog: DOperableCatalog,
-      dOperationsCatalog: DOperationsCatalog
-  ): Unit = {
+  override def register(registrar: CatalogRegistrar): Unit = {
     logger.info(
       s"Scanning registrables. Following jars will be scanned: ${jarsUrls.mkString(";")}.")
-    for (registrable <- scanForRegistrables()) {
+    val scanned = scanForRegistrables().iterator
+    val priorities = SortPriority.sdkInSequence
+    for {
+      (registrable, priority) <- scanned.zip(priorities)
+    } {
       logger.debug(s"Trying to register class $registrable")
       registrable match {
-        case DOperationMatcher(doperation) => registerDOperation(dOperationsCatalog, doperation)
-        case other => logger.warn(s"Only DOperation can be `@Register`ed")
+        case DOperationMatcher(doperation) => registerDOperation(registrar, doperation, priority)
+        case other => logger.warn(s"Only DOperation can be `@Register`ed. '$other' not supported.")
       }
     }
   }
@@ -64,10 +63,13 @@ class CatalogScanner(jarsUrls: Seq[URL]) extends Logging {
 
     if (urls.nonEmpty) {
 
-      val configBuilder = ConfigurationBuilder.build(urls.toSeq: _*)
+      val configBuilder = ConfigurationBuilder
+        .build(urls.toSeq: _*)
+        .addClassLoader(getClass.getClassLoader)
+        .setExpandSuperTypes(false)
 
       if (jarsUrls.nonEmpty) {
-        configBuilder.addClassLoader(URLClassLoader.newInstance(jarsUrls.toArray))
+        configBuilder.addClassLoader(URLClassLoader.newInstance(jarsUrls.toArray, getClass.getClassLoader))
       }
 
       new Reflections(configBuilder).getTypesAnnotatedWith(classOf[Register]).toSet
@@ -89,15 +91,16 @@ class CatalogScanner(jarsUrls: Seq[URL]) extends Logging {
     }
   }
 
-
   private def registerDOperation(
-      catalog: DOperationsCatalog,
-      operation: Class[DOperation]
+    registrar: CatalogRegistrar,
+    operation: Class[DOperation],
+    priority: SortPriority
   ): Unit = TypeUtils.constructorForClass(operation) match {
     case Some(constructor) =>
-      catalog.registerDOperation(
+      registrar.registerOperation(
         DOperationCategories.UserDefined,
-        () => TypeUtils.createInstance[DOperation](constructor)
+        () => TypeUtils.createInstance[DOperation](constructor),
+        priority
       )
     case None => logger.error(
       s"Class $operation could not be registered." +

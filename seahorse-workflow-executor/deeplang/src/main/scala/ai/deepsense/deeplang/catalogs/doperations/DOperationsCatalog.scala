@@ -16,13 +16,14 @@
 
 package ai.deepsense.deeplang.catalogs.doperations
 
-import java.lang.reflect.Constructor
-
-import scala.collection.mutable
-import scala.reflect.runtime.{universe => ru}
-
+import ai.deepsense.deeplang.{DOperable, DOperation, DOperationCategories}
 import ai.deepsense.deeplang.catalogs.doperations.exceptions._
-import ai.deepsense.deeplang.{DOperation, TypeUtils}
+import ai.deepsense.deeplang.doperations.UnknownOperation
+import scala.collection.mutable
+
+import ai.deepsense.deeplang.catalogs.SortPriority
+import ai.deepsense.deeplang.catalogs.spi.CatalogRegistrar.OperationFactory
+import javassist.bytecode.stackmap.TypeTag
 
 /**
  * Catalog of DOperations.
@@ -46,9 +47,14 @@ abstract class DOperationsCatalog {
    * Registers DOperation, which can be later viewed and created.
    * @param category category to which this operation directly belongs
    * @param visible a flag determining if the operation should be visible in the category tree
-   * @tparam T DOperation class to register
    */
-  def registerDOperation(category: DOperationCategory, factory: () => DOperation, visible: Boolean = true): Unit
+  def registerDOperation(
+    category: DOperationCategory, factory: () => DOperation, priority: SortPriority, visible: Boolean = true): Unit
+
+  /** Fetch the categories used by the registered operations in this catalog. */
+  def categories: Seq[DOperationCategory] = categoryTree.getCategories
+
+  def registeredOperations: Seq[(DOperationCategory, OperationFactory, SortPriority)]
 }
 
 object DOperationsCatalog {
@@ -59,7 +65,18 @@ object DOperationsCatalog {
     var operations = Map.empty[DOperation.Id, DOperationDescriptor]
     private val operationFactoryByOperationId = mutable.Map.empty[DOperation.Id, () => DOperation]
 
-    def registerDOperation(category: DOperationCategory, factory: () => DOperation, visible: Boolean = true): Unit = {
+    def registeredOperations: Seq[(DOperationCategory, OperationFactory, SortPriority)] =
+      categoryTree.getOperations.map {
+        case (category: DOperationCategory, id: DOperation.Id, priority: SortPriority)
+        => (category, operationFactoryByOperationId(id), priority)
+      }
+
+
+    def registerDOperation(
+        category: DOperationCategory,
+        factory: () => DOperation,
+        priority: SortPriority,
+        visible: Boolean = true): Unit = {
       val operationInstance = factory()
       operationInstance.validate()
       val id = operationInstance.id
@@ -69,7 +86,8 @@ object DOperationsCatalog {
       val outPortTypes = operationInstance.outPortTypes.map(_.tpe)
       val parameterDescription = operationInstance.paramsToJson
       val operationDescriptor = DOperationDescriptor(
-        id, name, description, category, operationInstance.hasDocumentation, parameterDescription, inPortTypes,
+        id, name, description, category, priority, operationInstance.hasDocumentation,
+        parameterDescription, inPortTypes,
         operationInstance.inPortsLayout, outPortTypes, operationInstance.outPortsLayout
       )
 
@@ -91,5 +109,11 @@ object DOperationsCatalog {
       case Some(factory) => factory()
       case None => throw DOperationNotFoundException(id)
     }
+
+    // This is a special case operation that serves as a fallback when an unrecognized
+    // UUID is encountered in a workflow. It is registered here so that the visibility flag
+    // can be set to false.
+    registerDOperation(
+      DOperationCategories.Other, () => new UnknownOperation, SortPriority.coreDefault, visible = false)
   }
 }
