@@ -51,16 +51,14 @@ object TestClusters extends Logging {
         """.stripMargin
       )
     }
-    // TODO We don't test on standalone, yarn and mesos now
+    // TODO We don't test on standalone and mesos now
     // Add them later on
     val _ = Seq(
       standalone,
       yarn,
       mesos)
 
-    Seq(
-      Some(local)
-    ).flatten
+    Seq(Some(local), yarn).flatten
   }
 
   def local() = ClusterDetails(

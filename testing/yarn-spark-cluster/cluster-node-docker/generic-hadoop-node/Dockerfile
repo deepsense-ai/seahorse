@@ -5,7 +5,7 @@ MAINTAINER DeepSense.io
 
 # To suppress some warnings
 ENV TERM=xterm
-ENV HADOOP_VERSION=hadoop-2.7.3
+ENV HADOOP_VERSION=hadoop-2.7.6
 ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre/
 ENV HADOOP_PREFIX=/opt/$HADOOP_VERSION
 ENV HADOOP_HOME=$HADOOP_PREFIX
