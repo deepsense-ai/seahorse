@@ -128,9 +128,8 @@ HADOOP_CONF_DIR="deployment/docker-compose/data/hadoop"
 mkdir -p $HADOOP_CONF_DIR
 cp testing/yarn-spark-cluster/cluster-node-docker/generic-hadoop-node/hadoop-conf/* $HADOOP_CONF_DIR
 
-### TODO Revive yarn
-#testing/yarn-spark-cluster/build-cluster-node-docker.sh
-#docker-compose -f $YARN_SPARK_DOCKER_COMPOSE up -d
+testing/yarn-spark-cluster/build-cluster-node-docker.sh
+docker-compose -f $YARN_SPARK_DOCKER_COMPOSE up -d
 
 export YARN_MASTER_IP=10.254.1.2
 
