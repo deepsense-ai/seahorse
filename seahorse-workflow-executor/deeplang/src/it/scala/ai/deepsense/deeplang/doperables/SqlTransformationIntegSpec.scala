@@ -63,8 +63,6 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
       assertTableUnregistered()
     }
     "allow use of UDFs defined in primary SQL Context" in {
-      val fun = sparkSQLSession.getSparkSession.catalog.getFunction("myOp")
-      assert(fun != null)
       val expression = s"select myOp($secondColumn) as foo from $dataFrameId"
       val resultSchema = executeSqlSchemaTransformation(expression, dataFrameId, schema)
       val expectedSchema = StructType(Seq(StructField("foo", IntegerType)))
