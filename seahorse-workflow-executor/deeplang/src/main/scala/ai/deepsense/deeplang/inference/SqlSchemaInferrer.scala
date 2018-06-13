@@ -30,7 +30,6 @@ class SqlSchemaInferrer {
   : (StructType, InferenceWarnings) = {
     try {
     val localSpark = SQL.createEmptySparkSQLSession()
-      UserDefinedFunctions.registerFunctions(localSpark.udfRegistration)
       inputSchemas.foreach { case (dataFrameId, schema) =>
         val emptyData = localSpark.sparkContext.parallelize(Seq(Row.empty))
         val emptyDf = localSpark.createDataFrame(emptyData, schema)

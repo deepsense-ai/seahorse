@@ -18,6 +18,7 @@ package ai.deepsense.sparkutils
 
 
 import scala.concurrent.{Await, Future}
+import ai.deepsense.sparkutils.spi.SparkSessionInitializer
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 import scala.reflect.api.Symbols
@@ -39,6 +40,9 @@ import org.apache.spark.{SparkContext, ml}
 class SparkSQLSession private[sparkutils](val sparkSession: SparkSession) {
   def this(sparkContext: SparkContext) = this(SparkSession.builder().config(sparkContext.getConf).getOrCreate())
 
+  // Calls SPI to allow registered clients to inject UDFs other global session state.
+  SparkSessionInitializer(sparkSession)
+
   def sparkContext: SparkContext = sparkSession.sparkContext
 
   def createDataFrame(rdd: RDD[Row], schema: StructType): DataFrame = sparkSession.createDataFrame(rdd, schema)
@@ -59,7 +63,7 @@ class SparkSQLSession private[sparkutils](val sparkSession: SparkSession) {
 
   def newSession(): SparkSQLSession = new SparkSQLSession(sparkSession.newSession())
 
-  // This is for pyexecutor.py
+  // This is for pyexecutor.py and DOperables and SparkSessionInitializer
   def getSparkSession = sparkSession
 }
 
