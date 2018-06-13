@@ -35,7 +35,7 @@ import ai.deepsense.deeplang.{DOperable, ExecutionContext}
  * @param schema Schema of the DataFrame. Usually it is schema of sparkDataFrame,
  *               but for inference, DataFrame may be not set but schema is known.
  */
-case class DataFrame private[dataframe] (
+case class DataFrame protected[dataframe] (
     sparkDataFrame: sql.DataFrame,
     schema: Option[StructType])
   extends DOperable
