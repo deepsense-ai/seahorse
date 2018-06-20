@@ -56,7 +56,7 @@ class SessionWorkflowExecutorActor(
 
   import scala.concurrent.duration._
 
-  private val heartbeat = Heartbeat(workflowId.toString)
+  private val heartbeat = Heartbeat(workflowId.toString, executionContext.sparkContext.uiWebUrl)
   private var scheduledHeartbeat: Option[Cancellable] = None
 
   override def receive: Receive = {
