@@ -73,8 +73,9 @@ class GlobalMQSerializerSpec
         val outMessage = JsObject(
           "messageType" -> JsString("heartbeat"),
           "messageBody" -> JsObject(
-            "workflowId" -> JsString(workflowId)))
-        serialize(Heartbeat(workflowId)) shouldBe asBytes(outMessage)
+            "workflowId" -> JsString(workflowId),
+            "sparkUiAddress" -> JsNull))
+        serialize(Heartbeat(workflowId, None)) shouldBe asBytes(outMessage)
       }
       "serialize PoisonPill messages" in {
         val outMessage = JsObject(

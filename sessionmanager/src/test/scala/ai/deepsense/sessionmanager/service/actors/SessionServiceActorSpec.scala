@@ -67,7 +67,7 @@ class SessionServiceActorSpec(_system: ActorSystem)
     "received a Heartbeat" when {
       "the session does not exist" should {
         "send a PoisonPill to sender" in fixture { p =>
-          p.sessionServiceActor ! Heartbeat(notExistingWorkflowId.toString)
+          p.sessionServiceActor ! Heartbeat(notExistingWorkflowId.toString, None)
           eventually {
             verify(p.sessionExecutorClients, times(1)).sendPoisonPill(notExistingWorkflowId)
           }

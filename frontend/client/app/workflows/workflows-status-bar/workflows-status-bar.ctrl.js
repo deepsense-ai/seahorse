@@ -44,7 +44,7 @@ function WorkflowStatusBarController($rootScope, $scope, $log, UserService, Clus
   vm.predefinedUserId = PredefinedUser.id;
   vm.sparkUiAddress = undefined;
   vm.isSparkUiAvailable = isSparkUiAvailable;
-  vm.sparkUiDisableClass = getSparkUiDisableClass();
+  vm.sparkUiAdditionalClasses = getSparkUiAdditionalClasses();
 
   $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
        if (data.sparkUiAddress !== null) {
@@ -69,19 +69,18 @@ function WorkflowStatusBarController($rootScope, $scope, $log, UserService, Clus
     vm.workflowId = newValue.id;
   });
 
-  $scope.$watch(() => vm.workflow.sessionStatus, (oldValue, newValue) => {
-    if (oldValue !== newValue) {
-      vm.sparkUiDisableClass = getSparkUiDisableClass();
-    }
-  });
+  watchForSparkUiChanges(() => vm.sparkUiAddress);
+  watchForSparkUiChanges(() => vm.workflow.sessionStatus);
 
-  $scope.$watch(() => vm.sparkUiAddress, (oldValue, newValue) => {
-    if (oldValue !== newValue) {
-      vm.sparkUiDisableClass = isSparkUiAvailable() ? '' : 'menu-item-disabled';
-    }
-  });
+  function watchForSparkUiAdditionalClassesChanges(variableToWatch) {
+      $scope.$watch(variableToWatch, (newValue, oldValue) => {
+        if (oldValue !== newValue) {
+          vm.sparkUiAdditionalClasses = getSparkUiAdditionalClasses();
+        }
+      });
+  }
 
-  function getSparkUiDisableClass() {
+  function getSparkUiAdditionalClasses() {
     return isSparkUiAvailable() ? '' : 'menu-item-disabled';
   }
 
