@@ -42,15 +42,15 @@ function WorkflowStatusBarController($rootScope, $scope, $log, UserService, Clus
   vm.isViewerMode = isViewerMode;
   vm.openDatasources = openDatasources;
   vm.predefinedUserId = PredefinedUser.id;
-  vm.sparkUi = undefined;
-  vm.isSparkUi = isSparkUi;
-  vm.sparkUiDisableClass = isSparkUi() ? '' : 'menu-item-disabled';
+  vm.sparkUiAddress = undefined;
+  vm.isSparkUiAvailable = isSparkUiAvailable;
+  vm.sparkUiDisableClass = getSparkUiDisableClass();
 
   $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
        if (data.sparkUiAddress !== null) {
-        vm.sparkUi = data.sparkUiAddress;
+        vm.sparkUiAddress = data.sparkUiAddress;
        } else {
-        vm.sparkUi = undefined;
+        vm.sparkUiAddress = undefined;
        }
   });
 
@@ -71,15 +71,19 @@ function WorkflowStatusBarController($rootScope, $scope, $log, UserService, Clus
 
   $scope.$watch(() => vm.workflow.sessionStatus, (oldValue, newValue) => {
     if (oldValue !== newValue) {
-      vm.sparkUiDisableClass = isSparkUi() ? '' : 'menu-item-disabled';
+      vm.sparkUiDisableClass = getSparkUiDisableClass();
     }
   });
 
-  $scope.$watch(() => vm.sparkUi, (oldValue, newValue) => {
+  $scope.$watch(() => vm.sparkUiAddress, (oldValue, newValue) => {
     if (oldValue !== newValue) {
-      vm.sparkUiDisableClass = isSparkUi() ? '' : 'menu-item-disabled';
+      vm.sparkUiDisableClass = isSparkUiAvailable() ? '' : 'menu-item-disabled';
     }
   });
+
+  function getSparkUiDisableClass() {
+    return isSparkUiAvailable() ? '' : 'menu-item-disabled';
+  }
 
   function getCurrentPreset() {
     return WorkflowService.isExecutorForCurrentWorkflowRunning() ?
@@ -113,8 +117,8 @@ function WorkflowStatusBarController($rootScope, $scope, $log, UserService, Clus
     return vm.workflow.owner.id === UserService.getSeahorseUser().id;
   }
 
-  function isSparkUi() {
-    return vm.workflow.sessionStatus === sessionStatus.RUNNING && vm.sparkUi !== undefined;
+  function isSparkUiAvailable() {
+    return vm.workflow.sessionStatus === sessionStatus.RUNNING && vm.sparkUiAddress !== undefined;
   }
 
   function isViewerMode() {
