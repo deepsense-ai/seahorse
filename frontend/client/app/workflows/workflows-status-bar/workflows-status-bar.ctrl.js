@@ -69,8 +69,8 @@ function WorkflowStatusBarController($rootScope, $scope, $log, UserService, Clus
     vm.workflowId = newValue.id;
   });
 
-  watchForSparkUiChanges(() => vm.sparkUiAddress);
-  watchForSparkUiChanges(() => vm.workflow.sessionStatus);
+  watchForSparkUiAdditionalClassesChanges(() => vm.sparkUiAddress);
+  watchForSparkUiAdditionalClassesChanges(() => vm.workflow.sessionStatus);
 
   function watchForSparkUiAdditionalClassesChanges(variableToWatch) {
       $scope.$watch(variableToWatch, (newValue, oldValue) => {
