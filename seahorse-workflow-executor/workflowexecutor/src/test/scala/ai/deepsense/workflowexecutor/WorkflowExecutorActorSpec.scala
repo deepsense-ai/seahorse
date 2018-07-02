@@ -28,7 +28,6 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mockito.MockitoSugar
 import spray.json.JsObject
-
 import ai.deepsense.commons.datetime.DateTimeConverter
 import ai.deepsense.commons.models.Entity
 import ai.deepsense.commons.utils.Logging
@@ -48,6 +47,7 @@ import ai.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import ai.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWorkflow, SaveState, SaveWorkflow}
 import ai.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Delete
 import ai.deepsense.workflowexecutor.partialexecution._
+import org.apache.spark.SparkContext
 
 class WorkflowExecutorActorSpec
   extends TestKit(ActorSystem("WorkflowExecutorActorSpec"))
@@ -303,7 +303,7 @@ class WorkflowExecutorActorSpec
 
         val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(
           new SessionWorkflowExecutorActor(
-            mock[CommonExecutionContext],
+            executionContext,
             nodeExecutorFactory,
             wmClient.ref,
             publisher.ref,
@@ -359,7 +359,7 @@ class WorkflowExecutorActorSpec
 
         val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(
           new SessionWorkflowExecutorActor(
-            mock[CommonExecutionContext],
+            executionContext,
             nodeExecutorFactory,
             wmClient.ref,
             publisher.ref,
@@ -436,8 +436,11 @@ class WorkflowExecutorActorSpec
     wea.underlyingActor.context.become(wea.underlyingActor.ready())
   }
 
-  val executionContext = {
+  def executionContext = {
     val context = mock[CommonExecutionContext]
+    val sparkContext = mock[SparkContext]
+    when(context.sparkContext).thenReturn(sparkContext)
+    when(sparkContext.uiWebUrl).thenReturn(None)
     when(context.createExecutionContext(any(), any())).thenReturn(mock[ExecutionContext])
     context
   }
@@ -492,7 +495,8 @@ class WorkflowExecutorActorSpec
       } else {
         wmClientActor(Map[Workflow.Id, WorkflowWithResults](workflow.id -> workflow))
       }
-    val commonExecutionContext = mock[CommonExecutionContext]
+
+    val commonExecutionContext = executionContext
     val inferContext = MockedInferContext()
     when(commonExecutionContext.inferContext).thenReturn(inferContext)
     val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(

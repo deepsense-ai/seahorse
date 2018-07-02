@@ -68,13 +68,22 @@ class GlobalMQSerializerSpec
         serializedMessage shouldBe asBytes(outMessage)
       }
 
-      "serialize Heartbeat messages" in {
+      "serialize Heartbeat without SparkUi messages" in {
         val workflowId = "foo-workflow"
         val outMessage = JsObject(
           "messageType" -> JsString("heartbeat"),
           "messageBody" -> JsObject(
             "workflowId" -> JsString(workflowId)))
-        serialize(Heartbeat(workflowId)) shouldBe asBytes(outMessage)
+        serialize(Heartbeat(workflowId, None)) shouldBe asBytes(outMessage)
+      }
+      "serialize Heartbeat with SparkUi messages" in {
+        val workflowId = "foo-workflow"
+        val outMessage = JsObject(
+          "messageType" -> JsString("heartbeat"),
+          "messageBody" -> JsObject(
+            "workflowId" -> JsString(workflowId),
+            "sparkUiAddress" -> JsString("localhost")))
+        serialize(Heartbeat(workflowId, Some("localhost"))) shouldBe asBytes(outMessage)
       }
       "serialize PoisonPill messages" in {
         val outMessage = JsObject(

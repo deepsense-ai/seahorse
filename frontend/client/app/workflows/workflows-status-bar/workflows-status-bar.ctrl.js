@@ -19,7 +19,7 @@
 import {sessionStatus} from 'APP/enums/session-status.js';
 
 /* @ngInject */
-function WorkflowStatusBarController($scope, UserService, ClusterModalService, DatasourcesPanelService,
+function WorkflowStatusBarController($rootScope, $scope, $log, UserService, ClusterModalService, DatasourcesPanelService,
                                      SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService, PredefinedUser) {
 
   const vm = this;
@@ -42,6 +42,17 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
   vm.isViewerMode = isViewerMode;
   vm.openDatasources = openDatasources;
   vm.predefinedUserId = PredefinedUser.id;
+  vm.sparkUiAddress = undefined;
+  vm.isSparkUiAvailable = isSparkUiAvailable;
+  vm.sparkUiAdditionalClasses = getSparkUiAdditionalClasses();
+
+  $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
+       if (data.sparkUiAddress !== null) {
+        vm.sparkUiAddress = data.sparkUiAddress;
+       } else {
+        vm.sparkUiAddress = undefined;
+       }
+  });
 
   $scope.$watch(getCurrentPreset, (newValue, oldValue) => {
     if (newValue && newValue !== oldValue) {
@@ -57,6 +68,21 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
     vm.workflow = newValue;
     vm.workflowId = newValue.id;
   });
+
+  watchForSparkUiAdditionalClassesChanges(() => vm.sparkUiAddress);
+  watchForSparkUiAdditionalClassesChanges(() => vm.workflow.sessionStatus);
+
+  function watchForSparkUiAdditionalClassesChanges(variableToWatch) {
+      $scope.$watch(variableToWatch, (newValue, oldValue) => {
+        if (oldValue !== newValue) {
+          vm.sparkUiAdditionalClasses = getSparkUiAdditionalClasses();
+        }
+      });
+  }
+
+  function getSparkUiAdditionalClasses() {
+    return isSparkUiAvailable() ? '' : 'menu-item-disabled';
+  }
 
   function getCurrentPreset() {
     return WorkflowService.isExecutorForCurrentWorkflowRunning() ?
@@ -88,6 +114,10 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
 
   function isOwner() {
     return vm.workflow.owner.id === UserService.getSeahorseUser().id;
+  }
+
+  function isSparkUiAvailable() {
+    return vm.workflow.sessionStatus === sessionStatus.RUNNING && vm.sparkUiAddress !== undefined;
   }
 
   function isViewerMode() {

@@ -19,8 +19,7 @@ package ai.deepsense.workflowexecutor.communication.mq.json
 import java.nio.charset.StandardCharsets
 
 import org.scalatest.mockito.MockitoSugar
-import spray.json.{JsArray, JsObject, JsString}
-
+import spray.json.{JsArray, JsNull, JsObject, JsString}
 import ai.deepsense.commons.StandardSpec
 import ai.deepsense.models.workflows.Workflow
 import ai.deepsense.workflowexecutor.communication.message.global._
@@ -53,8 +52,9 @@ class GlobalMQDeserializerSpec
       val rawMessage = JsObject(
         "messageType" -> JsString("heartbeat"),
         "messageBody" -> JsObject(
-          "workflowId" -> JsString(workflowId)))
-      serializeAndRead(rawMessage) shouldBe Heartbeat(workflowId)
+          "workflowId" -> JsString(workflowId),
+          "sparkUiAddress" -> JsNull))
+      serializeAndRead(rawMessage) shouldBe Heartbeat(workflowId, None)
     }
     "deserialize PoisonPill messages" in {
       val rawMessage = JsObject(
