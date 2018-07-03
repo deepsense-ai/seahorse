@@ -27,6 +27,7 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder "./h2-data", "/resources/h2-data", mount_options: ["dmode=775,fmode=664"], create: true
   config.vm.synced_folder "./jars", "/resources/jars", mount_options: ["dmode=775,fmode=664"], create: true
   config.vm.synced_folder "./R_Libs", "/resources/R_Libs", mount_options: ["dmode=775,fmode=664"], create: true
+  config.vm.synced_folder "./python_libs", "/resources/python_libs", mount_options: ["dmode=775,fmode=664"], create: true
   config.vm.synced_folder "./spark_applications_logs", "/resources/spark_applications_logs", mount_options: ["dmode=775,fmode=664"], create: true
   config.vm.synced_folder "./uaa", "/resources/uaa", mount_options: ["dmode=775,fmode=664"], create: true
   config.vm.synced_folder "./library", "/resources/library", mount_options: ["dmode=775,fmode=664"], create: true

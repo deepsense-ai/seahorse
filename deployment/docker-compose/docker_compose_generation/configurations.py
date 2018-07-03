@@ -25,6 +25,7 @@ class Directories(object):
     h2_data = './h2-data'
     jars = './jars'
     r_libs = './R_Libs'
+    python_libs = './python_libs'
     spark_application_logs = './spark_applications_logs'
 
     @staticmethod
@@ -208,6 +209,8 @@ class SessionManager(Service):
             Directories.expose(Directories.data, '/resources/data'),
             Directories.expose(Directories.jars, '/resources/jars'),
             Directories.expose(Directories.r_libs, '/opt/R_Libs'),
+            Directories.expose(Directories.python_libs, '/resources/python_libs'),
+
             Directories.expose(Directories.spark_application_logs, '/spark_applications_logs', 'rw'),
             Directories.expose(Directories.library, '/library')
         ]

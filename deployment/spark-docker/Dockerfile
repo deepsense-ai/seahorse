@@ -47,8 +47,12 @@ RUN wget -q -O /tmp/Miniconda2-4.3.27.1-Linux-x86_64.sh \
     /opt/conda/bin/conda install --yes -c r r-essentials && \
     /opt/conda/bin/conda install --yes -c r r-base='3.3.1 1' && \
     /opt/conda/bin/conda install --yes -c r r-irkernel=0.7 && \
-    /opt/conda/bin/conda clean --all --yes
-
+    /opt/conda/bin/conda clean --all --yes && \
+# Add /resources/python_libs for conda to search in for packages
+# /resources/python_libs is needed to be present for conda
+# /resources/python_libs will be overwritten later when mounting volume
+    mkdir -p /resources/python_libs && \
+    echo "/resources/python_libs" > /opt/conda/lib/python2.7/site-packages/python_libs.pth
 
 # Flag to use old g++ ABI (necessary for compilation of r-igraph package)
 RUN mkdir -p /root/.R && \
