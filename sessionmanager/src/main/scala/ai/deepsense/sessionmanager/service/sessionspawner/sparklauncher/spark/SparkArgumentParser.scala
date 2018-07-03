@@ -60,6 +60,20 @@ object SparkArgumentParser extends Logging {
         }
       }
     }
+
+    def getConfOption(key: String): Option[Set[String]] = self.get("--conf") match {
+      case Some(null) => None
+      case None => None
+      case Some(set: Set[String]) => {
+        val options = set.filter(_.split("=", 2)(0) == key)
+        if (options.isEmpty) {
+          None
+        } else {
+          val values = options.map(_.split("=", 2)(1))
+          Some(values)
+        }
+      }
+    }
   }
 
   def parse(paramsStringOpt: Option[String]): Validation[UnknownOption, SparkOptionsMultiMap] = {

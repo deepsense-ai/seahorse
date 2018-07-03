@@ -18,7 +18,6 @@ package ai.deepsense.sessionmanager.service.sessionspawner.sparklauncher.cluster
 
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
-
 import ai.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser._
 
 class SeahorseSparkLauncherSpec extends FunSuite with Matchers  with MockitoSugar {
@@ -29,11 +28,35 @@ class SeahorseSparkLauncherSpec extends FunSuite with Matchers  with MockitoSuga
     }
   }
 
+  test("Getting configuration option returns key value if it is present") {
+    confOptionMap.getConfOption("key") shouldBe Some(Set("5"))
+  }
+
+  test("Getting configuration option returns multiple values if it is present") {
+    confOptionMap.getConfOption("keyB") shouldBe Some(Set("1", "2"))
+  }
+
+  test("Getting configuration option returns None if there is no --conf argument") {
+    Map("--con" -> Set("key=5", "keyB=1", "keyB=2")).getConfOption("key") shouldBe None
+  }
+
+  test("Getting configuration option returns None if there is no key") {
+    confOptionMap.getConfOption("NonePresentKey") shouldBe None
+  }
+
+  val confOptionMap = Map("--conf" -> Set("key=5", "keyB=1", "keyB=2"))
+
   val testCases = Seq(
-    TestCase("key", "value", Map("--conf" -> Set("otherKey=5"), "--con" -> Set("value=otherValue")),
-      Map("--conf" -> Set("otherKey=5", "key=value"), "--con" -> Set("value=otherValue"))),
-    TestCase("key", "value", Map(("--conf" -> Set("key=valueOther", "key2=value2"))),
-      Map("--conf" -> Set("key=valueOther,value", "key2=value2")))
+    TestCase(
+      inputKey = "key",
+      inputValue = "value",
+      inputArgs = Map("--conf" -> Set("otherKey=5"), "--con" -> Set("value=otherValue")),
+      output = Map("--conf" -> Set("otherKey=5", "key=value"), "--con" -> Set("value=otherValue"))),
+    TestCase(
+      inputKey = "key",
+      inputValue = "value",
+      inputArgs = Map(("--conf" -> Set("key=valueOther", "key2=value2"))),
+      output = Map("--conf" -> Set("key=valueOther,value", "key2=value2")))
   )
 
   case class TestCase(

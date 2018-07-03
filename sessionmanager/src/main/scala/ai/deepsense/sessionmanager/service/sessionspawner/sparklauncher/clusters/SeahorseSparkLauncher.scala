@@ -81,6 +81,16 @@ object SeahorseSparkLauncher {
       }
     }
 
+    def setConfDefault(
+      key: String,
+      sparkArgs: SparkArgumentParser.SparkOptionsMultiMap,
+      default: String): SparkLauncher = {
+      sparkArgs.getConfOption(key) match {
+        case None => self.setConf(key, default)
+        case _ => self
+      }
+    }
+
     def setSparkArgs(args: SparkArgumentParser.SparkOptionsMultiMap): SparkLauncher =
       args.filterKeys(key =>
         !disabledKeys.contains(key)
