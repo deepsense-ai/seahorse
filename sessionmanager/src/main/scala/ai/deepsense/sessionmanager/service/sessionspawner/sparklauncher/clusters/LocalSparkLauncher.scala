@@ -43,7 +43,7 @@ private [clusters] object LocalSparkLauncher {
       .addAppArgs(applicationArgs: _*)
       .addFile(config.weDepsPath)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)
-      .setConf("spark.default.parallelism", parallelism.toString)
+      .setConfDefault("spark.default.parallelism", args, parallelism.toString)
   }
 
   private def env(config: SparkLauncherConfig,
