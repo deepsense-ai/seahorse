@@ -1,0 +1,12 @@
+<div class="modal-body">
+    <div
+      ng-class="'ace_editor_modal'"
+      ui-ace="{mode: text,}"
+      ng-model="acstmCtrl.codeSnippet.code"
+      readonly
+    >
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="acstmCtrl.close()">Close</button>
+</div>

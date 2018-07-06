@@ -30,12 +30,10 @@
     <tbody class="table-container">
     <tr ng-repeat="row in controller.table.values">
       <td ng-repeat="value in row track by $index"
-          uib-popover="{{value}}"
-          popover-trigger="{{{true: 'outsideClick', false: 'none'}[controller.isLongEnoughToBeCutOff(value)]}}"
           popover-append-to-body="true">
         <span ng-switch="value === null">
           <i ng-switch-when="true" class="null-value">(null)</i>
-          <span ng-switch-default class="whitespaces-preserved break-mid-words">{{controller.shortenValues(value, $index)}}</span>
+          <span ng-switch-default class="whitespaces-preserved break-mid-words">{{controller.shortenValues(value, $index)}} <a ng-if="controller.isLongEnoughToBeCutOff(value)" ng-click="controller.editInWindow(value)">More</a> </span>
         </span>
       </td>
     </tr>

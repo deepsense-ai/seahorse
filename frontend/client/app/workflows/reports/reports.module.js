@@ -28,6 +28,7 @@ require('./report-dataframe-full/report-dataframe-full.js').inject(reports);
 require('./report-default/report-default.js').inject(reports);
 require('./report-table/report-table.controller.js').inject(reports);
 require('./report-table/report-table.directive.js').inject(reports);
+require('./report-table/cell-viewer/cell-viewer-modal.ctrl.js').inject(reports);
 
 require('./charts/distribution-categorical-chart.js').inject(reports);
 require('./charts/distribution-continuous-chart.js').inject(reports);
