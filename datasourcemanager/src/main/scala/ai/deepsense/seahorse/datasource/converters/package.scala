@@ -17,14 +17,22 @@
 package ai.deepsense.seahorse.datasource
 
 import scalaz.syntax.validation._
-
 import ai.deepsense.commons.service.api.CommonApiExceptions
+import ai.deepsense.commons.service.api.CommonApiExceptions.ApiException
+import scalaz.Validation
 
 package object converters {
 
-  private [converters] def validateDefined[T](fieldName: String, field: Option[T]) = field match {
+ def validateDefined[T](fieldName: String, field: Option[T]) = field match {
     case Some(value) => value.success
     case None => CommonApiExceptions.fieldMustBeDefined(fieldName).failure
+  }
+
+  def validationIdentity[T, A] (field: Option[T], function: T => Validation[ApiException, Option[A]])
+  : Validation[ApiException, Option[A]] =
+    field match {
+    case Some(value) => function(value)
+    case None => None.success
   }
 
 }

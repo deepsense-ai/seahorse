@@ -31,6 +31,7 @@ object JettyMain {
 
     server.setHandler(context)
 
+    DefaultLibraryFiles.copyDefaultLibraryFiles()
     server.start()
     server.join()
   }

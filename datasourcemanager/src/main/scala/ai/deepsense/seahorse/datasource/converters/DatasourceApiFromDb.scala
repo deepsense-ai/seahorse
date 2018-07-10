@@ -24,18 +24,21 @@ import scalaz._
 import scalaz.syntax.validation._
 
 import ai.deepsense.commons.service.api.CommonApiExceptions._
-import ai.deepsense.seahorse.datasource.db.schema.DatasourcesSchema.DatasourceDB
+import ai.deepsense.seahorse.datasource.db.schema.DatasourcesSchema.{DatasourceDB, SparkOptionDB}
 import ai.deepsense.seahorse.datasource.model.FileFormat.FileFormat
 import ai.deepsense.seahorse.datasource.model._
 
 object DatasourceApiFromDb {
 
-  def apply(currentUserId: UUID, datasource: DatasourceDB): Validation[ApiException, Datasource] = {
+  def apply(
+    currentUserId: UUID,
+    datasource: DatasourceDB,
+    scalaOptionsList: List[SparkOptionDB]): Validation[ApiException, Datasource] = {
     for {
       jdbcParams <- validateJdbcParams(datasource)
-      externalFileParams <- validateExternalFileParams(datasource)
-      libraryFileParams <- validateLibraryFileParams(datasource)
-      hdfsParams <- validateHdfsParams(datasource)
+      externalFileParams <- validateExternalFileParams(datasource, scalaOptionsList)
+      libraryFileParams <- validateLibraryFileParams(datasource, scalaOptionsList)
+      hdfsParams <- validateHdfsParams(datasource, scalaOptionsList)
       googleSpreadsheetParams <- validateGoogleSpreadsheetParams(datasource)
     } yield Datasource(
       id = datasource.generalParameters.id,
@@ -76,29 +79,47 @@ object DatasourceApiFromDb {
     }
   }
 
-  private def validateExternalFileParams(datasource: DatasourceDB) = {
+  private def validateSparkGenericFileFormatParams(
+    datasource: DatasourceDB,
+    scalaOptionsList: List[SparkOptionDB],
+    fileFormat: FileFormat) = {
+    if (fileFormat == FileFormat.sparkgeneric) {
+      for {
+        formatSpecifier <- validateDefined(
+          "fileSparkGenericDataSourceFormat",
+          datasource.fileParameters.fileSparkGenericDataSourceFormat)
+      } yield Some(SparkGenericFileFormatParams(formatSpecifier, scalaOptionsList.map(SparkOptionApiFromDb(_))))
+    } else {
+        None.success
+    }
+  }
+
+  private def validateExternalFileParams(datasource: DatasourceDB, scalaOptionsList: List[SparkOptionDB]) = {
     if (datasource.generalParameters.datasourceType == DatasourceType.externalFile) {
       for {
         url <- validateDefined("externalFileUrl", datasource.fileParameters.externalFileUrl)
         fileFormat <- validateDefined("fileFormat", datasource.fileParameters.fileFormat)
         csvFileFormatParams <- validateCsvFileFormatParams(datasource, fileFormat)
-      } yield Some(ExternalFileParams(url, fileFormat, csvFileFormatParams))
+        genericFormatParams <- validateSparkGenericFileFormatParams(datasource, scalaOptionsList, fileFormat)
+      } yield Some(ExternalFileParams(url, fileFormat, csvFileFormatParams, genericFormatParams))
     } else {
       None.success
     }
   }
 
-  private def validateLibraryFileParams(datasource: DatasourceDB) = {
+  private def validateLibraryFileParams(datasource: DatasourceDB, scalaOptionsList: List[SparkOptionDB]) = {
     if (datasource.generalParameters.datasourceType == DatasourceType.libraryFile) {
       for {
         url <- validateDefined("libraryPath", datasource.fileParameters.libraryPath)
         fileFormat <- validateDefined("fileFormat", datasource.fileParameters.fileFormat)
         csvFileFormatParams <- validateCsvFileFormatParams(datasource, fileFormat)
-      } yield Some(LibraryFileParams(url, fileFormat, csvFileFormatParams))
+        genericFormatParams <- validateSparkGenericFileFormatParams(datasource, scalaOptionsList, fileFormat)
+      } yield Some(LibraryFileParams(url, fileFormat, csvFileFormatParams, genericFormatParams))
     } else {
       None.success
     }
   }
+
 
   private def validateCsvFileFormatParams(datasource: DatasourceDB, fileFormat: FileFormat) = {
     if (fileFormat == FileFormat.csv) {
@@ -120,13 +141,14 @@ object DatasourceApiFromDb {
     }
   }
 
-  private def validateHdfsParams(datasource: DatasourceDB) = {
+  private def validateHdfsParams(datasource: DatasourceDB, scalaOptionsList: List[SparkOptionDB]) = {
     if (datasource.generalParameters.datasourceType == DatasourceType.hdfs) {
       for {
         path <- validateDefined("hdfsPath", datasource.fileParameters.hdfsPath)
         fileFormat <- validateDefined("fileFormat", datasource.fileParameters.fileFormat)
         csvFileFormatParams <- validateCsvFileFormatParams(datasource, fileFormat)
-      } yield Some(HdfsParams(path, fileFormat, csvFileFormatParams))
+        genericFormatParams <- validateSparkGenericFileFormatParams(datasource, scalaOptionsList, fileFormat)
+      } yield Some(HdfsParams(path, fileFormat, csvFileFormatParams, genericFormatParams))
     } else {
       None.success
     }

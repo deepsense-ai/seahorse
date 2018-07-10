@@ -16,21 +16,21 @@
 
 package ai.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
-import java.io.{BufferedWriter, FileOutputStream, IOException, OutputStreamWriter}
+import java.io._
+import java.net.URL
 import java.nio.file.{Files, Paths}
 import java.util.UUID
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
-
 import ai.deepsense.deeplang.ExecutionContext
 import ai.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import ai.deepsense.deeplang.doperations.readwritedataframe.FilePath
 
-private[filestorage] object FileDownloader {
+object FileDownloader {
 
   def downloadFile(url: String)(implicit context: ExecutionContext): FilePath = {
-    if (context.tempPath.startsWith("hdfs://")) {
+    if (context.tempPath.startsWith("hdfs://") && !context.sparkContext.isLocal) {
       downloadFileToHdfs(url)
     } else {
       downloadFileToDriver(url)
@@ -38,50 +38,51 @@ private[filestorage] object FileDownloader {
   }
 
   private def downloadFileToHdfs(url: String)(implicit context: ExecutionContext) = {
-    val content = scala.io.Source.fromURL(url).getLines()
-    val hdfsPath = s"${context.tempPath}/${UUID.randomUUID()}"
+    val hdfsPath = s"${context.tempPath}/${UUID.randomUUID()}${getSuffix(url)}"
 
     val configuration = new Configuration()
     val hdfs = FileSystem.get(configuration)
     val file = new Path(hdfsPath)
     val hdfsStream = hdfs.create(file)
-    val writer = new BufferedWriter(new OutputStreamWriter(hdfsStream))
-    try {
-      content.foreach {s =>
-        writer.write(s)
-        writer.newLine()
-      }
-    } finally {
-      safeClose(writer)
-      hdfs.close()
-    }
 
+    download(new URL(url), hdfsStream)
     FilePath(hdfsPath)
   }
 
+
   private def downloadFileToDriver(url: String)
                                   (implicit context: ExecutionContext) = {
-    val outputDirPath = Paths.get(context.tempPath)
+    val outputDirPath = Paths.get(context.tempPath.stripPrefix("hdfs://"))
     // We're checking if the output is a directory following symlinks.
     // The default behaviour of createDirectories is NOT to follow symlinks
     if (!Files.isDirectory(outputDirPath)) {
       Files.createDirectories(outputDirPath)
     }
-
-    val outFilePath = Files.createTempFile(outputDirPath, "download", ".csv")
-    // content is a stream. Do not invoke stuff like .toList() on it.
-    val content = scala.io.Source.fromURL(url).getLines()
-    val writer: BufferedWriter =
-      new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFilePath.toFile)))
-    try {
-      content.foreach {s =>
-        writer.write(s)
-        writer.newLine()
-      }
-    } finally {
-      safeClose(writer)
-    }
+    val outFilePath = Files.createTempFile(outputDirPath, "download", getSuffix(url))
+    download(new URL(url), outFilePath.toFile)
     FilePath(s"file:///$outFilePath")
+  }
+
+  // avro files need .avro suffix ot cryptic setting has to be set
+  private def getSuffix(path: String, default: String = ".csv"): String = {
+    val extensionRegex = """.*(\.\w+)""".r
+    path match {
+      case extensionRegex(matchedSuffix) => matchedSuffix
+      case _ => ".csv"
+    }
+  }
+
+  private def download(url: URL, file: OutputStream) = {
+    import sys.process._
+    import scala.language.postfixOps
+    url #> file !!
+  }
+
+
+  private def download(url: URL, file: File) = {
+    import sys.process._
+    import scala.language.postfixOps
+    url #> file !!
   }
 
   private def safeClose(bufferedWriter: BufferedWriter): Unit = {

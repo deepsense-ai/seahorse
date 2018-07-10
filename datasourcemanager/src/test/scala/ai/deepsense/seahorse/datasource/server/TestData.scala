@@ -25,7 +25,8 @@ object TestData {
 
   def someDatasources(visibility: Option[Visibility] = None) = Seq(
     someJdbcDatasource(visibility),
-    someLibraryCsvDatasource(visibility)
+    someLibraryCsvDatasource(visibility),
+    someSparkGeneralFormatOption(visibility)
   )
 
   def someDatasource(visibility: Option[Visibility] = None) = someJdbcDatasource(visibility)
@@ -59,7 +60,27 @@ object TestData {
       fileFormat = FileFormat.csv,
       csvFileFormatParams = Some(CsvFileFormatParams(
         includeHeader = true, convert01ToBoolean = true, CsvSeparatorType.comma, None
-      ))
+      )),
+      sparkGenericFileFormatParams = None
+    )),
+    hdfsParams = None,
+    googleSpreadsheetParams = None
+  )
+
+  def someSparkGeneralFormatOption(visibility: Option[Visibility]) = DatasourceParams(
+    name = "some-name" + UUID.randomUUID(),
+    downloadUri = None,
+    visibility = visibility.getOrElse(Visibility.publicVisibility),
+    datasourceType = DatasourceType.libraryFile,
+    jdbcParams = None,
+    externalFileParams = None,
+    libraryFileParams = Some(LibraryFileParams(
+      "some_path",
+      fileFormat = FileFormat.sparkgeneric,
+      csvFileFormatParams = None,
+      sparkGenericFileFormatParams = Some(SparkGenericFileFormatParams(sparkFormat = "org.apacha.avro",
+        sparkOptions = List(SparkGenericOptions("key1", "value1"), SparkGenericOptions("key2", "value2")))
+      )
     )),
     hdfsParams = None,
     googleSpreadsheetParams = None
@@ -77,7 +98,8 @@ object TestData {
       fileFormat = FileFormat.csv,
       csvFileFormatParams = Some(CsvFileFormatParams(
         includeHeader = true, convert01ToBoolean = true, CsvSeparatorType.custom, Some(",,")
-      ))
+      )),
+      sparkGenericFileFormatParams = None
     )),
     hdfsParams = None,
     googleSpreadsheetParams = None

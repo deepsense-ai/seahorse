@@ -104,6 +104,12 @@ trap cleanup EXIT
  mkdir -p jars
  cp -r ../../seahorse-sdk-example/target/scala-2.11/*.jar jars
 
+ # Copy avro jar so examples using avro as datasource work
+ rm jars/spark-avro*.jar || true
+ wget -P jars/ \
+ http://central.maven.org/maven2/com/databricks/spark-avro_2.11/4.0.0/spark-avro_2.11-4.0.0.jar
+
+
  ./docker-compose.py -f $GIT_TAG -b $GIT_TAG --generate-only --yaml-file docker-compose.yml
  ./docker-compose.py -f $GIT_TAG -b $GIT_TAG -p $RUN_ID up -d
 )

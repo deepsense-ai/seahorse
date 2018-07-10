@@ -44,7 +44,8 @@ object Get {
     datasourceOpt <- datasourcesTable.filter(_.id === datasourceId).result.headOption
     datasource <- GenericDBIOs.checkExists(datasourceId, datasourceOpt)
     _ <- checkIfForbidden(datasource, callingUserId)
-    apiDatasource <- DatasourceApiFromDb(callingUserId, datasource).asDBIO
+    scalaOptions <- sparkOptionsTable.filter(_.datasourceId === datasource.generalParameters.id).result
+    apiDatasource <- DatasourceApiFromDb(callingUserId, datasource, scalaOptions.toList).asDBIO
   } yield apiDatasource
 
   private def checkIfForbidden(ds: DatasourceDB, callingUserId: UUID) =

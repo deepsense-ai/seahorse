@@ -1,0 +1,152 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "f889455d-d3e4-375b-777f-f6334d953b14",
+      "operation": {
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data source": "1a75088d-2b7a-57c7-ce5d-26d77a39ebea"
+      }
+    }, {
+      "id": "04867b13-c8c1-d0bb-990e-660400365f0f",
+      "operation": {
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data source": "736e3023-5f98-9e2b-fa49-b377ac2d4da7"
+      }
+    }, {
+      "id": "4336a662-abe3-52bc-29cf-2bd60c54169b",
+      "operation": {
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data source": "0dfe8872-d3a8-45dc-b3d5-1e65032b729e"
+      }
+    }],
+    "connections": []
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Read avro datasource",
+      "description": "",
+      "nodes": {
+        "f889455d-d3e4-375b-777f-f6334d953b14": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 8383,
+            "y": 8474
+          }
+        },
+        "04867b13-c8c1-d0bb-990e-660400365f0f": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 8590,
+            "y": 8473
+          }
+        },
+        "4336a662-abe3-52bc-29cf-2bd60c54169b": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 8168,
+            "y": 8473
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    },
+    "datasources": [{
+      "accessLevel": "writeRead",
+      "params": {
+        "name": "Avro Episodes over HTTPS",
+        "libraryFileParams": null,
+        "downloadUri": null,
+        "googleSpreadsheetParams": null,
+        "jdbcParams": null,
+        "hdfsParams": null,
+        "externalFileParams": {
+          "url": "https://s3.amazonaws.com/workflowexecutor/examples/data/episodes.avro",
+          "fileFormat": "sparkgeneric",
+          "csvFileFormatParams": null,
+          "sparkGenericFileFormatParams": {
+            "sparkFormat": "com.databricks.spark.avro",
+            "sparkOptions": []
+          }
+        },
+        "datasourceType": "externalFile",
+        "visibility": "privateVisibility"
+      },
+      "creationDateTime": "2018-07-19T12:55:48.639Z",
+      "id": "1a75088d-2b7a-57c7-ce5d-26d77a39ebea",
+      "ownerName": "user",
+      "ownerId": "00000000-0000-0000-0000-000000000001"
+    }, {
+      "accessLevel": "writeRead",
+      "params": {
+        "name": "Avro Episodes over HTTP",
+        "libraryFileParams": null,
+        "downloadUri": null,
+        "googleSpreadsheetParams": null,
+        "jdbcParams": null,
+        "hdfsParams": null,
+        "externalFileParams": {
+          "url": "http://s3.amazonaws.com/workflowexecutor/examples/data/episodes.avro",
+          "fileFormat": "sparkgeneric",
+          "csvFileFormatParams": null,
+          "sparkGenericFileFormatParams": {
+            "sparkFormat": "com.databricks.spark.avro",
+            "sparkOptions": []
+          }
+        },
+        "datasourceType": "externalFile",
+        "visibility": "privateVisibility"
+      },
+      "creationDateTime": "2018-07-19T12:55:38.100Z",
+      "id": "736e3023-5f98-9e2b-fa49-b377ac2d4da7",
+      "ownerName": "user",
+      "ownerId": "00000000-0000-0000-0000-000000000001"
+    }, {
+      "accessLevel": "writeRead",
+      "params": {
+        "name": "Avro Episodes over Library",
+        "libraryFileParams": {
+          "libraryPath": "library://episodes.avro",
+          "fileFormat": "sparkgeneric",
+          "csvFileFormatParams": null,
+          "sparkGenericFileFormatParams": {
+            "sparkFormat": "com.databricks.spark.avro",
+            "sparkOptions": []
+          }
+        },
+        "downloadUri": null,
+        "googleSpreadsheetParams": null,
+        "jdbcParams": null,
+        "hdfsParams": null,
+        "externalFileParams": null,
+        "datasourceType": "libraryFile",
+        "visibility": "privateVisibility"
+      },
+      "creationDateTime": "2018-07-17T13:51:04.193Z",
+      "id": "0dfe8872-d3a8-45dc-b3d5-1e65032b729e",
+      "ownerName": "user",
+      "ownerId": "00000000-0000-0000-0000-000000000001"
+    }]
+  },
+  "variables": {
+
+  },
+  "id": "bec35586-6b05-47ff-9b47-16f916eeaeae",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.4.4"
+  }
+}

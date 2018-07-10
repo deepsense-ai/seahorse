@@ -31,9 +31,18 @@ object GetAll {
   import DatasourcesSchema._
 
   def apply(callingUserId: UUID): DBIO[List[Datasource]] = for {
-    datasources <- datasourcesTable.filter(ds => visibleByUser(ds, callingUserId)).result
-    apiDatasources <- DBIO.sequence(datasources.map(DatasourceApiFromDb(callingUserId, _).asDBIO))
-  } yield apiDatasources.toList
+      datasources <- (datasourcesTable joinLeft sparkOptionsTable on (_.id === _.datasourceId))
+        .filter(ds => visibleByUser(ds._1, callingUserId)).result
+      datasourcesMap = datasources
+        .groupBy(_._1)
+        .mapValues(_.flatMap { case (_, sparkOptionOpt) => sparkOptionOpt }.toList)
+      apiDatasources <- DBIO.sequence(datasourcesMapToDBIO(callingUserId, datasourcesMap).toList)
+    } yield apiDatasources
+
+  def datasourcesMapToDBIO(callingUserId: UUID, datasourcesMap: Map[DatasourceDB, List[SparkOptionDB]]) =
+    datasourcesMap.map { case (datasourceDb, sparkOptions) =>
+      DatasourceApiFromDb(callingUserId, datasourceDb, sparkOptions).asDBIO
+    }
 
   private def visibleByUser(ds: DatasourceTable, callingUserId: UUID) = {
     ds.visibility === Visibility.publicVisibility || ds.ownerId === callingUserId

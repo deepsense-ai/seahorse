@@ -34,11 +34,12 @@ import ai.deepsense.sparkutils.SQL
 
 object DriverFiles extends JsonReader {
 
-  def read(driverPath: String, fileFormat: InputFileFormatChoice)
+  def read(filePath: FilePath, fileFormat: InputFileFormatChoice)
           (implicit context: ExecutionContext): SparkDataFrame = fileFormat match {
-    case csv: InputFileFormatChoice.Csv => readCsv(driverPath, csv)
-    case json: InputFileFormatChoice.Json => readJson(driverPath)
-    case parquet: InputFileFormatChoice.Parquet => throw ParquetNotSupported
+      case csv: InputFileFormatChoice.Csv => readCsv(filePath, csv)
+      case json: InputFileFormatChoice.Json => readJson(filePath)
+      case parquet: InputFileFormatChoice.Parquet => throw ParquetNotSupported
+      case generic: InputFileFormatChoice.SparkGeneric => readSparkGeneric(filePath, generic)
   }
 
   def write(dataFrame: DataFrame, path: FilePath, fileFormat: OutputFileFormatChoice, saveMode: SaveMode)
@@ -51,24 +52,31 @@ object DriverFiles extends JsonReader {
       case csv: OutputFileFormatChoice.Csv => writeCsv(path, csv, dataFrame)
       case json: OutputFileFormatChoice.Json => writeJson(path, dataFrame)
       case parquet: OutputFileFormatChoice.Parquet => throw ParquetNotSupported
+      case generic: OutputFileFormatChoice.SparkGeneric => writeGeneric(path, generic, dataFrame)
     }
   }
 
   private def readCsv
-      (driverPath: String, csvChoice: InputFileFormatChoice.Csv)
+      (driverFilePath: FilePath, csvChoice: InputFileFormatChoice.Csv)
       (implicit context: ExecutionContext): SparkDataFrame = {
     val params = CsvOptions.map(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
-    val lines = Source.fromFile(driverPath).getLines().toStream
+    val lines = Source.fromFile(driverFilePath.pathWithoutScheme).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
     RawCsvRDDToDataframe.parse(fileLinesRdd, context.sparkSQLSession.sparkSession, params)
   }
 
-  private def readJson(driverPath: String)(implicit context: ExecutionContext) = {
-    val lines = Source.fromFile(driverPath).getLines().toStream
+  private def readJson(driverFilePath: FilePath)(implicit context: ExecutionContext) = {
+    val lines = Source.fromFile(driverFilePath.pathWithoutScheme).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
     val sparkSession = context.sparkSQLSession.sparkSession
     readJsonFromRdd(fileLinesRdd, sparkSession)
+  }
+
+  private def readSparkGeneric(
+    driverFilePath: FilePath,
+    generic: InputFileFormatChoice.SparkGeneric)(implicit context: ExecutionContext) = {
+    context.sparkSQLSession.read.format(generic.getSparkGenericDataSourceFormat).load(driverFilePath.fullPath)
   }
 
   private def writeCsv
@@ -89,6 +97,11 @@ object DriverFiles extends JsonReader {
                        (implicit context: ExecutionContext): Unit = {
     val rawJsonLines: RDD[String] = SQL.dataFrameToJsonRDD(dataFrame.sparkDataFrame)
     writeRddToDriverFile(path.pathWithoutScheme, rawJsonLines)
+  }
+
+  private def writeGeneric(path: FilePath, generic: OutputFileFormatChoice.SparkGeneric, dataFrame: DataFrame)
+                          (implicit context: ExecutionContext): Unit = {
+    dataFrame.sparkDataFrame.write.format(generic.getSparkGenericDataSourceFormat).save(path.pathWithoutScheme)
   }
 
   private def writeRddToDriverFile(driverPath: String, lines: RDD[String]): Unit = {

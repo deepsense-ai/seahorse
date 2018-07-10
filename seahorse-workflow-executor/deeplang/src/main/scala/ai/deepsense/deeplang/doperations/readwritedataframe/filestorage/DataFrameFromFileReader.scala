@@ -44,7 +44,7 @@ object DataFrameFromFileReader {
       case FileScheme.Library =>
         val filePath = FilePathFromLibraryPath(path)
         readUsingProvidedFileScheme(filePath, fileFormat)
-      case FileScheme.File => DriverFiles.read(path.pathWithoutScheme, fileFormat)
+      case FileScheme.File => DriverFiles.read(path, fileFormat)
       case FileScheme.HTTP | FileScheme.HTTPS | FileScheme.FTP =>
         val downloadedPath = FileDownloader.downloadFile(path.fullPath)
         readUsingProvidedFileScheme(downloadedPath, fileFormat)

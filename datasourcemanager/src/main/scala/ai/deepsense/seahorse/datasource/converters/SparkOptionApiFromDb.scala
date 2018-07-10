@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 deepsense.ai (CodiLime, Inc)
+ * Copyright 2018 deepsense.ai (CodiLime, Inc)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package ai.deepsense.seahorse.datasource.api
+package ai.deepsense.seahorse.datasource.converters
 
-import ai.deepsense.commons.service.api.CommonApiExceptions
+import scala.language.reflectiveCalls
 
-object ApiExceptionFromCommon {
+import ai.deepsense.seahorse.datasource.db.schema.DatasourcesSchema.SparkOptionDB
+import ai.deepsense.seahorse.datasource.model._
+import scalaz._
 
-  def apply(ex: CommonApiExceptions.ApiException) = {
-    new ApiExceptionWithJsonBody(ex.message, ex.errorCode).initCause(ex)
+object SparkOptionApiFromDb {
+  def apply(
+    sparkOptionDB: SparkOptionDB): SparkGenericOptions = {
+      SparkGenericOptions(sparkOptionDB.key, sparkOptionDB.value)
   }
-
 }

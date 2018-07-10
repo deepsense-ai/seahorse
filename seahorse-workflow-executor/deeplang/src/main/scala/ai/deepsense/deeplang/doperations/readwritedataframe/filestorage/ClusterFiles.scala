@@ -38,6 +38,7 @@ private[filestorage] object ClusterFiles {
       case csv: InputFileFormatChoice.Csv => readCsv(clusterPath, csv)
       case json: InputFileFormatChoice.Json => context.sparkSQLSession.read.json(clusterPath)
       case parquet: InputFileFormatChoice.Parquet => context.sparkSQLSession.read.parquet(clusterPath)
+      case generic: InputFileFormatChoice.SparkGeneric => readGeneric(clusterPath, generic)
     }
   }
 
@@ -56,6 +57,8 @@ private[filestorage] object ClusterFiles {
         dataFrame.sparkDataFrame.write.format("parquet")
       case _: OutputFileFormatChoice.Json =>
         dataFrame.sparkDataFrame.write.format("json")
+      case g: OutputFileFormatChoice.SparkGeneric =>
+        dataFrame.sparkDataFrame.write.format(g.getSparkGenericDataSourceFormat)
     }
     writer.mode(saveMode).save(clusterPath)
   }
@@ -65,6 +68,12 @@ private[filestorage] object ClusterFiles {
     context.sparkSQLSession.read
       .format("com.databricks.spark.csv")
       .setCsvOptions(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
+      .load(clusterPath)
+
+  private def readGeneric(clusterPath: String, generic: InputFileFormatChoice.SparkGeneric)
+                         (implicit context: ExecutionContext) =
+    context.sparkSQLSession.read
+      .format(generic.getSparkGenericDataSourceFormat)
       .load(clusterPath)
 
 }

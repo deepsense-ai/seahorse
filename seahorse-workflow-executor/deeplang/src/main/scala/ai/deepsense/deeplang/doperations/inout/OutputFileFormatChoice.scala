@@ -25,7 +25,8 @@ sealed trait OutputFileFormatChoice extends Choice {
   override val choiceOrder: List[Class[_ <: OutputFileFormatChoice]] = List(
     classOf[Csv],
     classOf[Parquet],
-    classOf[Json])
+    classOf[Json],
+    classOf[SparkGeneric])
 }
 
 object OutputFileFormatChoice {
@@ -42,6 +43,10 @@ object OutputFileFormatChoice {
   class Json() extends OutputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
     override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
+  }
+  class SparkGeneric() extends OutputFileFormatChoice with SparkGenericFormatParameters {
+    override val name: String = FileFormat.SPARKGENERIC.toString
+    override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array(sparkGenericDataSourceFormat)
   }
 }
 

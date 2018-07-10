@@ -33,10 +33,16 @@ trait ToDatasourceConverters {
     hdfsParams.setFileFormat(fileType.getFileFormat())
     hdfsParams.setHdfsPath(fileType.getOutputFile())
 
-    if (hdfsParams.getFileFormat == FileFormat.CSV) {
-      hdfsParams.setCsvFileFormatParams(
-        fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.Csv]
-      )
+    hdfsParams.getFileFormat match {
+      case FileFormat.CSV =>
+        hdfsParams.setCsvFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.Csv]
+        )
+      case FileFormat.SPARKGENERIC =>
+        hdfsParams.setSparkGenericFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.SparkGeneric]
+        )
+      case _ => ()
     }
 
     hdfsParams
@@ -49,10 +55,16 @@ trait ToDatasourceConverters {
     libraryFileParams.setFileFormat(fileType.getFileFormat())
     libraryFileParams.setLibraryPath(fileType.getSourceFile())
 
-    if (libraryFileParams.getFileFormat == FileFormat.CSV) {
-      libraryFileParams.setCsvFileFormatParams(
-        fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.Csv]
-      )
+    libraryFileParams.getFileFormat match {
+      case  FileFormat.CSV =>
+        libraryFileParams.setCsvFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.Csv]
+        )
+      case FileFormat.SPARKGENERIC =>
+        libraryFileParams.setSparkGenericFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.SparkGeneric]
+        )
+      case _ => ()
     }
 
     libraryFileParams
@@ -65,10 +77,16 @@ trait ToDatasourceConverters {
     libraryFileParams.setFileFormat(fileType.getFileFormat())
     libraryFileParams.setLibraryPath(fileType.getOutputFile())
 
-    if (libraryFileParams.getFileFormat == FileFormat.CSV) {
-      libraryFileParams.setCsvFileFormatParams(
-        fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.Csv]
-      )
+    libraryFileParams.getFileFormat match {
+      case FileFormat.CSV =>
+        libraryFileParams.setCsvFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.Csv]
+        )
+      case FileFormat.SPARKGENERIC =>
+        libraryFileParams.setSparkGenericFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.SparkGeneric]
+        )
+      case _ => ()
     }
 
     libraryFileParams
@@ -178,6 +196,7 @@ trait ToDatasourceConverters {
       case _: InputFileFormatChoice.Csv => FileFormat.CSV
       case _: InputFileFormatChoice.Json => FileFormat.JSON
       case _: InputFileFormatChoice.Parquet => FileFormat.PARQUET
+      case _: InputFileFormatChoice.SparkGeneric => FileFormat.SPARKGENERIC
     }
 
   implicit def convertOutputFileFormatChoice(outputFileFormatChoice: OutputFileFormatChoice): FileFormat =
@@ -185,6 +204,7 @@ trait ToDatasourceConverters {
       case _: OutputFileFormatChoice.Csv => FileFormat.CSV
       case _: OutputFileFormatChoice.Json => FileFormat.JSON
       case _: OutputFileFormatChoice.Parquet => FileFormat.PARQUET
+      case _: OutputFileFormatChoice.SparkGeneric => FileFormat.SPARKGENERIC
     }
 
   implicit def convertColumnSeparatorChoice(columnSeparatorChoice: ColumnSeparatorChoice): CsvSeparatorType =
@@ -222,6 +242,13 @@ trait ToDatasourceConverters {
     params
   }
 
+  implicit def convertGenericFormatParams(
+    generic: SparkGenericFormatParameters): SparkGenericFileFormatParams = {
+    val params = new SparkGenericFileFormatParams
+    params.setSparkFormat(generic.getSparkGenericDataSourceFormat)
+    params
+  }
+
   implicit def inputStorageTypeChoiceFileToExternalFileParams(
       fileType: InputStorageTypeChoice.File): ExternalFileParams = {
     val externalFileParams = new ExternalFileParams
@@ -229,10 +256,16 @@ trait ToDatasourceConverters {
     externalFileParams.setFileFormat(fileType.getFileFormat())
     externalFileParams.setUrl(fileType.getSourceFile())
 
-    if (externalFileParams.getFileFormat == FileFormat.CSV) {
-      externalFileParams.setCsvFileFormatParams(
-        fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.Csv]
-      )
+    externalFileParams.getFileFormat match {
+      case  FileFormat.CSV =>
+        externalFileParams.setCsvFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.Csv]
+        )
+      case FileFormat.SPARKGENERIC =>
+        externalFileParams.setSparkGenericFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.SparkGeneric]
+        )
+      case _ => ()
     }
 
     externalFileParams
@@ -245,11 +278,18 @@ trait ToDatasourceConverters {
     externalFileParams.setFileFormat(fileType.getFileFormat())
     externalFileParams.setUrl(fileType.getOutputFile())
 
-    if (externalFileParams.getFileFormat == FileFormat.CSV) {
-      externalFileParams.setCsvFileFormatParams(
-        convertCsvParams(
-        fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.Csv])
-      )
+    externalFileParams.getFileFormat match {
+
+      case FileFormat.CSV =>
+        externalFileParams.setCsvFileFormatParams(
+          convertCsvParams(
+            fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.Csv])
+        )
+      case FileFormat.SPARKGENERIC =>
+        externalFileParams.setSparkGenericFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[OutputFileFormatChoice.SparkGeneric]
+        )
+      case _ => ()
     }
 
     externalFileParams
@@ -261,10 +301,17 @@ trait ToDatasourceConverters {
     hdfsParams.setFileFormat(fileType.getFileFormat())
     hdfsParams.setHdfsPath(fileType.getSourceFile())
 
-    if (hdfsParams.getFileFormat == FileFormat.CSV) {
-      hdfsParams.setCsvFileFormatParams(
-        fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.Csv]
-      )
+    hdfsParams.getFileFormat match {
+      case FileFormat.CSV =>
+        hdfsParams.setCsvFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.Csv]
+        )
+      case FileFormat.SPARKGENERIC =>
+        hdfsParams.setSparkGenericFileFormatParams(
+          fileType.getFileFormat().asInstanceOf[InputFileFormatChoice.SparkGeneric]
+        )
+
+      case _ => ()
     }
 
     hdfsParams

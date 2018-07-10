@@ -31,6 +31,10 @@ const DEFAULT_CSS_FILE_FORMAT_PARAMS = {
   customSeparator: ''
 };
 
+const DEFAULT_SPARK_GENERIC_PARAMS = {
+    sparkOptions: [],
+    sparkFormat: ''
+};
 
 const FileSettingsComponent = {
   bindings: {
@@ -47,19 +51,19 @@ const FileSettingsComponent = {
 
       this.$scope = $scope;
       this.$log = $log;
-      this.formats = ['csv', 'json', 'parquet'];
+      this.formats = ['csv', 'json', 'parquet', 'sparkgeneric'];
     }
-
 
     $onChanges(changed) {
       if (changed.fileSettings) {
         const newFileSettings = changed.fileSettings.currentValue;
-
         this.fileFormat = newFileSettings.fileFormat;
         this.csvFileFormatParams = angular.copy(newFileSettings.csvFileFormatParams || DEFAULT_CSS_FILE_FORMAT_PARAMS);
+
+        this.sparkGenericFileFormatParams = angular.copy(newFileSettings.sparkGenericFileFormatParams || DEFAULT_SPARK_GENERIC_PARAMS);
+        this.newSparkOption = {'key': '', 'value': ''};
       }
     }
-
 
     $postLink() {
       if (this.fileFormat === 'csv') {
@@ -71,12 +75,20 @@ const FileSettingsComponent = {
       }
     }
 
-
     onCustomSeparatorInputFocus() {
       this.fileSettings.csvFileFormatParams.separatorType = 'custom';
       this.updateFileSettings();
     }
 
+    deleteSparkOption(i) {
+        this.sparkGenericFileFormatParams.sparkOptions.splice(i, 1);
+        this.updateFileSettings();
+    }
+
+    addSparkOption() {
+        this.sparkGenericFileFormatParams.sparkOptions.push(angular.copy(this.newSparkOption));
+        this.updateFileSettings();
+    }
 
     updateFileSettings() {
       const fileSettings = {
@@ -88,6 +100,10 @@ const FileSettingsComponent = {
         if (fileSettings.csvFileFormatParams.separatorType !== 'custom') {
           fileSettings.csvFileFormatParams.customSeparator = '';
         }
+      }
+
+      if (this.fileFormat === 'sparkgeneric') {
+        fileSettings.sparkGenericFileFormatParams = this.sparkGenericFileFormatParams;
       }
 
       this.onChange({fileSettings});

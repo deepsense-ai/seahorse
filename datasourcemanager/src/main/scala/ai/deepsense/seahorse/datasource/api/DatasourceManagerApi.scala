@@ -31,7 +31,7 @@ import ai.deepsense.seahorse.datasource.db.Database
 import ai.deepsense.seahorse.datasource.model._
 
 class DatasourceManagerApi extends DefaultApi {
-
+  import DatasourceManagerApi._
   override def putDatasourceImpl(
       userId: UUID,
       userName: String,
@@ -50,7 +50,9 @@ class DatasourceManagerApi extends DefaultApi {
 
   // Codegen abstracts from application-specific error body format
   override protected def formatErrorBody(code: Int, msg: String): String = JsonBodyForError(code, msg)
+}
 
+object DatasourceManagerApi {
   // TODO DRY with Scheduling Manager
   implicit class DBIOOps[T](dbio: DBIO[T]) {
     import scala.concurrent.duration._

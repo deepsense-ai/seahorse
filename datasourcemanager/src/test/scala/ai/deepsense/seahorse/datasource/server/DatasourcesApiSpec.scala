@@ -43,7 +43,6 @@ class DatasourcesApiSpec extends FreeSpec with Matchers {
 
         (the[ApiException] thrownBy api.getDatasourceImpl(userId, id)).errorCode shouldBe StatusCodes.Forbidden.intValue
       }
-
     }
 
     "can manage his datasources" in {
@@ -62,6 +61,8 @@ class DatasourcesApiSpec extends FreeSpec with Matchers {
         info("User can also delete datasource")
         api.deleteDatasourceImpl(userId, id)
         api.getDatasourcesImpl(userId).find(_.id == id) shouldBe empty
+        info("Ensure there are no spark options left")
+        DatasourceDbTestHelper.getSparkOptionsByDatasourceId(id) shouldBe empty
 
         info("Once datasource not exists all operations yield 404")
         the[ApiException].thrownBy(

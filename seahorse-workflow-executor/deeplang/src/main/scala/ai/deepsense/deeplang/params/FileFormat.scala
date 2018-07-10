@@ -25,4 +25,5 @@ object FileFormat extends Enumeration {
   val CSV = Value("CSV")
   val PARQUET = Value("PARQUET")
   val JSON = Value("JSON")
+  val SPARKGENERIC = Value("SPARKGENERIC")
 }

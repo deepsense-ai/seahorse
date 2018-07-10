@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 deepsense.ai (CodiLime, Inc)
+ * Copyright 2018 Astraea, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package ai.deepsense.seahorse.datasource.api
+package ai.deepsense.deeplang.doperations.inout
 
-import ai.deepsense.commons.service.api.CommonApiExceptions
+import ai.deepsense.deeplang.params.{Params, StringParam}
 
-object ApiExceptionFromCommon {
+trait SparkGenericFormatParameters {
+  this: Params =>
 
-  def apply(ex: CommonApiExceptions.ApiException) = {
-    new ApiExceptionWithJsonBody(ex.message, ex.errorCode).initCause(ex)
-  }
-
+  val sparkGenericDataSourceFormat = StringParam(
+    name = "format",
+    description = Some("Spark DataSource format specifier")
+  )
+  def getSparkGenericDataSourceFormat = $(sparkGenericDataSourceFormat)
+  def setSparkGenericDataSourceFormat(value: String): this.type = set(sparkGenericDataSourceFormat, value)
 }

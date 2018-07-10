@@ -1,8 +1,9 @@
 <div class="file-settings">
   <div class="file-settings__row-wrapper">
-    <div class="title-row">Format</div>
+
     <div class="inputs-row vertical-align-bottom">
       <div class="col">
+        <div class="title-row">Format</div>
         <select
           ng-model="$ctrl.fileFormat"
           ng-options="format as (format | uppercase) for format in $ctrl.formats"
@@ -53,6 +54,38 @@
             </span>
           </label>
         </div>
+      </div>
+
+      <div ng-if="$ctrl.fileFormat === 'sparkgeneric'" class="generic-format">
+        <div class="title-row">Spark Format</div>
+
+        <input ng-change="$ctrl.updateFileSettings()"
+               ng-disabled="$ctrl.disabledMode"
+               ng-model="$ctrl.sparkGenericFileFormatParams.sparkFormat"
+               class="form-control">
+      </div>
+    </div>
+  </div>
+
+
+  <div ng-if="$ctrl.fileFormat === 'sparkgeneric'" class="file-settings__row-wrapper">
+    <div class="title-row">Spark Options</div>
+    <div ng-repeat="sparkOption in $ctrl.sparkGenericFileFormatParams.sparkOptions" class="inputs-row">
+      <span class="generic-format-key-value">key</span>
+      <input ng-disabled="$ctrl.disabledMode" ng-model="sparkOption.key" class="form-control">
+      <span class="generic-format-key-value generic-format-value">value</span>
+      <input ng-disabled="$ctrl.disabledMode" ng-model="sparkOption.value" class="form-control">
+      <div ng-click="$ctrl.deleteSparkOption($index)" class="btn library-source__browse-btn generic-format-btn">
+        <span>-</span>
+      </div>
+    </div>
+    <div class="inputs-row">
+    <span class="generic-format-key-value">key</span>
+    <input ng-disabled="$ctrl.disabledMode" ng-model="$ctrl.newSparkOption.key" class="form-control">
+    <span class="generic-format-key-value generic-format-value">value</span>
+    <input ng-disabled="$ctrl.disabledMode" ng-model="$ctrl.newSparkOption.value" class="form-control">
+      <div ng-click="$ctrl.addSparkOption()" class="btn library-source__browse-btn generic-format-btn">
+        <span>+</span>
       </div>
     </div>
   </div>

@@ -65,6 +65,10 @@ object DataFrameToFileWriter {
         val FilePath(_, libraryPath) = filePath
         new java.io.File(libraryPath).getParentFile.mkdirs()
         writeUsingProvidedFileScheme(fileChoice, dataFrame, filePath, saveMode)
+        val localLibraryPath = context.libraryPath + "/" + path.pathWithoutScheme
+        val localFilePath = FilePath(FileScheme.File, localLibraryPath)
+        writeUsingProvidedFileScheme(fileChoice, dataFrame, localFilePath, saveMode)
+
       case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
       case HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
       case HTTP | HTTPS | FTP => throw NotSupportedScheme(path.fileScheme)

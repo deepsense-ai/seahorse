@@ -17,6 +17,8 @@
 package ai.deepsense.deeplang.doperations.readwritedatasource
 
 import ai.deepsense.api.datasourcemanager.model._
+import ai.deepsense.deeplang.doperations
+import ai.deepsense.deeplang.doperations.inout
 import ai.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice
 import ai.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, InputStorageTypeChoice, OutputFileFormatChoice, OutputStorageTypeChoice}
 
@@ -26,6 +28,7 @@ object FromDatasourceConverters {
     def path: String
     def fileFormat: FileFormat
     def csvFileFormatParams: CsvFileFormatParams
+    def genericFileFormatParams: SparkGenericFileFormatParams
   }
 
   implicit def hdfsParamsToInputStorageParams(params: HdfsParams): DatasourceParams =
@@ -33,6 +36,7 @@ object FromDatasourceConverters {
       override def path: String = params.getHdfsPath
       override def fileFormat: FileFormat = params.getFileFormat
       override def csvFileFormatParams: CsvFileFormatParams = params.getCsvFileFormatParams
+      override def genericFileFormatParams: SparkGenericFileFormatParams = params.getSparkGenericFileFormatParams
     }
 
   implicit def externalFileParamsToInputStorageParams(params: ExternalFileParams): DatasourceParams =
@@ -40,6 +44,7 @@ object FromDatasourceConverters {
       override def path: String = params.getUrl
       override def fileFormat: FileFormat = params.getFileFormat
       override def csvFileFormatParams: CsvFileFormatParams = params.getCsvFileFormatParams
+      override def genericFileFormatParams: SparkGenericFileFormatParams = params.getSparkGenericFileFormatParams
     }
 
   implicit def libraryParamsToInputStorageParams(params: LibraryFileParams): DatasourceParams =
@@ -47,6 +52,7 @@ object FromDatasourceConverters {
       override def path: String = params.getLibraryPath
       override def fileFormat: FileFormat = params.getFileFormat
       override def csvFileFormatParams: CsvFileFormatParams = params.getCsvFileFormatParams
+      override def genericFileFormatParams: SparkGenericFileFormatParams = params.getSparkGenericFileFormatParams
     }
 
   // Similar code in Input/Output TODO DRY
@@ -58,6 +64,8 @@ object FromDatasourceConverters {
           case FileFormat.JSON => new InputFileFormatChoice.Json()
           case FileFormat.PARQUET => new InputFileFormatChoice.Parquet()
           case FileFormat.CSV => csvFormatChoice(inputStorageParams.csvFileFormatParams)
+          case FileFormat.SPARKGENERIC => new inout.InputFileFormatChoice.SparkGeneric()
+              .setSparkGenericDataSourceFormat(inputStorageParams.genericFileFormatParams.getSparkFormat)
         })
 
     private def csvFormatChoice(csvParams: CsvFileFormatParams): InputFileFormatChoice.Csv =
@@ -84,6 +92,8 @@ object FromDatasourceConverters {
           case FileFormat.JSON => new OutputFileFormatChoice.Json()
           case FileFormat.PARQUET => new OutputFileFormatChoice.Parquet()
           case FileFormat.CSV => csvFormatChoice(inputStorageParams.csvFileFormatParams)
+          case FileFormat.SPARKGENERIC => new OutputFileFormatChoice.SparkGeneric()
+            .setSparkGenericDataSourceFormat(inputStorageParams.genericFileFormatParams.getSparkFormat)
         })
 
     private def csvFormatChoice(csvParams: CsvFileFormatParams): OutputFileFormatChoice.Csv =

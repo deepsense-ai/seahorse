@@ -68,8 +68,14 @@ object DatasourcesSchema {
       fileCsvIncludeHeader: Option[Boolean],
       fileCsvConvert01ToBoolean: Option[Boolean],
       fileCsvSeparatorType: Option[CsvSeparatorType],
-      fileCsvCustomSeparator: Option[String])
+      fileCsvCustomSeparator: Option[String],
+      fileSparkGenericDataSourceFormat: Option[String])
 
+  case class SparkOptionDB(
+    id: UUID,
+    key: String,
+    value: String,
+    datasourceId: UUID)
 
   implicit val datasourceTypeFormat = EnumColumnMapper(DatasourceType)
   implicit val fileFormatFormat = EnumColumnMapper(FileFormat)
@@ -103,6 +109,7 @@ object DatasourcesSchema {
     def fileCsvConvert01ToBoolean = column[Option[Boolean]]("fileCsvConvert01ToBoolean")
     def fileCsvSeparatorType = column[Option[CsvSeparatorType]]("fileCsvSeparatorType")
     def fileCsvCustomSeparator = column[Option[String]]("fileCsvSeparator")
+    def sparkGenericDataSourceFormat = column[Option[String]]("sparkGenericDataSourceFormat")
     def googleSpreadsheetId = column[Option[String]]("googleSpreadsheetId")
     def googleServiceAccountCredentials = column[Option[String]]("googleServiceAccountCredentials")
     def googleSpreadsheetIncludeHeader = column[Option[Boolean]]("googleSpreadsheetIncludeHeader")
@@ -112,13 +119,13 @@ object DatasourcesSchema {
       (id, ownerId, ownerName, name, creationDateTime, visibility, downloadUri, datasourceType),
       (jdbcUrl, jdbcDriver, jdbcTable, jdbcQuery),
       (externalFileUrl, hdfsPath, libraryPath, fileFormat, fileCsvIncludeHeader,
-        fileCsvConvert01ToBoolean, fileCsvSeparatorType, fileCsvCustomSeparator),
+        fileCsvConvert01ToBoolean, fileCsvSeparatorType, fileCsvCustomSeparator, sparkGenericDataSourceFormat),
       (googleSpreadsheetId, googleServiceAccountCredentials,
         googleSpreadsheetIncludeHeader, googleSpreadsheetConvert01ToBoolean)
     ) <> ({ x: ((UUID, UUID, String, String, java.util.Date, Visibility, Option[String], DatasourceType),
                 (Option[String], Option[String], Option[String], Option[String]),
                 (Option[String], Option[String], Option[String], Option[FileFormat], Option[Boolean],
-                  Option[Boolean], Option[CsvSeparatorType], Option[String]),
+                  Option[Boolean], Option[CsvSeparatorType], Option[String], Option[String]),
                 (Option[String], Option[String], Option[Boolean], Option[Boolean])) =>
        x match {
          case (generalParameters, jdbcParameters, fileParameters, googleParameters) =>
@@ -139,7 +146,19 @@ object DatasourcesSchema {
 
   }
 
+
+  final class SparkOptionTable(tag: Tag)
+    extends Table[SparkOptionDB](tag, Some(DatasourceManagerConfig.database.schema), "sparkoption") {
+    def id = column[UUID]("id", O.PrimaryKey)
+    def key = column[String]("key")
+    def value = column[String]("value")
+    def datasourceId = column[UUID]("datasource_id")
+    def * = (id, key, value, datasourceId) <> (SparkOptionDB.tupled, SparkOptionDB.unapply)
+  }
+
+
   lazy val datasourcesTable = TableQuery[DatasourceTable]
+  lazy val sparkOptionsTable = TableQuery[SparkOptionTable]
 }
 
 // sbt-native-package won't work with multiple Mains

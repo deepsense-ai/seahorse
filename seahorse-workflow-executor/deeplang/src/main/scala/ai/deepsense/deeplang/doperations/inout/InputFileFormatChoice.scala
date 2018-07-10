@@ -45,10 +45,18 @@ object InputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
     override val params: Array[ai.deepsense.deeplang.params.Param[_]] = Array()
   }
+  class SparkGeneric() extends InputFileFormatChoice with SparkGenericFormatParameters  {
+    override val name: String = FileFormat.SPARKGENERIC.toString
+    override val params: Array[ai.deepsense.deeplang.params.Param[_]] =
+      Array(
+        sparkGenericDataSourceFormat
+      )
+  }
 
   val choiceOrder: List[Class[_ <: InputFileFormatChoice]] = List(
     classOf[Csv],
     classOf[Parquet],
-    classOf[Json]
+    classOf[Json],
+    classOf[SparkGeneric]
   )
 }

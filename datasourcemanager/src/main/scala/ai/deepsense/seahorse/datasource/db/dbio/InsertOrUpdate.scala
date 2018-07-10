@@ -20,12 +20,19 @@ import java.util.UUID
 
 import scala.util.{Failure, Success}
 
+import scalaz.Validation.FlatMap._
+import scalaz.Validation
+import scalaz.syntax.validation._
+
 import ai.deepsense.commons.service.api.CommonApiExceptions
+import ai.deepsense.commons.service.api.CommonApiExceptions.ApiException
 import ai.deepsense.commons.utils.LoggerForCallerClass
-import ai.deepsense.seahorse.datasource.converters.{DatasourceApiFromDb, DatasourceDbFromApi}
+import ai.deepsense.seahorse.datasource.converters.{DatasourceApiFromDb, DatasourceDbFromApi,
+  FileFormatParam, SparkOptionDbFromApi, validateDefined}
 import ai.deepsense.seahorse.datasource.db.Database
 import ai.deepsense.seahorse.datasource.db.schema.DatasourcesSchema
 import ai.deepsense.seahorse.datasource.model.{Datasource, DatasourceParams}
+
 
 object InsertOrUpdate {
 
@@ -33,6 +40,7 @@ object InsertOrUpdate {
 
   import Database.api._
   import DatasourcesSchema._
+  import ai.deepsense.seahorse.datasource.converters.RichDatasourceParams._
 
   val logger = LoggerForCallerClass()
 
@@ -40,8 +48,10 @@ object InsertOrUpdate {
       ownerId: UUID,
       ownerName: String,
       datasourceId: UUID,
-      datasourceParams: DatasourceParams): DBIO[Datasource] =
+      datasourceParams: DatasourceParams): DBIO[Datasource] = {
+
     for {
+      sparkOptions <- getSparkOptions(datasourceParams, datasourceId).asDBIO
       datasource <- DatasourceDbFromApi(ownerId, ownerName, datasourceId, datasourceParams).asDBIO
       updatedCount <- datasourcesTable.filter(ds =>
         ds.id === datasourceId && ds.ownerId === ownerId
@@ -59,11 +69,21 @@ object InsertOrUpdate {
       } else {
         DBIO.successful(())
       }
+      _ <- sparkOptionsTable.filter(_.datasourceId === datasourceId).delete
+      _ <- sparkOptionsTable ++= sparkOptions
       justUpserted <- datasourcesTable.filter(_.id === datasourceId).result.head
-      apiDatasource <- DatasourceApiFromDb(ownerId, justUpserted).asDBIO
+      apiDatasource <- DatasourceApiFromDb(ownerId, justUpserted, sparkOptions).asDBIO
     } yield apiDatasource
+  }
 
   private val successfullInsertBecauseItDidntExist = DBIO.successful(())
   private val failedBecauseAlreadyExistedForOtherUser = DBIO.failed(CommonApiExceptions.forbidden)
 
+  private def getSparkOptions(
+    datasourceParams: DatasourceParams,
+    datasourceId: UUID): Validation[ApiException, List[SparkOptionDB]] = {
+    for {
+      sparkOptions <- datasourceParams.getSparkOptions()
+    } yield SparkOptionDbFromApi(sparkOptions, datasourceId)
+  }
 }

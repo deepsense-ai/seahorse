@@ -17,13 +17,15 @@
 package ai.deepsense.deeplang.doperations.readwritedataframe
 
 import ai.deepsense.deeplang.ExecutionContext
+import ai.deepsense.deeplang.doperations.readwritedataframe.filestorage.FileDownloader
 
 object FilePathFromLibraryPath {
 
-  def apply(path: FilePath)(implicit ctx: ExecutionContext): FilePath = {
+  def apply(path: FilePath)(implicit context: ExecutionContext): FilePath = {
     require(path.fileScheme == FileScheme.Library)
-    val libraryPath = ctx.libraryPath + "/" + path.pathWithoutScheme
-    FilePath(FileScheme.File, libraryPath)
+    val libraryPath = context.libraryPath + "/" + path.pathWithoutScheme
+    val filePath = FilePath(FileScheme.File, libraryPath)
+    FileDownloader.downloadFile(filePath.fullPath)
   }
 
 }

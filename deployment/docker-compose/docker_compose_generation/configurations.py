@@ -192,7 +192,7 @@ class SessionManager(Service):
             SX_PARAM_PYTHON_EXECUTOR_BINARY='python',
             SX_PARAM_SPARK_RESOURCES_JARS='/resources/jars',
             SX_PARAM_SPARK_APPLICATIONS_LOGS_DIR='/spark_applications_logs',
-            SX_PARAM_TEMP_DIR='/tmp/seahorse/download',
+            SX_PARAM_TEMP_DIR='hdfs:///tmp/seahorse/download',
             SX_PARAM_PYTHON_DRIVER_BINARY='/opt/conda/bin/python',
             SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.internal_ip().as_string()) + \
                self.services.RabbitMQ.credentials().as_env() + \

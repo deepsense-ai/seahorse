@@ -259,6 +259,9 @@
         },
         "csvFileFormatParams": {
           "$ref": "#/definitions/CsvFileFormatParams"
+        },
+        "sparkGenericFileFormatParams": {
+          "$ref": "#/definitions/SparkGenericFileFormatParams"
         }
       }
     },
@@ -278,6 +281,9 @@
         },
         "csvFileFormatParams": {
           "$ref": "#/definitions/CsvFileFormatParams"
+        },
+        "sparkGenericFileFormatParams": {
+          "$ref": "#/definitions/SparkGenericFileFormatParams"
         }
       }
     },
@@ -297,6 +303,9 @@
         },
         "csvFileFormatParams": {
           "$ref": "#/definitions/CsvFileFormatParams"
+        },
+        "sparkGenericFileFormatParams": {
+          "$ref": "#/definitions/SparkGenericFileFormatParams"
         }
       }
     },
@@ -366,8 +375,41 @@
       "enum": [
         "csv",
         "json",
-        "parquet"
+        "parquet",
+        "sparkgeneric"
       ]
+    },
+    "SparkGenericFileFormatParams": {
+      "type": "object",
+      "description": "Generic Spark format",
+      "required": [
+        "sparkFormat",
+        "sparkOptions"
+      ],
+      "properties": {
+        "sparkFormat": {
+          "type": "string"
+        },
+        "sparkOptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SparkGenericOptions"
+          }
+        }
+      }
+    },
+    "SparkGenericOptions": {
+      "type": "object",
+      "description": "Key and their value",
+      "required": ["key", "value"],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
     },
     "CsvFileFormatParams": {
       "type": "object",

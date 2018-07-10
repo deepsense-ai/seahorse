@@ -25,7 +25,6 @@ import scalaz.syntax.validation._
 
 import ai.deepsense.commons.service.api.CommonApiExceptions.ApiException
 import ai.deepsense.seahorse.datasource.db.schema.DatasourcesSchema._
-import ai.deepsense.seahorse.datasource.model.CsvSeparatorType.CsvSeparatorType
 import ai.deepsense.seahorse.datasource.model.FileFormat.FileFormat
 import ai.deepsense.seahorse.datasource.model._
 
@@ -61,7 +60,8 @@ object DatasourceDbFromApi {
         fileCsvIncludeHeader = toBeOptionallyFilledLater,
         fileCsvConvert01ToBoolean = toBeOptionallyFilledLater,
         fileCsvSeparatorType = toBeOptionallyFilledLater,
-        fileCsvCustomSeparator = toBeOptionallyFilledLater
+        fileCsvCustomSeparator = toBeOptionallyFilledLater,
+        fileSparkGenericDataSourceFormat = toBeOptionallyFilledLater
       ),
       googleParameters = DatasourceDBGoogleParameters(
         googleSpreadsheetId = toBeOptionallyFilledLater,
@@ -119,19 +119,28 @@ object DatasourceDbFromApi {
   private def withCommonFileParams[T <: {
     def fileFormat : FileFormat
     def csvFileFormatParams : Option[CsvFileFormatParams]
+    def sparkGenericFileFormatParams: Option[SparkGenericFileFormatParams]
   }](datasource: DatasourceDB, apiFileParams: T) = {
-    if (apiFileParams.fileFormat == FileFormat.csv) {
-      for {
-        csvFileFormatParams <- validateDefined("csvFileFormatParams", apiFileParams.csvFileFormatParams)
-        csvFileCustomSeparator <- validateCustomSeparator(csvFileFormatParams)
-      } yield datasource.copy(fileParameters = datasource.fileParameters.copy(
-        fileCsvIncludeHeader = Some(csvFileFormatParams.includeHeader),
-        fileCsvConvert01ToBoolean = Some(csvFileFormatParams.convert01ToBoolean),
-        fileCsvSeparatorType = Some(csvFileFormatParams.separatorType),
-        fileCsvCustomSeparator = csvFileCustomSeparator
-      ))
-    } else {
-      datasource.success
+
+    apiFileParams.fileFormat match {
+      case FileFormat.csv =>
+        for {
+          csvFileFormatParams <- validateDefined("csvFileFormatParams", apiFileParams.csvFileFormatParams)
+          csvFileCustomSeparator <- validateCustomSeparator(csvFileFormatParams)
+        } yield datasource.copy(fileParameters = datasource.fileParameters.copy(
+          fileCsvIncludeHeader = Some(csvFileFormatParams.includeHeader),
+          fileCsvConvert01ToBoolean = Some(csvFileFormatParams.convert01ToBoolean),
+          fileCsvSeparatorType = Some(csvFileFormatParams.separatorType),
+          fileCsvCustomSeparator = csvFileCustomSeparator
+        ))
+      case FileFormat.sparkgeneric =>
+        for {
+          sparkGenericFileFormatParams <-
+            validateDefined("sparkGenericFileFormatParams", apiFileParams.sparkGenericFileFormatParams)
+        } yield datasource.copy(fileParameters = datasource.fileParameters.copy(
+          fileSparkGenericDataSourceFormat = Some(sparkGenericFileFormatParams.sparkFormat)
+        ))
+      case _ => datasource.success
     }
   }.map(result => result.copy(fileParameters = result.fileParameters.copy(
     fileFormat = Some(apiFileParams.fileFormat)
