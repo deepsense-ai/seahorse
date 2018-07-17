@@ -39,16 +39,18 @@ object DataFrameFromFileReader {
 
   private def readUsingProvidedFileScheme
   (path: FilePath, fileFormat: InputFileFormatChoice)
-  (implicit context: ExecutionContext): DataFrame =
+  (implicit context: ExecutionContext): DataFrame = {
+    import FileScheme._
     path.fileScheme match {
-      case FileScheme.Library =>
+      case Library =>
         val filePath = FilePathFromLibraryPath(path)
         readUsingProvidedFileScheme(filePath, fileFormat)
       case FileScheme.File => DriverFiles.read(path.pathWithoutScheme, fileFormat)
-      case FileScheme.HTTP | FileScheme.HTTPS | FileScheme.FTP =>
+      case HTTP | HTTPS | FTP =>
         val downloadedPath = FileDownloader.downloadFile(path.fullPath)
         readUsingProvidedFileScheme(downloadedPath, fileFormat)
-      case FileScheme.HDFS => ClusterFiles.read(path, fileFormat)
+      case HDFS | S3 | S3A | S3N => ClusterFiles.read(path, fileFormat)
     }
+  }
 
 }

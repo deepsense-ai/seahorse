@@ -110,7 +110,10 @@ trait ToDatasourceConverters {
           case FileScheme.File |
                FileScheme.FTP |
                FileScheme.HTTP |
-               FileScheme.HTTPS =>
+               FileScheme.HTTPS |
+               FileScheme.S3 |
+               FileScheme.S3A |
+               FileScheme.S3N =>
             params.setExternalFileParams(fileType)
             params.setDatasourceType(DatasourceType.EXTERNALFILE)
           case FileScheme.HDFS =>
@@ -147,7 +150,10 @@ trait ToDatasourceConverters {
           case FileScheme.File |
                FileScheme.FTP |
                FileScheme.HTTP |
-               FileScheme.HTTPS =>
+               FileScheme.HTTPS |
+               FileScheme.S3 |
+               FileScheme.S3A |
+               FileScheme.S3N =>
             params.setExternalFileParams(fileType)
             params.setDatasourceType(DatasourceType.EXTERNALFILE)
           case FileScheme.HDFS =>

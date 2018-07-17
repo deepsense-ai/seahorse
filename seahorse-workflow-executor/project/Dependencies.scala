@@ -25,7 +25,7 @@ object Version {
     case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "1.8", "2.7.1", "2.4.9", "3.3.+")
   }
 
-  val amazonS3 = "1.10.16"
+  val amazonSDK = "1.7.4"
   val googleApi = "1.22.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
@@ -53,7 +53,7 @@ object Library {
 
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
-  val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" % Version.amazonS3 excludeJackson
+  val amazonSDK = "com.amazonaws" % "aws-java-sdk" % Version.amazonSDK excludeJackson
   val apacheCommonsLang3 = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val apacheCommonsCsv = "org.apache.commons" % "commons-csv" % "1.1" // Also used by spark-csv
   val config = "com.typesafe" % "config" % "1.3.1"
@@ -171,7 +171,7 @@ object Dependencies {
     akkaActor,
     sprayClient,
     apacheCommonsLang3,
-    amazonS3,
+    amazonSDK,
     nscalaTime,
     scalaReflect,
     apacheCommonsCsv,

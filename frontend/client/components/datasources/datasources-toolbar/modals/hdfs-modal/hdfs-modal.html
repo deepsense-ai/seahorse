@@ -1,13 +1,12 @@
 <div class="datasources-modal" ng-form="datasourceForm">
   <div class="datasources-modal__header">
-    <div class="modal-title">HDFS</div>
+    <div class="modal-title">HDFS & S3</div>
   </div>
 
   <div class="datasources-modal__body">
     <div class="datasources-modal__body-row">
-      <label class="title">HDFS path</label>
+      <label class="title">path</label>
       <div class="icon-input">
-        <div class="hdfs-prefix">hdfs://</div>
         <input
           ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.hdfsPathBuffer"

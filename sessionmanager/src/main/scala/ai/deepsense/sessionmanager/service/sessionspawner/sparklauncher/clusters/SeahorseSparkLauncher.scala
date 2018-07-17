@@ -57,6 +57,7 @@ object SeahorseSparkLauncher {
       val extraClassPath = s"${sparkLauncherConfig.weJarPath}:${jars.mkString(":")}"
 
       jars.toList.foldLeft(sparkLauncher) { (acc, jar) => acc.addJar(jar) }
+        .addHadoopAwsJars()
         .setConf("spark.driver.extraClassPath", extraClassPath)
         .setConfOpt("spark.executor.memory", clusterConfig.executorMemory)
         .setConfOpt("spark.driver.memory", clusterConfig.driverMemory)
@@ -74,6 +75,12 @@ object SeahorseSparkLauncher {
     }
 
   implicit class RichSparkLauncher(self: SparkLauncher) {
+
+    def addHadoopAwsJars(): SparkLauncher = {
+      self.addJar("/opt/docker/app/lib/com.amazonaws.aws-java-sdk-1.7.4.jar")
+        .addJar("/opt/docker/app/lib/org.apache.hadoop.hadoop-aws-2.7.6.jar")
+    }
+
     def setConfOpt(key: String, valueOpt: Option[String]): SparkLauncher = {
       valueOpt match {
         case Some(value) => self.setConf(key, value)

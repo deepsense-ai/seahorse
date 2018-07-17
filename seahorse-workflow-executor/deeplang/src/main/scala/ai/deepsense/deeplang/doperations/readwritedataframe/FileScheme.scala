@@ -30,11 +30,14 @@ object FileScheme {
   case object HDFS extends FileScheme("hdfs")
   case object File extends FileScheme("file")
   case object Library extends FileScheme("library")
+  case object S3 extends FileScheme("s3")
+  case object S3A extends FileScheme("s3a")
+  case object S3N extends FileScheme("s3n")
 
   // TODO Autoderive values. There is macro-library for extracting sealed case objects.
-  val values = Seq(HTTP, HTTPS, FTP, HDFS, File, Library)
+  val values = Seq(HTTP, HTTPS, FTP, HDFS, File, Library, S3, S3A, S3N)
 
-  val supportedByParquet = Seq(HDFS)
+  val supportedByParquet = Seq(HDFS, S3, S3A, S3N)
 
   def fromPath(path: String): FileScheme = {
     val matchingFileSchema = values.find(schema => path.startsWith(schema.pathPrefix))
