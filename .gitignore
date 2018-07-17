@@ -58,5 +58,6 @@ data/*
 library/*
 spark_applications_logs/*
 h2-data/*
+R_Libs/*
 jars/*
 
