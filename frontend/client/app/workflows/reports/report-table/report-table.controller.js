@@ -16,10 +16,13 @@
 
 'use strict';
 
+require('./cell-viewer/cell-viewer-modal.ctrl.js');
+import tpl from './cell-viewer/cell-viewer-modal.html';
+
 let REPORT_EVENTS = require('../reports.controller.js').EVENTS;
 
 /* @ngInject */
-function ReportTableController($scope, $rootScope, $filter) {
+function ReportTableController($scope, $rootScope, $filter, $uibModal) {
   const controller = this;
   const map = {};
   const columnTypes = [];
@@ -82,6 +85,34 @@ function ReportTableController($scope, $rootScope, $filter) {
       });
     }
   }
+
+    var that = this;
+
+    that.editInWindow = function(value) {
+      var modalInstance = $uibModal.open({
+        animation: true,
+        backdrop: 'static',
+        templateUrl: tpl,
+        controller: 'cellViewerModalCtrl',
+        controllerAs: 'acstmCtrl',
+        size: 'lg',
+        resolve: {
+          codeSnippet: function () {
+            return {
+              code: value
+            };
+          }
+        }
+      });
+
+      modalInstance.result.then(function (modifiedCode) {
+        if(that.value !== modifiedCode) {
+          that.value = modifiedCode;
+        }
+      }, function () {});
+    };
+
+
 }
 
 exports.inject = function(module) {

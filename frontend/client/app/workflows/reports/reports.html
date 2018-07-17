@@ -1,5 +1,14 @@
-<div class="c-report">
-  <div ng-if="!controller.currentReport" class="no-report">
+<div class="c-report c-report-shadow">
+
+  <div>
+    <button class="c-report__close close u-flex u-flex--center-center"
+            ng-click="controller.close()">
+      <i class="c-report__close-icon fa fa-close"></i>
+    </button>
+  </div>
+
+
+  <div ng-if="!controller.currentReport" class="c-report no-report" style="overflow-y: scroll;">
     <div class="no-report-title">
       <i class="fa fa-file-text-o"></i>
       <span>No report selected!</span>
@@ -9,7 +18,8 @@
     </div>
   </div>
 
-  <div ng-if="controller.currentReport">
+
+  <div class="c-report" style="overflow-y: scroll;" ng-if="controller.currentReport">
     <div class="report-header">
       <h2> {{controller.getReport().name}} </h2>
     </div>
@@ -25,8 +35,5 @@
       </report-default>
     </div>
   </div>
-  <button class="c-report__close close u-flex u-flex--center-center"
-          ng-click="controller.close()">
-    <i class="c-report__close-icon fa fa-close"></i>
-  </button>
+
 </div>
