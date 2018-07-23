@@ -19,8 +19,8 @@ package ai.deepsense.deeplang.doperations
 import java.util.UUID
 
 import org.scalatest._
-
 import ai.deepsense.commons.utils.Logging
+import ai.deepsense.deeplang
 import ai.deepsense.deeplang._
 import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice
@@ -46,7 +46,8 @@ class InputOutputSpec extends
       .setCsvColumnSeparator(ColumnSeparatorChoice.Comma())
       .setNamesIncluded(true)
       .setShouldConvertToBoolean(true),
-    new InputFileFormatChoice.Json()
+    new InputFileFormatChoice.Json(),
+    new InputFileFormatChoice.SparkGeneric().setSparkGenericDataSourceFormat("com.databricks.spark.avro")
   )
 
   private val someFormatsSupportedByCluster =

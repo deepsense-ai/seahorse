@@ -22,7 +22,7 @@ import ai.deepsense.deeplang.doperables.dataframe.DataFrame
 import ai.deepsense.deeplang.doperations.exceptions.WriteFileException
 import ai.deepsense.deeplang.doperations.inout.OutputFileFormatChoice.Csv
 import ai.deepsense.deeplang.doperations.inout.OutputStorageTypeChoice
-import ai.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FilePathFromLibraryPath, FileScheme}
+import ai.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FilePathFromLibraryPath, FileScheme, LibrarySupport}
 import ai.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvSchemaStringifierBeforeCsvWriting
 import ai.deepsense.deeplang.exceptions.DeepLangException
 import ai.deepsense.deeplang.{ExecutionContext, FileSystemClient}
@@ -61,13 +61,12 @@ object DataFrameToFileWriter {
     import FileScheme._
     path.fileScheme match {
       case Library =>
-        val filePath = FilePathFromLibraryPath(path)
+        val filePath = LibrarySupport.filePathFromLibraryPath(path)
         val FilePath(_, libraryPath) = filePath
         new java.io.File(libraryPath).getParentFile.mkdirs()
         writeUsingProvidedFileScheme(fileChoice, dataFrame, filePath, saveMode)
-        val localLibraryPath = context.libraryPath + "/" + path.pathWithoutScheme
-        val localFilePath = FilePath(FileScheme.File, localLibraryPath)
-        writeUsingProvidedFileScheme(fileChoice, dataFrame, localFilePath, saveMode)
+        val hdfsPathOpt = LibrarySupport.hdfsPathFromLibraryPath(path)
+        hdfsPathOpt.foreach(hdfsPath => writeUsingProvidedFileScheme(fileChoice, dataFrame, hdfsPath, saveMode))
 
       case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
       case HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
