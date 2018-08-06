@@ -21,6 +21,8 @@ COPY seahorse_notebook_path /usr/local/lib/python2.7/site-packages
 
 COPY jupyter_notebook_config.py /home/jovyan/.jupyter
 COPY wmcontents /opt/conda/lib/python3.5/site-packages/wmcontents
+RUN mkdir -p /home/jovyan/.jupyter/custom
+COPY custom.js /home/jovyan/.jupyter/custom
 
 # seahorse_notebook_path is copied two times, because it is needed
 # by forwarding_kernel (python 2.7) and by notebook server (python 3.5)
