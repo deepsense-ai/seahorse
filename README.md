@@ -5,8 +5,6 @@ in a fast, simple and interactive way.
 
 Seahorse is distributed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
 
-Read more about Seahorse on the documentation page: [seahorse.deepsense.ai](https://seahorse.deepsense.ai/).
-
 ## Building Seahorse from source
 
 Prerequisites:
