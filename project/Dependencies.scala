@@ -57,6 +57,8 @@ object Library {
 
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark excludeScalatest
 
+  val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % (Version.hadoop + ".+")
+
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
   val akkaActor = akka("actor")
@@ -114,7 +116,9 @@ object Dependencies {
   object Spark {
     val components = Seq(
       sparkCore,
-      sparkMLLib)
+      sparkMLLib,
+      hadoop("aws")
+    )
     // val provided = components.map(_ % Provided)
     val provided = components
     val test = components.map(_ % s"$Test,it")

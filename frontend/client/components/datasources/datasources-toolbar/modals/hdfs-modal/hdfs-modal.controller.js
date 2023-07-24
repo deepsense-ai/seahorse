@@ -20,7 +20,7 @@
 import DatasourceModal from '../datasource-modal.class.js';
 
 
-const HDFS_REGEX = /(hdfs):\/\/([\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
+const HDFS_REGEX = /(hdfs|s3|s3a|s3n):\/\/([\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
 const HDFS_PREFIX = 'hdfs://';
 
 
@@ -40,7 +40,7 @@ class HdfsModalController extends DatasourceModal {
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
       this.datasourceParams = editedDatasource.params;
-      this.hdfsPathBuffer = this.datasourceParams.hdfsParams.hdfsPath.replace(HDFS_PREFIX, '');
+      this.hdfsPathBuffer = this.datasourceParams.hdfsParams.hdfsPath;
       this.validateHdfsPath();
     } else {
       this.datasourceParams = {
@@ -66,10 +66,9 @@ class HdfsModalController extends DatasourceModal {
     }, true);
   }
 
-
   canAddDatasource() {
     const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.hdfsParams);
-    const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== 'hdfs://';
+    const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== HDFS_PREFIX;
 
     return super.canAddDatasource() &&
       isCsvSeparatorValid &&
@@ -78,19 +77,12 @@ class HdfsModalController extends DatasourceModal {
 
 
   onChangeHandler() {
-    this.hideHdfsPrefix();
+    this.datasourceParams.hdfsParams.hdfsPath = this.hdfsPathBuffer;
     this.validateHdfsPath();
   }
 
-
-  hideHdfsPrefix() {
-    this.hdfsPathBuffer = this.hdfsPathBuffer.replace(HDFS_PREFIX, '');
-    this.datasourceParams.hdfsParams.hdfsPath = `${HDFS_PREFIX}${this.hdfsPathBuffer}`;
-  }
-
-
   validateHdfsPath() {
-    this.isHdfsPathValid = this.datasourceParams.hdfsParams.hdfsPath !== '' &&
+    this.isHdfsPathValid = this.datasourceParams.hdfsParams.hdfsPath !== HDFS_PREFIX &&
       this.datasourceParams.hdfsParams.hdfsPath.match(HDFS_REGEX);
   }
 
